@@ -3121,7 +3121,7 @@
         <Setter Property="Height" Value="20" />
         <Setter Property="Background" Value="#FFFFFF"/>
         <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
         <Setter Property="BorderThickness" Value="0,0,0,3"/>
         <Setter Property="BorderBrush" Value="{DynamicResource $amdocsLogoRadialGradientBrush}"/>

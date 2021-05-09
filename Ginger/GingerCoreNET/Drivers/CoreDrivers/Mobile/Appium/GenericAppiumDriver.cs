@@ -405,163 +405,170 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
+                IWebElement e = null;
                 //adjusting operations to fit native apps
-                if (act.ElementAction == ActUIElement.eElementAction.JavaScriptClick)
-                {
-                    act.ElementAction = ActUIElement.eElementAction.Click;
-                }
-                if (act.ElementAction == ActUIElement.eElementAction.SetValue)
-                {
-                    act.ElementAction = ActUIElement.eElementAction.SendKeys;
-                }
-                //IWebElement e;
-                //long x = 0, y = 0;
-
                 switch (act.ElementAction)
                 {
-                    //need to override regular selenium driver actions only if needed, 
-                    //if not then to run the regular selenium driver actions handler for it to avoid duplication
+                    case ActUIElement.eElementAction.JavaScriptClick:
+                    case ActUIElement.eElementAction.Submit:
+                        e = LocateElement(act);
+                        e.Click();
+                        break;
 
-                    //case ActUIElement.eElementAction.SetValue:
+                    case ActUIElement.eElementAction.SetValue:
+                        e = LocateElement(act);
+                        e.SendKeys(act.GetInputParamCalculatedValue("Value"));
+                        break;
+
+                    case ActUIElement.eElementAction.GetText:
+                    case ActUIElement.eElementAction.GetFont:
+                        e = LocateElement(act);
+                        act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("text"));
+                        break;
+
+                    case ActUIElement.eElementAction.GetTextLength:
+                        e = LocateElement(act);
+                        act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("text").Length).ToString());
+                        break;
+
+                    case ActUIElement.eElementAction.IsValuePopulated:
+                        e = LocateElement(act);
+                        switch (act.ElementType)
+                        {
+                            case eElementType.ComboBox:
+                                OpenQA.Selenium.Support.UI.SelectElement seIsPrepopulated = new OpenQA.Selenium.Support.UI.SelectElement(e);
+                                act.AddOrUpdateReturnParamActual("Actual", (seIsPrepopulated.SelectedOption.ToString().Trim() != "").ToString());
+                                break;
+                            case eElementType.TextBox:
+                                act.AddOrUpdateReturnParamActual("Actual", (!string.IsNullOrEmpty(e.Text)).ToString());
+                                break;
+                        }
+                        break;
+
+                    case ActUIElement.eElementAction.GetSize:
+                        e = LocateElement(act);
+                        act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("contentSize").ToString());
+                        break;
+
+                    case ActUIElement.eElementAction.ScrollToElement:
+                        e = LocateElement(act);
+                        int x = e.Location.X;
+                        int y = e.Location.Y;
+                        TouchAction action = new TouchAction(Driver);
+                        action.Press(x, y).MoveTo(x+1000, y).Release().Perform();
+                        break;
+
+                    //case ActUIElement.eElementAction.SelectByIndex:
                     //    e = LocateElement(act);
-                    //    if (e != null)
-                    //    {
-                    //        e.Clear();
-                    //        //make sure value was cleared- trying to handle clear issue in WebViews
-                    //        try
-                    //        {
-                    //            //TODO: Need to add a flag in the action for this case, as sometimes the value is clear but show text under like 'Searc, or say "OK Google".
-                    //            //Wasting time when not needed
-                    //            string elemntContent = e.Text; //.GetAttribute("name");
-                    //            if (string.IsNullOrEmpty(elemntContent) == false)
-                    //            {
-                    //                for (int indx = 1; indx <= elemntContent.Length; indx++)
-                    //                {
-                    //                    //Driver.KeyEvent(22);//"KEYCODE_DPAD_RIGHT"- move marker to right
-                    //                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(22);
-                    //                    //Driver.KeyEvent(67);//"KEYCODE_DEL"- delete 1 character
-                    //                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(67);
-                    //                }
-                    //            }
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            Reporter.ToLog(eLogLevel.DEBUG, "Failed to clear element value", ex);
-                    //        }
-                    //        switch (DevicePlatformType)
-                    //        {
-                    //            case eDevicePlatformType.Android:
-                    //                //e.Clear();
-                    //                e.SendKeys(act.GetInputParamCalculatedValue("Value"));
-                    //                break;
-                    //            case eDevicePlatformType.iOS:
-                    //                //e.Clear();
-                    //                e.SendKeys(act.GetInputParamCalculatedValue("Value"));
-                    //                //((IOSElement)e).SetImmediateValue(act.GetInputParamCalculatedValue("Value"));
-                    //                break;
-                    //        }
-                    //        //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 100);
-                    //    }
-                    //    else
-                    //    {
-                    //        act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
-                    //    }
+                    //    OpenQA.Selenium.Support.UI.SelectElement dropdown = new OpenQA.Selenium.Support.UI.SelectElement(e);
+                    //    dropdown.SelectByIndex(Int32.Parse(act.GetInputParamCalculatedValue(ActUIElement.Fields.ValueToSelect)));
                     //    break;
 
-                    //case ActGenElement.eGenElementAction.GetValue:
-                    //case ActGenElement.eGenElementAction.GetInnerText:
-                    //    e = LocateElement(act);
-                    //    if (e != null)
-                    //    {
-                    //        act.AddOrUpdateReturnParamActual("Actual", e.Text);
-                    //    }
-                    //    else
-                    //    {
-                    //        act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
-                    //        return;
-                    //    }
-                    //    break;
-
-                    //case ActGenElement.eGenElementAction.GetContexts:
-                    //    int i = 0;
-                    //    foreach (var c in Driver.Contexts)
-                    //    {
-                    //        act.AddOrUpdateReturnParamActual("Actual " + i, c.ToString());
-                    //    }
-                    //    break;
-
-                    //case ActGenElement.eGenElementAction.SetContext:
-                    //    Driver.Context = act.GetInputParamCalculatedValue("Value");
-                    //    break;
-
-                    //case ActGenElement.eGenElementAction.GetCustomAttribute:
-                    //    e = LocateElement(act);
-                    //    if (e != null)
-                    //    {
-                    //        string attribute = string.Empty;
-                    //        try
-                    //        {
-                    //            attribute = e.GetAttribute(act.Value);
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            string value = act.Value.ToLower();
-                    //            switch (value)
-                    //            {
-                    //                case "content-desc":
-                    //                    value = "name";
-                    //                    break;
-                    //                case "resource-id":
-                    //                    value = "resourceId";
-                    //                    break;
-                    //                case "class":
-                    //                    act.AddOrUpdateReturnParamActual("Actual", e.TagName);
-                    //                    return;
-                    //                case "source":
-                    //                    act.AddOrUpdateReturnParamActual("source", this.GetPageSource().Result);
-                    //                    return;
-                    //                case "x":
-                    //                case "X":
-                    //                    ActGenElement tempact = new ActGenElement();
-                    //                    act.AddOrUpdateReturnParamActual("X", e.Location.X.ToString());
-                    //                    return;
-                    //                case "y":
-                    //                case "Y":
-                    //                    act.AddOrUpdateReturnParamActual("Y", e.Location.Y.ToString());
-                    //                    return;
-                    //                default:
-                    //                    if (act.LocateBy == eLocateBy.ByXPath)
-                    //                    {
-                    //                        XmlDocument PageSourceXml = new XmlDocument();
-                    //                        PageSourceXml.LoadXml(this.GetPageSource().Result);
-                    //                        XmlNode node = PageSourceXml.SelectSingleNode(act.LocateValueCalculated);
-
-                    //                        foreach (XmlAttribute XA in node.Attributes)
-                    //                        {
-                    //                            if (XA.Name == act.ValueForDriver)
-                    //                            {
-                    //                                act.AddOrUpdateReturnParamActual("Actual", XA.Value);
-                    //                                break;
-                    //                            }
-                    //                        }
-                    //                    }
-                    //                    return;
-                    //            }
-                    //            attribute = e.GetAttribute(value);
-                    //            Reporter.ToLog(eLogLevel.ERROR, "Error happend", ex);
-                    //        }
-                    //        act.AddOrUpdateReturnParamActual("Actual", attribute);
-                    //    }
-                    //    else
-                    //    {
-                    //        act.Error = "Error: Element not found - " + act.LocateBy + "- '" + act.LocateValueCalculated + "'";
-                    //        return;
-                    //    }
-                    //    break;
                     default:
                         mSeleniumDriver.HandleActUIElement(act);
                         break;
                 }
+
+                //IWebElement e;
+                //long x = 0, y = 0;
+
+                //switch (act.ElementAction)
+                //{
+
+                //case ActGenElement.eGenElementAction.GetValue:
+                //case ActGenElement.eGenElementAction.GetInnerText:
+                //    e = LocateElement(act);
+                //    if (e != null)
+                //    {
+                //        act.AddOrUpdateReturnParamActual("Actual", e.Text);
+                //    }
+                //    else
+                //    {
+                //        act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
+                //        return;
+                //    }
+                //    break;
+
+                //case ActGenElement.eGenElementAction.GetContexts:
+                //    int i = 0;
+                //    foreach (var c in Driver.Contexts)
+                //    {
+                //        act.AddOrUpdateReturnParamActual("Actual " + i, c.ToString());
+                //    }
+                //    break;
+
+                //case ActGenElement.eGenElementAction.SetContext:
+                //    Driver.Context = act.GetInputParamCalculatedValue("Value");
+                //    break;
+
+                //case ActGenElement.eGenElementAction.GetCustomAttribute:
+                //    e = LocateElement(act);
+                //    if (e != null)
+                //    {
+                //        string attribute = string.Empty;
+                //        try
+                //        {
+                //            attribute = e.GetAttribute(act.Value);
+                //        }
+                //        catch (Exception ex)
+                //        {
+                //            string value = act.Value.ToLower();
+                //            switch (value)
+                //            {
+                //                case "content-desc":
+                //                    value = "name";
+                //                    break;
+                //                case "resource-id":
+                //                    value = "resourceId";
+                //                    break;
+                //                case "class":
+                //                    act.AddOrUpdateReturnParamActual("Actual", e.TagName);
+                //                    return;
+                //                case "source":
+                //                    act.AddOrUpdateReturnParamActual("source", this.GetPageSource().Result);
+                //                    return;
+                //                case "x":
+                //                case "X":
+                //                    ActGenElement tempact = new ActGenElement();
+                //                    act.AddOrUpdateReturnParamActual("X", e.Location.X.ToString());
+                //                    return;
+                //                case "y":
+                //                case "Y":
+                //                    act.AddOrUpdateReturnParamActual("Y", e.Location.Y.ToString());
+                //                    return;
+                //                default:
+                //                    if (act.LocateBy == eLocateBy.ByXPath)
+                //                    {
+                //                        XmlDocument PageSourceXml = new XmlDocument();
+                //                        PageSourceXml.LoadXml(this.GetPageSource().Result);
+                //                        XmlNode node = PageSourceXml.SelectSingleNode(act.LocateValueCalculated);
+
+                //                        foreach (XmlAttribute XA in node.Attributes)
+                //                        {
+                //                            if (XA.Name == act.ValueForDriver)
+                //                            {
+                //                                act.AddOrUpdateReturnParamActual("Actual", XA.Value);
+                //                                break;
+                //                            }
+                //                        }
+                //                    }
+                //                    return;
+                //            }
+                //            attribute = e.GetAttribute(value);
+                //            Reporter.ToLog(eLogLevel.ERROR, "Error happend", ex);
+                //        }
+                //        act.AddOrUpdateReturnParamActual("Actual", attribute);
+                //    }
+                //    else
+                //    {
+                //        act.Error = "Error: Element not found - " + act.LocateBy + "- '" + act.LocateValueCalculated + "'";
+                //        return;
+                //    }
+                //    break;
+                // default:
+                //mSeleniumDriver.HandleActUIElement(act);
+                //break;
+                //}
             }
             catch (Exception ex)
             {
