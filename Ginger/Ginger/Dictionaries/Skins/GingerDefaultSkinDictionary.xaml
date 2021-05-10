@@ -1992,15 +1992,14 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-                
-        <Style TargetType="DataGridCell" x:Key="DataGridCellStyle" >
-           
-    <Style.Triggers>
-        <Trigger Property="IsSelected" Value="True">
-            <Setter Property="Background" Value="DeepSkyBlue"/>
-            <Setter Property="Foreground" Value="White"/>
-        </Trigger>
-    </Style.Triggers>
+
+    <Style TargetType="DataGridCell" x:Key="DataGridCellStyle" >
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="DeepSkyBlue"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="DataGrid" x:Key="DataGridAlternatingRowBackground" >
@@ -3119,29 +3118,32 @@
 
     <Style TargetType="DataGridColumnHeader" x:Key="@DataGridColumnHeader" >
         <Setter Property="Height" Value="20" />
-        <Setter Property="Background" Value="#FFFFFF"/>
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="2,0,0,0"/>
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
-        <Setter Property="BorderThickness" Value="0,0,0,3"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource $amdocsLogoRadialGradientBrush}"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
     </Style>
 
     <Style TargetType="DataGridCell" x:Key="@DataGridCellStyle" >
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="White"/>
-                <Setter Property="Foreground" Value="{DynamicResource $SelectionColor_Pink}"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource $amdocsLogoLinarGradientBrush}"/>
+                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
+                <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
                 <Setter Property="BorderThickness" Value="0,1,0,1"/>
                 <Setter Property="FontWeight" Value="Bold"/>
             </Trigger>
-            <Trigger Property="IsEditing" Value="True">
-                <Setter Property="Background" Value="{DynamicResource $SelectionColor_VeryLightBlue}"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource $amdocsLogoRadialGradientBrush}"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-
-            </Trigger>
+            <!--<Trigger Property="IsEditing" Value="True">
+                <Setter Property="Background" Value="{StaticResource $SelectionColor_Pink}"/>
+                --><!--<Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>--><!--
+            </Trigger>-->
         </Style.Triggers>
     </Style>
 

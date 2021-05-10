@@ -1913,5 +1913,49 @@ namespace Amdocs.Ginger.CoreNET
                 return "Window:";
             }
         }
+
+        public override bool SerializationError(Agent agent, SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType == SerializationErrorType.SetValueException)
+            {
+                if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid")
+                {
+                    agent.DriverType = Agent.eDriverType.Appium;
+                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
+                    agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
+                    agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
+                    return true;
+                }
+                else if (value == "MobileAppiumIOS" || value == "PerfectoMobileIOS")
+                {
+                    agent.DriverType = Agent.eDriverType.Appium;
+                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
+                    agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
+                    agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
+                    return true;
+                }
+                else if (value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb")
+                {
+                    agent.DriverType = Agent.eDriverType.Appium;
+                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
+                    agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
+                    agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
+                    return true;
+                }
+                else if (value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
+                {
+                    agent.DriverType = Agent.eDriverType.Appium;
+                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
+                    agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
+                    agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
