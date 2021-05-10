@@ -180,8 +180,149 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override ObservableList<ElementLocator> GetLearningLocators()
         {
-            return null;
+            ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Very Recommended (usually unique)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByAutomationID, Help = "Recommended (usually stable)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Recommended (sensitive to page design changes)" });
+
+            return learningLocatorsList;
         }
 
+        public List<ElementTypeData> GetPlatformElementTypesData()
+        {
+            if (mPlatformElementTypeOperations == null)
+            {
+                mPlatformElementTypeOperations = new List<ElementTypeData>();
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Unknown,
+                    IsCommonElementType = false
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Button,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.ScrollBar,
+                    IsCommonElementType = false
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.ComboBox,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.RadioButton,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.TextBox,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.CheckBox,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Label,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.List,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.MenuItem,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Window,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Tab,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.TreeView,
+                    IsCommonElementType = true
+                });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.DatePicker,
+                    IsCommonElementType = true
+                });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Dialog,
+                    IsCommonElementType = false
+                });
+                
+            }
+            return mPlatformElementTypeOperations;
+        }
+        private string SetElementExtInfo(eElementType elementType)
+        {
+            var elementExtInfo = string.Empty;
+            switch (elementType)
+            {
+                case eElementType.Browser:
+                case eElementType.Div:
+                case eElementType.Span:
+                case eElementType.HyperLink:
+                    elementExtInfo = "For Embedded Html";
+                    break;
+                default:
+                    elementExtInfo = string.Empty;
+                    break;
+            }
+            return elementExtInfo;
+        }
+        public override Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList()
+        {
+            ObservableList<UIElementFilter> uIBasicElementFilters = new ObservableList<UIElementFilter>();
+            ObservableList<UIElementFilter> uIAdvancedElementFilters = new ObservableList<UIElementFilter>();
+            foreach (ElementTypeData elementTypeOperation in GetPlatformElementTypesData())
+            {
+                var elementExtInfo = SetElementExtInfo(elementTypeOperation.ElementType);
+                if (elementTypeOperation.IsCommonElementType)
+                {
+                    uIBasicElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, elementExtInfo, true));
+                }
+                else
+                {
+                    uIAdvancedElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, elementExtInfo, false));
+                }
+            }
+
+            Dictionary<string, ObservableList<UIElementFilter>> elementListDic = new Dictionary<string, ObservableList<UIElementFilter>>();
+            elementListDic.Add("Basic", new ObservableList<UIElementFilter>(uIBasicElementFilters));
+            elementListDic.Add("Advanced", new ObservableList<UIElementFilter>(uIAdvancedElementFilters));
+
+            return elementListDic;
+        }
     }
 }
