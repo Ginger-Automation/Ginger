@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -62,7 +63,7 @@ namespace GingerCore.Drivers
         {
             return false;
         }
-     
+
         //TODO:Remove this once on the drivers implementing IWindowExplorer are ready
         public virtual bool IsWindowExplorerSupportReady()
         {
@@ -76,15 +77,15 @@ namespace GingerCore.Drivers
 
         public void CreateSTA(Action ThreadStartingPoint)
         {
-            STAThread = new Thread(new ThreadStart(ThreadStartingPoint));            
+            STAThread = new Thread(new ThreadStart(ThreadStartingPoint));
             STAThread.SetApartmentState(ApartmentState.STA);
             STAThread.IsBackground = true;
             STAThread.Start();
 
-            
+
         }
 
-        public ObservableList<DriverConfigParam> AdvanceDriverConfigurations  { get; set; }
+        public ObservableList<DriverConfigParam> AdvanceDriverConfigurations { get; set; }
         public abstract void StartDriver();
         public bool cancelAgentLoading = false;
         public abstract void CloseDriver();
@@ -98,17 +99,17 @@ namespace GingerCore.Drivers
 
         //TODO: to be removed - not used!?
         public abstract Act GetCurrentElement();
-        public abstract string GetURL();       
+        public abstract string GetURL();
 
         public abstract void HighlightActElement(Act act);
         public BusinessFlow BusinessFlow { get; set; }
         public Environments.ProjEnvironment Environment { get; set; }
-        public abstract ePlatformType Platform { get;  }
+        public abstract ePlatformType Platform { get; }
         public abstract bool IsRunning();
 
         protected bool mIsDriverBusy;
 
-     
+
 
         public bool IsDriverBusy
         {
@@ -152,8 +153,8 @@ namespace GingerCore.Drivers
 
         public enum eDriverMessageType
         {
-          DriverStatusChanged,
-          ActionPerformed,
+            DriverStatusChanged,
+            ActionPerformed,
         }
 
         public void OnDriverMessage(eDriverMessageType DriverMessageType)
@@ -187,15 +188,15 @@ namespace GingerCore.Drivers
         /// </summary>
         public static readonly List<KeyValuePair<string, DriverBase>> VirtualDrivers = new List<KeyValuePair<string, DriverBase>>();
 
-    
+
         public void DriverStarted(string AgentGuid)
         {
-            DriverBase.VirtualDrivers.Add(new KeyValuePair<string, DriverBase>(AgentGuid,this));
+            DriverBase.VirtualDrivers.Add(new KeyValuePair<string, DriverBase>(AgentGuid, this));
         }
 
         public void DriverClosed()
         {
-            foreach (var drvr in  DriverBase.VirtualDrivers.Where(x => x.Value == this))
+            foreach (var drvr in DriverBase.VirtualDrivers.Where(x => x.Value == this))
             {
                 DriverBase.VirtualDrivers.Remove(drvr);
             }
@@ -214,5 +215,19 @@ namespace GingerCore.Drivers
         {
             return null;
         }
+
+        /// <summary>
+        /// Used for handling serialization adjustments for legacy properties or values
+        /// </summary>
+        /// <param name="agent"></param>
+        /// <param name="errorType"></param>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public virtual bool SerializationError(Agent agent, SerializationErrorType errorType, string name, string value)
+        {
+            return false;
+        }
     }
 }
+

@@ -122,7 +122,7 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Use 64Bit Browser")]
+        [UserConfiguredDescription("Only for Internet Explorer & Firefox | Set \"true\" for using 64Bit Browser")]
         public bool Use64Bitbrowser { get; set; }
 
         [UserConfigured]
