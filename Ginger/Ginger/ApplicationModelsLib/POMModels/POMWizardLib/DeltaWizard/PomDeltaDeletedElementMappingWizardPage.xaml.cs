@@ -149,7 +149,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             var currentItem = (DeltaElementInfo)xDeletedElementsMappingGrid.CurrentItem;
             mPomNewAddedElementSelectionPage = new PomNewAddedElementSelectionPage(new ObservableList<DeltaElementInfo>(mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Added))), mPomWizard.mPomDeltaUtils, Convert.ToString(currentItem.ElementTypeEnum));
 
-            var selectedElement = mPomNewAddedElementSelectionPage.SelectedElement();
+            var selectedElement = mPomNewAddedElementSelectionPage.ShowAsWindow("Added Elements");
             if (selectedElement != null)
             {
                 currentItem.MappedElementInfo = selectedElement.ElementInfo.Guid.ToString();

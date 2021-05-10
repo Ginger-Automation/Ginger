@@ -16,8 +16,11 @@ limitations under the License.
 */
 #endregion
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore;
 using GingerCoreNET.Application_Models;
+using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -31,27 +34,89 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         private PomDeltaViewPage mPomDeltaViewPage;
         private Agent mAgent;
         private PomDeltaUtils mPomDeltaUtils;
+        private ObservableList<DeltaElementInfo> mDeltaElements;
+        private GenericWindow mGenericWindow = null;
 
 
         public PomNewAddedElementSelectionPage(ObservableList<DeltaElementInfo> deltaElementInfos, PomDeltaUtils pomDeltaUtils, string searchText)
         {
             InitializeComponent();
             mPomDeltaUtils = pomDeltaUtils;
+            mDeltaElements = deltaElementInfos;
 
             mAgent = mPomDeltaUtils.Agent;
 
-            mPomDeltaViewPage = new PomDeltaViewPage(deltaElementInfos);
+            mPomDeltaViewPage = new PomDeltaViewPage(mDeltaElements);
             mPomDeltaViewPage.SetAgent(mAgent);
             mPomDeltaViewPage.xMainElementsGrid.Grid.Columns[1].Visibility = Visibility.Collapsed;
             mPomDeltaViewPage.xMainElementsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
 
             mPomDeltaViewPage.xMainElementsGrid.txtSearch.Text = searchText;
             xNewPomElementsPageFrame.Content = mPomDeltaViewPage;
+
+
+            // set LiveSpy Agent
+            xLiveSpy.DirverAgent = mAgent;
+            xLiveSpy.PropertyChanged += XLiveSpy_PropertyChanged; ;
+
         }
 
-        internal DeltaElementInfo SelectedElement()
+        private void XLiveSpy_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            return  mPomDeltaViewPage.ShowAsWindow("Added Elements");
+            var elementInfo = xLiveSpy.SpySelectedElement;
+
+            if (elementInfo != null)
+            {
+                ElementInfo matchingOriginalElement = (ElementInfo)xLiveSpy.mWinExplorer.GetMatchingElement(elementInfo,mPomDeltaUtils.GetElementInfoListFromDeltaElementInfo( mDeltaElements));
+                if (matchingOriginalElement != null)
+                {
+                    xLiveSpy.SetLableStatusText("Element found in new added list");
+                    xLiveSpy.mWinExplorer.LearnElementInfoDetails(elementInfo);
+                    var deltaElement = mDeltaElements.Where(x => x.ElementInfo.XPath.Equals(elementInfo.XPath)).FirstOrDefault();
+                    if (deltaElement != null)
+                    {
+                        mDeltaElements.CurrentItem = deltaElement;
+                        mPomDeltaViewPage.xMainElementsGrid.ScrollToViewCurrentItem();
+                    }
+                   
+                }
+                else
+                {
+                    xLiveSpy.SetLableStatusText("Element not found in new added list");
+                }
+            }
+        }
+
+ 
+        internal DeltaElementInfo ShowAsWindow(string winTitle)
+        {
+            ObservableList<Button> windowButtons = new ObservableList<Button>();
+
+            Button selectBtn = new Button();
+            selectBtn.Content = "Select";
+            selectBtn.Click += new RoutedEventHandler(selectBtn_Click);
+            windowButtons.Add(selectBtn);
+            this.Height = 600;
+            this.Width = 800;
+            GenericWindow.LoadGenericWindow(ref mGenericWindow, null, eWindowShowStyle.Dialog, winTitle, this, windowButtons, true, "Cancel", CancelBtn_Click);
+            return mPomDeltaViewPage.mSelectedElement;
+        }
+
+        private void CancelBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mGenericWindow != null)
+            {
+                mPomDeltaViewPage.xMainElementsGrid.Grid.SelectedItem = null;
+                mGenericWindow.Close();
+            }
+        }
+
+        private void selectBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mGenericWindow != null)
+            {
+                mGenericWindow.Close();
+            }
         }
     }
 }

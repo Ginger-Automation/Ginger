@@ -509,10 +509,10 @@ namespace GingerCoreNET.Application_Models
 
         public void UpdateOriginalPom()
         {
+            MapDeletedElementWithNewAddedElement();
+            
             //selected elements
             List<DeltaElementInfo> elementsToUpdate = DeltaViewElements.Where(x => x.IsSelected == true).ToList();
-            
-            MapDeletedElementWithNewAddedElement(elementsToUpdate);
 
             foreach (DeltaElementInfo elementToUpdate in elementsToUpdate)
             {
@@ -578,8 +578,10 @@ namespace GingerCoreNET.Application_Models
             }
         }
 
-        private void MapDeletedElementWithNewAddedElement(List<DeltaElementInfo> elementsToUpdate)
+        private void MapDeletedElementWithNewAddedElement()
         {
+            List<DeltaElementInfo> elementsToUpdate = DeltaViewElements.Where(x => x.IsSelected == true).ToList();
+
             foreach (DeltaElementInfo elementToUpdate in elementsToUpdate)
             {
                 if (elementToUpdate.MappedElementInfo != null && elementToUpdate.DeltaStatus.Equals(eDeltaStatus.Deleted))
@@ -607,6 +609,17 @@ namespace GingerCoreNET.Application_Models
         private ElementInfo GetOriginalItem(ObservableList<ElementInfo> group, ElementInfo copiedItem)
         {
             return group.Where(x => x.Guid == copiedItem.Guid).First();
+        }
+
+        public ObservableList<ElementInfo> GetElementInfoListFromDeltaElementInfo(ObservableList<DeltaElementInfo> deltaElementInfos)
+        {
+            ObservableList<ElementInfo> elementInfos = new ObservableList<ElementInfo>();
+            foreach (var deltaElementInfo in deltaElementInfos)
+            {
+                elementInfos.Add(deltaElementInfo.ElementInfo);
+            }
+
+            return elementInfos;
         }
 
     }
