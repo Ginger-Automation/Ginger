@@ -66,6 +66,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         [UserConfiguredDescription("Maximum time(in seconds) to wait for SSH Client connection")]
         public int SSHConnectionTimeout { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Enable Keyboard Intractive Authentication for Login")]
+        public bool KeyboardIntractiveAuthentication { get; set; }
+
         public SshClient UnixClient;
         public SftpClient UnixFTPClient;
         string workdir;
@@ -82,6 +87,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             this.BusinessFlow = BF;
             this.Environment = env;
         }
+
+        public override void InitDriver(Agent agent)
+        {
+            SetScriptsFolder(Path.Combine(agent.SolutionFolder, @"Documents\sh\"));
+        }
+
         public void SetScriptsFolder(string FolderPath)
         {
             mScriptsFolder = FolderPath;
@@ -136,11 +147,20 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     throw new Exception("Error Connecting to Host: " + Host + " with Port: " + Port);
                 }
 
-                var connectionInfo = new ConnectionInfo(Host, Port, UserName,
-                            new PasswordAuthenticationMethod(UserName, Password)
-                        );
+                ConnectionInfo connectionInfo = null;
+                if (KeyboardIntractiveAuthentication)
+                {
+                    connectionInfo = KeyboardInteractiveAuthConnectionInfo();
+                }
+                else
+                {
+                    connectionInfo = new ConnectionInfo(Host, Port, UserName,
+                               new PasswordAuthenticationMethod(UserName, Password)
+                           );
+                }
 
-                if (!string.IsNullOrEmpty(PrivateKeyPassPhrase))
+
+                if (!string.IsNullOrEmpty(PrivateKeyPassPhrase))    
                     passPhrase = PrivateKeyPassPhrase;
 
                 if (File.Exists(PrivateKey))
@@ -200,6 +220,29 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 ErrorMessageFromDriver = e.Message;
                 return false;
+            }
+        }
+
+        private ConnectionInfo KeyboardInteractiveAuthConnectionInfo()
+        {
+            ConnectionInfo connectionInfo;
+            KeyboardInteractiveAuthenticationMethod keyboardIntractiveAuth = new KeyboardInteractiveAuthenticationMethod(UserName);
+            PasswordAuthenticationMethod pauth = new PasswordAuthenticationMethod(UserName, Password);
+
+            keyboardIntractiveAuth.AuthenticationPrompt += HandleIntractiveKeyBoardEvent;
+
+            connectionInfo = new ConnectionInfo(Host, Port, UserName, pauth, keyboardIntractiveAuth);
+            return connectionInfo;
+        }
+
+        void HandleIntractiveKeyBoardEvent(Object sender, Renci.SshNet.Common.AuthenticationPromptEventArgs e)
+        {
+            foreach (Renci.SshNet.Common.AuthenticationPrompt prompt in e.Prompts)
+            {
+                if (prompt.Request.IndexOf("Password:", StringComparison.InvariantCultureIgnoreCase) != -1)
+                {
+                    prompt.Response = Password;
+                }
             }
         }
 
@@ -370,9 +413,19 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         private void VerifyFTPConnected()
         {
             string passPhrase = null;
-            var connectionInfo = new ConnectionInfo(Host, Port, UserName,
+
+            ConnectionInfo connectionInfo = null;
+            if (KeyboardIntractiveAuthentication)
+            {
+                connectionInfo = KeyboardInteractiveAuthConnectionInfo();
+            }
+            else
+            {
+                connectionInfo = new ConnectionInfo(Host, Port, UserName,
                             new PasswordAuthenticationMethod(UserName, Password)
                         );
+            }
+             
 
             if (!string.IsNullOrEmpty(PrivateKeyPassPhrase))
                 passPhrase = PrivateKeyPassPhrase;

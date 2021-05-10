@@ -158,7 +158,7 @@ namespace GingerCore.Drivers
 
         public void OnDriverMessage(eDriverMessageType DriverMessageType)
         {
-            DriverMessageEventHandler handler = driverMessageEventHandler;
+            DriverMessageEventHandler handler = DriverMessageEvent;
             if (handler != null)
             {
                 handler(this, new DriverMessageEventArgs(DriverMessageType));
@@ -166,7 +166,7 @@ namespace GingerCore.Drivers
         }
 
         public delegate void DriverMessageEventHandler(object sender, DriverMessageEventArgs e);
-        public event DriverMessageEventHandler driverMessageEventHandler;
+        public event DriverMessageEventHandler DriverMessageEvent;
 
         public virtual void ActionCompleted(Act act)
         {
@@ -202,5 +202,17 @@ namespace GingerCore.Drivers
         }
 
         #endregion
+
+        public virtual void InitDriver(Agent agent)
+        {
+        }
+
+        /// <summary>
+        /// Name of customized edit page for the driver to load on Agent edit page
+        /// </summary>
+        public virtual string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        {
+            return null;
+        }
     }
 }

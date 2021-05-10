@@ -16,6 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using HtmlAgilityPack;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Xml;
@@ -45,7 +51,7 @@ namespace GingerCore.UserControls
                 BindXMLDocument();
             }
         }
- 
+
         private void BindXMLDocument()
         {
             if (_xmldocument == null)
@@ -53,7 +59,7 @@ namespace GingerCore.UserControls
                 xmlTree.ItemsSource = null;
                 return;
             }
- 
+
             XmlDataProvider provider = new XmlDataProvider();
             provider.Document = _xmldocument;
             Binding binding = new Binding();
@@ -61,5 +67,6 @@ namespace GingerCore.UserControls
             binding.XPath = "child::node()";
             xmlTree.SetBinding(TreeView.ItemsSourceProperty, binding);
         }
+
     }
 }

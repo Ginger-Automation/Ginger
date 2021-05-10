@@ -31,6 +31,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml;
@@ -706,7 +707,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public System.Collections.Generic.List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        public async Task<System.Collections.Generic.List<ElementInfo>> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
             List<ElementInfo> Eil = new System.Collections.Generic.List<ElementInfo>();
 
@@ -803,6 +804,36 @@ namespace GingerCore.Drivers.MainFrame
         List<AppWindow> IWindowExplorer.GetWindowAllFrames()
         {
             throw new NotImplementedException();
+        }
+
+        public bool IsRecordingSupported()
+        {
+            return false;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return false;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return true;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { /*eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView*/ };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.none;
+        }
+
+        public string SelectionWindowText()
+        {
+            return "Window:";
         }
     }
 }

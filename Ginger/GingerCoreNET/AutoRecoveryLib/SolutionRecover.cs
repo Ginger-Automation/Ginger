@@ -120,7 +120,7 @@ namespace Ginger.Functionalties
 
             if (recovredItems.Count > 0 || showRecoverPageAnyway)                
             {
-                RepositoryItemHelper.RepositoryItemFactory.ShowRecoveryItemPage(recovredItems);
+                TargetFrameworkHelper.Helper.ShowRecoveryItemPage(recovredItems);
             }
         }
         public void CleanUp()

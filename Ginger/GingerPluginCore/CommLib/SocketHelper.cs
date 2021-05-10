@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.OS;
 using GingerPluginCore;
 using GingerUtils;
 using System;
@@ -43,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         private static void SetLocalHostIP()
         {
-            LocalHostIP = OSHelper.Current.GetFirstLocalHostIPAddress();            
+            LocalHostIP = OperatingSystemBase.CurrentOperatingSystem.GetFirstLocalHostIPAddress();
         }
 
         
@@ -64,6 +65,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         static int LastPort = 15000;  // Ginger Grid and nodes will be on 15000+ ports - this area is mainly free to find ports
         public static int GetOpenPort()
         {
+
             semaphore.WaitOne(); // control the reentry if several threads request at the same time                        
             int count = 999;         // We scan range of 999 ports
             int timeout = 0;

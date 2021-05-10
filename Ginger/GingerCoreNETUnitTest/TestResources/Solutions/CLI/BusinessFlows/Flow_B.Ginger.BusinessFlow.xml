@@ -21,7 +21,7 @@
 </ActDummy>
 <ActValidation Active="True" Description="Condition Validation Action" Guid="9c67972a-c9c4-4750-a7ad-66d16d50f84a" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
 <InputValues>
-<ActInputValue Guid="4b7fb4a8-514c-4783-bad2-35f698920696" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{Var Name=ValidationVar}=&quot;111&quot;" />
+<ActInputValue Guid="4b7fb4a8-514c-4783-bad2-35f698920696" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{Var Name=ValidationVar}>=111" />
 </InputValues>
 </ActValidation>
 </Acts>

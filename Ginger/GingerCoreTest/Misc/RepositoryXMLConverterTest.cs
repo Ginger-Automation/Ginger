@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger;
 using Ginger.Repository;
 using GingerCore;
 using GingerCore.Environments;
@@ -38,7 +39,7 @@ namespace UnitTests.NonUITests
         [ClassInitialize]        
         public static void ClassInitialize(TestContext TC)
         {
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
             WorkSpace.Init(new WorkSpaceEventHandler());                   
         }
 

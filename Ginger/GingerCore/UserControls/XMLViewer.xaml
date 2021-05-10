@@ -76,6 +76,7 @@
                 </DataTrigger>
             </HierarchicalDataTemplate.Triggers>
         </HierarchicalDataTemplate>
+
     </UserControl.Resources>
 
     <Grid>

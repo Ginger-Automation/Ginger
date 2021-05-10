@@ -19,6 +19,7 @@ limitations under the License.
 using GingerTestHelper;
 using ImageMagick;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows;
@@ -112,7 +113,8 @@ namespace GingerTest
             percentageDifference = percentageDifference * 100;
             percentageDifference = Math.Round(percentageDifference, 2);
 
-            Bitmap ImgToSave = diffImg.ToBitmap();
+            TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));
+            Bitmap ImgToSave = (Bitmap)tc.ConvertFrom(diffImg.ToByteArray());
             ImgToSave.Save(ResultFileName);
 
             if (percentageDifference == 0)

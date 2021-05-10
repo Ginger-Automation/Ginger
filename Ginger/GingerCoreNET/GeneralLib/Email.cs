@@ -37,7 +37,7 @@ namespace GingerCore.GeneralLib
             if (!InitSmtpAuthenticationManagerDone)
             {
                 // For Linux we need to fix the auth
-                GingerUtils.OSHelper.Current.InitSmtpAuthenticationManager();
+               WorkSpace.Instance.OSHelper.InitSmtpAuthenticationManager();
                 InitSmtpAuthenticationManagerDone = true;
             }
         }
@@ -260,14 +260,14 @@ namespace GingerCore.GeneralLib
         public AlternateView alternateView { get; set; }
         private bool Send_Outlook(bool actualSend = true)
         {
-            bool a = RepositoryItemHelper.RepositoryItemFactory.Send_Outlook(actualSend, MailTo, Event, Subject, Body, MailCC, Attachments, EmbededAttachment);
+            bool a = TargetFrameworkHelper.Helper.Send_Outlook(actualSend, MailTo, Event, Subject, Body, MailCC, Attachments, EmbededAttachment);
             return a;
         }
 
         public void DisplayAsOutlookMail()
         {
             Send_Outlook(false);
-            RepositoryItemHelper.RepositoryItemFactory.DisplayAsOutlookMail();
+            TargetFrameworkHelper.Helper.DisplayAsOutlookMail();
             // mOutlookMail.Display();
         }
 
@@ -362,7 +362,7 @@ namespace GingerCore.GeneralLib
                 {
                     if (String.IsNullOrEmpty(AttachmentFileName) == false)
                     {
-                        Attachment a = new Attachment(AttachmentFileName);
+                        Attachment a = new Attachment(WorkSpace.Instance.OSHelper.AdjustFilePath(AttachmentFileName));
                         myMail.Attachments.Add(a);
                     }
                 }

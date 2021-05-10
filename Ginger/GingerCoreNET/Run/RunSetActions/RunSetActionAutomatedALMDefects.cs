@@ -152,7 +152,7 @@ namespace Ginger.Run.RunSetActions
                     return;
                 var defectFields = defaultALMDefectProfile.ALMDefectProfileFields.Where(a => a.Mandatory || a.ToUpdate).ToList();
                 //update alm type to open defect
-                RepositoryItemHelper.RepositoryItemFactory.CreateNewALMDefects(defectsForOpening, defectFields, defaultALMDefectProfile.AlmType);
+                TargetFrameworkHelper.Helper.CreateNewALMDefects(defectsForOpening, defectFields, defaultALMDefectProfile.AlmType);
             }
         }
 

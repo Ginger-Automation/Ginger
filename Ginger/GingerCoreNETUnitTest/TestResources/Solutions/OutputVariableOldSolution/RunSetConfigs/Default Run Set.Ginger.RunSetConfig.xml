@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="0e15d9b5-c6cd-4610-82e3-5427dc97775b" ItemType="RunSetConfig" CreatedBy="JGHODKE" Created="202105060501" GingerVersion="3.7.0.0" Version="19" LastUpdateBy="JGHODKE" LastUpdate="202105061002" />
+<RunSetConfig Guid="0e15d9b5-c6cd-4610-82e3-5427dc97775b" Name="Default Run Set" ParentGuid="00000000-0000-0000-0000-000000000000" RunModeParallel="False">
+<GingerRunners>
+<GingerRunner Guid="dee7a4f8-9c8b-4447-92a5-57368faa9a6c" Name="Runner 1" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall">
+<ApplicationAgents>
+<ApplicationAgent AgentID="a9450eb5-c6e0-461a-a7c2-83e745bead37" AgentName="MyWindowsApp - Agent 1" AppID="1bcd3f3e-554c-4429-9532-aafe06420186" AppName="MyWindowsApp" Guid="ae7f21ed-2dfd-42ed-80d1-263c70387e43" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+<BusinessFlowRun BusinessFlowGuid="163a562b-964a-438b-bf4e-db9e6e88c623" BusinessFlowInstanceGuid="2887671c-4f0c-4be8-9233-ca2f20ed1f04" BusinessFlowIsActive="True" BusinessFlowName="Create Contact" Guid="dfca8b6b-94a7-4074-9b55-6c86ddbeb32d" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<BusinessFlowRun BusinessFlowGuid="591a5421-3008-483e-a9d1-2568f8420bd5" BusinessFlowInstanceGuid="e565d774-bd3e-4fea-868a-edcd4e2ff612" BusinessFlowIsActive="True" BusinessFlowName="Create Customer" Guid="4eae2b21-9dc2-4b73-ba4c-ab263ddf009f" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<BusinessFlowRun BusinessFlowGuid="95142161-23ba-4ebd-8410-9e3508a22606" BusinessFlowInstanceGuid="748d2372-465f-4ee5-b626-69b6de7beab5" BusinessFlowIsActive="True" BusinessFlowName="Provide" Guid="c327d52e-6442-4ad1-aeaf-2e2995d27450" ParentGuid="00000000-0000-0000-0000-000000000000">
+<BusinessFlowCustomizedRunVariables>
+<VariableString DiffrentFromOrigin="True" Guid="f4bf4d70-65d3-474b-bb01-3ae0570a3120" InitialStringValue="7993" MappedOutputType="OutputVariable" MappedOutputValue="b3ed569d-c99b-4a5e-8bb3-1462d83a837f" Name="CustomerIDForProvide" ParentGuid="95142161-23ba-4ebd-8410-9e3508a22606" ParentName="Provide" ParentType="Business Flow" SetAsOutputValue="False" />
+</BusinessFlowCustomizedRunVariables>
+</BusinessFlowRun>
+</BusinessFlowsRunList>
+</GingerRunner>
+<GingerRunner Guid="01ddd405-aa62-49e3-b05c-30cb5867fff7" Name="Runner 2" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall">
+<ApplicationAgents>
+<ApplicationAgent AgentID="a9450eb5-c6e0-461a-a7c2-83e745bead37" AgentName="MyWindowsApp - Agent 1" AppID="1bcd3f3e-554c-4429-9532-aafe06420186" AppName="MyWindowsApp" Guid="61c4d1a7-2a92-4dda-a1d6-c15e49560819" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+<BusinessFlowRun BusinessFlowGuid="163a562b-964a-438b-bf4e-db9e6e88c623" BusinessFlowInstanceGuid="095817da-8fd1-4d88-98a8-1c884a854884" BusinessFlowIsActive="True" BusinessFlowName="Create Contact" Guid="05a888bf-92f6-4ae8-8583-d7a6a4a428e4" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<BusinessFlowRun BusinessFlowGuid="163a562b-964a-438b-bf4e-db9e6e88c623" BusinessFlowInstanceGuid="d1677d32-b215-4fd2-82aa-1d64c92317ab" BusinessFlowIsActive="True" BusinessFlowName="Create Contact" Guid="dca77daf-7243-4d01-9867-4aaa657b5428" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<BusinessFlowRun BusinessFlowGuid="95142161-23ba-4ebd-8410-9e3508a22606" BusinessFlowInstanceGuid="e68c93a7-55e8-45e4-8483-538c83d84336" BusinessFlowIsActive="True" BusinessFlowName="Provide" Guid="15ee00c0-e6e6-41bd-8a2f-0750fdb4f42b" ParentGuid="00000000-0000-0000-0000-000000000000">
+<BusinessFlowCustomizedRunVariables>
+<VariableString DiffrentFromOrigin="True" Guid="f4bf4d70-65d3-474b-bb01-3ae0570a3120" InitialStringValue="5385" MappedOutputType="OutputVariable" MappedOutputValue="b3ed569d-c99b-4a5e-8bb3-1462d83a837f" Name="CustomerIDForProvide" ParentGuid="95142161-23ba-4ebd-8410-9e3508a22606" ParentName="Provide" ParentType="Business Flow" SetAsOutputValue="False" />
+</BusinessFlowCustomizedRunVariables>
+</BusinessFlowRun>
+</BusinessFlowsRunList>
+</GingerRunner>
+<GingerRunner Guid="87ef3f48-2507-49db-9780-160efbd0b923" Name="Runner 3" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall">
+<ApplicationAgents>
+<ApplicationAgent AgentID="a9450eb5-c6e0-461a-a7c2-83e745bead37" AgentName="MyWindowsApp - Agent 1" AppID="1bcd3f3e-554c-4429-9532-aafe06420186" AppName="MyWindowsApp" Guid="a1bf4cc6-e3a5-4171-9746-261188b303ec" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+<BusinessFlowRun BusinessFlowGuid="95142161-23ba-4ebd-8410-9e3508a22606" BusinessFlowInstanceGuid="c51ac7ee-271c-42ae-9efb-8b9737b8ee1f" BusinessFlowIsActive="True" BusinessFlowName="Provide" Guid="27524fdc-1acb-4998-8bbb-8dfa8183f8f9" ParentGuid="00000000-0000-0000-0000-000000000000">
+<BusinessFlowCustomizedRunVariables>
+<VariableString DiffrentFromOrigin="True" Guid="f4bf4d70-65d3-474b-bb01-3ae0570a3120" InitialStringValue="9055" MappedOutputType="OutputVariable" MappedOutputValue="b3ed569d-c99b-4a5e-8bb3-1462d83a837f" Name="CustomerIDForProvide" ParentGuid="95142161-23ba-4ebd-8410-9e3508a22606" ParentName="Provide" ParentType="Business Flow" SetAsOutputValue="False" />
+</BusinessFlowCustomizedRunVariables>
+</BusinessFlowRun>
+</BusinessFlowsRunList>
+</GingerRunner>
+</GingerRunners>
+</RunSetConfig></GingerRepositoryItem>
