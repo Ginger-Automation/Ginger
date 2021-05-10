@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ namespace GingerCore.Helpers
         private ITextBoxFormatter TBF;
         public TextBlockHelper(object ActionRecUseCaseTextBlock) // System.Windows.Controls.TextBlock
         {
-            TBF = RepositoryItemHelper.RepositoryItemFactory.CreateTextBoxFormatter(ActionRecUseCaseTextBlock);
+            TBF = TargetFrameworkHelper.Helper.CreateTextBoxFormatter(ActionRecUseCaseTextBlock);
         }
 
         public void AddText(string txt)

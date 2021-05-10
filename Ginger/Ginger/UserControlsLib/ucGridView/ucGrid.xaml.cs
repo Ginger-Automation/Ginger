@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -603,10 +603,10 @@ namespace Ginger
         }
         public Visibility ShowSearch
         {
-            get { return lblSearch.Visibility; }
+            get { return txtSearch.Visibility; }
             set
             {
-                lblSearch.Visibility = value;
+                //lblSearch.Visibility = value;
                 txtSearch.Visibility = value;
                 btnClearSearch.Visibility = value;
             }
@@ -878,13 +878,17 @@ namespace Ginger
             this.grdMain.CancelEdit(DataGridEditingUnit.Row);
             if (txtSearch.Text.Length > 0)
             {
-                SetBtnImage(btnClearSearch, "@Clear_16x16.png");
-                btnClearSearch.IsEnabled = true;
+                btnClearSearch.Visibility = Visibility.Visible;
+                xSearchBtn.Visibility = Visibility.Collapsed;
+                //SetBtnImage(btnClearSearch, "@Clear_16x16.png");
+                //btnClearSearch.IsEnabled = true;
             }
             else
             {
-                SetBtnImage(btnClearSearch, "@DisabledClear_16x16.png");
-                btnClearSearch.IsEnabled = false;
+                btnClearSearch.Visibility = Visibility.Collapsed;
+                xSearchBtn.Visibility = Visibility.Visible;
+                //SetBtnImage(btnClearSearch, "@DisabledClear_16x16.png");
+                //btnClearSearch.IsEnabled = false;
             }
 
             string search = txtSearch.Text.ToUpper();
@@ -1711,15 +1715,17 @@ public void RemoveCustomView(string viewName)
             tool.Content = userControl;
             tool.Click += clickHandler;
 
-            toolbar.Items.Remove(lblSearch);
+            //toolbar.Items.Remove(lblSearch);
             toolbar.Items.Remove(txtSearch);
+            toolbar.Items.Remove(xSearchBtn);
             toolbar.Items.Remove(btnClearSearch);
             toolbar.Items.Remove(lblView);
             toolbar.Items.Remove(comboView);
             toolbar.Items.Remove(TagsViewer);
             toolbar.Items.Add(tool);
-            toolbar.Items.Add(lblSearch);
+            //toolbar.Items.Add(lblSearch);
             toolbar.Items.Add(txtSearch);
+            toolbar.Items.Add(xSearchBtn);
             toolbar.Items.Add(btnClearSearch);
             toolbar.Items.Add(TagsViewer);
             toolbar.Items.Add(lblView);

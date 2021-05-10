@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Ginger;
 using Ginger.ReporterLib;
 using Ginger.Repository;
 using GingerWPF.WorkSpaceLib;
@@ -93,7 +94,7 @@ namespace GingerTest
                 app = new Ginger.App();
                 WorkSpace.Init(new WorkSpaceEventHandler());
                 WorkSpace.Instance.RunningFromUnitTest = true;
-                WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
+                WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper());
                 
 
                 app.HideConsoleWindow();

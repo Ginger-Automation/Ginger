@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
 using System.Windows;
 
 namespace GingerCore.Drivers.WebServicesDriverLib
@@ -23,7 +24,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
     /// <summary>
     /// Interaction logic for WebServicesDriverWindow.xaml
     /// </summary>
-    public partial class WebServicesDriverWindow : Window
+    public partial class WebServicesDriverWindow : Window, IWebserviceDriverWindow
     {
         public WebServicesDriverWindow(BusinessFlow BF)
         {
@@ -31,6 +32,41 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
             //TODO: below is Amdocs Proxy - need to externalize
             this.WindowState = System.Windows.WindowState.Minimized;
-        }        
+        }
+
+        public IDispatcher GingerDispatcher { get; set; }
+
+        public void ShowDriverWindow()
+        {
+            Show();
+  
+            GingerDispatcher = new DriverWindowDispatcher(Dispatcher);
+
+            System.Windows.Threading.Dispatcher.Run();
+        }
+
+        public void UpdateRequestParams(string uRL, string value, string mRequest)
+        {
+            URLTextBox.Text = uRL;
+            SOAPActionTextBox.Text = value;
+            ReqBox.Text = mRequest;
+            General.DoEvents();
+        }
+
+        public void UpdateResponseTextBox(string responseCode)
+        {
+            ResponseTextBox.Text = responseCode;
+        }
+
+        public void updateResponseXMLText(string Response)
+        {
+          RespXML.Text = Response;
+        }
+
+        public void UpdateStatusLabel(string status)
+        {
+            StatusLabel.Content = status;
+            General.DoEvents();
+        }
     }
 }

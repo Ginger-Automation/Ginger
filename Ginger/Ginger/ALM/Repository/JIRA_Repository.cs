@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -450,14 +450,14 @@ namespace Ginger.ALM.Repository
 
         public override bool LoadALMConfigurations()
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            dlg.DefaultExt = "*.zip";
-            dlg.Filter = "zip Files (*.zip)|*.zip";
-            dlg.Title = "Select Jira Configuration Zip File";
-
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
             {
-                if (!((JiraCore)ALMIntegration.Instance.AlmCore).ValidateConfigurationFile(dlg.FileName))
+                DefaultExt = "*.zip",
+                Filter = "zip Files (*.zip)|*.zip",
+                Title = "Select Jira Configuration Zip File"
+            }, false) is string fileName)
+            {
+                if (!((JiraCore)ALMIntegration.Instance.AlmCore).ValidateConfigurationFile(fileName))
                     return false;
 
                 string folderPath = Path.Combine(WorkSpace.Instance.Solution.Folder, "Configurations");
@@ -467,7 +467,7 @@ namespace Ginger.ALM.Repository
                 if (Directory.Exists(folderPath))
                     Amdocs.Ginger.Common.GeneralLib.General.ClearDirectoryContent(folderPath);
 
-                ZipFile.ExtractToDirectory(dlg.FileName, folderPath);
+                ZipFile.ExtractToDirectory(fileName, folderPath);
                 if (!((JiraCore)ALMIntegration.Instance.AlmCore).IsConfigPackageExists())
                     return false;
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -777,11 +777,10 @@ namespace GingerCore.ALM.JIRA.Bll
         {
             jiraIssue.name = activtiesGroup.Name;
             jiraIssue.resourceType = resourceType;
-            jiraIssue.ExportFields.Add("project", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMProjectName } });
+            jiraIssue.ExportFields.Add("project", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMProjectKey } });
             jiraIssue.ExportFields.Add("summary", new List<IJiraExportData>() { new JiraExportData() { value = activtiesGroup.Name } });
             jiraIssue.ExportFields.Add("description", new List<IJiraExportData>() { new JiraExportData() { value = activtiesGroup.Description } });
             jiraIssue.ExportFields.Add("issuetype", new List<IJiraExportData>() { new JiraExportData() { value = "Test" } });
-            jiraIssue.ExportFields.Add("reporter", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMUserName } });
             if (!string.IsNullOrEmpty(activtiesGroup.ExternalID2))
                 jiraIssue.ExportFields.Add("labels", new List<IJiraExportData>() { new JiraExportData() { value = activtiesGroup.ExternalID2 } });
 

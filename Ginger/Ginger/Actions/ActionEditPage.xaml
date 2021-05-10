@@ -47,8 +47,12 @@
                 <Button x:Name="ClearExpectedValueBtn" Content="X" Click="GridClearExpectedValueBtn_Click"  Style="{DynamicResource DataGridCellButtonStyle}" ToolTip="Clear Expected Value"/>
             </DataTemplate>
         </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition x:Name="xExplorerOperationsRow" Height="0" />
+        </Grid.RowDefinitions>
 
-        <Grid>
+        <Grid Grid.Row="0">
             <!--Tabs Area-->
             <TabControl x:Name="xActionTabs" Margin="0,0,0,0" HorizontalAlignment="Stretch" SelectionChanged="xActionTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0" >
                 <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="0" Tag="False">
@@ -56,7 +60,7 @@
                         <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="General Details">
                             <DockPanel >
                                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Info" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
-                                <TextBlock Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                <TextBlock Text="Details" x:Name="xDetailsTabTextBlock" Style="{StaticResource $CoolTabTextBlockStyle}" />
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
@@ -92,7 +96,7 @@
                         <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Operation to Perform Settings">
                             <DockPanel>
                                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Action" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                <TextBlock  Text="Operation Settings" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                <TextBlock  Text="Operation Settings" x:Name="xOperationsTabTextBlock" Style="{StaticResource $CoolTabTextBlockStyle}" />
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
@@ -242,7 +246,7 @@
                     <TabItem.Header>
                         <Border Style="{StaticResource $CoolTabBorderStyle}">
                             <DockPanel Margin="0,0,0,0">
-                                <TextBlock Text="Execution Report" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                <TextBlock Text="Execution Report" x:Name="xExecutionReportTabTextBlock" Style="{StaticResource $CoolTabTextBlockStyle}" />
                                 <uclistview:UcItemExecutionStatus x:Name="xExecutionStatusTabImage" StatusViewMode="Image" StatusSize="16" Margin="5,0,0,0" VerticalAlignment="Center"/>
                             </DockPanel>
                         </Border>
@@ -357,5 +361,13 @@
             </TabControl>
             <usercontrols:ucButton x:Name="xHelpButton" VerticalAlignment="Top" HorizontalAlignment="Right" ButtonFontImageSize="16" ButtonType="ImageButton" ButtonImageType="Help" Click="XHelpButton_Click" ToolTip="View Action help info" Margin="0,0,5,0" />
         </Grid>
+
+        <DockPanel HorizontalAlignment="Stretch" Grid.Row="1" Margin="10">
+            <usercontrols:ucButton x:Name="xRunActBtn" ButtonImageType="Run" ButtonText="Run" ButtonImageHeight="16" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"
+                         ButtonImageForground="{StaticResource $SelectionColor_Pink}" DockPanel.Dock="Left" ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="0" Click="xRunActBtn_Click" />
+
+            <usercontrols:ucButton x:Name="xAddActBtn" ButtonImageType="Add" ButtonText="Add" ButtonImageHeight="16" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" 
+                         ButtonImageForground="{StaticResource $SelectionColor_Pink}" DockPanel.Dock="Left" ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="0" Click="xAddActBtn_Click" />
+        </DockPanel>
     </Grid>
 </Page>

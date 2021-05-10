@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.Common
         PleaseStartAgent, AskToSelectValidation,
         EnvironmentItemLoadError, MissingUnixCredential,
         ErrorConnectingToDataBase, ErrorClosingConnectionToDataBase, DbTableError, DbTableNameError, DbQueryError, DbConnSucceed, DbConnFailed,
-        SuccessfullyConnectedToAgent, FailedToConnectAgent, RecordingStopped, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent, RestartAgent,
+        TestagentSucceed, FailedToConnectAgent, RecordingStopped, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent, RestartAgent,
         MissingActionPropertiesEditor, AskToSelectItem, AskToSelectAction, ImportSeleniumScriptError,
         AskToSelectVariable, VariablesAssignError, SetCycleNumError, VariablesParentNotFound, CantStoreToVariable,
         AskToSelectSolutionFolder, SolutionLoadError,
@@ -98,7 +98,7 @@ namespace Amdocs.Ginger.Common
         SettingsChangeRequireRestart, ChangesRequireRestart, UnsupportedFileFormat, WarnRegradingMissingVariablesUse, NotAllMissingVariablesWereAdded, UpdateApplicationNameChangeInSolution,
         ShareEnvAppWithAllEnvs, ShareEnvAppParamWithAllEnvs, CtrlSsaveEnvApp, CtrlSMissingItemToSave, FailedToSendEmail, FailedToExportBF,
         ReportTemplateNotFound, DriverNotSupportingWindowExplorer, AgentNotRunningAfterWaiting,
-        FoundDuplicateAgentsInRunSet, StaticErrorMessage, StaticWarnMessage, StaticInfoMessage, ApplicationAgentNotMapped,
+        FoundDuplicateAgentsInRunSet, StaticErrorMessage, StaticWarnMessage, StaticInfoMessage, StaticQuestionsMessage, ApplicationAgentNotMapped,
         ActivitiesGroupAlreadyMappedToTC, ExportItemToALMFailed, AskIfToSaveBFAfterExport,
         BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, WindowClosed, TargetWindowNotSelected,
         ChangingEnvironmentParameterValue, IFSaveChangesOfBF, AskIfToLoadExternalFields, WhetherToOpenSolution,
@@ -139,6 +139,7 @@ namespace Amdocs.Ginger.Common
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, OperationNotSupported, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty,
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
+        POMElementNotExist, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped,
         AskIfToUndoChanges, AskIfToUndoItemChanges, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification,WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
         PluginDownloadInProgress, SaveRunsetChanges, LegacyActionsCleanup,
@@ -187,6 +188,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticErrorMessage, new UserMsg(eUserMsgType.ERROR, "Error", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticWarnMessage, new UserMsg(eUserMsgType.WARN, "Warning", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticInfoMessage, new UserMsg(eUserMsgType.INFO, "Info", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.StaticQuestionsMessage, new UserMsg(eUserMsgType.QUESTION, "Question", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToClose, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowNeedTargetApplication, new UserMsg(eUserMsgType.WARN, "Target Application Not Selected", "Target Application Not Selected! Please Select at least one Target Application", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -291,8 +293,8 @@ namespace Amdocs.Ginger.Common
             #endregion Environment Messages
 
             #region Agents/Drivers Messages
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SuccessfullyConnectedToAgent, new UserMsg(eUserMsgType.INFO, "Connect Agent Success", "Agent connection successful!", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToConnectAgent, new UserMsg(eUserMsgType.ERROR, "Connect to Agent", "Failed to connect to the {0} agent." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.TestagentSucceed, new UserMsg(eUserMsgType.INFO, "Test Agent", "Agent starting test ended successfully!", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToConnectAgent, new UserMsg(eUserMsgType.ERROR, "Connect to Agent", "Failed to load '{0}' Agent." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SshCommandError, new UserMsg(eUserMsgType.ERROR, "Ssh Command Error", "The Ssh Run Command returns error, please double check the connection info and credentials." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.GoToUrlFailure, new UserMsg(eUserMsgType.ERROR, "Go To URL Error", "Failed to go to the URL: '{0}'." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.HookLinkEventError, new UserMsg(eUserMsgType.ERROR, "Hook Link Event Error", "The link type is unknown.", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -478,9 +480,9 @@ namespace Amdocs.Ginger.Common
             #endregion ActivitiesGroup
 
             #region Mobile
-            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileConnectionFailed, new UserMsg(eUserMsgType.ERROR, "Mobile Connection", "Failed to connect to the mobile device." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileRefreshScreenShotFailed, new UserMsg(eUserMsgType.ERROR, "Mobile Screen Image", "Failed to refresh the mobile device screen image." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileShowElementDetailsFailed, new UserMsg(eUserMsgType.ERROR, "Mobile Elements Inspector", "Failed to locate the details of the selected element." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileConnectionFailed, new UserMsg(eUserMsgType.ERROR, "Mobile Connection Failed", "Failed to connect to the mobile device." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileRefreshScreenShotFailed, new UserMsg(eUserMsgType.WARN, "Mobile Screen Image", "Failed to refresh the mobile device screen image." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileShowElementDetailsFailed, new UserMsg(eUserMsgType.WARN, "Mobile Elements Inspector", "Failed to locate the details of the selected element." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MobileActionWasAdded, new UserMsg(eUserMsgType.INFO, "Add Action", "Action was added.", eUserMsgOption.OK, eUserMsgSelection.None));
             //Reporter.UserMessagesPool.Add(eUserMsgKey.MobileActionWasAdded, new UserMessage(eMessageType.INFO, "Add Action", "Action was added." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to run the Action?", MessageBoxButton.YesNo, MessageBoxResult.No));
             #endregion Mobile
@@ -688,6 +690,10 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.WizardSureWantToCancel, new UserMsg(eUserMsgType.QUESTION, "Cancel Wizard?", "Are you sure you want to cancel wizard and close?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ReportsTemplatesSaveWarn, new UserMsg(eUserMsgType.WARN, "Default Template Report Change", "Default change will cause all templates to be updated and saved, to continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToLoadPlugIn, new UserMsg(eUserMsgType.ERROR, "Failed to Load Plug In", "Ginger could not load the plug in '{0}'" + Environment.NewLine + "Error Details: {1}", eUserMsgOption.OK, eUserMsgSelection.None));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.POMElementNotExist, new UserMsg(eUserMsgType.QUESTION, "Element Not Found", "'{0}' does not exist in selected Page Object Model - '{1}'" + Environment.NewLine + "Do you want to add this Element to POM ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.UpdateExistingPOMElement, new UserMsg(eUserMsgType.QUESTION, "Updated Element Found", "An updated version of Page Object Model Element '{0}' Found." + Environment.NewLine + "Do you want to update existing POM ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.POMMoveElementFromUnmappedToMapped, new UserMsg(eUserMsgType.QUESTION, "POM Element Found in Unmapped Elements", "Selected Element '{0}' Found in Unmapped Elements list of Page Object Model '{1}'." + Environment.NewLine + "Do you want to update POM & move element into Mapped Elements list ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.Failedtosaveitems, new UserMsg(eUserMsgType.ERROR, "Failed to Save", "Failed to do Save All", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AllItemsSaved, new UserMsg(eUserMsgType.INFO, "All Changes Saved", "All Changes Saved", eUserMsgOption.OK, eUserMsgSelection.None));

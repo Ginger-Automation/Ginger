@@ -1,4 +1,22 @@
-﻿using ALM_Common.DataContracts;
+#region License
+/*
+Copyright © 2014-2021 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -6,6 +24,7 @@ using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -131,13 +150,26 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             try
             {
                 //get the BF matching test set
-                List<BaseResponseItem> eportedPhase = zephyrEntRepository.GetPhaseById(Convert.ToInt32(bizFlow.ExternalID2));
-                BaseResponseItem item = eportedPhase.FirstOrDefault(md => md.id.ToString().Equals(bizFlow.ExternalID));
+                List<BaseResponseItem> exportedPhase = zephyrEntRepository.GetPhaseById(Convert.ToInt32(bizFlow.ExternalID2));
+                BaseResponseItem item = exportedPhase.FirstOrDefault(md => md.id.ToString().Equals(bizFlow.ExternalID));
+                if (item == null)
+                {
+                    BaseResponseItem firstItem = exportedPhase.FirstOrDefault();
+                    foreach (var category in (JArray)firstItem.TryGetItem("categories"))
+                    {
+                        BaseResponseItem treeNode = category.ToObject<BaseResponseItem>();
+                        if(treeNode.id.ToString().Equals(bizFlow.ExternalID))
+                        {
+                            item = treeNode;
+                            break;
+                        }
+                    }
+                }
                 if (item != null)
                 {
                     long scheduleId = 0;
                     //get the Test set TC's
-                    List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(item.TryGetItem("id")));
+                    List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(item.id));
                     //get phase execution list
                     List<Execution> executions = zephyrEntRepository.GetExecutionsByPhaseId(Convert.ToInt64(bizFlow.ExternalID2));
                     //get all BF Activities groups

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -108,9 +108,8 @@ namespace Ginger.AnalyzerLib
                                 if (optionalOutputVariables == null)
                                 {
                                     optionalOutputVariables = GR.GetPossibleOutputVariables(RSC, bf, includeGlobalVars: false, includePrevRunnersVars: true);
-                                }                                
-                                Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
-                                issueExist = optionalOutputVariables.Where(x => x.Guid == mappedGuid).FirstOrDefault() == null;
+                                }                              
+                                issueExist = optionalOutputVariables.Where(x => x.VariableInstanceInfo == inputVar.MappedOutputValue).FirstOrDefault() == null;
                                 break;
                             case VariableBase.eOutputType.GlobalVariable:                                
                                 Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);

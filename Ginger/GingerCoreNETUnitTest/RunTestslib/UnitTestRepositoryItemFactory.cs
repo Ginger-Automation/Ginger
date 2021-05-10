@@ -11,10 +11,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Common;
+using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
-    public class UnitTestRepositoryItemFactory : IRepositoryItemFactory
+    public class UnitTestRepositoryItemFactory : ITargetFrameworkHelper
     {
         public void CreateChart(List<KeyValuePair<int, int>> y, string chartName, string Title, string tempfolder)
         {
@@ -106,11 +108,6 @@ namespace GingerCoreNETUnitTest.RunTestslib
             return true;
         }
 
-        public void StartAgentDriver(IAgent agent)
-        {
-            throw new NotImplementedException();
-        }
-
         public Dictionary<string, string> TakeDesktopScreenShot(bool v)
         {
             throw new NotImplementedException();
@@ -152,6 +149,25 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegration.eALMType almType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object GetDriverObject(IAgent agent)
+        {
+            throw new NotImplementedException();
+        }
+        public DbConnection GetMSAccessConnection()
+        {
+            throw new NotImplementedException("MS Acess is not supported on Ginger Console");
+        }
+
+        public IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow)
+        {
+            return new WebserviceDriverConsoleReporter();
+        }
+
+        public DbConnection GetOracleConnection(string ConnectionString)
         {
             throw new NotImplementedException();
         }

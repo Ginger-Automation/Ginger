@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using mshtml;
 using System;
 using System.Collections;
@@ -159,7 +160,7 @@ namespace GingerCore.Drivers
             var v= doc.body.getAttribute("data-GingerXpath");
             if (v is System.DBNull)
             {
-                injectScriptCode(doc, Properties.Resources.wgxpath_install);
+                injectScriptCode(doc, JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install));
                 string js = GetXpathJS();
                 injectScriptCode(doc, js);
                 doc.body.setAttribute("data-GingerXpath", "Done");
