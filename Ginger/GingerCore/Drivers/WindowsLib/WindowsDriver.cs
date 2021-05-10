@@ -305,11 +305,6 @@ namespace GingerCore.Drivers.WindowsLib
                 }
             }
 
-            //table
-            if (actUIElement.ElementType.Equals(eElementType.Table))
-            {
-
-            }
             //window
             else if (actUIElement.ElementType.Equals(eElementType.Window))
             {
@@ -796,6 +791,10 @@ namespace GingerCore.Drivers.WindowsLib
 
                     case ActUIElement.eElementAction.Click:
                         mUIAutomationHelper.ClickMenuElement(actUIElement);
+                        break;
+
+                    default:
+                        actUIElement.Error = string.Format("Selected '{0}' Operation not supported for 'WindowsDriver'", actUIElement.ElementAction.ToString());
                         break;
                 }
             }

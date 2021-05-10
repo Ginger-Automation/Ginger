@@ -121,47 +121,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override List<ActUIElement.eTableAction> GetTableControlActions(ActUIElement.eElementAction tableAction)
         {
             List<ActUIElement.eTableAction> windowsTableControlActionlist = base.GetTableControlActions(tableAction);
-            switch (tableAction)
-            {
-                case ActUIElement.eElementAction.TableCellAction:
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.IsCellEnabled);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.IsVisible);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.GetValue);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.SetValue);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.SetFocus);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.Click);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.AsyncClick);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.WinClick);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.Toggle);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.DoubleClick);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.Type);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.MousePressAndRelease);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.IsChecked);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.RightClick);
-                    break;
-                case ActUIElement.eElementAction.TableRowAction:
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.GetSelectedRow);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.ActivateRow);
-                    break;
-                case ActUIElement.eElementAction.TableAction:
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.GetRowCount);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.SelectAllRows);
-                    //list.Add(ActUIElement.eTableAction.RightClick);
-                    break;
-                case ActUIElement.eElementAction.Unknown:
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.IsCellEnabled);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.IsVisible);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.GetValue);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.SetValue);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.SetFocus);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.Click);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.AsyncClick);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.WinClick);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.Toggle);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.GetRowCount);
-                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.GetSelectedRow);
-                    break;
-            }
+            
             return windowsTableControlActionlist;
         }
 
@@ -201,7 +161,6 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementsTypeList.Add(eElementType.Image);
                 mElementsTypeList.Add(eElementType.Label);
                 mElementsTypeList.Add(eElementType.List);
-                mElementsTypeList.Add(eElementType.Table);
                 mElementsTypeList.Add(eElementType.Window);
                 mElementsTypeList.Add(eElementType.MenuItem);
             }

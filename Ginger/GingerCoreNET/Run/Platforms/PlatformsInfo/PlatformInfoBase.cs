@@ -258,7 +258,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public virtual List<ActUIElement.eTableAction> GetTableControlActions(ActUIElement.eElementAction tableAction)
         {
-            return new List<ActUIElement.eTableAction>();
+            return null;
         }
 
         public virtual List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)
