@@ -49,12 +49,13 @@ namespace Ginger.Drivers.DriversWindows
         #region Events
         private void MobileDriverWindow_DriverMessageEvent(object sender, DriverMessageEventArgs e)
         {
-            this.Dispatcher.Invoke(() =>
+
+            switch (e.DriverMessageType)
             {
-                switch (e.DriverMessageType)
-                {
-                    case DriverBase.eDriverMessageType.DriverStatusChanged:
-                        if (mDriver.IsDeviceConnected)
+                case DriverBase.eDriverMessageType.DriverStatusChanged:
+                    if (mDriver.IsDeviceConnected)
+                    {
+                        this.Dispatcher.Invoke(() =>
                         {
                             xLoadingPnl.Visibility = Visibility.Collapsed;
                             xDeviceScreenshotCanvas.Visibility = Visibility.Visible;
@@ -62,24 +63,24 @@ namespace Ginger.Drivers.DriversWindows
                             RefreshDeviceScreenshotAsync();
                             SetOrientationButton();
                             DoContinualDeviceScreenshotRefresh();
-                        }
-                        else
+                        });
+                    }
+                    else
+                    {
+                        if (!mSelfClosing)
                         {
-                            if (!mSelfClosing)
-                            {
-                                DoSelfClose();
-                            }
+                            DoSelfClose();
                         }
-                        break;
+                    }
+                    break;
 
-                    case DriverBase.eDriverMessageType.ActionPerformed:
-                        if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
-                        {
-                            RefreshDeviceScreenshotAsync(100);
-                        }
-                        break;
-                }
-            });
+                case DriverBase.eDriverMessageType.ActionPerformed:
+                    if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
+                    {
+                        RefreshDeviceScreenshotAsync(100);
+                    }
+                    break;
+            }            
         }
 
        
