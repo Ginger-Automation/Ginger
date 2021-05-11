@@ -164,8 +164,6 @@ namespace Ginger.WindowExplorer
 
             SetControlsGridView();
 
-            InitControlPropertiesGridView();
-
             //xUCElementDetails.AppAgent = mApplicationAgent;
             xWindowSelection.context = context;
             xUCElementDetails.Context = context;
@@ -174,8 +172,6 @@ namespace Ginger.WindowExplorer
             xUCElementDetails.xPropertiesGrid.btnRefresh.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(RefreshControlProperties));
 
             //IsPOMSupportedPlatform = ApplicationPOMModel.PomSupportedPlatforms.Contains(mContext.Platform);
-
-            InitUCElementDetailsLocatorsGrid();
 
             //RefreshTabsContent();
 
@@ -209,9 +205,8 @@ namespace Ginger.WindowExplorer
             }
             else if (xUCElementDetails.SelectedElement != null && !ElementDetailsNotNullHandled)
             {
-                xElementDetailGridRow.Height = new GridLength(200, GridUnitType.Star);
-                xElementDetailGridRow.MinHeight = 200;
-                xElementDetailGridColumn.Width = new GridLength(91, GridUnitType.Star);
+                xElementDetailGridRow.Height = new GridLength(50, GridUnitType.Star);
+                xElementDetailGridColumn.Width = new GridLength(50, GridUnitType.Star);
 
                 if (ActualWidth > 700)
                 {
@@ -241,16 +236,28 @@ namespace Ginger.WindowExplorer
             }
         }
 
+        bool ExplorerLoaded = false;
         private void SetPlatformBasedUpdates()
         {
-            xWindowSelection.xWindowDropdownLbl.Content = mWindowExplorerDriver.SelectionWindowText();
+            if (mWindowExplorerDriver != null)
+            {
+                xWindowSelection.xWindowDropdownLbl.Content = mWindowExplorerDriver.SelectionWindowText();
 
-            xPageSrcTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.PageSource) ? Visibility.Visible : Visibility.Collapsed;
-            xTreeViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.TreeView) ? Visibility.Visible : Visibility.Collapsed;
-            xGridViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.GridView) ? Visibility.Visible : Visibility.Collapsed;
-            xScreenShotViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.Screenshot) ? Visibility.Visible : Visibility.Collapsed;
+                xPageSrcTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.PageSource) ? Visibility.Visible : Visibility.Collapsed;
+                xTreeViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.TreeView) ? Visibility.Visible : Visibility.Collapsed;
+                xGridViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.GridView) ? Visibility.Visible : Visibility.Collapsed;
+                xScreenShotViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.Screenshot) ? Visibility.Visible : Visibility.Collapsed;
 
-            xViewsTabs.SelectedItem = DefaultSelectedTab();
+                xViewsTabs.SelectedItem = DefaultSelectedTab();
+
+                InitUCElementDetailsLocatorsGrid();
+
+                ExplorerLoaded = true;
+            }
+            else
+            {
+                ExplorerLoaded = false;
+            }
         }
 
         //private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -275,7 +282,11 @@ namespace Ginger.WindowExplorer
                 //RecordingButton.Visibility = Visibility.Collapsed;
                 mWindowExplorerDriver = windowExplorerDriver;
                 UpdateWindowsList();
-                InitUCElementDetailsLocatorsGrid();
+
+                if(!ExplorerLoaded)
+                {
+                    SetPlatformBasedUpdates();
+                }
             });
         }
 
@@ -394,31 +405,44 @@ namespace Ginger.WindowExplorer
 
         private async Task RefreshPageSrcContent()
         {
-            //xHTMLTree.Items.Add(new PageSrcParser(((SeleniumDriver)mContext.Agent.Driver).GetPageHTML())
-            if (mWindowExplorerDriver is GenericAppiumDriver)
+            xLoadingPageSrcBanner.Visibility = Visibility.Visible;
+
+            try
             {
-                if ((mWindowExplorerDriver as GenericAppiumDriver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.Web)
+                //xHTMLTree.Items.Add(new PageSrcParser(((SeleniumDriver)mContext.Agent.Driver).GetPageHTML())
+                if (mWindowExplorerDriver is GenericAppiumDriver)
+                {
+                    if ((mWindowExplorerDriver as GenericAppiumDriver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.Web)
+                    {
+                        xHTMLPageSrcViewer.Visibility = Visibility.Visible;
+
+                        HtmlDocument htmlDoc = (mWindowExplorerDriver as GenericAppiumDriver).AppiumSeleniumDriver.GetPageHTML();
+                        xHTMLPageSrcViewer.htmlDocument = htmlDoc;
+                    }
+                    else
+                    {
+                        xXMLPageSrcViewer.Visibility = Visibility.Visible;
+                        string pageSrcXML = await ((GenericAppiumDriver)mWindowExplorerDriver).GetPageSource();
+                        XmlDocument pageSrcXmlDoc = new XmlDocument();
+                        pageSrcXmlDoc.LoadXml(pageSrcXML);
+                        xXMLPageSrcViewer.xmlDocument = pageSrcXmlDoc;
+                    }
+                }
+                else if (mWindowExplorerDriver is SeleniumDriver)
                 {
                     xHTMLPageSrcViewer.Visibility = Visibility.Visible;
 
-                    HtmlDocument htmlDoc = (mWindowExplorerDriver as GenericAppiumDriver).AppiumSeleniumDriver.GetPageHTML();
+                    HtmlDocument htmlDoc = ((SeleniumDriver)mWindowExplorerDriver).GetPageHTML();
                     xHTMLPageSrcViewer.htmlDocument = htmlDoc;
                 }
-                else
-                {
-                    xXMLPageSrcViewer.Visibility = Visibility.Visible;
-                    string pageSrcXML = await ((GenericAppiumDriver)mWindowExplorerDriver).GetPageSource();
-                    XmlDocument pageSrcXmlDoc = new XmlDocument();
-                    pageSrcXmlDoc.LoadXml(pageSrcXML);
-                    xXMLPageSrcViewer.xmlDocument = pageSrcXmlDoc;
-                }
             }
-            else if (mWindowExplorerDriver is SeleniumDriver)
+            catch(Exception exc)
             {
-                xHTMLPageSrcViewer.Visibility = Visibility.Visible;
-
-                HtmlDocument htmlDoc = ((SeleniumDriver)mWindowExplorerDriver).GetPageHTML();
-                xHTMLPageSrcViewer.htmlDocument = htmlDoc;
+                Reporter.ToLog(eLogLevel.ERROR, exc.Message, exc);
+            }
+            finally
+            {
+                xLoadingPageSrcBanner.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -752,19 +776,6 @@ namespace Ginger.WindowExplorer
                 RefreshTabsContent();
         }
 
-        private void InitControlPropertiesGridView()
-        {
-            // Grid View
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = "Name", WidthWeight = 8, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = "Value", WidthWeight = 20, ReadOnly = true });
-
-            xUCElementDetails.xPropertiesGrid.SetAllColumnsDefaultView(view);
-            xUCElementDetails.xPropertiesGrid.InitViewItems();
-        }
-
         private void RefreshWindowsButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateWindowsList();
@@ -1017,7 +1028,7 @@ namespace Ginger.WindowExplorer
 
                 if (mWindowExplorerDriver is GenericAppiumDriver)   // && (mWindowExplorerDriver as GenericAppiumDriver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.NativeHybride)
                 {
-                    mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.3);
+                    mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.25);
                 }
                 else
                 {
@@ -1321,6 +1332,23 @@ namespace Ginger.WindowExplorer
                         }
                     }
                 }
+
+                if (xViewsTabs.SelectedItem == xTreeViewTab)
+                {
+                    TreeViewTab_Selected(sender, e);
+                }
+                else if (xViewsTabs.SelectedItem == xScreenShotViewTab)
+                {
+                    ScreenShotViewTab_Selected(sender, e);
+                }
+                else if (xViewsTabs.SelectedItem == xPageSrcTab)
+                {
+                    PageSrcTab_Selected(sender, e);
+                }
+                else if (xViewsTabs.SelectedItem == xGridViewTab)
+                {
+                    GridViewTab_Selected(sender, e);
+                }
             }
             catch (Exception ex)
             {
@@ -1419,7 +1447,7 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private async void xGridViewTab_GotFocus(object sender, RoutedEventArgs e)
+        private async void GridViewTab_Selected(object sender, RoutedEventArgs e)
         {
             if (RefreshGrid)
             {
@@ -1428,7 +1456,7 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private async void xTreeViewTab_GotFocus(object sender, RoutedEventArgs e)
+        private async void TreeViewTab_Selected(object sender, RoutedEventArgs e)
         {
             if (RefreshTree)
             {
@@ -1437,7 +1465,7 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private void ScreenShotViewTab_GotFocus(object sender, RoutedEventArgs e)
+        private void ScreenShotViewTab_Selected(object sender, RoutedEventArgs e)
         {
             if (RefreshScreenshot)
             {
@@ -1446,7 +1474,7 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private async void xPageSrcTab_GotFocus(object sender, RoutedEventArgs e)
+        private async void PageSrcTab_Selected(object sender, RoutedEventArgs e)
         {
             if (RefreshPageSrc)
             {

@@ -273,8 +273,9 @@ namespace GingerCoreNET.Application_Models
             }
             if (KeepOriginalLocatorsOrderAndActivation == true)
             {
-                foreach (ElementLocator originalLocator in existingElement.Locators)
+                for(int i = 0; i < existingElement.Locators.Count; i++)
                 {
+                    ElementLocator originalLocator = existingElement.Locators[i];
                     ElementLocator latestLocator = latestElement.Locators.Where(x => x.Guid == originalLocator.Guid).FirstOrDefault();
 
                     if (latestLocator != null)

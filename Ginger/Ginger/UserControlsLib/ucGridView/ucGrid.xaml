@@ -113,6 +113,7 @@
                   LoadingRow="grdMain_LoadingRow" 
                   Background="{StaticResource $BackgroundColor_White}"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"                  
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"                  
                   SizeChanged="grdMain_SizeChanged"        
                   ScrollViewer.ScrollChanged="grdMain_ScrollChanged"
                  >
