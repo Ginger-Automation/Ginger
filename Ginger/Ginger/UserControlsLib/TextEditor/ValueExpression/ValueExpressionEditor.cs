@@ -137,7 +137,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                     list.Add(GETVariableTCD(v));
                 }
             }
-            if (mContext.BusinessFlow.CurrentActivity != null)
+            if (mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity != null)
             {
                 foreach (VariableBase v in mContext.BusinessFlow.CurrentActivity.Variables)
                 {
