@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Run;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.RunLib;
@@ -372,7 +373,7 @@ namespace GingerCore
                         }
                         else
                         {
-                            Driver = (DriverBase)RepositoryItemHelper.RepositoryItemFactory.GetDriverObject(this);
+                            Driver = (DriverBase)TargetFrameworkHelper.Helper.GetDriverObject(this);
                         }
                     }
                     catch (Exception e)
@@ -549,7 +550,7 @@ namespace GingerCore
 
                 if (DriverClass == null)
             {
-                DriverClass = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
+                DriverClass = TargetFrameworkHelper.Helper.GetDriverType(this);
                     if (DriverClass == null)
                     {
                         return false;
@@ -593,7 +594,7 @@ namespace GingerCore
             }
             else
             {
-                DriverClass = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
+                DriverClass = TargetFrameworkHelper.Helper.GetDriverType(this);
 
                 SetDriverMissingParams(DriverClass);
 
@@ -699,7 +700,7 @@ namespace GingerCore
 
             if (AgentType == eAgentType.Driver)
             {
-                Type driverType = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
+                Type driverType = TargetFrameworkHelper.Helper.GetDriverType(this);
                 SetDriverDefualtParams(driverType);
             }
             else if (AgentType == eAgentType.Service)
@@ -1308,6 +1309,16 @@ namespace GingerCore
                     actionTimeoutParameter.Description=actionTimeoutParameter.Description.Replace("10", "30");
                 }
             }          
+        }
+
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {           
+            if (new GenericAppiumDriver(null).SerializationError(this, errorType,name,value))
+            {
+                return true;
+            }
+
+            return false;
         }
 
     }

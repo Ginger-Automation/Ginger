@@ -143,6 +143,11 @@ namespace GingerCore.Platforms.PlatformsInfo
             return null;
         }
 
+        public override Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList()
+        {
+            throw new NotImplementedException();
+        }
+
         // TODO: provide type of values per property - true/false, string, number bounds etc...       
     }
 }

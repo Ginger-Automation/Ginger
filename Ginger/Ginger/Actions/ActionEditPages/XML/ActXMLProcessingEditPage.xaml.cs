@@ -79,20 +79,12 @@ namespace Ginger.Actions.XML
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            dlg.Filter = "All files (*.*)|*.*";
-            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-
-            if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
             {
-                // replace Absolute file name with relative to solution
-                string FileName = dlg.FileName.ToUpper();
-                if (FileName.Contains(SolutionFolder))
-                {
-                    FileName = FileName.Replace(SolutionFolder, @"~\");
-                }
-
-                XMLTemplateFileTextBox.Text = FileName;
+                Filter = "All files (*.*)|*.*"
+            }) is string fileName)
+            {
+                XMLTemplateFileTextBox.Text = fileName;
             }
         }
     }

@@ -350,10 +350,8 @@ namespace Ginger.AnalyzerLib
                 }
             }
 
-
-
-
-            GlobalAppModelParameter.GetListOfUsedGlobalParameters(a, ref mUsedGlobalParameters);
+            //App Model Global Params
+            GlobalAppModelParameter.GetListOfUsedAppModelGlobalParameters(a, ref mUsedGlobalParameters);
             if (mUsedGlobalParameters.Count > 0)
             {
                 foreach (string Param in mUsedGlobalParameters)

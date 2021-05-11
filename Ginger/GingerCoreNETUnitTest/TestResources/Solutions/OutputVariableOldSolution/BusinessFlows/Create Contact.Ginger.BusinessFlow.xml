@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="163a562b-964a-438b-bf4e-db9e6e88c623" ItemType="BusinessFlow" CreatedBy="JGHODKE" Created="202105060459" GingerVersion="3.7.0.0" Version="3" LastUpdateBy="JGHODKE" LastUpdate="202105060505" />
+<BusinessFlow Elapsed="210" Guid="163a562b-964a-438b-bf4e-db9e6e88c623" Name="Create Contact" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="f1b7cfb0-7afe-4236-bfb5-dd1be475ff76" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyWindowsApp">
+<Acts>
+<ActSetVariableValue Active="True" Description="Generate Contact ID" Guid="ae69abd6-7b9f-43ba-9f13-becd85098eb6" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SetVariableValueOption="AutoGenerateValue" StatusConverter="None" VariableName="ContactIDOfCreateContact" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="30efb3c9-7668-41dd-853b-1c8ee0ef2eb0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActSetVariableValue>
+<ActSetVariableValue Active="True" Description="Set Contact Id" Guid="c4ded4f7-ac16-440a-a2c5-e1c584f6f4cc" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SetVariableValueOption="SetValue" StatusConverter="None" VariableName="ContactId" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="30efb3c9-7668-41dd-853b-1c8ee0ef2eb0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{Var Name=ContactIDOfCreateContact}" />
+</InputValues>
+</ActSetVariableValue>
+</Acts>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="13c4473f-7d08-4e97-a885-1145ba7afa1f" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="f1b7cfb0-7afe-4236-bfb5-dd1be475ff76" ActivityName="Activity 1" Guid="115c258b-9355-4e10-bd35-afce5f518f61" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="MyWindowsApp" Guid="108b6e6a-59a3-496d-89fc-14359e078a70" LastExecutingAgentName="MyWindowsApp - Agent 1" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+
+<Variables>
+<VariableString Guid="b3ed569d-c99b-4a5e-8bb3-1462d83a837f" InitialStringValue="2355" MappedOutputType="None" Name="ContactId" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsInputValue="False" />
+</Variables>
+</BusinessFlow></GingerRepositoryItem>
