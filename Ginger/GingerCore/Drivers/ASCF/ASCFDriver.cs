@@ -1481,6 +1481,11 @@ namespace GingerCore.Drivers.ASCF
             return false;
         }
 
+        public bool IsWinowSelectionRequired()
+        {
+            return false;
+        }
+
         public List<eTabView> SupportedViews()
         {
             return new List<eTabView>() { /*eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView */};

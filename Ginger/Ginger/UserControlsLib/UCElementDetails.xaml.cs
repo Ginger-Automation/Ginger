@@ -186,6 +186,11 @@ namespace Ginger
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
                     }
+
+                    if(xElementDetailsTabs.SelectedItem == xAddActionTab)
+                    {
+                        AddActionTab_Selected(sender, e);
+                    }
                 }
             }
             catch (Exception ex)
@@ -404,7 +409,7 @@ namespace Ginger
             }
         }
 
-        private void xAddActionTab_GotFocus(object sender, RoutedEventArgs e)
+        private void AddActionTab_Selected(object sender, RoutedEventArgs e)
         {
             if(SelectedElement == null)
             {
@@ -637,8 +642,8 @@ namespace Ginger
                     xExecutionStatusIcon.Visibility = Visibility.Collapsed;
                 }
 
-                xRunActBtn.Click += CAP.RunActionClicked;
-                xAddActBtn.Click += CAP.AddActionClicked;
+                //xRunActBtn.Click += CAP.RunActionClicked;
+                //xAddActBtn.Click += CAP.AddActionClicked;
 
                 xActUIPageFrame.Content = CAP;
                 xAddActionTab.Visibility = Visibility.Visible;
@@ -776,6 +781,22 @@ namespace Ginger
                 }
 
                 WindowExplorerDriver.TestElementLocators(testElement);
+            }
+        }
+
+        private void xRunActBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if(xActUIPageFrame.Content != null && xActUIPageFrame.Content is ControlActionsPage_New)
+            {
+                (xActUIPageFrame.Content as ControlActionsPage_New).RunActionClicked(sender, e);
+            }
+        }
+
+        private void xAddActBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (xActUIPageFrame.Content != null && xActUIPageFrame.Content is ControlActionsPage_New)
+            {
+                (xActUIPageFrame.Content as ControlActionsPage_New).AddActionClicked(sender, e);
             }
         }
     }

@@ -8035,6 +8035,11 @@ namespace GingerCore.Drivers
             return true;
         }
 
+        public bool IsWinowSelectionRequired()
+        {
+            return true;
+        }
+
         public List<eTabView> SupportedViews()
         {
             return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView };

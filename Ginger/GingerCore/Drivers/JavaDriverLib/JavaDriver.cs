@@ -2580,7 +2580,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             if (!(String.IsNullOrEmpty(bName)))
             {
-                ElementLocator locator = new ElementLocator();
+                ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                 if (ElementInfo.XPath == "/") // If it is root node the  only by title is applicable
                     locator.LocateBy = eLocateBy.ByTitle;
                 else
@@ -2593,7 +2593,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 if (ElementInfo.XPath != "/")
                 {
-                    ElementLocator locator = new ElementLocator();
+                    ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                     locator.LocateBy = eLocateBy.ByXPath;
                     locator.LocateValue = ElementInfo.XPath;
                     locatorList.Add(locator);
@@ -2607,7 +2607,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     if (ElementInfo.XPath != "/")
                     {
-                        ElementLocator locator = new ElementLocator();
+                        ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                         locator.LocateBy = eLocateBy.ByRelXPath;
                         locator.LocateValue = ((HTMLElementInfo)ElementInfo).RelXpath;
                         locatorList.Add(locator);
@@ -2618,7 +2618,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     if (ElementInfo.XPath != "/" && !ElementInfo.ElementType.Contains("JEditor"))//?????????
                     {
-                        ElementLocator locator = new ElementLocator();
+                        ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                         locator.LocateBy = eLocateBy.ByID;
                         locator.LocateValue = ((HTMLElementInfo)ElementInfo).ID;
                         locatorList.Add(locator);
@@ -2629,14 +2629,13 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     if (!String.IsNullOrEmpty(ElementInfo.Path))
                     {
-                        ElementLocator locator = new ElementLocator();
+                        ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                         locator.LocateBy = eLocateBy.ByCSSSelector;
                         locator.LocateValue = ((HTMLElementInfo)ElementInfo).Path;
                         locatorList.Add(locator);
                     }
                 }
             }
-            locatorList.ToList().ForEach(x => x.IsAutoLearned = true);
             return locatorList;
         }
 
@@ -3971,6 +3970,11 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
 
         public bool IsLiveSpySupported()
+        {
+            return true;
+        }
+
+        public bool IsWinowSelectionRequired()
         {
             return true;
         }
