@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:Ginger.ApplicationModelsLib.POMModels.POMWizardLib" xmlns:Ginger="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="PomNewAddedElementSelectionPage">
+      Title="PomNewAddedElementSelectionPage" Loaded="Page_Loaded">
 
     <Grid>
         <Grid.RowDefinitions>

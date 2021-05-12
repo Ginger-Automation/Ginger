@@ -36,6 +36,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         private PomDeltaUtils mPomDeltaUtils;
         private ObservableList<DeltaElementInfo> mDeltaElements;
         private GenericWindow mGenericWindow = null;
+        private ObservableList<ElementInfo> mElementInfoList = new ObservableList<ElementInfo>();
 
 
         public PomNewAddedElementSelectionPage(ObservableList<DeltaElementInfo> deltaElementInfos, PomDeltaUtils pomDeltaUtils, string searchText)
@@ -67,7 +68,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
             if (elementInfo != null)
             {
-                ElementInfo matchingOriginalElement = (ElementInfo)xLiveSpy.mWinExplorer.GetMatchingElement(elementInfo,mPomDeltaUtils.GetElementInfoListFromDeltaElementInfo( mDeltaElements));
+                ElementInfo matchingOriginalElement = (ElementInfo)xLiveSpy.mWinExplorer.GetMatchingElement(elementInfo, mElementInfoList);
                 if (matchingOriginalElement != null)
                 {
                     xLiveSpy.SetLableStatusText("Element found in new added list");
@@ -117,6 +118,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             {
                 mGenericWindow.Close();
             }
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            mElementInfoList = mPomDeltaUtils.GetElementInfoListFromDeltaElementInfo(mDeltaElements);
         }
     }
 }

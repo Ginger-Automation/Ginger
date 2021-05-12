@@ -13,7 +13,7 @@
         <Grid.Resources>
             <DataTemplate x:Key="xMatchingElementTemplate">
                 <UserControls:ucButton x:Name="xManualMatchBtn" VerticalAlignment="Center" IsEnabled="True"  Margin="0" Padding="0" Height="23"
-                      ButtonType="ImageButton" Click="xManualMatchBtn_Click"  ButtonText="" ToolTip="Manually Match an Existing Element Model" ButtonFontImageSize="15" ButtonImageHeight="15"
+                      ButtonType="ImageButton" Click="xManualMatchBtn_Click"  ButtonText="" ToolTip="Manually Match an Existing Element" ButtonFontImageSize="15" ButtonImageHeight="15"
                             ButtonImageWidth="15" ButtonImageType="Edit" />
             </DataTemplate>
             <DataTemplate x:Key="xCompareElementPropTemplate">
