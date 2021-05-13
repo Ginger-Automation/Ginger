@@ -49,8 +49,8 @@ namespace Ginger.WindowExplorer
             InitializeComponent();
         }
 
-        public Act mAction; // If we come here from EditAction page to update the locator
-        public ObservableList<Act> mActions; // List of available actions to choose from
+        public Act DefaultAction; // If we come here from EditAction page to update the locator
+        public ObservableList<Act> AvailableActions; // List of available actions to choose from
         public ObservableList<ElementLocator> mLocators;
         private IWindowExplorer mWindowExplorerDriver;
         private ObservableList<ActInputValue> mActInputValues;
@@ -61,7 +61,7 @@ namespace Ginger.WindowExplorer
         double mLastDataGridRowHeight = 50;
         Context mContext;
         Page actEditPage;
-        bool IsLegacyPlatform = false;
+        public bool IsLegacyPlatform = false;
 
         // when launching from Window explore we get also available actions to choose so user can add
         public ControlActionsPage_New(IWindowExplorer driver, ElementInfo ElementInfo, Context context, ElementActionCongifuration actionConfigurations, ITreeViewItem CurrentControlTreeViewItem, PlatformInfoBase PlatformInfo)
@@ -77,9 +77,9 @@ namespace Ginger.WindowExplorer
             mDataPage = mCurrentControlTreeViewItem.EditPage(mContext);
             mActInputValues = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
 
-            mAction = (mPlatform as IPlatformInfo).GetPlatformAction(mElementInfo, actionConfigurations);
+            DefaultAction = (mPlatform as IPlatformInfo).GetPlatformAction(mElementInfo, actionConfigurations);
 
-            IsLegacyPlatform = mAction == null;
+            IsLegacyPlatform = DefaultAction == null;
 
             mContext.Runner.PropertyChanged += Runner_PropertyChanged;
             SetPlatformBasedUIUpdates();
@@ -112,6 +112,7 @@ namespace Ginger.WindowExplorer
             xOutputValuesGrid.Grid.MaxHeight = 500;
         }
 
+        /*
         private void Action_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Act.Status))
@@ -171,6 +172,7 @@ namespace Ginger.WindowExplorer
             {
             }
         }
+        */
 
         void SetPlatformBasedUIUpdates()
         {
@@ -179,19 +181,19 @@ namespace Ginger.WindowExplorer
                 if (mPlatform.PlatformType().Equals(ePlatformType.Web) || (mPlatform.PlatformType().Equals(ePlatformType.Java) && !mElementInfo.ElementType.Contains("JEditor")))
                 {
                     //TODO: J.G: Remove check for element type editor and handle it in generic way in all places
-                    mActions = mPlatform.GetPlatformElementActions(mElementInfo);
+                    AvailableActions = mPlatform.GetPlatformElementActions(mElementInfo);
                 }
                 else
                 {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
-                    mActions = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementActions();   // case will be removed once all platforms will be overrided
+                    AvailableActions = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementActions();   // case will be removed once all platforms will be overrided
                 }
 
-                if (mActions.CurrentItem == null && mActions.Count > 0)
+                if (AvailableActions.CurrentItem == null && AvailableActions.Count > 0)
                 {
-                    mActions.CurrentItem = mActions[0];
+                    AvailableActions.CurrentItem = AvailableActions[0];
                 }
 
-                mAction = (Act)mActions.CurrentItem;
+                DefaultAction = (Act)AvailableActions.CurrentItem;
                 xActEditPageFrame.Visibility = Visibility.Collapsed;
 
                 xOperationsScrollView.Visibility = Visibility.Visible;
@@ -201,18 +203,17 @@ namespace Ginger.WindowExplorer
 
                 InitOutputValuesGrid();
 
-                BindingHandler.ObjFieldBinding(xExecutionStatusIcon, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
-                BindingHandler.ObjFieldBinding(xErrorTxtBlock, TextBlock.TextProperty, mAction, nameof(Act.Error));
-                BindingHandler.ObjFieldBinding(xExecInfoTxtBlock, TextBlock.TextProperty, mAction, nameof(Act.ExInfo));
-                BindingHandler.ObjFieldBinding(xOutputValuesGrid, DataGrid.ItemsSourceProperty, mAction, nameof(Act.ReturnValues));
-                BindingHandler.ObjFieldBinding(xOutputValuesGrid, IsVisibleProperty, mAction, nameof(Act.ReturnValues), new OutPutValuesCountConverter());
+                BindingHandler.ObjFieldBinding(xErrorTxtBlock, TextBlock.TextProperty, DefaultAction, nameof(Act.Error));
+                BindingHandler.ObjFieldBinding(xExecInfoTxtBlock, TextBlock.TextProperty, DefaultAction, nameof(Act.ExInfo));
+                BindingHandler.ObjFieldBinding(xOutputValuesGrid, DataGrid.ItemsSourceProperty, DefaultAction, nameof(Act.ReturnValues));
+                BindingHandler.ObjFieldBinding(xOutputValuesGrid, IsVisibleProperty, DefaultAction, nameof(Act.ReturnValues), new OutPutValuesCountConverter());
                 //BindingHandler.ObjFieldBinding(xActExecutionDetails, Expander.IsExpandedProperty, mAction, Convert.ToString(mAction.Status.Value == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed || mAction.Status.Value == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed), new CheckboxConfigConverter());
             }
             else
             {
-                mAction.Context = mContext;
-                SetActionDetails(mAction);
-                actEditPage = new ActionEditPage(mAction, General.eRIPageViewMode.Explorer);
+                DefaultAction.Context = mContext;
+                SetActionDetails(DefaultAction);
+                actEditPage = new ActionEditPage(DefaultAction, General.eRIPageViewMode.Explorer);
 
                 xActEditPageFrame.Visibility = Visibility.Visible;
                 xActEditPageFrame.Content = actEditPage;
@@ -220,6 +221,7 @@ namespace Ginger.WindowExplorer
                 xOperationsScrollView.Visibility = Visibility.Collapsed;
             }
 
+            //BindingHandler.ObjFieldBinding(xExecutionStatusIcon, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
             InitDataPage();
         }
 
@@ -320,21 +322,37 @@ namespace Ginger.WindowExplorer
 
         private void InitActionsGrid()
         {
-            xDDActions.ItemsSource = mActions;
-            xDDActions.SelectedItem = mActions.CurrentItem;
+            xDDActions.ItemsSource = AvailableActions;
+            xDDActions.SelectedItem = AvailableActions.CurrentItem;
         }
 
 
-        private void xAddActBtn_Click(object sender, RoutedEventArgs e)
+        public void AddActionClicked(object sender, RoutedEventArgs e)
         {
-            if (mActions.CurrentItem == null)
+            Act selectedAct;
+
+            if (IsLegacyPlatform)
             {
-                Reporter.ToUser(eUserMsgKey.AskToSelectAction);
-                return;
+                if (AvailableActions.CurrentItem == null)
+                {
+                    Reporter.ToUser(eUserMsgKey.AskToSelectAction);
+                    return;
+                }
+
+                selectedAct = AvailableActions.CurrentItem as Act;
+                SetActionDetails(selectedAct);
+            }
+            else
+            {
+                if (DefaultAction == null)
+                {
+                    Reporter.ToUser(eUserMsgKey.AskToSelectAction);
+                    return;
+                }
+
+                selectedAct = DefaultAction;
             }
 
-            Act selectedAct = mActions.CurrentItem as Act;
-            SetActionDetails(selectedAct);
             ActionsFactory.AddActionsHandler(selectedAct, mContext);
         }
 
@@ -363,7 +381,7 @@ namespace Ginger.WindowExplorer
                 EL = (ElementLocator)mElementInfo.Locators.CurrentItem;
             }
 
-            if (mAction.GetType() == typeof(ActUIElement))
+            if (DefaultAction.GetType() == typeof(ActUIElement))
             {
                 //Set UIElement action locator
                 ActUIElement actUI = (ActUIElement)act;
@@ -393,7 +411,7 @@ namespace Ginger.WindowExplorer
 
                 act = actUI;
             }
-            else if (mAction.GetType() == typeof(ActBrowserElement))
+            else if (DefaultAction.GetType() == typeof(ActBrowserElement))
             {
                 //Set UIElement action locator
                 ActBrowserElement actBrowser = (ActBrowserElement)act;
@@ -414,30 +432,25 @@ namespace Ginger.WindowExplorer
             return act;
         }
 
-        private void xRunActBtn_Click(object sender, RoutedEventArgs e)
+        public void RunActionClicked(object sender, RoutedEventArgs e)
         {
-            if (mAction == null)
+            if (IsLegacyPlatform)
             {
-                mAction = (Act)mActions.CurrentItem;
+                if (DefaultAction == null)
+                {
+                    DefaultAction = (Act)AvailableActions.CurrentItem;
+                }
+
+                SetActionDetails(DefaultAction);
+
+            }
+            else
+            {
+                (actEditPage as ActionEditPage).xActionTabs.SelectedItem = (actEditPage as ActionEditPage).xExecutionReportTab;
             }
 
-            SetActionDetails(mAction);
-
             WindowExplorerCommon.IsTestActionRunning = true;
-
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act, bool>(null, mAction, true));
-
-            //mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-            //mContext.Runner.PrepActionValueExpression(mAction);
-
-            //ApplicationAgent ag = (ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
-            //if (ag != null)
-            //{
-            //    mContext.Runner.RunAction(mAction);
-            //    mContext.Agent.RunAction(act);
-            //}
-
-            //mContext.Agent.RunAction(mAction);
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act, bool>(null, DefaultAction, true));
         }
 
         private string GetAllRetVals(Act act)
@@ -457,9 +470,9 @@ namespace Ginger.WindowExplorer
 
         private void AvailableControlActionsGrid_RowChangedEvent(object sender, EventArgs e)
         {
-            if (mActions.CurrentItem == null) return;
+            if (AvailableActions.CurrentItem == null) return;
 
-            string ActValue = ((Act)mActions.CurrentItem).Value;
+            string ActValue = ((Act)AvailableActions.CurrentItem).Value;
             if (!string.IsNullOrEmpty(ActValue))
             {
                 xValueTextBox.Text = ActValue;
@@ -470,8 +483,8 @@ namespace Ginger.WindowExplorer
         {
             //Copy the selected locator to the action Locator we edit
             ElementLocator EL = (ElementLocator)mLocators.CurrentItem;
-            mAction.LocateBy = EL.LocateBy;
-            mAction.LocateValue = EL.LocateValue;
+            DefaultAction.LocateBy = EL.LocateBy;
+            DefaultAction.LocateValue = EL.LocateValue;
         }
 
         private void xDDActions_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -479,9 +492,9 @@ namespace Ginger.WindowExplorer
             if (xDDActions.SelectedItem == null)
                 return;
             else
-                mActions.CurrentItem = xDDActions.SelectedItem;
+                AvailableActions.CurrentItem = xDDActions.SelectedItem;
 
-            string ActValue = ((Act)mActions.CurrentItem).Value;
+            string ActValue = ((Act)AvailableActions.CurrentItem).Value;
             if (!string.IsNullOrEmpty(ActValue))
             {
                 xValueTextBox.Text = ActValue;

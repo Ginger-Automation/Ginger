@@ -212,10 +212,6 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
                     ActivitiesGroup repoActivsGroup = null;
-                    if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
-                    {
-                        repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
-                    }
                     if (repoActivsGroup == null)
                     {
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
@@ -246,17 +242,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     {
                         tcActivsGroup = new ActivitiesGroup();
                         tcActivsGroup.Name = tc.TestName;
-                        if (tc.LinkedTestID == null || tc.LinkedTestID == string.Empty)
-                        {
-                            tcActivsGroup.ExternalID = tc.TestID;
-                            tcActivsGroup.ExternalID2 = tc.TestID;
-                        }
-                        else
-                        {
-                            tcActivsGroup.ExternalID = tc.LinkedTestID;
-                            tcActivsGroup.ExternalID2 = tc.TestID; //original TC ID will be used for uploading the execution details back to QC
-                            tcActivsGroup.Description = tc.Description;
-                        }
+                        tcActivsGroup.ExternalID = tc.TestID;
+                        tcActivsGroup.ExternalID2 = tc.LinkedTestID;
+                        tcActivsGroup.Description = tc.Description;
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                     }
 

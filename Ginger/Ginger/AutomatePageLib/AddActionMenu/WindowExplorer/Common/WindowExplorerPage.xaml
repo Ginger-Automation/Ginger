@@ -30,12 +30,12 @@
 
         <Grid x:Name="xSubGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition x:Name="ControlsViewGridRow" Height="*" MinHeight="200" />
-                <RowDefinition x:Name="xElementDetailGridRow" Height="0" MinHeight="0" />
+                <RowDefinition x:Name="ControlsViewGridRow" Height="50*" />
+                <RowDefinition x:Name="xElementDetailGridRow" Height="0" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="xControlsViewGridColumn" Width="*" MinWidth="200"/>
-                <ColumnDefinition x:Name="xElementDetailGridColumn" Width="0" MinWidth="0"/>
+                <ColumnDefinition x:Name="xControlsViewGridColumn" Width="50*" />
+                <ColumnDefinition x:Name="xElementDetailGridColumn" Width="0" />
             </Grid.ColumnDefinitions>
 
             <TabControl x:Name="xViewsTabs" Margin="0,5,0,0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="ViewsTabs_SelectionChanged" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
@@ -55,7 +55,7 @@
                     </Style>
                 </TabControl.Resources>
 
-                <TabItem x:Name="xScreenShotViewTab" GotFocus="ScreenShotViewTab_GotFocus" >
+                <TabItem x:Name="xScreenShotViewTab">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <usercontrols:ImageMakerControl ImageType="Image"  SetAsFontImageWithSize="20"  Width="20" Height="20" />
@@ -71,7 +71,7 @@
                         </StackPanel>
 
                         <!--Retry Button for error in taking screenshot-->
-                        <StackPanel x:Name="xRetrySSBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
+                        <StackPanel x:Name="xRetrySSBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                             <usercontrols:ucButton x:Name="xRetryScreenshotBtn" ButtonType="PanelButton" ButtonFontImageSize="20" ButtonImageType="Retry" 
                                        ButtonImageHeight="20" ButtonImageWidth="20" ButtonText="Retry" Click="xRetryScreenshotBtn_Click" />
                         </StackPanel>
@@ -80,7 +80,7 @@
                     </Grid>
                 </TabItem>
 
-                <TabItem x:Name="xPageSrcTab" GotFocus="xPageSrcTab_GotFocus">
+                <TabItem x:Name="xPageSrcTab">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <usercontrols:ImageMakerControl ImageType="DataSource" SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -89,16 +89,16 @@
                     </TabItem.Header>
 
                     <Grid>
-                        <StackPanel x:Name="xLoadingHTMLBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                        <StackPanel x:Name="xLoadingPageSrcBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                             <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
-                            <TextBlock Text="Loading HTML . . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock x:Name="xPageSrcLoadingText" Text="Loading Page Source . . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </StackPanel>
                         <usercontrols1:XMLViewer x:Name="xXMLPageSrcViewer" Visibility="Collapsed"/>
                         <usercontrols1:UCHtmlViewer x:Name="xHTMLPageSrcViewer" Visibility="Collapsed"/>
                     </Grid>
                 </TabItem>
 
-                <TabItem x:Name="xTreeViewTab" GotFocus="xTreeViewTab_GotFocus">
+                <TabItem x:Name="xTreeViewTab">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <usercontrols:ImageMakerControl ImageType="TreeView"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -115,7 +115,7 @@
                     </Grid>
                 </TabItem>
 
-                <TabItem x:Name="xGridViewTab" GotFocus="xGridViewTab_GotFocus">
+                <TabItem x:Name="xGridViewTab">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <usercontrols:ImageMakerControl ImageType="DataTable"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
