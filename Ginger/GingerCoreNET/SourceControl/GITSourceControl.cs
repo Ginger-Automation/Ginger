@@ -722,20 +722,45 @@ namespace GingerCore.SourceControl
                 string ConfigFileContent = string.Empty;
                 string ConfigFilePath = Path.Combine( UserFolder,".gitconfig");
 
-                if (SourceControlConfigureProxy)
+                if (SourceControlConfigureProxy||IgnoreCertificate)
                 {
                     if (File.Exists(ConfigFilePath))
                     {
                         ConfigFileContent = File.ReadAllText(ConfigFilePath);
                         if (!ConfigFileContent.Contains(SourceControlProxyAddress + ":" + SourceControlProxyPort))
                         {
-                            ConfigFileContent += Environment.NewLine + "[http]" + Environment.NewLine + "proxy =" + '\u0022' + SourceControlProxyAddress + ":" + SourceControlProxyPort + '\u0022';
-                            File.WriteAllText(ConfigFilePath, ConfigFileContent);
+                            ConfigFileContent += Environment.NewLine + "[http]";
+                            
+                            if(SourceControlConfigureProxy)
+                            {
+                                ConfigFileContent += Environment.NewLine + "proxy =" + '\u0022' + SourceControlProxyAddress + ":" + SourceControlProxyPort + '\u0022';
+
+                            }
+                          
                         }
+                        if (IgnoreCertificate)
+                        {
+                            ConfigFileContent += Environment.NewLine + "sslVerify = false;";
+
+                        }
+
+
+                        File.WriteAllText(ConfigFilePath, ConfigFileContent);
                     }
                     else
                     {
-                        ConfigFileContent = "[http]" + Environment.NewLine + "proxy =" + '\u0022' + SourceControlProxyAddress + ":" + SourceControlProxyPort + '\u0022';
+                        ConfigFileContent = "[http]";
+
+                        if (SourceControlConfigureProxy)
+                        {
+                            ConfigFileContent += Environment.NewLine + "proxy =" + '\u0022' + SourceControlProxyAddress + ":" + SourceControlProxyPort + '\u0022';
+
+                        }
+                        if (IgnoreCertificate)
+                        {
+                            ConfigFileContent += Environment.NewLine + "sslVerify = false;";
+
+                        }
                         File.WriteAllText(ConfigFilePath, ConfigFileContent);
                     }
                 }

@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Ginger="clr-namespace:Ginger" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" xmlns:uclistview="clr-namespace:Ginger.UserControlsLib.UCListView"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d" >
 
     <Grid Grid.Row="3" x:Name="xSelectedElementSectionGrid" Margin="0,2,0,-2">
         <Grid.Resources>
@@ -79,9 +78,9 @@
                         <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed"/>
+                    <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed"/>
             </TabItem>
-            <TabItem x:Name="xAddActionTab" GotFocus="xAddActionTab_GotFocus">
+            <TabItem x:Name="xAddActionTab">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="Action"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -94,16 +93,28 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>-->
 
-                <DockPanel LastChildFill="True" Background="{StaticResource $BackgroundColor_LightGray}">
-                    <StackPanel x:Name="xPOMCheckStackPanel" Orientation="Horizontal" DockPanel.Dock="Top">
-                        <CheckBox x:Name="xIntegratePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10"
+                <ScrollViewer x:Name="xActionsTabScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <DockPanel LastChildFill="True" Background="{StaticResource $BackgroundColor_LightGray}">
+                        <StackPanel x:Name="xPOMCheckStackPanel" Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0">
+                            <CheckBox x:Name="xIntegratePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10"
                           Style="{StaticResource $CeckBoxStyle}" Content="Integrate POM" IsChecked="False" Checked="xIntegratePOMChkBox_Checked" Unchecked="xIntegratePOMChkBox_Unchecked" >
-                        </CheckBox>
-                        <Frame x:Name="xPOMSelectionFrame" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <!--<Border BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" Width="Auto" DockPanel.Dock="Top" />-->
-                    </StackPanel>
-                    <Frame x:Name="xActUIPageFrame" Margin="5" VerticalAlignment="Stretch" Width="Auto" DockPanel.Dock="Bottom" />
-                </DockPanel>
+                            </CheckBox>
+                            <Frame x:Name="xPOMSelectionFrame" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+                            <DockPanel x:Name="xAddRunOperationPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center" >
+                                <UserControls:ucButton x:Name="xRunActBtn" ButtonImageType="Run" ButtonText="Run" ButtonImageHeight="16" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" 
+                             ButtonImageForground="{StaticResource $SelectionColor_Pink}" DockPanel.Dock="Left" ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="0" Click="xRunActBtn_Click" />
+
+                                <uclistview:UcItemExecutionStatus x:Name="xExecutionStatusIcon" StatusViewMode="Image" 
+                                           DockPanel.Dock="Right" StatusSize="16" VerticalAlignment="Center" Margin="10,0,10,0"/>
+
+                                <UserControls:ucButton x:Name="xAddActBtn" ButtonImageType="Add" ButtonText="Add" ButtonImageHeight="16" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" 
+                             ButtonImageForground="{StaticResource $SelectionColor_Pink}" DockPanel.Dock="Right" ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="0" Click="xAddActBtn_Click" />
+                            </DockPanel>
+                        </StackPanel>
+                        <Frame x:Name="xActUIPageFrame" Margin="5" VerticalAlignment="Stretch" Width="Auto" DockPanel.Dock="Bottom" />
+                    </DockPanel>
+                </ScrollViewer>
                 <!--</Grid>-->
             </TabItem>
         </TabControl>

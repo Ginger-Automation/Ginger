@@ -89,7 +89,7 @@
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
                                 <Setter Property="FontWeight" Value="Bold"/>
-                                <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
+                                <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
                                 <Setter Property="FontWeight" Value="Normal"/>

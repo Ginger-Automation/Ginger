@@ -58,20 +58,32 @@ namespace GingerCore.Platforms.PlatformsInfo
         }
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
-            List<ActUIElement.eElementAction> pbTableControlActionlist = base.GetPlatformUIElementActionsList(ElementType);
+            List<ActUIElement.eElementAction> windowsPlatformElementActionslist = base.GetPlatformUIElementActionsList(ElementType);
             
             switch (ElementType)
             {
                 case eElementType.Unknown:
                     break;
                 case eElementType.Button:
-                    pbTableControlActionlist.Add(ActUIElement.eElementAction.ClickAndValidate);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickAndValidate);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     break;
                 case eElementType.Window:
-                    pbTableControlActionlist.Add(ActUIElement.eElementAction.Switch);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetWindowTitle);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Maximize);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Minimize);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.IsExist);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.CloseWindow);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Switch);
+                    break;
+                case eElementType.MenuItem:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Collapse);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Expand);
                     break;
             }
-            return pbTableControlActionlist;
+            return windowsPlatformElementActionslist;
         }
 
         public override string GetPlatformGenericElementEditControls()
@@ -108,24 +120,9 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override List<ActUIElement.eTableAction> GetTableControlActions(ActUIElement.eElementAction tableAction)
         {
-            List<ActUIElement.eTableAction> pbTableControlActionlist = base.GetTableControlActions(tableAction);
-            switch (tableAction)
-            {
-                case ActUIElement.eElementAction.TableCellAction:
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.AsyncClick);
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.WinClick);
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.Type);
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.DoubleClick);
-                    break;
-                case ActUIElement.eElementAction.TableRowAction:
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.SetFocus);
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.IsCellEnabled);
-                    break;
-                case ActUIElement.eElementAction.TableAction:
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.SetFocus);
-                    break;
-            }
-            return pbTableControlActionlist;
+            List<ActUIElement.eTableAction> windowsTableControlActionlist = base.GetTableControlActions(tableAction);
+            
+            return windowsTableControlActionlist;
         }
 
         public override List<ActUIElement.eElementAction> GetPlatformUIValidationTypesList()
@@ -164,8 +161,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementsTypeList.Add(eElementType.Image);
                 mElementsTypeList.Add(eElementType.Label);
                 mElementsTypeList.Add(eElementType.List);
-                mElementsTypeList.Add(eElementType.Table);
                 mElementsTypeList.Add(eElementType.Window);
+                mElementsTypeList.Add(eElementType.MenuItem);
             }
             return mElementsTypeList;
         }

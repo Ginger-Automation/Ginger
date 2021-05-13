@@ -130,15 +130,19 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             {
                 list.Add(GETVariableTCD(v));
             }
-
-            foreach (VariableBase v in mContext.BusinessFlow.Variables)
+            if (mContext.BusinessFlow != null)
             {
-                list.Add(GETVariableTCD(v));
+                foreach (VariableBase v in mContext.BusinessFlow.Variables)
+                {
+                    list.Add(GETVariableTCD(v));
+                }
             }
-
-            foreach (VariableBase v in mContext.BusinessFlow.CurrentActivity.Variables)
+            if (mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity != null)
             {
-                list.Add(GETVariableTCD(v));
+                foreach (VariableBase v in mContext.BusinessFlow.CurrentActivity.Variables)
+                {
+                    list.Add(GETVariableTCD(v));
+                }
             }
         }
 

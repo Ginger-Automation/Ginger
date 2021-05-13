@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
+using Ginger;
 using GingerCore;
 using GingerCoreNET.RunLib;
 using System;
@@ -72,7 +73,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
                     async (DynamicOptions opts) => await HandleFileOptions("dynamic", opts.FileName, opts.VerboseLevel),
                     async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
-                    async (SCMOptions opts) => await HandleSCMOptions(opts),
                     async (VersionOptions opts) => await HandleVersionOptions(opts),                        
                     async (ExampleOptions opts) => await HandleExampleOptions(opts),
                     async (DoOptions opts) => await HandleDoOptions(opts),
@@ -360,6 +360,33 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.RunAnalyzer = !runOptions.DoNotAnalyze;
             mCLIHelper.ShowAutoRunWindow = runOptions.ShowUI;
             mCLIHelper.TestArtifactsFolder = runOptions.TestArtifactsPath;
+
+            mCLIHelper.SourceControlURL = runOptions.URL;
+            mCLIHelper.SourcecontrolUser = runOptions.User;
+            mCLIHelper.sourceControlType = runOptions.SCMType;
+            mCLIHelper.sourceControlPass = runOptions.Pass;
+            mCLIHelper.sourceControlPassEncrypted = runOptions.PasswordEncrypted;
+
+            if (WorkSpace.Instance.UserProfile == null)
+            {
+                WorkSpace.Instance.UserProfile = new UserProfile();
+            }
+            WorkSpace.Instance.UserProfile.SourceControlURL = runOptions.URL;
+            WorkSpace.Instance.UserProfile.SourceControlUser = runOptions.User;
+            WorkSpace.Instance.UserProfile.SourceControlType = runOptions.SCMType;
+            WorkSpace.Instance.UserProfile.SourceControlIgnoreCertificate = runOptions.ignoreCertificate;
+
+            if (runOptions.PasswordEncrypted)
+            {
+                WorkSpace.Instance.UserProfile.EncryptedSourceControlPass = runOptions.Pass;
+
+            }
+            else
+            {
+                WorkSpace.Instance.UserProfile.SourceControlPass = runOptions.Pass;
+            }
+
+
 
             WorkSpace.Instance.RunningInExecutionMode = true;
             if (!CLILoadAndPrepare())

@@ -28,6 +28,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using static GingerCoreNET.SourceControl.SourceControlBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -44,6 +45,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourceControlURL;
         public string SourcecontrolUser;
         public string sourceControlPass;
+        public eSourceControlType sourceControlType;
+        public bool sourceControlPassEncrypted;
         public eAppReporterLoggingLevel AppLoggingLevel;
 
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
