@@ -84,7 +84,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void SetElementPropertiesGridView(GridViewDef gridViewDef,bool isDeletedElement=true)
         {
-            //GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             gridViewDef.GridColsView = new ObservableList<GridColView>();
 
             gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 25 ,ReadOnly=true});
