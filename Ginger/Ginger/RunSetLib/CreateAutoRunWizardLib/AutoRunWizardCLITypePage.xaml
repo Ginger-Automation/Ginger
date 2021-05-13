@@ -23,7 +23,7 @@
                 <ColumnDefinition Width="300*"/>
             </Grid.ColumnDefinitions>
             <StackPanel>
-                <RadioButton x:Name="xConfigRadioButton" GroupName="cliType" Margin="5" Checked="xConfigRadioButton_Checked" Style="{StaticResource $InputRadioButtonStyle}">Config</RadioButton>
+                <!--<RadioButton x:Name="xConfigRadioButton" GroupName="cliType" Margin="5" Checked="xConfigRadioButton_Checked" Style="{StaticResource $InputRadioButtonStyle}">Config</RadioButton>-->
                 <StackPanel Orientation="Horizontal">
                     <RadioButton x:Name="xDynamicRadioButton" GroupName="cliType" Checked="XDynamicRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Dynamic</RadioButton>
                     <ComboBox x:Name="xDynamicFileTypeCombo" Style="{StaticResource $FlatInputComboBoxStyle}" Width="30" Margin="5,0,0,0" VerticalAlignment="Center" DropDownClosed="xDynamicFileTypeCombo_DropDownClosed"  Visibility="{Binding IsChecked, ElementName=xDynamicRadioButton, Converter={StaticResource b2v}}"/>
