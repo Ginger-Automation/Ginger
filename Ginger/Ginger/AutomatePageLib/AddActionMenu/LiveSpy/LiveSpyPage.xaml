@@ -16,7 +16,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="80"/>
-            <RowDefinition x:Name="ControlDetailsRow" Height="650" MinHeight="35" MaxHeight="35" />
+            <RowDefinition x:Name="ControlDetailsRow" Height="0" />
         </Grid.RowDefinitions>
 
         <userControl:UCWindowsGrid x:Name="xWindowSelectionUC" Margin="5, 10, 5, 0" Grid.Row="0" AddSwitchActionRequired="True"  />
@@ -34,7 +34,9 @@
             </ScrollViewer>
         </DockPanel>
 
-        <Expander x:Name="xSelectedControlDetailsExpander" Grid.Row="2" Margin="5,0,5,0"  ExpandDirection="Down" Visibility="Collapsed" IsExpanded="False" Style="{StaticResource @ExpanderLightStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="SelectedControlDetailsExpander_Expanded" Collapsed="SelectedControlDetailsExpander_Collapsed">
+        <Ginger:UCElementDetails x:Name="xUCElementDetails" ShowActionTab="True" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+        <!--<Expander x:Name="xSelectedControlDetailsExpander" Grid.Row="2" Margin="5,0,5,0"  ExpandDirection="Down" Visibility="Collapsed" IsExpanded="False" Style="{StaticResource @ExpanderLightStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="SelectedControlDetailsExpander_Expanded" Collapsed="SelectedControlDetailsExpander_Collapsed">
             <Expander.Header>
                 <Label x:Name="xSelectedControlDetailsExpanderLable" Style="{StaticResource $HeaderStyle}" Foreground="{StaticResource $BackgroundColor_DarkBlue}" Content="Selected Element Details &amp; Actions"/>
             </Expander.Header>
@@ -51,7 +53,7 @@
                     </TabItem>
                 </TabControl>
             </Expander.Content>
-        </Expander>
+        </Expander>-->
 
     </Grid>
 </Page>

@@ -1868,6 +1868,11 @@ namespace Ginger.Run.RunSetActions
                     //Create the Zip file if file not exists otherwise delete existing one and then create new.
                     try
                     {
+                        if(!Directory.Exists(tempFolder))
+                        {
+                            Directory.CreateDirectory(tempFolder);
+
+                        }
                         if (File.Exists(Path.Combine(tempFolder, ZipFileName)))
                         {
                             File.Delete(Path.Combine(tempFolder, ZipFileName));
