@@ -248,6 +248,8 @@ namespace Ginger.WindowExplorer
                 xGridViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.GridView) ? Visibility.Visible : Visibility.Collapsed;
                 xScreenShotViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.Screenshot) ? Visibility.Visible : Visibility.Collapsed;
 
+                xWindowSelection.IsEnabled = mWindowExplorerDriver.IsWinowSelectionRequired();
+
                 xViewsTabs.SelectedItem = DefaultSelectedTab();
 
                 InitUCElementDetailsLocatorsGrid();
@@ -283,7 +285,7 @@ namespace Ginger.WindowExplorer
                 mWindowExplorerDriver = windowExplorerDriver;
                 UpdateWindowsList();
 
-                if(!ExplorerLoaded)
+                if (!ExplorerLoaded)
                 {
                     SetPlatformBasedUpdates();
                 }
@@ -343,7 +345,7 @@ namespace Ginger.WindowExplorer
                         }
                     }
 
-                    if (xWindowSelection.WindowsComboBox.Items.Count == 1)
+                    if (xWindowSelection.WindowsComboBox.Items.Count == 1 && mContext.Agent.Driver.IsRunning())
                     {
                         xWindowSelection.WindowsComboBox.SelectedItem = xWindowSelection.WindowsComboBox.Items[0];
                         mWindowExplorerDriver.SwitchWindow((xWindowSelection.WindowsComboBox.SelectedItem as AppWindow).Title);
@@ -436,7 +438,7 @@ namespace Ginger.WindowExplorer
                     xHTMLPageSrcViewer.htmlDocument = htmlDoc;
                 }
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 Reporter.ToLog(eLogLevel.ERROR, exc.Message, exc);
             }
@@ -451,7 +453,7 @@ namespace Ginger.WindowExplorer
             GingerCore.General.DoEvents();
 
             AppWindow AW = (AppWindow)xWindowSelection.WindowsComboBox.SelectedItem;
-            if (AW == null) 
+            if (AW == null)
                 return null;
             mWindowExplorerDriver.SwitchWindow(AW.Title);
 
@@ -880,7 +882,7 @@ namespace Ginger.WindowExplorer
                     TVI = WindowsElementConverter.GetWindowsElementTreeItem(EI);
                 }
             }
-            else if (EI is AppiumElementInfo)
+            else if (EI is AppiumElementInfo || EI.WindowExplorer is GenericAppiumDriver)
             {
                 TVI = AppiumElementInfoConverter.GetTreeViewItemFor(EI);
             }
@@ -990,7 +992,7 @@ namespace Ginger.WindowExplorer
             {
                 CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
                 FilterElementsPage FEW = new FilterElementsPage(FilteringCreteriaList, CheckedFilteringCreteriaList, /*ControlsSearchButton_Click,*/ this);
-                    FEW.ShowAsWindow(eWindowShowStyle.Dialog);
+                FEW.ShowAsWindow(eWindowShowStyle.Dialog);
 
                 foreach (UIElementFilter filter in FilteringCreteriaList)
                     if (filter.Selected)
