@@ -66,7 +66,6 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        //  public ucGrid ElementListGrid { get; set; }
         public LiveSpyHandler()
         {
             InitializeComponent();
@@ -95,7 +94,7 @@ namespace Ginger.UserControlsLib
                 if (mDispatcherTimer == null)
                 {
                     mDispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-                    mDispatcherTimer.Tick += new EventHandler(GetElementInfoOnKeyPress);
+                    mDispatcherTimer.Tick += GetElementInfoOnKeyPress;
                     mDispatcherTimer.Interval = new TimeSpan(0, 0, 1);
                 }
 
@@ -103,7 +102,6 @@ namespace Ginger.UserControlsLib
             }
             else
             {
-               // xCreateNewElement.Visibility = Visibility.Collapsed;
                 xStatusLable.Content = "Spying is Off";
                 mDispatcherTimer.IsEnabled = false;
             }
