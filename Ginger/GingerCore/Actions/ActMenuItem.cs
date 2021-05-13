@@ -51,7 +51,6 @@ namespace GingerCore.Actions
                 {                    
                     mPlatforms.Add(ePlatformType.Windows);
                     mPlatforms.Add(ePlatformType.ASCF);
-                    mPlatforms.Add(ePlatformType.Mobile);
                     mPlatforms.Add(ePlatformType.PowerBuilder);
                 }
                 return mPlatforms;

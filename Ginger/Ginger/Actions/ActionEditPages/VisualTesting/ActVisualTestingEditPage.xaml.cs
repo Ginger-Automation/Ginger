@@ -97,34 +97,49 @@ namespace Ginger.Actions.VisualTesting
             switch (EventArgs.EventType)
             {
                 case VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility:
-                    xLightGrayVerticalBorder.Visibility = EventArgs.visibility;
-                    xSetApplicationScreenSize.Visibility = EventArgs.visibility;
+                    xLightGrayVerticalBorder.Visibility = ConvertVisibility(EventArgs.visibility);
+                    xSetApplicationScreenSize.Visibility = ConvertVisibility(EventArgs.visibility);
                     break;
 
                 case VisualTestingEventArgs.eEventType.SetBaselineSectionVisibility:
-                    xCompareOrCreateBaselinesRadioButtons.Visibility = EventArgs.visibility;
-                    xBaselineAndTargetImages.Visibility = EventArgs.visibility;
-                    if (EventArgs.visibility == Visibility.Visible)
+                    xCompareOrCreateBaselinesRadioButtons.Visibility = ConvertVisibility(EventArgs.visibility);
+                    xBaselineAndTargetImages.Visibility = ConvertVisibility(EventArgs.visibility);
+                    if (ConvertVisibility(EventArgs.visibility) == Visibility.Visible)
                         xBaselineAndTargetImagesRow.Height = new GridLength(400, GridUnitType.Pixel);
                     else
                         xBaselineAndTargetImagesRow.Height = new GridLength(400, GridUnitType.Star);
                     break;
 
                 case VisualTestingEventArgs.eEventType.SetTargetSectionVisibility:
-                    xDiffrenceImageFrame.Visibility = EventArgs.visibility;
-                    if (EventArgs.visibility == Visibility.Visible)
+                    xDiffrenceImageFrame.Visibility = ConvertVisibility(EventArgs.visibility);
+                    if (ConvertVisibility(EventArgs.visibility) == Visibility.Visible)
                         xDiffrenceImageFrameRow.Height = new GridLength(500, GridUnitType.Pixel);
                     else
                         xDiffrenceImageFrameRow.Height = new GridLength(500, GridUnitType.Star);
                     break;
 
                 case VisualTestingEventArgs.eEventType.SetResultsSectionVisibility:
-                    xResultImageHeader.Visibility = EventArgs.visibility;
-                    if (EventArgs.visibility == Visibility.Visible)
+                    xResultImageHeader.Visibility = ConvertVisibility(EventArgs.visibility);
+                    if (ConvertVisibility(EventArgs.visibility) == Visibility.Visible)
                         xResultImageHeaderRow.Height = new GridLength(30, GridUnitType.Pixel);
                     else
                         xResultImageHeaderRow.Height = new GridLength(30, GridUnitType.Star);
                     break;
+            }
+        }
+
+        private Visibility ConvertVisibility(eVisualTestingVisibility eVisualTestingVisibility)
+        {
+            switch(eVisualTestingVisibility)
+            {
+                case eVisualTestingVisibility.Visible:
+                    return Visibility.Visible;
+                case eVisualTestingVisibility.Hidden:
+                    return Visibility.Hidden;
+                case eVisualTestingVisibility.Collapsed:
+                    return Visibility.Collapsed;
+                default:
+                    return Visibility.Visible;
             }
         }
 

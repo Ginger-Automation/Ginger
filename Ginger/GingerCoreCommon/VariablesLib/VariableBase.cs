@@ -323,7 +323,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "GetListOfUsedVariables - " + ex.Message);
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Exception occured during Action Analyze of Used Variabels, object='{0}', field='{1}'", item, mi.Name), ex);
                     value = null;
                 } 
                 
@@ -398,7 +398,7 @@ namespace GingerCore.Variables
                         }
                         catch (Exception ex)
                         {
-                           Reporter.ToLog(eLogLevel.WARN, "Failed to get list of used " + GingerDicser.GetTermResValue(eTermResKey.Variables), ex); 
+                            Reporter.ToLog(eLogLevel.WARN, string.Format("Exception occured during Action Analyze of Used Variabels, object='{0}', field='{1}'", item, mi.Name), ex);
                         } 
                     }
                 }
@@ -540,6 +540,22 @@ namespace GingerCore.Variables
                 OnPropertyChanged(nameof(PossibleOutputVariables));
             }
         }
+
+        /// <summary>
+        /// This field is used to design the variable path 
+        /// e.g. when showing possible output values on the Runset business flow configuration page
+        /// for output variable possible values we will show <<VariableName>>[<<BusinessFlowName(<<BusinessflowRunInstanceNumber>>)>>]
+        /// </summary>
+        public string Path {get; set; }
+
+        /// <summary>
+        /// This field is used to store the variable instance info in the runset.
+        /// And this is used for output variable mapping on the runset configuration.
+        /// e.g. if the variables parent business flow is added in Runset 
+        /// then this field have the value <<BusinessflowinstanceGUID>>_<<VaruabileGUID>>
+        /// </summary>
+        public string VariableInstanceInfo { get; set; }
+
 
         string mMappedOutputVariable = string.Empty;
         public string MappedOutputVariable

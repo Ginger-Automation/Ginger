@@ -109,9 +109,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             get
             {
-                if (xLocatorsGrid.Grid.SelectedItem != null)
+                if (xElementDetails.xLocatorsGrid.Grid.SelectedItem != null)
                 {
-                    return (ElementLocator)xLocatorsGrid.Grid.SelectedItem;
+                    return (ElementLocator)xElementDetails.xLocatorsGrid.Grid.SelectedItem;
                 }
                 else
                 {
@@ -135,8 +135,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
             SetElementsGridView();
+
             SetLocatorsGridView();
             SetControlPropertiesGridView();
+
+            //xElementDetails.InitGridView(this)
 
             xMainElementsGrid.DataSourceList = mElements;
 
@@ -175,7 +178,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             Dispatcher.Invoke(() =>
             {
-                xPropertiesTextBlock.Text = string.Format("Properties ({0})", mSelectedElement.Properties.Count);
+                xElementDetails.xPropertiesTextBlock.Text = string.Format("Properties ({0})", mSelectedElement.Properties.Count);
             });
         }
 
@@ -188,7 +191,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             Dispatcher.Invoke(() =>
             {
-                xLocatorsTextBlock.Text = string.Format("Locators ({0})", mSelectedElement.Locators.Count);
+                xElementDetails.xLocatorsTextBlock.Text = string.Format("Locators ({0})", mSelectedElement.Locators.Count);
             });
         }
 
@@ -485,16 +488,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
-            xLocatorsGrid.SetAllColumnsDefaultView(defView);
-            xLocatorsGrid.InitViewItems();
+            xElementDetails.xLocatorsGrid.SetAllColumnsDefaultView(defView);
+            xElementDetails.xLocatorsGrid.InitViewItems();
 
-            xLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
-            xLocatorsGrid.AddToolbarTool(eImageType.Run, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
-            xLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocatorButtonClicked));
-            xLocatorsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteLocatorClicked));
+            xElementDetails.xLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
+            xElementDetails.xLocatorsGrid.AddToolbarTool(eImageType.Run, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsLocators));
+            xElementDetails.xLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddLocatorButtonClicked));
+            xElementDetails.xLocatorsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteLocatorClicked));
 
-            xLocatorsGrid.grdMain.PreparingCellForEdit += LocatorsGrid_PreparingCellForEdit;
-            xLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
+            xElementDetails.xLocatorsGrid.grdMain.PreparingCellForEdit += LocatorsGrid_PreparingCellForEdit;
+            xElementDetails.xLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
         }
 
         private List<ComboEnumItem> GetPlatformLocatByList()
@@ -526,7 +529,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void DeleteLocatorClicked(object sender, RoutedEventArgs e)
         {
             bool msgShowen = false;
-            List<ElementLocator> locatorsToDelete = xLocatorsGrid.Grid.SelectedItems.Cast<ElementLocator>().ToList();
+            List<ElementLocator> locatorsToDelete = xElementDetails.xLocatorsGrid.Grid.SelectedItems.Cast<ElementLocator>().ToList();
             foreach (ElementLocator locator in locatorsToDelete)
             {
                 if (locator.IsAutoLearned)
@@ -546,13 +549,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AddLocatorButtonClicked(object sender, RoutedEventArgs e)
         {
-            xLocatorsGrid.Grid.CommitEdit();
+            xElementDetails.xLocatorsGrid.Grid.CommitEdit();
 
             ElementLocator locator = new ElementLocator() { Active = true };
             mSelectedElement.Locators.Add(locator);
 
-            xLocatorsGrid.Grid.SelectedItem = locator;
-            xLocatorsGrid.ScrollToViewCurrentItem();
+            xElementDetails.xLocatorsGrid.Grid.SelectedItem = locator;
+            xElementDetails.xLocatorsGrid.ScrollToViewCurrentItem();
         }
 
         bool disabeledLocatorsMsgShown;
@@ -578,12 +581,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
             view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 75 });
             view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xPropertyValueVETemplate"] });
 
-            xPropertiesGrid.SetAllColumnsDefaultView(view);
-            xPropertiesGrid.InitViewItems();
-            xPropertiesGrid.SetTitleLightStyle = true;
-            xPropertiesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPropertyHandler));
-            xPropertiesGrid.grdMain.PreparingCellForEdit += PropertiesGrid_PreparingCellForEdit;
-            xPropertiesGrid.grdMain.CellEditEnding += PropertiesGrid_CellEditEnding;
+            xElementDetails.xPropertiesGrid.SetAllColumnsDefaultView(view);
+            xElementDetails.xPropertiesGrid.InitViewItems();
+            xElementDetails.xPropertiesGrid.SetTitleLightStyle = true;
+            xElementDetails.xPropertiesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPropertyHandler));
+            xElementDetails.xPropertiesGrid.grdMain.PreparingCellForEdit += PropertiesGrid_PreparingCellForEdit;
+            xElementDetails.xPropertiesGrid.grdMain.CellEditEnding += PropertiesGrid_CellEditEnding;
         }
 
         private void PropertiesGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
@@ -605,7 +608,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void AddPropertyHandler(object sender, RoutedEventArgs e)
         {
-            xPropertiesGrid.Grid.CommitEdit();
+            xElementDetails.xPropertiesGrid.Grid.CommitEdit();
 
             //for java Swing ParentIframe is not required
             if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Java) && !mSelectedElement.GetType().Equals(typeof(HTMLElementInfo)))
@@ -615,10 +618,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             ControlProperty elemProp = new ControlProperty() { Name = ElementProperty.ParentIFrame };
             mSelectedElement.Properties.Add(elemProp);
-            xPropertiesGrid.Grid.SelectedItem = elemProp;
-            xPropertiesGrid.ScrollToViewCurrentItem();
+            xElementDetails.xPropertiesGrid.Grid.SelectedItem = elemProp;
+            xElementDetails.xPropertiesGrid.ScrollToViewCurrentItem();
 
-            xPropertiesGrid.ShowAdd = Visibility.Collapsed;
+            xElementDetails.xPropertiesGrid.ShowAdd = Visibility.Collapsed;
         }
 
         private void HandelElementSelectionChange()
@@ -652,19 +655,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                 mSelectedElement.Locators.CollectionChanged -= Locators_CollectionChanged;
                 mSelectedElement.Locators.CollectionChanged += Locators_CollectionChanged;
-                xLocatorsGrid.DataSourceList = mSelectedElement.Locators;
+                xElementDetails.xLocatorsGrid.DataSourceList = mSelectedElement.Locators;
                 UpdateLocatorsHeader();
 
                 mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
                 mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
-                xPropertiesGrid.DataSourceList = mSelectedElement.Properties;
+                xElementDetails.xPropertiesGrid.DataSourceList = mSelectedElement.Properties;
                 if(!mSelectedElement.IsAutoLearned && mSelectedElement.Properties.Where(c => c.Name == "Parent IFrame").FirstOrDefault() == null)
                 {
-                    xPropertiesGrid.ShowAdd = Visibility.Visible;
+                    xElementDetails.xPropertiesGrid.ShowAdd = Visibility.Visible;
                 }
                 else
                 {
-                    xPropertiesGrid.ShowAdd = Visibility.Collapsed;
+                    xElementDetails.xPropertiesGrid.ShowAdd = Visibility.Collapsed;
                 }
                 UpdatePropertiesHeader();
 
@@ -782,8 +785,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             xMainElementsGrid.Grid.CommitEdit();
             xMainElementsGrid.Grid.CancelEdit();
-            xLocatorsGrid.Grid.CommitEdit();
-            xLocatorsGrid.Grid.CancelEdit();
+            xElementDetails.xLocatorsGrid.Grid.CommitEdit();
+            xElementDetails.xLocatorsGrid.Grid.CancelEdit();
         }
 
 
@@ -792,15 +795,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
             //set the selected tab text style
             try
             {
-                if (xElementDetailsTabs.SelectedItem != null)
+                if (xElementDetails.xElementDetailsTabs.SelectedItem != null)
                 {
-                    foreach (TabItem tab in xElementDetailsTabs.Items)
+                    foreach (TabItem tab in xElementDetails.xElementDetailsTabs.Items)
                     {
                         foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
 
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
-                                if (xElementDetailsTabs.SelectedItem == tab)
+                                if (xElementDetails.xElementDetailsTabs.SelectedItem == tab)
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
@@ -818,7 +821,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void XLocateValueVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ElementLocator selectedVarb = (ElementLocator)xLocatorsGrid.CurrentItem;
+            ElementLocator selectedVarb = (ElementLocator)xElementDetails.xLocatorsGrid.CurrentItem;
             if (selectedVarb.IsAutoLearned)
             {
                 if (!disabeledLocatorsMsgShown)
@@ -836,7 +839,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void xPropertyValueVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ControlProperty selectedVerb = (ControlProperty)xPropertiesGrid.CurrentItem;
+            ControlProperty selectedVerb = (ControlProperty)xElementDetails.xPropertiesGrid.CurrentItem;
             ElementInfo elementInfo = (ElementInfo)xMainElementsGrid.CurrentItem;
             if (elementInfo.IsAutoLearned)
             {

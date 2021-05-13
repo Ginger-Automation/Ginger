@@ -71,6 +71,46 @@ namespace GingerCoreNET.Application_Models
                     OnPropertyChanged(nameof(SelectedElementGroup));
                 }
             }
-        }        
+        }
+        /// <summary>
+        /// Map Deleted element with new added element
+        /// </summary>
+        /// 
+        private string mMappedElementInfo;
+        public string MappedElementInfo 
+        {
+            get 
+            {
+                return mMappedElementInfo;
+            } 
+            set 
+            {
+                mMappedElementInfo = value;
+                OnPropertyChanged(nameof(MappedElementInfo));
+            }
+        }
+
+
+        private eMappingStatus mMappingElementStatus;
+        public eMappingStatus MappingElementStatus
+        {
+            get
+            {
+                return mMappingElementStatus;
+            }
+            set
+            {
+                mMappingElementStatus = value;
+                OnPropertyChanged(nameof(MappingElementStatus));
+            }
+        }
+
+        public enum eMappingStatus
+        {
+            DeletedElement,
+            ReplaceExistingElement
+        }
+
+
     }
 }
