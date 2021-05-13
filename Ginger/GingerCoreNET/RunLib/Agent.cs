@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Run;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.RunLib;
@@ -1308,6 +1309,16 @@ namespace GingerCore
                     actionTimeoutParameter.Description=actionTimeoutParameter.Description.Replace("10", "30");
                 }
             }          
+        }
+
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {           
+            if (new GenericAppiumDriver(null).SerializationError(this, errorType,name,value))
+            {
+                return true;
+            }
+
+            return false;
         }
 
     }

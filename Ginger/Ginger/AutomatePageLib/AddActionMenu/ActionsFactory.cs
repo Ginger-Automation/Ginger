@@ -247,6 +247,7 @@ namespace Ginger.BusinessFlowPages
                 POMGuid = elementInfo.ParentGuid.ToString(),
                 ElementGuid = elementInfo.Guid.ToString(),
                 LearnedElementInfo = elementInfo,
+                Type = elementInfo.ElementTypeEnum
             };
 
             instance = mPlatform.GetPlatformAction(elementInfo, actionConfigurations);

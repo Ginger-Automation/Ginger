@@ -203,7 +203,6 @@ namespace Ginger.Actions
 
         private void SetExplorerMode()
         {
-            xExplorerOperationsRow.Height = new GridLength(60);
             xHelpTab.Visibility = Visibility.Collapsed;
             xHelpButton.Visibility = Visibility.Collapsed;
             xFlowControlTab.Visibility = Visibility.Collapsed;
@@ -1783,25 +1782,6 @@ namespace Ginger.Actions
         {
             updateDSOutGrid();
             SetDSGridVisibility();
-        }
-
-        private void xRunActBtn_Click(object sender, RoutedEventArgs e)
-        {
-            WindowExplorerCommon.IsTestActionRunning = true;
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act, bool>(null, mAction, true));
-
-            xActionTabs.SelectedItem = xExecutionReportTab;
-        }
-
-        private void xAddActBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (mAction == null)
-            {
-                Reporter.ToUser(eUserMsgKey.AskToSelectAction);
-                return;
-            }
-
-            ActionsFactory.AddActionsHandler(mAction, mContext);
         }
     }
 }

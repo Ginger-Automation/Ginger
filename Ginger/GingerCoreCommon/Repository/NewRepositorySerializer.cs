@@ -1142,7 +1142,6 @@ namespace Amdocs.Ginger.Repository
                         {
                             if (propertyInfo.CanWrite)
                             {
-
                                 SetObjAttrValue(obj, propertyInfo, Value);
                             }
                             else
@@ -1239,8 +1238,8 @@ namespace Amdocs.Ginger.Repository
                             RepositoryItemKey repositoryItemKey = new RepositoryItemKey();
                             repositoryItemKey.Key = sValue;
                             propertyInfo.SetValue(obj, repositoryItemKey);
-                            
-                        }                       
+
+                        }
                         else
                         {
                             //check if this is nullable enum  like: Activity Status? 
@@ -1310,16 +1309,24 @@ namespace Amdocs.Ginger.Repository
             }
             catch
             {
-                string err;
-                if (propertyInfo != null)
+                if (obj is RepositoryItemBase
+                     && ((RepositoryItemBase)obj).SerializationError(SerializationErrorType.SetValueException, propertyInfo.Name, sValue.ToString()))
                 {
-                    err = "Obj=" + obj + ", Property=" + propertyInfo.Name + ", Value=" + sValue.ToString();
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Property value converted successfully: object='{0}', property='{1}', value='{2}'", obj.GetType().Name, propertyInfo.Name, sValue.ToString()));
                 }
                 else
                 {
-                    err = "Property Not found: Obj=" + obj + " Value=" + sValue.ToString();
+                    string err;
+                    if (propertyInfo != null)
+                    {
+                        err = "Obj=" + obj + ", Property=" + propertyInfo.Name + ", Value=" + sValue.ToString();
+                    }
+                    else
+                    {
+                        err = "Property Not found: Obj=" + obj + " Value=" + sValue.ToString();
+                    }
+                    throw new Exception(err);
                 }
-                throw new Exception(err);
             }
         }
 

@@ -730,12 +730,7 @@ namespace Amdocs.Ginger.Repository
                 }
             });
             //targetObj.PostDeserialization();
-            if(setNewGUID)
-            {
-                targetObj = targetObj.ReplaceOldGuidUsages(guidMappingList);
-            }
-            
-            targetObj.UpdateCopiedItem();            
+                  
 
             return targetObj;
         }
@@ -773,7 +768,7 @@ namespace Amdocs.Ginger.Repository
                 ItemCopyIsInProgress = true;
 
                 List<GuidMapper> guidMappingList = new List<GuidMapper>();
-                var duplicatedItem = CopyRIObject(this, guidMappingList, setNewGUID);
+                var duplicatedItem = CopyRIObject(this, guidMappingList, setNewGUID);         
                 //change the GUID of duplicated item
                 if (duplicatedItem != null)
                 {
@@ -782,9 +777,11 @@ namespace Amdocs.Ginger.Repository
                         duplicatedItem.ParentGuid = Guid.Empty;   // TODO: why we don't keep parent GUID?
                         duplicatedItem.ExternalID = string.Empty;
                         duplicatedItem.Guid = Guid.NewGuid();
+                        duplicatedItem = duplicatedItem.ReplaceOldGuidUsages(guidMappingList);
                     }
+                    duplicatedItem.UpdateCopiedItem();
                     duplicatedItem.DirtyStatus = eDirtyStatus.Modified;
-                }
+                }                
                 return duplicatedItem;
             }
             finally

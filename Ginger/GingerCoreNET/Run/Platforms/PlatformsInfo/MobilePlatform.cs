@@ -113,23 +113,21 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mPlatformElementTypeOperations = base.GetPlatformElementTypesData();//taken from WebPlatform
 
                 //Changes from Web
-                //ElementTypeData button = mPlatformElementTypeOperations.Where(x => x.ElementType == eElementType.Button).FirstOrDefault();
-                //if (button != null)
-                //{
-                //    button.ElementOperationsList.Remove(ActUIElement.eElementAction.MouseClick);
-                //    button.ElementOperationsList.Remove(ActUIElement.eElementAction.MousePressRelease);
-                //}
                 foreach (ElementTypeData etd in mPlatformElementTypeOperations)
                 {
                     etd.ElementOperationsList.Remove(ActUIElement.eElementAction.MouseClick);
                     etd.ElementOperationsList.Remove(ActUIElement.eElementAction.MousePressRelease);
+                    etd.ElementOperationsList.Remove(ActUIElement.eElementAction.MouseRightClick);
                 }
-
                 if (mPlatformElementTypeOperations.Where(x => x.ElementType == eElementType.Window).FirstOrDefault() != null)
                 {
                     mPlatformElementTypeOperations.Remove(mPlatformElementTypeOperations.Where(x => x.ElementType == eElementType.Window).FirstOrDefault());
                 }
-
+                ElementTypeData List = mPlatformElementTypeOperations.Where(x => x.ElementType == eElementType.List).FirstOrDefault();
+                if (List != null)
+                {
+                    List.ElementOperationsList.Add(ActUIElement.eElementAction.Click);
+                }
             }
             return mPlatformElementTypeOperations;
         }
