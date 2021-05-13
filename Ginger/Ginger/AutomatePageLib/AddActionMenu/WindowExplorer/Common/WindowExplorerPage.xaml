@@ -128,7 +128,7 @@
                             <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
                             <TextBlock Text="Loading Page Controls Grid. . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </StackPanel>
-                        <Ginger:ucGrid x:Name="xWindowControlsGridView" Grid.Row="2" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        <Ginger:ucGrid x:Name="xWindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" ScrollViewer.HorizontalScrollBarVisibility="Visible" />
                     </Grid>
                 </TabItem>
             </TabControl>

@@ -1238,7 +1238,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             else if (elementTagName.ToLower() == "android.widget.checkbox" || elementTypeAtt.ToLower() == "android.widget.checkbox")
             {
-                elementType = eElementType.ComboBox;
+                elementType = eElementType.CheckBox;
             }
             else if (elementTagName.ToLower() == "android.widget.view" || elementTypeAtt.ToLower() == "android.widget.view")
             {
@@ -1387,7 +1387,8 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
-                    LocateBy = eLocateBy.ByXPath,
+                    //LocateBy = eLocateBy.ByXPath,
+                    LocateBy = eLocateBy.ByResourceID,
                     LocateValue = residXpath,
                     Help = "Use Resource id only when you don't want XPath with relative info, but the resource-id is unique"
                 });
@@ -1399,7 +1400,8 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
-                    LocateBy = eLocateBy.ByXPath,
+                    //LocateBy = eLocateBy.ByXPath,
+                    LocateBy = eLocateBy.ByContentDescription,
                     LocateValue = string.Format("//*[@content-desc='{0}']", contentdesc),
                     Help = "content-desc is Recommended when resource-id not exist"
                 });
@@ -1412,7 +1414,8 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
-                    LocateBy = eLocateBy.ByXPath,
+                    //LocateBy = eLocateBy.ByXPath,
+                    LocateBy = eLocateBy.ByText,
                     LocateValue = string.Format("//{0}[@text='{1}']", eClass, eText),    // like: //android.widget.RadioButton[@text='Ginger']" 
                     Help = "use class and text when you have list of items and no resource-id to use"
                 });
@@ -1787,6 +1790,11 @@ namespace Amdocs.Ginger.CoreNET
         }
 
         public bool IsLiveSpySupported()
+        {
+            return false;
+        }
+
+        public bool IsWinowSelectionRequired()
         {
             return false;
         }
