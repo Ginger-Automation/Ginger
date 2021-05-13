@@ -56,6 +56,8 @@ namespace Amdocs.Ginger.Common.UIElement
 
         bool IsLiveSpySupported();
 
+        bool IsWinowSelectionRequired();
+
         List<eTabView> SupportedViews();
 
         eTabView DefaultView();

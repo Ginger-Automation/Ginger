@@ -12,6 +12,7 @@ using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.Reports;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
+using Ginger.UserControlsLib.UCListView;
 using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
@@ -87,7 +88,11 @@ namespace Ginger
 
                     SelectedElementChanged = true;
                     RefreshPropertiesAndLocators();
-                    RefreshElementAction();
+
+                    if (ShowActionTab)
+                    {
+                        RefreshElementAction();
+                    }
                 }
             }
         }
@@ -158,9 +163,7 @@ namespace Ginger
         {
             InitializeComponent();
 
-            //UIElementAction = new ActUIElement();
-
-            // new ActUIElementEditPage(UIElementAction);
+            InitControlPropertiesGridView();
         }
 
         private void ElementDetailsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -183,6 +186,11 @@ namespace Ginger
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
                     }
+
+                    if(xElementDetailsTabs.SelectedItem == xAddActionTab)
+                    {
+                        AddActionTab_Selected(sender, e);
+                    }
                 }
             }
             catch (Exception ex)
@@ -194,6 +202,19 @@ namespace Ginger
         public enum eViewPage
         {
             POM, Explorer
+        }
+
+        private void InitControlPropertiesGridView()
+        {
+            // Grid View
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+
+            view.GridColsView.Add(new GridColView() { Field = "Name", WidthWeight = 8, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = "Value", WidthWeight = 20, ReadOnly = true });
+
+            xPropertiesGrid.SetAllColumnsDefaultView(view);
+            xPropertiesGrid.InitViewItems();
         }
 
         public void InitLegacyLocatorsGridView()
@@ -343,6 +364,11 @@ namespace Ginger
         {
             List<ComboEnumItem> locateByComboItemList = new List<ComboEnumItem>();
 
+            if (Platform == null)
+            {
+                Platform = PlatformInfoBase.GetPlatformImpl(Context.Platform);  // ((Agent)ApplicationAgent.Agent).Platform);
+            }
+
             List<eLocateBy> platformLocateByList = Platform.GetPlatformUIElementLocatorsList();
 
             foreach (var locateBy in platformLocateByList)
@@ -383,8 +409,13 @@ namespace Ginger
             }
         }
 
-        private void xAddActionTab_GotFocus(object sender, RoutedEventArgs e)
+        private void AddActionTab_Selected(object sender, RoutedEventArgs e)
         {
+            if(SelectedElement == null)
+            {
+                return;
+            }
+
             if (WindowExplorerDriver.IsPOMSupported())
             {
                 xIntegratePOMChkBox.Visibility = Visibility.Visible;
@@ -538,7 +569,7 @@ namespace Ginger
 
         void UpdateElementActionTab()
         {
-            if (!SelectedElementChanged)
+            if (!SelectedElementChanged || SelectedElement == null)
             {
                 return;
             }
@@ -597,12 +628,27 @@ namespace Ginger
             {
                 xAddActionTab.Visibility = Visibility.Collapsed;
                 xActUIPageFrame.Visibility = Visibility.Collapsed;
+                xAddRunOperationPanel.Visibility = Visibility.Collapsed;
             }
             else
             {
+                if(CAP.IsLegacyPlatform)
+                {
+                    xExecutionStatusIcon.Visibility = Visibility.Visible;
+                    BindingHandler.ObjFieldBinding(xExecutionStatusIcon, UcItemExecutionStatus.StatusProperty, CAP.DefaultAction, nameof(Act.Status));
+                }
+                else
+                {
+                    xExecutionStatusIcon.Visibility = Visibility.Collapsed;
+                }
+
+                //xRunActBtn.Click += CAP.RunActionClicked;
+                //xAddActBtn.Click += CAP.AddActionClicked;
+
                 xActUIPageFrame.Content = CAP;
                 xAddActionTab.Visibility = Visibility.Visible;
                 xActUIPageFrame.Visibility = Visibility.Visible;
+                xAddRunOperationPanel.Visibility = Visibility.Visible;
             }
 
             SelectedElementChanged = false;
@@ -735,6 +781,22 @@ namespace Ginger
                 }
 
                 WindowExplorerDriver.TestElementLocators(testElement);
+            }
+        }
+
+        private void xRunActBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if(xActUIPageFrame.Content != null && xActUIPageFrame.Content is ControlActionsPage_New)
+            {
+                (xActUIPageFrame.Content as ControlActionsPage_New).RunActionClicked(sender, e);
+            }
+        }
+
+        private void xAddActBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (xActUIPageFrame.Content != null && xActUIPageFrame.Content is ControlActionsPage_New)
+            {
+                (xActUIPageFrame.Content as ControlActionsPage_New).AddActionClicked(sender, e);
             }
         }
     }
