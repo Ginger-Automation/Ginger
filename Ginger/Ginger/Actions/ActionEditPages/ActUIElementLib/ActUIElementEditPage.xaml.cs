@@ -416,7 +416,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         propertyListString.Add(property.ToString());
                     }
 
-                    elementList.Add(GetElementConfigControl("Property Name", Fields.ValueToSelect, eElementType.ComboBox, propertyListString));
+                    elementList.Add(GetElementConfigControl("Property_Name", Fields.ValueToSelect, eElementType.ComboBox, propertyListString));
                     break;
                 case eElementAction.Switch:
                     if(mAction.ElementType.Equals(eElementType.Window))
