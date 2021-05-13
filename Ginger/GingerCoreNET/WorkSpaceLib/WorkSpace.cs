@@ -181,8 +181,15 @@ namespace amdocs.ginger.GingerCoreNET
 
         private void InitLocalGrid()
         {
-            mLocalGingerGrid = new GingerGrid();
-            mLocalGingerGrid.Start();
+            try
+            {
+                mLocalGingerGrid = new GingerGrid();
+                mLocalGingerGrid.Start();
+            }
+            catch(Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to start Ginger Grid", e);
+            }
         }
 
         public SolutionRepository SolutionRepository;

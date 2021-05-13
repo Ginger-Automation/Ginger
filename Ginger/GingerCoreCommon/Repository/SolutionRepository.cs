@@ -387,6 +387,7 @@ namespace Amdocs.Ginger.Repository
         {
             try
             {
+               
                 if (relativePath.TrimStart().StartsWith("~"))
                 {
                     string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
