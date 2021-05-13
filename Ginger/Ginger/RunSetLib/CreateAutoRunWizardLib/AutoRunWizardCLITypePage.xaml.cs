@@ -65,12 +65,12 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         private void ShowHelp()
         {
             string helpContent = string.Empty;
-
+            /*
             if (xConfigRadioButton.IsChecked == true)
             {
                 helpContent = string.Format("Simple text file which contain the execution configurations." + GetRowDown() + "To be used in case {0} already exist in the Solution and only need to trigger it." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'ConfigFile=%ConfigFilePath%', Example: Ginger.exe ConfigFile=\"C:\\Ginger\\Regression1.Ginger.AutoRunConfigs.Config\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
-            }
-            else if (xDynamicRadioButton.IsChecked == true)
+            }*/
+            if (xDynamicRadioButton.IsChecked == true)
             {
                 helpContent = string.Format("File (XML/JSON) which describes the {0} to be executed." + GetRowDown() + "To be used in case {0} not exist in the Solution and should be created dynamically for execution purposes only, or in case {0} is exist but need to dynamically customized it input values for specific execution." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'Dynamic -f %FilePath%', Example: Ginger.exe Dynamic -f \"C:\\Ginger\\FeatureATesting.Ginger.AutoRunConfigs.xml\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
             }
