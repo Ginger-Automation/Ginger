@@ -416,6 +416,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActUIElement.eElementAction.SetValue:
+                    case ActUIElement.eElementAction.SetText:
                         e = LocateElement(act);
                         e.SendKeys(act.GetInputParamCalculatedValue("Value"));
                         break;

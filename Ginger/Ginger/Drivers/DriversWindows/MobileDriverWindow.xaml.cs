@@ -601,8 +601,17 @@ namespace Ginger.Drivers.DriversWindows
 
             if (mDriver.GetAppType() == eAppType.Web)
             {
-                pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
-                pointOnMobile.Y = (int)((pointOnImage.Y + (xDeviceScreenshotImage.ActualHeight / 8)) * ratio_Y);
+                if (mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
+                {
+                    pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
+                    pointOnMobile.Y = (int)((pointOnImage.Y + xDeviceScreenshotImage.ActualHeight/9) * ratio_Y);
+                }
+                else
+                {
+                    pointOnMobile.X = (int)((pointOnImage.X * ratio_X)/3);
+                    pointOnMobile.Y = (int)((pointOnImage.Y * ratio_Y)/3);
+
+                }
             }
             else
             {
