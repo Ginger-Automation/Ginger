@@ -3581,12 +3581,16 @@ namespace Ginger.Run
                 {
                     if (CurrentBusinessFlow.Activities.Count > 0)
                     {
+                        NotifyActivityStart(CurrentBusinessFlow.Activities[0]);
                         CurrentBusinessFlow.Activities[0].Status = eRunStatus.Failed;
                         if (CurrentBusinessFlow.Activities[0].Acts.Count > 0)
                         {
+                            NotifyActionStart((Act)CurrentBusinessFlow.Activities[0].Acts[0]);
                             CurrentBusinessFlow.Activities[0].Acts[0].Error = string.Format("Error occured in Input {0} values setup, please make sure all configured {1} Input {0} Mapped Values are valid", GingerDicser.GetTermResValue(eTermResKey.Variables), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                             CurrentBusinessFlow.Activities[0].Acts[0].Status = eRunStatus.Failed;
-                        }                        
+                            NotifyActionEnd((Act)CurrentBusinessFlow.Activities[0].Acts[0]);
+                        }
+                        NotifyActivityEnd(CurrentBusinessFlow.Activities[0]);
                     }
                     return;//failed to prepare BF inputes as expected
                 }
