@@ -41,14 +41,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
     public partial class PomDeltaDeletedElementMappingWizardPage : Page,IWizardPage
     {
         PomDeltaWizard mPomWizard;
-        List<NewAddedComboboxItem> NewAddedElementList = new List<NewAddedComboboxItem>();
+        List<NewAddedComboboxItem> NewAddedElementComboList = new List<NewAddedComboboxItem>();
+       
+        ObservableList<DeltaElementInfo> DeletedDeltaElementInfos = new ObservableList<DeltaElementInfo>();
 
         private PomNewAddedElementSelectionPage mPomNewAddedElementSelectionPage;
 
         public PomDeltaDeletedElementMappingWizardPage()
         {
             InitializeComponent();
-            
         }
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
@@ -61,7 +62,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 case EventType.Active:
 
                     SetDeletedElementsGridView();
-                    xDeletedElementsMappingGrid.DataSourceList = new ObservableList<DeltaElementInfo>(mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Deleted)));
+                    DeletedDeltaElementInfos = new ObservableList<DeltaElementInfo>(mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Deleted)));
+                    xDeletedElementsMappingGrid.DataSourceList = DeletedDeltaElementInfos;
                     break;
             }
         }
@@ -76,11 +78,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.ElementName), Header = "Deleted Element Name", AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = "Matching Element", Header = "Matching Element", BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xMatchingElementTemplate"] });
 
-            NewAddedElementList = GetNewAddedElementComboBoxItem();
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappedElementInfo), Header = "New Added Element", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = NewAddedElementList, ComboboxDisplayMemberField = nameof(NewAddedComboboxItem.DisplayValue), ComboboxSelectedValueField = nameof(NewAddedComboboxItem.InternalValue), BindingMode = BindingMode.TwoWay });
+            GetNewAddedElementComboBoxItem();
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappedElementInfo), Header = "New Added Element", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = NewAddedElementComboList, ComboboxDisplayMemberField = nameof(NewAddedComboboxItem.DisplayValue), ComboboxSelectedValueField = nameof(NewAddedComboboxItem.InternalValue), BindingMode = BindingMode.TwoWay });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappingElementStatus), Header = "Element Status", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GetElementStatusComoList() });
-            view.GridColsView.Add(new GridColView() { Field = "Compare", Header = "Compare", BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, ReadOnly = true, CellTemplate = (DataTemplate)this.MainGrid.Resources["xCompareElementPropTemplate"] });
+            view.GridColsView.Add(new GridColView() { Field = "Compare", Header = "Compare", BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, ReadOnly = false, CellTemplate = (DataTemplate)this.MainGrid.Resources["xCompareElementPropTemplate"] });
 
 
             xDeletedElementsMappingGrid.SetAllColumnsDefaultView(view);
@@ -94,7 +96,38 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             xDeletedElementsMappingGrid.btnRefresh.Visibility = Visibility.Visible;
             xDeletedElementsMappingGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(ResetMappingElementInfo));
 
-            xDeletedElementsMappingGrid.SelectedItemChanged += XDeletedElementsMappingGrid_SelectedItemChanged;
+            xDeletedElementsMappingGrid.Grid.SelectionChanged += Grid_SelectionChanged;
+        }
+
+        private void Grid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var currentSelected = (DeltaElementInfo)xDeletedElementsMappingGrid.Grid.CurrentItem;
+
+            RemoveSelectedElementFromCombobox(currentSelected);
+        }
+
+        private void RemoveSelectedElementFromCombobox(DeltaElementInfo currentSelected=null)
+        {
+            NewAddedElementComboList.Clear();
+            GetNewAddedElementComboBoxItem();
+            foreach (var item in DeletedDeltaElementInfos)
+            {
+                if (currentSelected != null && item.MappedElementInfo == currentSelected.MappedElementInfo)
+                {
+                    continue;
+                }
+                if (item.MappedElementInfo != null && item.MappedElementInfo.ToLower() != "none")
+                {
+                    var removeItem = NewAddedElementComboList.IndexOf(NewAddedElementComboList.Where(x => x.InternalValue == item.MappedElementInfo).FirstOrDefault());
+
+                    if (removeItem != -1)
+                    {
+                        NewAddedElementComboList.RemoveAt(removeItem);
+                    }
+
+                }
+            }
+
         }
 
         private List<ComboEnumItem> GetElementStatusComoList()
@@ -111,35 +144,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             {
                 item.MappedElementInfo = null;
             }
-            NewAddedElementList.Clear();
-            NewAddedElementList = GetNewAddedElementComboBoxItem();
+            NewAddedElementComboList.Clear();
+
+            Dispatcher.Invoke(() =>
+            {
+                SetDeletedElementsGridView();
+            });
         }
 
-        private List<NewAddedComboboxItem> GetNewAddedElementComboBoxItem()
+        private void GetNewAddedElementComboBoxItem()
         {
-            var comboSource = new List<NewAddedComboboxItem>();
-            comboSource.Add(new NewAddedComboboxItem() { DisplayValue = "-None-", InternalValue = "None" });
+            NewAddedElementComboList.Add(new NewAddedComboboxItem() { DisplayValue = "-None-", InternalValue = "None" });
             foreach (var item in mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Added)))
             {
-                comboSource.Add(new NewAddedComboboxItem() { DisplayValue = item.ElementName, InternalValue = item.ElementInfo.Guid.ToString() });
-            }
-
-            return comboSource;
-        }
-
-        private void XDeletedElementsMappingGrid_SelectedItemChanged(object selectedItem)
-        {
-            foreach (var item in mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Deleted)))
-            {
-                if (item.MappedElementInfo != null && item.MappedElementInfo.ToLower() != "none")
-                {
-                    var removeItem = NewAddedElementList.IndexOf(NewAddedElementList.Where(x => x.InternalValue == item.MappedElementInfo).FirstOrDefault());
-                    if (removeItem != -1)
-                    {
-                        NewAddedElementList.RemoveAt(removeItem);
-                    }
-                    
-                }
+                NewAddedElementComboList.Add(new NewAddedComboboxItem() { DisplayValue = item.ElementName, InternalValue = item.ElementInfo.Guid.ToString() });
             }
         }
 
@@ -147,19 +165,28 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             //current selected deleted element
             var currentItem = (DeltaElementInfo)xDeletedElementsMappingGrid.CurrentItem;
-            mPomNewAddedElementSelectionPage = new PomNewAddedElementSelectionPage(new ObservableList<DeltaElementInfo>(mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Added))), mPomWizard.mPomDeltaUtils, Convert.ToString(currentItem.ElementTypeEnum));
+            var deltaAddedList = mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Added));
 
-            var selectedElement = mPomNewAddedElementSelectionPage.SelectedElement();
+            //filtering mapped added element
+            var filteredAddedList = new ObservableList<DeltaElementInfo>(deltaAddedList.Where(x => NewAddedElementComboList.Any(y => y.InternalValue == x.ElementInfo.Guid.ToString())));
+
+            mPomNewAddedElementSelectionPage = new PomNewAddedElementSelectionPage(filteredAddedList, mPomWizard.mPomDeltaUtils, Convert.ToString(currentItem.ElementTypeEnum));
+
+            var selectedElement = mPomNewAddedElementSelectionPage.ShowAsWindow("Added Elements");
             if (selectedElement != null)
             {
                 currentItem.MappedElementInfo = selectedElement.ElementInfo.Guid.ToString();
                 currentItem.MappingElementStatus = DeltaElementInfo.eMappingStatus.ReplaceExistingElement;
+                RemoveSelectedElementFromCombobox(selectedElement);
             }
         }
 
         private void xCompareElementPropButton_Click(object sender, RoutedEventArgs e)
         {
+            var currentItem = (DeltaElementInfo)xDeletedElementsMappingGrid.CurrentItem;
+            var newAddedElement = mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Added) && x.ElementInfo.Guid.ToString().Equals(currentItem.MappedElementInfo)).FirstOrDefault();
 
+            new PomDeltaMappingElementsComparePage(currentItem,newAddedElement).ShowAsWindow("Element Details Comparsion");
         }
     }
 
