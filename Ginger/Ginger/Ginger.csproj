@@ -404,6 +404,9 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaSettingsWizardPage.xaml.cs">
       <DependentUpon>PomDeltaSettingsWizardPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaMappingElementsComparePage.xaml.cs">
+      <DependentUpon>PomDeltaMappingElementsComparePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaViewPage.xaml.cs">
       <DependentUpon>PomDeltaViewPage.xaml</DependentUpon>
     </Compile>
@@ -503,6 +506,9 @@
     </Compile>
     <Compile Include="Run\RunSetActions\RunSetActionSendDataToExternalSourceEditPage.xaml.cs">
       <DependentUpon>RunSetActionSendDataToExternalSourceEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\LiveSpyHandler.xaml.cs">
+      <DependentUpon>LiveSpyHandler.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\TextEditor\ValueExpression\ValueExpressionFlowDetailsEditorPage.xaml.cs">
       <DependentUpon>ValueExpressionFlowDetailsEditorPage.xaml</DependentUpon>
@@ -2746,6 +2752,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaMappingElementsComparePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2909,6 +2919,10 @@
     <Page Include="RunSetPageLib\RunsetRunnersConfigPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\LiveSpyHandler.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\TextEditor\ValueExpression\ValueExpressionFlowDetailsEditorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
