@@ -14,7 +14,7 @@
     <DockPanel x:Name="mainDockPanel"  HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}">
         <!-- Grid Title -->
         <Border x:Name="xSimpleHeader" DockPanel.Dock="Top" Visibility="{Binding  ElementName=lblTitle, Path=Visibility}" Background="{Binding ElementName=lblTitle, Path=Background}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}"  >
-                <Label x:Name="xSimpleHeaderTitle" Style="{DynamicResource $ucGridTitleLightStyle}" Margin="0,1,0,1">Grid Title</Label>
+            <Label x:Name="xSimpleHeaderTitle" Style="{DynamicResource $ucGridTitleLightStyle}" Margin="0,1,0,1">Grid Title</Label>
         </Border>
         <DockPanel x:Name="xEnhancedHeader" DockPanel.Dock="Top" VerticalAlignment="Center" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Collapsed">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="5,5,5,0">
@@ -78,11 +78,15 @@
                         <Image Source= "{StaticResource @ArrowDown_16x16}"/>
                     </Button>
 
-                    <Label x:Name="lblSearch" Style="{DynamicResource @LabelStyle}">Search:</Label>
-                    <TextBox x:Name="txtSearch" Width="100" TextChanged="txtSearch_TextChanged" Style="{DynamicResource @ToolBarTextBoxStyle}" ></TextBox>
-                    <Button x:Name="btnClearSearch" ToolTip="Clear Searched Text" Click="btnClearSearchText_Click">
+                    <TextBox x:Name="txtSearch" MinWidth="120" Height="15" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="txtSearch_TextChanged" BorderBrush="White" />
+                    <usercontrols:ucButton x:Name="btnClearSearch" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="btnClearSearchText_Click" BorderBrush="Transparent" Background="Transparent" Margin="-3,0,6,0" ></usercontrols:ucButton>
+                    <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" BorderBrush="Transparent" Background="Transparent" Margin="-3,0,6,0" ></usercontrols:ucButton>
+
+                    <!--<Label x:Name="lblSearch" Style="{DynamicResource @LabelStyle}">Search:</Label>-->
+                    <!--<TextBox x:Name="txtSearch" Width="100" TextChanged="txtSearch_TextChanged" Style="{DynamicResource @ToolBarTextBoxStyle}" ></TextBox>-->
+                    <!--<Button x:Name="btnClearSearch" ToolTip="Clear Searched Text" Click="btnClearSearchText_Click">
                         <Image Source="{DynamicResource @DisabledClear_16x16}" />
-                    </Button>
+                    </Button>-->
                     <Ginger:ucTagsViewer x:Name="TagsViewer" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Collapsed" AddTags="False"/>
 
                     <Label x:Name="lblView" Style="{DynamicResource @LabelStyle}" Visibility="Collapsed">View:</Label>
@@ -102,13 +106,14 @@
                   CanUserResizeRows="True" AreRowDetailsFrozen="True" CanUserAddRows="False" 
                   PreviewMouseDown="grdMain_SelectionChanged" SelectionChanged="grdMain_SelectionChanged" SelectionMode="Extended"  SelectionUnit="FullRow" 
                   IsSynchronizedWithCurrentItem="True"
-                  ColumnHeaderStyle="{DynamicResource @DataGridColumnHeader}" CellStyle="{DynamicResource @DataGridCellStyle}" 
+                  GridLinesVisibility="None"
+                  ColumnHeaderStyle="{DynamicResource @DataGridColumnHeader}"
+                  CellStyle="{DynamicResource @DataGridCellStyle}" 
                   AlternationCount="2" AlternatingRowBackground="#F6F6F6"
                   LoadingRow="grdMain_LoadingRow" 
                   Background="{StaticResource $BackgroundColor_White}"
-                  BorderBrush="{DynamicResource $Color_DarkBlue}"
-                  BorderThickness="1"    
                   ScrollViewer.VerticalScrollBarVisibility="Auto"                  
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"                  
                   SizeChanged="grdMain_SizeChanged"        
                   ScrollViewer.ScrollChanged="grdMain_ScrollChanged"
                  >
@@ -118,16 +123,15 @@
                         <EventSetter Event="MouseDoubleClick" Handler="Row_DoubleClick"/>
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource $SelectionColor_LightBlue}"/>
-                                <!--<Setter Property="Foreground" Value="White"/>-->
-                                <Setter Property="BorderBrush" Value="{DynamicResource $Color_DarkBlue}"/>
+                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
                 </DataGrid.RowStyle>
                 <DataGrid.RowHeaderStyle>
                     <Style TargetType="DataGridRowHeader">
-                        <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}"/>
+                        <Setter Property="Foreground" Value="{StaticResource $Color_DarkBlue}"/>
+                        <Setter Property="FontWeight"  Value="Bold"/>
                     </Style>
                 </DataGrid.RowHeaderStyle>
                 <DataGrid.CommandBindings>

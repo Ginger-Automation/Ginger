@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
@@ -46,17 +47,9 @@ namespace Ginger.Actions
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            
-            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                string FileName = dlg.FileName.ToUpper();
-                if (FileName.Contains(SolutionFolder))
-                {
-                    FileName = FileName.Replace(SolutionFolder, @"~\");
-                }
-                TextFileNameTextBox.ValueTextBox.Text = FileName;
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()) is string fileName)
+            { 
+                TextFileNameTextBox.ValueTextBox.Text = fileName;
             }
         }
         

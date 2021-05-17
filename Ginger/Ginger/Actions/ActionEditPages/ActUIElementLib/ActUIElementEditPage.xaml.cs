@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -416,7 +416,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         propertyListString.Add(property.ToString());
                     }
 
-                    elementList.Add(GetElementConfigControl("Property Name", Fields.ValueToSelect, eElementType.ComboBox, propertyListString));
+                    elementList.Add(GetElementConfigControl("Property_Name", Fields.ValueToSelect, eElementType.ComboBox, propertyListString));
                     break;
                 case eElementAction.Switch:
                     if(mAction.ElementType.Equals(eElementType.Window))

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -780,7 +780,7 @@ namespace GingerCore.Repository
                         else
                         {
                             //check if this is nullable enum  like: Activity Status? 
-                            if (Nullable.GetUnderlyingType(propertyInfo.PropertyType).IsEnum)
+                            if (Nullable.GetUnderlyingType(propertyInfo.PropertyType) != null && Nullable.GetUnderlyingType(propertyInfo.PropertyType).IsEnum)
                             {
                                 object o = Enum.Parse(Nullable.GetUnderlyingType(propertyInfo.PropertyType), sValue);
                                 if (o != null)

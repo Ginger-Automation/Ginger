@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -152,7 +152,7 @@ namespace Ginger.Run.RunSetActions
                     return;
                 var defectFields = defaultALMDefectProfile.ALMDefectProfileFields.Where(a => a.Mandatory || a.ToUpdate).ToList();
                 //update alm type to open defect
-                RepositoryItemHelper.RepositoryItemFactory.CreateNewALMDefects(defectsForOpening, defectFields, defaultALMDefectProfile.AlmType);
+                TargetFrameworkHelper.Helper.CreateNewALMDefects(defectsForOpening, defectFields, defaultALMDefectProfile.AlmType);
             }
         }
 

@@ -85,14 +85,15 @@
                         <Setter Property="FontSize" Value="15"/>
                         <Setter Property="FontWeight" Value="Normal"/>
                         <Setter Property="Margin" Value="2,0,0,0"/>
-                        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
                         <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
                                 <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
                                 <Setter Property="FontWeight" Value="Normal"/>
+                                <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Ginger;
 using Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -37,7 +38,7 @@ namespace GingerAutoPilotTest
             // We provide the assembly to GingerTestHelper.TestResources so it can locate the 'TestResources' folder path
             TestResources.Assembly = Assembly.GetExecutingAssembly();
 
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
             // Init Reporter
             Reporter.WorkSpaceReporter = new UnitTestWorkspaceReporter();
 

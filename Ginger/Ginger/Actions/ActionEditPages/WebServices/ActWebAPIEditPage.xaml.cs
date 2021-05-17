@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -540,21 +540,13 @@ namespace Ginger.Actions.WebServices
 
             if (item.ValueType == WebAPIKeyBodyValues.eValueType.File)
             {
-                System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-
-                dlg.DefaultExt = "*.*";
-                dlg.Filter = "All files (All Files)|*.*";
-                string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-
-                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
                 {
-                    // replace Absolute file name with relative to solution
-                    FileName = dlg.FileName.ToUpper();
-                    if (FileName.Contains(SolutionFolder))
-                    {
-                        FileName = FileName.Replace(SolutionFolder, @"~\");
-                    }
-                    item.Value = FileName;
+                    DefaultExt = "*.*",
+                    Filter = "All files (All Files)|*.*"
+                }) is string fileName)
+                {
+                    item.Value = fileName;
                     FormDataGrid.DataSourceList.CurrentItem = item;
                 }
             }

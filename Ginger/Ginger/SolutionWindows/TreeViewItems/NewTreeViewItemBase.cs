@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -128,19 +128,25 @@ namespace GingerWPF.TreeViewItemsLib
         public override void DuplicateTreeItem(object item)
         {
             if (item is RepositoryItemBase)
-            {
-                //string newName = ((RepositoryItemBase)item).GetNameForFileName() + "_Copy";
-                //if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Duplicated Item Name", "Name:", ref newName, System.IO.Path.GetInvalidPathChars()))
-                //{
-                //    RepositoryItemBase copy = ((RepositoryItemBase)item).CreateCopy();
-                //    copy.ItemName = newName;
-                //    (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)item))).AddRepositoryItem(copy);
-                //}  
-                RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)item);
-                if (copiedItem != null)
+            {   
+                Reporter.ToStatus(eStatusMsgKey.DuplicateItem, null, ((RepositoryItemBase)item).ItemName);
+
+                try
                 {
-                    copiedItem.DirtyStatus = eDirtyStatus.NoTracked;
-                    (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)item))).AddRepositoryItem(copiedItem);
+                    RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)item);
+                    if (copiedItem != null)
+                    {
+                        copiedItem.DirtyStatus = eDirtyStatus.NoTracked;
+                        (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)item))).AddRepositoryItem(copiedItem);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Duplicating tree item", ex);
+                }
+                finally
+                {
+                    Reporter.HideStatusMessage();
                 }
             }
             else

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ using Ginger.ALM;
 using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowWindows;
 using Ginger.ConfigurationsLib;
+using Ginger.Drivers.DriversWindows;
 using Ginger.Functionalities;
 using Ginger.GeneralLib;
 using Ginger.GeneralWindows;
@@ -69,6 +70,9 @@ namespace Ginger
             mHelpLayoutList.CollectionChanged += MHelpLayoutList_CollectionChanged;
 
             Telemetry.eventHandler += TelemetryEventHandler;
+
+            DriverWindowHandler.Init();
+
             GingerCore.General.DoEvents();            
         }
 

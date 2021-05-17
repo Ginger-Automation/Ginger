@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ namespace GingerCore.ALM.JIRA
                 if (resourceType == ResourceType.DEFECT)
                 {
                     AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testDefectFieldsList;
-                    testDefectFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectName, ALM_Common.DataContracts.ResourceType.DEFECT);
+                    testDefectFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectKey, ALM_Common.DataContracts.ResourceType.DEFECT);
                     fields.Append(SetALMItemsFields(testDefectFieldsList, ResourceType.DEFECT));
                 }
                 else
@@ -74,9 +74,9 @@ namespace GingerCore.ALM.JIRA
                     AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testSetFieldsList;
                     AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testExecutionFieldsList;
 
-                    testSetFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectName, ALM_Common.DataContracts.ResourceType.TEST_SET);
-                    testCaseFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectName, ALM_Common.DataContracts.ResourceType.TEST_CASE);
-                    testExecutionFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectName, ALM_Common.DataContracts.ResourceType.TEST_CASE_EXECUTION_RECORDS);
+                    testSetFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectKey, ALM_Common.DataContracts.ResourceType.TEST_SET);
+                    testCaseFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectKey, ALM_Common.DataContracts.ResourceType.TEST_CASE);
+                    testExecutionFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectKey, ALM_Common.DataContracts.ResourceType.TEST_CASE_EXECUTION_RECORDS);
 
                     fields.Append(SetALMItemsFields(testSetFieldsList, ResourceType.TEST_SET));
                     fields.Append(SetALMItemsFields(testCaseFieldsList, ResourceType.TEST_CASE));

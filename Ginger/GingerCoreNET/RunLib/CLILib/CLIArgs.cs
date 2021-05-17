@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 return null;
             }
         }
-        
+
         public string CreateConfigurationsContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             RunOptions options = new RunOptions();
@@ -47,7 +47,25 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             options.DoNotAnalyze = !cliHelper.RunAnalyzer;
             options.ShowUI = cliHelper.ShowAutoRunWindow;
             options.TestArtifactsPath = cliHelper.TestArtifactsFolder;
+           
+            options.URL = cliHelper.SourceControlURL;
+            options.User = cliHelper.SourcecontrolUser;
+            options.Pass = cliHelper.sourceControlPass;
 
+            options.PasswordEncrypted = cliHelper.sourceControlPassEncrypted;
+            options.SCMType = cliHelper.sourceControlType;
+
+            if (cliHelper.DownloadUpgradeSolutionFromSourceControl)
+            {
+
+                options.URL = solution.SourceControl.SourceControlURL;
+                options.User = solution.SourceControl.SourceControlUser;
+                options.Pass = solution.SourceControl.SourceControlPass;
+
+                options.PasswordEncrypted = true;
+                options.SCMType = solution.SourceControl.GetSourceControlType;
+            }
+           
             var args = CommandLine.Parser.Default.FormatCommandLine<RunOptions>(options);
 
             // !!!!!!!!!!!!!!!!!!!

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -111,16 +111,15 @@ namespace Ginger.Run
             view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentType), Header = "Level", WidthWeight = 10, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentName), Header = "Parent Name", WidthWeight = 15, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Name), WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Description), WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Formula), WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
+           
             view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Initial Value", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });           
             if (mWindowMode == eWindowMode.Configuration)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCDataMapping.GetTemplate(nameof(VariableBase.MappedOutputType), nameof(VariableBase.MappedOutputValue), nameof(VariableBase.SupportSetValue), variabelsSourceProperty:nameof(VariableBase.PossibleVariables), outputVariabelsSourceProperty: nameof(VariableBase.PossibleOutputVariables)), WidthWeight = 40 });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCDataMapping.GetTemplate(nameof(VariableBase.MappedOutputType), nameof(VariableBase.MappedOutputValue), nameof(VariableBase.SupportSetValue), variabelsSourceProperty:nameof(VariableBase.PossibleVariables), outputVariabelsSourceProperty: nameof(VariableBase.PossibleOutputVariables)), WidthWeight = 70 });
             }                
             else if (mWindowMode == eWindowMode.SummaryView)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", BindingMode = BindingMode.OneWay, ReadOnly = true, WidthWeight = 40});
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", BindingMode = BindingMode.OneWay, ReadOnly = true, WidthWeight = 70});
             }
                 
             view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.DiffrentFromOrigin), Header = "Different From Origin", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });

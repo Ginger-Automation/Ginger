@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -352,11 +352,11 @@ namespace Ginger.SourceControl
                 }
                 else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 {
-                    mSourceControl = RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
+                    mSourceControl = TargetFrameworkHelper.Helper.GetNewSVnRepo();
                 }
                 else
                 {
-                    mSourceControl = RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
+                    mSourceControl = TargetFrameworkHelper.Helper.GetNewSVnRepo();
                 }
 
                 if (mSourceControl != null)
@@ -366,6 +366,8 @@ namespace Ginger.SourceControl
                     mSourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
                     mSourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
                     mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+                    mSourceControl.IgnoreCertificate = WorkSpace.Instance.UserProfile.SourceControlIgnoreCertificate;
+
                     mSourceControl.SolutionFolder = SolutionFolder;
 
                     mSourceControl.SourceControlConfigureProxy = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
@@ -434,14 +436,14 @@ namespace Ginger.SourceControl
                         Reporter.ToLog(eLogLevel.INFO, "Reverting local Solution changes");
                         try
                         {                            
-                            RepositoryItemHelper.RepositoryItemFactory.Revert(sol.LocalFolder, mSourceControl);
+                            TargetFrameworkHelper.Helper.Revert(sol.LocalFolder, mSourceControl);
                         }
                         catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Failed to revert local Solution changes, error: " + ex.Message);
                         }
                     }
-                    return RepositoryItemHelper.RepositoryItemFactory.GetLatest(sol.LocalFolder, mSourceControl);
+                    return TargetFrameworkHelper.Helper.GetLatest(sol.LocalFolder, mSourceControl);
                 }
                 else
                 {

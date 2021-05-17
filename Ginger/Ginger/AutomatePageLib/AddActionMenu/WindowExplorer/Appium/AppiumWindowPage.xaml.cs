@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using System.Windows.Controls;
 using GingerCore.Drivers.Appium;
 using Ginger.UserControlsLib.TextEditor.XML;
 using System.IO;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.Appium
 {
@@ -29,9 +30,9 @@ namespace Ginger.WindowExplorer.Appium
     /// </summary>
     public partial class AppiumWindowPage : Page
     {
-        AppiumElementInfo mAppiumElementInfo;
+        ElementInfo mAppiumElementInfo;
 
-        public AppiumWindowPage(AppiumElementInfo AEI)
+        public AppiumWindowPage(ElementInfo AEI)
         {
             mAppiumElementInfo = AEI;
             InitializeComponent();
@@ -54,7 +55,7 @@ namespace Ginger.WindowExplorer.Appium
                 XMLTextEditor e = new XMLTextEditor();
                 MemoryStream ms = new MemoryStream();
                 string tmp = System.IO.Path.GetTempFileName();
-                mAppiumElementInfo.XmlDoc.Save(tmp);
+                //mAppiumElementInfo.XmlDoc.Save(tmp);
                 pageSourceXMLViewer.Init(tmp, e, false);
                 pageSourceXMLViewer.Visibility = System.Windows.Visibility.Visible;
                 pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
@@ -62,7 +63,8 @@ namespace Ginger.WindowExplorer.Appium
             else
             {
                 //Show simple text view
-                pageSourceTextViewer.Text = mAppiumElementInfo.XmlDoc.OuterXml;
+                //pageSourceTextViewer.Text = mAppiumElementInfo.XmlDoc.OuterXml;
+                pageSourceTextViewer.Text = "AppiumElementInfo is no more used - Discuss with Meni";
                 pageSourceTextViewer.Visibility = System.Windows.Visibility.Visible;
                 pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
             }

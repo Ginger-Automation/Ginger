@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -61,11 +61,24 @@ namespace Ginger.Agents.AddAgentWizardLib
                     xAgentDescriptionTextBox.BindControl(mWizard.Agent, nameof(Agent.Notes));
                     xAgentTagsViewer.Init(mWizard.Agent.Tags);
 
-                    //Removing ASCF from platform combobox
-                    List<ComboEnumItem> platformList = (GingerCore.General.GetEnumValuesForCombo(typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType))).Where(x => ((GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType)x.Value) != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF).ToList();
-                  
-                    xPlatformTypeComboBox.BindControl(platformList);
+                    //Removing ASCF from platform combobox                    
+                    List<dynamic> platformesToExclude = new List<dynamic>();
+                    platformesToExclude.Add(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF);
+                    //GingerCore.General.FillComboFromEnumObj(xPlatformTypeComboBox, mWizard.Agent.Platform, excludeList:platformesToExclude);//All
+                    //Only platforms used in Solution (having Target Application for)
+                    List<object> onlySolutionPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms.Select(x => x.Platform).Distinct().ToList().Cast<object>().ToList();
+                    GingerCore.General.FillComboFromEnumObj(xPlatformTypeComboBox, mWizard.Agent.Platform, values: onlySolutionPlatforms, excludeList: platformesToExclude);
+                    
                     xPlatformTypeComboBox.SelectionChanged += xPlatformTypeComboBox_SelectionChanged;
+                    ////set Web as default
+                    //foreach(object platform in xPlatformTypeComboBox.Items)
+                    //{
+                    //    if(platform.ToString() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web.ToString())
+                    //    {
+                    //        xPlatformTypeComboBox.SelectedItem = platform;
+                    //        break;
+                    //    }
+                    //}
                     xPlatformTypeComboBox.SelectedIndex = 0;
 
                     xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverInfo));
@@ -104,9 +117,7 @@ namespace Ginger.Agents.AddAgentWizardLib
             {
                 //mWizard.Agent.DriverInfo = DriversforPlatform[0];
                 xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
-            }
-
-      
+            }      
         }
 
         private void xDriverTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

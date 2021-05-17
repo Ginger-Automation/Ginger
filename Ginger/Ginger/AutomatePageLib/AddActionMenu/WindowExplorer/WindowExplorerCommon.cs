@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,11 +35,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
     class WindowExplorerCommon
     {
+        static public bool IsTestActionRunning { get; set; } = false;
+
         public static ITreeViewItem GetTreeViewItemForElementInfo(Amdocs.Ginger.Common.UIElement.ElementInfo EI)
         {
             if (EI == null) return null; // can happen when grid is filtered
@@ -70,6 +73,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             else if (EI is HTMLElementInfo)
             {
                 TVI = HTMLElementInfoConverter.GetHTMLElementTreeItem(((HTMLElementInfo)EI));
+            }
+            else if(EI.ElementObject is XmlNode)
+            {
+                TVI = AppiumElementInfoConverter.GetTreeViewItemFor(EI);
             }
             else
             {

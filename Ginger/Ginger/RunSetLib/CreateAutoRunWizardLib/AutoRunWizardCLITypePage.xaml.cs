@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -46,8 +46,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 case EventType.Init:
                     mAutoRunWizard = (AutoRunWizard)WizardEventArgs.Wizard;                    
                     BindingHandler.ObjFieldBinding(xConfigurationNameTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigName));
-                    xConfigurationPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigFileFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);                    
-                    xConfigRadioButton.IsChecked = true;                                    
+                    xConfigurationPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigFileFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);
+                    xParametersRadioButton.IsChecked = true;                                    
                     break;
 
                 case EventType.Active:
@@ -65,12 +65,12 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         private void ShowHelp()
         {
             string helpContent = string.Empty;
-
+            /*
             if (xConfigRadioButton.IsChecked == true)
             {
                 helpContent = string.Format("Simple text file which contain the execution configurations." + GetRowDown() + "To be used in case {0} already exist in the Solution and only need to trigger it." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'ConfigFile=%ConfigFilePath%', Example: Ginger.exe ConfigFile=\"C:\\Ginger\\Regression1.Ginger.AutoRunConfigs.Config\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
-            }
-            else if (xDynamicRadioButton.IsChecked == true)
+            }*/
+            if (xDynamicRadioButton.IsChecked == true)
             {
                 helpContent = string.Format("File (XML/JSON) which describes the {0} to be executed." + GetRowDown() + "To be used in case {0} not exist in the Solution and should be created dynamically for execution purposes only, or in case {0} is exist but need to dynamically customized it input values for specific execution." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'Dynamic -f %FilePath%', Example: Ginger.exe Dynamic -f \"C:\\Ginger\\FeatureATesting.Ginger.AutoRunConfigs.xml\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
             }

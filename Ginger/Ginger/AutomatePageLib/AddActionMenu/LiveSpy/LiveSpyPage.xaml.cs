@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -44,16 +45,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     {
         bool isSpying = false;
         Context mContext;
-        IWindowExplorer mDriver;
+        IWindowExplorer mWindowExplorerDriver;
 
         System.Windows.Threading.DispatcherTimer dispatcherTimer = null;
         ElementInfo mSpyElement;
         ITreeViewItem mCurrentControlTreeViewItem;
         Page mControlFrameContentPage = null;
         bool mFirstElementSelectionDone = false;
-        private Act mAction;     
-        
-        
+        private Act mAction;
+
+
 
         public LiveSpyPage(Context context, IWindowExplorer driver)
         {
@@ -62,30 +63,85 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mContext = context;
             xWindowSelectionUC.mContext = mContext;
 
+            xUCElementDetails.Context = mContext;
+
             SetDriver(driver);
             SetSpyingControls();
-            InitControlPropertiesGridView();
+
+            //xUCElementDetails.xPropertiesGrid.btnRefresh.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(RefreshControlProperties));
+
+            InitUCElementDetailsLocatorsGrid();
+
+            xUCElementDetails.PropertyChanged += XUCElementDetails_PropertyChanged;
+        }
+
+        private void XUCElementDetails_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(xUCElementDetails.SelectedElement))
+            {
+                HandleUCElementDetails();
+            }
+        }
+
+        bool ElementDetailsNotNullHandled = false;
+        bool ElementDetailsNullHandled = false;
+        public void HandleUCElementDetails()
+        {
+            if (xUCElementDetails.SelectedElement == null && !ElementDetailsNullHandled)
+            {
+                ControlDetailsRow.Height = new GridLength(0);
+
+                ElementDetailsNullHandled = true;
+                ElementDetailsNotNullHandled = false;
+            }
+            else if (xUCElementDetails.SelectedElement != null && !ElementDetailsNotNullHandled)
+            {
+                ControlDetailsRow.Height = new GridLength(150, GridUnitType.Star);
+
+                ElementDetailsNotNullHandled = true;
+                ElementDetailsNullHandled = false;
+            }
+        }
+
+        public void InitUCElementDetailsLocatorsGrid()
+        {
+            if (mWindowExplorerDriver != null)
+            {
+                if (mWindowExplorerDriver.IsPOMSupported())
+                {
+                    xUCElementDetails.InitLocatorsGridView();
+                }
+                else
+                {
+                    xUCElementDetails.InitLegacyLocatorsGridView();
+                }
+            }
         }
 
         public void SetDriver(IWindowExplorer windowExplorerDriver)
         {
             this.Dispatcher.Invoke(() =>
             {
-                if (mDriver != windowExplorerDriver)
+                if (mWindowExplorerDriver != windowExplorerDriver)
                 {
-                    mDriver = windowExplorerDriver;
-                    xWindowSelectionUC.mWindowExplorerDriver = mDriver;
+                    mWindowExplorerDriver = windowExplorerDriver;
+                    xWindowSelectionUC.mWindowExplorerDriver = mWindowExplorerDriver;
                     xWindowSelectionUC.mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
+                    xUCElementDetails.WindowExplorerDriver = windowExplorerDriver;
+
+                    InitUCElementDetailsLocatorsGrid();
                 }
 
                 if (windowExplorerDriver == null)
                 {
                     xWindowSelectionUC.WindowsComboBox.ItemsSource = null;
+                    xUCElementDetails.SelectedElement = null;
                 }
 
                 if (windowExplorerDriver != null && xWindowSelectionUC.WindowsComboBox.ItemsSource == null)
                 {
                     xWindowSelectionUC.UpdateWindowsList();
+                    xUCElementDetails.SelectedElement = null;
                 }
             });
         }
@@ -149,25 +205,27 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xSpyingButton.ButtonImageType = eImageType.Spy;
                 xSpyingButton.IsEnabled = true;
 
+                ControlDetailsRow.Height = new GridLength(0);
+
                 xStatusTextBlock.Visibility = Visibility.Collapsed;
 
                 xStopSpyingBtn.Visibility = Visibility.Collapsed;
             }
-            xSpyingButton.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Highlighted");            
+            xSpyingButton.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Highlighted");
 
-            if (xControlPropertiesGrid.DataSourceList != null)
-            {
-                xControlPropertiesGrid.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xControlPropertiesGrid.Visibility = Visibility.Collapsed;
-            }
+            //if (xControlPropertiesGrid.DataSourceList != null)
+            //{
+            //    xControlPropertiesGrid.Visibility = Visibility.Visible;
+            //}
+            //else
+            //{
+            //    xControlPropertiesGrid.Visibility = Visibility.Collapsed;
+            //}
         }
 
         private void SpyTimerHandler(object sender, EventArgs e)
         {
-            if (mDriver != null)
+            if (mWindowExplorerDriver != null)
             {
                 ///?? why we have specific driver handleing?
                 //if (xWindowSelectionUC.mWindowExplorerDriver.GetType() == typeof(GingerCore.Drivers.SeleniumDriver) 
@@ -190,10 +248,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         xStatusTextBlock.Foreground = (Brush)FindResource("$PassedStatusColor");
                         GingerCore.General.DoEvents();
                         mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);
-                        ShowCurrentControlInfo();
+                        xUCElementDetails.SelectedElement = mSpyElement;
                     }
                     else
                     {
+                        xUCElementDetails.SelectedElement = null;
                         xStatusTextBlock.Text = "Failed to identify the element.";
                         xStatusTextBlock.Foreground = (Brush)FindResource("$FailedStatusColor");
                         GingerCore.General.DoEvents();
@@ -206,177 +265,42 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
-        private void InitControlPropertiesGridView()
-        {
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
+        //private void ShowCurrentControlInfo()
+        //{
+        //    if (mCurrentControlTreeViewItem == null) return;
+        //    ElementInfo EI = (ElementInfo)mCurrentControlTreeViewItem.NodeObject();
+        //    try
+        //    {
+        //        //if (xWindowSelectionUC.mWindowExplorerDriver.IsElementObjectValid(EI.ElementObject))
+        //        //{
+        //        //    EI.WindowExplorer = xWindowSelectionUC.mWindowExplorerDriver;
+        //        //    xWindowSelectionUC.mWindowExplorerDriver.HighLightElement(EI);
 
-            view.GridColsView.Add(new GridColView() { Field = "Name", WidthWeight = 8, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = "Value", WidthWeight = 20, ReadOnly = true });
-
-            xControlPropertiesGrid.SetAllColumnsDefaultView(view);
-            xControlPropertiesGrid.InitViewItems();
-        }
-
-        private void ShowCurrentControlInfo()
-        {
-            if (mCurrentControlTreeViewItem == null) return;
-            ElementInfo EI = (ElementInfo)mCurrentControlTreeViewItem.NodeObject();
-            try
-            {
-                if (xWindowSelectionUC.mWindowExplorerDriver.IsElementObjectValid(EI.ElementObject))
-                {
-                    EI.WindowExplorer = xWindowSelectionUC.mWindowExplorerDriver;
-                    xWindowSelectionUC.mWindowExplorerDriver.HighLightElement(EI);
-
-                    //General tab will show the generic element info page, customized page will be in Data tab
-                    mControlFrameContentPage = new ElementInfoPage(EI);
-                    ControlFrame.Content = mControlFrameContentPage;
-                    SetDetailsExpanderDesign(true, EI);
-                    if (mCurrentControlTreeViewItem is IWindowExplorerTreeItem)
-                    {
-                        xControlPropertiesGrid.DataSourceList = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
-                        xControlPropertiesGrid.Visibility = System.Windows.Visibility.Visible;
-                    }
-                    else
-                    {
-                        xControlPropertiesGrid.Visibility = System.Windows.Visibility.Collapsed;
-                    }
-                    ShowControlActions(mCurrentControlTreeViewItem);
-                }
-                else
-                {
-                    Reporter.ToUser(eUserMsgKey.ObjectUnavailable);
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in LiveSpy page ShowCurrentControlInfo", ex);
-                Reporter.ToUser(eUserMsgKey.ObjectLoad);
-            }
-        }
-
-        private void SetDetailsExpanderDesign(bool detailsExist, ElementInfo selectedElementInfo)
-        {
-            if (detailsExist == false)
-            {
-                xSelectedControlDetailsExpander.Visibility = Visibility.Collapsed;
-                xSelectedControlDetailsExpanderLable.Content = "Selected Element Details & Actions";
-                xSelectedControlDetailsExpanderLable.Foreground = Brushes.Gray;
-                xSelectedControlDetailsExpander.IsEnabled = false;
-                xSelectedControlDetailsExpander.IsExpanded = false;
-            }
-            else
-            {
-                xSelectedControlDetailsExpander.Visibility = Visibility.Visible;
-                xSelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementType + " : " + selectedElementInfo.ElementName + "' Element Details & Actions";
-                xSelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_DarkBlue")).ToString()); ;
-                xSelectedControlDetailsExpander.IsEnabled = true;
-                if (mFirstElementSelectionDone == false)
-                {
-                    xSelectedControlDetailsExpander.IsExpanded = true;
-                    mFirstElementSelectionDone = true;
-                }
-            }
-        }
-
-        private void ShowControlActions(ITreeViewItem iv)
-        {
-            //We show action if we didn't came from Edit page
-            if (iv is IWindowExplorerTreeItem)
-            {
-                ElementInfo EI = (ElementInfo)iv.NodeObject();
-
-                ControlActionsPage CAP = null;
-                // We came from Action EditPage
-                if (mAction != null)
-                {
-                    CAP = new ControlActionsPage(mAction, EI);
-                }
-                else
-                {
-                    ObservableList<Act> list = new ObservableList<Act>();
-                    ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
-
-                    ePlatformType mPlatformType = xWindowSelectionUC.mPlatform.PlatformType();
-
-                    // if platform is web or
-                    // platform is java and element info type is javaelementinfo 
-                    if (mPlatformType == ePlatformType.Web || mPlatformType == ePlatformType.Java)
-                    {
-                        list = xWindowSelectionUC.mPlatform.GetPlatformElementActions(EI);
-                    }
-                    else
-                    {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
-                        list = ((IWindowExplorerTreeItem)iv).GetElementActions();   // case will be removed once all platforms will be overrided
-                    }                                                               //
-
-                    //If no element actions returned then no need to get locator's. 
-                    if (list == null || list.Count == 0)
-                    {
-                        SetActionsTabDesign(false);
-                        return;
-                    }
-                    else
-                    {
-
-                        Page DataPage = mCurrentControlTreeViewItem.EditPage(mContext);
-                        actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
-                        CAP = new ControlActionsPage(xWindowSelectionUC.mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext);
-                    }
-                }
-                ControlActionsFrame.Content = CAP;
-                SetActionsTabDesign(true);
-            }
-            else
-            {
-                SetActionsTabDesign(false);
-            }
-        }
-
-        private void SetActionsTabDesign(bool actionsExist)
-        {
-            if (actionsExist == false)
-            {
-                xActionsTab.IsEnabled = false;
-                ControlActionsFrame.Visibility = System.Windows.Visibility.Collapsed;
-                xGeneralTab.IsSelected = true;
-            }
-            else
-            {
-                xActionsTab.IsEnabled = true;
-                xActionsTab.IsSelected = true;
-                ControlActionsFrame.Visibility = System.Windows.Visibility.Visible;
-            }
-        }
-
-        private void SelectedControlDetailsExpander_Collapsed(object sender, RoutedEventArgs e)
-        {
-            ControlDetailsRow.Height = new GridLength(35);
-            ControlDetailsRow.MaxHeight = 35;
-        }
-
-        private void SelectedControlDetailsExpander_Expanded(object sender, RoutedEventArgs e)
-        {
-            if (mControlFrameContentPage == null)
-            {
-                xSelectedControlDetailsExpander.IsExpanded = false;
-                return;
-            }
-            ControlDetailsRow.Height = new GridLength(200, GridUnitType.Star);
-            ControlDetailsRow.MaxHeight = Double.PositiveInfinity;
-        }
-
-        private void ControlTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //TODO: check tab and do it only on props, only once per control for speed - cache
-            // Add in Grid refresh button if needed
-            //if (e.Source  == ControlTabs)  // Handle selection change only from the tab, otherwise it might bubble up from grid or alike
-            //{
-            //    ShowCurrentControlInfo();
-            //}
-        }
-
-
+        //        //    //General tab will show the generic element info page, customized page will be in Data tab
+        //        //    mControlFrameContentPage = new ElementInfoPage(EI);
+        //        //    ControlFrame.Content = mControlFrameContentPage;
+        //        //    SetDetailsExpanderDesign(true, EI);
+        //        //    if (mCurrentControlTreeViewItem is IWindowExplorerTreeItem)
+        //        //    {
+        //        //        xControlPropertiesGrid.DataSourceList = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
+        //        //        xControlPropertiesGrid.Visibility = System.Windows.Visibility.Visible;
+        //        //    }
+        //        //    else
+        //        //    {
+        //        //        xControlPropertiesGrid.Visibility = System.Windows.Visibility.Collapsed;
+        //        //    }
+        //        //    ShowControlActions(mCurrentControlTreeViewItem);
+        //        //}
+        //        //else
+        //        //{
+        //        //    Reporter.ToUser(eUserMsgKey.ObjectUnavailable);
+        //        //}
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Reporter.ToLog(eLogLevel.ERROR, "Exception in LiveSpy page ShowCurrentControlInfo", ex);
+        //        Reporter.ToUser(eUserMsgKey.ObjectLoad);
+        //    }
+        //}
     }
 }

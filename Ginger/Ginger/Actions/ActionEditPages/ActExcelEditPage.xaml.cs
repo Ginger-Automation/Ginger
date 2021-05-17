@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -80,22 +80,13 @@ namespace Ginger.Actions
 
         private void BrowseExcelButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-
-            dlg.DefaultExt = "*.xlsx or .xls or .xlsm";
-            dlg.Filter = "Excel Files (*.xlsx, *.xls, *.xlsm)|*.xlsx;*.xls;*.xlsm";
-            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper(); 
-            
-            if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
             {
-                // replace Absolute file name with relative to solution
-                string FileName = dlg.FileName.ToUpper();
-                if (FileName.Contains(SolutionFolder))
-                {
-                    FileName = FileName.Replace(SolutionFolder, @"~\");
-                }
-                
-                ExcelFileNameTextBox.ValueTextBox.Text = FileName;
+                DefaultExt = "*.xlsx or .xls or .xlsm",
+                Filter = "Excel Files (*.xlsx, *.xls, *.xlsm)|*.xlsx;*.xls;*.xlsm"
+            }) is string fileName)
+            {
+                ExcelFileNameTextBox.ValueTextBox.Text = fileName;
                 FillSheetCombo();
             }
         }

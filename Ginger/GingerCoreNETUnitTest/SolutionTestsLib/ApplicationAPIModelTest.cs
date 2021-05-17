@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             SR.CreateRepository(TempSolutionFolder);
 
             NewRepositorySerializer RS = new NewRepositorySerializer();
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(ApplicationAPIModel).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommon);
             SR.Open(TempSolutionFolder);            
         }
 

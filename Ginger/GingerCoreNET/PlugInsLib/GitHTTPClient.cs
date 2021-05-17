@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
             using (var client = new HttpClient())
             {                
                 // Simulate a browser header                
-                //client.DefaultRequestHeaders.Add("User-Agent", GingerUtils.OSHelper.Current.UserAgent);
+                //client.DefaultRequestHeaders.Add("User-Agent", GingerUtils.Workspace.OS.UserAgent);
                 client.DefaultRequestHeaders.Add("User-Agent", "Ginger-App");             
                 var result = client.GetAsync(url).Result;
                 Reporter.ToLog(eLogLevel.DEBUG, "result= " + result);
