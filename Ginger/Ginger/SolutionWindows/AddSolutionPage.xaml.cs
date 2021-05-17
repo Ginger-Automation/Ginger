@@ -147,7 +147,7 @@ namespace Ginger.SolutionWindows
                     agent.DriverType = Agent.eDriverType.DOSConsole;
                     break;
                 case ePlatformType.Mobile:
-                    agent.DriverType = Agent.eDriverType.MobileAppiumAndroid;
+                    agent.DriverType = Agent.eDriverType.Appium;
                     break;
                 case ePlatformType.PowerBuilder:
                     agent.DriverType = Agent.eDriverType.PowerBuilder;

@@ -30,6 +30,8 @@ using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Ginger.Reports;
 using Ginger.Reports.GingerExecutionReport;
 using Amdocs.Ginger.CoreNET.Utility;
+using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.Logger
 {
@@ -112,9 +114,12 @@ namespace Amdocs.Ginger.CoreNET.Logger
         {
             bool response = false;
 
+
             try
             {
                 json = $"window.runsetData={json};";
+
+#warning Report Fix MEN not stable approach 
                 StringBuilder pageDataSb = new StringBuilder();
                 pageDataSb.Append("file:///");
                 pageDataSb.Append(clientAppFolderPath.Replace('\\', '/'));
@@ -126,8 +131,9 @@ namespace Amdocs.Ginger.CoreNET.Logger
                     pageDataSb.Append(openObject.Guid);
                 }
                 string taskCommand = $"\"{pageDataSb.ToString()}\"";
-                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets","Execution_Data","executiondata.js"), json);
-                if (shouldDisplayReport)
+                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets", "Execution_Data", "executiondata.js"), json);
+
+                if (shouldDisplayReport && !Assembly.GetEntryAssembly().FullName.ToUpper().Contains("CONSOLE"))
                 {
                     System.Diagnostics.Process.Start(@browserPath, taskCommand);
                     System.Diagnostics.Process.Start(clientAppFolderPath);
@@ -138,6 +144,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error in RunClientApp", ex);
             }
+
             return response;
         }
 

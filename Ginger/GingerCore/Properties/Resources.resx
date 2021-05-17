@@ -169,9 +169,6 @@
   <data name="Excel16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Excel16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="wgxpath_install" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\wgxpath.install.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="MobileDevice_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\@MobileDevice_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -184,47 +181,11 @@
   <data name="PopUpHandler_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\@PopUpHandler_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="HTMLSpy" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\HTMLSpy.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="BrowserWaitForIdle" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\BrowserWaitForIdle.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="DevicesList" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DevicesList.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="GingerHTMLHelper" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\gingerhtmlhelper.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="html2canvas" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\html2canvas.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral,PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="jquery_min" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\jquery.min.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="InjectJavaScript" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\javascript\injectjavascript.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
   <data name="Java16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\java16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PayLoad" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PayLoad.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="GingerLibXPath" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\GingerLibXPath.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="GingerLiveSpy" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\GingerLiveSpy.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="Html5DragAndDrop" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\draganddrop.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="ArrayBuffer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ArrayBuffer.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="GingerHTMLRecorder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\GingerHTMLRecorder.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="CheckBox_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\@executionres_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

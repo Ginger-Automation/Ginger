@@ -82,6 +82,10 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
                     {
                         ZephyrEntPhaseTreeItem zeTS = new ZephyrEntPhaseTreeItem(phase[0]);
                         zeTS.Path = ((TestPlanningFolderTreeItem)cc).Path;
+                        if(!String.IsNullOrEmpty(((TestPlanningFolderTreeItem)cc).CycleId.ToString()))
+                        {
+                            zeTS.TestSetID = ((TestPlanningFolderTreeItem)cc).CycleId.ToString();
+                        }
                         zeTS.FatherId = Id;
                         zeTS.TestSetStatuses.AddRange(((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTCsDataSummary(Convert.ToInt32(zeTS.TestSetID)));
                         tsChildrens.Add(zeTS);

@@ -268,12 +268,13 @@ namespace GingerCore.ALM
             if (testInstance != null)
             {
                 //Regular TC
-                newTSTest.TestID = testInstance["id"].ToString();
+                newTSTest.TestID = testInstance["testcaseId"].ToString();
+                newTSTest.LinkedTestID = testInstance["id"].ToString();
                 newTSTest.TestName = testInstance["name"].ToString();
                 newTSTest.Description = testInstance["description"] == null ? "" : testInstance["description"].ToString();
             }
 
-            var testSteps = zephyrEntRepository.GetTeststepByTestcaseId(Convert.ToInt32(newTSTest.TestID), versionId);
+            var testSteps = zephyrEntRepository.GetTeststepByTestcaseId(Convert.ToInt32(newTSTest.LinkedTestID), versionId);
             //Get the TC design steps
             if (testSteps.Count > 0)
             {

@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="Ginger.UserControlsLib.LiveSpyHandler"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Ginger.UserControlsLib"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="600">
+    <Grid>
+        <StackPanel x:Name="xSpyPanel" HorizontalAlignment="Left" Orientation="Horizontal">
+            <ToggleButton x:Name="xLiveSpyButton" Click="LiveSpyButton_Click"  ToolTip="Live Spy- Hover with the mouse over the Element you want to spy and Click/Hold Down 'Ctrl' Key" Width="24" Height="24" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}">
+                <Image Source="{StaticResource @Spy_24x24}"/>
+            </ToggleButton>
+            <Label x:Name="xStatusLable" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Content="Spying is Off" ></Label>
+        </StackPanel>
+    </Grid>
+</UserControl>

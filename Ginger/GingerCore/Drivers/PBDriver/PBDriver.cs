@@ -34,11 +34,13 @@ using System.Threading;
 using Amdocs.Ginger.Repository;
 using Castle.Components.DictionaryAdapter;
 using Amdocs.Ginger.CoreNET.RunLib;
+using System.Threading.Tasks;
+using GingerCore.Actions.VisualTesting;
 
 namespace GingerCore.Drivers.PBDriver
 {
     //This class is for Power Builder UIAutomation
-    public class PBDriver : UIAutomationDriverBase, IWindowExplorer,IVirtualDriver
+    public class PBDriver : UIAutomationDriverBase, IWindowExplorer, IVirtualDriver, IVisualTestingDriver
     {
         Dictionary<AutomationElement, AutomationElement[,]> gridDictionary;
 
@@ -975,9 +977,9 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.GetListOfDriverAppWindows();
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
-            return mUIAutomationHelper.GetVisibleControls();
+            return await mUIAutomationHelper.GetVisibleControls();
         }
 
         void IWindowExplorer.SwitchWindow(string Title)
@@ -1124,6 +1126,100 @@ namespace GingerCore.Drivers.PBDriver
         {
             errorMessage = string.Empty;
             return true;
+        }
+
+        /// <summary>
+        /// IVisualTestingDriver's Overloaded Method o get device screenshot
+        /// </summary>
+        /// <returns>Application Screenshot in Bitmap format</returns>
+        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null)
+        {
+            Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
+            return bmp;
+        }
+
+        /// <summary>
+        /// IVisualTestingDriver Overloaded Method to get all the visible elements information
+        /// </summary>
+        /// <returns>VisualElementInfo object</returns>
+        public VisualElementsInfo GetVisualElementsInfo()
+        {
+            List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls().Result;
+
+            VisualElementsInfo VEI = new VisualElementsInfo();
+            foreach (ElementInfo EI in list)
+            {
+                VisualElement VE = new VisualElement() { ElementType = EI.ElementType, Text = EI.ElementName, X = EI.X, Y = EI.Y, Width = EI.Width, Height = EI.Height };
+                VEI.Elements.Add(VE);
+            }
+            return VEI;
+        }
+
+        /// <summary>
+        /// IVisualTestingDriver Overloaded Method to change/update the App window size
+        /// Not yet implemented for PBDriver & WindowsDriver
+        /// </summary>
+        /// <returns>NotImplementedException</returns>
+        public void ChangeAppWindowSize(int Width, int Height)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// IVisualTestingDriver Overloaded Method to get all the visible elements information
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ElementInfo> GetElementAtPoint(long ptX, long ptY)
+        {
+            object elem = mUIAutomationHelper.GetElementAtPoint(new System.Windows.Point(ptX, ptY));
+
+            if (elem == null) return null;
+            ElementInfo EI;
+
+            if (elem.GetType().Equals(typeof(AutomationElement)))
+            {
+                EI = mUIAutomationHelper.GetElementInfoFor((AutomationElement)elem);
+            }
+            else
+            {
+                EI = mUIAutomationHelper.GetHTMLHelper().GetHtmlElementInfo((IHTMLElement)elem);
+            }
+            return EI;
+        }
+
+        public bool IsRecordingSupported()
+        {
+            return false;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return false;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return true;
+        }
+
+        public bool IsWinowSelectionRequired()
+        {
+            return true;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.TreeView };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.TreeView;
+        }
+
+        public string SelectionWindowText()
+        {
+            return "Window:";
         }
     }
 }

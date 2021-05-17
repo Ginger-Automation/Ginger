@@ -467,6 +467,10 @@ namespace Ginger.ALM.Repository
 
                         //convert test set into BF
                         BusinessFlow tsBusFlow = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).ConvertQCTestSetToBF(TS);
+                        if (testSetItemtoImport.entityType == EntityFolderType.Cycle)
+                        {
+                            testSetItemtoImport.FatherId = testSetItemtoImport.TestSetID;
+                        }
                         tsBusFlow.ExternalID2 = testSetItemtoImport.FatherId;
                         if (WorkSpace.Instance.Solution.MainApplication != null)
                         {

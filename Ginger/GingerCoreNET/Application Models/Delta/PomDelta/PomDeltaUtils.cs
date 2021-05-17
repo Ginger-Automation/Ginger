@@ -187,7 +187,7 @@ namespace GingerCoreNET.Application_Models
             return newDeltaElement;
         }
 
-        private void SetMatchingElementDeltaDetails(ElementInfo existingElement, ElementInfo latestElement)
+        public void SetMatchingElementDeltaDetails(ElementInfo existingElement, ElementInfo latestElement)
         {
             DeltaElementInfo matchedDeltaElement = new DeltaElementInfo();            
             //copy possible customized fields from original
@@ -273,8 +273,9 @@ namespace GingerCoreNET.Application_Models
             }
             if (KeepOriginalLocatorsOrderAndActivation == true)
             {
-                foreach (ElementLocator originalLocator in existingElement.Locators)
+                for(int i = 0; i < existingElement.Locators.Count; i++)
                 {
+                    ElementLocator originalLocator = existingElement.Locators[i];
                     ElementLocator latestLocator = latestElement.Locators.Where(x => x.Guid == originalLocator.Guid).FirstOrDefault();
 
                     if (latestLocator != null)
@@ -509,9 +510,12 @@ namespace GingerCoreNET.Application_Models
 
         public void UpdateOriginalPom()
         {
-            //Updating selected elements
-            List<DeltaElementInfo> elementsToUpdate = DeltaViewElements.Where(x => x.IsSelected == true).ToList();
-            foreach (DeltaElementInfo elementToUpdate in elementsToUpdate)
+            //selected elements
+            var elementsToUpdate = DeltaViewElements.Where(x => x.IsSelected == true);
+
+            MapDeletedElementWithNewAddedElement(elementsToUpdate.ToList());
+
+            foreach (DeltaElementInfo elementToUpdate in elementsToUpdate.ToList())
             {
                 //Add the New onces to the last of the list
                 if (elementToUpdate.DeltaStatus == eDeltaStatus.Added)
@@ -557,9 +561,9 @@ namespace GingerCoreNET.Application_Models
                     {
                         selectedGroup = POM.UnMappedUIElements;
                     }
-                    
+
                     ElementInfo originalElementInfo = originalGroup.Where(x => x.Guid == elementToUpdate.ElementInfo.Guid).First();
-                    
+
                     //enter it to POM elements instead of existing one
                     int originalItemIndex = GetOriginalItemIndex(originalGroup, originalElementInfo);
                     originalGroup.RemoveAt(originalItemIndex);
@@ -575,6 +579,27 @@ namespace GingerCoreNET.Application_Models
             }
         }
 
+        private void MapDeletedElementWithNewAddedElement(List<DeltaElementInfo> elementsToUpdate)
+        {
+            foreach (DeltaElementInfo elementToUpdate in elementsToUpdate)
+            {
+                if (elementToUpdate.MappedElementInfo != null && elementToUpdate.DeltaStatus.Equals(eDeltaStatus.Deleted))
+                {
+                    var deltaElementToUpdateProp = DeltaViewElements.Where(x => x.IsSelected == true && x.DeltaStatus.Equals(eDeltaStatus.Added) && x.ElementInfo.Guid.ToString().Equals(elementToUpdate.MappedElementInfo)).FirstOrDefault();
+                    if (deltaElementToUpdateProp != null)
+                    {
+                        elementToUpdate.ElementInfo.Properties = deltaElementToUpdateProp.ElementInfo.Properties;
+                        elementToUpdate.ElementInfo.Locators = deltaElementToUpdateProp.ElementInfo.Locators;
+                        elementToUpdate.ElementInfo.ElementType = deltaElementToUpdateProp.ElementInfo.ElementType;
+                        elementToUpdate.DeltaStatus = eDeltaStatus.Changed;
+
+                        var index = DeltaViewElements.IndexOf(deltaElementToUpdateProp);
+                        DeltaViewElements.RemoveAt(index);
+                    }
+                }
+            }
+        }
+
         private int GetOriginalItemIndex(ObservableList<ElementInfo> group, ElementInfo copiedItem)
         {
             return group.IndexOf(group.Where(x => x.Guid == copiedItem.Guid).First());
@@ -583,6 +608,17 @@ namespace GingerCoreNET.Application_Models
         private ElementInfo GetOriginalItem(ObservableList<ElementInfo> group, ElementInfo copiedItem)
         {
             return group.Where(x => x.Guid == copiedItem.Guid).First();
+        }
+
+        public ObservableList<ElementInfo> GetElementInfoListFromDeltaElementInfo(ObservableList<DeltaElementInfo> deltaElementInfos)
+        {
+            ObservableList<ElementInfo> elementInfos = new ObservableList<ElementInfo>();
+            foreach (var deltaElementInfo in deltaElementInfos)
+            {
+                elementInfos.Add(deltaElementInfo.ElementInfo);
+            }
+
+            return elementInfos;
         }
 
     }

@@ -33,8 +33,7 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Platforms;
-using GingerCore.Variables;
-using GingerCoreNET.ALMLib;
+
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
@@ -46,6 +45,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common.OS;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -65,8 +65,15 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        public  OperatingSystemBase OSHelper;
         static bool lockit;
-
+        public ITargetFrameworkHelper TargetFrameworkHelper
+        {
+            get
+            {
+                return Amdocs.Ginger.Common.TargetFrameworkHelper.Helper;
+            }
+        }      
         public static void LockWS()
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Lock Workspace");
@@ -93,17 +100,18 @@ namespace amdocs.ginger.GingerCoreNET
 
         public static void Init(IWorkSpaceEventHandler WSEH, bool startLocalGrid = true)
         {
-            mWorkSpace = new WorkSpace();         
+         
+            mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
-
+            mWorkSpace.OSHelper = OperatingSystemBase.CurrentOperatingSystem;
             if (startLocalGrid)
             {
                 mWorkSpace.InitLocalGrid();
-            }           
+            }
             Telemetry.Init();
             mWorkSpace.Telemetry.SessionStarted();
-        }     
+        }   
 
         public void StartLocalGrid()
         {
@@ -172,9 +180,16 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         private void InitLocalGrid()
-        {            
-            mLocalGingerGrid = new GingerGrid();
-            mLocalGingerGrid.Start();
+        {
+            try
+            {
+                mLocalGingerGrid = new GingerGrid();
+                mLocalGingerGrid.Start();
+            }
+            catch(Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to start Ginger Grid", e);
+            }
         }
 
         public SolutionRepository SolutionRepository;
@@ -217,15 +232,15 @@ namespace amdocs.ginger.GingerCoreNET
             bDone = true;
 
             // Add all RI classes from GingerCoreCommon
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommon);
 
             // Add gingerCoreNET classes                        
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(ALMConfig).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreNET);
+            //NewRepositorySerializer.AddClassesFromAssembly(typeof(ALMConfig).Assembly);
         }
 
 
-        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, IRepositoryItemFactory repositoryItemFactory)
+        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, ITargetFrameworkHelper FrameworkHelper)
         {
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -235,7 +250,8 @@ namespace amdocs.ginger.GingerCoreNET
 
             string phase = string.Empty;
 
-            RepositoryItemHelper.RepositoryItemFactory = repositoryItemFactory;
+            Amdocs.Ginger.Common.TargetFrameworkHelper.Helper = FrameworkHelper;
+            mWorkSpace.OSHelper = OperatingSystemBase.CurrentOperatingSystem;
 
             BetaFeatures = BetaFeatures.LoadUserPref();
             BetaFeatures.PropertyChanged += BetaFeatureChanged;

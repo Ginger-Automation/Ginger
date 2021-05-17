@@ -1,0 +1,36 @@
+﻿<Page xmlns:Actions="clr-namespace:Ginger.Actions"  x:Class="Ginger.Actions.ActionEditPages.ActValidationEditPage"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="1000"
+	Title="ActValdiationEditPage">
+
+    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="55" x:Name="RowCreds"/>
+            <RowDefinition Height="55"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <StackPanel x:Name="xCalcEnginePanel">
+                <Label x:Name="xCalcEngineLabel"  Style="{StaticResource @InputFieldLabelStyle}">Calculation Engine:</Label>
+                <StackPanel x:Name="xCalcEngineRBsPanel" Orientation="Horizontal">
+                    <UserControlsLib:UCRadioButtons x:Name="xCalcEngineUCRadioButtons" HorizontalAlignment="Left"></UserControlsLib:UCRadioButtons>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="1">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Condition:</Label>
+            <Actions:UCValueExpression x:Name="xValidationUCValueExpression"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2">
+            <Label x:Name="xVBSWarnHelpLabel" Style="{StaticResource @InputFieldLabelStyle}" Foreground="Red">
+                Note: VBS operations are slow and works only on Windows OS, please consider changing it to CS.
+            </Label>
+        </StackPanel>
+    </Grid>
+</Page>

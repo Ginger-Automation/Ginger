@@ -73,42 +73,46 @@ namespace GingerCoreNET.RosLynLib
 
             foreach (Match M in Pattern.Matches(Expression))
             {
+                string csharpError = "";
                 string match = M.Value;
                 string exp = match;
                 exp = exp.Replace(Clean.Match(exp).Value, "");
                 //not doing string replacement to
                 exp = exp.Remove(exp.Length-1);
-                string Evalresult = exp;
-                try
-                {
-//TODO: Improve this and cache
-                    System.Collections.Generic.List<String> Refrences = typeof(System.DateTime).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>();
-                    Refrences.AddRange(typeof(string).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>());
-
-               object Result=     CSharpScript.EvaluateAsync(exp, ScriptOptions.Default.WithImports(Refrences)).Result;
-                    //c# generate True/False for bool.tostring which fails in subsequent expressions 
-                    if(Result.GetType()==typeof(Boolean))
-                    {
-                        Evalresult = Result.ToString().ToLower();
-                    }
-                    else
-                    {
-                        Evalresult = Result.ToString();
-                    }
-                }
-
-                catch (Exception e)
-                {
-                    Console.Write(e.Message);
-                }
-                Expression = Expression.Replace(match, Evalresult);
+                string evalresult = GetEvaluteResult(exp, out csharpError);
+                Expression = Expression.Replace(match, evalresult);
             }
 
             return Expression;
 
         }
 
-
+        public static string GetEvaluteResult(string expression, out string error)
+        {
+            string evalresult = "";
+            error = "";
+            try
+            {
+                System.Collections.Generic.List<String> Refrences = typeof(System.DateTime).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>();
+                Refrences.AddRange(typeof(string).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>());
+                object result = CSharpScript.EvaluateAsync(expression, ScriptOptions.Default.WithImports(Refrences)).Result;
+                //c# generate True/False for bool.tostring which fails in subsequent expressions 
+                if (result.GetType() == typeof(Boolean))
+                {
+                    evalresult = result.ToString().ToLower();
+                }
+                else
+                {
+                    evalresult = result.ToString();
+                }
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, expression + System.Environment.NewLine + " not a valid c# expression to evaluate", e);
+                error = e.Message;
+            }
+            return evalresult;
+        }
         public static bool EvalCondition(string condition)
         {
             try

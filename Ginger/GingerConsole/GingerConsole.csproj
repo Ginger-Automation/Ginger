@@ -20,6 +20,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <CodeAnalysisRuleSet>GingerConsole.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>2</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +31,7 @@
 
   <ItemGroup>
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="1.0.8" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
     <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
   </ItemGroup>
@@ -37,5 +39,16 @@
   <ItemGroup>
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild_CopySeleniumDrivers" AfterTargets="Build">
+    <ItemGroup>
+      <LinuxDrivers Include="$(ProjectDir)..\GingerLinuxOsSupport\bin\$(Configuration)\netstandard2.0\chromedriver.*;$(ProjectDir)..\GingerLinuxOsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.*" />
+      <MacDrivers Include="$(ProjectDir)..\GingerMacOsSupport\bin\$(Configuration)\netstandard2.0\chromedriver.*;$(ProjectDir)..\GingerMacOsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.*" />     
+      <Windows64BitDrivers Include="$(ProjectDir)..\GingerWin64OsSupport\bin\$(Configuration)\netstandard2.0\IEDriverServer.exe;$(ProjectDir)..\GingerWin64OsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.exe" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LinuxDrivers);" DestinationFolder="$(TargetDir)\Linux" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(MacDrivers);" DestinationFolder="$(TargetDir)\Mac" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(Windows64BitDrivers);" DestinationFolder="$(TargetDir)\Win64" SkipUnchangedFiles="true" />
+  </Target>
 
 </Project>

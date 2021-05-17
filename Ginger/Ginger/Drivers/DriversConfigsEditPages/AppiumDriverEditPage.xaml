@@ -1,0 +1,94 @@
+﻿<Page x:Class="Ginger.Drivers.DriversConfigsEditPages.AppiumDriverEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:ginger="clr-namespace:Ginger"
+      xmlns:Actions="clr-namespace:Ginger.Activities"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="AppiumDriverEditPage">
+
+    <Grid x:Name="xPageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.Resources>
+            <DataTemplate x:Key="ParamValueExpressionButton">
+                <Button x:Name="ParamsGridVEButton" Content="..." Click="CapabilitiesGridVEButton_Click"  Style="{StaticResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
+        </Grid.Resources>
+
+        <DockPanel >
+            <Expander x:Name="xSettingsExpander" ExpandDirection="Down"  IsExpanded="True"  Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,0" BorderThickness="0">
+                <Expander.Header>
+                    <Label  Content="Connection Configurations" Style="{StaticResource $HorizontalExpanderLabelStyle}" />
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel>
+                        <Label Content="Appium server:" Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top"/>
+                        <Actions:UCValueExpression x:Name="xServerURLTextBox" HorizontalAlignment="Stretch" VerticalAlignment="Top"  DockPanel.Dock="Top"/>
+                        <CheckBox x:Name="xLoadDeviceWindow" Style="{StaticResource $CeckBoxStyle}" Content="Load device window" Margin="0,5,0,0" IsChecked="True" Checked="xLoadDeviceWindow_Checked" Unchecked="xLoadDeviceWindow_Checked"/>
+                        <StackPanel x:Name="xAutoRefreshModePnl" Orientation="Horizontal" Margin="0,5,0,0">
+                            <Label  Content="Auto refresh mode:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
+                            <RadioButton x:Name="xLiveRdBtn" Content="Live" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AutoRefreshMode" VerticalAlignment="Center" IsChecked="True" />
+                            <RadioButton x:Name="xPostOperationRdBtn" Content="Post Operation" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="5,0,0,0" />
+                            <RadioButton x:Name="xDisabledRdBtn" Content="Disabled" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="5,0,0,0" />
+                        </StackPanel>
+                        <Expander x:Name="xAdvancedSettingsExpander" ExpandDirection="Down"  IsExpanded="False"  Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,10" BorderThickness="0">
+                            <Expander.Header>
+                                <Label  Content="Advanced" Style="{StaticResource $HorizontalExpanderLabelStyle}" FontWeight="Normal" />
+                            </Expander.Header>
+                            <Expander.Content>
+                                <StackPanel Margin="10,0,0,0">
+                                    <!--<CheckBox x:Name="xSSLChkBox" Content="Use SSL" Style="{StaticResource $CeckBoxStyle}" Margin="0,5,0,0"/>-->
+                                    <!--<CheckBox x:Name="xAllowUnahutCertChkBox" Content="Allow unauthorized certificates" Style="{StaticResource $CeckBoxStyle}" Margin="0,5,0,0"/>-->
+                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                        <CheckBox x:Name="xUseProxyChkBox" Content="Use proxy" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Checked="xUseProxyChkBox_Checked" Unchecked="xUseProxyChkBox_Unchecked"/>
+                                        <Actions:UCValueExpression x:Name="xProxyTextBox" Width="180" Margin="10,0,0,0" IsEnabled="False"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
+                                        <Label Content="Load timeout (seconds):" Style="{StaticResource $LabelStyle}"/>
+                                        <Actions:UCValueExpression x:Name="xLoadTimeoutTxtbox" Width="120" Margin="10,0,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+            <Expander x:Name="xDesiredCapabilitiesExpander" ExpandDirection="Down"  IsExpanded="True"  Style="{StaticResource $ExpanderStyle}"  DockPanel.Dock="Top" BorderThickness="0">
+                <Expander.Header>
+                    <Label  Content="Desired Capabilities" Style="{StaticResource $HorizontalExpanderLabelStyle}" />
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label  Content="Platform:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
+                            <RadioButton x:Name="xAndroidRdBtn" Content="Android" Style="{StaticResource $InputRadioButtonStyle}" GroupName="PlatformType" VerticalAlignment="Center" IsChecked="True" Checked="PlatformSelectionChanged"/>
+                            <usercontrols:ImageMakerControl x:Name="xAndroidIconImg" ImageType="Android" Width="16" Margin="5,0,0,0"/>
+                            <RadioButton x:Name="xIOSRdBtn" Content="iOS" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="PlatformType" VerticalAlignment="Center" Margin="10,0,0,0" Checked="PlatformSelectionChanged"/>
+                            <usercontrols:ImageMakerControl x:Name="xIosIconImg" ImageType="ios" Width="16" Margin="5,0,0,2"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <Label  Content="Application type:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
+                            <RadioButton x:Name="xNativeHybRdBtn" Content="Native/Hybrid" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AppType" VerticalAlignment="Center" IsChecked="True" Checked="ActivityTypeSelectionChanged"/>
+                            <RadioButton x:Name="xWebRdBtn" Content="Web" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AppType" VerticalAlignment="Center" Margin="7,0,0,0" Checked="ActivityTypeSelectionChanged"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical"  Margin="0,5,0,0">
+                            <CheckBox x:Name="xAutoUpdateCapabiltiies" Content="Auto update capabilities table" Style="{StaticResource $CeckBoxStyle}" Margin="0,4.5,5,0" IsChecked="True" Checked="xAutoUpdateCapabiltiies_Checked"/>
+                            <TextBlock Style="{StaticResource $TextBlockStyle}" Margin="0,5,0,0"> 
+                            For full Appium desired capabilities list,
+                            <Hyperlink NavigateUri="http://appium.io/docs/en/writing-running-appium/caps/" RequestNavigate="AppiumCapabilities_RequestNavigate">
+                                Click Here
+                            </Hyperlink>
+                                
+                            </TextBlock>
+                        </StackPanel>
+                        <DockPanel Margin="0,10,0,0">
+                            <ginger:ucGrid x:Name="xCapabilitiesGrid" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Title="Capabilities" ShowEdit="Collapsed" ShowUpDown="Collapsed"/>
+                        </DockPanel>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+        </DockPanel>
+    </Grid>
+</Page>

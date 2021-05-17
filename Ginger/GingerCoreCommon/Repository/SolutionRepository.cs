@@ -23,9 +23,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Common.GeneralLib;
-using System.Reflection;
+using Amdocs.Ginger.Common.OS;
+using Amdocs.Ginger.IO;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -387,11 +387,12 @@ namespace Amdocs.Ginger.Repository
         {
             try
             {
+               
                 if (relativePath.TrimStart().StartsWith("~"))
                 {
                     string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
                     fullPath = Path.Combine(mSolutionFolderPath, fullPath);
-                    return fullPath;
+                    return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(fullPath);
                 }
             }
             catch(Exception ex)
@@ -399,7 +400,7 @@ namespace Amdocs.Ginger.Repository
                 Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
             }
 
-            return relativePath;
+            return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(relativePath);
         }
 
         /// <summary>
@@ -409,7 +410,11 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public string ConvertFullPathToBeRelative(string fullPath)
         {
-            string relative = fullPath.ToLower().Replace(mSolutionFolderPath.ToLower(), cSolutionRootFolderSign);
+            string relative = fullPath;
+            if (fullPath.ToUpper().Contains(SolutionFolder.ToUpper()))
+            {
+                relative = cSolutionRootFolderSign + fullPath.Remove(0, SolutionFolder.Length);
+            }
             return relative;
         }
 

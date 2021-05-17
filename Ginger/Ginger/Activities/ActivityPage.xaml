@@ -31,7 +31,7 @@
                     <GingerCore:ucTextDicResource Text="[Activity]"/>
                 </usercontrols:ImageMakerControl.ToolTip>
             </usercontrols:ImageMakerControl>
-            <TextBlock x:Name="xNameTextBlock" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Activity Name" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"  />
+            <TextBlock x:Name="xNameTextBlock" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Activity Name" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" />
             <DockPanel x:Name="xOperationsPnl" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
                 <StackPanel x:Name="xGeneralOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
                     <usercontrols:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="xUndoBtn_Click"  ButtonFontImageSize="17"  ButtonImageType="Undo" >
