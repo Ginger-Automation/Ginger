@@ -332,8 +332,7 @@ namespace Ginger.ALM.Repository
                 if (testSetsItemsToImport.Count == 0) { return false; } //noting to import
 
                 //Refresh Ginger repository and allow GingerQC to use it                
-                ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-                ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                ALMIntegration.Instance.AlmCore.InitCoreObjs();
 
                 foreach (QCTestSetTreeItem testSetItemtoImport in testSetsItemsToImport)
                 {
