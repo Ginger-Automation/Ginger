@@ -35,6 +35,7 @@ using JiraRepository.BLL;
 using JiraRepository.Data_Contracts;
 using amdocs.ginger.GingerCoreNET;
 using System.Linq;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM
 {
@@ -56,6 +57,11 @@ namespace GingerCore.ALM
         {
             get { return jiraImportObj.GingerActivitiesRepo; }
             set { jiraImportObj.GingerActivitiesRepo = value; }
+        }
+        public override ObservableList<ApplicationPlatform> ApplicationPlatforms
+        {
+            get { return jiraImportObj.ApplicationPlatforms; }
+            set { jiraImportObj.ApplicationPlatforms = value; }
         }
         public JiraCore()
         {
