@@ -419,7 +419,10 @@ namespace Ginger
             if (WindowExplorerDriver.IsPOMSupported())
             {
                 xIntegratePOMChkBox.Visibility = Visibility.Visible;
-                if (xIntegratePOMChkBox.IsChecked != true)
+
+                /// If it's null, it means it's came into view or is selected for the first time 
+                /// so, we'll check it and ask user to select a POM from a list of available POMs
+                if (xIntegratePOMChkBox.IsChecked == null)
                 {
                     xIntegratePOMChkBox.IsChecked = true;
                 }
@@ -577,6 +580,10 @@ namespace Ginger
             SetPOMBasedChecks();
 
             ControlActionsPage_New CAP = null;
+            if(xActUIPageFrame.HasContent)
+            {
+                xActUIPageFrame.Content = null;
+            }
 
             if (SelectedElement.Locators.CurrentItem == null && SelectedElement.Locators.Count > 0)
             {
@@ -621,7 +628,7 @@ namespace Ginger
                 };
             }
 
-            CAP = new ControlActionsPage_New(WindowExplorerDriver, SelectedElement, Context, actConfigurations, mCurrentControlTreeViewItem, Platform);
+            CAP = new ControlActionsPage_New(WindowExplorerDriver, SelectedElement, Context, actConfigurations, mCurrentControlTreeViewItem);
             //}
 
             if (CAP == null)

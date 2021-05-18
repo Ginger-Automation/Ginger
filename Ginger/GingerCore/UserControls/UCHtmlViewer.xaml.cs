@@ -34,16 +34,26 @@ namespace GingerCore.UserControls
             get { return _htmldocument; }
             set
             {
-                _htmldocument = value;
-                BindHTMLDocument();
+                if (value != _htmldocument)
+                {
+                    _htmldocument = value;
+                    ClearTreeItems();
+                    BindHTMLDocument();
+                }
             }
         }
 
-        private void BindHTMLDocument()
+        public void ClearTreeItems()
+        {
+            htmlTree.Items.Clear();
+            htmlTree.ItemsSource = null;
+        }
+
+        private async void BindHTMLDocument()
         {
             if (_htmldocument == null)
             {
-                htmlTree.ItemsSource = null;
+                ClearTreeItems();
                 return;
             }
 
@@ -62,7 +72,7 @@ namespace GingerCore.UserControls
                 {
                     //childItem = new TreeViewItem();
                     //TVRoot.Items.Add(childItem);
-                    bind(_htmldocument.DocumentNode, TVRoot);
+                    await BindTree(_htmldocument.DocumentNode, TVRoot);
                 }
                 catch (Exception ex)
                 {
@@ -79,7 +89,7 @@ namespace GingerCore.UserControls
             //xmlTree.SetBinding(TreeView.ItemsSourceProperty, binding);
         }
 
-        public void bind(HtmlNode htmlN, TreeViewItem treeN)
+        public async Task BindTree(HtmlNode htmlN, TreeViewItem treeN)
         {
             StringBuilder result = new StringBuilder();
             switch (htmlN.NodeType)
@@ -118,7 +128,7 @@ namespace GingerCore.UserControls
                 {
                     childTN = new TreeViewItem();
                     treeN.Items.Add(childTN);
-                    bind(node, childTN);
+                    await BindTree(node, childTN);
                 }
             }
         }
