@@ -1,0 +1,20 @@
+﻿<Page x:Class="Ginger.ApplicationModelsLib.POMModels.POMWizardLib.PomDeltaMappingElementsComparePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:Ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="910"
+      Title="PomDeltaUpdateElementsComparePage">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"  />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+            <Ginger:UCElementDetails  x:Name="xDeletedElementDetails" Grid.Column="0" Grid.Row="0" ShowActionTab="False" ScrollViewer.HorizontalScrollBarVisibility="Visible" />
+
+            <Ginger:UCElementDetails x:Name="xAddedElementDetails" Grid.Column="1" Grid.Row="1" ShowActionTab="False"  ScrollViewer.HorizontalScrollBarVisibility="Visible"/>
+    </Grid>
+</Page>

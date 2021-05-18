@@ -304,30 +304,197 @@ namespace GingerCore.Drivers.WindowsLib
                     return;
                 }
             }
-            switch (actUIElement.ElementAction)
+
+            //window
+            else if (actUIElement.ElementType.Equals(eElementType.Window))
             {
-                case ActUIElement.eElementAction.DragDrop:
-                    mUIAutomationHelper.DragAndDrop(AE, actUIElement);
-                    break;
+                HandleWindowControlUIElementAction(actUIElement, AE);
+            }
+            //menu-item
+            else if (actUIElement.ElementType.Equals(eElementType.MenuItem))
+            {
+                HandleMenuControlUIElementAction(actUIElement);
+            }
+            else
+            {
+                string status = string.Empty;
+                switch (actUIElement.ElementAction)
+                {
+                    case ActUIElement.eElementAction.DragDrop:
+                        mUIAutomationHelper.DragAndDrop(AE, actUIElement);
+                        break;
 
-                case ActUIElement.eElementAction.ClickAndValidate:
-                    string status = mUIAutomationHelper.ClickAndValidteHandler(AE, actUIElement);
-                    if (!status.Contains("Clicked Successfully"))
-                    {
-                        actUIElement.Error += status;
-                    }
-                    else
-                    {
-                        actUIElement.ExInfo += status;
-                    }
-                    break;
-                case ActUIElement.eElementAction.Switch:
-                    mUIAutomationHelper.ActUISwitchWindow(actUIElement);
-                    break;
+                    case ActUIElement.eElementAction.ClickAndValidate:
+                        status = mUIAutomationHelper.ClickAndValidteHandler(AE, actUIElement);
+                        if (!status.Contains("Clicked Successfully"))
+                        {
+                            actUIElement.Error += status;
+                        }
+                        else
+                        {
+                            actUIElement.ExInfo += status;
+                        }
+                        break;
+                    case ActUIElement.eElementAction.Switch:
+                        mUIAutomationHelper.ActUISwitchWindow(actUIElement);
+                        break;
+                    case ActUIElement.eElementAction.AsyncClick:
+                        status = mUIAutomationHelper.ClickElement(AE, true);
+                        if (!status.Contains("Clicked Successfully"))
+                        {
+                            actWC.Error += status;
+                        }
+                        else
+                        {
+                            actWC.ExInfo += status;
+                        }
+                        break;
+                    case ActUIElement.eElementAction.Click:
+                        status = mUIAutomationHelper.ClickElement(AE);
+                        if (!status.Contains("Clicked Successfully"))
+                        {
+                            actWC.Error += status;
+                        }
+                        else
+                        {
+                            actWC.ExInfo += status;
+                        }
+                        break;
+                    case ActUIElement.eElementAction.ClickXY:
+                        mUIAutomationHelper.ClickOnXYPoint(AE, actWC.ValueForDriver);
+                        break;
+                    case ActUIElement.eElementAction.DoubleClick:
+                        mUIAutomationHelper.DoDoubleClick(AE, actWC.ValueForDriver);
+                        break;
+                    case ActUIElement.eElementAction.Expand:
+                        mUIAutomationHelper.ExpandComboboxByUIA(AE);
+                        break;
+                    case ActUIElement.eElementAction.GetControlProperty:
+                        string propValue = mUIAutomationHelper.GetControlPropertyValue(AE, actWC.ValueForDriver);
+                        actWC.AddOrUpdateReturnParamActual("Actual", propValue);
+                        actWC.ExInfo = propValue;
+                        break;
+                    case ActUIElement.eElementAction.GetText:
+                        string valText = mUIAutomationHelper.GetControlText(AE, actWC.ValueForDriver);
+                        actWC.AddOrUpdateReturnParamActual("Actual", valText);
+                        actWC.ExInfo = valText;
+                        break;
+                    case ActUIElement.eElementAction.GetWindowTitle:
+                        string title = mUIAutomationHelper.GetDialogTitle(AE);
+                        actUIElement.AddOrUpdateReturnParamActual("Dialog Title", title);
+                        actUIElement.ExInfo = title;
+                        break;
+                    case ActUIElement.eElementAction.GetValue:
+                        string val = mUIAutomationHelper.GetControlValue(AE);
+                        actWC.AddOrUpdateReturnParamActual("Actual", val);
+                        actWC.ExInfo = val;
+                        break;
+                    case ActUIElement.eElementAction.IsEnabled:
+                        string valueIsEnabled = mUIAutomationHelper.IsEnabledControl(AE);
+                        actWC.AddOrUpdateReturnParamActual("Actual", valueIsEnabled);
+                        actWC.ExInfo = valueIsEnabled;
+                        break;
+                    case ActUIElement.eElementAction.IsExist:
+                        string valueIsExist = mUIAutomationHelper.IsElementExist(actWC.LocateBy, actWC.LocateValue).ToString();
+                        actWC.Error = "";
+                        actWC.AddOrUpdateReturnParamActual("Actual", valueIsExist);
+                        actWC.ExInfo = valueIsExist;
+                        break;
+                    case ActUIElement.eElementAction.Maximize:
+                    case ActUIElement.eElementAction.Minimize:
+                        status = mUIAutomationHelper.SetElementVisualState(AE, actUIElement.ElementAction.ToString());
+                        if (!status.Contains("State set successfully"))
+                        {
+                            actWC.Error = status;
+                        }
+                        else
+                        {
+                            actWC.ExInfo += status;
+                        }
+                        break;
+                    case ActUIElement.eElementAction.MouseRightClick:
+                        mUIAutomationHelper.DoRightClick(AE, actWC.ValueForDriver);
+                        break;
+                    case ActUIElement.eElementAction.ScrollDown:
+                        mUIAutomationHelper.ScrollDown(AE);
+                        break;
+                    case ActUIElement.eElementAction.ScrollUp:
+                        mUIAutomationHelper.ScrollUp(AE);
+                        break;
+                    case ActUIElement.eElementAction.Select:
+                        mUIAutomationHelper.SetControlValue(AE, actWC.ValueForDriver);
+                        break;
+                    case ActUIElement.eElementAction.SendKeys:
+                        mUIAutomationHelper.SendKeysToControl(AE, actWC.ValueForDriver);
+                        actWC.ExInfo = actWC.ValueForDriver + " set";
+                        break;
+                    case ActUIElement.eElementAction.SetValue:
+                        mUIAutomationHelper.SetControlValue(AE, actWC.ValueForDriver);
+                        actWC.ExInfo = actWC.ValueForDriver + " set";
+                        break;
+                    case ActUIElement.eElementAction.Toggle:
+                        string value = mUIAutomationHelper.ToggleControlValue(AE);
+                        actWC.AddOrUpdateReturnParamActual("Actual", value);
+                        actWC.ExInfo = value;
+                        break;
 
-                default:
-                    actUIElement.Error = string.Format("Selected '{0}' Operation not supported for 'WindowsDriver'", actUIElement.ElementAction.ToString());
-                    break;
+
+                    default:
+                        actUIElement.Error = string.Format("Selected '{0}' Operation not supported for 'WindowsDriver'", actUIElement.ElementAction.ToString());
+                        break;
+                }
+            }
+        }
+
+        //ActUIElement
+        private void HandleWindowControlUIElementAction(ActUIElement actUIElement, object AE)
+        {
+            try
+            {
+                switch (actUIElement.ElementAction)
+                {
+                    case ActUIElement.eElementAction.GetWindowTitle:
+                        string title = mUIAutomationHelper.GetDialogTitle(AE);
+                        actUIElement.AddOrUpdateReturnParamActual("Dialog Title", title);
+                        actUIElement.ExInfo = title;
+                        break;
+                    case ActUIElement.eElementAction.Switch:
+                        mUIAutomationHelper.ActUISwitchWindow(actUIElement);
+                        break;
+                    case ActUIElement.eElementAction.IsExist:
+                        string val = mUIAutomationHelper.IsWindowExist(actUIElement).ToString();
+                        actUIElement.Error = "";
+                        actUIElement.AddOrUpdateReturnParamActual("Actual", val);
+                        actUIElement.ExInfo = val;
+                        break;
+                    case ActUIElement.eElementAction.CloseWindow:
+                        bool isClosed = mUIAutomationHelper.CloseWindow(actUIElement);
+                        if (!isClosed)
+                        {
+                            actUIElement.Error = "Window cannot be closed, please use the close window button.";
+                        }
+                        break;
+                    case ActUIElement.eElementAction.Maximize:                       
+                    case ActUIElement.eElementAction.Minimize:                        
+                        string status = mUIAutomationHelper.SetElementVisualState(AE, actUIElement.ElementAction.ToString());
+                        if (!status.Contains("State set successfully"))
+                        {
+                            actUIElement.Error = status;
+                        }
+                        else
+                        {
+                            actUIElement.ExInfo += status;
+                        }
+                        break;
+                    
+                    default:
+                        actUIElement.Error = "Unknown Action  - " + actUIElement.ActionType;
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
 
@@ -359,8 +526,8 @@ namespace GingerCore.Drivers.WindowsLib
                             actWindow.Error = "Window cannot be closed, please use the close window button.";
                         }
                         break;
-                    case ActWindow.eWindowActionType.Maximize:                       
-                    case ActWindow.eWindowActionType.Minimize:                        
+                    case ActWindow.eWindowActionType.Maximize:
+                    case ActWindow.eWindowActionType.Minimize:
                     case ActWindow.eWindowActionType.Restore:
                         bool isDone = mUIAutomationHelper.SetWindowVisualState(actWindow);
                         if (!isDone)
@@ -593,7 +760,50 @@ namespace GingerCore.Drivers.WindowsLib
                 throw e;
             }
         }
-        
+
+        //ActUIElement
+        private void HandleMenuControlUIElementAction(ActUIElement actUIElement)
+        {
+            object AE;
+            try
+            {
+                switch (actUIElement.ElementAction)
+                {
+                    case ActUIElement.eElementAction.Expand:
+                        AE = mUIAutomationHelper.GetActElement(actUIElement);
+                        if (AE == null)
+                        {
+                            actUIElement.Error = "Unable to locate Menu Item";
+                            return;
+                        }
+                        mUIAutomationHelper.ExpandControlElement(AE);
+                        break;
+
+                    case ActUIElement.eElementAction.Collapse:
+                        AE = mUIAutomationHelper.GetActElement(actUIElement);
+                        if (AE == null)
+                        {
+                            actUIElement.Error = "Unable to locate Menu Item";
+                            return;
+                        }
+                        mUIAutomationHelper.CollapseControlElement(AE);
+                        break;
+
+                    case ActUIElement.eElementAction.Click:
+                        mUIAutomationHelper.ClickMenuElement(actUIElement);
+                        break;
+
+                    default:
+                        actUIElement.Error = string.Format("Selected '{0}' Operation not supported for 'WindowsDriver'", actUIElement.ElementAction.ToString());
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public override string GetURL()
         {
             return "TBD";

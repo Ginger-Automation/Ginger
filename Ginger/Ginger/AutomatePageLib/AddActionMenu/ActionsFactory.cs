@@ -24,6 +24,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.ApiModelsFolder;
+using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
@@ -273,16 +274,19 @@ namespace Ginger.BusinessFlowPages
 
             if (parentGroup != null)
             {
+                eUserMsgSelection userSelection = eUserMsgSelection.None;
                 foreach (Activity sharedActivity in sharedActivitiesToAdd)
                 {
                     Activity activityIns = (Activity)sharedActivity.CreateInstance(true);
                     activityIns.Active = true;
+                    //map activities target application to BF if missing in BF
+                    userSelection = businessFlow.MapTAToBF(userSelection, activityIns, WorkSpace.Instance.Solution.ApplicationPlatforms);
                     businessFlow.SetActivityTargetApplication(activityIns);
                     businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
-                    //mBusinessFlow.CurrentActivity = droppedActivityIns;
                 }
             }
         }
+
 
         /// <summary>
         /// Adding Activities Groups from Shared Repository to the Business Flow in Context
@@ -296,7 +300,7 @@ namespace Ginger.BusinessFlowPages
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)sharedGroup.CreateInstance(true);
                 businessFlow.AddActivitiesGroup(droppedGroupIns);
                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                businessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
+                businessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, WorkSpace.Instance.Solution.ApplicationPlatforms, false);
             }
             businessFlow.AttachActivitiesGroupsAndActivities();
         }

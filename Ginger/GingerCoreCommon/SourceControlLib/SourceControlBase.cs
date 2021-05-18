@@ -71,7 +71,9 @@ namespace GingerCoreNET.SourceControl
 
         bool mSourceControlConfigureProxy;
         public bool SourceControlConfigureProxy { get { return mSourceControlConfigureProxy; } set { mSourceControlConfigureProxy = value; OnPropertyChanged(nameof(SourceControlConfigureProxy)); } }
-
+      
+        bool mIgnoreCertificate;
+        public bool IgnoreCertificate { get { return mIgnoreCertificate; } set { mIgnoreCertificate = value; } }
 
         string mSolutionSourceControlAuthorName;
         public string SolutionSourceControlAuthorName { get { return mSolutionSourceControlAuthorName; } set { mSolutionSourceControlAuthorName = value; OnPropertyChanged(nameof(SourceControlConfigureProxy)); } }

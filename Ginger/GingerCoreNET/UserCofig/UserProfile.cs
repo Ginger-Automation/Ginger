@@ -811,6 +811,7 @@ namespace Ginger
             }
         }
 
+        public bool SourceControlIgnoreCertificate { get; internal set; }
 
         [IsSerializedForLocalRepository]
         public List<string> ShownHelpLayoutsKeys = new List<string>();
