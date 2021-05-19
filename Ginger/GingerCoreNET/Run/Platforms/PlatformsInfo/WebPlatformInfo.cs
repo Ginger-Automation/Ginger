@@ -195,7 +195,11 @@ namespace GingerCore.Platforms.PlatformsInfo
                         {
                             Description = string.IsNullOrWhiteSpace(actConfig.Description) ? "UI Element Action : " + actConfig.Operation + " - " + elementInfo.ItemName : actConfig.Description,
                             ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), actConfig.Operation),
+                            //LocateBy = (eLocateBy)System.Enum.Parse(typeof(eLocateBy), Convert.ToString(actConfig.LocateBy)),
+                            ElementLocateBy = (eLocateBy)System.Enum.Parse(typeof(eLocateBy), Convert.ToString(actConfig.LocateBy)),
                             ElementLocateValue = actConfig.LocateValue,
+                            //LocateValue = actConfig.LocateValue,
+                            ElementType = (eElementType)System.Enum.Parse(typeof(eElementType), Convert.ToString(actConfig.Type)),
                             Value = actConfig.ElementValue
                         };
 
@@ -254,8 +258,31 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             return true;
         }
+        public override Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList()
+        {
+            ObservableList<UIElementFilter> uIBasicElementFilters = new ObservableList<UIElementFilter>();
+            ObservableList<UIElementFilter> uIAdvancedElementFilters = new ObservableList<UIElementFilter>();
 
-        public List<ElementTypeData> GetPlatformElementTypesData()
+            foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in GetPlatformElementTypesData())
+            {
+                if (elementTypeOperation.IsCommonElementType)
+                {
+                    uIBasicElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, true));
+                }
+                else
+                {
+                    uIAdvancedElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, false));
+                }
+            }
+
+            Dictionary<string, ObservableList<UIElementFilter>> elementListDic = new Dictionary<string, ObservableList<UIElementFilter>>();
+            elementListDic.Add("Basic", new ObservableList<UIElementFilter>(uIBasicElementFilters));
+            elementListDic.Add("Advanced", new ObservableList<UIElementFilter>(uIAdvancedElementFilters));
+
+            return elementListDic;
+        }
+
+        public virtual List<ElementTypeData> GetPlatformElementTypesData()
         {
             if (mPlatformElementTypeOperations == null)
             {

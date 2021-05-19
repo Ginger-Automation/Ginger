@@ -780,7 +780,7 @@ namespace GingerCore.Repository
                         else
                         {
                             //check if this is nullable enum  like: Activity Status? 
-                            if (Nullable.GetUnderlyingType(propertyInfo.PropertyType).IsEnum)
+                            if (Nullable.GetUnderlyingType(propertyInfo.PropertyType) != null && Nullable.GetUnderlyingType(propertyInfo.PropertyType).IsEnum)
                             {
                                 object o = Enum.Parse(Nullable.GetUnderlyingType(propertyInfo.PropertyType), sValue);
                                 if (o != null)

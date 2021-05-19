@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
@@ -24,7 +25,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.GeneralLib;
-using GingerCore.Platforms;
 using System;
 using System.Collections.Generic;
 
@@ -248,5 +248,6 @@ namespace Ginger.Run
             UpdateRunnersBusinessFlowRunsList();
             base.UpdateBeforeSave();
         }
+        
     }
 }

@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
+    [ObsoleteAttribute("User newer options", false)]
     public class CLIConfigFile : ICLI
     {
         bool ICLI.IsFileBasedConfig { get { return true; } }

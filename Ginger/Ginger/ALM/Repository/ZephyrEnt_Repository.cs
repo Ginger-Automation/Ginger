@@ -451,8 +451,7 @@ namespace Ginger.ALM.Repository
                 }
 
                 //Refresh Ginger repository
-                ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-                ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                ALMIntegration.Instance.AlmCore.InitCoreObjs();
 
                 foreach (ZephyrEntPhaseTreeItem testSetItemtoImport in testSetsItemsToImport)
                 {
@@ -468,6 +467,10 @@ namespace Ginger.ALM.Repository
 
                         //convert test set into BF
                         BusinessFlow tsBusFlow = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).ConvertQCTestSetToBF(TS);
+                        if (testSetItemtoImport.entityType == EntityFolderType.Cycle)
+                        {
+                            testSetItemtoImport.FatherId = testSetItemtoImport.TestSetID;
+                        }
                         tsBusFlow.ExternalID2 = testSetItemtoImport.FatherId;
                         if (WorkSpace.Instance.Solution.MainApplication != null)
                         {

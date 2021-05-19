@@ -23,14 +23,19 @@
             <ColumnDefinition Width="100*"/>
             <ColumnDefinition Width="55"/>
         </Grid.ColumnDefinitions>
+        <Grid.Resources>
+            <BooleanToVisibilityConverter x:Key="boolToVisibility" />
+        </Grid.Resources>
+
         <Label x:Name="xPOMTitleLbl" Style="{StaticResource $LabelStyle}" Grid.Column="0" Content="POM:" VerticalAlignment="Top"/>
         <TextBox x:Name="xPomPathTextBox" Grid.Column="1" Style="{StaticResource $TextBoxStyle}" Height="25" IsReadOnly="True" VerticalAlignment="Top" Margin="2,0,2,3"></TextBox>
         <StackPanel Orientation="Horizontal" Grid.Column="2">
             <usercontrols:ucButton ToolTip="Select POM" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Edit" Click="SelectPOM_Click" VerticalAlignment="Top" Margin="0,-8,0,0"  />
             <usercontrols:ucButton x:Name="xViewPOMBtn" ToolTip="View/Edit POM" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="View" Click="XViewPOMBtn_Click" VerticalAlignment="Top" Margin="-8,-8,0,0" Visibility="Collapsed" />
         </StackPanel>
-        <Label x:Name="xPOMElementsLbl" Style="{StaticResource $LabelStyle}" HorizontalContentAlignment="Right" Grid.Column="4" Content="Element:" VerticalAlignment="Top" />
-        <TextBox x:Name="xPOMElementTextBox" Grid.Column="5" Style="{StaticResource $TextBoxStyle}" Height="25" IsReadOnly="True"  VerticalAlignment="Top" Margin="2,0,2,3" MouseDoubleClick="XPOMElementTextBox_MouseClick"></TextBox>
+
+        <Label x:Name="xPOMElementsLbl" Style="{StaticResource $LabelStyle}" HorizontalContentAlignment="Right" Grid.Column="4" Content="Element:" VerticalAlignment="Top" Visibility="{Binding Path=mOnlyPOMRequest, Converter={StaticResource boolToVisibility}}"/>
+        <TextBox x:Name="xPOMElementTextBox" Grid.Column="5" Style="{StaticResource $TextBoxStyle}" Height="25" IsReadOnly="True"  VerticalAlignment="Top" Margin="2,0,2,3" MouseDoubleClick="XPOMElementTextBox_MouseClick" Visibility="{Binding Path=mOnlyPOMRequest, Converter={StaticResource boolToVisibility}}"></TextBox>
         <StackPanel Orientation="Vertical" Grid.Row="0"  Grid.Column="5">
             <Ginger:ucGrid x:Name="xPOMElementsGrid" Height="150" Visibility="Collapsed" Title="POM Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" RowDoubleClick="XPOMElementsGrid_RowDoubleClick" />
             <usercontrols:ucButton x:Name="xSelectElement" Visibility="Collapsed" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Center"  ButtonText="Select Element" ButtonImageType="Check" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="SelectElementsClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" />

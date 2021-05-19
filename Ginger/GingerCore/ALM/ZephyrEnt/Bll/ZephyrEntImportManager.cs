@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.QCRestAPI;
 using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json.Linq;
 using QCRestClient;
 using System;
@@ -42,6 +43,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
     {
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public static ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
         enum StatuesName { NoRun = 0, PASS = 1, FAIL = 2, WIP = 3, Blocked = 4}
         Dictionary<int, int> statusesDic = new Dictionary<int, int>() 
         { {(int)StatuesName.NoRun, 0 }, {(int)StatuesName.PASS, 0 }, 
@@ -212,10 +214,6 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
                     ActivitiesGroup repoActivsGroup = null;
-                    if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
-                    {
-                        repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
-                    }
                     if (repoActivsGroup == null)
                     {
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
@@ -239,24 +237,16 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
                         tcActivsGroup.ExternalID2 = tc.TestID;
                         busFlow.AddActivitiesGroup(tcActivsGroup);
-                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
+                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
                         busFlow.AttachActivitiesGroupsAndActivities();
                     }
                     else //TC not exist in Ginger repository so create new one
                     {
                         tcActivsGroup = new ActivitiesGroup();
                         tcActivsGroup.Name = tc.TestName;
-                        if (tc.LinkedTestID == null || tc.LinkedTestID == string.Empty)
-                        {
-                            tcActivsGroup.ExternalID = tc.TestID;
-                            tcActivsGroup.ExternalID2 = tc.TestID;
-                        }
-                        else
-                        {
-                            tcActivsGroup.ExternalID = tc.LinkedTestID;
-                            tcActivsGroup.ExternalID2 = tc.TestID; //original TC ID will be used for uploading the execution details back to QC
-                            tcActivsGroup.Description = tc.Description;
-                        }
+                        tcActivsGroup.ExternalID = tc.TestID;
+                        tcActivsGroup.ExternalID2 = tc.LinkedTestID;
+                        tcActivsGroup.Description = tc.Description;
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                     }
 
@@ -596,7 +586,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
                 tcActivsGroup.ExternalID2 = testInstance.Id;
                 busFlow.AddActivitiesGroup(tcActivsGroup);
-                busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
+                busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
                 busFlow.AttachActivitiesGroupsAndActivities();
             }
             else //TC not exist in Ginger repository so create new one

@@ -136,19 +136,24 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     if (mContext.Agent.Driver is IWindowExplorer)
                     {
-                        xWindowExplorerItemBtn.Visibility = Visibility.Visible;
-                        xLiveSpyItemBtn.Visibility = Visibility.Visible;
-                    }
-                    if (mContext.Agent.Driver is IRecord)
-                    {
-                        xRecordItemBtn.Visibility = Visibility.Visible;
+                        xWindowExplorerItemBtn.xButton.IsEnabled = mContext.Agent.Driver.IsRunning();
+                        xLiveSpyItemBtn.xButton.IsEnabled = (mContext.Agent.Driver as IWindowExplorer).IsLiveSpySupported() && mContext.Agent.Driver.IsRunning();
+                        xRecordItemBtn.xButton.IsEnabled = (mContext.Agent.Driver as IWindowExplorer).IsRecordingSupported() && mContext.Agent.Driver.IsRunning();
+
+                        xWindowExplorerItemBtn.IsEnabled = mContext.Agent.Driver.IsRunning();
+                        xLiveSpyItemBtn.IsEnabled = (mContext.Agent.Driver as IWindowExplorer).IsLiveSpySupported() && mContext.Agent.Driver.IsRunning();
+                        xRecordItemBtn.IsEnabled = (mContext.Agent.Driver as IWindowExplorer).IsRecordingSupported() && mContext.Agent.Driver.IsRunning();
                     }
                 }
                 else
                 {
-                    xWindowExplorerItemBtn.Visibility = Visibility.Collapsed;
-                    xLiveSpyItemBtn.Visibility = Visibility.Collapsed;
-                    xRecordItemBtn.Visibility = Visibility.Collapsed;
+                    xWindowExplorerItemBtn.xButton.IsEnabled = false;
+                    xLiveSpyItemBtn.xButton.IsEnabled = false;
+                    xRecordItemBtn.xButton.IsEnabled = false;
+
+                    xWindowExplorerItemBtn.IsEnabled = false;
+                    xLiveSpyItemBtn.IsEnabled = false;
+                    xRecordItemBtn.IsEnabled = false;
                 }
             });
         }

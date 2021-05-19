@@ -43,7 +43,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.Java)
+            if (platform == ePlatformType.Web || platform == ePlatformType.Mobile || platform == ePlatformType.Java)
             {
                 return true;
             }
@@ -58,6 +58,7 @@ namespace GingerCore.Actions
                 var legacyPlatform = new List<ePlatformType>();
                 legacyPlatform.Add(ePlatformType.Web);
                 legacyPlatform.Add(ePlatformType.Java);
+                legacyPlatform.Add(ePlatformType.Mobile);
                 return legacyPlatform;
             }
         }
@@ -73,6 +74,10 @@ namespace GingerCore.Actions
 
                 case ePlatformType.Java:
                     targetPlatform = ePlatformType.Java;
+                    break;
+
+                case ePlatformType.Mobile:
+                    targetPlatform = ePlatformType.Mobile;
                     break;
 
                 default:
@@ -112,6 +117,11 @@ namespace GingerCore.Actions
                 case ePlatformType.Web:
                     convertedUIElementAction = GetNewActionForWeb();
                     break;
+
+                case ePlatformType.Mobile:
+                    convertedUIElementAction = GetNewActionForMobile();
+                    break;
+
                 case ePlatformType.Java:
                     convertedUIElementAction = GetNewActionForJava();
                     break;
@@ -369,6 +379,27 @@ namespace GingerCore.Actions
                 return NewActBrowserElement;
             }
             return null;
+        }
+
+        private Act GetNewActionForMobile()
+        {
+            Act act = GetNewActionForWeb();
+
+            //do changes from Web
+            //if (act is ActUIElement)
+            //{
+            //    ActUIElement uIElementAct = (ActUIElement)act;
+            //    if (uIElementAct.ElementAction == ActUIElement.eElementAction.JavaScriptClick)
+            //    {
+            //        uIElementAct.ElementAction = ActUIElement.eElementAction.Click;
+            //    }
+            //    if (uIElementAct.ElementAction == ActUIElement.eElementAction.SetValue)
+            //    {
+            //        uIElementAct.ElementAction = ActUIElement.eElementAction.SendKeys;
+            //    }
+            //}
+
+            return act;
         }
 
         Type GetActionTypeByElementActionName(eGenElementAction genElementAction)

@@ -131,7 +131,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             LocateElement,
             UnHighlight,
             GetWindowAllFrames,
-            GetFrameControls
+            GetFrameControls,
+            GetElementAtPoint
         }
         public override void StartDriver()
         {
@@ -518,6 +519,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     locateElement.LocateStatus = ElementLocator.eLocateStatus.Passed;
                     act.ExInfo += locateElement.LocateStatus;
+                    pomExcutionUtil.PriotizeLocatorPosition();
                     break;
                 }
 
@@ -2048,7 +2050,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return true;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
 
             List<ElementInfo> list = new List<ElementInfo>();
@@ -2578,7 +2580,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             if (!(String.IsNullOrEmpty(bName)))
             {
-                ElementLocator locator = new ElementLocator();
+                ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                 if (ElementInfo.XPath == "/") // If it is root node the  only by title is applicable
                     locator.LocateBy = eLocateBy.ByTitle;
                 else
@@ -2591,7 +2593,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 if (ElementInfo.XPath != "/")
                 {
-                    ElementLocator locator = new ElementLocator();
+                    ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                     locator.LocateBy = eLocateBy.ByXPath;
                     locator.LocateValue = ElementInfo.XPath;
                     locatorList.Add(locator);
@@ -2605,7 +2607,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     if (ElementInfo.XPath != "/")
                     {
-                        ElementLocator locator = new ElementLocator();
+                        ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                         locator.LocateBy = eLocateBy.ByRelXPath;
                         locator.LocateValue = ((HTMLElementInfo)ElementInfo).RelXpath;
                         locatorList.Add(locator);
@@ -2616,7 +2618,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     if (ElementInfo.XPath != "/" && !ElementInfo.ElementType.Contains("JEditor"))//?????????
                     {
-                        ElementLocator locator = new ElementLocator();
+                        ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                         locator.LocateBy = eLocateBy.ByID;
                         locator.LocateValue = ((HTMLElementInfo)ElementInfo).ID;
                         locatorList.Add(locator);
@@ -2627,14 +2629,13 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     if (!String.IsNullOrEmpty(ElementInfo.Path))
                     {
-                        ElementLocator locator = new ElementLocator();
+                        ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                         locator.LocateBy = eLocateBy.ByCSSSelector;
                         locator.LocateValue = ((HTMLElementInfo)ElementInfo).Path;
                         locatorList.Add(locator);
                     }
                 }
             }
-            locatorList.ToList().ForEach(x => x.IsAutoLearned = true);
             return locatorList;
         }
 
@@ -3916,6 +3917,81 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
 
             return optionalValues;
+        }
+
+        public async Task<ElementInfo> GetElementAtPoint(long ptX, long ptY)
+        {
+            PayLoad Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+            Request.AddEnumValue(WindowExplorerOperationType.GetElementAtPoint);
+            Request.AddValue(ptX + "_" + ptY);
+            Request.ClosePackage();
+            General.DoEvents();
+
+            PayLoad Response = Send(Request);
+            if (!(Response.IsErrorPayLoad()))
+            {
+                if (Response.Name == "HTMLElement")
+                {
+                    return GetHTMLElementInfoFromPL(Response);
+                }
+                else if (Response.Name == "RequireInitializeBrowser")
+                {
+                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                    JavaElementInfo JE = (JavaElementInfo)GetControlInfoFromPayLoad(Response);
+                    InitializeBrowser(JE);
+                    //Adding automatically action for InitializeBrowser
+                    BusinessFlow.AddAct(new ActBrowserElement
+                    {
+                        Description = "Initialize Browser Automatically - JExplorerBrowser",
+                        LocateBy = eLocateBy.ByXPath,
+                        LocateValue = JE.XPath,
+                        Value = ""
+                    });
+
+                    Mouse.OverrideCursor = null;
+                    Reporter.ToUser(eUserMsgKey.InitializeBrowser);
+                    return null;
+                }
+                else
+                    return GetControlInfoFromPayLoad(Response);
+            }
+            return null;
+            throw new NotImplementedException();
+        }
+
+        public bool IsRecordingSupported()
+        {
+            return true;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return true;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return true;
+        }
+
+        public bool IsWinowSelectionRequired()
+        {
+            return true;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.TreeView };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.TreeView;
+        }
+
+        public string SelectionWindowText()
+        {
+            return "Window:";
         }
     }
 }

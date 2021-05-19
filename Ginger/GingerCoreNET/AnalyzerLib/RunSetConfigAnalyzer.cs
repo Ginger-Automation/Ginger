@@ -108,9 +108,8 @@ namespace Ginger.AnalyzerLib
                                 if (optionalOutputVariables == null)
                                 {
                                     optionalOutputVariables = GR.GetPossibleOutputVariables(RSC, bf, includeGlobalVars: false, includePrevRunnersVars: true);
-                                }                                
-                                Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
-                                issueExist = optionalOutputVariables.Where(x => x.Guid == mappedGuid).FirstOrDefault() == null;
+                                }                              
+                                issueExist = optionalOutputVariables.Where(x => x.VariableInstanceInfo == inputVar.MappedOutputValue).FirstOrDefault() == null;
                                 break;
                             case VariableBase.eOutputType.GlobalVariable:                                
                                 Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);

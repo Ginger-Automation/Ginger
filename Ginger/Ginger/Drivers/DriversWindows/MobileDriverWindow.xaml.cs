@@ -49,12 +49,13 @@ namespace Ginger.Drivers.DriversWindows
         #region Events
         private void MobileDriverWindow_DriverMessageEvent(object sender, DriverMessageEventArgs e)
         {
-            this.Dispatcher.Invoke(() =>
+
+            switch (e.DriverMessageType)
             {
-                switch (e.DriverMessageType)
-                {
-                    case DriverBase.eDriverMessageType.DriverStatusChanged:
-                        if (mDriver.IsDeviceConnected)
+                case DriverBase.eDriverMessageType.DriverStatusChanged:
+                    if (mDriver.IsDeviceConnected)
+                    {
+                        this.Dispatcher.Invoke(() =>
                         {
                             xLoadingPnl.Visibility = Visibility.Collapsed;
                             xDeviceScreenshotCanvas.Visibility = Visibility.Visible;
@@ -62,24 +63,24 @@ namespace Ginger.Drivers.DriversWindows
                             RefreshDeviceScreenshotAsync();
                             SetOrientationButton();
                             DoContinualDeviceScreenshotRefresh();
-                        }
-                        else
+                        });
+                    }
+                    else
+                    {
+                        if (!mSelfClosing)
                         {
-                            if (!mSelfClosing)
-                            {
-                                DoSelfClose();
-                            }
+                            DoSelfClose();
                         }
-                        break;
+                    }
+                    break;
 
-                    case DriverBase.eDriverMessageType.ActionPerformed:
-                        if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
-                        {
-                            RefreshDeviceScreenshotAsync(100);
-                        }
-                        break;
-                }
-            });
+                case DriverBase.eDriverMessageType.ActionPerformed:
+                    if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
+                    {
+                        RefreshDeviceScreenshotAsync(100);
+                    }
+                    break;
+            }            
         }
 
        
@@ -247,7 +248,7 @@ namespace Ginger.Drivers.DriversWindows
         {
             if (mDriver.GetAppType() == eAppType.Web)
             {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Operation not supported in device browser mode");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation not supported for this mobile OS or application type.");
                 return;
             }
 
@@ -262,7 +263,7 @@ namespace Ginger.Drivers.DriversWindows
         {
             if (mDriver.GetAppType() == eAppType.Web)
             {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Operation not supported in device browser mode");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation not supported for this mobile OS or application type.");
                 return;
             }
 
@@ -540,25 +541,27 @@ namespace Ginger.Drivers.DriversWindows
                         return true;
                     }
                     catch (Exception ex)
-                    {                       
-                        this.Dispatcher.Invoke(() =>
+                    {
+
+                        if (!mDriver.IsDeviceConnected)
                         {
-                            if (!mDriver.IsDeviceConnected)
+                            if (!mSelfClosing)
                             {
-                                if (!mSelfClosing)
-                                {
-                                    DoSelfClose();
-                                }
+                                DoSelfClose();
                             }
-                            else
+                        }
+                        else
+                        {
+                            Reporter.ToUser(eUserMsgKey.MobileRefreshScreenShotFailed, string.Format("Failed to update the device screenshot, Error:{0}", ex.Message));
+                            if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.Live)
                             {
-                                Reporter.ToUser(eUserMsgKey.MobileRefreshScreenShotFailed, string.Format("Failed to update the device screenshot, Error:{0}", ex.Message));
-                                if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.Live)
+                                this.Dispatcher.Invoke(() =>
                                 {
                                     xPostOperationRdBtn.IsChecked = true;
-                                }
+                                });
                             }
-                        });
+                        }
+                      
                         return false;
                     }
                 });
@@ -596,10 +599,16 @@ namespace Ginger.Drivers.DriversWindows
                 ratio_Y = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.ActualHeight;
             }
 
-            //pointOnMobile.X = (long)(pointOnImage.X * ratio_X);
-            //pointOnMobile.Y = (long)(pointOnImage.Y * ratio_Y);
-            pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
-            pointOnMobile.Y = (int)(pointOnImage.Y * ratio_Y);
+            if (mDriver.GetAppType() == eAppType.Web)
+            {
+                pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
+                pointOnMobile.Y = (int)((pointOnImage.Y + (xDeviceScreenshotImage.ActualHeight / 8)) * ratio_Y);
+            }
+            else
+            {
+                pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
+                pointOnMobile.Y = (int)(pointOnImage.Y * ratio_Y);
+            }
 
             return pointOnMobile;
         }
@@ -677,7 +686,10 @@ namespace Ginger.Drivers.DriversWindows
             mSelfClosing = true;
             if (!mUserClosing)
             {
-                this.Close();
+                this.Dispatcher.Invoke(() =>
+                {
+                    this.Close();
+                });
             }
         }
         #endregion Functions

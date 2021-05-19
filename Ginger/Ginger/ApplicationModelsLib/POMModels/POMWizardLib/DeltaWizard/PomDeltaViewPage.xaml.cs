@@ -68,7 +68,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        DeltaElementInfo mSelectedElement
+       internal DeltaElementInfo mSelectedElement
         {
             get
             {
@@ -449,5 +449,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 Reporter.ToLog(eLogLevel.ERROR, "Error in POM Delta View Page tabs style", ex);
             }
         }
+       
+        
     }
 }

@@ -114,35 +114,37 @@ namespace Amdocs.Ginger.CoreNET.Logger
         {
             bool response = false;
 
-            if (!Assembly.GetEntryAssembly().FullName.ToUpper().Contains("CONSOLE"))
+
+            try
             {
-                try
+                json = $"window.runsetData={json};";
+
+#warning Report Fix MEN not stable approach 
+                StringBuilder pageDataSb = new StringBuilder();
+                pageDataSb.Append("file:///");
+                pageDataSb.Append(clientAppFolderPath.Replace('\\', '/'));
+                pageDataSb.Append("/");
+                pageDataSb.Append("index.html");
+                if (openObject != null)
                 {
-                    json = $"window.runsetData={json};";
-                    StringBuilder pageDataSb = new StringBuilder();
-                    pageDataSb.Append("file:///");
-                    pageDataSb.Append(clientAppFolderPath.Replace('\\', '/'));
-                    pageDataSb.Append("/");
-                    pageDataSb.Append("index.html");
-                    if (openObject != null)
-                    {
-                        pageDataSb.Append("#/?Routed_Guid=");
-                        pageDataSb.Append(openObject.Guid);
-                    }
-                    string taskCommand = $"\"{pageDataSb.ToString()}\"";
-                    System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets", "Execution_Data", "executiondata.js"), json);
-                    if (shouldDisplayReport)
-                    {
-                        System.Diagnostics.Process.Start(@browserPath, taskCommand);
-                        System.Diagnostics.Process.Start(clientAppFolderPath);
-                    }
-                    response = true;
+                    pageDataSb.Append("#/?Routed_Guid=");
+                    pageDataSb.Append(openObject.Guid);
                 }
-                catch (Exception ex)
+                string taskCommand = $"\"{pageDataSb.ToString()}\"";
+                System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets", "Execution_Data", "executiondata.js"), json);
+
+                if (shouldDisplayReport && !Assembly.GetEntryAssembly().FullName.ToUpper().Contains("CONSOLE"))
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error in RunClientApp", ex);
+                    System.Diagnostics.Process.Start(@browserPath, taskCommand);
+                    System.Diagnostics.Process.Start(clientAppFolderPath);
                 }
+                response = true;
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in RunClientApp", ex);
+            }
+
             return response;
         }
 

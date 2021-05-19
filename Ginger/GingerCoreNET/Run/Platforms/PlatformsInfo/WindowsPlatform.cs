@@ -58,20 +58,32 @@ namespace GingerCore.Platforms.PlatformsInfo
         }
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
-            List<ActUIElement.eElementAction> pbTableControlActionlist = base.GetPlatformUIElementActionsList(ElementType);
+            List<ActUIElement.eElementAction> windowsPlatformElementActionslist = base.GetPlatformUIElementActionsList(ElementType);
             
             switch (ElementType)
             {
                 case eElementType.Unknown:
                     break;
                 case eElementType.Button:
-                    pbTableControlActionlist.Add(ActUIElement.eElementAction.ClickAndValidate);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickAndValidate);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     break;
                 case eElementType.Window:
-                    pbTableControlActionlist.Add(ActUIElement.eElementAction.Switch);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetWindowTitle);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Maximize);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Minimize);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.IsExist);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.CloseWindow);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Switch);
+                    break;
+                case eElementType.MenuItem:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Collapse);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Expand);
                     break;
             }
-            return pbTableControlActionlist;
+            return windowsPlatformElementActionslist;
         }
 
         public override string GetPlatformGenericElementEditControls()
@@ -108,24 +120,9 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override List<ActUIElement.eTableAction> GetTableControlActions(ActUIElement.eElementAction tableAction)
         {
-            List<ActUIElement.eTableAction> pbTableControlActionlist = base.GetTableControlActions(tableAction);
-            switch (tableAction)
-            {
-                case ActUIElement.eElementAction.TableCellAction:
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.AsyncClick);
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.WinClick);
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.Type);
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.DoubleClick);
-                    break;
-                case ActUIElement.eElementAction.TableRowAction:
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.SetFocus);
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.IsCellEnabled);
-                    break;
-                case ActUIElement.eElementAction.TableAction:
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.SetFocus);
-                    break;
-            }
-            return pbTableControlActionlist;
+            List<ActUIElement.eTableAction> windowsTableControlActionlist = base.GetTableControlActions(tableAction);
+            
+            return windowsTableControlActionlist;
         }
 
         public override List<ActUIElement.eElementAction> GetPlatformUIValidationTypesList()
@@ -164,8 +161,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementsTypeList.Add(eElementType.Image);
                 mElementsTypeList.Add(eElementType.Label);
                 mElementsTypeList.Add(eElementType.List);
-                mElementsTypeList.Add(eElementType.Table);
                 mElementsTypeList.Add(eElementType.Window);
+                mElementsTypeList.Add(eElementType.MenuItem);
             }
             return mElementsTypeList;
         }
@@ -180,8 +177,149 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override ObservableList<ElementLocator> GetLearningLocators()
         {
-            return null;
+            ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Very Recommended (usually unique)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByAutomationID, Help = "Recommended (usually stable)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Recommended (sensitive to page design changes)" });
+
+            return learningLocatorsList;
         }
 
+        public List<ElementTypeData> GetPlatformElementTypesData()
+        {
+            if (mPlatformElementTypeOperations == null)
+            {
+                mPlatformElementTypeOperations = new List<ElementTypeData>();
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Unknown,
+                    IsCommonElementType = false
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Button,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.ScrollBar,
+                    IsCommonElementType = false
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.ComboBox,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.RadioButton,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.TextBox,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.CheckBox,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Label,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.List,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.MenuItem,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Window,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Tab,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.TreeView,
+                    IsCommonElementType = true
+                });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.DatePicker,
+                    IsCommonElementType = true
+                });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Dialog,
+                    IsCommonElementType = false
+                });
+                
+            }
+            return mPlatformElementTypeOperations;
+        }
+        private string SetElementExtInfo(eElementType elementType)
+        {
+            var elementExtInfo = string.Empty;
+            switch (elementType)
+            {
+                case eElementType.Browser:
+                case eElementType.Div:
+                case eElementType.Span:
+                case eElementType.HyperLink:
+                    elementExtInfo = "For Embedded Html";
+                    break;
+                default:
+                    elementExtInfo = string.Empty;
+                    break;
+            }
+            return elementExtInfo;
+        }
+        public override Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList()
+        {
+            ObservableList<UIElementFilter> uIBasicElementFilters = new ObservableList<UIElementFilter>();
+            ObservableList<UIElementFilter> uIAdvancedElementFilters = new ObservableList<UIElementFilter>();
+            foreach (ElementTypeData elementTypeOperation in GetPlatformElementTypesData())
+            {
+                var elementExtInfo = SetElementExtInfo(elementTypeOperation.ElementType);
+                if (elementTypeOperation.IsCommonElementType)
+                {
+                    uIBasicElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, elementExtInfo, true));
+                }
+                else
+                {
+                    uIAdvancedElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, elementExtInfo, false));
+                }
+            }
+
+            Dictionary<string, ObservableList<UIElementFilter>> elementListDic = new Dictionary<string, ObservableList<UIElementFilter>>();
+            elementListDic.Add("Basic", new ObservableList<UIElementFilter>(uIBasicElementFilters));
+            elementListDic.Add("Advanced", new ObservableList<UIElementFilter>(uIAdvancedElementFilters));
+
+            return elementListDic;
+        }
     }
 }

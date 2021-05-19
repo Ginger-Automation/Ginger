@@ -24,6 +24,8 @@ using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
+using Ginger.BusinessFlowPages;
+using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.BusinessFlowWindows;
 using Ginger.Help;
 using Ginger.Repository;
@@ -115,10 +117,11 @@ namespace Ginger.Actions
             EditMode = editMode;
 
             mAction = act;
-            if (editMode != General.eRIPageViewMode.View)
+            if (editMode != General.eRIPageViewMode.View && editMode != General.eRIPageViewMode.Explorer)
             {
                 mAction.SaveBackup();
             }
+
             mAction.PropertyChanged -= ActionPropertyChanged;
             mAction.PropertyChanged += ActionPropertyChanged;
             mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
@@ -169,7 +172,7 @@ namespace Ginger.Actions
                 mAction.AddNewReturnParams = true;
             }
 
-            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View)
+            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.Explorer)
             {
                 BindingHandler.ObjFieldBinding(xExecutionStatusTabImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
             }
@@ -182,6 +185,10 @@ namespace Ginger.Actions
             {
                 SetViewMode();
             }
+            else if(EditMode == General.eRIPageViewMode.Explorer)
+            {
+                SetExplorerMode();
+            }
 
             if ((EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View) &&
                        (mAction.Status != null && mAction.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending))
@@ -192,6 +199,18 @@ namespace Ginger.Actions
             {
                 xActionTabs.SelectedItem = xOperationSettingsTab;
             }
+        }
+
+        private void SetExplorerMode()
+        {
+            xHelpTab.Visibility = Visibility.Collapsed;
+            xHelpButton.Visibility = Visibility.Collapsed;
+            xFlowControlTab.Visibility = Visibility.Collapsed;
+
+            xOutputValuesTabHeaderTextBlock.FontSize = 10;
+            xDetailsTabTextBlock.FontSize = 10;
+            xExecutionReportTabTextBlock.FontSize = 10;
+            xOperationsTabTextBlock.FontSize = 10;
         }
 
         private void InitDetailsTabView()
@@ -344,7 +363,7 @@ namespace Ginger.Actions
             InitActionLog();
 
             //execution details section
-            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View)
+            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.Explorer)
             {
                 BindingHandler.ObjFieldBinding(xExecutionStatusImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
                 BindingHandler.ObjFieldBinding(xExecutionStatusLabel, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
@@ -779,31 +798,13 @@ namespace Ginger.Actions
         {
             //Each Action need to implement ActionEditPage which return the name of the page for edit
             //TODO: check all action are working and showing the correct Edit Page
-
             if (a.ActionEditPage != null)
             {
-                string classname = "Ginger.Actions." + a.ActionEditPage;
-                Type t = Assembly.GetExecutingAssembly().GetType(classname);
-                if (t == null)
+                Page actEditPage = ActionsFactory.GetActionEditPage(a, mContext);
+                if (actEditPage != null)
                 {
-                    throw new Exception("Action edit page not found - " + classname);
-                }
-                Page p = (Page)Activator.CreateInstance(t, a);
-                if (p != null)
-                {
-                    // For no driver actions we give the BF and env - used for example in set var value.
-                    if (typeof(ActWithoutDriver).IsAssignableFrom(a.GetType()))
-                    {
-                        if (mContext != null && mContext.Runner != null)
-                        {
-                            ((ActWithoutDriver)a).RunOnBusinessFlow = (BusinessFlow)mContext.Runner.CurrentBusinessFlow;
-                            ((ActWithoutDriver)a).RunOnEnvironment = (ProjEnvironment)mContext.Runner.ProjEnvironment;
-                            ((ActWithoutDriver)a).DSList = mContext.Runner.DSList;
-                        }
-                    }
-
                     // Load the page
-                    xActionPrivateConfigsFrame.SetContent(p);
+                    xActionPrivateConfigsFrame.SetContent(actEditPage);
                     xActionPrivateConfigsFrame.Visibility = System.Windows.Visibility.Visible;
                 }
             }

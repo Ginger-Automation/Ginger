@@ -29,7 +29,9 @@ using Ginger.Repository.ItemToRepositoryWizard;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
+using GingerCore.Platforms;
 using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 
 namespace Ginger.Repository
@@ -293,6 +295,6 @@ namespace Ginger.Repository
 
             //return true;
         }
-
+        
     }
 }
