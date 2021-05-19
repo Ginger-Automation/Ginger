@@ -22,6 +22,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
 
         void PerformMenuButtonPress();
 
+        void PerformVolumeButtonPress(eVolumeOperation volumeOperation);
+
+        void PerformLockButtonPress(eLockOperation lockOperation);
+
         Byte[] GetScreenshotImage();
 
         void PerformTap(long x, long y);

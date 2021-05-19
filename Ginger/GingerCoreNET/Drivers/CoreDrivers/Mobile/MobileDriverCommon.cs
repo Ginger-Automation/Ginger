@@ -53,6 +53,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile
         Up, Down
     }
 
+    public enum eLockOperation
+    {
+        Lock, UnLock
+    }
+
     public class MobileDriverCommon
     {
 
