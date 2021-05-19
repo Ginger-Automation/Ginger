@@ -36,9 +36,9 @@ namespace Ginger.Actions
     public partial class ActExcelEditPage 
     {       
         public ActionEditPage actp;
-        private ActExcelNPOI mAct;
+        private ActExcel mAct;
 
-        public ActExcelEditPage(ActExcelNPOI act)
+        public ActExcelEditPage(ActExcel act)
         {
             InitializeComponent();
             mAct = act;
@@ -48,21 +48,21 @@ namespace Ginger.Actions
         
         public void Bind()
         {            
-            ExcelActionComboBox.BindControl(mAct, ActExcelNPOI.Fields.ExcelActionType);
-            ExcelFileNameTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcelNPOI.Fields.ExcelFileName);
-            SheetNamComboBox.BindControl(mAct, ActExcelNPOI.Fields.SheetName);
-            SelectRowsWhereTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcelNPOI.Fields.SelectRowsWhere);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SelectAllRows,CheckBox.IsCheckedProperty,mAct, ActExcelNPOI.Fields.SelectAllRows);
-            PrimaryKeyColumnTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcelNPOI.Fields.PrimaryKeyColumn);
-            SetDataUsedTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcelNPOI.Fields.SetDataUsed);
-            ColMappingRulesTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcelNPOI.Fields.ColMappingRules);
+            ExcelActionComboBox.BindControl(mAct, nameof(ActExcel.ExcelActionType));
+            ExcelFileNameTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ExcelFileName));
+            SheetNamComboBox.BindControl(mAct, nameof(ActExcel.SheetName));
+            SelectRowsWhereTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SelectRowsWhere));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SelectAllRows,CheckBox.IsCheckedProperty,mAct, nameof(ActExcel.SelectAllRows));
+            PrimaryKeyColumnTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.PrimaryKeyColumn));
+            SetDataUsedTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SetDataUsed));
+            ColMappingRulesTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ColMappingRules));
             
-            if (mAct.ExcelActionType == ActExcelNPOI.eExcelActionType.ReadData)
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData)
             {                
                 this.ColMappingRulesSection.Visibility = Visibility.Collapsed;
                 SetDataUsedSection.Visibility = Visibility.Visible;
             }
-            if (mAct.ExcelActionType == ActExcelNPOI.eExcelActionType.WriteData)
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.WriteData)
             {
                 this.ColMappingRulesSection.Visibility = Visibility.Visible;
             }
@@ -158,14 +158,21 @@ namespace Ginger.Actions
 
         private void SheetNamVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActExcelNPOI.Fields.SheetName, Context.GetAsContext(mAct.Context));
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, nameof(ActExcel.SheetName), Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             SheetNamComboBox.Text = mAct.SheetName;
         }
 
         private void xOpenExcelButton_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(mAct.GetExcelFileNameForDriver());
+            try
+            {
+                Process.Start(mAct.GetExcelFileNameForDriver());
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.MissingExcelDetails);
+            }
         }
     }
 }

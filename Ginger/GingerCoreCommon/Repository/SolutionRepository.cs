@@ -387,6 +387,12 @@ namespace Amdocs.Ginger.Repository
         {
             try
             {
+                if(string.IsNullOrEmpty(relativePath))
+                {
+                    string missingFileName = "Invalid or missing file name";
+                    Reporter.ToLog(eLogLevel.WARN, missingFileName);
+                    throw new Exception(missingFileName);
+                }
                 if (relativePath.TrimStart().StartsWith("~"))
                 {
                     string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
