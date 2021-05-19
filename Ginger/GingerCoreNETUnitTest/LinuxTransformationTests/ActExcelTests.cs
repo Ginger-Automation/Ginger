@@ -128,6 +128,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("ExcelFileName",
                 TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names.xlsx"));
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("SheetName", "Sheet1");
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue("SelectRowsWhere", "A2");
             actExcel.ExcelActionType = ActExcel.eExcelActionType.ReadCellData;
             actExcel.AddNewReturnParams = true;
 
