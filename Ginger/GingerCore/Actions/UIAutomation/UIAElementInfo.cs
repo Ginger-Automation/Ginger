@@ -43,10 +43,10 @@ namespace GingerCore.Actions.UIAutomation
             return ((UIAutomationDriverBase)WindowExplorer).mUIAutomationHelper.GetElementTitle(ElementObject);
         }
 
-        public override string GetElementType()
-        {
-          return  ((UIAutomationDriverBase) WindowExplorer).mUIAutomationHelper.GetElementControlType(ElementObject);
-        }
+        //public override string GetElementType()
+        //{
+        //  return  ((UIAutomationDriverBase) WindowExplorer).mUIAutomationHelper.GetElementControlType(ElementObject);
+        //}
 
         public override string GetValue()
         {
