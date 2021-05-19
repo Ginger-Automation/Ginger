@@ -27,6 +27,7 @@ using Rally.RestApi.Response;
 using GingerCore.ALM.Rally;
 using Amdocs.Ginger.Repository;
 using System.Linq;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM
 {
@@ -215,6 +216,12 @@ namespace GingerCore.ALM
         {
             get { return ImportFromRally.GingerActivitiesRepo; }
             set { ImportFromRally.GingerActivitiesRepo = value; }
+        }
+
+        public override ObservableList<ApplicationPlatform> ApplicationPlatforms
+        {
+            get { return ImportFromRally.ApplicationPlatforms; }
+            set { ImportFromRally.ApplicationPlatforms = value; }
         }
     }
 }
