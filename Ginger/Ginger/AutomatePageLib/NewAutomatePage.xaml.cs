@@ -236,7 +236,10 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (e.PropertyName == nameof(Agent.Status))
             {
-                mContext.AgentStatus = Convert.ToString(((Agent)sender).Status);
+                if ((sender as Agent) != null & (sender as Agent) == mContext.Agent)
+                {
+                    mContext.AgentStatus = Convert.ToString(((Agent)sender).Status);
+                }
             }
         }
 
@@ -256,6 +259,7 @@ namespace GingerWPF.BusinessFlowsLib
                 if (mContext.Agent != appAgent.Agent)
                 {
                     mContext.Agent = appAgent.Agent;
+                    //mContext.AgentStatus = appAgent.Agent.Status.ToString();
                 }
 
                 if (mContext.Agent != null)

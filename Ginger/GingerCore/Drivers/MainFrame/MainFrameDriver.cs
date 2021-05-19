@@ -818,7 +818,7 @@ namespace GingerCore.Drivers.MainFrame
 
         public bool IsLiveSpySupported()
         {
-            return true;
+            return false;
         }
 
         public bool IsWinowSelectionRequired()
