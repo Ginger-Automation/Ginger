@@ -534,15 +534,8 @@ namespace GingerCore.Actions
             {
                 return "";
             }
-
-            ExcelFileNameAbsolutue = ExcelFileNameAbsolutue.ToUpper();
-
-            if (ExcelFileNameAbsolutue.Contains(SolutionRepository.cSolutionRootFolderSign))
-            {
-                ExcelFileNameAbsolutue = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExcelFileNameAbsolutue);
-            }
-
-
+            ExcelFileNameAbsolutue = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExcelFileNameAbsolutue);
+            
             return ExcelFileNameAbsolutue;
         }
 
