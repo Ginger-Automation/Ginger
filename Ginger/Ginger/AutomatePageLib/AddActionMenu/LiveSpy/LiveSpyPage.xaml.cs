@@ -205,7 +205,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xSpyingButton.ButtonImageType = eImageType.Spy;
                 xSpyingButton.IsEnabled = true;
 
-                ControlDetailsRow.Height = new GridLength(0);
+                xUCElementDetails.SelectedElement = null;
 
                 xStatusTextBlock.Visibility = Visibility.Collapsed;
 
