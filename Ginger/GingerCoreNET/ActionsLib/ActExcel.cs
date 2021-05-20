@@ -515,6 +515,16 @@ namespace GingerCore.Actions
 
             return VarCols;
         }
+        internal static string[] GetVarColsMapsFromString(string sVarCols)
+        {
+
+
+            string[] VarColMap = sVarCols.Split(',');
+
+
+
+            return VarColMap;
+        }
 
         public string GetExcelFileNameForDriver()
         {
