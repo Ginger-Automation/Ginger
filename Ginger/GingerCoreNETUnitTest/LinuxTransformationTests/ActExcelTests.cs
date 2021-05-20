@@ -68,7 +68,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             //Arrange            
             ActExcel actExcel = new ActExcel();
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("ExcelFileName",
-                TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names.xlsx"));
+                TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names1.xlsx"));
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("SheetName", "Sheet1");
             actExcel.ExcelActionType = ActExcel.eExcelActionType.ReadData;
             actExcel.AddNewReturnParams = true;
@@ -86,7 +86,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             //Arrange            
             ActExcel actExcel = new ActExcel();
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("ExcelFileName",
-                TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names.xlsx"));
+                TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names2.xlsx"));
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("SheetName", "Sheet1");
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("SelectRowsWhere", "Last='Cohen'");
             actExcel.ExcelActionType = ActExcel.eExcelActionType.ReadData;
@@ -105,7 +105,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             //Arrange            
             ActExcel actExcel = new ActExcel();
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("ExcelFileName",
-                TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names.xlsx"));
+                TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names3.xlsx"));
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("SheetName", "Sheet1");
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("PrimaryKeyColumn", "ID");
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("SelectRowsWhere", "Last='Cohen'");
@@ -126,7 +126,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             //Arrange            
             ActExcel actExcel = new ActExcel();
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("ExcelFileName",
-                TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names.xlsx"));
+                TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names4.xlsx"));
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("SheetName", "Sheet1");
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue("SelectRowsWhere", "A2");
             actExcel.ExcelActionType = ActExcel.eExcelActionType.ReadCellData;
