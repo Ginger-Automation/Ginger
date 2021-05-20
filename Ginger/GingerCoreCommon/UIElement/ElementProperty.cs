@@ -33,5 +33,6 @@ namespace Amdocs.Ginger.Common.UIElement
         public const string Y = "Y";
         public const string Value = "Value";
         public const string OptionalValues="Optional Values";
+        public const string InnerText = "InnerText";
     }
 }

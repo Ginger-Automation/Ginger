@@ -268,7 +268,7 @@ namespace GingerCore.Drivers
 
         public SeleniumDriver()
         {
-            
+
         }
 
         ~SeleniumDriver()
@@ -463,7 +463,7 @@ namespace GingerCore.Drivers
                         {
                             options.EnableMobileEmulation(EmulationDeviceName);
                         }
-                        else if(!string.IsNullOrEmpty(BrowserUserAgent))
+                        else if (!string.IsNullOrEmpty(BrowserUserAgent))
                         {
                             ChromeMobileEmulationDeviceSettings chromeMobileEmulationDevice = new ChromeMobileEmulationDeviceSettings()
                             { UserAgent = BrowserUserAgent.Trim() };
@@ -559,7 +559,7 @@ namespace GingerCore.Drivers
 
                 if (!string.IsNullOrEmpty(BrowserHeight) && !string.IsNullOrEmpty(BrowserWidth))
                 {
-                    Driver.Manage().Window.Size = new Size() { Height = Convert.ToInt32(BrowserHeight),Width=Convert.ToInt32(BrowserWidth) };
+                    Driver.Manage().Window.Size = new Size() { Height = Convert.ToInt32(BrowserHeight), Width = Convert.ToInt32(BrowserWidth) };
                 }
 
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
@@ -3176,7 +3176,7 @@ namespace GingerCore.Drivers
                         currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
                         pomExcutionUtil.PriotizeLocatorPosition();
                     }
-                    
+
                 }
             }
             else
@@ -3796,16 +3796,16 @@ namespace GingerCore.Drivers
             }
 
         }
-        
-        
+
+
         private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
 
-                string documentContents = Driver.PageSource;
-                HtmlDocument htmlDoc = new HtmlDocument();
-                htmlDoc.LoadHtml(documentContents);
+            string documentContents = Driver.PageSource;
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(documentContents);
             IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#"));
 
             if (htmlElements.Count() != 0)
@@ -4558,7 +4558,7 @@ namespace GingerCore.Drivers
                     var wt = Driver.Title; //if Switch window throw exception then reading current driver title to avoid exception for next window handle in loop
                     Reporter.ToLog(eLogLevel.ERROR, "Error occured during Switchwindow", ex);
                 }
-               
+
             }
             if (!windowfound)
             {
@@ -4592,7 +4592,7 @@ namespace GingerCore.Drivers
                 {
                     SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
                 }
-                
+
 
                 //Find element 
                 if (locateElementByItLocators)
@@ -4692,7 +4692,7 @@ namespace GingerCore.Drivers
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.PlatformElementType, Value = ElementInfo.ElementType });
                 }
-                list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });              
+                list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
                 if (!string.IsNullOrWhiteSpace(ElementInfo.Path))
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.ParentIFrame, Value = ElementInfo.Path });
@@ -4725,40 +4725,7 @@ namespace GingerCore.Drivers
 
                 if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
                 {
-                    if (ElementInfo.IsElementTypeSupportingOptionalValues(ElementInfo.ElementTypeEnum))
-                    {
-                        foreach (HtmlNode childNode in ((HTMLElementInfo)ElementInfo).HTMLElementObject.ChildNodes)
-                        {
-                            if (!childNode.Name.StartsWith("#") && !string.IsNullOrEmpty(childNode.InnerText))
-                            {
-                                string[] tempOpVals = childNode.InnerText.Split('\n');
-                                foreach (string cuVal in tempOpVals)
-                                {
-                                    ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
-                                }
-                            }
-                        }
-                        if (ElementInfo.OptionalValuesObjectsList.Count > 0)
-                        {
-                            ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
-                            list.Add(new ControlProperty() { Name = ElementProperty.OptionalValues, Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
-                        }
-
-                    }
-                    if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
-                    {
-                        HtmlAttributeCollection htmlAttributes = ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes;
-
-                        foreach (HtmlAttribute htmlAttribute in htmlAttributes)
-                        {
-                            ControlProperty existControlProperty = list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
-                            if (existControlProperty == null)
-                            {
-                                ControlProperty controlProperty = new ControlProperty() { Name = htmlAttribute.Name, Value = htmlAttribute.Value };
-                                list.Add(controlProperty);
-                            }
-                        }
-                    }
+                    LearnPropertiesFromHtmlElementObject(ElementInfo, list);
                 }
                 else if (el != null)
                 {
@@ -4815,6 +4782,49 @@ namespace GingerCore.Drivers
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
             }
 
+        }
+
+        private static void LearnPropertiesFromHtmlElementObject(ElementInfo ElementInfo, ObservableList<ControlProperty> list)
+        {
+            var htmlElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject;
+
+            if (ElementInfo.IsElementTypeSupportingOptionalValues(ElementInfo.ElementTypeEnum))
+            {
+                foreach (HtmlNode childNode in htmlElementObject.ChildNodes)
+                {
+                    if (!childNode.Name.StartsWith("#") && !string.IsNullOrEmpty(childNode.InnerText))
+                    {
+                        string[] tempOpVals = childNode.InnerText.Split('\n');
+                        foreach (string cuVal in tempOpVals)
+                        {
+                            ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
+                        }
+                    }
+                }
+                if (ElementInfo.OptionalValuesObjectsList.Count > 0)
+                {
+                    ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
+                    list.Add(new ControlProperty() { Name = ElementProperty.OptionalValues, Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
+                }
+
+            }
+
+            HtmlAttributeCollection htmlAttributes = htmlElementObject.Attributes;
+            foreach (HtmlAttribute htmlAttribute in htmlAttributes)
+            {
+                ControlProperty existControlProperty = list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
+                if (existControlProperty == null)
+                {
+                    ControlProperty controlProperty = new ControlProperty() { Name = htmlAttribute.Name, Value = htmlAttribute.Value };
+                    list.Add(controlProperty);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(htmlElementObject.InnerText) && ElementInfo.OptionalValues.Count == 0 && htmlElementObject.ChildNodes.Count == 0)
+            {
+                list.Add(new ControlProperty() { Name = ElementProperty.InnerText, Value = htmlElementObject.InnerText.ToString() });
+            }
+            
         }
 
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
@@ -5062,7 +5072,7 @@ namespace GingerCore.Drivers
                 return foundElemntInfo;
             }
             catch(Exception ex)
-            { 
+            {
             }
             finally
             {
@@ -5113,7 +5123,7 @@ namespace GingerCore.Drivers
             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
             foundElemntInfo.Path = IframePath;
             foundElemntInfo.ElementObject = elInsideIframe;
-            
+
             if (elInsideIframe.TagName == "iframe" || elInsideIframe.TagName == "frame")
             {
                 if (!string.IsNullOrEmpty(foundElemntInfo.Path))
@@ -5237,7 +5247,7 @@ namespace GingerCore.Drivers
         }
 
         public void InjectGingerLiveSpy()
-        {                                    
+        {
             AddJavaScriptToPage(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLiveSpy));
             ((IJavaScriptExecutor)Driver).ExecuteScript("define_GingerLibLiveSpy();", null);
             string rc = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.AddScript(arguments[0]);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min));
@@ -5356,7 +5366,7 @@ namespace GingerCore.Drivers
             {
                 // Do nothing...
             }
-        }        
+        }
 
         String GetInjectJSSCript(string script)
         {
@@ -5601,7 +5611,7 @@ namespace GingerCore.Drivers
                         }
                     }
                     catch (OpenQA.Selenium.WebDriverException e)
-                    {                        
+                    {
                         StopRecordingIfAgentClosed(e.Message);
                     }
                     catch (Exception e)
@@ -5878,7 +5888,7 @@ namespace GingerCore.Drivers
 
                 PayLoad pl = new PayLoad("StopRecording");
                 pl.ClosePackage();
-                PayLoad plrc = ExceuteJavaScriptPayLoad(pl); 
+                PayLoad plrc = ExceuteJavaScriptPayLoad(pl);
             }
             // Handle in the JS to stop recording
             IsRecording = false;
@@ -7542,7 +7552,7 @@ namespace GingerCore.Drivers
             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
             foundElemntInfo.ElementObject = parentElementObject;
             foundElemntInfo.HTMLElementObject = parentElementHtmlNode;
-            ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
+            ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo); //why learning complete infoDetails of parent element
 
             return foundElemntInfo;
         }
@@ -8000,15 +8010,15 @@ namespace GingerCore.Drivers
         }
 
         public bool CanStartAnotherInstance(out string errorMessage)
-        
+
         {
 
             switch(mBrowserTpe)
             {
-               
-          
-               //TODO: filter on internetexplorer
-                  
+
+
+                //TODO: filter on internetexplorer
+
                 default:
                     errorMessage = string.Empty;
                     return true;
