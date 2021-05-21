@@ -64,7 +64,7 @@ namespace Ginger.WindowExplorer
         public bool IsLegacyPlatform = false;
 
         // when launching from Window explore we get also available actions to choose so user can add
-        public ControlActionsPage_New(IWindowExplorer driver, ElementInfo ElementInfo, Context context, ElementActionCongifuration actionConfigurations, ITreeViewItem CurrentControlTreeViewItem, PlatformInfoBase PlatformInfo)
+        public ControlActionsPage_New(IWindowExplorer driver, ElementInfo ElementInfo, Context context, ElementActionCongifuration actionConfigurations, ITreeViewItem CurrentControlTreeViewItem)
         {
             InitializeComponent();
 
@@ -73,7 +73,7 @@ namespace Ginger.WindowExplorer
             mLocators = mElementInfo.Locators;  // mWindowExplorerDriver.GetElementLocators(mElementInfo);
             mContext = context;
             mCurrentControlTreeViewItem = CurrentControlTreeViewItem;
-            mPlatform = PlatformInfo;
+            mPlatform = PlatformInfoBase.GetPlatformImpl(context.Platform);
             mDataPage = mCurrentControlTreeViewItem.EditPage(mContext);
             mActInputValues = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
 
@@ -212,6 +212,7 @@ namespace Ginger.WindowExplorer
             else
             {
                 DefaultAction.Context = mContext;
+                DefaultAction.Description = string.Format("{0} : {1} - {2}", (DefaultAction as ActUIElement).ElementAction, mElementInfo.ElementTypeEnum.ToString(), mElementInfo.ElementName);
                 SetActionDetails(DefaultAction);
                 actEditPage = new ActionEditPage(DefaultAction, General.eRIPageViewMode.Explorer);
 
@@ -436,6 +437,12 @@ namespace Ginger.WindowExplorer
         {
             if (IsLegacyPlatform)
             {
+                if (AvailableActions.CurrentItem == null)
+                {
+                    Reporter.ToUser(eUserMsgKey .AskToSelectAction);
+                    return;
+                }
+
                 if (DefaultAction == null)
                 {
                     DefaultAction = (Act)AvailableActions.CurrentItem;

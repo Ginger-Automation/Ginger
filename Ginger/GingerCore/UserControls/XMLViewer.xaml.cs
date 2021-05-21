@@ -47,16 +47,25 @@ namespace GingerCore.UserControls
             get { return _xmldocument; }
             set
             {
-                _xmldocument = value;
-                BindXMLDocument();
+                if (_xmldocument != value)
+                {
+                    _xmldocument = value;
+                    ClearTreeItems();
+                    BindXMLDocument();
+                }
             }
+        }
+
+        public void ClearTreeItems()
+        {
+            xmlTree.ItemsSource = null;
         }
 
         private void BindXMLDocument()
         {
             if (_xmldocument == null)
             {
-                xmlTree.ItemsSource = null;
+                ClearTreeItems();
                 return;
             }
 
