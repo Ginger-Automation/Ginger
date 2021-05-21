@@ -216,7 +216,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
         {
             WorkSpace.Instance.RefreshGlobalAppModelParams(AAMB);
             //Duplicate Model for not changing on cache
-            ApplicationAPIModel AAMBDuplicate = (ApplicationAPIModel)AAMB.CreateCopy(false);
+            ApplicationAPIModel AAMBDuplicate = (ApplicationAPIModel)AAMB.CreateCopy(true);
 
             //Set model params with actual execution value
             foreach (AppModelParameter modelParam in AAMBDuplicate.AppModelParameters)
