@@ -248,7 +248,7 @@ namespace Ginger.WindowExplorer
                 xGridViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.GridView) ? Visibility.Visible : Visibility.Collapsed;
                 xScreenShotViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.Screenshot) ? Visibility.Visible : Visibility.Collapsed;
 
-                xWindowSelection.IsEnabled = mWindowExplorerDriver.IsWinowSelectionRequired();
+                xWindowSelection.Visibility = mWindowExplorerDriver.IsWinowSelectionRequired() ? Visibility.Visible : Visibility.Collapsed;
 
                 xViewsTabs.SelectedItem = DefaultSelectedTab();
 
@@ -1311,7 +1311,7 @@ namespace Ginger.WindowExplorer
             return pointOnAppScreen;
         }
 
-        private void ViewsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void ViewsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //set the selected tab text style
             try
@@ -1337,7 +1337,7 @@ namespace Ginger.WindowExplorer
 
                 if (xViewsTabs.SelectedItem == xTreeViewTab)
                 {
-                    TreeViewTab_Selected(sender, e);
+                    await TreeViewTab_Selected(sender, e);
                 }
                 else if (xViewsTabs.SelectedItem == xScreenShotViewTab)
                 {
@@ -1345,11 +1345,11 @@ namespace Ginger.WindowExplorer
                 }
                 else if (xViewsTabs.SelectedItem == xPageSrcTab)
                 {
-                    PageSrcTab_Selected(sender, e);
+                    await PageSrcTab_Selected(sender, e);
                 }
                 else if (xViewsTabs.SelectedItem == xGridViewTab)
                 {
-                    GridViewTab_Selected(sender, e);
+                    await GridViewTab_Selected(sender, e);
                 }
             }
             catch (Exception ex)
@@ -1449,7 +1449,7 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private async void GridViewTab_Selected(object sender, RoutedEventArgs e)
+        private async Task GridViewTab_Selected(object sender, RoutedEventArgs e)
         {
             if (RefreshGrid)
             {
@@ -1458,7 +1458,7 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private async void TreeViewTab_Selected(object sender, RoutedEventArgs e)
+        private async Task TreeViewTab_Selected(object sender, RoutedEventArgs e)
         {
             if (RefreshTree)
             {
@@ -1476,7 +1476,7 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private async void PageSrcTab_Selected(object sender, RoutedEventArgs e)
+        private async Task PageSrcTab_Selected(object sender, RoutedEventArgs e)
         {
             if (RefreshPageSrc)
             {
