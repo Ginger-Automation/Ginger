@@ -32,6 +32,7 @@ using Amdocs.Ginger.IO;
 using System.Text.RegularExpressions;
 using System.Web;
 using amdocs.ginger.GingerCoreNET;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM
 {
@@ -126,7 +127,12 @@ namespace GingerCore.ALM
             get { return ImportFromQtest.GingerActivitiesRepo; }
             set { ImportFromQtest.GingerActivitiesRepo = value; }
         }
-       
+
+        public override ObservableList<ApplicationPlatform> ApplicationPlatforms
+        {
+            get { return ImportFromQtest.ApplicationPlatforms; }
+            set { ImportFromQtest.ApplicationPlatforms = value; }
+        }
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
             ConnectALMServer();

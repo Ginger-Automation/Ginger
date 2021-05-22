@@ -25,6 +25,7 @@ using System.ComponentModel;
 using TDAPIOLELib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM
 {
@@ -79,7 +80,11 @@ namespace GingerCore.ALM
             get { return ImportFromQC.GingerActivitiesRepo; }
             set { ImportFromQC.GingerActivitiesRepo = value; }
         }
-
+        public override ObservableList<ApplicationPlatform> ApplicationPlatforms
+        {
+            get { return ImportFromQC.ApplicationPlatforms; }
+            set { ImportFromQC.ApplicationPlatforms = value; }
+        }
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
             return UpdatedAlmFields(ImportFromQC.GetALMItemFields());

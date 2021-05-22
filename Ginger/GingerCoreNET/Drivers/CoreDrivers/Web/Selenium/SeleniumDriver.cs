@@ -7191,7 +7191,6 @@ namespace GingerCore.Drivers
             {
                 string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
 
-                //RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
                 RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
 
                 if (ele == null)
@@ -7200,22 +7199,23 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-                    if(SSPageDoc == null)
-                    {
-                        SSPageDoc = new HtmlDocument();
-                        SSPageDoc.LoadHtml(Driver.PageSource);
-                    }
+                    //if(SSPageDoc == null)
+                    //{
+                    //    SSPageDoc = new HtmlDocument();
+                    //    SSPageDoc.LoadHtml(Driver.PageSource);
+                    //}
 
-                    HtmlNode elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id == ele.GetProperty("id")).FirstOrDefault();
+                    //HtmlNode elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id == ele.GetProperty("id")).FirstOrDefault();
 
                     elemInfo = new HTMLElementInfo();
+
                     var elemTypeEnum = GetElementTypeEnum(ele);
                     elemInfo.ElementType = elemTypeEnum.Item1;
                     elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
                     elemInfo.ElementObject = ele;
                     elemInfo.Path = iframeXPath;
                     elemInfo.XPath = await GenerateXpathForIWebElementAsync(ele, string.Empty);
-                    elemInfo.HTMLElementObject = elemNode;
+                    //elemInfo.HTMLElementObject = elemNode;
 
                     ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
                 }

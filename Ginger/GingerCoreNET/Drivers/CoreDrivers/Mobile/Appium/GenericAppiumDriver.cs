@@ -1803,7 +1803,8 @@ namespace Amdocs.Ginger.CoreNET
         {
             if (AppType == eAppType.Web)
             {
-                return await ((IVisualTestingDriver)mSeleniumDriver).GetElementAtPoint(ptX, ptY);
+                return await Task.Run(() => ((IVisualTestingDriver)mSeleniumDriver).GetElementAtPoint(ptX, ptY));
+                //return await ((IVisualTestingDriver)mSeleniumDriver).GetElementAtPoint(ptX, ptY);
             }
 
             XmlNode foundNode = await FindElementXmlNodeByXY(ptX, ptY);
