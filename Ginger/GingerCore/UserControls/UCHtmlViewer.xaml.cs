@@ -24,6 +24,14 @@ namespace GingerCore.UserControls
     {
         private HtmlDocument _htmldocument;
 
+        public TreeView HTMLTree
+        {
+            get
+            {
+                return htmlTree;
+            }
+        }
+
         public UCHtmlViewer()
         {
             InitializeComponent();

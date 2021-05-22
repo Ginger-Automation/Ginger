@@ -1221,5 +1221,10 @@ namespace GingerCore.Drivers.PBDriver
         {
             return "Window:";
         }
+
+        public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
+        }
     }
 }

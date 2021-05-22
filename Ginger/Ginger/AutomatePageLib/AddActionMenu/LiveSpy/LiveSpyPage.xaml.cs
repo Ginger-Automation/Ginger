@@ -241,6 +241,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xStatusTextBlock.Foreground = (Brush)FindResource("$RunningStatusColor");
                     GingerCore.General.DoEvents();
                     mSpyElement = xWindowSelectionUC.mWindowExplorerDriver.GetControlFromMousePosition();
+                    mSpyElement.WindowExplorer = mWindowExplorerDriver;
+
                     if (mSpyElement != null)
                     {
                         xWindowSelectionUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);

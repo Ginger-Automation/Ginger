@@ -107,6 +107,7 @@ namespace Ginger.WindowExplorer
         public WindowExplorerPage(ApplicationAgent ApplicationAgent, Context context, Act Act = null)
         {
             InitializeComponent();
+
             xWindowControlsTreeView.TreeGrid.RowDefinitions[0].Height = new GridLength(0);
 
             mContext = context;
@@ -177,6 +178,58 @@ namespace Ginger.WindowExplorer
 
             xUCElementDetails.PropertyChanged += XUCElementDetails_PropertyChanged;
             SetPlatformBasedUpdates();
+
+            xHTMLPageSrcViewer.HTMLTree.SelectedItemChanged += HTMLPageSourceTree_SelectedItemChanged;
+            xXMLPageSrcViewer.XMLTree.SelectedItemChanged += XMLPageSourceTree_SelectedItemChanged;
+        }
+
+        private void HTMLPageSourceTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            HtmlNode hNode = null;
+
+            if ((sender as TreeView).SelectedItem != null)
+            {
+                hNode = ((sender as TreeView).SelectedItem as TreeViewItem).Tag as HtmlNode;
+            }
+
+            if (hNode != null)
+            {
+                HTMLElementInfo EI = new HTMLElementInfo()
+                {
+                    XPath = hNode.XPath,
+                    ID = hNode.Id,
+                    HTMLElementObject = hNode
+                };
+
+                ElementInfo elemInfo = mWindowExplorerDriver.LearnElementInfoDetails(EI);
+
+                if (elemInfo != null)
+                {
+                    mCurrentControlTreeViewItem = GetTreeViewItemForElementInfo(elemInfo);
+                    ShowCurrentControlInfo();
+                }
+            }
+        }
+
+        private void XMLPageSourceTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            XmlNode xmlNode = null;
+
+            if ((sender as TreeView).SelectedItem != null)
+            {
+                xmlNode = (sender as TreeView).SelectedItem as XmlNode;
+            }
+
+            if (xmlNode != null)
+            {
+                ElementInfo elemInfo = mWindowExplorerDriver.LearnElementInfoDetails(new ElementInfo() { ElementObject = xmlNode });
+
+                if (elemInfo != null)
+                {
+                    mCurrentControlTreeViewItem = GetTreeViewItemForElementInfo(elemInfo);
+                    ShowCurrentControlInfo();
+                }
+            }
         }
 
         bool ElementDetailsNotNullHandled = false;
@@ -411,31 +464,18 @@ namespace Ginger.WindowExplorer
 
             try
             {
-                //xHTMLTree.Items.Add(new PageSrcParser(((SeleniumDriver)mContext.Agent.Driver).GetPageHTML())
-                if (mWindowExplorerDriver is GenericAppiumDriver)
-                {
-                    if ((mWindowExplorerDriver as GenericAppiumDriver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.Web)
-                    {
-                        xHTMLPageSrcViewer.Visibility = Visibility.Visible;
+                var srcDoc = await mWindowExplorerDriver.GetPageSourceDocument(true);
 
-                        HtmlDocument htmlDoc = (mWindowExplorerDriver as GenericAppiumDriver).AppiumSeleniumDriver.GetPageHTML();
-                        xHTMLPageSrcViewer.htmlDocument = htmlDoc;
-                    }
-                    else
-                    {
-                        xXMLPageSrcViewer.Visibility = Visibility.Visible;
-                        string pageSrcXML = await ((GenericAppiumDriver)mWindowExplorerDriver).GetPageSource();
-                        XmlDocument pageSrcXmlDoc = new XmlDocument();
-                        pageSrcXmlDoc.LoadXml(pageSrcXML);
-                        xXMLPageSrcViewer.xmlDocument = pageSrcXmlDoc;
-                    }
+                if (srcDoc != null && srcDoc is XmlDocument)
+                {
+                    xXMLPageSrcViewer.Visibility = Visibility.Visible;
+                    xXMLPageSrcViewer.xmlDocument = srcDoc as XmlDocument;
                 }
-                else if (mWindowExplorerDriver is SeleniumDriver)
+                else if (srcDoc is HtmlDocument)
                 {
                     xHTMLPageSrcViewer.Visibility = Visibility.Visible;
 
-                    HtmlDocument htmlDoc = ((SeleniumDriver)mWindowExplorerDriver).GetPageHTML();
-                    xHTMLPageSrcViewer.htmlDocument = htmlDoc;
+                    xHTMLPageSrcViewer.htmlDocument = srcDoc as HtmlDocument;
                 }
             }
             catch (Exception exc)
@@ -1023,6 +1063,8 @@ namespace Ginger.WindowExplorer
 
             try
             {
+                LoadPageSourceDoc = mWindowExplorerDriver.SupportedViews().Contains(eTabView.PageSource);
+
                 if (SwitchToCurrentWindow() == null)
                     return;
 
@@ -1122,6 +1164,12 @@ namespace Ginger.WindowExplorer
 
                 try
                 {
+                    if (LoadPageSourceDoc)
+                    {
+                        await mWindowExplorerDriver.GetPageSourceDocument(true);
+                        LoadPageSourceDoc = false;
+                    }
+
                     RemoveElemntRectangle();
 
                     System.Windows.Point pointOnImg = e.GetPosition((System.Windows.Controls.Image)sender);
@@ -1216,26 +1264,32 @@ namespace Ginger.WindowExplorer
                             {
                                 ratio_X = (mScreenShotViewPage.xMainImage.Source.Width * 3) / mScreenShotViewPage.xMainImage.ActualWidth;
                                 ratio_Y = (mScreenShotViewPage.xMainImage.Source.Height * 3) / mScreenShotViewPage.xMainImage.ActualHeight;
+
+                                element_Start_X = element_Start_X * ratio_X;
+                                element_Start_Y = element_Start_Y * ratio_Y;
+                                element_Max_X = element_Max_X * ratio_X;
+                                element_Max_Y = element_Max_Y * ratio_Y;
                             }
                             else
                             {
                                 ratio_X = mScreenShotViewPage.xMainImage.Source.Width / mScreenShotViewPage.xMainImage.ActualWidth;
                                 ratio_Y = mScreenShotViewPage.xMainImage.Source.Height / mScreenShotViewPage.xMainImage.ActualHeight;
+
+                                string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
+                                bounds = bounds.Replace("[", ",");
+                                bounds = bounds.Replace("]", ",");
+                                string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (boundsXY.Count() == 4)
+                                {
+                                    element_Start_X = (Convert.ToInt64(boundsXY[0])) / ratio_X;
+                                    //rectangleStartPoint_X = (long)element_Start_X;
+                                    element_Start_Y = (Convert.ToInt64(boundsXY[1])) / ratio_Y;
+                                    //rectangleStartPoint_Y = (long)element_Start_Y;
+                                    element_Max_X = (Convert.ToInt64(boundsXY[2])) / ratio_X;
+                                    element_Max_Y = (Convert.ToInt64(boundsXY[3])) / ratio_Y;
+                                }
                             }
 
-                            string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
-                            bounds = bounds.Replace("[", ",");
-                            bounds = bounds.Replace("]", ",");
-                            string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                            if (boundsXY.Count() == 4)
-                            {
-                                element_Start_X = (Convert.ToInt64(boundsXY[0])) / ratio_X;
-                                //rectangleStartPoint_X = (long)element_Start_X;
-                                element_Start_Y = (Convert.ToInt64(boundsXY[1])) / ratio_Y;
-                                //rectangleStartPoint_Y = (long)element_Start_Y;
-                                element_Max_X = (Convert.ToInt64(boundsXY[2])) / ratio_X;
-                                element_Max_Y = (Convert.ToInt64(boundsXY[3])) / ratio_Y;
-                            }
                             break;
 
                         case Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eDevicePlatformType.iOS:
@@ -1362,9 +1416,21 @@ namespace Ginger.WindowExplorer
         bool RefreshTree = false;
         bool RefreshScreenshot = false;
         bool RefreshPageSrc = false;
+        /// <summary>
+        /// Flag to identify if the screenshot was taken means page was changed
+        /// hence need to update the page source document on the driver
+        /// </summary>
+        bool LoadPageSourceDoc = true;
 
         private void xRefreshCurrentTabContentBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (!LastSearchFinished)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation can't be done until previous request is finished.");
+                return;
+            }
+
+            xUCElementDetails.SelectedElement = null;
             RefreshTabsContent();
         }
 

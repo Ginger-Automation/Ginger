@@ -840,5 +840,10 @@ namespace GingerCore.Drivers.MainFrame
         {
             return "Window:";
         }
+
+        public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
+        }
     }
 }
