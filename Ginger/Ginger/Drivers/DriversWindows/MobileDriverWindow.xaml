@@ -7,7 +7,7 @@
         Title="UpdatedAppiumDriverWindow" Height="650" Width="800"
         MinHeight="600" MinWidth="300" WindowStyle="ToolWindow"
         WindowStartupLocation="CenterScreen" Closing="Window_Closing" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded"
-        Topmost="False" >
+        Topmost="False" KeyDown="Window_KeyDown" >
 
     <Grid x:Name="xWindowGrid" Background="DarkGray">
         <Grid.ColumnDefinitions>
@@ -91,6 +91,7 @@
                            MouseLeftButtonUp="xDeviceScreenshotImage_MouseLeftButtonUp" 
                            MouseEnter="xDeviceScreenshotImage_MouseEnter" 
                            MouseLeave="xDeviceScreenshotImage_MouseLeave"  
+                           MouseWheel="xDeviceScreenshotImage_MouseWheel"
                            SizeChanged="xDeviceScreenshotImage_SizeChanged">
                     </Image>
                 </Canvas>
@@ -133,7 +134,6 @@
                         <ComboBoxItem>10</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
-                <Button x:Name="xVolumUpBtsn22" Foreground="Transparent" Background="Transparent" Width="3"  Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"  ToolTip="Volume Up"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

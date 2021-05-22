@@ -32,10 +32,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
 
         void PerformDrag(System.Drawing.Point start, System.Drawing.Point end);
 
+        void PerformScreenSwipe(eSwipeSide swipeSide);
+
         void SwitchToLandscape();
 
         void SwitchToPortrait();
 
         eDeviceOrientation GetOrientation();
+
+        void PerformSendKey(string key);
     }
 }

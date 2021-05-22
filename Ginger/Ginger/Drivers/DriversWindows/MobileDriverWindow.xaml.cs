@@ -113,11 +113,6 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xDeviceScreenshotImage_MouseMove(object sender, MouseEventArgs e)
         {
-            //if (mDriver.GetAppType() == eAppType.Web)
-            //{
-            //    e.Handled = true;
-            //    return;
-            //}
             if (mIsMousePressed == true)
             {
                 //it's a drag
@@ -151,6 +146,12 @@ namespace Ginger.Drivers.DriversWindows
                 //do click
                 DeviceScreenshotImageMouseClickAsync(mMouseEndPoint);
             }
+        }
+
+        private void xDeviceScreenshotImage_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            System.Windows.Point mMousePoint = e.GetPosition((System.Windows.Controls.Image)sender);           
+            DeviceScreenshotImageMouseDragAsync(mMousePoint, new System.Windows.Point(mMousePoint.X, mMousePoint.Y + e.Delta));
         }
 
         private void xDeviceScreenshotImage_MouseEnter(object sender, MouseEventArgs e)
@@ -352,6 +353,36 @@ namespace Ginger.Drivers.DriversWindows
             {
                 xRefreshWaitingRatePnl.Visibility = Visibility.Collapsed;
                 xRefreshButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (mDriver.GetAppType() == eAppType.Web)
+            {
+                try
+                {
+                    Task.Run(() =>
+                    {
+                        string key = e.Key.ToString();
+                        if (e.Key == Key.Back)
+                        {
+                            mDriver.PerformSendKey("\b");
+                        }
+                        else if (key.Length == 2 && key.Contains("D"))
+                        {
+                            mDriver.PerformSendKey(key.TrimStart('D'));
+                        }
+                        else
+                        {
+                            mDriver.PerformSendKey(key);
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to perform send key to mobile device", ex);
+                }
             }
         }
         #endregion Events
@@ -674,6 +705,9 @@ namespace Ginger.Drivers.DriversWindows
         {
             try
             {
+                startPoint = GetPointOnMobile(startPoint);
+                endPoint = GetPointOnMobile(endPoint);
+
                 //Perform drag
                 await Task.Run(() => {
                     mDriver.PerformDrag(new System.Drawing.Point((int)startPoint.X, (int)startPoint.Y), new System.Drawing.Point((int)endPoint.X, (int)endPoint.Y));

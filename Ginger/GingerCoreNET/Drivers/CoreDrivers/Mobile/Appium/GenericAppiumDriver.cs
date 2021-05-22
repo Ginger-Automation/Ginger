@@ -1053,31 +1053,42 @@ namespace Amdocs.Ginger.CoreNET
 
         public void SwipeScreen(eSwipeSide side)
         {
-            ITouchAction swipe;
             System.Drawing.Size sz = Driver.Manage().Window.Size;
-
+            double startX;
+            double startY;
+            double endX;
+            double endY;
             switch (side)
             {
-                case eSwipeSide.Down:
-                    swipe = BuildDragAction(Driver, (int)(sz.Width * 0.5), (int)(sz.Height * 0.3), (int)(sz.Width * 0.5), (int)(sz.Height * 0.7), 1000);
-                    swipe.Perform();
+                case eSwipeSide.Down: // center of footer
+                    startX = sz.Width * 0.5;
+                    startY = sz.Height * 0.3;
+                    endX = sz.Width * 0.5;
+                    endY = sz.Height * 0.7;
                     break;
-
-                case eSwipeSide.Up:
-                    swipe = BuildDragAction(Driver, (int)(sz.Width * 0.5), (int)(sz.Height * 0.7), (int)(sz.Width * 0.5), (int)(sz.Height * 0.3), 1000);
-                    swipe.Perform();
+                case eSwipeSide.Up: // center of header
+                    startX = sz.Width * 0.5;
+                    startY = sz.Height * 0.7;
+                    endX = sz.Width * 0.5;
+                    endY = sz.Height * 0.3;
                     break;
-
-                case eSwipeSide.Left:
-                    swipe = BuildDragAction(Driver, (int)(sz.Width * 0.8), (int)(sz.Height * 0.5), (int)(sz.Width * 0.1), (int)(sz.Height * 0.5), 1000);
-                    swipe.Perform();
+                case eSwipeSide.Left: // center of left side
+                    startX = sz.Width * 0.8;
+                    startY = sz.Height * 0.5;
+                    endX = sz.Width * 0.1;
+                    endY = sz.Height * 0.5;
                     break;
-
-                case eSwipeSide.Right:
-                    swipe = BuildDragAction(Driver, (int)(sz.Width * 0.1), (int)(sz.Height * 0.5), (int)(sz.Width * 0.8), (int)(sz.Height * 0.5), 1000);
-                    swipe.Perform();
+                case eSwipeSide.Right: // center of right side
+                    startX = sz.Width * 0.1;
+                    startY = sz.Height * 0.5;
+                    endX = sz.Width * 0.8;
+                    endY = sz.Height * 0.5;
                     break;
+                default:
+                    throw new ArgumentException("swipeScreen(): dir: '" + side + "' NOT supported");
             }
+            TouchAction drag = new TouchAction(Driver);
+            drag.Press(startX, startY).Wait(200).MoveTo(endX, endY).Release().Perform();
         }
 
         public ITouchAction BuildDragAction(AppiumDriver<AppiumWebElement> driver, int startX, int startY, int endX, int endY, int duration)
@@ -1098,11 +1109,11 @@ namespace Amdocs.Ginger.CoreNET
             drag.Perform();
         }
 
+
         public override string GetURL()
         {
             return "TBD";
         }
-
 
         public override bool IsRunning()
         {
@@ -1884,6 +1895,17 @@ namespace Amdocs.Ginger.CoreNET
                 }
             }
             return false;
+        }
+
+        public void PerformScreenSwipe(eSwipeSide swipeSide)
+        {
+            SwipeScreen(swipeSide);
+        }
+
+        public void PerformSendKey(string key)
+        {
+            IWebElement currentElement = Driver.SwitchTo().ActiveElement();
+            currentElement.SendKeys(key);
         }
     }
 }
