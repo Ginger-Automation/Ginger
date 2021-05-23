@@ -332,3 +332,4 @@ ASALocalRun/
 /Ginger/GingerCore/Drivers/JavaDriverLib/GingerJavaAgent/.externalToolBuilders
 /Ginger/GingerCoreNETUnitTest/TestResources/Solutions/BasicSimple/ExecutionResults/GingerExecutionResults.db
 /Ginger/GingerTest/GingerTest.GeneratedMSBuildEditorConfig.editorconfig
+*.DS_Store
