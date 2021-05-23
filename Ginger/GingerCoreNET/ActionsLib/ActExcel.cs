@@ -187,10 +187,6 @@ namespace GingerCore.Actions
                 case eExcelActionType.ReadCellData:
                     ReadCellData();
                     break;
-
-                default:
-
-                    break;
             }
         }
 
@@ -220,7 +216,7 @@ namespace GingerCore.Actions
             DataTable excelDataTable = excelOperator.ReadCellData(excelFileName, sheetName, selectRowsWhere, SelectAllRows);
             try
             {
-                if (!string.IsNullOrEmpty(SelectRowsWhere) && SelectAllRows == false)
+                if (!string.IsNullOrEmpty(SelectRowsWhere) && !SelectAllRows)
                 {
                     string CellValue = excelDataTable.Rows[0][0].ToString();
                     AddOrUpdateReturnParamActual("Actual", CellValue);
@@ -318,6 +314,11 @@ namespace GingerCore.Actions
                             isUpdated = excelOperator.updateExcelData(GetExcelFileNameForDriver(), SheetName, SelectRowsWhere, SetDataUsed, convertPKtoFilter);
                         }
                     }
+                    if(!isUpdated)
+                    {
+                        this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        Error = "Failed updated excel data: " + setDataUsed;
+                    }
                 }
             }
             catch (Exception ex)
@@ -368,14 +369,18 @@ namespace GingerCore.Actions
             {
 
                 if (!string.IsNullOrEmpty(GetInputParamCalculatedValue("SetDataUsed")))
+                {
                     sSetDataUsed = @", " + GetInputParamCalculatedValue("SetDataUsed");
-
+                }
                 // we expect only 1 record
-                if (excelDataTable.Rows.Count == 1 && SelectAllRows == false)
+                if (excelDataTable.Rows.Count == 1 && !SelectAllRows)
                 {
                     DataRow r = excelDataTable.Rows[0];
                     string strPrimaryKeyColumn = GetInputParamCalculatedValue("PrimaryKeyColumn");
-                    if (strPrimaryKeyColumn.Contains("`")) strPrimaryKeyColumn = strPrimaryKeyColumn.Replace("`", "");
+                    if (strPrimaryKeyColumn.Contains("`"))
+                    {
+                        strPrimaryKeyColumn = strPrimaryKeyColumn.Replace("`", "");
+                    }
                     string rowKey = r[strPrimaryKeyColumn].ToString();
                     //Read data to variables
                     foreach (string vc in varColMaps)
@@ -405,8 +410,8 @@ namespace GingerCore.Actions
                         }
 
                         //remove '' from value
-                        txt = txt.TrimStart(new char[] { '\'' });
-                        txt = txt.TrimEnd(new char[] { '\'' });
+                        txt = txt.TrimStart('\'');
+                        txt = txt.TrimEnd('\'');
                         updateCellValuesList.Add(new Tuple<string, object>(ColName, txt));
                     }
                     string setCellData = string.Join(",", updateCellValuesList.Select(st => st.Item1 + " = '" + st.Item2 + "' ,")).TrimEnd(',');
@@ -418,7 +423,7 @@ namespace GingerCore.Actions
                             excelOperator.WriteData(GetExcelFileNameForDriver(), SheetName, SelectRowsWhere, SetDataUsed, updateCellValuesList, PrimaryKeyColumn, rowKey);
                     }
                 }
-                else if (excelDataTable.Rows.Count > 0 && SelectAllRows == true)
+                else if (excelDataTable.Rows.Count > 0 && SelectAllRows)
                 {
                     foreach (string vc in varColMaps)
                     {
@@ -432,18 +437,20 @@ namespace GingerCore.Actions
                         VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
                         if (var != null)
                         {
-
                             var.Value = ValueExpression.Calculate(var.Value);
                             if (var != null)
+                            {
                                 txt = var.Value;
+                            }
                             else
+                            {
                                 txt = Value;
+                            }
                         }
 
                         //remove '' from value
-                        txt = txt.TrimStart(new char[] { '\'' });
-                        txt = txt.TrimEnd(new char[] { '\'' });
-
+                        txt = txt.TrimStart('\'');
+                        txt = txt.TrimEnd('\'' );
 
                         updateCellValuesList.Add(new Tuple<string, object>(ColName, txt));
                     }
@@ -453,27 +460,15 @@ namespace GingerCore.Actions
                 }
                 else if (excelDataTable.Rows.Count == 0)
                 {
+                    this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     this.ExInfo = "No Rows updated with given criteria";
                 }
             }
             catch (Exception ex)
             {
-                // Reporter.ToLog(eAppReporterLogLevel.ERROR, "Writing into excel got error " + ex.Message);
-                this.Error = "Error when trying to update the excel: " + ex.Message + Environment.NewLine + "UpdateSQL=";
+                this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                this.Error = "Error when trying to update the excel: " + ex.Message;
             }
-            finally
-            {
-
-            }
-
-            // then show a message if needed
-            if (excelDataTable.Rows.Count == 0)
-            {
-                //TODO: reporter
-                // Reporter.ToUser("No rows found in excel file matching criteria - " + sql);                
-                //  throw new Exception("No rows found in excel file matching criteria - " + sql);
-            }
-            
         }
 
         public DataTable GetExcelSheetData(string where)

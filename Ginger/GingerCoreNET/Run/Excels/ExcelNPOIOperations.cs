@@ -52,6 +52,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                         var cell = currentRow.GetCell(j);
 
                         if (cell != null)
+                        {
                             switch (cell.CellType)
                             {
                                 case CellType.Numeric:
@@ -75,6 +76,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                                     dr[j] = cell.RichStringCellValue;
                                     break;
                             }
+                        }
                     }
                     dtExcelTable.Rows.Add(dr);
                     i++;
@@ -82,9 +84,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 }
                 return dtExcelTable;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw;
+                throw new Exception("Can't convert sheet to data table, " + ex.Message);
             }
         }
 
@@ -107,7 +109,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
             catch(Exception ex)
             {
-                throw;
+                throw new Exception("Read Excel data failed, " + ex.Message);
             }
         }
 
