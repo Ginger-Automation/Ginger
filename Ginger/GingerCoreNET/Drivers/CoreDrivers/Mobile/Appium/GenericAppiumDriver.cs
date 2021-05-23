@@ -932,7 +932,9 @@ namespace Amdocs.Ginger.CoreNET
                     //((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(3);
                     break;
                 case eDevicePlatformType.iOS:
-                    Driver.ExecuteScript("mobile: pressButton", "name", "home");
+                    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
+                    commandArgs.Add("name", "home");
+                    Driver.ExecuteScript("mobile: pressButton", commandArgs);
                     break;
             }
         }
@@ -973,13 +975,16 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     break;
                 case eDevicePlatformType.iOS:
+                    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
                     switch (volumeOperation)
                     {
                         case eVolumeOperation.Up:
-                            Driver.ExecuteScript("mobile: pressButton", "name", "volumeup");
+                            commandArgs.Add("name", "volumeup");
+                            Driver.ExecuteScript("mobile: pressButton", commandArgs);
                             break;
                         case eVolumeOperation.Down:
-                            Driver.ExecuteScript("mobile: pressButton", "name", "volumedown");
+                            commandArgs.Add("name", "volumedown");
+                            Driver.ExecuteScript("mobile: pressButton", commandArgs);
                             break;
                     }
                     break;
@@ -1012,11 +1017,12 @@ namespace Amdocs.Ginger.CoreNET
             {
                 case eDevicePlatformType.Android:
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(Convert.ToInt32(Enum.Parse(typeof(ActMobileDevice.ePressKey), key)));
-
                     break;
-                    //case eDevicePlatformType.iOS:
-                    //    Driver.ExecuteScript("mobile: pressButton", "name", key);
-                    //    break;
+                //case eDevicePlatformType.iOS:
+                //    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
+                //    commandArgs.Add("name", key);
+                //    Driver.ExecuteScript("mobile: pressButton", commandArgs);
+                //    break;
             }
         }
 
@@ -1028,7 +1034,9 @@ namespace Amdocs.Ginger.CoreNET
                     ((AndroidDriver<AppiumWebElement>)Driver).LongPressKeyCode(Convert.ToInt32(Enum.Parse(typeof(ActMobileDevice.ePressKey), key)));
                     break;
                     //case eDevicePlatformType.iOS:
-                    //    Driver.ExecuteScript("mobile: pressButton", "name", key);
+                    //    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
+                    //    commandArgs.Add("name", key);
+                    //    Driver.ExecuteScript("mobile: pressButton", commandArgs);
                     //    break;
             }
         }

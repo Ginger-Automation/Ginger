@@ -42,8 +42,9 @@
                             <Ginger:ucTagsViewer x:Name="xTagsViewer" Margin="0,0,0,0" HorizontalAlignment="Left" />
                             <StackPanel  Orientation="Vertical" >
                                 <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                    <CheckBox x:Name="xSetAsInputValueCheckBox" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Set as Input" HorizontalAlignment="Left" Margin="5,0,0,0" />
-                                    <CheckBox x:Name="xSetAsOutputValueCheckBox" Style="{StaticResource $CeckBoxStyle}"  VerticalAlignment="Center" Content="Set as Output" HorizontalAlignment="Left" Margin="10,0,0,0" />
+                                    <CheckBox x:Name="xSetAsInputValueCheckBox" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Set as Input" HorizontalAlignment="Left" Margin="5,0,0,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked" />
+                                    <CheckBox x:Name="xSetAsOutputValueCheckBox" Style="{StaticResource $CeckBoxStyle}"  VerticalAlignment="Center" Content="Set as Output" HorizontalAlignment="Left" Margin="10,0,0,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked"/>
+                                    <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="30,0,0,0" Style="{StaticResource $CeckBoxStyle}" Visibility="Collapsed"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="5,10,0,10" VerticalAlignment="Center">
                                     <Label Style="{StaticResource $LabelStyle}" VerticalAlignment="Center">
@@ -63,7 +64,6 @@
                                         </usercontrols:ucButton.ToolTip>
                                     </usercontrols:ucButton>
                                 </StackPanel>
-                                <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,-5,0,5" Style="{StaticResource $CeckBoxStyle}"/>
                             </StackPanel>
                         </StackPanel>
                         <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC" Grid.Column="1" />

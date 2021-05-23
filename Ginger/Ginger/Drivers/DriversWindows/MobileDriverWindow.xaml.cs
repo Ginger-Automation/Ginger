@@ -198,27 +198,41 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xOrientationBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (mDriver.GetOrientation() == eDeviceOrientation.Landscape)
+            try
             {
-                mDriver.SwitchToPortrait();
+                if (mDriver.GetOrientation() == eDeviceOrientation.Landscape)
+                {
+                    mDriver.SwitchToPortrait();
+                }
+                else
+                {
+                    mDriver.SwitchToLandscape();
+                }
+                if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
+                {
+                    RefreshDeviceScreenshotAsync();
+                }
+                SetOrientationButton();
             }
-            else
+            catch (Exception ex)
             {
-                mDriver.SwitchToLandscape();
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Operation failed, Error: " + ex.Message);
             }
-            if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
-            {
-                RefreshDeviceScreenshotAsync();
-            }
-            SetOrientationButton();
         }
 
         private void xBackBtn_Click(object sender, RoutedEventArgs e)
         {
-            mDriver.PerformBackButtonPress();
-            if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
+            try
             {
-                RefreshDeviceScreenshotAsync(100);
+                mDriver.PerformBackButtonPress();
+                if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
+                {
+                    RefreshDeviceScreenshotAsync(100);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Operation failed, Error: " + ex.Message);
             }
         }
 
@@ -230,10 +244,17 @@ namespace Ginger.Drivers.DriversWindows
                 return;
             }
 
-            mDriver.PerformHomeButtonPress();
-            if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
+            try
             {
-                RefreshDeviceScreenshotAsync(100);
+                mDriver.PerformHomeButtonPress();
+                if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
+                {
+                    RefreshDeviceScreenshotAsync(100);
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Operation failed, Error: " + ex.Message);
             }
         }
 
@@ -245,10 +266,17 @@ namespace Ginger.Drivers.DriversWindows
                 return;
             }
 
-            mDriver.PerformMenuButtonPress();
-            if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
+            try
             {
-                RefreshDeviceScreenshotAsync(100);
+                mDriver.PerformMenuButtonPress();
+                if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
+                {
+                    RefreshDeviceScreenshotAsync(100);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Operation failed, Error: " + ex.Message);
             }
         }
 
@@ -259,8 +287,14 @@ namespace Ginger.Drivers.DriversWindows
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation not supported for this mobile OS or application type.");
                 return;
             }
-
-            mDriver.PerformVolumeButtonPress(eVolumeOperation.Up);
+            try
+            {
+                mDriver.PerformVolumeButtonPress(eVolumeOperation.Up);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Operation failed, Error: " + ex.Message);
+            }
         }
 
         private void xVolumDownPnl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -270,8 +304,14 @@ namespace Ginger.Drivers.DriversWindows
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation not supported for this mobile OS or application type.");
                 return;
             }
-
-            mDriver.PerformVolumeButtonPress(eVolumeOperation.Down);
+            try
+            {
+                mDriver.PerformVolumeButtonPress(eVolumeOperation.Down);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Operation failed, Error: " + ex.Message);
+            }
         }
 
         bool lockDone;
@@ -283,15 +323,22 @@ namespace Ginger.Drivers.DriversWindows
                 return;
             }
 
-            if (!lockDone)
+            try
             {
-                mDriver.PerformLockButtonPress(eLockOperation.Lock);
-                lockDone = true;
+                if (!lockDone)
+                {
+                    mDriver.PerformLockButtonPress(eLockOperation.Lock);
+                    lockDone = true;
+                }
+                else
+                {
+                    mDriver.PerformLockButtonPress(eLockOperation.UnLock);
+                    lockDone = false;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                mDriver.PerformLockButtonPress(eLockOperation.UnLock);
-                lockDone = false;
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Operation failed, Error: " + ex.Message);
             }
         }
 
@@ -305,7 +352,14 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     if (Reporter.ToUser(eUserMsgKey.StaticQuestionsMessage, "Close Mobile Agent?") == eUserMsgSelection.Yes)
                     {
-                        mAgent.Close();
+                        try
+                        {
+                            mAgent.Close();
+                        }
+                        catch(Exception ex)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to close Agent, Error: " + ex.Message);
+                        }
                     }
                 }
             }
@@ -358,9 +412,9 @@ namespace Ginger.Drivers.DriversWindows
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (mDriver.GetAppType() == eAppType.Web)
+            try
             {
-                try
+                if (mDriver.GetAppType() == eAppType.Web)
                 {
                     Task.Run(() =>
                     {
@@ -379,10 +433,10 @@ namespace Ginger.Drivers.DriversWindows
                         }
                     });
                 }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.WARN, "Failed to perform send key to mobile device", ex);
-                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Failed to perform send key to mobile device", ex);
             }
         }
         #endregion Events
@@ -493,16 +547,23 @@ namespace Ginger.Drivers.DriversWindows
 
         private void SetOrientationButton()
         {
-            eDeviceOrientation currentOrientation = mDriver.GetOrientation();
-            if (currentOrientation == eDeviceOrientation.Landscape)
+            try
             {
-                xPortraiteBtn.Visibility = Visibility.Visible;
-                xLandscapeBtn.Visibility = Visibility.Collapsed;
+                eDeviceOrientation currentOrientation = mDriver.GetOrientation();
+                if (currentOrientation == eDeviceOrientation.Landscape)
+                {
+                    xPortraiteBtn.Visibility = Visibility.Visible;
+                    xLandscapeBtn.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    xPortraiteBtn.Visibility = Visibility.Collapsed;
+                    xLandscapeBtn.Visibility = Visibility.Visible;
+                }
             }
-            else
+            catch(Exception ex)
             {
-                xPortraiteBtn.Visibility = Visibility.Collapsed;
-                xLandscapeBtn.Visibility = Visibility.Visible;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to set the device orientation", ex);
             }
         }
 
@@ -510,7 +571,7 @@ namespace Ginger.Drivers.DriversWindows
         {
             Task.Run(() =>
             {
-                while(mWindowIsOpen && mDriver.IsDeviceConnected)
+                while(mWindowIsOpen && mDriver != null && mDriver.IsDeviceConnected)
                 {
                     if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.Live)
                     {
@@ -640,41 +701,49 @@ namespace Ginger.Drivers.DriversWindows
 
         private System.Windows.Point GetPointOnMobile(System.Windows.Point pointOnImage)
         {
-            System.Windows.Point pointOnMobile = new System.Windows.Point();
-            double ratio_X = 1;
-            double ratio_Y = 1;
+            try
+            {
+                System.Windows.Point pointOnMobile = new System.Windows.Point();
+                double ratio_X = 1;
+                double ratio_Y = 1;
 
-            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS && mDriver.GetAppType() == eAppType.NativeHybride)
-            {
-                ratio_X = (xDeviceScreenshotImage.Source.Width / 2) / xDeviceScreenshotImage.ActualWidth;
-                ratio_Y = (xDeviceScreenshotImage.Source.Height / 2) / xDeviceScreenshotImage.ActualHeight;
-            }
-            else
-            {
-                ratio_X = xDeviceScreenshotImage.Source.Width / xDeviceScreenshotImage.ActualWidth;
-                ratio_Y = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.ActualHeight;
-            }
-
-            if (mDriver.GetAppType() == eAppType.Web)
-            {
-                if (mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
+                if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS && mDriver.GetAppType() == eAppType.NativeHybride)
                 {
-                    pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
-                    pointOnMobile.Y = (int)((pointOnImage.Y + xDeviceScreenshotImage.ActualHeight/9) * ratio_Y);
+                    ratio_X = (xDeviceScreenshotImage.Source.Width / 2) / xDeviceScreenshotImage.ActualWidth;
+                    ratio_Y = (xDeviceScreenshotImage.Source.Height / 2) / xDeviceScreenshotImage.ActualHeight;
                 }
                 else
                 {
-                    pointOnMobile.X = (int)((pointOnImage.X * ratio_X)/3);
-                    pointOnMobile.Y = (int)((pointOnImage.Y * ratio_Y)/3);
+                    ratio_X = xDeviceScreenshotImage.Source.Width / xDeviceScreenshotImage.ActualWidth;
+                    ratio_Y = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.ActualHeight;
                 }
-            }
-            else
-            {
-                pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
-                pointOnMobile.Y = (int)(pointOnImage.Y * ratio_Y);
-            }
 
-            return pointOnMobile;
+                if (mDriver.GetAppType() == eAppType.Web)
+                {
+                    if (mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
+                    {
+                        pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
+                        pointOnMobile.Y = (int)((pointOnImage.Y + xDeviceScreenshotImage.ActualHeight / 9) * ratio_Y);
+                    }
+                    else
+                    {
+                        pointOnMobile.X = (int)((pointOnImage.X * ratio_X) / 3);
+                        pointOnMobile.Y = (int)((pointOnImage.Y * ratio_Y) / 3);
+                    }
+                }
+                else
+                {
+                    pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
+                    pointOnMobile.Y = (int)(pointOnImage.Y * ratio_Y);
+                }
+
+                return pointOnMobile;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to get point on device", ex);
+                return new Point(0, 0);
+            }
         }
 
         private async void DeviceScreenshotImageMouseClickAsync(System.Windows.Point clickedPoint)
