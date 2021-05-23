@@ -187,6 +187,8 @@ namespace GingerCore.Actions
                 case eExcelActionType.ReadCellData:
                     ReadCellData();
                     break;
+                default:
+                    break;
             }
         }
 

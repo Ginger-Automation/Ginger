@@ -166,6 +166,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                             workbook = new HSSFWorkbook(fs);
                         }
                         break;
+                    default:
+                        break;
                 }
             }
             catch(Exception ex)
@@ -268,11 +270,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                         {
                             cell = currentRow.GetCell(j);
                         }
-                        else{
+                        else
+                        {
                             throw new Exception("Invalid row number");
                         }
-
                         if (cell != null)
+                        {
                             switch (cell.CellType)
                             {
                                 case CellType.Numeric:
@@ -286,7 +289,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                                 case CellType.Blank:
                                     dr[dtColCount] = string.Empty;
                                     break;
+                                default:
+                                    break;
                             }
+                        }
                         dtColCount++;
                     }
                     dtExcelTable.Rows.Add(dr);
