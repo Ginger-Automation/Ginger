@@ -1190,10 +1190,7 @@ namespace Amdocs.Ginger.CoreNET
 
             List<ElementInfo> list = new List<ElementInfo>();
 
-            string pageSourceString = Driver.PageSource;
-            XmlDocument pageSourceXml = new XmlDocument();
-            pageSourceXml.LoadXml(pageSourceString);
-
+            await GetPageSourceDocument(true);
 
             //Get all elements but only clickable elements= user can interact with them
             XmlNodeList nodes = pageSourceXml.SelectNodes("//*");
@@ -1572,6 +1569,12 @@ namespace Amdocs.Ginger.CoreNET
         }
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
+            if(AppType == eAppType.Web)
+            {
+                return ((IWindowExplorer)mSeleniumDriver).LearnElementInfoDetails(EI);
+            }
+
+            EI = GetElementInfoforXmlNode(EI.ElementObject as XmlNode).Result;
             return EI;
         }
 
@@ -1907,6 +1910,26 @@ namespace Amdocs.Ginger.CoreNET
         {
             IWebElement currentElement = Driver.SwitchTo().ActiveElement();
             currentElement.SendKeys(key);
+        }
+
+        public async Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            if(AppType == eAppType.Web)
+            {
+                return await ((IWindowExplorer)mSeleniumDriver).GetPageSourceDocument(ReloadHtmlDoc);
+            }
+
+            if (ReloadHtmlDoc)
+                pageSourceXml = null;
+
+            if (pageSourceXml == null)
+            {
+                pageSourceXml = new XmlDocument();
+                pageSourceString = await GetPageSource();
+                pageSourceXml.LoadXml(pageSourceString);
+            }
+
+            return pageSourceXml;
         }
     }
 }

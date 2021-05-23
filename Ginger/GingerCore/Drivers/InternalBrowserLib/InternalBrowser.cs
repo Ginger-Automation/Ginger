@@ -1395,5 +1395,10 @@ namespace GingerCore.Drivers.InternalBrowserLib
         {
             return "Page:";
         }
+
+        public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
+        }
     }
 }

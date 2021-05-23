@@ -37,6 +37,14 @@ namespace GingerCore.UserControls
     {
         private XmlDocument _xmldocument;
 
+        public TreeView XMLTree
+        {
+            get
+            {
+                return xmlTree;
+            }
+        }
+
         public XMLViewer()
         {
             InitializeComponent();
