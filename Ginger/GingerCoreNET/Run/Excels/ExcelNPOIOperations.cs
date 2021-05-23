@@ -100,10 +100,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     return null;
                 }
                 ExcelDataTable = ConvertSheetToDataTable(Sheet);
-                if (filter != null)
-                {
-                    filter = FilterFormatByType(filter);
-                }
                 ExcelDataTable.DefaultView.RowFilter = filter ?? "";
                 FilteredDataTable = GetFilteredDataTable(ExcelDataTable, selectedRows);
                 UpdateCellList = GetSetDataUsed(setData);
@@ -306,7 +302,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         public bool WriteData(string fileName, string sheetName, string filter, string setDataUsed, List<Tuple<string, object>> updateCellValuesList, string primaryKey = null, string key = null)
         {
             UpdateCellList.AddRange(updateCellValuesList);
-            filter = FilterFormatByType(filter);
             if (UpdateCellList.Count > 0)
             {
                 UpdateCellList.ForEach(x =>
@@ -322,35 +317,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             return false;
         }
 
-        private string FilterFormatByType(string filter)
-        {
-            try
-            {
-                filter = filter.Replace("\"", "'");
-                Regex regex = new Regex(@"[\w*\d*]+=[\w*\d*]+");
-                foreach (Match itemMatch in regex.Matches(filter))
-                {
-                    string currentItem = itemMatch.Value;
-                    string[] filterData = currentItem.Split('=');
-                    if (filterData.Length > 1)
-                    {
-                        if (ExcelDataTable.Columns[filterData[0].Trim()].DataType.Name.Equals("String") && !filterData[1].Contains("'"))
-                        {
-                            filter = filter.Replace(currentItem, string.Join("=", filterData[0].Trim(), $"'{filterData[1].Trim()}'"));
-                        }
-                        else
-                        {
-                            filter = filter.Replace(currentItem, string.Join("=", filterData[0].Trim(), filterData[1].Replace("'","")));
-                        }
-                    }
-                }
-            }
-            catch(Exception ex)
-            {
-
-            }
-            return filter;
-        }
+        
 
         public List<string> GetSheets()
         {

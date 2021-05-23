@@ -86,11 +86,11 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamValue("ExcelFileName");
+                return GetInputParamValue(nameof(ExcelFileName));
             }
             set
             {
-                AddOrUpdateInputParamValue("ExcelFileName", value);
+                AddOrUpdateInputParamValue(nameof(ExcelFileName), value);
                 OnPropertyChanged(nameof(ExcelFileName));
             }
         }
@@ -98,12 +98,11 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamValue("SheetName");
-                //return GetInputParamCalculatedValue("SheetName").Trim();
+                return GetInputParamValue(nameof(SheetName));
             }
             set
             {
-                AddOrUpdateInputParamValue("SheetName", value);
+                AddOrUpdateInputParamValue(nameof(SheetName), value);
                 OnPropertyChanged(nameof(SheetName));
             }
         }
@@ -111,12 +110,11 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamValue("SelectRowsWhere");
-                //return GetInputParamCalculatedValue("SelectRowsWhere");
+                return GetInputParamValue(nameof(SelectRowsWhere));
             }
             set
             {
-                AddOrUpdateInputParamValue("SelectRowsWhere", value);
+                AddOrUpdateInputParamValue(nameof(SelectRowsWhere), value);
                 OnPropertyChanged(nameof(SelectRowsWhere));
             }
         }
@@ -124,11 +122,11 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamValue("PrimaryKeyColumn");
+                return GetInputParamValue(nameof(PrimaryKeyColumn));
             }
             set
             {
-                AddOrUpdateInputParamValue("PrimaryKeyColumn", value);
+                AddOrUpdateInputParamValue(nameof(PrimaryKeyColumn), value);
                 OnPropertyChanged(nameof(PrimaryKeyColumn));
             }
         }
@@ -136,11 +134,11 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamValue("SetDataUsed");
+                return GetInputParamValue(nameof(SetDataUsed));
             }
             set
             {
-                AddOrUpdateInputParamValue("SetDataUsed", value);
+                AddOrUpdateInputParamValue(nameof(SetDataUsed), value);
                 OnPropertyChanged(nameof(SetDataUsed));
             }
         }
@@ -153,11 +151,11 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamValue("ColMappingRules");
+                return GetInputParamValue(nameof(ColMappingRules));
             }
             set
             {
-                AddOrUpdateInputParamValue("ColMappingRules", value);
+                AddOrUpdateInputParamValue(nameof(ColMappingRules), value);
                 OnPropertyChanged(nameof(ColMappingRules));
             }
         }
@@ -215,7 +213,11 @@ namespace GingerCore.Actions
 
         private void ReadCellData()
         {
-            DataTable excelDataTable = excelOperator.ReadCellData(GetExcelFileNameForDriver(), SheetName, SelectRowsWhere, SelectAllRows);
+            string excelFileName = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(
+                    GetInputParamCalculatedValue(nameof(ExcelFileName)));
+            string sheetName = GetInputParamCalculatedValue(nameof(SheetName));
+            string selectRowsWhere = GetInputParamCalculatedValue(nameof(SelectRowsWhere));
+            DataTable excelDataTable = excelOperator.ReadCellData(excelFileName, sheetName, selectRowsWhere, SelectAllRows);
             try
             {
                 if (!string.IsNullOrEmpty(SelectRowsWhere) && SelectAllRows == false)
@@ -263,7 +265,13 @@ namespace GingerCore.Actions
         }
         public void ReadData()
         {
-            DataTable excelDataTable = excelOperator.ReadData(GetExcelFileNameForDriver(), SheetName, SelectRowsWhere, SelectAllRows, PrimaryKeyColumn, SetDataUsed);
+            string excelFileName = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(
+                    GetInputParamCalculatedValue(nameof(ExcelFileName)));
+            string sheetName = GetInputParamCalculatedValue(nameof(SheetName));
+            string selectRowsWhere = GetInputParamCalculatedValue(nameof(SelectRowsWhere));
+            string primaryKeyColumn = GetInputParamCalculatedValue(nameof(PrimaryKeyColumn));
+            string setDataUsed = GetInputParamCalculatedValue(nameof(SetDataUsed));
+            DataTable excelDataTable = excelOperator.ReadData(excelFileName, sheetName, selectRowsWhere, SelectAllRows, primaryKeyColumn, setDataUsed);
             try
             {
                 if(excelDataTable != null && excelDataTable.Rows.Count > 0)
@@ -343,8 +351,14 @@ namespace GingerCore.Actions
 
         public void WriteData()
         {
+            string excelFileName = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(
+                    GetInputParamCalculatedValue(nameof(ExcelFileName)));
+            string sheetName = GetInputParamCalculatedValue(nameof(SheetName));
+            string selectRowsWhere = GetInputParamCalculatedValue(nameof(SelectRowsWhere));
+            string primaryKeyColumn = GetInputParamCalculatedValue(nameof(PrimaryKeyColumn));
+            string setDataUsed = GetInputParamCalculatedValue(nameof(SetDataUsed));
             List<Tuple<string, object>> updateCellValuesList = new List<Tuple<string, object>>();
-            DataTable excelDataTable = excelOperator.ReadData(ExcelFileName, SheetName, SelectRowsWhere, SelectAllRows, PrimaryKeyColumn, SetDataUsed);
+            DataTable excelDataTable = excelOperator.ReadData(excelFileName, sheetName, selectRowsWhere, SelectAllRows, primaryKeyColumn, setDataUsed);
             
             string result = System.Text.RegularExpressions.Regex.Replace(GetInputParamCalculatedValue("ColMappingRules"), @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
             string[] varColMaps = result.Split(',');
