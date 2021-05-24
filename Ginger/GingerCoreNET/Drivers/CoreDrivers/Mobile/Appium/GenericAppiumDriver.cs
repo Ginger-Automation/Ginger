@@ -1261,61 +1261,64 @@ namespace Amdocs.Ginger.CoreNET
                 return returnTuple;
             }
 
-            if (elementTagName.ToLower() == "android.widget.edittext" || elementTypeAtt.ToLower() == "android.widget.edittext")
+            elementType = GetElementTypeFromTag(elementTagName);
+
+            if (elementType == eElementType.Unknown)
             {
-                elementType = eElementType.TextBox;
+                elementType = GetElementTypeFromTag(elementTypeAtt);
             }
-            else if (elementTagName.ToLower() == "android.widget.button" || elementTypeAtt.ToLower() == "android.widget.button")
-            {
-                elementType = eElementType.Button;
-            }
-            else if (elementTagName.ToLower() == "android.widget.edittext" || elementTypeAtt.ToLower() == "android.widget.edittext")
-            {
-                elementType = eElementType.HyperLink;
-            }
-            else if (elementTagName.ToLower() == "android.widget.checkbox" || elementTypeAtt.ToLower() == "android.widget.checkbox")
-            {
-                elementType = eElementType.CheckBox;
-            }
-            else if (elementTagName.ToLower() == "android.widget.view" || elementTypeAtt.ToLower() == "android.widget.view")
-            {
-                elementType = eElementType.Label;
-            }
-            else if (elementTagName.ToLower() == "android.widget.image" || elementTypeAtt.ToLower() == "android.widget.image")
-            {
-                elementType = eElementType.Image;
-            }
-            else if (elementTagName.ToLower() == "android.widget.radiobutton" || elementTypeAtt.ToLower() == "android.widget.radiobutton")
-            {
-                elementType = eElementType.RadioButton;
-            }
-            else if (elementTagName.ToLower() == "android.widget.canvas" || elementTypeAtt.ToLower() == "android.widget.canvas")
-            {
-                elementType = eElementType.Canvas;
-            }
-            else if (elementTagName.ToLower() == "android.widget.form" || elementTypeAtt.ToLower() == "android.widget.form")
-            {
-                elementType = eElementType.Form;
-            }
-            else if (elementTagName.ToUpper() == "android.widget.checkedtextview" || elementTypeAtt.ToLower() == "android.widget.checkedtextview")
-            {
-                elementType = eElementType.ListItem;
-            }
-            else if (elementTagName.ToLower() == "android.view.view" || elementTypeAtt.ToLower() == "android.view.view")
-            {
-                elementType = eElementType.Div;
-            }
-            else if (elementTagName.ToLower() == "android.widget.framelayout" || elementTypeAtt.ToLower() == "android.widget.framelayout")
-            {
-                elementType = eElementType.Button;
-            }
-            else
-                elementType = eElementType.Unknown;
+
             returnTuple = new Tuple<string, eElementType>(elementTagName, elementType);
 
             return returnTuple;
         }
 
+        public static eElementType GetElementTypeFromTag(string ElementTag)
+        {
+            switch(ElementTag.ToLower())
+            {
+                case "android.widget.edittext":
+                        return eElementType.TextBox;
+
+                case "android.widget.button":
+                case "android.widget.ratingbar":
+                case "android.widget.framelayout":
+                case "android.widget.imageview":
+                case "android.widget.imagebuton":
+                    return eElementType.Button;
+
+                case "android.widget.spinner":
+                    return eElementType.ComboBox;
+
+                case "android.widget.checkbox":
+                    return eElementType.CheckBox;
+
+                case "android.widget.view":
+                case "android.widget.textview":
+                    return eElementType.Label;
+
+                case "android.widget.image":
+                    return eElementType.Image;
+
+                case "android.widget.radiobutton":
+                    return eElementType.RadioButton;
+
+                case "android.widget.canvas":
+                    return eElementType.Canvas;
+
+                case "android.widget.form":
+                    return eElementType.Form;
+
+                case "android.view.view":
+                    return eElementType.Div;
+
+                case "android.widget.checkedtextview":
+                    return eElementType.ListItem;
+
+                default:
+                    return eElementType.Unknown;
+            }
+        }
         private async Task<string> GetNodeXPath(XmlNode xmlNode)
         {
             return await GetXPathToNode(xmlNode);
