@@ -62,17 +62,103 @@ namespace GingerCore.Platforms.PlatformsInfo
         }
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
-            List<ActUIElement.eElementAction> windowsPlatformElementActionslist = base.GetPlatformUIElementActionsList(ElementType);
+            List<ActUIElement.eElementAction> windowsPlatformElementActionslist = new List<ActUIElement.eElementAction>();
 
             switch (ElementType)
             {
                 case eElementType.Unknown:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Expand);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetWindowTitle);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.IsExist);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Maximize);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Minimize);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseRightClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ScrollDown);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ScrollUp);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeys);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Toggle);
+
                     break;
                 case eElementType.Button:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickAndValidate);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     break;
+
+                case eElementType.TextBox:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
+                  //  windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeys);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    //windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
+                    break;
+
+                case eElementType.Label:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    break;
+
+                case eElementType.ComboBox:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    break;
+
+                case eElementType.Tab:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
+                    break;
+
+                case eElementType.MenuBar:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    break;
+
+                case eElementType.CheckBox:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Toggle);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
+                    break;
+
+                case eElementType.RadioButton:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    break;
+
+                case eElementType.List:
+                    //windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetSelectedValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    break;
+
+                case eElementType.ListItem:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
+                    break;
+
+                case eElementType.Dialog:
+                   windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetWindowTitle); 
+                    break;
+
+                case eElementType.DatePicker:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    break;
+
+                case eElementType.ScrollBar:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ScrollDown);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ScrollUp);
+                    break;
+
                 case eElementType.Window:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetWindowTitle);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Maximize);
@@ -169,9 +255,10 @@ namespace GingerCore.Platforms.PlatformsInfo
                 
                 mElementsTypeList.Add(eElementType.Label);
                 mElementsTypeList.Add(eElementType.List);
-                //mElementsTypeList.Add(eElementType.Window);
+               mElementsTypeList.Add(eElementType.Window);
                 mElementsTypeList.Add(eElementType.Tab);
                 mElementsTypeList.Add(eElementType.MenuBar);
+                mElementsTypeList.Add(eElementType.MenuItem);
                 mElementsTypeList.Add(eElementType.ListItem);
                 mElementsTypeList.Add(eElementType.Dialog);
                 mElementsTypeList.Add(eElementType.DatePicker); 
@@ -407,7 +494,6 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.List:
                 case eElementType.RadioButton:
                 case eElementType.Button:
-                case eElementType.DatePicker:
                     return ActUIElement.eElementAction.Click.ToString();
 
                 case eElementType.CheckBox:
@@ -500,6 +586,11 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                 case "Dialog":
                     elementTypeEnum = eElementType.Dialog;
+                    break;
+
+                case "window":
+                case "Window":
+                    elementTypeEnum = eElementType.Window;
                     break;
 
                 case "pane":
