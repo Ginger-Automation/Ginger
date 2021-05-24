@@ -7189,7 +7189,7 @@ namespace GingerCore.Drivers
                     elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
                     elemInfo.ElementObject = ele;
                     elemInfo.Path = iframeXPath;
-                    elemInfo.XPath = elemNode.XPath;        //await GenerateXpathForIWebElementAsync(ele, string.Empty);
+                    elemInfo.XPath = string.IsNullOrEmpty(elemId) ? await GenerateXpathForIWebElementAsync(ele, string.Empty) : elemNode.XPath;
                     elemInfo.HTMLElementObject = elemNode;
 
                     ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
