@@ -306,7 +306,7 @@ namespace GingerCore.Drivers.WindowsLib
             }
 
             //window
-            else if (actUIElement.ElementType.Equals(eElementType.Window))
+            if (actUIElement.ElementType.Equals(eElementType.Window))
             {
                 HandleWindowControlUIElementAction(actUIElement, AE);
             }

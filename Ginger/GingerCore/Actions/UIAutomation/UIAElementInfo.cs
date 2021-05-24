@@ -45,7 +45,7 @@ namespace GingerCore.Actions.UIAutomation
 
         public override string GetElementType()
         {
-          return  ((UIAutomationDriverBase) WindowExplorer).mUIAutomationHelper.GetElementControlType(ElementObject);
+            return ((UIAutomationDriverBase)WindowExplorer).mUIAutomationHelper.GetElementControlType(ElementObject);
         }
 
         public override string GetValue()
