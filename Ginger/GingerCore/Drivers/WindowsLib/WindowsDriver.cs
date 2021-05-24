@@ -1269,5 +1269,10 @@ namespace GingerCore.Drivers.WindowsLib
         {
             return "Window:";
         }
+
+        public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
+        }
     }
 }
