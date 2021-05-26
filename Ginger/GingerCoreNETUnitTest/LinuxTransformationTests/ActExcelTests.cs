@@ -69,7 +69,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             ActExcel actExcel = new ActExcel();
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ExcelFileName),
                 TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names.xlsx"));
-            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SelectRowsWhere), "Last='Cohen'");
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SelectRowsWhere), "Last='Bond'");
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SheetName), "Sheet1");
             actExcel.ExcelActionType = ActExcel.eExcelActionType.ReadData;
             actExcel.AddNewReturnParams = true;
@@ -79,7 +79,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             actExcel.Execute();
 
             //Assert
-            Assert.AreEqual(actExcel.ActReturnValues.Count, 12);
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "3,Mike,Bond,AZ");
         }
         [TestMethod]
         public void ReadExcelAllWithFilterRowsTest()
