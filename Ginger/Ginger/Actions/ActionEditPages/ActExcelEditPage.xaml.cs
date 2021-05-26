@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.ActionsLib;
 using GingerCore;
 using GingerCore.Actions;
@@ -37,13 +38,15 @@ namespace Ginger.Actions
     {       
         public ActionEditPage actp;
         private ActExcel mAct;
-
+        private IExcelOperations mExcelOperations = new ExcelNPOIOperations();
+        ValueExpression mVE = null;
         public ActExcelEditPage(ActExcel act)
         {
             InitializeComponent();
             mAct = act;
             Bind();
             mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            mVE = new ValueExpression(((Context)act.Context).Environment, ((Context)act.Context).BusinessFlow);
         }
         
         public void Bind()
@@ -96,7 +99,7 @@ namespace Ginger.Actions
         {
             ContextProcessInputValueForDriver();
             //Move code to ExcelFunction no in Act...
-            List<string> SheetsList = mAct.GetSheets();
+            List<string> SheetsList = mExcelOperations.GetSheets(mAct.CalculatedFileName);
             GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
         }
 
@@ -113,20 +116,44 @@ namespace Ginger.Actions
         {
             ContextProcessInputValueForDriver();
 
-            DataTable dt = mAct.GetExcelSheetData(null);
-            if (dt != null)
-                ExcelDataGrid.ItemsSource = dt.AsDataView();
+            DataTable dt = GetExcelSheetData(true);
+            if (dt == null)
+            {
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                return;
+            }
+            ExcelDataGrid.ItemsSource = dt.AsDataView();
         }
 
         private void ViewWhereButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!mAct.CheckMandatoryFieldsExists(new List<string>() { 
+                nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName),  nameof(mAct.CalculatedFilter)}))
+            {
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                return;
+            }
             ContextProcessInputValueForDriver();
-
-            DataTable dt = mAct.GetExcelSheetDataWithWhere();
-            if(dt!=null)
-                ExcelDataGrid.ItemsSource = dt.AsDataView();
+            DataTable dt = GetExcelSheetData(false);
+            if (dt == null)
+            {
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                return;
+            }
+            ExcelDataGrid.ItemsSource = dt.AsDataView();
         }
-
+        DataTable GetExcelSheetData(bool isViewAllData)
+        {
+            if(!mAct.CheckMandatoryFieldsExists(new List<string>() { nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName) }))
+            {
+                return null;
+            }
+            if (!isViewAllData && mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData && !string.IsNullOrWhiteSpace(mAct.CalculatedFilter))
+            {
+                return mExcelOperations.ReadCellData(mAct.CalculatedFileName, mAct.CalculatedSheetName, mAct.CalculatedFilter, true);
+            }
+            return mExcelOperations.ReadData(mAct.CalculatedFileName, mAct.CalculatedSheetName, isViewAllData ? null : mAct.CalculatedFilter, true);
+        }
         private void ExcelActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ContextProcessInputValueForDriver();
@@ -153,6 +180,11 @@ namespace Ginger.Actions
 
         private void SheetNamComboBox_DropDownOpened(object sender, EventArgs e)
         {
+            if (!mAct.CheckMandatoryFieldsExists(new List<string>() { nameof(mAct.CalculatedFileName) }))
+            {
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                return;
+            }
             FillSheetCombo();
         }
 
@@ -165,14 +197,13 @@ namespace Ginger.Actions
 
         private void xOpenExcelButton_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (!mAct.CheckMandatoryFieldsExists(new List<string>() { nameof(mAct.CalculatedFileName) }))
             {
-                Process.Start(mAct.GetExcelFileNameForDriver());
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                return;
             }
-            catch(Exception ex)
-            {
-                Reporter.ToUser(eUserMsgKey.MissingExcelDetails);
-            }
+            Process.Start(mAct.CalculatedFileName);
         }
+            
     }
 }

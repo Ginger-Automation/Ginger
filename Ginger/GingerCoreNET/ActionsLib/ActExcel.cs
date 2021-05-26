@@ -54,6 +54,10 @@ namespace GingerCore.Actions
             TBH.AddText("Write Excel :- Similar as read action,to write an excel, select Write data from Excel Action type dropdown, Then browse the file by clicking Browse button,select sheet name and then add where condition on column which you want to write, Then add primary key column if you have any.Then finally to write an excel add column name =Variable name in Variable to col textbox and run the action");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
+            TBH.AddText("Read Excel Cells:- User option to Read Excel data by cells, Select Read Cell Data from Action type dropdown, Then browse the file by clicking Browse button.Once you " +
+             "browse the file then all the sheets will get bind to Sheet Name dropdown,Select sheet name and click on view button.If you want to put where condition on excel sheet then type cell location in the excel. for one cell: Like A2, for multi cells: Like A2:D4");
+            TBH.AddLineBreak();
+            TBH.AddLineBreak();
             TBH.AddText("Note:- Column name should not be the same name as the variable name.");
         }
 
@@ -94,6 +98,22 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(ExcelFileName));
             }
         }
+        public string CalculatedFileName
+        {
+            get
+            {
+                return WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(
+                    GetInputParamCalculatedValue(nameof(ExcelFileName)));
+            }
+        }
+        
+        private string CalculatedColMappingRules
+        {
+            get
+            {
+                return GetInputParamCalculatedValue(nameof(ColMappingRules));
+            }
+        }
         public string SheetName
         {
             get
@@ -106,6 +126,13 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(SheetName));
             }
         }
+        public string CalculatedSheetName
+        {
+            get
+            {
+                return GetInputParamCalculatedValue(nameof(SheetName)).Trim();
+            }
+        }
         public string SelectRowsWhere
         {
             get
@@ -116,6 +143,13 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateInputParamValue(nameof(SelectRowsWhere), value);
                 OnPropertyChanged(nameof(SelectRowsWhere));
+            }
+        }
+        public string CalculatedFilter
+        {
+            get
+            {
+                return GetInputParamCalculatedValue(nameof(SelectRowsWhere));
             }
         }
         public string PrimaryKeyColumn
@@ -140,6 +174,13 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateInputParamValue(nameof(SetDataUsed), value);
                 OnPropertyChanged(nameof(SetDataUsed));
+            }
+        }
+        private string CalculatedSetDataUsed
+        {
+            get
+            {
+                return GetInputParamCalculatedValue(nameof(SetDataUsed));
             }
         }
         [IsSerializedForLocalRepository]
@@ -171,7 +212,7 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
-            if(!CheckMandatoryFieldsExists())
+            if(!CheckMandatoryFieldsExists(new List<string>() { nameof(CalculatedFileName), nameof(CalculatedSheetName) }))
             {
                 return;
             }
@@ -191,31 +232,27 @@ namespace GingerCore.Actions
                     break;
             }
         }
-
-        private bool CheckMandatoryFieldsExists()
+        public object this[string propertyName]
         {
-            if(String.IsNullOrWhiteSpace(ExcelFileName))
+            get { return this.GetType().GetProperty(propertyName).GetValue(this, null); }
+        }
+
+        public bool CheckMandatoryFieldsExists(List<string> fields)
+        {
+            foreach(string field in fields)
             {
-                this.Error += eUserMsgKey.MissingExcelDetails;
-                Reporter.ToUser(eUserMsgKey.MissingExcelDetails);
-                return false;
-            }
-            if (String.IsNullOrWhiteSpace(SheetName))  
-            {
-                this.Error += eUserMsgKey.ExcelNoWorksheetSelected;
-                Reporter.ToUser(eUserMsgKey.ExcelNoWorksheetSelected);
-                return false;
+                if (String.IsNullOrWhiteSpace((string)this[field]))
+                {
+                    this.Error += eUserMsgKey.ExcelInvalidFieldData;
+                    return false;
+                }
             }
             return true;
         }
 
         private void ReadCellData()
         {
-            string excelFileName = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(
-                    GetInputParamCalculatedValue(nameof(ExcelFileName)));
-            string sheetName = GetInputParamCalculatedValue(nameof(SheetName));
-            string selectRowsWhere = GetInputParamCalculatedValue(nameof(SelectRowsWhere));
-            DataTable excelDataTable = excelOperator.ReadCellData(excelFileName, sheetName, selectRowsWhere, SelectAllRows);
+            DataTable excelDataTable = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
             try
             {
                 if (!string.IsNullOrEmpty(SelectRowsWhere) && !SelectAllRows)
@@ -239,37 +276,17 @@ namespace GingerCore.Actions
             }
             catch (Exception ex)
             {
-                this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 Error = ex.Message;
             }
 
             if (excelDataTable.Rows.Count == 0)
             {
-                this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 Error = "No rows found in excel file matching criteria - ";
             }
-
-        }
-
-        public List<string> GetSheets()
-        {
-            List<string> returnList = new List<string>();
-            var fileExtension = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExcelFileName);
-            excelOperator = new ExcelNPOIOperations()
-            {
-                FileName = fileExtension
-            };
-            return excelOperator.GetSheets().OrderBy(itm => itm).ToList();
         }
         public void ReadData()
         {
-            string excelFileName = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(
-                    GetInputParamCalculatedValue(nameof(ExcelFileName)));
-            string sheetName = GetInputParamCalculatedValue(nameof(SheetName));
-            string selectRowsWhere = GetInputParamCalculatedValue(nameof(SelectRowsWhere));
-            string primaryKeyColumn = GetInputParamCalculatedValue(nameof(PrimaryKeyColumn));
-            string setDataUsed = GetInputParamCalculatedValue(nameof(SetDataUsed));
-            DataTable excelDataTable = excelOperator.ReadData(excelFileName, sheetName, selectRowsWhere, SelectAllRows, primaryKeyColumn, setDataUsed);
+            DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
             try
             {
                 if(excelDataTable != null && excelDataTable.Rows.Count > 0)
@@ -298,7 +315,7 @@ namespace GingerCore.Actions
                     {
                         if (!String.IsNullOrWhiteSpace(SetDataUsed))
                         {
-                            isUpdated = excelOperator.updateExcelData(GetExcelFileNameForDriver(), SheetName, SelectRowsWhere, SetDataUsed);
+                            isUpdated = excelOperator.updateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed);
                         }
                     }
                     else
@@ -308,95 +325,51 @@ namespace GingerCore.Actions
                             if (string.IsNullOrWhiteSpace(PrimaryKeyColumn))
                             {
                                 Error += "Missing or Invalid Primary Key"; 
-                                Reporter.ToLog(eLogLevel.WARN, Error);
-                                return; // send error message PK missing
+                                return; 
                             }
-                            string convertPKtoFilter = PrimaryKeyColumn + "=" + excelDataTable.Rows[0][GetInputParamCalculatedValue("PrimaryKeyColumn")].ToString(); //// should take from typeof
-
-                            isUpdated = excelOperator.updateExcelData(GetExcelFileNameForDriver(), SheetName, SelectRowsWhere, SetDataUsed, convertPKtoFilter);
+                            isUpdated = excelOperator.updateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed, CalculatedPrimaryKeyFilter(excelDataTable.Rows[0]));
                         }
                     }
                     if(!isUpdated)
                     {
-                        this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        Error = "Failed updated excel data: " + setDataUsed;
+                        Error = "Failed updated excel data: " + CalculatedSetDataUsed;
                     }
                 }
             }
             catch (Exception ex)
             {
-                this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 Error = ex.Message;
             }
 
             if (excelDataTable.Rows.Count == 0)
             {
-                this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 Error = "No rows found in excel file matching criteria - ";
             }
         }
 
-        public bool check_file_open(String name)
-        {
-            try
-            {
-                FileStream fs = new FileStream(name, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-                fs.Close();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Error = "Write Operation canceled due to error: " + ex.Message;
-                return false;
-            }
-        }
-
-
         public void WriteData()
         {
-            string excelFileName = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(
-                    GetInputParamCalculatedValue(nameof(ExcelFileName)));
-            string sheetName = GetInputParamCalculatedValue(nameof(SheetName));
-            string selectRowsWhere = GetInputParamCalculatedValue(nameof(SelectRowsWhere));
-            string primaryKeyColumn = GetInputParamCalculatedValue(nameof(PrimaryKeyColumn));
-            string setDataUsed = GetInputParamCalculatedValue(nameof(SetDataUsed));
             List<Tuple<string, object>> updateCellValuesList = new List<Tuple<string, object>>();
-            DataTable excelDataTable = excelOperator.ReadData(excelFileName, sheetName, selectRowsWhere, SelectAllRows, primaryKeyColumn, setDataUsed);
+            DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
             
-            string result = System.Text.RegularExpressions.Regex.Replace(GetInputParamCalculatedValue("ColMappingRules"), @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
+            string result = System.Text.RegularExpressions.Regex.Replace(CalculatedColMappingRules, @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
             string[] varColMaps = result.Split(',');
             string sSetDataUsed = "";
 
             try
             {
 
-                if (!string.IsNullOrEmpty(GetInputParamCalculatedValue("SetDataUsed")))
+                if (!string.IsNullOrEmpty(CalculatedSetDataUsed))
                 {
-                    sSetDataUsed = @", " + GetInputParamCalculatedValue("SetDataUsed");
+                    sSetDataUsed = @", " + CalculatedSetDataUsed;
                 }
                 // we expect only 1 record
                 if (excelDataTable.Rows.Count == 1 && !SelectAllRows)
                 {
                     DataRow r = excelDataTable.Rows[0];
-                    string strPrimaryKeyColumn = GetInputParamCalculatedValue("PrimaryKeyColumn");
-                    if (strPrimaryKeyColumn.Contains("`"))
-                    {
-                        strPrimaryKeyColumn = strPrimaryKeyColumn.Replace("`", "");
-                    }
-                    string rowKey = r[strPrimaryKeyColumn].ToString();
                     //Read data to variables
                     foreach (string vc in varColMaps)
                     {
-                        int res;
-                        int.TryParse(rowKey, out res);
-
-                        if (res == 0 || r[strPrimaryKeyColumn].GetType() == typeof(System.String))
-                        {
-                            rowKey = "'" + rowKey + "'";
-                        }
-
-                        //TODO: fix me in OO Style
-
                         //Do mapping
                         string ColName = vc.Split('=')[0];
                         string Value = vc.Split('=')[1];
@@ -419,10 +392,10 @@ namespace GingerCore.Actions
                     string setCellData = string.Join(",", updateCellValuesList.Select(st => st.Item1 + " = '" + st.Item2 + "' ,")).TrimEnd(',');
 
                     this.ExInfo = "Write action done";
-                    if (rowKey != null && updateCellValuesList.Count > 0)
+                    if (updateCellValuesList.Count > 0)
                     {
-                        bool isUpdated = string.IsNullOrEmpty(rowKey) ? excelOperator.WriteData(GetExcelFileNameForDriver(), SheetName, SelectRowsWhere, SetDataUsed, updateCellValuesList) : 
-                            excelOperator.WriteData(GetExcelFileNameForDriver(), SheetName, SelectRowsWhere, SetDataUsed, updateCellValuesList, PrimaryKeyColumn, rowKey);
+                        bool isUpdated = string.IsNullOrEmpty(CalculatedPrimaryKeyFilter(r)) ? excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed, updateCellValuesList) : 
+                            excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed, updateCellValuesList, CalculatedPrimaryKeyFilter(r));
                     }
                 }
                 else if (excelDataTable.Rows.Count > 0 && SelectAllRows)
@@ -456,59 +429,57 @@ namespace GingerCore.Actions
 
                         updateCellValuesList.Add(new Tuple<string, object>(ColName, txt));
                     }
-                    bool isUpdated = excelOperator.WriteData(GetExcelFileNameForDriver(), SheetName, SelectRowsWhere, SetDataUsed, updateCellValuesList);
+                    bool isUpdated = excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed, updateCellValuesList);
                     
                     this.ExInfo += "write action done";
                 }
                 else if (excelDataTable.Rows.Count == 0)
                 {
-                    this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     this.ExInfo = "No Rows updated with given criteria";
                 }
             }
             catch (Exception ex)
             {
-                this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 this.Error = "Error when trying to update the excel: " + ex.Message;
             }
         }
 
-        public DataTable GetExcelSheetData(string where)
-        {
-            try
-            {
-                if(!CheckMandatoryFieldsExists())
-                {
-                    return null;
-                }
-                if(string.IsNullOrEmpty(SheetName))
-                {
-                    string missingSheetName = "Invalid or missing sheet name";
-                    Reporter.ToLog(eLogLevel.WARN, missingSheetName);
-                    throw new Exception(missingSheetName);
-                }
-                if(where != null && ExcelActionType == eExcelActionType.ReadCellData)
-                {
-                    return excelOperator.ReadCellData(ExcelFileName, SheetName, where, true);
-                }
-                return excelOperator.ReadData(ExcelFileName, SheetName, where, true, "", "");
-            }
-            catch (Exception ex)
-            {
-                switch (ex.Message)
-                {
-                    case "Syntax error in FROM clause.":
-                        break;
-                    case "No value given for one or more required parameters.":
-                        Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
-                        break;
-                    default:
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
-                        break;
-                }
-                return null;
-            }
-        }
+        //public DataTable GetExcelSheetData(string where)
+        //{
+        //    try
+        //    {
+        //        if(!CheckMandatoryFieldsExists())
+        //        {
+        //            return null;
+        //        }
+        //        if(string.IsNullOrEmpty(SheetName))
+        //        {
+        //            string missingSheetName = "Invalid or missing sheet name";
+        //            Reporter.ToLog(eLogLevel.WARN, missingSheetName);
+        //            throw new Exception(missingSheetName);
+        //        }
+        //        if(where != null && ExcelActionType == eExcelActionType.ReadCellData)
+        //        {
+        //            return excelOperator.ReadCellData(ExcelFileName, SheetName, where, true);
+        //        }
+        //        return excelOperator.ReadData(ExcelFileName, SheetName, where, true);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        switch (ex.Message)
+        //        {
+        //            case "Syntax error in FROM clause.":
+        //                break;
+        //            case "No value given for one or more required parameters.":
+        //                Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
+        //                break;
+        //            default:
+        //                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
+        //                break;
+        //        }
+        //        return null;
+        //    }
+        //}
 
         internal static ObservableList<ActReturnValue> GetVarColsFromString(string sVarCols)
         {
@@ -526,37 +497,15 @@ namespace GingerCore.Actions
 
             return VarCols;
         }
-        internal static string[] GetVarColsMapsFromString(string sVarCols)
-        {
 
-
-            string[] VarColMap = sVarCols.Split(',');
-
-
-
-            return VarColMap;
-        }
-
-        public string GetExcelFileNameForDriver()
-        {
-            string ExcelFileNameAbsolutue = GetInputParamCalculatedValue(nameof(ExcelFileName));
-
-            if (string.IsNullOrWhiteSpace(ExcelFileNameAbsolutue))
-            {
-                return "";
-            }
-            ExcelFileNameAbsolutue = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExcelFileNameAbsolutue);
-            
-            return ExcelFileNameAbsolutue;
-        }
-
-        public DataTable GetExcelSheetDataWithWhere()
-        {
-            return GetExcelSheetData(GetInputParamCalculatedValue("SelectRowsWhere"));
-        }
         private DataTable GetFilteredDataTable(DataTable dataTable, bool selectAllRows)
         {
             return selectAllRows ? dataTable.DefaultView.ToTable() : dataTable.DefaultView.ToTable().AsEnumerable().Take(1).CopyToDataTable();
+        }
+        private string CalculatedPrimaryKeyFilter(DataRow dataRow)
+        {
+            string pk = GetInputParamCalculatedValue(nameof(PrimaryKeyColumn)).Replace("`", "");
+            return dataRow[pk].GetType() == typeof(int) ? pk + "=" + dataRow[pk].ToString() : pk + "=" + "'" + dataRow[pk].ToString() + "'";
         }
     }
 }

@@ -19,13 +19,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 {
     public class ExcelNPOIOperations : IExcelOperations
     {
-        public string FileName { get; set; }
-        DataTable ExcelDataTable { get; set; }
-        DataTable FilteredDataTable { get; set; }
+        string mFileName { get; set; }
+        DataTable mExcelDataTable { get; set; }
+        DataTable mFilteredDataTable { get; set; }
         List<Tuple<string, object>> UpdateCellList { get; set; }
-        IWorkbook Workbook { get; set; }
-        ISheet Sheet { get; set; }
-
+        IWorkbook mWorkbook { get; set; }
+        ISheet mSheet { get; set; }
         private DataTable ConvertSheetToDataTable(ISheet sheet)
         {
             try
@@ -90,27 +89,19 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
         }
 
-        public DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows, string primaryKey, string setData)
+        public DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows)
         {
-            try
+            mWorkbook = GetExcelWorkbook(fileName);
+            mSheet = mWorkbook.GetSheet(sheetName);
+            if (mSheet == null)
             {
-                Workbook = GetExcelWorkbook(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(fileName));
-                Sheet = Workbook.GetSheet(sheetName);
-                if (Sheet == null)
-                {
-                    Reporter.ToLog(eLogLevel.WARN, "Incorrect Sheet name.");
-                    return null;
-                }
-                ExcelDataTable = ConvertSheetToDataTable(Sheet);
-                ExcelDataTable.DefaultView.RowFilter = filter ?? "";
-                FilteredDataTable = GetFilteredDataTable(ExcelDataTable, selectedRows);
-                UpdateCellList = GetSetDataUsed(setData);
-                return FilteredDataTable;
+                Reporter.ToLog(eLogLevel.WARN, "Incorrect Sheet name.");
+                return null;
             }
-            catch(Exception ex)
-            {
-                throw new Exception("Read Excel data failed, " + ex.Message);
-            }
+            mExcelDataTable = ConvertSheetToDataTable(mSheet);
+            mExcelDataTable.DefaultView.RowFilter = filter ?? "";
+            mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
+            return mFilteredDataTable;
         }
 
         private List<Tuple<string, object>> GetSetDataUsed(string setDataUsed)
@@ -179,9 +170,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         public bool updateExcelData(string fileName, string sheetName, string filter, string setDataUsed, string primaryKey = null, string key = null)
         {
+            UpdateCellList = GetSetDataUsed(setDataUsed);
             if (UpdateCellList.Count > 0)
             {
-                var headerRow = Sheet.GetRow(0);
+                var headerRow = mSheet.GetRow(0);
                 foreach(string colName in UpdateCellList.Select(x => x.Item1))
                 {
                     if (!headerRow.Cells.Any(x => x.RichStringCellValue.ToString().Equals(colName)))
@@ -194,12 +186,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     filter = primaryKey;
                 }
                 UpdateCellList.ForEach(x =>
-                ExcelDataTable.Select(filter).ToList().ForEach(dr =>
-                Sheet.GetRow(ExcelDataTable.Rows.IndexOf(dr) + 1).GetCell(ExcelDataTable.Columns[x.Item1].Ordinal).SetCellValue((string)x.Item2)));
+                mExcelDataTable.Select(filter).ToList().ForEach(dr =>
+                mSheet.GetRow(mExcelDataTable.Rows.IndexOf(dr) + 1).GetCell(mExcelDataTable.Columns[x.Item1].Ordinal).SetCellValue((string)x.Item2)));
                 
                 using (FileStream fs = new FileStream(fileName, FileMode.Create))
                 {
-                    Workbook.Write(fs);
+                    mWorkbook.Write(fs);
                     fs.Close();
                 }
             }
@@ -208,20 +200,19 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         public DataTable ReadCellData(string fileName, string sheetName, string filter, bool selectedRows)
         {
-            fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(fileName);
             if (string.IsNullOrEmpty(filter))
             {
-                return ReadData(fileName, sheetName, filter, selectedRows, "", "");
+                return ReadData(fileName, sheetName, filter, selectedRows);
             }
             Regex regex = new Regex(@"(^[A-Z]+\d+$)|(^[A-Z]+\d+:[A-Z]+\d+$)");
             Match match = regex.Match(filter);
-            if (match.Success)
+            if (!match.Success)
             {
-                Console.WriteLine("MATCH VALUE: " + match.Value);
+                return null;
             }
-            Workbook = GetExcelWorkbook(fileName);
-            Sheet = Workbook.GetSheet(sheetName);
-            if(Sheet == null)
+            mWorkbook = GetExcelWorkbook(fileName);
+            mSheet = mWorkbook.GetSheet(sheetName);
+            if (mSheet == null)
             {
                 throw new Exception("Invalid Sheet name");
             }
@@ -238,86 +229,80 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 cellFrom = new CellReference(filter);
                 cellTo = new CellReference(filter);
             }
-            try
+            var dtExcelTable = new DataTable();
+            dtExcelTable.Rows.Clear();
+            dtExcelTable.Columns.Clear();
+            var headerRow = mSheet.GetRow(0);
+            int colCount = headerRow.LastCellNum;
+            if (cellFrom.Col > colCount || cellTo.Col > colCount)
             {
-                var dtExcelTable = new DataTable();
-                dtExcelTable.Rows.Clear();
-                dtExcelTable.Columns.Clear();
-                var headerRow = Sheet.GetRow(0);
-                int colCount = headerRow.LastCellNum;
-                if(cellFrom.Col > colCount || cellTo.Col > colCount)
-                {
-                    throw new Exception("Invalid filter");
-                }
-                for (var c = cellFrom.Col; c <= cellTo.Col; c++)
-                {
-                    if (headerRow.GetCell(c) != null && !dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
-                    {
-                        dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString());
-                    }
-                }
-                var i = cellFrom.Row;
-                var currentRow = Sheet.GetRow(i);
-                int dtColCount = 0;
-                while (i <= cellTo.Row)
-                {
-                    var dr = dtExcelTable.NewRow();
-                    dtColCount = 0;
-                    for (var j = cellFrom.Col; j <= cellTo.Col; j++)
-                    {
-                        ICell cell;
-                        if(currentRow != null)
-                        {
-                            cell = currentRow.GetCell(j);
-                        }
-                        else
-                        {
-                            throw new Exception("Invalid row number");
-                        }
-                        if (cell != null)
-                        {
-                            switch (cell.CellType)
-                            {
-                                case CellType.Numeric:
-                                    dr[dtColCount] = DateUtil.IsCellDateFormatted(cell)
-                                        ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
-                                        : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
-                                    break;
-                                case CellType.String:
-                                    dr[dtColCount] = cell.StringCellValue;
-                                    break;
-                                case CellType.Blank:
-                                    dr[dtColCount] = string.Empty;
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        dtColCount++;
-                    }
-                    dtExcelTable.Rows.Add(dr);
-                    i++;
-                    currentRow = Sheet.GetRow(i);
-                }
-                return dtExcelTable;
+                throw new Exception("Invalid filter");
             }
-            catch (Exception e)
+            for (var c = cellFrom.Col; c <= cellTo.Col; c++)
             {
-                throw;
+                if (headerRow.GetCell(c) != null && !dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
+                {
+                    dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString());
+                }
             }
+            var i = cellFrom.Row;
+            var currentRow = mSheet.GetRow(i);
+            int dtColCount = 0;
+            while (i <= cellTo.Row)
+            {
+                var dr = dtExcelTable.NewRow();
+                dtColCount = 0;
+                for (var j = cellFrom.Col; j <= cellTo.Col; j++)
+                {
+                    ICell cell;
+                    if (currentRow != null)
+                    {
+                        cell = currentRow.GetCell(j);
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid row number");
+                    }
+                    if (cell != null)
+                    {
+                        switch (cell.CellType)
+                        {
+                            case CellType.Numeric:
+                                dr[dtColCount] = DateUtil.IsCellDateFormatted(cell)
+                                    ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
+                                    : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
+                                break;
+                            case CellType.String:
+                                dr[dtColCount] = cell.StringCellValue;
+                                break;
+                            case CellType.Blank:
+                                dr[dtColCount] = string.Empty;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    dtColCount++;
+                }
+                dtExcelTable.Rows.Add(dr);
+                i++;
+                currentRow = mSheet.GetRow(i);
+            }
+            return dtExcelTable;
         }
 
         public bool WriteData(string fileName, string sheetName, string filter, string setDataUsed, List<Tuple<string, object>> updateCellValuesList, string primaryKey = null, string key = null)
         {
+            UpdateCellList = GetSetDataUsed(setDataUsed);
             UpdateCellList.AddRange(updateCellValuesList);
             if (UpdateCellList.Count > 0)
             {
                 UpdateCellList.ForEach(x =>
-                ExcelDataTable.Select(filter).ToList().ForEach(dr =>
-                Sheet.GetRow(ExcelDataTable.Rows.IndexOf(dr) + 1).GetCell(ExcelDataTable.Columns[x.Item1].Ordinal).SetCellValue((string)x.Item2)));
+                mExcelDataTable.Select(filter).ToList().ForEach(dr =>
+                mSheet.GetRow(mExcelDataTable.Rows.IndexOf(dr) + 1).GetCell(mExcelDataTable.Columns[x.Item1].Ordinal).SetCellValue((string)x.Item2)));
                 using (FileStream fs = new FileStream(fileName, FileMode.Create))
                 {
-                    Workbook.Write(fs);
+                    mWorkbook.Write(fs);
                     fs.Close();
                 }
                 return true;
@@ -327,15 +312,16 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         
 
-        public List<string> GetSheets()
+        public List<string> GetSheets(string fileName)
         {
             List<string> sheets = new List<string>();
-            var wb = GetExcelWorkbook(FileName);
+            mFileName = fileName;
+            var wb = GetExcelWorkbook(mFileName);
             for (int i = 0; i < wb.NumberOfSheets; i++)
             {
                 sheets.Add(wb.GetSheetAt(i).SheetName);
             }
-            return sheets;
+            return sheets.OrderBy(itm => itm).ToList();
         }
     }
 }
