@@ -284,6 +284,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                                 dr[dtColCount] = string.Empty;
                                 break;
                             default:
+                                dr[dtColCount] = cell.RichStringCellValue;
                                 break;
                         }
                     }

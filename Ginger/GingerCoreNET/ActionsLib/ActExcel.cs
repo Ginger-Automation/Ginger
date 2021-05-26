@@ -344,12 +344,6 @@ namespace GingerCore.Actions
 
                 string result = System.Text.RegularExpressions.Regex.Replace(CalculatedColMappingRules, @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
                 string[] varColMaps = result.Split(',');
-                string sSetDataUsed = "";
-
-                if (!string.IsNullOrEmpty(CalculatedSetDataUsed))
-                {
-                    sSetDataUsed = @", " + CalculatedSetDataUsed;
-                }
                 // we expect only 1 record
                 if (excelDataTable.Rows.Count == 1 && !SelectAllRows)
                 {
