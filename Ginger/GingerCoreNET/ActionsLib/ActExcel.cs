@@ -102,8 +102,8 @@ namespace GingerCore.Actions
         {
             get
             {
-                return WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(
-                    GetInputParamCalculatedValue(nameof(ExcelFileName)));
+                string file = GetInputParamCalculatedValue(nameof(ExcelFileName)) ?? "";
+                return WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(file);
             }
         }
         
@@ -130,7 +130,8 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamCalculatedValue(nameof(SheetName)).Trim();
+                string sheet = GetInputParamCalculatedValue(nameof(SheetName)) ?? "";
+                return sheet.Trim();
             }
         }
         public string SelectRowsWhere
@@ -229,7 +230,7 @@ namespace GingerCore.Actions
                     ReadCellData();
                     break;
                 default:
-                    return;
+                    Reporter.ToLog(eLogLevel.INFO, "Only action type can be selected");
                     break;
             }
         }
@@ -259,7 +260,7 @@ namespace GingerCore.Actions
                 if (!string.IsNullOrEmpty(SelectRowsWhere) && !SelectAllRows)
                 {
                     string CellValue = excelDataTable.Rows[0][0].ToString();
-                    AddOrUpdateReturnParamActual("Actual", CellValue);
+                    AddOrUpdateReturnParamActual(excelDataTable.Columns[0].ColumnName, CellValue);
                 }
                 else
                 {
@@ -270,7 +271,7 @@ namespace GingerCore.Actions
                         // in case the user didn't select cols then get all excel output columns
                         for (int i = 0; i < excelDataTable.Columns.Count; i++)
                         {
-                            AddOrUpdateReturnParamActualWithPath("Actual", ((object)r[i]).ToString(), (j + 1).ToString() + (i + 1).ToString());
+                            AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, ((object)r[i]).ToString(), (j + 1).ToString() + (i + 1).ToString());
                         }
                     }
                 }

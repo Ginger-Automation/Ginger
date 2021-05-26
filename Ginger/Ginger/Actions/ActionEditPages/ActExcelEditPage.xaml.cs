@@ -39,14 +39,12 @@ namespace Ginger.Actions
         public ActionEditPage actp;
         private ActExcel mAct;
         private IExcelOperations mExcelOperations = new ExcelNPOIOperations();
-        ValueExpression mVE = null;
         public ActExcelEditPage(ActExcel act)
         {
             InitializeComponent();
             mAct = act;
             Bind();
             mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-            mVE = new ValueExpression(((Context)act.Context).Environment, ((Context)act.Context).BusinessFlow);
         }
         
         public void Bind()

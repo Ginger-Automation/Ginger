@@ -80,6 +80,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "3,Mike,Bond,AZ");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()), "1,1,1,1");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
         }
         [TestMethod]
         public void ReadExcelAllWithFilterRowsTest()
@@ -99,6 +101,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()), "1,1,1,1");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
         }
         [TestMethod]
         public void ReadExcelAllWithFilterRowsSetDataTest()
@@ -119,9 +123,9 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             actExcel.Execute();
 
             //Assert
-            IExcelOperations excelOperations = new ExcelNPOIOperations();
-            DataTable dt = excelOperations.ReadData(excelPathWriteTemp, actExcel.SheetName, actExcel.SelectRowsWhere, actExcel.SelectAllRows);
-            Assert.AreEqual(string.Join(',', dt.Rows[0].ItemArray.Select(x => x).ToList()), "1,Jhon,Cohen,2109 Fox Dr");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr,4,Adam,Cohen,NY");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()), "1,1,1,1,2,2,2,2");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address,ID,First,Last,Address");
         }
         [TestMethod]
         public void ReadCellDataExcelOneCellTest()
@@ -140,6 +144,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             Assert.AreEqual(actExcel.ActReturnValues.Count, 1);
+            Assert.AreEqual(actExcel.ActReturnValues[0].Actual, "1");
+            Assert.AreEqual(actExcel.ActReturnValues[0].Param, "ID");
         }
         [TestMethod]
         public void ReadCellDataExcelAllCellTest()
@@ -149,6 +155,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ExcelFileName),
                 TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names.xlsx"));
             actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SheetName), "Sheet1");
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SelectRowsWhere), "B2:D4");
             actExcel.ExcelActionType = ActExcel.eExcelActionType.ReadCellData;
             actExcel.AddNewReturnParams = true;
             actExcel.SelectAllRows = true;
@@ -157,7 +164,10 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             actExcel.Execute();
 
             //Assert
-            Assert.AreEqual(actExcel.ActReturnValues.Count, 12);
+            Assert.AreEqual(actExcel.ActReturnValues.Count, 9);
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "Mark,Cohen,2109 Fox Dr,Julia,Smith,LA,Mike,Bond,AZ");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()), "11,12,13,21,22,23,31,32,33");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "First,Last,Address,First,Last,Address,First,Last,Address");
         }
         [TestMethod]
         public void WriteExcelOneRowWithPKTest()
