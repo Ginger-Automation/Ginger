@@ -204,10 +204,10 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             string actual = "";
             foreach (DataRow dr in dt.Rows)
             {
-                actual += string.Join(',', dr.ItemArray.Select(x => x).ToList());
-                actual += ",";
+                string current = string.Join(',', dr.ItemArray.Select(x => x).ToList());
+                actual = string.Join(',', actual, current);
             }
-            Assert.AreEqual(actual.TrimEnd(','), "1,Simon,Cohen,2109 Fox Dr,4,Simon,Cohen,NY");
+            Assert.AreEqual(actual.TrimStart(','), "1,Simon,Cohen,2109 Fox Dr,4,Simon,Cohen,NY");
         }
     }
 }
