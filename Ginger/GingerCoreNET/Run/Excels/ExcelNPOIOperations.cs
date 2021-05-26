@@ -158,12 +158,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                         }
                         break;
                     default:
+                        Reporter.ToLog(eLogLevel.WARN, "Please check file extention" + fullFilePath);
                         break;
                 }
             }
             catch(Exception ex)
             {
-                throw new Exception("Invalid file path: " + fullFilePath + ", " + ex.Message);
+                Reporter.ToLog(eLogLevel.WARN, "Invalid Path Name" + fullFilePath, ex);
             }
             return workbook;
         }
@@ -214,7 +215,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             mSheet = mWorkbook.GetSheet(sheetName);
             if (mSheet == null)
             {
-                throw new Exception("Invalid Sheet name");
+                Reporter.ToLog(eLogLevel.WARN, "Invalid sheet name");
+                return null;
             }
             CellReference cellFrom;
             CellReference cellTo;
@@ -236,7 +238,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             int colCount = headerRow.LastCellNum;
             if (cellFrom.Col > colCount || cellTo.Col > colCount)
             {
-                throw new Exception("Invalid filter");
+                Reporter.ToLog(eLogLevel.WARN, "Invalid filter expresion, please check");
+                return null;
             }
             for (var c = cellFrom.Col; c <= cellTo.Col; c++)
             {
@@ -261,7 +264,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     }
                     else
                     {
-                        throw new Exception("Invalid row number");
+                        Reporter.ToLog(eLogLevel.WARN, "Invalid filter expresion, please check");
+                        return null;
                     }
                     if (cell != null)
                     {

@@ -253,6 +253,11 @@ namespace GingerCore.Actions
         private void ReadCellData()
         {
             DataTable excelDataTable = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
+            if(excelDataTable == null)
+            {
+                Error = "Invalid field data, please check";
+                return;
+            }
             try
             {
                 if (!string.IsNullOrEmpty(SelectRowsWhere) && !SelectAllRows)
@@ -277,11 +282,6 @@ namespace GingerCore.Actions
             catch (Exception ex)
             {
                 Error = ex.Message;
-            }
-
-            if (excelDataTable.Rows.Count == 0)
-            {
-                Error = "No rows found in excel file matching criteria - ";
             }
         }
         public void ReadData()
@@ -443,44 +443,6 @@ namespace GingerCore.Actions
                 this.Error = "Error when trying to update the excel: " + ex.Message;
             }
         }
-
-        //public DataTable GetExcelSheetData(string where)
-        //{
-        //    try
-        //    {
-        //        if(!CheckMandatoryFieldsExists())
-        //        {
-        //            return null;
-        //        }
-        //        if(string.IsNullOrEmpty(SheetName))
-        //        {
-        //            string missingSheetName = "Invalid or missing sheet name";
-        //            Reporter.ToLog(eLogLevel.WARN, missingSheetName);
-        //            throw new Exception(missingSheetName);
-        //        }
-        //        if(where != null && ExcelActionType == eExcelActionType.ReadCellData)
-        //        {
-        //            return excelOperator.ReadCellData(ExcelFileName, SheetName, where, true);
-        //        }
-        //        return excelOperator.ReadData(ExcelFileName, SheetName, where, true);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        switch (ex.Message)
-        //        {
-        //            case "Syntax error in FROM clause.":
-        //                break;
-        //            case "No value given for one or more required parameters.":
-        //                Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
-        //                break;
-        //            default:
-        //                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
-        //                break;
-        //        }
-        //        return null;
-        //    }
-        //}
-
         internal static ObservableList<ActReturnValue> GetVarColsFromString(string sVarCols)
         {
             ObservableList<ActReturnValue> VarCols = new ObservableList<ActReturnValue>();
