@@ -306,7 +306,7 @@ namespace GingerCore.Drivers.WindowsLib
             }
 
             //window
-            else if (actUIElement.ElementType.Equals(eElementType.Window))
+            if (actUIElement.ElementType.Equals(eElementType.Window))
             {
                 HandleWindowControlUIElementAction(actUIElement, AE);
             }
@@ -1268,6 +1268,11 @@ namespace GingerCore.Drivers.WindowsLib
         public string SelectionWindowText()
         {
             return "Window:";
+        }
+
+        public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
         }
     }
 }

@@ -1500,5 +1500,10 @@ namespace GingerCore.Drivers.ASCF
         {
             return "Window:";
         }
+
+        public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
+        }
     }
 }

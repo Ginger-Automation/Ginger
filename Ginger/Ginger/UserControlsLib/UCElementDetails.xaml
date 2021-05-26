@@ -97,7 +97,7 @@
                     <DockPanel LastChildFill="True" Background="{StaticResource $BackgroundColor_LightGray}">
                         <StackPanel x:Name="xPOMCheckStackPanel" Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0">
                             <CheckBox x:Name="xIntegratePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10"
-                          Style="{StaticResource $CeckBoxStyle}" Content="Integrate POM" IsChecked="False" Checked="xIntegratePOMChkBox_Checked" Unchecked="xIntegratePOMChkBox_Unchecked" >
+                          Style="{StaticResource $CeckBoxStyle}" Content="Integrate POM" IsChecked="{x:Null}" Checked="xIntegratePOMChkBox_Checked" Unchecked="xIntegratePOMChkBox_Unchecked" >
                             </CheckBox>
                             <Frame x:Name="xPOMSelectionFrame" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Left"/>
 

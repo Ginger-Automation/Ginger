@@ -268,7 +268,7 @@ namespace GingerCore.Drivers
 
         public SeleniumDriver()
         {
-            
+
         }
 
         ~SeleniumDriver()
@@ -3176,7 +3176,7 @@ namespace GingerCore.Drivers
                         currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
                         pomExcutionUtil.PriotizeLocatorPosition();
                     }
-                    
+
                 }
             }
             else
@@ -3796,16 +3796,16 @@ namespace GingerCore.Drivers
             }
 
         }
-        
-        
+
+
         private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
 
-                string documentContents = Driver.PageSource;
-                HtmlDocument htmlDoc = new HtmlDocument();
-                htmlDoc.LoadHtml(documentContents);
+            string documentContents = Driver.PageSource;
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(documentContents);
             IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#"));
 
             if (htmlElements.Count() != 0)
@@ -4135,8 +4135,12 @@ namespace GingerCore.Drivers
                     }
                 }
 
-                string text = ((IWebElement)EI.ElementObject).Text;
+                string text = "";
 
+                if (EI.ElementObject != null)
+                {
+                    text = ((IWebElement)EI.ElementObject).Text;
+                }
 
                 if (text.Count() > 15)
                 {
@@ -4558,7 +4562,7 @@ namespace GingerCore.Drivers
                     var wt = Driver.Title; //if Switch window throw exception then reading current driver title to avoid exception for next window handle in loop
                     Reporter.ToLog(eLogLevel.ERROR, "Error occured during Switchwindow", ex);
                 }
-               
+
             }
             if (!windowfound)
             {
@@ -4592,7 +4596,7 @@ namespace GingerCore.Drivers
                 {
                     SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
                 }
-                
+
 
                 //Find element 
                 if (locateElementByItLocators)
@@ -4692,7 +4696,7 @@ namespace GingerCore.Drivers
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.PlatformElementType, Value = ElementInfo.ElementType });
                 }
-                list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });              
+                list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
                 if (!string.IsNullOrWhiteSpace(ElementInfo.Path))
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.ParentIFrame, Value = ElementInfo.Path });
@@ -5062,7 +5066,7 @@ namespace GingerCore.Drivers
                 return foundElemntInfo;
             }
             catch(Exception ex)
-            { 
+            {
             }
             finally
             {
@@ -5113,7 +5117,7 @@ namespace GingerCore.Drivers
             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
             foundElemntInfo.Path = IframePath;
             foundElemntInfo.ElementObject = elInsideIframe;
-            
+
             if (elInsideIframe.TagName == "iframe" || elInsideIframe.TagName == "frame")
             {
                 if (!string.IsNullOrEmpty(foundElemntInfo.Path))
@@ -5237,7 +5241,7 @@ namespace GingerCore.Drivers
         }
 
         public void InjectGingerLiveSpy()
-        {                                    
+        {
             AddJavaScriptToPage(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLiveSpy));
             ((IJavaScriptExecutor)Driver).ExecuteScript("define_GingerLibLiveSpy();", null);
             string rc = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.AddScript(arguments[0]);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min));
@@ -5356,7 +5360,7 @@ namespace GingerCore.Drivers
             {
                 // Do nothing...
             }
-        }        
+        }
 
         String GetInjectJSSCript(string script)
         {
@@ -5601,7 +5605,7 @@ namespace GingerCore.Drivers
                         }
                     }
                     catch (OpenQA.Selenium.WebDriverException e)
-                    {                        
+                    {
                         StopRecordingIfAgentClosed(e.Message);
                     }
                     catch (Exception e)
@@ -5878,7 +5882,7 @@ namespace GingerCore.Drivers
 
                 PayLoad pl = new PayLoad("StopRecording");
                 pl.ClosePackage();
-                PayLoad plrc = ExceuteJavaScriptPayLoad(pl); 
+                PayLoad plrc = ExceuteJavaScriptPayLoad(pl);
             }
             // Handle in the JS to stop recording
             IsRecording = false;
@@ -7139,37 +7143,12 @@ namespace GingerCore.Drivers
 
         public HtmlDocument SSPageDoc = null;
 
-        public HtmlDocument GetPageHTML()
-        {
-            SSPageDoc = new HtmlDocument();
-            SSPageDoc.LoadHtml(Driver.PageSource);
-
-            return SSPageDoc;
-        }
-
         public Bitmap GetScreenShot()
         {
             try
             {
                 Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
 
-                SSPageDoc = new HtmlDocument();
-                SSPageDoc.LoadHtml(Driver.PageSource);
-
-                //SSPageDocXML = new XmlDocument();
-                //SSPageDocXML.LoadXml(Driver.PageSource);
-
-                //using (var ms = new MemoryStream(ss.AsByteArray))
-                //{
-                //    using (MemoryStream outStream = new MemoryStream())
-                //    {
-                //        BitmapEncoder enc = new BmpBitmapEncoder();
-                //        enc.Frames.Add(BitmapFrame.Create(ms));
-                //        enc.Save(outStream);
-                //        Bitmap bitmap = new Bitmap(outStream);
-                //        return new Bitmap(bitmap);
-                //    }
-                //}
                 TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));
                 return (Bitmap)tc.ConvertFrom(ss.AsByteArray);
             }
@@ -7191,7 +7170,6 @@ namespace GingerCore.Drivers
             {
                 string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
 
-                //RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
                 RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
 
                 if (ele == null)
@@ -7200,21 +7178,18 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-                    if(SSPageDoc == null)
-                    {
-                        SSPageDoc = new HtmlDocument();
-                        SSPageDoc.LoadHtml(Driver.PageSource);
-                    }
+                    string elemId = ele.GetProperty("id");
 
-                    HtmlNode elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id == ele.GetProperty("id")).FirstOrDefault();
+                    HtmlNode elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id.Equals(elemId)).FirstOrDefault();
 
                     elemInfo = new HTMLElementInfo();
+
                     var elemTypeEnum = GetElementTypeEnum(ele);
                     elemInfo.ElementType = elemTypeEnum.Item1;
                     elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
                     elemInfo.ElementObject = ele;
                     elemInfo.Path = iframeXPath;
-                    elemInfo.XPath = await GenerateXpathForIWebElementAsync(ele, string.Empty);
+                    elemInfo.XPath = elemNode.XPath;        //await GenerateXpathForIWebElementAsync(ele, string.Empty);
                     elemInfo.HTMLElementObject = elemNode;
 
                     ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
@@ -8000,15 +7975,15 @@ namespace GingerCore.Drivers
         }
 
         public bool CanStartAnotherInstance(out string errorMessage)
-        
+
         {
 
             switch(mBrowserTpe)
             {
-               
-          
-               //TODO: filter on internetexplorer
-                  
+
+
+                //TODO: filter on internetexplorer
+
                 default:
                     errorMessage = string.Empty;
                     return true;
@@ -8053,6 +8028,20 @@ namespace GingerCore.Drivers
         public string SelectionWindowText()
         {
             return "Page:";
+        }
+
+        async Task<object> IWindowExplorer.GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            if (ReloadHtmlDoc)
+                SSPageDoc = null;
+
+            if (SSPageDoc == null)
+            {
+                SSPageDoc = new HtmlDocument();
+                await Task.Run(() => SSPageDoc.LoadHtml(Driver.PageSource));
+            }
+
+            return SSPageDoc;
         }
     }
 }
