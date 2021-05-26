@@ -85,7 +85,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
             catch (Exception ex)
             {
-                throw new Exception("Can't convert sheet to data table, " + ex.Message);
+                Reporter.ToLog(eLogLevel.WARN, "Can't convert sheet to data, " + ex.Message);
+                return null;
             }
         }
 

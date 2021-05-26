@@ -229,6 +229,7 @@ namespace GingerCore.Actions
                     ReadCellData();
                     break;
                 default:
+                    return;
                     break;
             }
         }
@@ -252,14 +253,9 @@ namespace GingerCore.Actions
 
         private void ReadCellData()
         {
-            DataTable excelDataTable = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
-            if(excelDataTable == null)
-            {
-                Error = "Invalid field data, please check";
-                return;
-            }
             try
             {
+                DataTable excelDataTable = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
                 if (!string.IsNullOrEmpty(SelectRowsWhere) && !SelectAllRows)
                 {
                     string CellValue = excelDataTable.Rows[0][0].ToString();
@@ -281,22 +277,21 @@ namespace GingerCore.Actions
             }
             catch (Exception ex)
             {
-                Error = ex.Message;
+                Error += eUserMsgKey.ExcelInvalidFieldData + ", " + ex.Message;
             }
         }
         public void ReadData()
         {
-            DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
             try
             {
-                if(excelDataTable != null && excelDataTable.Rows.Count > 0)
+                DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
+                if (excelDataTable != null && excelDataTable.Rows.Count > 0)
                 {
                     for (int j = 0; j < excelDataTable.Rows.Count; j++)
                     {
                         DataRow r = excelDataTable.Rows[j];
                         for (int i = 0; i < excelDataTable.Columns.Count; i++)
                         {
-                            
                             if (SelectAllRows)
                             {
                                 AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, ((object)r[i]).ToString(), "" + (j + 1).ToString());
@@ -306,9 +301,7 @@ namespace GingerCore.Actions
                             {
                                 AddOrUpdateReturnParamActual(excelDataTable.Columns[i].ColumnName, ((object)r[i]).ToString());
                             }
-
                         }
-                        
                     }
                     bool isUpdated = true;
                     if (SelectAllRows)
@@ -338,26 +331,20 @@ namespace GingerCore.Actions
             }
             catch (Exception ex)
             {
-                Error = ex.Message;
-            }
-
-            if (excelDataTable.Rows.Count == 0)
-            {
-                Error = "No rows found in excel file matching criteria - ";
+                Error += eUserMsgKey.ExcelInvalidFieldData + ", " + ex.Message;
             }
         }
 
         public void WriteData()
         {
-            List<Tuple<string, object>> updateCellValuesList = new List<Tuple<string, object>>();
-            DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
-            
-            string result = System.Text.RegularExpressions.Regex.Replace(CalculatedColMappingRules, @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
-            string[] varColMaps = result.Split(',');
-            string sSetDataUsed = "";
-
             try
             {
+                List<Tuple<string, object>> updateCellValuesList = new List<Tuple<string, object>>();
+                DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
+
+                string result = System.Text.RegularExpressions.Regex.Replace(CalculatedColMappingRules, @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
+                string[] varColMaps = result.Split(',');
+                string sSetDataUsed = "";
 
                 if (!string.IsNullOrEmpty(CalculatedSetDataUsed))
                 {
