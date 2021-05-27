@@ -194,10 +194,12 @@ namespace GingerCore.Actions.Common
 
         public enum eElementProperty
         {
-            [EnumValueDescription("Enabled")]
+            [EnumValueDescription("Is Enabled")]
             Enabled,
             [EnumValueDescription("Visible")]
             Visible,
+            [EnumValueDescription("Is Selected")]
+            IsSelected,
             [EnumValueDescription("Color")]
             Color,
             [EnumValueDescription("Text")]
@@ -214,8 +216,22 @@ namespace GingerCore.Actions.Common
             HTML,
             [EnumValueDescription("List")]
             List,
-            [EnumValueDescription("ToggleState")]
+            [EnumValueDescription("Toggle State")]
             ToggleState,
+            [EnumValueDescription("Name")]
+            Name,
+            [EnumValueDescription("Class Name")]
+            ClassName,
+            [EnumValueDescription("Automation Id")]
+            AutomationId,
+            [EnumValueDescription("Is Password")]
+            IsPassword,
+            [EnumValueDescription("Process Id")]
+            ProcessId,
+            [EnumValueDescription("X Coordinate")]
+            XCoordinate,
+            [EnumValueDescription("Y Coordinate")]
+            YCoordinate
         }
 
         public enum eElementAction
@@ -418,7 +434,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Select From Dijit List")]
             SelectFromDijitList,
             [Description(EElementActionTypeGeneric)]
-            [EnumValueDescription("Right Click")]
+            [EnumValueDescription("Mouse Right Click")]
             MouseRightClick,
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Font")]
@@ -451,6 +467,8 @@ namespace GingerCore.Actions.Common
             Switch,
             [EnumValueDescription("Double Click using XY")]
             DoubleClickXY,
+            [EnumValueDescription("Right Click using XY")]
+            RightClickXY,
             [EnumValueDescription("Send Keys using XY")]
             SendKeysXY,
             #endregion Generic Action Types
