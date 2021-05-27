@@ -54,7 +54,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ActEditPage
         }
 
-        List<ComboItem> operationTypeList;        
+        List<ComboItem> operationTypeList;
 
         public UIElementTableConfigPage(ActUIElement Act, PlatformInfoBase Platform)
         {
@@ -63,7 +63,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mPlatform = Platform;
 
             InitializeComponent();
-            ShowTableControlActionConfigPage(mPlatform);           
+            if(Act.ElementData != null)
+            {
+                InitTableInfo();
+                SetComponents(true);
+                SetDescriptionDetails();
+            }
+
+            ShowTableControlActionConfigPage(mPlatform);
         }
 
         public UIElementTableConfigPage(ElementInfo ElementInfo, ObservableList<Act> Actions, Context context)
@@ -92,45 +99,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mActions = Actions;
             ShowCellActions();
             InitializeComponent();
-            ControlActionComboBox.Visibility = Visibility.Collapsed;
             InitTableInfo();
 
             ShowTableControlActionConfigPage(mPlatform);
-            SetComponents();
+            SetComponents(false);
             SetDescriptionDetails();
-        }
-
-        public UIElementTableConfigPage(ElementInfo ElementInfo, PlatformInfoBase Platform)
-        {
-            eBaseWindow = BaseWindow.WindowExplorer;
-            mElementInfo = ElementInfo;
-            mAct = new ActUIElement();
-            mAct.Description = "UI Element Table";
-            mPlatform = Platform;
-
-            if (ElementInfo.ElementType.Contains("JEditor"))
-            {
-                mAct.ElementType = eElementType.EditorPane;
-                mAct.ElementAction = ActUIElement.eElementAction.JEditorPaneElementAction;
-                mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementType, ActUIElement.eSubElementType.HTMLTable.ToString());
-                mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementAction, ActUIElement.eElementAction.TableCellAction.ToString());
-            }
-            else
-            {
-                mAct.ElementType = eElementType.Table;
-                mAct.ElementAction = ActUIElement.eElementAction.TableCellAction;
-            }
-
-            mElementInfo = ElementInfo;
-            //mActions = Actions;
-            //ShowCellActions();
-            InitializeComponent();
-            ControlActionComboBox.Visibility = Visibility.Visible;
-            InitTableInfo();
-
-            ShowTableControlActionConfigPage(mPlatform);
-            SetComponents();
-
         }
 
         public ObservableList<ActInputValue> GetTableRelatedInputValues()
@@ -154,7 +127,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
         
         private void InitTableInfo()
         {
-            object o = mElementInfo.GetElementData();
+            object o = null;
+
+            if (mElementInfo != null)
+            {
+                o = mElementInfo.GetElementData();
+            }
+            else if(mAct.ElementData != null)
+            {
+                o = mAct.ElementData;
+            }
+
             if (o != null)
             {
                 mColNames = ((TableElementInfo)o).ColumnNames;
@@ -168,10 +151,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
-        private void SetComponents()
+        private void SetComponents(bool ExplorerRequest)
         {
-            subElementTypeRow.Height = new GridLength(0);
-            OperationTypeRow.Height = new GridLength(0);
+            if (!ExplorerRequest)
+            {
+                ControlActionComboBox.Visibility = Visibility.Collapsed;
+                subElementTypeRow.Height = new GridLength(0);
+                OperationTypeRow.Height = new GridLength(0);
+            }
 
             mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ColSelectorValue, ActUIElement.eTableElementRunColSelectorValue.ColTitle.ToString());
 
@@ -395,7 +382,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void ColSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
+            if (mColNames != null)  // eBaseWindow.Equals(BaseWindow.WindowExplorer))
             {
                 cmbColumnValue.ComboBox.Items.Clear();
                 for (int i = 0; i < mColNames.Count; i++)
@@ -419,10 +406,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void ColumnValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
-            {
-                SetDescriptionDetails();
-            }
+            SetDescriptionDetails();
         }
 
         private void RowNum_Checked(object sender, RoutedEventArgs e)

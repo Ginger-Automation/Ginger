@@ -212,17 +212,12 @@ namespace Ginger.WindowExplorer
             else
             {
                 DefaultAction.Context = mContext;
+                (DefaultAction as ActUIElement).ElementData = mElementInfo.GetElementData();
                 DefaultAction.Description = string.Format("{0} : {1} - {2}", (DefaultAction as ActUIElement).ElementAction, mElementInfo.ElementTypeEnum.ToString(), mElementInfo.ElementName);
                 SetActionDetails(DefaultAction);
                 actEditPage = new ActionEditPage(DefaultAction, General.eRIPageViewMode.Explorer);
 
                 xActEditPageFrame.Visibility = Visibility.Visible;
-
-                if (actEditPage.GetCurrentActEditPage() != null && actEditPage.GetCurrentActEditPage() is ActUIElementEditPage)
-                {
-                    var actUIEditPage = actEditPage.GetCurrentActEditPage() as ActUIElementEditPage;
-                    actUIEditPage.ShowControlSpecificPageForExplorer(mElementInfo);
-                }
 
                 xActEditPageFrame.Content = actEditPage;
 
