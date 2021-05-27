@@ -570,6 +570,8 @@ namespace Amdocs.Ginger.Common.UIElement
             MenuBar,
             [EnumValueDescription("Tree View")]
             TreeView,
+            [EnumValueDescription("Tree Item")]
+            TreeItem,
             Window,
             HyperLink,
             [EnumValueDescription("Scroll Bar")]
@@ -578,6 +580,8 @@ namespace Amdocs.Ginger.Common.UIElement
             Canvas,
             Text,
             Tab,
+            [EnumValueDescription("Tab Item")]
+            TabItem,
             [EnumValueDescription("Editor Pane")]
             EditorPane,
             [EnumValueDescription("Editor Table")]
@@ -588,8 +592,10 @@ namespace Amdocs.Ginger.Common.UIElement
             Form,
             Browser,
             [EnumValueDescription("Date Picker")]
-            DatePicker
-        }
+            DatePicker,
+            Document
+
+    }
 
     
 }
