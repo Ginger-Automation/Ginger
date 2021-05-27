@@ -65,7 +65,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             InitializeComponent();
             ShowTableControlActionConfigPage(mPlatform);           
         }
-      
+
         public UIElementTableConfigPage(ElementInfo ElementInfo, ObservableList<Act> Actions, Context context)
         {
             eBaseWindow = BaseWindow.WindowExplorer;
@@ -92,11 +92,45 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mActions = Actions;
             ShowCellActions();
             InitializeComponent();
+            ControlActionComboBox.Visibility = Visibility.Collapsed;
             InitTableInfo();
 
             ShowTableControlActionConfigPage(mPlatform);
             SetComponents();
             SetDescriptionDetails();
+        }
+
+        public UIElementTableConfigPage(ElementInfo ElementInfo, PlatformInfoBase Platform)
+        {
+            eBaseWindow = BaseWindow.WindowExplorer;
+            mElementInfo = ElementInfo;
+            mAct = new ActUIElement();
+            mAct.Description = "UI Element Table";
+            mPlatform = Platform;
+
+            if (ElementInfo.ElementType.Contains("JEditor"))
+            {
+                mAct.ElementType = eElementType.EditorPane;
+                mAct.ElementAction = ActUIElement.eElementAction.JEditorPaneElementAction;
+                mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementType, ActUIElement.eSubElementType.HTMLTable.ToString());
+                mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementAction, ActUIElement.eElementAction.TableCellAction.ToString());
+            }
+            else
+            {
+                mAct.ElementType = eElementType.Table;
+                mAct.ElementAction = ActUIElement.eElementAction.TableCellAction;
+            }
+
+            mElementInfo = ElementInfo;
+            //mActions = Actions;
+            //ShowCellActions();
+            InitializeComponent();
+            ControlActionComboBox.Visibility = Visibility.Visible;
+            InitTableInfo();
+
+            ShowTableControlActionConfigPage(mPlatform);
+            SetComponents();
+
         }
 
         public ObservableList<ActInputValue> GetTableRelatedInputValues()
@@ -136,8 +170,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void SetComponents()
         {
-            ControlActionComboBox.Visibility = Visibility.Collapsed;
-            ControlActionComboBox.Visibility = Visibility.Collapsed;
             subElementTypeRow.Height = new GridLength(0);
             OperationTypeRow.Height = new GridLength(0);
 
@@ -474,7 +506,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         }
 
         private void ControlActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {           
+        {
             SetDescriptionDetails();          
 
             Page setControlActionValuePage = GetControlActionValue();

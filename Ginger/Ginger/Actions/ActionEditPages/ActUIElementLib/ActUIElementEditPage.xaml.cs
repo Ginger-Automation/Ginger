@@ -240,6 +240,20 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
+        ElementInfo ExplorerElement = null;
+        public void ShowControlSpecificPageForExplorer(ElementInfo ExplorerElementInfo)
+        {
+            ExplorerElement = ExplorerElementInfo;
+
+            var pageContent = GetControlSpecificPageContent();
+
+            if (pageContent != null)
+            {
+                UIElementActionEditPageFrame.Content = pageContent;
+                UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
+            }
+        }
+
         private Page GetControlSpecificPageContent()
         {
             Page pageContent;
@@ -249,7 +263,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 case eElementAction.TableRowAction:
                 case eElementAction.TableCellAction:
                 case eElementAction.JEditorPaneElementAction:
-                    pageContent = new UIElementTableConfigPage(mAction, mPlatform);
+                    if (ExplorerElement == null)
+                    {
+                        pageContent = new UIElementTableConfigPage(mAction, mPlatform);
+                    }
+                    else
+                    {
+                        pageContent = new UIElementTableConfigPage(ExplorerElement, mPlatform);
+                    }
                     break;
 
                 case eElementAction.ClickAndValidate:

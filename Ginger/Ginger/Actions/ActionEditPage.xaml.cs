@@ -794,13 +794,20 @@ namespace Ginger.Actions
             xInputValuesGrid.DataSourceList = mAction.InputValues;
         }
 
+        Page actEditPage = null;
+        public Page GetCurrentActEditPage()
+        {
+            return actEditPage;
+        }
+
         private void LoadOperationSettingsEditPage(Act a)
         {
             //Each Action need to implement ActionEditPage which return the name of the page for edit
             //TODO: check all action are working and showing the correct Edit Page
             if (a.ActionEditPage != null)
             {
-                Page actEditPage = ActionsFactory.GetActionEditPage(a, mContext);
+                actEditPage = null;
+                actEditPage = ActionsFactory.GetActionEditPage(a, mContext);
                 if (actEditPage != null)
                 {
                     // Load the page

@@ -131,6 +131,16 @@
                         <Ginger:ucGrid x:Name="xWindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" ScrollViewer.HorizontalScrollBarVisibility="Visible" />
                     </Grid>
                 </TabItem>
+
+                <TabItem x:Name="xLiveSpyTab">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+                            <usercontrols:ImageMakerControl ImageType="Spy"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
+                            <TextBlock x:Name="xLiveSpyTabTextBlock" Text="Live Spy" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <Frame x:Name="xLiveSpyTabContentFrame" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ScrollViewer.CanContentScroll="True"/>
+                </TabItem>
             </TabControl>
 
             <GridSplitter x:Name="xRowSplitter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ResizeDirection="Rows" Height="1" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $Color_DarkBlue}"/>

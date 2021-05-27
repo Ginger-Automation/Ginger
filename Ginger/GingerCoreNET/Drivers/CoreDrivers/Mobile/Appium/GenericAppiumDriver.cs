@@ -318,18 +318,16 @@ namespace Amdocs.Ginger.CoreNET
                 return mSeleniumDriver.LocateElement(act);
             }
 
-            eLocateBy locateBy = act.LocateBy;
+            eLocateBy locateBy = act is ActUIElement ? (act as ActUIElement).ElementLocateBy : act.LocateBy;
             IWebElement elem = null;
-
+            string locateValue = act is ActUIElement ? (act as ActUIElement).ElementLocateValue : act.LocateValue;
             switch (locateBy)
             {
                 case eLocateBy.ByResourceID:
-                    {
-                        elem = Driver.FindElementById(act.LocateValue);
+                        elem = Driver.FindElementById(locateValue);
                         break;
-                    }
                 default:
-                    elem = mSeleniumDriver.LocateElement(act);
+                    elem = Driver.FindElementByXPath(locateValue);
                     break;
             }
 
@@ -411,6 +409,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     case ActUIElement.eElementAction.JavaScriptClick:
                     case ActUIElement.eElementAction.Submit:
+                    case ActUIElement.eElementAction.Click:
                         e = LocateElement(act);
                         e.Click();
                         break;
@@ -423,6 +422,7 @@ namespace Amdocs.Ginger.CoreNET
 
                     case ActUIElement.eElementAction.GetText:
                     case ActUIElement.eElementAction.GetFont:
+                    case ActUIElement.eElementAction.GetValue:
                         e = LocateElement(act);
                         act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("text"));
                         break;
@@ -1423,7 +1423,7 @@ namespace Amdocs.Ginger.CoreNET
             //Only by Resource ID
             string resid = GetAttrValue(ElementInfo.ElementObject as XmlNode, "resource-id");
             string residXpath = string.Format("//*[@resource-id='{0}']", resid);
-            if (residXpath != ElementInfo.XPath) // We show by res id when it is different then the elem XPath, so not to show twice the same, the AE.Apath can include relative info
+            if (!string.IsNullOrEmpty(resid) && residXpath != ElementInfo.XPath) // We show by res id when it is different then the elem XPath, so not to show twice the same, the AE.Apath can include relative info
             {
                 list.Add(new ElementLocator()
                 {
