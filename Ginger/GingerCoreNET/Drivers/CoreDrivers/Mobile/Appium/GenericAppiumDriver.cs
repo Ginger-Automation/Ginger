@@ -409,7 +409,6 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     case ActUIElement.eElementAction.JavaScriptClick:
                     case ActUIElement.eElementAction.Submit:
-                    case ActUIElement.eElementAction.Click:
                         e = LocateElement(act);
                         e.Click();
                         break;
@@ -422,7 +421,6 @@ namespace Amdocs.Ginger.CoreNET
 
                     case ActUIElement.eElementAction.GetText:
                     case ActUIElement.eElementAction.GetFont:
-                    case ActUIElement.eElementAction.GetValue:
                         e = LocateElement(act);
                         act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("text"));
                         break;
