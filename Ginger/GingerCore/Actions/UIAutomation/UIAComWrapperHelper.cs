@@ -23,6 +23,7 @@ using GingerCore.Actions.Common;
 using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.PBDriver;
+using GingerCore.Platforms.PlatformsInfo;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -5825,6 +5826,8 @@ namespace GingerCore.Drivers
             EI.Width = (int)AE.Current.BoundingRectangle.Width;
             EI.Height = (int)AE.Current.BoundingRectangle.Height;
             EI.WindowExplorer = WindowExplorer;
+            EI.ElementType= GetElementControlType(AE);
+            EI.ElementTypeEnum = WindowsPlatform.GetElementType(EI.ElementType, GetControlPropertyValue(EI.ElementObject, "ClassName"));
             //EI.IsExpandable = AE.Current.IsContentElement;
             return EI;
         }
