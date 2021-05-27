@@ -301,6 +301,8 @@ namespace Ginger.WindowExplorer
                 xGridViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.GridView) ? Visibility.Visible : Visibility.Collapsed;
                 xScreenShotViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.Screenshot) ? Visibility.Visible : Visibility.Collapsed;
 
+                xLiveSpyTab.Visibility = mWindowExplorerDriver.IsLiveSpySupported() ? Visibility.Visible : Visibility.Collapsed;
+
                 xWindowSelection.Visibility = mWindowExplorerDriver.IsWinowSelectionRequired() ? Visibility.Visible : Visibility.Collapsed;
 
                 xViewsTabs.SelectedItem = DefaultSelectedTab();
@@ -1065,7 +1067,7 @@ namespace Ginger.WindowExplorer
             {
                 LoadPageSourceDoc = mWindowExplorerDriver.SupportedViews().Contains(eTabView.PageSource);
 
-                if (SwitchToCurrentWindow() == null)
+                if (!mWindowExplorerDriver.SupportedViews().Contains(eTabView.Screenshot) || SwitchToCurrentWindow() == null)
                     return;
 
                 Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot();   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
@@ -1405,6 +1407,10 @@ namespace Ginger.WindowExplorer
                 {
                     await GridViewTab_Selected(sender, e);
                 }
+                else if (xViewsTabs.SelectedItem == xLiveSpyTab)
+                {
+                    LiveSpyTab_Selected(sender, e);
+                }
             }
             catch (Exception ex)
             {
@@ -1548,6 +1554,26 @@ namespace Ginger.WindowExplorer
             {
                 await RefreshPageSrcContent();
                 RefreshPageSrc = false;
+            }
+        }
+
+        LiveSpyPage spyPage;
+        private void LiveSpyTab_Selected(object sender, SelectionChangedEventArgs e)
+        {
+            xUCElementDetails.SelectedElement = null;
+            if (spyPage == null)
+            {
+                if (mWindowExplorerDriver == null)
+                {
+                    mWindowExplorerDriver = (IWindowExplorer)mContext.Agent.Driver;
+                }
+
+                spyPage = new LiveSpyPage(mContext, mWindowExplorerDriver);
+            }
+
+            if (!xLiveSpyTabContentFrame.HasContent || xLiveSpyTabContentFrame.Content == null)
+            {
+                xLiveSpyTabContentFrame.Content = spyPage;
             }
         }
 
