@@ -60,7 +60,7 @@ namespace Ginger.WindowExplorer
         Page mDataPage = null;
         double mLastDataGridRowHeight = 50;
         Context mContext;
-        Page actEditPage;
+        ActionEditPage actEditPage;
         public bool IsLegacyPlatform = false;
 
         // when launching from Window explore we get also available actions to choose so user can add
@@ -212,11 +212,13 @@ namespace Ginger.WindowExplorer
             else
             {
                 DefaultAction.Context = mContext;
+                (DefaultAction as ActUIElement).ElementData = mElementInfo.GetElementData();
                 DefaultAction.Description = string.Format("{0} : {1} - {2}", (DefaultAction as ActUIElement).ElementAction, mElementInfo.ElementTypeEnum.ToString(), mElementInfo.ElementName);
                 SetActionDetails(DefaultAction);
                 actEditPage = new ActionEditPage(DefaultAction, General.eRIPageViewMode.Explorer);
 
                 xActEditPageFrame.Visibility = Visibility.Visible;
+
                 xActEditPageFrame.Content = actEditPage;
 
                 xOperationsScrollView.Visibility = Visibility.Collapsed;
@@ -453,7 +455,7 @@ namespace Ginger.WindowExplorer
             }
             else
             {
-                (actEditPage as ActionEditPage).xActionTabs.SelectedItem = (actEditPage as ActionEditPage).xExecutionReportTab;
+                actEditPage.xActionTabs.SelectedItem = actEditPage.xExecutionReportTab;
             }
 
             WindowExplorerCommon.IsTestActionRunning = true;

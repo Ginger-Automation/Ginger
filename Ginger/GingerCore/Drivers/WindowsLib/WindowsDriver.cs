@@ -1222,7 +1222,6 @@ namespace GingerCore.Drivers.WindowsLib
 
         void IWindowExplorer.UnHighLightElements()
         {
-            throw new NotImplementedException();
         }
 
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)

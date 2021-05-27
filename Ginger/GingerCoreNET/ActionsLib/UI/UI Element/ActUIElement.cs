@@ -169,6 +169,9 @@ namespace GingerCore.Actions.Common
             Checked,
             UnChecked
         }
+
+        public object ElementData = null;
+
         public enum eLocateRowTypeOptions
         {
             [EnumValueDescription("Row Number")]
