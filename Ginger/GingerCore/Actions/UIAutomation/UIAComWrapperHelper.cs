@@ -2426,25 +2426,6 @@ namespace GingerCore.Drivers
             return;
         }
 
-        public void SetTextBoxValue(Act act)
-        {
-            string txt = act.GetInputParamCalculatedValue("Value");
-            AutomationElement AE = (AutomationElement)GetActElement(act);
-            if (AE != null)
-            {
-                SetControlValue(AE, txt);
-            }
-            else
-            {
-                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                act.ExInfo = "Element not found";
-            }
-        }
-
-        public void GetTextBoxValue(Act act)
-        {
-            GetTextBoxValue(act, (AutomationElement)GetActElement(act));
-        }
         
         public string ClickElementUsingInvokePattern(AutomationElement element, ref Boolean clickTriggeredFlag)
         {
@@ -2494,7 +2475,7 @@ namespace GingerCore.Drivers
                 if (sLegacyDefaultAction == null) return "Failed to Perform click, Do Default of Legacy action is not available";
 
                 clickTriggeredFlag = true;
-                legacyPattern.DoDefaultAction();
+                legacyPattern.DoDefaultAction();                
             }
             catch (COMException e)
             {
@@ -2800,30 +2781,7 @@ namespace GingerCore.Drivers
             return menuElement;
         }
         
-        private void GetTextBoxValue(Act act, AutomationElement element)
-        {
-            string val = "Not Valid Value";
-            try
-            {
-                object valuePattern = null;
-                if (!element.TryGetCurrentPattern(
-                        ValuePattern.Pattern, out valuePattern))
-                {
-                    if (valuePattern != null)
-                    {
-                        val = ((ValuePattern)valuePattern).Current.Value;
-                    }
-                    else { val = element.GetCurrentPropertyValue(AutomationElement.NameProperty).ToString(); }
 
-                }
-                else
-                {
-                    val = element.GetCurrentPropertyValue(AutomationElement.NameProperty).ToString();
-                }
-            }
-            catch { val = element.GetCurrentPropertyValue(AutomationElement.NameProperty).ToString(); }
-            act.AddOrUpdateReturnParamActual("Actual", val);
-        }
 
         public override void SendKeysToControl(object obj, string value)
         {
@@ -3118,7 +3076,7 @@ namespace GingerCore.Drivers
                         }
                         break;
 
-                    // command button handler
+                    //why button in set control value ?????
                     case "button":
                         element.TryGetCurrentPattern(InvokePatternIdentifiers.Pattern, out vp);
                         ((InvokePattern)vp).Invoke();
@@ -3126,7 +3084,7 @@ namespace GingerCore.Drivers
 
                     // check box handler
                     case "check box":
-                    case "tree item":                    
+                    case "tree item":
                         if (value != "Checked" && value != "Unchecked")
                         {
                             throw new Exception(
@@ -3147,7 +3105,7 @@ namespace GingerCore.Drivers
                             ((TogglePattern)vp).Toggle();
                         }
                         break;
-                
+
                     // radio button handler
                     case "radio button":
                         value = "True";
@@ -3716,6 +3674,7 @@ namespace GingerCore.Drivers
                         break;
 
                     case "LocalizedControlType":
+                    case "Type":
                         propValue = element.Current.LocalizedControlType;
                         break;
 
@@ -3728,6 +3687,7 @@ namespace GingerCore.Drivers
                         break;
 
                     case "IsEnabled":
+                    case "Enabled":
                         propValue = element.Current.IsEnabled.ToString();
                         break;
 
@@ -3740,10 +3700,12 @@ namespace GingerCore.Drivers
                         break;
 
                     case "XOffset":
+                    case "XCoordinate":
                         propValue = element.Current.BoundingRectangle.X.ToString();
                         break;
 
                     case "YOffset":
+                    case "YCoordinate":
                         propValue = element.Current.BoundingRectangle.Y.ToString();
                         break;
 
@@ -4079,10 +4041,10 @@ namespace GingerCore.Drivers
             fieldValueElement = TreeWalker.RawViewWalker.GetNextSibling(fieldNameElement);
             return fieldValueElement.Current.Name;
         }
-        
-       public override string ToggleControlValue(object obj)
-       {
-           AutomationElement element = (AutomationElement) obj;
+
+        public override string ToggleControlValue(object obj)
+        {
+            AutomationElement element = (AutomationElement) obj;
             //Check if control is enabled 
             if (element == null)
             {
