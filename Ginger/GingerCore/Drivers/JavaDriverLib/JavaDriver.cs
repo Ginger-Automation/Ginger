@@ -2468,7 +2468,12 @@ namespace GingerCore.Drivers.JavaDriverLib
                     if (valueList.Count != 0)
                         PValue = valueList.ElementAt(0);
                 }
-                list.Add(new ControlProperty() { Name = PName, Value = PValue });
+
+                if (!string.IsNullOrEmpty(PValue))
+                {
+                    list.Add(new ControlProperty() { Name = PName, Value = PValue });
+                }
+
             }
             //TODO:J.G: Fix it for JEDITOR Elements
 
