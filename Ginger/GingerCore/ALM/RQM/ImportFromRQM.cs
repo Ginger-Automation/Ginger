@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.External;
 using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json;
 using RQM_Repository;
 using RQM_Repository.Data_Contracts;
@@ -47,6 +48,7 @@ namespace GingerCore.ALM.RQM
     {
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public static ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
 
         public static int totalValues = 0;
         public static string populatedValue = string.Empty;
@@ -88,7 +90,7 @@ namespace GingerCore.ALM.RQM
                         tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance(true);
                         tcActivsGroup.ExternalID = tcActivsGroup.ExternalID.Replace("RQMRecordID=" + ExportToRQM.GetExportedIDString(tcActivsGroup.ExternalID, "RQMRecordID"), "RQMRecordID=");
                         busFlow.AddActivitiesGroup(tcActivsGroup);
-                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
+                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
                         busFlow.AttachActivitiesGroupsAndActivities();
                         continue;
                     }
@@ -330,7 +332,7 @@ namespace GingerCore.ALM.RQM
                             {
                                 tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance();
                                 busFlow.AddActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
-                                busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
+                                busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
                                 busFlow.AttachActivitiesGroupsAndActivities();
                                 continue;
                             }
@@ -543,7 +545,7 @@ namespace GingerCore.ALM.RQM
                     {
                         tcActivsGroup =(ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance();
                         busFlow.AddActivitiesGroup(tcActivsGroup);
-                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
+                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
                         busFlow.AttachActivitiesGroupsAndActivities();
                         continue;
                     }

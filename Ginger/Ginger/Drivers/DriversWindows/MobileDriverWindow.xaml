@@ -7,7 +7,7 @@
         Title="UpdatedAppiumDriverWindow" Height="650" Width="800"
         MinHeight="600" MinWidth="300" WindowStyle="ToolWindow"
         WindowStartupLocation="CenterScreen" Closing="Window_Closing" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded"
-        Topmost="False" >
+        Topmost="False" KeyDown="Window_KeyDown" >
 
     <Grid x:Name="xWindowGrid" Background="DarkGray">
         <Grid.ColumnDefinitions>
@@ -20,6 +20,7 @@
                 <ColumnDefinition Width="12"/>
                 <ColumnDefinition Width="100*"/>
                 <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="2"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
@@ -60,13 +61,28 @@
             <DockPanel Grid.Column="2" Grid.Row="2" Background="Transparent" >
                 <Border BorderThickness="1" CornerRadius="0,0,20,0" BorderBrush="Black"  Background="Black"/>
             </DockPanel>
+            <DockPanel Grid.Column="3" Grid.Row="1" Background="Transparent">
+                <Grid DockPanel.Dock="Top">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="20"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel x:Name="xVolumUpPnl" Grid.Row="1" Background="Black" Height="20" Width="2" ToolTip="Volume Up" Cursor="Hand" MouseLeftButtonDown="xVolumUpPnl_MouseLeftButtonDown"/>
+                    <StackPanel x:Name="xVolumDownPnl" Grid.Row="3" Background="Black" Height="20" Width="2" ToolTip="Volume Down" Cursor="Hand" MouseLeftButtonDown="xVolumDownPnl_MouseLeftButtonDown"/>
+                    <StackPanel x:Name="xLockPnl" Grid.Row="5" Background="Black" Height="20" Width="2" ToolTip="Lock/Un-Lock Device" Cursor="Hand" MouseLeftButtonDown="xLockPnl_MouseLeftButtonDown"/>
+                </Grid>
+            </DockPanel>
 
             <!--mobile image-->
             <DockPanel Grid.Column="1" Grid.Row="1" Background="#424242">
-                <StackPanel x:Name="xLoadingPnl" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,100,0,0" DockPanel.Dock="Top">
-                    <UserControls:ImageMakerControl x:Name="xLoadingImage" ImageType="AndroidWhite" Width="150" Height="150"/>
-                    <Label x:Name="xLoadingLbl" Content="Loading..." Foreground="WhiteSmoke" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" FontWeight="Normal"/>
-                    <UserControls:ImageMakerControl ImageType="Processing" SetAsFontImageWithSize="35" Width="35" Height="35" Foreground="WhiteSmoke" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <StackPanel x:Name="xMessagePnl" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,100,0,0" DockPanel.Dock="Top">
+                    <UserControls:ImageMakerControl x:Name="xMessageImage" ImageType="AndroidWhite" Width="110" Height="110"/>
+                    <Label x:Name="xMessageLbl" Content="Loading..." Foreground="WhiteSmoke" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" FontWeight="Normal"/>
+                    <UserControls:ImageMakerControl x:Name="xMessageProcessingImage"  ImageType="Processing" SetAsFontImageWithSize="30" Width="30" Height="30" Foreground="WhiteSmoke" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </StackPanel>
                 <Canvas x:Name="xDeviceScreenshotCanvas" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" DockPanel.Dock="Top">
                     <Image x:Name="xDeviceScreenshotImage" Height="{Binding ActualHeight, ElementName=xDeviceScreenshotCanvas}" Width="{Binding ActualWidth, ElementName=xDeviceScreenshotCanvas}"  
@@ -75,6 +91,7 @@
                            MouseLeftButtonUp="xDeviceScreenshotImage_MouseLeftButtonUp" 
                            MouseEnter="xDeviceScreenshotImage_MouseEnter" 
                            MouseLeave="xDeviceScreenshotImage_MouseLeave"  
+                           MouseWheel="xDeviceScreenshotImage_MouseWheel"
                            SizeChanged="xDeviceScreenshotImage_SizeChanged">
                     </Image>
                 </Canvas>

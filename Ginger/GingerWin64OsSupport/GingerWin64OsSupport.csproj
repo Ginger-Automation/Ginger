@@ -10,7 +10,7 @@
   
   <ItemGroup>
     <None Update="IEDriverServer.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   
