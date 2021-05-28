@@ -690,6 +690,23 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
         [TestMethod]
         [Timeout(60000)]
+        public void NestedFunCalculateTest()
+        {
+            //Arrange    
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+
+            //Act
+            VE.Value = @"UsernameToken-{Function Fun=GetHashCode({Function Fun=GetGUID()})}-abcd";
+
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(true, v.EndsWith("-abcd"));
+            Assert.AreEqual(true, v.StartsWith("UsernameToken-"));
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
         public void ReplaceSpecialCharsBackToJson()
         {
             //Arrange  
