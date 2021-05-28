@@ -30,6 +30,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Text.RegularExpressions;
 
 namespace Ginger.SolutionWindows
 {
@@ -46,10 +47,28 @@ namespace Ginger.SolutionWindows
             InitializeComponent();
             mSolution = s;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, s, nameof(Solution.Name));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));            
             GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform);
         }
 
+        private void ShowPassword_PreviewMouseDown(object sender, MouseButtonEventArgs e) => ShowPasswordFunction();
+        private void ShowPassword_PreviewMouseUp(object sender, MouseButtonEventArgs e) => HidePasswordFunction();
+        private void ShowPassword_MouseLeave(object sender, MouseEventArgs e) => HidePasswordFunction();
+
+        private void ShowPasswordFunction()
+        {
+            ShowPassword.Text = "HIDE";
+            EncryptionKeyTextBox.Visibility = Visibility.Visible;
+            EncryptionKeyPasswordBox.Visibility = Visibility.Hidden;
+            EncryptionKeyTextBox.Text = EncryptionKeyPasswordBox.Password;
+        }
+
+        private void HidePasswordFunction()
+        {
+            ShowPassword.Text = "SHOW";
+            EncryptionKeyTextBox.Visibility = Visibility.Hidden;
+            EncryptionKeyPasswordBox.Visibility = Visibility.Visible;
+        }
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -59,19 +78,29 @@ namespace Ginger.SolutionWindows
                 //check name and folder inputs exists
                 if (SolutionNameTextBox.Text.Trim() == string.Empty || SolutionFolderTextBox.Text.Trim() == string.Empty
                         || ApplicationTextBox.Text.Trim() == string.Empty 
-                            || MainPlatformComboBox.SelectedItem == null || MainPlatformComboBox.SelectedItem.ToString() == "Null")
+                            || MainPlatformComboBox.SelectedItem == null || MainPlatformComboBox.SelectedItem.ToString() == "Null"
+                            || EncryptionKeyPasswordBox.Password.Trim() == string.Empty)
                 {
                     Mouse.OverrideCursor = null;
                     Reporter.ToUser(eUserMsgKey.MissingAddSolutionInputs);
                     return;
                 }
-                
+
+                Regex regex = new Regex(@"^.*(?=.{8,16})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!*@#$%^&+=]).*$");
+                if (!regex.IsMatch(EncryptionKeyPasswordBox.Password.ToString()))
+                {
+                    Mouse.OverrideCursor = null;
+                    EncryptionKeyPasswordBox.Password = "";
+                    Reporter.ToUser(eUserMsgKey.InvalidEncryptionKey);
+                    return;
+                }
+
                 mSolution.ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
                 ApplicationPlatform MainApplicationPlatform = new ApplicationPlatform();
                 MainApplicationPlatform.AppName = ApplicationTextBox.Text;
                 MainApplicationPlatform.Platform = (ePlatformType)MainPlatformComboBox.SelectedValue;
                 mSolution.ApplicationPlatforms.Add(MainApplicationPlatform);
-
+                mSolution.EncryptionKey = EncryptionKeyPasswordBox.Password;
                 //TODO: check AppName and platform validity - not empty + app exist in list of apps
 
 
@@ -113,9 +142,10 @@ namespace Ginger.SolutionWindows
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(WorkSpace.Instance.GetNewBusinessFlow("Flow 1", true));
                 mSolution.SetReportsConfigurations();
 
+              //  mSolution.EncryptSolutionName();
+                mSolution.SaveEncryptionKey();
                 //Save again to keep all defualt configurations setup
                 mSolution.SaveSolution(false);
-
                 //show success message to user
                 Mouse.OverrideCursor = null;
                 Reporter.ToUser(eUserMsgKey.AddSolutionSucceed);

@@ -223,6 +223,9 @@ namespace amdocs.ginger.GingerCoreNET
 
         static bool bDone = false;
 
+
+        public bool IsEncryptionKeyValid = false;
+
         /// <summary>
         /// Init core classes type dictionary for RepositorySerializer
         /// </summary>
@@ -332,6 +335,7 @@ namespace amdocs.ginger.GingerCoreNET
         {                      
             try
             {
+                IsEncryptionKeyValid = false;
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", solutionFolder));
                 LoadingSolution = true;
 
@@ -374,6 +378,15 @@ namespace amdocs.ginger.GingerCoreNET
                     Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Failed to load the Solution file");
                     Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Failed to load the Solution file");
                     return false;
+                }
+
+                //GetEncryptionKey(solution.Guid.ToString());
+                if (solution.FetchEncryptionKey())
+                {
+                    if(solution.ValidateKey())
+                    {
+                        IsEncryptionKeyValid = true;
+                    }
                 }
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Creating Items Repository");
@@ -617,7 +630,6 @@ namespace amdocs.ginger.GingerCoreNET
 
         // Running from CLI
         public bool RunningInExecutionMode = false;
-                
 
         public void RefreshGlobalAppModelParams(ApplicationModelBase AppModel)
         {

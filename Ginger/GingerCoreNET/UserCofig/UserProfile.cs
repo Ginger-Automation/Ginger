@@ -22,6 +22,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.UserConfig;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -330,44 +331,46 @@ namespace Ginger
 
         public string SourceControlPass
         {
-            get
-            {
-                bool res = false;
-                string pass = string.Empty;
-                if (EncryptedSourceControlPass != null)
-                    pass = EncryptionHandler.DecryptString(EncryptedSourceControlPass, ref res);
-                if (res && String.IsNullOrEmpty(pass) == false)
-                    return pass;
-                else
-                    return string.Empty;
-            }
-            set
-            {
-                bool res = false;
-                if (value != null)
-                    EncryptedSourceControlPass = EncryptionHandler.EncryptString(value, ref res);
-            }
+             get;set;
+            //get
+            //{
+            //    bool res = false;
+            //    string pass = string.Empty;
+            //    if (EncryptedSourceControlPass != null)
+            //        pass = EncryptionHandler.DecryptString(EncryptedSourceControlPass, ref res);
+            //    if (res && String.IsNullOrEmpty(pass) == false)
+            //        return pass;
+            //    else
+            //        return string.Empty;
+            //}
+            //set
+            //{
+            //    bool res = false;
+            //    if (value != null)
+            //        EncryptedSourceControlPass = EncryptionHandler.EncryptString(value, ref res);
+            //}
         }
 
         public string SolutionSourceControlPass
         {
-            get
-            {
-                bool res = false;
-                string pass = string.Empty;
-                if (EncryptedSolutionSourceControlPass != null)
-                    pass = EncryptionHandler.DecryptString(EncryptedSolutionSourceControlPass, ref res);
-                if (res && String.IsNullOrEmpty(pass) == false)
-                    return pass;
-                else
-                    return string.Empty;
-            }
-            set
-            {
-                bool res = false;
-                if (value != null)
-                    EncryptedSolutionSourceControlPass = EncryptionHandler.EncryptString(value, ref res);
-            }
+             get;set;
+            //get
+            //{
+            //    bool res = false;
+            //    string pass = string.Empty;
+            //    if (EncryptedSolutionSourceControlPass != null)
+            //        pass = EncryptionHandler.DecryptString(EncryptedSolutionSourceControlPass, ref res);
+            //    if (res && String.IsNullOrEmpty(pass) == false)
+            //        return pass;
+            //    else
+            //        return string.Empty;
+            //}
+            //set
+            //{
+            //    bool res = false;
+            //    if (value != null)
+            //        EncryptedSolutionSourceControlPass = EncryptionHandler.EncryptString(value, ref res);
+            //}
         }
 
         [IsSerializedForLocalRepository]
@@ -449,6 +452,7 @@ namespace Ginger
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while saving Recent App-Agents Mapping for User Profile save", ex);
             }
             RepositorySerializer.SaveToFile(this, UserProfileFilePath);
+            SavePasswords();
         }
 
         public void SaveRecentAppAgentsMapping()
@@ -551,6 +555,7 @@ namespace Ginger
                     {
                         up.AddUserConfigProperties(UserConfigdictObj);
                     }
+                    up = LoadPasswords(up);
                     return up;
                 }
                 catch (Exception ex)
@@ -579,6 +584,35 @@ namespace Ginger
             }
 
             return up2;
+        }
+
+        public static UserProfile LoadPasswords(UserProfile userProfile)
+        {
+            //Get sourcecontrol password
+            userProfile.SourceControlPass = WinCredentialUtil.GetCredential("Ginger_SourceControl_" + userProfile.SourceControlType);
+            userProfile.SolutionSourceControlPass = WinCredentialUtil.GetCredential("Ginger_SolutionSourceControl");
+
+            //Get ALM passwords
+            foreach (GingerCoreNET.ALMLib.ALMUserConfig almConfig in userProfile.ALMUserConfigs)
+            {
+                almConfig.ALMPassword = WinCredentialUtil.GetCredential("Ginger_ALM_" + almConfig.AlmType);
+            }
+
+            return userProfile;
+        }
+
+        public void SavePasswords()
+        {
+            //Save source control password
+            WinCredentialUtil.SetCredentials("Ginger_SourceControl_" + SourceControlType, SourceControlUser, SourceControlPass);
+            WinCredentialUtil.SetCredentials("Ginger_SolutionSourceControl", SolutionSourceControlUser, SolutionSourceControlPass);
+
+
+            //Save ALM passwords on windows credential manager
+            foreach (GingerCoreNET.ALMLib.ALMUserConfig almConfig in ALMUserConfigs)
+            {
+                WinCredentialUtil.SetCredentials("Ginger_ALM_" + almConfig.AlmType, almConfig.ALMUserName, almConfig.ALMPassword);
+            }
         }
 
         public void LoadUserTypeHelper()

@@ -57,6 +57,7 @@ namespace Ginger.SolutionGeneral
             Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
             solution.FilePath = solutionFileName;
             solution.Folder = Path.GetDirectoryName(solutionFileName);
+         //   solution.EncryptionKey = GetEncryptionKey(solution.Guid.ToString());
             if (startDirtyTracking)
             {
                 solution.StartDirtyTracking();
@@ -226,6 +227,83 @@ namespace Ginger.SolutionGeneral
         public ObservableList<RepositoryItemTag> Tags;
 
         private string mAccount;
+
+        /// <summary>
+        /// For encrypting password variables
+        /// </summary>
+        public string EncryptionKey { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public string EncryptedSolutionName {get;set;}
+
+        public bool ValidateKey()
+        {
+            try
+            {
+                return EncryptionHandler.DecryptwithKey(EncryptedSolutionName, EncryptionKey).Equals("valid");
+            }
+            catch
+            {
+
+            }
+            return false;
+        }
+
+        public bool EncryptSolutionName()
+        {
+            try
+            {
+                EncryptedSolutionName = EncryptionHandler.EncryptwithKey("valid", EncryptionKey);
+                return true;
+            }
+            catch
+            { 
+            
+            }
+            return false;
+        }
+
+        public static string GetEncryptionKey(string guid)
+        {
+            try
+            {
+               return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
+            }
+            catch
+            {
+
+            }
+            return null;
+        }
+
+        public bool FetchEncryptionKey()
+        {
+            try
+            {
+                EncryptionKey =  GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + Guid);
+                return string.IsNullOrEmpty(EncryptionKey) ? false : true;
+            }
+            catch
+            {
+
+            }
+            return false;
+        }
+
+        public bool SaveEncryptionKey()
+        {
+            try
+            {
+                EncryptSolutionName();
+                GingerCore.GeneralLib.WinCredentialUtil.SetCredentials("Ginger_Sol_" + Guid, mName, EncryptionKey);
+                return true;
+            }
+            catch
+            {
+
+            }
+            return false;
+        }
 
         [IsSerializedForLocalRepository]
         public string Account {

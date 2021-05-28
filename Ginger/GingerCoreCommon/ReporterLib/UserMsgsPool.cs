@@ -145,7 +145,8 @@ namespace Amdocs.Ginger.Common
         PluginDownloadInProgress, SaveRunsetChanges, LegacyActionsCleanup,
         MissingImplementationForPlatform,
         WarnAddSwingOrWidgetElement,
-        AskToSelectValidItem
+        AskToSelectValidItem,
+        InvalidEncryptionKey
     }
 
     public static class UserMsgsPool
@@ -384,6 +385,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.AddSolutionFailed, new UserMsg(eUserMsgType.ERROR, "Add Solution", "Failed to create the new solution. " + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RefreshTreeGroupFailed, new UserMsg(eUserMsgType.ERROR, "Refresh", "Failed to perform the refresh operation." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToDeleteRepoItem, new UserMsg(eUserMsgType.ERROR, "Delete", "Failed to perform the delete operation." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidEncryptionKey, new UserMsg(eUserMsgType.WARN, "Encryption Key", "Encryption key must be 8-16 in lenght and should contain atleast 1 cap, 1 small, 1 digit and 1 special char.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.FolderExistsWithName, new UserMsg(eUserMsgType.WARN, "Folder Creation Failed", "Folder with same name already exists. Please choose a different name for the folder.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UpdateApplicationNameChangeInSolution, new UserMsg(eUserMsgType.WARN, "Target Application Name Change", "Do you want to automatically update the Target Application name in all Solution items?" + Environment.NewLine + Environment.NewLine + "Note: If you choose 'Yes', changes won't be saved, for saving them please click 'SaveAll'", eUserMsgOption.YesNo, eUserMsgSelection.Yes));

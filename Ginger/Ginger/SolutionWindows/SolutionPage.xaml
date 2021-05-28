@@ -18,6 +18,16 @@
             <TextBox x:Name="SolutionFolderTextBox" Style="{StaticResource @TextBoxStyle}" IsReadOnly="True"/>
             <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Account:" />
             <TextBox x:Name="AccountTextBox" Style="{StaticResource @TextBoxStyle}"/>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Encryption Key:</Label>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="700"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
+                <PasswordBox x:Name="EncryptionKeyPasswordBox" AutomationProperties.AutomationId="QA-EncryptionKeyPasswordBox" Style="{StaticResource @PasswordBoxStyle}" FontWeight="Bold" Width="650" HorizontalAlignment="Left" ToolTip="Encryption key must be 8-16 in lenght and should contain atleast 1 cap, 1 small, 1 digit and 1 special char."/>
+                <TextBox x:Name="EncryptionKeyTextBox" AutomationProperties.AutomationId="QA-EncryptionKeyTextBox" Style="{StaticResource @TextBoxStyle}" FontWeight="Bold" Width="650" Visibility="Hidden" HorizontalAlignment="Left"/>
+                <TextBlock x:Name="ShowPassword" Text="SHOW" PreviewMouseDown="ShowPassword_PreviewMouseDown"  Style="{StaticResource $TextBlockStyle}"  PreviewMouseUp="ShowPassword_PreviewMouseUp" MouseLeave="ShowPassword_MouseLeave" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            </Grid>
         </StackPanel>
     </Grid>
 </Page>
