@@ -375,6 +375,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             WorkSpace.Instance.UserProfile.SourceControlUser = runOptions.User;
             WorkSpace.Instance.UserProfile.SourceControlType = runOptions.SCMType;
             WorkSpace.Instance.UserProfile.SourceControlIgnoreCertificate = runOptions.ignoreCertificate;
+            WorkSpace.Instance.UserProfile.SourceControlUseShellClient = runOptions.useScmShell;
 
             if (runOptions.PasswordEncrypted)
             {

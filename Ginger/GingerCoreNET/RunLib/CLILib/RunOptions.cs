@@ -66,8 +66,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('c', "ignoreCertificate", Required = false, HelpText = "Ignore certificate errors while cloning solution")]
         public bool ignoreCertificate { get; set; }
 
+        [Option('g', "useScmShell", Required = false, HelpText = "Use shell Git Client")]
+        public bool useScmShell { get; set; }
 
 
     }
 
-    }
+}
