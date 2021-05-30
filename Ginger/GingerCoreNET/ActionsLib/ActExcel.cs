@@ -309,7 +309,7 @@ namespace GingerCore.Actions
                     {
                         if (!String.IsNullOrWhiteSpace(SetDataUsed))
                         {
-                            isUpdated = excelOperator.updateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed);
+                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed);
                         }
                     }
                     else
@@ -321,7 +321,7 @@ namespace GingerCore.Actions
                                 Error += "Missing or Invalid Primary Key"; 
                                 return; 
                             }
-                            isUpdated = excelOperator.updateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed, CalculatedPrimaryKeyFilter(excelDataTable.Rows[0]));
+                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed, CalculatedPrimaryKeyFilter(excelDataTable.Rows[0]));
                         }
                     }
                     if(!isUpdated)

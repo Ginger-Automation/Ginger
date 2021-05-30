@@ -42,6 +42,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             Assert.AreEqual(actExcel.ActReturnValues.Count,4);
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
         }
         [TestMethod]
         public void ReadExcelFirstRowWithFilterTest()
@@ -59,7 +61,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             actExcel.Execute();
 
             //Assert
-            Assert.AreEqual(string.Join(',',actExcel.ActReturnValues.Select(x=> x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
         }
 
         [TestMethod]

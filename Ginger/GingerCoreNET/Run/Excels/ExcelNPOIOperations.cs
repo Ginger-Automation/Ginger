@@ -170,7 +170,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             return workbook;
         }
 
-        public bool updateExcelData(string fileName, string sheetName, string filter, string setDataUsed, string primaryKey = null, string key = null)
+        public bool UpdateExcelData(string fileName, string sheetName, string filter, string setDataUsed, string primaryKey = null, string key = null)
         {
             UpdateCellList = GetSetDataUsed(setDataUsed);
             if (UpdateCellList.Count > 0)
