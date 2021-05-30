@@ -379,6 +379,8 @@ namespace Ginger.Run
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
                 }
 
+                Runners[0].Centeralized_Logger.RunSetStart(RunSetConfig);
+
                 //Start Run 
                 if (doContinueRun == false)
                 {
@@ -475,11 +477,12 @@ namespace Ginger.Run
 
                 Task.WaitAll(runnersTasks.ToArray());
                 mStopwatch.Stop();
-
+                RunSetConfig.Elapsed = mStopwatch.ElapsedMilliseconds;
                 //Do post execution items
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 //ExecutionLoggerManager.RunSetEnd();
                 Runners[0].ExecutionLoggerManager.RunSetEnd();
+                Runners[0].Centeralized_Logger.RunSetEnd(RunSetConfig);
                 if (mStopRun == false)
                 {
                     // Process all post execution RunSet Operations

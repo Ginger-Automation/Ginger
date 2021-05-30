@@ -25,6 +25,8 @@ using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
@@ -211,6 +213,11 @@ namespace Ginger.Run
             }
         }
 
+        // Only for Run time, no need to serialize        
+        public DateTime StartTimeStamp { get; set; }
+
+        public DateTime EndTimeStamp { get; set; }
+
         public double? Elapsed
         {
             get
@@ -378,6 +385,11 @@ namespace Ginger.Run
 
         public bool IsUpdateBusinessFlowRunList;
 
+        /// <summary>
+        /// ID which been provided for each execution instance on the Activity
+        /// </summary>
+        public Guid ExecutionId { get; set; }
+
         public GingerRunner()
         {
             ExecutedFrom = eExecutedFrom.Run;
@@ -386,6 +398,7 @@ namespace Ginger.Run
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
 
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
+            RunListeners.Add(new AccountReportExecutionLogger(mContext));
 
             if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
             {
@@ -401,7 +414,7 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
-
+            RunListeners.Add(new AccountReportExecutionLogger(mContext));            
             if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
             {
                 RunListeners.Add(new TelemetryRunListener());
@@ -4308,6 +4321,15 @@ namespace Ginger.Run
             {
                 ExecutionLoggerManager ExecutionLoggerManager = (ExecutionLoggerManager)(from x in mRunListeners where x.GetType() == typeof(ExecutionLoggerManager) select x).SingleOrDefault();
                 return ExecutionLoggerManager;
+            }
+        }
+
+        public AccountReportExecutionLogger Centeralized_Logger
+        {
+            get
+            {
+                AccountReportExecutionLogger centeralized_Logger = (AccountReportExecutionLogger)(from x in mRunListeners where x.GetType() == typeof(AccountReportExecutionLogger) select x).SingleOrDefault();
+                return centeralized_Logger;
             }
         }
 

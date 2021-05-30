@@ -27,6 +27,7 @@ using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Ginger.Run
 {
@@ -91,6 +92,47 @@ namespace Ginger.Run
                     mExecutionID = value;
                     OnPropertyChanged(nameof(ExecutionID));
                 }
+            }
+        }
+
+        // Only for Run time, no need to serialize        
+        public DateTime StartTimeStamp { get; set; }
+
+        public DateTime EndTimeStamp { get; set; }
+
+        public double? Elapsed { get; set; }
+
+        private Amdocs.Ginger.CoreNET.Execution.eRunStatus runSetExecutionStatus;
+        public Amdocs.Ginger.CoreNET.Execution.eRunStatus RunSetExecutionStatus
+        {
+            get
+            {
+                
+                if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed select x).Count() > 0)
+                {
+                    return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                }
+                else if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked select x).Count() > 0)
+                {
+                    return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
+                }
+                else if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped select x).Count() > 0)
+                {
+                    return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
+                }
+                else if ((from x in GingerRunners.ToList() where (x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed ||
+                          x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped) select x).Count() == GingerRunners.Count)
+                {
+                    return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                }
+                else
+                {
+                    return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+                }
+            }
+            set
+            {
+                runSetExecutionStatus = value;
             }
         }
 

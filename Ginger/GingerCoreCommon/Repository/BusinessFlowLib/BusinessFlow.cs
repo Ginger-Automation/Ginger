@@ -62,6 +62,11 @@ namespace GingerCore
             return mName;
         }
 
+        /// <summary>
+        /// ID which been provided for each execution instance on the Activity
+        /// </summary>
+        public Guid ExecutionId { get; set; }
+
         public override string GetNameForFileName() { return Name; }
 
         public enum eBusinessFlowStatus

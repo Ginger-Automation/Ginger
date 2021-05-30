@@ -575,7 +575,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             LiteDbRunSet liteDbRunSet = dbManager.GetLatestExecutionRunsetData(runsetId?.ToString());
             List<string> screenshotList= PopulateMissingFieldsAndGetScreenshotsList(liteDbRunSet, executionId);
             
-            CentralExecutionLoggerHelper centralExecutionLogger = new CentralExecutionLoggerHelper(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+            AccountReportApiHandler centralExecutionLogger = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
 
             //Map the data to AccountReportRunset Object
             AccountReportRunSet accountReportRunSet = centralExecutionLogger.MapDataToAccountReportObject(liteDbRunSet);
@@ -734,7 +734,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override string CalculateExecutionJsonData(LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate)
         {
-            CentralExecutionLoggerHelper centralExecutionLogger = new CentralExecutionLoggerHelper();
+            AccountReportApiHandler centralExecutionLogger = new AccountReportApiHandler();
             AccountReportRunSet accountReportRunSet = centralExecutionLogger.MapDataToAccountReportObject(liteDbRunSet);
             string json = JsonConvert.SerializeObject(accountReportRunSet, Formatting.Indented);
 

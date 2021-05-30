@@ -34,20 +34,20 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.CentralExecutionLogger
 {
-    public class CentralExecutionLoggerHelper
+    public class AccountReportApiHandler
     {
      
 
         private string EndPointUrl { get; set; }
 
         RestClient restClient;
-        public CentralExecutionLoggerHelper(string apiUrl)
+        public AccountReportApiHandler(string apiUrl)
         {
             EndPointUrl = apiUrl;          
             restClient = new RestClient(apiUrl);
             restClient.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
         }
-        public CentralExecutionLoggerHelper()
+        public AccountReportApiHandler()
         {
             //created deafult constructor to access only MapDataToAccountReportObject
         }
@@ -98,6 +98,33 @@ namespace Amdocs.Ginger.CoreNET.CentralExecutionLogger
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception when sending "+message, ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
+        }
+
+        public async Task SendActionExecutionDataToCentralDBAsync(AccountReportAction accountReportAction)
+        {
+            Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, null, "Publishing Action Execution data to central DB");
+            RestRequest restRequest = (RestRequest)new RestRequest("api/AccountReport/AddActionToAccountDB/", Method.POST) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportAction);
+            string message = string.Format(" execution data to Central DB for Runset: {0} , Execution Id:{1}", accountReportAction.Name, accountReportAction.ExecutionId);
+            try
+            {
+                IRestResponse response = await restClient.ExecuteTaskAsync(restRequest);
+                if (response.IsSuccessful)
+                {
+                    Reporter.ToLog(eLogLevel.INFO, "Successfully sent " + message);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to send " + message + "Response: " + response.Content);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception when sending " + message, ex);
             }
             finally
             {
