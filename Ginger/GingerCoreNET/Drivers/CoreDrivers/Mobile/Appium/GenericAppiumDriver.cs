@@ -114,6 +114,11 @@ namespace Amdocs.Ginger.CoreNET
         public eAutoScreenshotRefreshMode DeviceAutoScreenshotRefreshMode { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("true")]
+        [UserConfiguredDescription("Determine if auto set the default capabilities based on OS and application type selection")]
+        public bool AutoSetCapabilities { get; set; }
+
+        [UserConfigured]
         [UserConfiguredMultiValues]
         [UserConfiguredDescription("Appium capabilities")]
         public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
@@ -246,6 +251,11 @@ namespace Amdocs.Ginger.CoreNET
             //User customized capabilities
             foreach (DriverConfigParam UserCapability in AppiumCapabilities)
             {
+                if (String.IsNullOrWhiteSpace(UserCapability.Parameter))
+                {
+                    continue;
+                }
+
                 bool boolValue;
                 int intValue = 0;
                 if (bool.TryParse(UserCapability.Value, out boolValue))
@@ -1870,40 +1880,36 @@ namespace Amdocs.Ginger.CoreNET
         {
             if (errorType == SerializationErrorType.SetValueException)
             {
-                if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid")
+                if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid" || value == "MobileAppiumIOS" || value == "PerfectoMobileIOS"
+                       || value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb" || value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
                 {
                     agent.DriverType = Agent.eDriverType.Appium;
                     agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
-                    agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
+                    //agent.GetOrCreateParam(nameof(AppiumServer), @"http://127.0.0.1:4723/wd/hub");
+                    agent.GetOrCreateParam(nameof(LoadDeviceWindow),"true");
+                    agent.GetOrCreateParam(nameof(DeviceAutoScreenshotRefreshMode), eAutoScreenshotRefreshMode.Live.ToString());
                     agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
-                    return true;
-                }
-                else if (value == "MobileAppiumIOS" || value == "PerfectoMobileIOS")
-                {
-                    agent.DriverType = Agent.eDriverType.Appium;
-                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
-                    agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
-                    agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
-                    return true;
-                }
-                else if (value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb")
-                {
-                    agent.DriverType = Agent.eDriverType.Appium;
-                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
-                    agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
-                    agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
-                    return true;
-                }
-                else if (value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
-                {
-                    agent.DriverType = Agent.eDriverType.Appium;
-                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
-                    agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
-                    agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
+
+                    if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid")
+                    {                        
+                        agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
+                        agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());                                                
+                    }
+                    else if (value == "MobileAppiumIOS" || value == "PerfectoMobileIOS")
+                    {
+                        agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
+                        agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
+                    }
+                    else if (value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb")
+                    {
+                        agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
+                        agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
+                    }
+                    else if (value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
+                    {
+                        agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
+                        agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
+                    }
                     return true;
                 }
             }
