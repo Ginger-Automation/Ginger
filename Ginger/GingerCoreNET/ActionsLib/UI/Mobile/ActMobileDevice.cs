@@ -285,6 +285,25 @@ namespace GingerCore.Actions
             Keycode_D=32,
         }
 
-
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType == SerializationErrorType.SetValueException)
+            {
+                 if (name == "MobilePressKey")
+                { 
+                    return true;
+                }
+                else if (name == nameof(MobileDeviceAction) && value == "Wait")
+                {
+                    return true;
+                }
+                else if (name == "MobilePressXY")
+                {
+                    this.MobileDeviceAction = eMobileDeviceAction.PressXY;
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

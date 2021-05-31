@@ -353,6 +353,7 @@ namespace Ginger.WindowExplorer
                     return;
                 }
 
+                DefaultAction.Description = string.Format("{0} : {1} - {2}", (DefaultAction as ActUIElement).ElementAction, mElementInfo.ElementTypeEnum.ToString(), mElementInfo.ElementName);
                 selectedAct = DefaultAction;
             }
 

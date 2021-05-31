@@ -114,6 +114,11 @@ namespace Amdocs.Ginger.CoreNET
         public eAutoScreenshotRefreshMode DeviceAutoScreenshotRefreshMode { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("true")]
+        [UserConfiguredDescription("Determine if auto set the default capabilities based on OS and application type selection")]
+        public bool AutoSetCapabilities { get; set; }
+
+        [UserConfigured]
         [UserConfiguredMultiValues]
         [UserConfiguredDescription("Appium capabilities")]
         public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
@@ -246,6 +251,11 @@ namespace Amdocs.Ginger.CoreNET
             //User customized capabilities
             foreach (DriverConfigParam UserCapability in AppiumCapabilities)
             {
+                if (String.IsNullOrWhiteSpace(UserCapability.Parameter))
+                {
+                    continue;
+                }
+
                 bool boolValue;
                 int intValue = 0;
                 if (bool.TryParse(UserCapability.Value, out boolValue))
@@ -1191,7 +1201,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             if (AppType == eAppType.Web)
             {
-                return await ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(filteredElementType, foundElementsList, isPOMLearn, specificFramePath);
+                return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(filteredElementType, foundElementsList, isPOMLearn, specificFramePath));
             }
 
             List<ElementInfo> list = new List<ElementInfo>();
@@ -1330,11 +1340,11 @@ namespace Amdocs.Ginger.CoreNET
         {
             //TODO: verify XPath return 1 item back to same xmlnode.
 
-            string resid = GetAttrValue(node, "resource-id");
-            if (!string.IsNullOrEmpty(resid))
-            {
-                return string.Format("//*[@resource-id='{0}']", resid);
-            }
+            //string resid = GetAttrValue(node, "resource-id");
+            //if (!string.IsNullOrEmpty(resid))
+            //{
+            //    return string.Format("//*[@resource-id='{0}']", resid);
+            //}
 
             if (node.ParentNode == null)
             {
@@ -1409,15 +1419,6 @@ namespace Amdocs.Ginger.CoreNET
         {
             ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
 
-            // Show XPath, can have relative info
-            list.Add(new ElementLocator()
-            {
-                LocateBy = eLocateBy.ByXPath,
-                LocateValue = ElementInfo.XPath,
-                Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
-            });
-
-
             //Only by Resource ID
             string resid = GetAttrValue(ElementInfo.ElementObject as XmlNode, "resource-id");
             string residXpath = string.Format("//*[@resource-id='{0}']", resid);
@@ -1425,8 +1426,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
-                    //LocateBy = eLocateBy.ByXPath,
-                    LocateBy = eLocateBy.ByResourceID,
+                    LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = residXpath,
                     Help = "Use Resource id only when you don't want XPath with relative info, but the resource-id is unique"
                 });
@@ -1438,8 +1438,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
-                    //LocateBy = eLocateBy.ByXPath,
-                    LocateBy = eLocateBy.ByContentDescription,
+                    LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = string.Format("//*[@content-desc='{0}']", contentdesc),
                     Help = "content-desc is Recommended when resource-id not exist"
                 });
@@ -1452,12 +1451,19 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
-                    //LocateBy = eLocateBy.ByXPath,
-                    LocateBy = eLocateBy.ByText,
+                    LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = string.Format("//{0}[@text='{1}']", eClass, eText),    // like: //android.widget.RadioButton[@text='Ginger']" 
                     Help = "use class and text when you have list of items and no resource-id to use"
                 });
             }
+
+            // Show XPath
+            list.Add(new ElementLocator()
+            {
+                LocateBy = eLocateBy.ByXPath,
+                LocateValue = ElementInfo.XPath,
+                Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
+            });
 
             return list;
         }
@@ -1816,7 +1822,6 @@ namespace Amdocs.Ginger.CoreNET
             if (AppType == eAppType.Web)
             {
                 return await Task.Run(() => ((IVisualTestingDriver)mSeleniumDriver).GetElementAtPoint(ptX, ptY));
-                //return await ((IVisualTestingDriver)mSeleniumDriver).GetElementAtPoint(ptX, ptY);
             }
 
             XmlNode foundNode = await FindElementXmlNodeByXY(ptX, ptY);
@@ -1870,40 +1875,36 @@ namespace Amdocs.Ginger.CoreNET
         {
             if (errorType == SerializationErrorType.SetValueException)
             {
-                if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid")
+                if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid" || value == "MobileAppiumIOS" || value == "PerfectoMobileIOS"
+                       || value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb" || value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
                 {
                     agent.DriverType = Agent.eDriverType.Appium;
                     agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
-                    agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
+                    //agent.GetOrCreateParam(nameof(AppiumServer), @"http://127.0.0.1:4723/wd/hub");
+                    agent.GetOrCreateParam(nameof(LoadDeviceWindow),"true");
+                    agent.GetOrCreateParam(nameof(DeviceAutoScreenshotRefreshMode), eAutoScreenshotRefreshMode.Live.ToString());
                     agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
-                    return true;
-                }
-                else if (value == "MobileAppiumIOS" || value == "PerfectoMobileIOS")
-                {
-                    agent.DriverType = Agent.eDriverType.Appium;
-                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
-                    agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
-                    agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
-                    return true;
-                }
-                else if (value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb")
-                {
-                    agent.DriverType = Agent.eDriverType.Appium;
-                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
-                    agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
-                    agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
-                    return true;
-                }
-                else if (value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
-                {
-                    agent.DriverType = Agent.eDriverType.Appium;
-                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
-                    agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
-                    agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
+
+                    if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid")
+                    {                        
+                        agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
+                        agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());                                                
+                    }
+                    else if (value == "MobileAppiumIOS" || value == "PerfectoMobileIOS")
+                    {
+                        agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
+                        agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
+                    }
+                    else if (value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb")
+                    {
+                        agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
+                        agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
+                    }
+                    else if (value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
+                    {
+                        agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
+                        agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
+                    }
                     return true;
                 }
             }
