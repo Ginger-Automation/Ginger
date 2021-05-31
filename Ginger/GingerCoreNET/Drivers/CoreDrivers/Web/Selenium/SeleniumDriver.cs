@@ -7178,9 +7178,18 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-                    string elemId = ele.GetProperty("id");
+                    HtmlNode elemNode = null;
+                    string elemId;
+                    try
+                    {
+                        elemId = ele.GetProperty("id");
+                        elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id.Equals(elemId)).FirstOrDefault();
+                    }
+                    catch (Exception exc)
+                    {
+                        elemId = "";
+                    }
 
-                    HtmlNode elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id.Equals(elemId)).FirstOrDefault();
 
                     elemInfo = new HTMLElementInfo();
 
