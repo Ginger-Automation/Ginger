@@ -1080,7 +1080,7 @@ namespace Ginger.WindowExplorer
                 {
                     mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.5);
                 }
-
+                mScreenShotViewPage.ImageMouseCursor = Cursors.Hand;
                 /// UnComment to allow Element detection on hover
                 //if (mPlatform.PlatformType() == ePlatformType.Web)
                 //{
