@@ -65,6 +65,21 @@ namespace Ginger.Actions._Common.ActUIElementLib
             InitializeComponent();
             if(Act.ElementData != null)
             {
+                if (Act.ElementType == eElementType.EditorPane || Act.ElementType.ToString() == "JEditor")
+                {
+                    mAct.ElementType = eElementType.EditorPane;
+                    mAct.ElementAction = ActUIElement.eElementAction.JEditorPaneElementAction;
+                    mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementType, ActUIElement.eSubElementType.HTMLTable.ToString());
+                    mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.SubElementAction, ActUIElement.eElementAction.TableCellAction.ToString());
+                    mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eElementAction.GetValue.ToString());
+                }
+                else
+                {
+                    mAct.ElementType = eElementType.Table;
+                    mAct.ElementAction = ActUIElement.eElementAction.TableCellAction;
+                    mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, ActUIElement.eElementAction.GetValue.ToString());
+                }
+
                 InitTableInfo();
                 SetComponents(true);
                 SetDescriptionDetails();

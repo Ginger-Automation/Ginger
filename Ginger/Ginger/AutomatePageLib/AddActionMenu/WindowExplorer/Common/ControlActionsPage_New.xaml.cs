@@ -212,6 +212,18 @@ namespace Ginger.WindowExplorer
             else
             {
                 DefaultAction.Context = mContext;
+
+                if (mPlatform.PlatformType().Equals(ePlatformType.Java) && mElementInfo.ElementType.Contains("JEditor"))
+                {
+                    ActInputValue inputPar = DefaultAction.GetOrCreateInputParam(ActUIElement.Fields.IsWidgetsElement);
+                    if(inputPar != null && inputPar.Value == "true")
+                    {
+                        mElementInfo.ElementTypeEnum = eElementType.EditorPane;
+                        (DefaultAction as ActUIElement).ElementType = eElementType.EditorPane;
+                        inputPar.Value = "false";
+                    }
+                }
+
                 (DefaultAction as ActUIElement).ElementData = mElementInfo.GetElementData();
                 DefaultAction.Description = string.Format("{0} : {1} - {2}", (DefaultAction as ActUIElement).ElementAction, mElementInfo.ElementTypeEnum.ToString(), mElementInfo.ElementName);
                 SetActionDetails(DefaultAction);
