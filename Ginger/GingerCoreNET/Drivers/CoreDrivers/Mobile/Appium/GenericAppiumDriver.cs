@@ -1201,7 +1201,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             if (AppType == eAppType.Web)
             {
-                return await ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(filteredElementType, foundElementsList, isPOMLearn, specificFramePath);
+                return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(filteredElementType, foundElementsList, isPOMLearn, specificFramePath));
             }
 
             List<ElementInfo> list = new List<ElementInfo>();
@@ -1340,11 +1340,11 @@ namespace Amdocs.Ginger.CoreNET
         {
             //TODO: verify XPath return 1 item back to same xmlnode.
 
-            string resid = GetAttrValue(node, "resource-id");
-            if (!string.IsNullOrEmpty(resid))
-            {
-                return string.Format("//*[@resource-id='{0}']", resid);
-            }
+            //string resid = GetAttrValue(node, "resource-id");
+            //if (!string.IsNullOrEmpty(resid))
+            //{
+            //    return string.Format("//*[@resource-id='{0}']", resid);
+            //}
 
             if (node.ParentNode == null)
             {
@@ -1419,15 +1419,6 @@ namespace Amdocs.Ginger.CoreNET
         {
             ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
 
-            // Show XPath, can have relative info
-            list.Add(new ElementLocator()
-            {
-                LocateBy = eLocateBy.ByXPath,
-                LocateValue = ElementInfo.XPath,
-                Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
-            });
-
-
             //Only by Resource ID
             string resid = GetAttrValue(ElementInfo.ElementObject as XmlNode, "resource-id");
             string residXpath = string.Format("//*[@resource-id='{0}']", resid);
@@ -1435,8 +1426,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
-                    //LocateBy = eLocateBy.ByXPath,
-                    LocateBy = eLocateBy.ByResourceID,
+                    LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = residXpath,
                     Help = "Use Resource id only when you don't want XPath with relative info, but the resource-id is unique"
                 });
@@ -1448,8 +1438,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
-                    //LocateBy = eLocateBy.ByXPath,
-                    LocateBy = eLocateBy.ByContentDescription,
+                    LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = string.Format("//*[@content-desc='{0}']", contentdesc),
                     Help = "content-desc is Recommended when resource-id not exist"
                 });
@@ -1462,12 +1451,19 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
-                    //LocateBy = eLocateBy.ByXPath,
-                    LocateBy = eLocateBy.ByText,
+                    LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = string.Format("//{0}[@text='{1}']", eClass, eText),    // like: //android.widget.RadioButton[@text='Ginger']" 
                     Help = "use class and text when you have list of items and no resource-id to use"
                 });
             }
+
+            // Show XPath
+            list.Add(new ElementLocator()
+            {
+                LocateBy = eLocateBy.ByXPath,
+                LocateValue = ElementInfo.XPath,
+                Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
+            });
 
             return list;
         }
@@ -1826,7 +1822,6 @@ namespace Amdocs.Ginger.CoreNET
             if (AppType == eAppType.Web)
             {
                 return await Task.Run(() => ((IVisualTestingDriver)mSeleniumDriver).GetElementAtPoint(ptX, ptY));
-                //return await ((IVisualTestingDriver)mSeleniumDriver).GetElementAtPoint(ptX, ptY);
             }
 
             XmlNode foundNode = await FindElementXmlNodeByXY(ptX, ptY);
