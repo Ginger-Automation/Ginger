@@ -690,6 +690,21 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
         [TestMethod]
         [Timeout(60000)]
+        public void ReplaceSpecialCharsFromJsonContainsSpecChars()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{Function Fun=ReplaceSpecialChars(\"{\"name\":\"Joh\"n\", \"age\":31, \"city\":\"New York\"}\",\",_)}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "{_name_:_Joh_n_, _age_:31, _city_:_New York_}");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
         public void NestedFunCalculateTest()
         {
             //Arrange    
@@ -703,6 +718,38 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             //Assert
             Assert.AreEqual(true, v.EndsWith("-abcd"));
             Assert.AreEqual(true, v.StartsWith("UsernameToken-"));
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void NestedFunCalculateTestWihtReplacCharFunc()
+        {
+            //Arrange    
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+
+            //Act
+            VE.Value = "{Function Fun=GetEncryptedBase64String(\"{Function Fun=ReplaceSpecialChars(\"Hel\"lo\",\",_)}\")}";
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual("XyJIZWxfImxvXw==", v);
+
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void NestedFunCalculateTestWihtReplacCharFunc2()
+        {
+            //Arrange    
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+
+            //Act
+            VE.Value = "{Function Fun=GetEncryptedBase64String(\"{Function Fun=ReplaceSpecialChars(\"{\"name\":\"John\",\"age\":31,\"city\":\"New York\"}\",\",_)}\")}";
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual("e19uYW1lXzpfSm9obl8sX2FnZV86MzEsX2NpdHlfOl9OZXcgWW9ya199", v);
+
         }
 
         [TestMethod]
