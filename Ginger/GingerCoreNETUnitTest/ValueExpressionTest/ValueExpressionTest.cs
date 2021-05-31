@@ -732,7 +732,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             string v = VE.ValueCalculated;
 
             //Assert
-            Assert.AreEqual("XyJIZWxfImxvXw==", v);
+            Assert.AreEqual("SGVsX2xv", v);
 
         }
 
