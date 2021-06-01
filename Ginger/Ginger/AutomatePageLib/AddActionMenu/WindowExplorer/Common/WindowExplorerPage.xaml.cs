@@ -1429,6 +1429,11 @@ namespace Ginger.WindowExplorer
                     }
                 }
 
+                if(WindowComboboxRow.Height.Value == 0)
+                {
+                    WindowComboboxRow.Height = new GridLength(50);
+                }
+
                 if (xViewsTabs.SelectedItem == xTreeViewTab)
                 {
                     await TreeViewTab_Selected(sender, e);
@@ -1447,6 +1452,7 @@ namespace Ginger.WindowExplorer
                 }
                 else if (xViewsTabs.SelectedItem == xLiveSpyTab)
                 {
+                    WindowComboboxRow.Height = new GridLength(0);
                     LiveSpyTab_Selected(sender, e);
                 }
             }
