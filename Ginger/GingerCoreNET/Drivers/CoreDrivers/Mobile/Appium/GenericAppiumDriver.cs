@@ -336,8 +336,14 @@ namespace Amdocs.Ginger.CoreNET
                 case eLocateBy.ByResourceID:
                         elem = Driver.FindElementById(locateValue);
                         break;
-                default:
+
+                case eLocateBy.ByXPath:
+                case eLocateBy.ByRelXPath:
                     elem = Driver.FindElementByXPath(locateValue);
+                    break;
+
+                default:
+                    elem = mSeleniumDriver.LocateElement(act);
                     break;
             }
 
