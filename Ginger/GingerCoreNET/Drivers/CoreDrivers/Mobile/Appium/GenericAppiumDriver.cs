@@ -1297,7 +1297,8 @@ namespace Amdocs.Ginger.CoreNET
                 case "android.widget.ratingbar":
                 case "android.widget.framelayout":
                 case "android.widget.imageview":
-                case "android.widget.imagebuton":
+                case "android.widget.imagebutton":
+                case "android.widget.switch":
                     return eElementType.Button;
 
                 case "android.widget.spinner":
@@ -1317,6 +1318,8 @@ namespace Amdocs.Ginger.CoreNET
                     return eElementType.RadioButton;
 
                 case "android.widget.canvas":
+                case "android.widget.linearlayout":
+                case "android.widget.relativelayout":
                     return eElementType.Canvas;
 
                 case "android.widget.form":
