@@ -250,6 +250,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private async Task<int> HandleFileOptions(string fileType, string fileName, eVerboseLevel verboseLevel)
         {
+            WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.script;
             try
             {
                 SetVerboseLevel(verboseLevel);
@@ -257,9 +258,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 switch (fileType)
                 {
                     case "config":
+                        WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.config;
                         mCLIHandler = new CLIConfigFile();
                         break;
                     case "dynamic":
+                        WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.dynamic;
                         if (Path.GetExtension(fileName).ToLower() == ".xml")
                         {
                             mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
@@ -309,6 +312,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private async Task<int> HanldeGridOption(GridOptions gridOptions)
         {
+            WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.grid;
            return await Task.Run(() =>
             {
                 SetVerboseLevel(gridOptions.VerboseLevel);
@@ -344,6 +348,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private async Task<int> HandleRunOptions(RunOptions runOptions)
         {
+            WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.run;
             SetVerboseLevel(runOptions.VerboseLevel);
 
             Reporter.ToLog(eLogLevel.INFO, string.Format("########################## Starting Automatic {0} Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));

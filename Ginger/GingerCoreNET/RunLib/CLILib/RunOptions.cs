@@ -60,7 +60,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('p', "pass", Required = false, HelpText = "Source Control Pass")]
         public string Pass { get; set; }
 
-        [Option('g', "encrypted", Required = false, HelpText = "password is encrypted")]
+        [Option('g', "encrypted", Required = false, Default = false, HelpText = "password is encrypted")]
         public bool PasswordEncrypted { get; set; }
 
         [Option('c', "ignoreCertificate", Required = false, HelpText = "Ignore certificate errors while cloning solution")]
