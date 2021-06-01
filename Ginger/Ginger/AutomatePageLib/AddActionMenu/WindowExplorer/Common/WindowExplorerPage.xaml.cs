@@ -344,6 +344,11 @@ namespace Ginger.WindowExplorer
                 {
                     SetPlatformBasedUpdates();
                 }
+
+                if (spyPage != null)
+                {
+                    spyPage.SetDriver(windowExplorerDriver);
+                }
             });
         }
 
