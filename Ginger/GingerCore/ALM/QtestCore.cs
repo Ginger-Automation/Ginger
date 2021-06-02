@@ -468,8 +468,9 @@ namespace GingerCore.ALM
                     testCase = testcaseApi.CreateTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testCase);
                     foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
                     {
-                        QTestApiModel.TestStepResource stepResource = new QTestApiModel.TestStepResource(   null, null, 
-                                                                                                            ((Activity)actIdent.IdentifiedActivity).Description == null ? string.Empty : ((Activity)actIdent.IdentifiedActivity).Description,
+                        string stepNameWithDesc = ((Activity)actIdent.IdentifiedActivity).ActivityName + "=>" + ((Activity)actIdent.IdentifiedActivity).Description;
+                        QTestApiModel.TestStepResource stepResource = new QTestApiModel.TestStepResource(   null, null,
+                                                                                                            stepNameWithDesc,
                                                                                                             ((Activity)actIdent.IdentifiedActivity).Expected == null ? string.Empty : ((Activity)actIdent.IdentifiedActivity).Expected);
                         stepResource.PlainValueText = ((Activity)actIdent.IdentifiedActivity).ActivityName;
                         stepResource = testcaseApi.AddTestStep((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testCase.Id, stepResource);
@@ -591,7 +592,16 @@ namespace GingerCore.ALM
                 }
                 else
                 {
-                    QtestTestStep newStep = new QtestTestStep(testStep.Id.ToString(), testStep.Description, testStep.Expected);
+                    string stepName = testStep.Description;
+                    string stepDesc = testStep.Description;
+                    if (testStep.Description.Contains("=>"))
+                    {
+                        string[] activityData = testStep.Description.Split(new string[] { "=>" }, StringSplitOptions.None);
+                        stepName = activityData[0];
+                        stepDesc = activityData[1];
+                    }
+                    QtestTestStep newStep = new QtestTestStep(testStep.Id.ToString(), stepDesc, testStep.Expected, null, stepName);
+                    
                     if ((testStep.ParameterValues != null) && (testStep.ParameterValues.Count > 0) && (testStep.ParameterValues[0] != null))
                     {
                         if (existedParameters != null)
