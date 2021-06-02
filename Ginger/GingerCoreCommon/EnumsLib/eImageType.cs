@@ -279,6 +279,10 @@ namespace Amdocs.Ginger.Common.Enums
         Android,
         AndroidOutline,
         AndroidWhite,
+        AngleArrowUp,
+        AngleArrowDown,
+        AngleArrowLeft,
+        AngleArrowRight,
         #endregion
 
         #region Source control Images     

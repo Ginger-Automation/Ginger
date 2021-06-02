@@ -845,6 +845,18 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.SignOut:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.SignOut);
                     break;
+                case eImageType.AngleArrowUp:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleUp);
+                    break;
+                case eImageType.AngleArrowDown:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleDown);
+                    break;
+                case eImageType.AngleArrowLeft:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleLeft);
+                    break;
+                case eImageType.AngleArrowRight:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleRight);
+                    break;
                 #endregion
 
                 #region ElementType Images
