@@ -631,9 +631,8 @@ namespace GingerCore.ALM
             testrunApi = new QTestApi.TestrunApi(connObj.Configuration);
             testcaseApi = new QTestApi.TestcaseApi(connObj.Configuration);
 
-            //QTestApi.ParametersApi parametersApi = new QTestApi.ParametersApi(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, connObj.Configuration);
-            //QTestApiModel.ParameterPostQueryResponse existedParameters = parametersApi.GetAllParameters((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey));
-            QTestApiModel.ParameterPostQueryResponse existedParameters = null;
+            QTestApi.ParametersApi parametersApi = new QTestApi.ParametersApi(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, connObj.Configuration);
+            QTestApiModel.ParameterPostQueryResponse existedParameters = parametersApi.GetAllParameters((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey));
             List<QTestApiModel.TestRunWithCustomFieldResource> testRunList = testrunApi.GetOf((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), (long)Convert.ToInt32(TS.ID), "test-suite");
             foreach (QTestApiModel.TestRunWithCustomFieldResource testRun in testRunList)
             {
