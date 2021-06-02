@@ -22,6 +22,7 @@ using Ginger.SolutionGeneral;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Ginger.SolutionWindows
 {
@@ -36,24 +37,28 @@ namespace Ginger.SolutionWindows
         public SolutionPage()
         {
             InitializeComponent();
-            
-             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+
+            WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
             Init();
         }
 
         private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(WorkSpace.Solution))
+            if (e.PropertyName == nameof(WorkSpace.Solution))
             {
                 Init();
             }
         }
 
-        private void Init()
+        private void Init(Solution solution = null)
         {
-            if ( WorkSpace.Instance.Solution != null)
+            if (WorkSpace.Instance.Solution != null)
             {
-                mSolution =  WorkSpace.Instance.Solution;
+                mSolution = WorkSpace.Instance.Solution;
+            }
+            else if (solution != null)
+            {
+                mSolution = solution;
             }
             else
             {
@@ -79,9 +84,12 @@ namespace Ginger.SolutionWindows
         private void ShowPassword_PreviewMouseUp(object sender, MouseButtonEventArgs e) => HidePasswordFunction();
         private void ShowPassword_MouseLeave(object sender, MouseEventArgs e) => HidePasswordFunction();
 
+        private void ValidateKeyMouseDown(object sender, MouseButtonEventArgs e) => ValidateKey();
+
         private void ShowPasswordFunction()
         {
-            ShowPassword.Text = "HIDE";
+            //ShowPassword.Text = "HIDE";
+            ShowPassword.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Invisible;
             EncryptionKeyTextBox.Visibility = Visibility.Visible;
             EncryptionKeyPasswordBox.Visibility = Visibility.Hidden;
             EncryptionKeyTextBox.Text = EncryptionKeyPasswordBox.Password;
@@ -89,7 +97,8 @@ namespace Ginger.SolutionWindows
 
         private void HidePasswordFunction()
         {
-            ShowPassword.Text = "SHOW";
+            //ShowPassword.Text = "SHOW";
+            ShowPassword.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Visible;
             EncryptionKeyTextBox.Visibility = Visibility.Hidden;
             EncryptionKeyPasswordBox.Visibility = Visibility.Visible;
         }
@@ -100,6 +109,8 @@ namespace Ginger.SolutionWindows
             AccountTextBox.IsReadOnly = false;
             EncryptionKeyTextBox.IsReadOnly = true;
             EncryptionKeyPasswordBox.IsEnabled = false;
+            ValidFlag.Visibility = Visibility.Collapsed;
+            InvalidFlag.Visibility = Visibility.Collapsed;
             mSolution.SaveBackup();
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
@@ -126,61 +137,74 @@ namespace Ginger.SolutionWindows
             mSolution.SaveSolution(true, Solution.eSolutionItemToSave.GeneralDetails);
         }
 
-        public bool ShowAsWindow(bool ValidateEncryptionKey, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
+        public bool ShowAsWindow(Solution solution, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
+
+            Init(solution);
+
             SolutionFolderTextBox.IsReadOnly = true;
             SolutionNameTextBox.IsReadOnly = true;
             AccountTextBox.IsReadOnly = true;
             EncryptionKeyTextBox.IsReadOnly = false;
             EncryptionKeyPasswordBox.IsEnabled = true;
-            mSolution.SaveBackup();
+            ValidFlag.Visibility = Visibility.Collapsed;
+            InvalidFlag.Visibility = Visibility.Collapsed;           
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
-            Button ValidateBtn = new Button();
-            ValidateBtn.Content = "Validate";
-            ValidateBtn.Click += new RoutedEventHandler(ValidateBtn_Click);
-            winButtons.Add(ValidateBtn);
+            // Button ValidateBtn = new Button();
+            //ValidateBtn.Content = "Validate";
+            //ValidateBtn.Click += new RoutedEventHandler(ValidateBtn_Click);
+            //winButtons.Add(ValidateBtn);
             Button uSaveKeyBtn = new Button();
-            uSaveKeyBtn.Content = "Save Key";
+            uSaveKeyBtn.Content = "Ok";
             uSaveKeyBtn.Click += new RoutedEventHandler(SaveKeyBtn_Click);
             winButtons.Add(uSaveKeyBtn);
-            Button replaceKeyBtn = new Button();
-            replaceKeyBtn.Content = "Replace Key";
-            replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
-            winButtons.Add(replaceKeyBtn);
+            //Button replaceKeyBtn = new Button();
+            //replaceKeyBtn.Content = "Replace Key";
+            //replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
+            //winButtons.Add(replaceKeyBtn);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons,true, "Close Solution",CloseBtn_Click);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons, true, "Cancel", CloseBtn_Click);
             return IsValidEncryptionKeyAdded;
         }
 
         private void ValidateBtn_Click(object sender, RoutedEventArgs e)
         {
+            ValidateKey();
+        }
+
+        public bool ValidateKey()
+        {
             mSolution.EncryptionKey = EncryptionKeyPasswordBox.Password;
             if (mSolution.ValidateKey())
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage,"Enterred Encryption Key is Valid.");
+            {
+                ValidFlag.Visibility = Visibility.Visible;
+                InvalidFlag.Visibility = Visibility.Collapsed;
+                return true;
+            }
             else
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Enterred Encryption Key is Invalid.");
+            {
+                ValidFlag.Visibility = Visibility.Collapsed;
+                InvalidFlag.Visibility = Visibility.Visible;
+                return false;
+            }
         }
 
         private void ReplaceKeyBtn_Click(object sender, RoutedEventArgs e)
         {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Not implemented yet.");
+            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Not implemented yet.");
         }
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
-            IsValidEncryptionKeyAdded = false;            
+            IsValidEncryptionKeyAdded = false;
         }
 
         private void SaveKeyBtn_Click(object sender, RoutedEventArgs e)
         {
-            mSolution.EncryptionKey = EncryptionKeyPasswordBox.Password;
-            if (!mSolution.ValidateKey())
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Enterred Encryption Key is Invalid.");
-            else
+            if (ValidateKey())
             {
                 mSolution.SaveEncryptionKey();
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Enterred Encryption Key is Saved on Solution.");
                 IsValidEncryptionKeyAdded = true;
                 _pageGenericWin.Close();
             }

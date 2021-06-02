@@ -101,5 +101,13 @@ namespace GingerWPF.WorkSpaceLib
         public void SolutionClosed()
         {
         }
+
+        public bool ValidateEncryptionKey(Solution solution)
+        {
+            SolutionPage solutionPage = new SolutionPage();
+
+            return solutionPage.ShowAsWindow(solution);
+
+        }
     }
 }

@@ -57,7 +57,7 @@ namespace Ginger.SolutionGeneral
             Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
             solution.FilePath = solutionFileName;
             solution.Folder = Path.GetDirectoryName(solutionFileName);
-         //   solution.EncryptionKey = GetEncryptionKey(solution.Guid.ToString());
+            solution.EncryptionKey = GetEncryptionKey(solution.Guid.ToString());            
             if (startDirtyTracking)
             {
                 solution.StartDirtyTracking();

@@ -57,7 +57,8 @@ namespace Ginger.SolutionWindows
 
         private void ShowPasswordFunction()
         {
-            ShowPassword.Text = "HIDE";
+            //ShowPassword.Text = "HIDE";
+            ShowPassword.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Invisible;
             EncryptionKeyTextBox.Visibility = Visibility.Visible;
             EncryptionKeyPasswordBox.Visibility = Visibility.Hidden;
             EncryptionKeyTextBox.Text = EncryptionKeyPasswordBox.Password;
@@ -65,7 +66,8 @@ namespace Ginger.SolutionWindows
 
         private void HidePasswordFunction()
         {
-            ShowPassword.Text = "SHOW";
+            //ShowPassword.Text = "SHOW";
+            ShowPassword.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Visible;
             EncryptionKeyTextBox.Visibility = Visibility.Hidden;
             EncryptionKeyPasswordBox.Visibility = Visibility.Visible;
         }

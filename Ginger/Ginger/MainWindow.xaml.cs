@@ -325,7 +325,6 @@ namespace Ginger
                 if ( WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects.Count > 0)
                 {
                     WorkSpace.Instance.OpenSolution( WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects[0].Folder);
-                    ValidateEncryptionKey();
                     xSolutionTabsListView.SelectedItem = null;
                     xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                 }
@@ -334,24 +333,7 @@ namespace Ginger
             {
                 Reporter.ToUser(eUserMsgKey.SolutionLoadError, ex);
             }
-        }
-
-        private void ValidateEncryptionKey()
-        {
-            if (!WorkSpace.Instance.IsEncryptionKeyValid)
-            {
-                Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Encryption key validation failed or key is missing. Press Ok to enter the key manually.");
-                Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Encryption key validation failed");
-                if (mSolutionPage == null)
-                {
-                    mSolutionPage = new SolutionPage();
-                }
-                if (!mSolutionPage.ShowAsWindow(true))
-                {
-                    WorkSpace.Instance.CloseSolution();
-                }
-            }
-        }
+        }    
         
         public void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -486,7 +468,6 @@ namespace Ginger
                 if (System.IO.File.Exists(PathHelper.GetLongPath(solutionFileName)))
                 {
                     WorkSpace.Instance.OpenSolution(Path.GetDirectoryName(PathHelper.GetLongPath(solutionFolder)));
-                    ValidateEncryptionKey();
                 }
                 else
                 {
@@ -836,7 +817,6 @@ namespace Ginger
             if (selectedSol != null && Directory.Exists(selectedSol.Folder))
             {
                 WorkSpace.Instance.OpenSolution(selectedSol.Folder);
-                ValidateEncryptionKey();
             }
             else
                 Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Selected Solution was not found");

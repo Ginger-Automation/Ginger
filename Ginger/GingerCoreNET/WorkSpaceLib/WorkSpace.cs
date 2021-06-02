@@ -388,7 +388,20 @@ namespace amdocs.ginger.GingerCoreNET
                         IsEncryptionKeyValid = true;
                     }
                 }
+                //Solution = solution;
+                if (!IsEncryptionKeyValid)
+                {
+                    Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Encryption key validation failed or key is missing. Press Ok to enter the key manually.");
+                    Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Encryption key validation failed");
+                    if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
+                    {
+                        if (!WorkSpace.Instance.EventHandler.ValidateEncryptionKey(solution))
+                            return false;
+                    }
+                    else return false;
+                }
 
+                
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Creating Items Repository");
                 SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
                 SolutionRepository.Open(solutionFolder);
