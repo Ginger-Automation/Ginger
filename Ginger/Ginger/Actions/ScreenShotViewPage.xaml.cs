@@ -42,6 +42,18 @@ namespace Ginger.Actions.UserControls
 
         public Action<object, MouseMoveonScrenshot> MouseMoveOnScreenshot { get; set; }
 
+        public Cursor ImageMouseCursor
+        {
+            get
+            {
+                return xMainImage.Cursor;
+            }
+            set
+            {
+                xMainImage.Cursor = value;
+            }
+        }
+
         public ScreenShotViewPage(string Name, BitmapImage bitmapImage)
         {
             InitializeComponent();

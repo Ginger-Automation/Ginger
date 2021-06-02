@@ -46,6 +46,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common.OS;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -73,7 +74,9 @@ namespace amdocs.ginger.GingerCoreNET
             {
                 return Amdocs.Ginger.Common.TargetFrameworkHelper.Helper;
             }
-        }      
+        }
+
+        public eGingerCLIMode GingerCLIMode { get; set; } = eGingerCLIMode.none;
         public static void LockWS()
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Lock Workspace");

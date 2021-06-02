@@ -105,7 +105,7 @@ namespace GingerCore
         private static Regex VBSRegex = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
         private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
 
-        private static Regex rfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((.*)([^\\)}])*\\)}", RegexOptions.Compiled | RegexOptions.Singleline);
+        private static Regex rNestedfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\(([^()])*\\)}", RegexOptions.Compiled);
 
         // Enable setting value simply by assigned string, 
         // so no need to create new VE class everywhere in code
@@ -1058,9 +1058,13 @@ namespace GingerCore
                 matches = VBSRegex.Matches(value);
                 if (matches.Count == 0)
                 {
-                    matches = rfunc.Matches(value);
+                    matches = rNestedfunc.Matches(value);
+
                     if (matches.Count == 0)
+                    {
                         return;
+                    }
+
                 }
             }
 
@@ -1096,8 +1100,9 @@ namespace GingerCore
 
         private void ProcessGeneralFuncations()
         {
-            MatchCollection mc = rfunc.Matches(mValueCalculated);
-            if(mc.Count==0)
+            var mc = rNestedfunc.Matches(mValueCalculated);
+
+            if (mc.Count==0)
             {
                 return;
             }

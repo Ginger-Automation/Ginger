@@ -39,9 +39,12 @@ namespace Ginger.Agents.AddAgentWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = ((AddAgentWizard)WizardEventArgs.Wizard);
+                    mWizard = ((AddAgentWizard)WizardEventArgs.Wizard);        
+                    break;
+
+                case EventType.Active:
                     AgentDriverConfigPage p = new AgentDriverConfigPage(mWizard.Agent);
-                    xDriverConfigFrame.SetContent(p);                    
+                    xDriverConfigFrame.SetContent(p);
                     break;
             }             
         }

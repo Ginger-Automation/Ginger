@@ -595,7 +595,25 @@ namespace Ginger
 
         void UpdateElementActionTab()
         {
-            if (!SelectedElementChanged || SelectedElement == null)
+            if (SelectedElement == null)
+                return;
+
+            if (LocatorChanged)
+            {
+                ElementLocator locator = xLocatorsGrid.CurrentItem as ElementLocator;
+                if (locator != null && xActUIPageFrame.HasContent && (xActUIPageFrame.Content as ControlActionsPage_New).DefaultAction is ActUIElement)
+                {
+                    if (((xActUIPageFrame.Content as ControlActionsPage_New).DefaultAction as ActUIElement).ElementLocateBy != eLocateBy.POMElement)
+                    {
+                        ((xActUIPageFrame.Content as ControlActionsPage_New).DefaultAction as ActUIElement).ElementLocateBy = locator.LocateBy;
+                        ((xActUIPageFrame.Content as ControlActionsPage_New).DefaultAction as ActUIElement).ElementLocateValue = locator.LocateValue;
+                    }
+                }
+
+                LocatorChanged = false;
+            }
+
+            if (!SelectedElementChanged)
             {
                 return;
             }
@@ -828,6 +846,12 @@ namespace Ginger
             {
                 (xActUIPageFrame.Content as ControlActionsPage_New).AddActionClicked(sender, e);
             }
+        }
+
+        bool LocatorChanged = false;
+        private void xLocatorsGrid_RowChangedEvent(object sender, EventArgs e)
+        {
+            LocatorChanged = true;
         }
     }
 }

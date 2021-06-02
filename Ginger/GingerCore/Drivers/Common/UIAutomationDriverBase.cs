@@ -42,6 +42,7 @@ namespace GingerCore.Drivers.Common
         }
 
         public UIAutomationHelperBase mUIAutomationHelper;
+        public UIElementOperationsHelper mUIElementOperationsHelper;
 
         Boolean retryForCOMExceptionDoneFlag = false;
 
