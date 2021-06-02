@@ -70,9 +70,8 @@ namespace Ginger.ALM.Qtest
         {
             TreeViewItem item = (TreeViewItem)sender;
             ITreeViewItem iv = (ITreeViewItem)item.Tag;
-            QtestModuleTreeItem QCTVI = (QtestModuleTreeItem)iv;
+            mCurrentSelectedTreeItem = (QtestModuleTreeItem)iv;
             mCurrentSelectedObject = mCurrentSelectedTreeItem;
-            SelectedPath = QCTVI.Path;
         }
 
         public object ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
