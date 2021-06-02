@@ -382,15 +382,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             WorkSpace.Instance.UserProfile.SourceControlIgnoreCertificate = runOptions.ignoreCertificate;
             WorkSpace.Instance.UserProfile.SourceControlUseShellClient = runOptions.useScmShell;
 
+
+            WorkSpace.Instance.UserProfile.EncryptedSourceControlPass = runOptions.Pass;
+            WorkSpace.Instance.UserProfile.SourceControlPass = runOptions.Pass;
             if (runOptions.PasswordEncrypted)
             {
-                WorkSpace.Instance.UserProfile.EncryptedSourceControlPass = runOptions.Pass;
+                mCLIHandler.LoadGeneralConfigurations("", mCLIHelper);
 
             }
-            else
-            {
-                WorkSpace.Instance.UserProfile.SourceControlPass = runOptions.Pass;
-            }
+     
 
 
 

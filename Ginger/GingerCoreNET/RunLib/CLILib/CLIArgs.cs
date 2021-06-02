@@ -61,8 +61,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
                 options.URL = solution.SourceControl.SourceControlURL;
                 options.User = solution.SourceControl.SourceControlUser;
-                bool encrypted = false;
-                options.Pass = EncryptionHandler.EncryptString(solution.SourceControl.SourceControlPass,ref encrypted);
+              
+                options.Pass = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
 
                 options.PasswordEncrypted = true;
                 options.SCMType = solution.SourceControl.GetSourceControlType;
@@ -102,6 +102,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void LoadGeneralConfigurations(string content, CLIHelper cliHelper)
         {
+  
+            cliHelper.SetSourceControlPassword(cliHelper.sourceControlPass);
+            cliHelper.PasswordEncrypted(cliHelper.sourceControlPassEncrypted.ToString());
+
 
         }
 
