@@ -151,25 +151,28 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             {
                 //get the BF matching test set
                 List<BaseResponseItem> exportedPhase = zephyrEntRepository.GetPhaseById(Convert.ToInt32(bizFlow.ExternalID2));
+                JArray categories = (JArray)exportedPhase.FirstOrDefault().TryGetItem("categories");
+                BaseResponseItem currentPhase = null;
                 BaseResponseItem item = exportedPhase.FirstOrDefault(md => md.id.ToString().Equals(bizFlow.ExternalID));
-                if (item == null)
-                {
-                    BaseResponseItem firstItem = exportedPhase.FirstOrDefault();
-                    foreach (var category in (JArray)firstItem.TryGetItem("categories"))
-                    {
-                        BaseResponseItem treeNode = category.ToObject<BaseResponseItem>();
-                        if(treeNode.id.ToString().Equals(bizFlow.ExternalID))
-                        {
-                            item = treeNode;
-                            break;
-                        }
-                    }
-                }
-                if (item != null)
+                JObject selectedPhase = findPhaseToExportDetails((JObject)categories.First, bizFlow.ExternalID);
+                //if (item == null)
+                //{
+                //    BaseResponseItem firstItem = exportedPhase.FirstOrDefault();
+                //    foreach (var category in (JArray)firstItem.TryGetItem("categories"))
+                //    {
+                //        BaseResponseItem treeNode = category.ToObject<BaseResponseItem>();
+                //        if(treeNode.id.ToString().Equals(bizFlow.ExternalID))
+                //        {
+                //            item = treeNode;
+                //            break;
+                //        }
+                //    }
+                //}
+                if (selectedPhase != null)
                 {
                     long scheduleId = 0;
                     //get the Test set TC's
-                    List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(item.id));
+                    List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(selectedPhase["parentId"]));
                     //get phase execution list
                     List<Execution> executions = zephyrEntRepository.GetExecutionsByPhaseId(Convert.ToInt64(bizFlow.ExternalID2));
                     //get all BF Activities groups
@@ -277,6 +280,23 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             }
 
             return false; // Remove it at the end
+        }
+
+        private JObject findPhaseToExportDetails(JObject exportedCategories, string id)
+        {
+            if(exportedCategories.GetValue("id").ToString().Equals(id))
+            {
+                return exportedCategories;
+            }
+            if(exportedCategories.GetValue("categories").Count() > 0)
+            {
+                return findPhaseToExportDetails((JObject)exportedCategories.GetValue("categories").First, id);
+            }
+            if (exportedCategories.Next != null)
+            {
+                return findPhaseToExportDetails((JObject)exportedCategories.Next, id);
+            }
+            return null;
         }
 
         private List<TestStepResource> CreateTestSteps(ObservableList<ActivityIdentifiers> testStepsList, long tcVersionId, long tcId)
