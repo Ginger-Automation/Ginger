@@ -474,5 +474,92 @@ namespace GingerCore.Drivers.Common
             }                
             return relxpath;
         }
+
+
+        internal string CreateRelativeXpathWithTagNameAndAttributes(HTMLElementInfo hTMLElement)
+        {
+            var relXpath = string.Empty;
+
+            try
+            {
+                //creating relative xpath with multiple attribute and tagname
+                if (hTMLElement.Properties.Count > 1)
+                {
+                    var elementAttributes = string.Empty;
+
+                    var fieldInfos = typeof(ElementProperty).GetFields();
+                    List<string> propNames = new List<string>();
+
+                    foreach (var fieldInfo in fieldInfos)
+                    {
+                        propNames.Add(fieldInfo.GetValue(null).ToString());
+                    }
+                    foreach (var prop in hTMLElement.Properties)
+                    {
+                        if (!propNames.Contains(prop.Name) && !prop.Name.ToLower().Equals("id") && !prop.Name.ToLower().Equals("name"))
+                        {
+                            elementAttributes += string.Concat("@", prop.Name, "=", "\'", prop.Value, "\'", " ", "and", " ");
+                        }
+                    }
+
+                    elementAttributes = elementAttributes.Remove(elementAttributes.Length - 5, 5);
+                    relXpath = string.Concat("//", hTMLElement.HTMLElementObject.Name.ToString(), "[", elementAttributes, "]");
+                }
+            }
+            catch (Exception  ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error  occured when creating  relative xapth with attributes values", ex);
+            }
+                
+            return relXpath;
+            
+        }
+
+        internal string CreateRelativeXpathWithTextMatch(HTMLElementInfo hTMLElementInfo,bool isExactMatch=true)
+        {
+            var relXpath = string.Empty;
+
+            var innerText = hTMLElementInfo.Properties.Where(x => x.Value == ElementProperty.InnerText).FirstOrDefault();
+
+            if (innerText != null)
+            {
+                if (isExactMatch)
+                {
+                    relXpath = string.Concat("//*[text()=", "\'", innerText.Value, "\'", "]");
+                }
+                else
+                {
+                    relXpath = string.Concat("//*[contains(text(),", "\'", innerText.Value, "\'", ")]");
+                }
+            }
+
+            return relXpath;
+        }
+
+        //creating xpath with previous sibling for ex: //*[text()="Name"]//following::input
+        internal string CreateRelativeXpathWithSibling(HTMLElementInfo hTMLElementInfo)
+        {
+            var relXpath = string.Empty;
+
+            var previousSibling = hTMLElementInfo.HTMLElementObject.PreviousSibling;
+
+            //looking for text till two level up
+            if (hTMLElementInfo.HTMLElementObject.Name == "input" && previousSibling== null)
+            {
+                previousSibling = hTMLElementInfo.HTMLElementObject.ParentNode;
+
+                if (string.IsNullOrEmpty(previousSibling.InnerText))
+                {
+                    previousSibling = previousSibling.PreviousSibling;
+                }
+            }
+            if (previousSibling != null && !string.IsNullOrEmpty(previousSibling.InnerText) && previousSibling.ChildNodes.Count ==1)
+            {
+                relXpath = string.Concat("//*[text()=\'",previousSibling.InnerText, "\']//following::",hTMLElementInfo.HTMLElementObject.Name);
+            }
+            
+
+            return relXpath;
+        }
     }
 }

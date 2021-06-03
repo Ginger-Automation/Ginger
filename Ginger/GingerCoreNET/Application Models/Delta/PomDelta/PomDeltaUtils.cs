@@ -207,7 +207,7 @@ namespace GingerCoreNET.Application_Models
                 DeltaElementLocator deltaLocator = new DeltaElementLocator();
                 latestLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
                 deltaLocator.ElementLocator = latestLocator;
-                ElementLocator matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy).FirstOrDefault();
+                ElementLocator matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy && x.LocateValue == latestLocator.LocateValue).FirstOrDefault();
                 if (matchingExistingLocator != null)
                 {
                     latestLocator.Guid = matchingExistingLocator.Guid;
