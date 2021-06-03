@@ -4175,8 +4175,12 @@ namespace GingerCore.Drivers
                     }
                 }
 
-                string text = ((IWebElement)EI.ElementObject).Text;
+                string text = "";
 
+                if (EI.ElementObject != null)
+                {
+                    text = ((IWebElement)EI.ElementObject).Text;
+                }
 
                 if (text.Count() > 15)
                 {
@@ -7189,37 +7193,12 @@ namespace GingerCore.Drivers
 
         public HtmlDocument SSPageDoc = null;
 
-        public HtmlDocument GetPageHTML()
-        {
-            SSPageDoc = new HtmlDocument();
-            SSPageDoc.LoadHtml(Driver.PageSource);
-
-            return SSPageDoc;
-        }
-
         public Bitmap GetScreenShot()
         {
             try
             {
                 Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
 
-                SSPageDoc = new HtmlDocument();
-                SSPageDoc.LoadHtml(Driver.PageSource);
-
-                //SSPageDocXML = new XmlDocument();
-                //SSPageDocXML.LoadXml(Driver.PageSource);
-
-                //using (var ms = new MemoryStream(ss.AsByteArray))
-                //{
-                //    using (MemoryStream outStream = new MemoryStream())
-                //    {
-                //        BitmapEncoder enc = new BmpBitmapEncoder();
-                //        enc.Frames.Add(BitmapFrame.Create(ms));
-                //        enc.Save(outStream);
-                //        Bitmap bitmap = new Bitmap(outStream);
-                //        return new Bitmap(bitmap);
-                //    }
-                //}
                 TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));
                 return (Bitmap)tc.ConvertFrom(ss.AsByteArray);
             }
@@ -7241,7 +7220,6 @@ namespace GingerCore.Drivers
             {
                 string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
 
-                //RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
                 RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
 
                 if (ele == null)
@@ -7250,21 +7228,27 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-                    if(SSPageDoc == null)
+                    HtmlNode elemNode = null;
+                    string elemId;
+                    try
                     {
-                        SSPageDoc = new HtmlDocument();
-                        SSPageDoc.LoadHtml(Driver.PageSource);
+                        elemId = ele.GetProperty("id");
+                        elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id.Equals(elemId)).FirstOrDefault();
+                    }
+                    catch (Exception exc)
+                    {
+                        elemId = "";
                     }
 
-                    HtmlNode elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id == ele.GetProperty("id")).FirstOrDefault();
 
                     elemInfo = new HTMLElementInfo();
+
                     var elemTypeEnum = GetElementTypeEnum(ele);
                     elemInfo.ElementType = elemTypeEnum.Item1;
                     elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
                     elemInfo.ElementObject = ele;
                     elemInfo.Path = iframeXPath;
-                    elemInfo.XPath = await GenerateXpathForIWebElementAsync(ele, string.Empty);
+                    elemInfo.XPath = string.IsNullOrEmpty(elemId) ? await GenerateXpathForIWebElementAsync(ele, string.Empty) : elemNode.XPath;
                     elemInfo.HTMLElementObject = elemNode;
 
                     ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
@@ -8103,6 +8087,20 @@ namespace GingerCore.Drivers
         public string SelectionWindowText()
         {
             return "Page:";
+        }
+
+        async Task<object> IWindowExplorer.GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            if (ReloadHtmlDoc)
+                SSPageDoc = null;
+
+            if (SSPageDoc == null)
+            {
+                SSPageDoc = new HtmlDocument();
+                await Task.Run(() => SSPageDoc.LoadHtml(Driver.PageSource));
+            }
+
+            return SSPageDoc;
         }
     }
 }

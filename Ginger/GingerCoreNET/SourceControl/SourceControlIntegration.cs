@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Core;
+using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -348,11 +349,31 @@ namespace Ginger.SourceControl
                 SourceControlBase mSourceControl;
                 if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
-                    mSourceControl = new GITSourceControl();
+
+                    if (WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.SourceControlUseShellClient)
+                    {
+                        mSourceControl = new GitSourceControlShellWrapper();
+                    }
+                    else
+                    {
+                        mSourceControl = new GITSourceControl();
+                    }
+
+
+                    
                 }
                 else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 {
-                    mSourceControl = TargetFrameworkHelper.Helper.GetNewSVnRepo();
+
+                    if (WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.SourceControlUseShellClient)
+                    {
+                        mSourceControl = new SVNSourceControlShellWrapper();
+                    }
+                    else
+                    {
+                        mSourceControl = TargetFrameworkHelper.Helper.GetNewSVnRepo();
+                    }
+                
                 }
                 else
                 {
@@ -414,8 +435,23 @@ namespace Ginger.SourceControl
                 string ProjectURI = string.Empty;
                 if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 {
-                    ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
-                    sol.SourceControlLocation : WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
+
+                    if(WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        ProjectURI = sol.SourceControlLocation;
+                    }
+                    else
+                    {
+                        if(WorkSpace.Instance.GingerCLIMode==Amdocs.Ginger.CoreNET.RunLib.CLILib.eGingerCLIMode.run)
+                        {
+                            ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
+                        }
+                        else
+                        {
+                            ProjectURI= WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
+                        }
+                    }
+                   
                 }
                 else
                 {

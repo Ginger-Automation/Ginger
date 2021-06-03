@@ -205,8 +205,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xSpyingButton.ButtonImageType = eImageType.Spy;
                 xSpyingButton.IsEnabled = true;
 
-                ControlDetailsRow.Height = new GridLength(0);
-
                 xStatusTextBlock.Visibility = Visibility.Collapsed;
 
                 xStopSpyingBtn.Visibility = Visibility.Collapsed;
@@ -240,14 +238,18 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xStatusTextBlock.Text = "Element been identified, please wait...";
                     xStatusTextBlock.Foreground = (Brush)FindResource("$RunningStatusColor");
                     GingerCore.General.DoEvents();
-                    mSpyElement = xWindowSelectionUC.mWindowExplorerDriver.GetControlFromMousePosition();
+                    mSpyElement = mWindowExplorerDriver.GetControlFromMousePosition();
+
                     if (mSpyElement != null)
                     {
+                        mWindowExplorerDriver.UnHighLightElements();
+                        mSpyElement.WindowExplorer = mWindowExplorerDriver;
                         xWindowSelectionUC.mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
                         xStatusTextBlock.Text = "Element was identified, see details below.";//string.Format("The element '{0}' was identified", mSpyElement.ElementName);                    
                         xStatusTextBlock.Foreground = (Brush)FindResource("$PassedStatusColor");
                         GingerCore.General.DoEvents();
                         mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);
+                        mWindowExplorerDriver.HighLightElement(mSpyElement);
                         xUCElementDetails.SelectedElement = mSpyElement;
                     }
                     else

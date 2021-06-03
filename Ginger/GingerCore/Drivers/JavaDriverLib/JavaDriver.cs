@@ -2468,7 +2468,12 @@ namespace GingerCore.Drivers.JavaDriverLib
                     if (valueList.Count != 0)
                         PValue = valueList.ElementAt(0);
                 }
-                list.Add(new ControlProperty() { Name = PName, Value = PValue });
+
+                if (!string.IsNullOrEmpty(PValue))
+                {
+                    list.Add(new ControlProperty() { Name = PName, Value = PValue });
+                }
+
             }
             //TODO:J.G: Fix it for JEDITOR Elements
 
@@ -3981,7 +3986,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         public List<eTabView> SupportedViews()
         {
-            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.TreeView };
+            return new List<eTabView>() { eTabView.GridView, eTabView.TreeView };
         }
 
         public eTabView DefaultView()
@@ -3992,6 +3997,11 @@ namespace GingerCore.Drivers.JavaDriverLib
         public string SelectionWindowText()
         {
             return "Window:";
+        }
+
+        public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
         }
     }
 }

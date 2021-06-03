@@ -772,7 +772,6 @@ namespace GingerCore.Drivers.MainFrame
 
         public void UnHighLightElements()
         {
-            throw new NotImplementedException();
         }
 
 
@@ -818,7 +817,7 @@ namespace GingerCore.Drivers.MainFrame
 
         public bool IsLiveSpySupported()
         {
-            return true;
+            return false;
         }
 
         public bool IsWinowSelectionRequired()
@@ -839,6 +838,11 @@ namespace GingerCore.Drivers.MainFrame
         public string SelectionWindowText()
         {
             return "Window:";
+        }
+
+        public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
         }
     }
 }
