@@ -3174,7 +3174,11 @@ namespace GingerCore.Drivers
                         }
                         elem = LocateElementByLocators(currentPOMElementInfo.Locators);
                         currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
-                        pomExcutionUtil.PriotizeLocatorPosition();
+                       
+                        if(pomExcutionUtil.PriotizeLocatorPosition())
+                        {
+                            act.ExInfo += "Locator prioritized during self healing operation";
+                        }
                     }
 
                 }
@@ -3919,7 +3923,7 @@ namespace GingerCore.Drivers
             if (!string.IsNullOrEmpty(innerText))
             {
                 //relative xpath with Innertext Exact Match
-                var relXpathwithExactTextMatch = mXPathHelper.CreateRelativeXpathWithTextMatch(innerText, true);
+                var relXpathwithExactTextMatch = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, true);
                 if (!string.IsNullOrEmpty(relXpathwithExactTextMatch))
                 {
                     var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithExactTextMatch, IsAutoLearned = true };
@@ -3927,7 +3931,7 @@ namespace GingerCore.Drivers
                 }
                
                 //relative xpath with Contains Innertext
-                var relXpathwithContainsText = mXPathHelper.CreateRelativeXpathWithTextMatch(innerText, false);
+                var relXpathwithContainsText = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, false);
                 if (!string.IsNullOrEmpty(relXpathwithContainsText))
                 {
                     var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithContainsText, IsAutoLearned = true };

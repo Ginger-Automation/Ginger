@@ -514,17 +514,29 @@ namespace GingerCore.Drivers.Common
             
         }
 
-        internal string CreateRelativeXpathWithTextMatch(string innerText,bool isExactMatch=true)
+        internal string CreateRelativeXpathWithTextMatch(HTMLElementInfo hTMLElementInfo,bool isExactMatch=true)
         {
             var relXpath = string.Empty;
+            var htmlNode = hTMLElementInfo.HTMLElementObject;
+
+            var tagName = "*";
+           
+            if (htmlNode.Name.ToLower().Equals(eElementType.Label.ToString().ToLower()))
+            {
+                tagName = htmlNode.Name;
+            }
+            else if (htmlNode.Name.ToLower().Equals(eElementType.Div.ToString().ToLower()) && !isExactMatch)
+            {
+                tagName = htmlNode.Name;
+            }
             
             if (isExactMatch)
             {
-                relXpath = string.Concat("//*[text()=", "\'", innerText, "\'", "]");
+                relXpath = string.Concat("//", tagName, "[text()=", "\'", htmlNode.InnerText, "\'", "]");
             }
             else
             {
-                relXpath = string.Concat("//*[contains(text(),", "\'", innerText, "\'", ")]");
+                relXpath = string.Concat("//", tagName, "[contains(text(),", "\'", htmlNode.InnerText, "\'", ")]");
             }
 
             return relXpath;
