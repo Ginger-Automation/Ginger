@@ -3915,23 +3915,26 @@ namespace GingerCore.Drivers
             }
 
 
-            //relative xpath with Innertext Exact Match
-            var relXpathwithExactTextMatch = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo);
-            if (!string.IsNullOrEmpty(relXpathwithExactTextMatch))
+            var innerText = foundElemntInfo.HTMLElementObject.InnerText;
+            if (!string.IsNullOrEmpty(innerText))
             {
-                var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithExactTextMatch, IsAutoLearned = true };
-                foundElemntInfo.Locators.Add(elementLocator);
+                //relative xpath with Innertext Exact Match
+                var relXpathwithExactTextMatch = mXPathHelper.CreateRelativeXpathWithTextMatch(innerText, true);
+                if (!string.IsNullOrEmpty(relXpathwithExactTextMatch))
+                {
+                    var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithExactTextMatch, IsAutoLearned = true };
+                    foundElemntInfo.Locators.Add(elementLocator);
+                }
+               
+                //relative xpath with Contains Innertext
+                var relXpathwithContainsText = mXPathHelper.CreateRelativeXpathWithTextMatch(innerText, false);
+                if (!string.IsNullOrEmpty(relXpathwithContainsText))
+                {
+                    var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithContainsText, IsAutoLearned = true };
+                    foundElemntInfo.Locators.Add(elementLocator);
+                }
             }
-
-
-            //relative xpath with Contains Innertext
-            var relXpathwithContainsText = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, false);
-            if (!string.IsNullOrEmpty(relXpathwithContainsText))
-            {
-                var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithContainsText, IsAutoLearned = true };
-                foundElemntInfo.Locators.Add(elementLocator);
-            }
-
+            
             //relative xpath with Sibling Text
             var relXpathwithSiblingText = mXPathHelper.CreateRelativeXpathWithSibling(foundElemntInfo);
             if (!string.IsNullOrEmpty(relXpathwithSiblingText))

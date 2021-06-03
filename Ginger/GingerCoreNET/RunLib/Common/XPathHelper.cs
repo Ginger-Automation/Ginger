@@ -485,8 +485,7 @@ namespace GingerCore.Drivers.Common
                 //creating relative xpath with multiple attribute and tagname
                 if (hTMLElement.Properties.Count > 1)
                 {
-                    var elementAttributes = string.Empty;
-
+                    System.Text.StringBuilder elementAttributes = new System.Text.StringBuilder();
                     var fieldInfos = typeof(ElementProperty).GetFields();
                     List<string> propNames = new List<string>();
 
@@ -498,7 +497,7 @@ namespace GingerCore.Drivers.Common
                     {
                         if (!propNames.Contains(prop.Name) && !prop.Name.ToLower().Equals("id") && !prop.Name.ToLower().Equals("name"))
                         {
-                            elementAttributes += string.Concat("@", prop.Name, "=", "\'", prop.Value, "\'", " ", "and", " ");
+                            elementAttributes.Append(string.Concat("@", prop.Name, "=", "\'", prop.Value, "\'", " ", "and", " "));
                         }
                     }
 
@@ -515,22 +514,17 @@ namespace GingerCore.Drivers.Common
             
         }
 
-        internal string CreateRelativeXpathWithTextMatch(HTMLElementInfo hTMLElementInfo,bool isExactMatch=true)
+        internal string CreateRelativeXpathWithTextMatch(string innerText,bool isExactMatch=true)
         {
             var relXpath = string.Empty;
-
-            var innerText = hTMLElementInfo.Properties.Where(x => x.Value == ElementProperty.InnerText).FirstOrDefault();
-
-            if (innerText != null)
+            
+            if (isExactMatch)
             {
-                if (isExactMatch)
-                {
-                    relXpath = string.Concat("//*[text()=", "\'", innerText.Value, "\'", "]");
-                }
-                else
-                {
-                    relXpath = string.Concat("//*[contains(text(),", "\'", innerText.Value, "\'", ")]");
-                }
+                relXpath = string.Concat("//*[text()=", "\'", innerText, "\'", "]");
+            }
+            else
+            {
+                relXpath = string.Concat("//*[contains(text(),", "\'", innerText, "\'", ")]");
             }
 
             return relXpath;
