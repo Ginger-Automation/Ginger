@@ -495,7 +495,7 @@ namespace GingerCore.Drivers.Common
                     }
                     foreach (var prop in hTMLElement.Properties)
                     {
-                        if (!propNames.Contains(prop.Name) && !prop.Name.ToLower().Equals("id") && !prop.Name.ToLower().Equals("name"))
+                        if (!propNames.Contains(prop.Name) && !prop.Name.ToLower().Equals("value") && !prop.Name.ToLower().Equals("id") && !prop.Name.ToLower().Equals("name"))
                         {
                             elementAttributes.Append(string.Concat("@", prop.Name, "=", "\'", prop.Value, "\'", " ", "and", " "));
                         }
@@ -518,6 +518,13 @@ namespace GingerCore.Drivers.Common
         {
             var relXpath = string.Empty;
             var htmlNode = hTMLElementInfo.HTMLElementObject;
+
+            // checking svg element
+            var isParentContainsSVG = htmlNode.InnerHtml.Contains("<svg");
+            if(isParentContainsSVG)
+            {
+                return relXpath;
+            }
 
             var tagName = "*";
            

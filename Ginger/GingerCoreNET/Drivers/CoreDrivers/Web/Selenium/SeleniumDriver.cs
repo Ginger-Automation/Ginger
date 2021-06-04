@@ -3912,7 +3912,7 @@ namespace GingerCore.Drivers
         {
             //relative xpath with multiple attribute and tagname
             var relxPathWithMultipleAtrrs = mXPathHelper.CreateRelativeXpathWithTagNameAndAttributes(foundElemntInfo);
-            if (!string.IsNullOrEmpty(relxPathWithMultipleAtrrs))
+            if (!string.IsNullOrEmpty(relxPathWithMultipleAtrrs) && CheckElementLocateStatus(relxPathWithMultipleAtrrs))
             {
                 var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relxPathWithMultipleAtrrs, IsAutoLearned = true };
                 foundElemntInfo.Locators.Add(elementLocator);
@@ -3924,7 +3924,7 @@ namespace GingerCore.Drivers
             {
                 //relative xpath with Innertext Exact Match
                 var relXpathwithExactTextMatch = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, true);
-                if (!string.IsNullOrEmpty(relXpathwithExactTextMatch))
+                if (!string.IsNullOrEmpty(relXpathwithExactTextMatch) && CheckElementLocateStatus(relXpathwithExactTextMatch))
                 {
                     var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithExactTextMatch, IsAutoLearned = true };
                     foundElemntInfo.Locators.Add(elementLocator);
@@ -3932,7 +3932,7 @@ namespace GingerCore.Drivers
                
                 //relative xpath with Contains Innertext
                 var relXpathwithContainsText = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, false);
-                if (!string.IsNullOrEmpty(relXpathwithContainsText))
+                if (!string.IsNullOrEmpty(relXpathwithContainsText) && CheckElementLocateStatus(relXpathwithContainsText))
                 {
                     var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithContainsText, IsAutoLearned = true };
                     foundElemntInfo.Locators.Add(elementLocator);
@@ -3941,12 +3941,23 @@ namespace GingerCore.Drivers
             
             //relative xpath with Sibling Text
             var relXpathwithSiblingText = mXPathHelper.CreateRelativeXpathWithSibling(foundElemntInfo);
-            if (!string.IsNullOrEmpty(relXpathwithSiblingText))
+            if (!string.IsNullOrEmpty(relXpathwithSiblingText) && CheckElementLocateStatus(relXpathwithSiblingText))
             {
                 var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithSiblingText, IsAutoLearned = true };
                 foundElemntInfo.Locators.Add(elementLocator);
             }
 
+        }
+
+        private bool CheckElementLocateStatus(string relXPath)
+        {
+            IWebElement webElement = Driver.FindElement(By.XPath(relXPath));
+            if (webElement != null)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public static Tuple<string, eElementType> GetElementTypeEnum(IWebElement el = null, string jsType = null, HtmlNode htmlNode = null)
