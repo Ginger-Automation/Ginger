@@ -536,6 +536,11 @@ namespace GingerCore.Drivers.Common
             {
                 tagName = htmlNode.Name;
             }
+            else if (htmlNode.ParentNode != null)
+            {
+                tagName = string.Concat(htmlNode.ParentNode.Name, "//", "*");
+            }
+
             
             if (isExactMatch)
             {
