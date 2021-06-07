@@ -772,7 +772,6 @@ namespace GingerCore.Drivers.MainFrame
 
         public void UnHighLightElements()
         {
-            throw new NotImplementedException();
         }
 
 

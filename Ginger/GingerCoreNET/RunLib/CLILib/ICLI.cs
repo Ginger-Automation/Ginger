@@ -60,4 +60,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         bool IsFileBasedConfig { get; }
     }
+
+
+    /// <summary>
+    /// in which mode CLI processor was used
+    /// </summary>
+    public enum eGingerCLIMode
+    {
+        none, run, grid, config, script, dynamic
+    }
 }

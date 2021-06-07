@@ -405,9 +405,10 @@ namespace Amdocs.Ginger.Common.GeneralLib
         {
             try
             {
-                EnumValueDescriptionAttribute[] attributes = (EnumValueDescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false);
+                EnumValueDescriptionAttribute[] attributes = EnumType.GetField(EnumValue.ToString()) != null ? 
+                    (EnumValueDescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false) : null;
                 string s;
-                if (attributes.Length > 0)
+                if (attributes != null && attributes.Length > 0)
                 {
                     s = attributes[0].ValueDescription;
                     //for supporting multi Terminology types
