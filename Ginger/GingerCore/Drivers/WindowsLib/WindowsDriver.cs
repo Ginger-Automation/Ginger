@@ -1448,34 +1448,22 @@ namespace GingerCore.Drivers.WindowsLib
         {
             ObservableList<OptionalValue> optionalValues = new ObservableList<OptionalValue>();
             AutomationElement automationElement = (AutomationElement)ElementInfo.ElementObject;
-            
-            //object expandPattern;
-            //automationElement.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out expandPattern);
-            //if (expandPattern != null)
-            //{
-            //    ((ExpandCollapsePattern)expandPattern).Expand();
-            //    //actionResult.executionInfo = "Successfully expanded the element";
-            //}
 
-            //AutomationElementCollection cbitemList = automationElement.FindAll(TreeScope.Children,
-            //    new PropertyCondition(AutomationElement.LocalizedControlTypeProperty, "list item"));
+            //get child elements expand if combobox
+            object expandPattern;
+            automationElement.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out expandPattern);
+            if (expandPattern != null)
+            {
+                ((ExpandCollapsePattern)expandPattern).Expand();
+            }
 
-            //List<ComboBoxElementItem> ComboValues = (List<ComboBoxElementItem>)mUIAutomationHelper.GetElementData(automationElement);
-            //if (ComboValues != null)
-            //{
-            //    foreach (ComboBoxElementItem cb in ComboValues)
-            //    {
-            //        optionalValues.Add(new OptionalValue { Value = cb.Text, IsDefault = false });
-            //    }
-            //}
-
-            AutomationElementCollection itemList = automationElement.FindAll(TreeScope.Descendants, 
+            AutomationElementCollection itemList = automationElement.FindAll(TreeScope.Descendants,
                 new PropertyCondition(AutomationElement.LocalizedControlTypeProperty, "list item"));
             foreach (AutomationElement ae in itemList)
             {
                 optionalValues.Add(new OptionalValue { Value = ae.Current.Name, IsDefault = false });
             }
-
+            
             return optionalValues;
         }
         public bool CanStartAnotherInstance(out string errorMessage)
