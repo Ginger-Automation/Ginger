@@ -5841,12 +5841,17 @@ namespace GingerCore.Drivers
 
         public Bitmap WindowToBitmap(AutomationElement tempWindow)
         {
-            WinAPIAutomation.ShowWindow(CurrentWindow);            
+            //WinAPIAutomation.ShowWindow(CurrentWindow);            
             HandlePaintWindow(CurrentWindow);
             Thread.Sleep(200);
             int width = (int)tempWindow.Current.BoundingRectangle.Width;
             int height= (int)tempWindow.Current.BoundingRectangle.Height;
-
+            if (width == 0 || height == 0)
+            {
+                WinAPIAutomation.ShowWindow(CurrentWindow);
+                width = (int)tempWindow.Current.BoundingRectangle.Width;
+                height = (int)tempWindow.Current.BoundingRectangle.Height;
+            }
             Bitmap bmp = new Bitmap(width, height);
             
             Graphics memoryGraphics = Graphics.FromImage(bmp);

@@ -930,8 +930,7 @@ namespace GingerCore.Drivers.WindowsLib
             {
                 foundElementsList = new ObservableList<ElementInfo>();
             }
-            List<ElementInfo> elementInfoList = mUIAutomationHelper.GetVisibleControls().Result;
-
+            List<ElementInfo> elementInfoList = await mUIAutomationHelper.GetVisibleControls();
             foreach (UIAElementInfo foundElemntInfo in elementInfoList)
             {
                 ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
@@ -940,7 +939,9 @@ namespace GingerCore.Drivers.WindowsLib
                 if (filteredElementType != null)
                 {
                     if (!filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                    {
                         learnElement = false;
+                    }
                 }
                 if (learnElement)
                 {
@@ -948,7 +949,7 @@ namespace GingerCore.Drivers.WindowsLib
                     foundElementsList.Add(foundElemntInfo);
                 }
             }
-
+            
             elementInfoList = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
             return elementInfoList;
         }
@@ -1289,7 +1290,7 @@ namespace GingerCore.Drivers.WindowsLib
                     el.LocateStatus = ElementLocator.eLocateStatus.Pending;
                 }
 
-                List<ElementLocator> activesElementLocators = EI.Locators.Where(x => x.Active == true).ToList();
+                List<ElementLocator> activesElementLocators = EI.Locators.Where(x => x.Active).ToList();
                 foreach (ElementLocator elementLocator in activesElementLocators)
                 {
                     AutomationElement windowElement = null;
@@ -1392,7 +1393,7 @@ namespace GingerCore.Drivers.WindowsLib
                     try
                     {
                         AutomationElement elem;
-                        foreach (ElementLocator locator in EI.Locators.Where(x => x.Active == true).ToList())
+                        foreach (ElementLocator locator in EI.Locators.Where(x => x.Active).ToList())
                         {
                             if (!locator.IsAutoLearned)
                             {
@@ -1415,7 +1416,7 @@ namespace GingerCore.Drivers.WindowsLib
                     catch (Exception ex)
                     {
                         EI.ElementStatus = ElementInfo.eElementStatus.Failed;
-                        Console.WriteLine("CollectOriginalElementsDataForDeltaCheck error: " + ex.Message);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
                 }
             }
