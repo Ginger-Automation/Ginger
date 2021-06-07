@@ -412,6 +412,7 @@
     <Compile Include="Drivers\MainFrame\MainFrameUIHelper.cs" />
     <Compile Include="Drivers\MainFrame\Terminal.cs" />
     <Compile Include="Drivers\PBDriver\HTMLHelper.cs" />
+    <Compile Include="Drivers\WindowsLib\WindowsElementInfo.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\BindingHandler.cs" />
     <Compile Include="GeneralLib\ComboEnumItem.cs" />

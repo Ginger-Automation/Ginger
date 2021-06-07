@@ -35,6 +35,8 @@ using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Automation;
+using System.Linq;
+using System.Reflection;
 
 namespace GingerCore.Drivers.WindowsLib
 {
@@ -861,7 +863,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         public override string GetURL()
         {
-            return "TBD";
+            return ((IWindowExplorer)this).GetActiveWindow().Title;
         }
         
 
@@ -909,13 +911,46 @@ namespace GingerCore.Drivers.WindowsLib
 
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
+            EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
+            EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
+            if (ElementInfo.IsElementTypeSupportingOptionalValues(EI.ElementTypeEnum))
+            {
+                EI.OptionalValuesObjectsList = ((IWindowExplorer)this).GetOptionalValuesList(EI, eLocateBy.ByXPath, EI.XPath);
+            }
+            if (EI.OptionalValuesObjectsList.Count > 0)
+            {
+                EI.OptionalValuesObjectsList[0].IsDefault = true;
+            }
             return EI;
         }
 
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
-            List<ElementInfo> list = await mUIAutomationHelper.GetVisibleControls();
-            return list;
+            if (foundElementsList == null)
+            {
+                foundElementsList = new ObservableList<ElementInfo>();
+            }
+            List<ElementInfo> elementInfoList = mUIAutomationHelper.GetVisibleControls().Result;
+
+            foreach (UIAElementInfo foundElemntInfo in elementInfoList)
+            {
+                ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
+
+                bool learnElement = true;
+                if (filteredElementType != null)
+                {
+                    if (!filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                        learnElement = false;
+                }
+                if (learnElement)
+                {
+                    foundElemntInfo.IsAutoLearned = true;
+                    foundElementsList.Add(foundElemntInfo);
+                }
+            }
+
+            elementInfoList = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
+            return elementInfoList;
         }
 
         List<ElementInfo> IWindowExplorer.GetElementChildren(ElementInfo ElementInfo)
@@ -962,6 +997,26 @@ namespace GingerCore.Drivers.WindowsLib
         
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
+            if (ElementInfo.ElementObject == null)
+            {
+                foreach (ElementLocator elementLocator in ElementInfo.Locators.ToList())
+                {
+                    try
+                    {
+                        object obj = mUIAutomationHelper.FindElementByLocator(elementLocator.LocateBy, elementLocator.LocateValue);
+                        AutomationElement AE = (AutomationElement)obj;
+                        if (AE != null)
+                        {
+                            ElementInfo.ElementObject = (object)AE;
+                            break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    }
+                }
+            }
             HighLightElement(ElementInfo);           
         }
 
@@ -1226,9 +1281,94 @@ namespace GingerCore.Drivers.WindowsLib
 
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                mIsDriverBusy = true;
+                foreach (ElementLocator el in EI.Locators)
+                {
+                    el.LocateStatus = ElementLocator.eLocateStatus.Pending;
+                }
 
+                List<ElementLocator> activesElementLocators = EI.Locators.Where(x => x.Active == true).ToList();
+                foreach (ElementLocator elementLocator in activesElementLocators)
+                {
+                    AutomationElement windowElement = null;
+                    if (!elementLocator.IsAutoLearned)
+                    {
+                        windowElement = LocateElementIfNotAutoLearned(elementLocator);
+                    }
+                    else
+                    {
+                        windowElement = LocateElementByLocator(elementLocator, true);
+                    }
+                    if (windowElement != null)
+                    {
+                        elementLocator.StatusError = string.Empty;
+                        elementLocator.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                        if (GetOutAfterFoundElement)
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        elementLocator.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                    }
+                }
+
+                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                foreach (ElementLocator el in EI.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Pending).ToList())
+                {
+                    el.LocateStatus = ElementLocator.eLocateStatus.Unknown;
+                }
+                mIsDriverBusy = false;
+            }
+        }
+        private AutomationElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
+        {
+            locator.StatusError = "";
+            locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
+            AutomationElement AE = null;
+            try
+            {
+                object obj = mUIAutomationHelper.FindElementByLocator(locator.LocateBy, locator.LocateValue);
+                AE = (AutomationElement)obj;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when LocateElementByLocator", ex);
+                if (AlwaysReturn)
+                {
+                    AE = null;
+                    locator.StatusError = ex.Message;
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                    return AE;
+                }
+                else
+                    throw;
+            }
+            return AE;
+        }
+        private AutomationElement LocateElementIfNotAutoLearned(ElementLocator locator)
+        {
+            ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
+            ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+            evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
+
+            object obj = mUIAutomationHelper.FindElementByLocator(evaluatedLocator.LocateBy, evaluatedLocator.LocateValue);
+            AutomationElement AE = (AutomationElement)obj;
+            return AE;
+        }
         public override void ActionCompleted(Act act)
         {
             mUIAutomationHelper.taskFinished = true;
@@ -1240,22 +1380,103 @@ namespace GingerCore.Drivers.WindowsLib
 
         public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
         {
-            throw new NotImplementedException();
+            try
+            {
+                mIsDriverBusy = true;
+                foreach (ElementInfo EI in originalList)
+                {
+                    EI.ElementStatus = ElementInfo.eElementStatus.Pending;
+                }
+                foreach (ElementInfo EI in originalList)
+                {
+                    try
+                    {
+                        AutomationElement elem;
+                        foreach (ElementLocator locator in EI.Locators.Where(x => x.Active == true).ToList())
+                        {
+                            if (!locator.IsAutoLearned)
+                            {
+                                elem = LocateElementIfNotAutoLearned(locator);
+                            }
+                            else
+                                elem = LocateElementByLocator(locator);
+
+                            if (elem != null)
+                            {
+                                locator.StatusError = string.Empty;
+                                locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                            }
+                            else
+                            {
+                                locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                        Console.WriteLine("CollectOriginalElementsDataForDeltaCheck error: " + ex.Message);
+                    }
+                }
+            }
+            finally
+            {
+                mIsDriverBusy = false;
+            }
         }
 
         public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
         {
-            throw new NotImplementedException();
+            //try by type and Xpath comparison
+            ElementInfo OriginalElementInfo = originalElements.Where(x => (x.ElementTypeEnum == latestElement.ElementTypeEnum)
+                                                                && (x.XPath == latestElement.XPath)
+                                                                && (x.Path == latestElement.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(latestElement.Path)))
+                                                                && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null
+                                                                    || (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) != null && latestElement.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) != null
+                                                                        && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == latestElement.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
+                                                                        )
+                                                                    )
+                                                                ).FirstOrDefault();
+            return OriginalElementInfo;
         }
 
         public void StartSpying()
         {
-            throw new NotImplementedException();
         }
 
         ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
-            throw new NotImplementedException();
+            ObservableList<OptionalValue> optionalValues = new ObservableList<OptionalValue>();
+            AutomationElement automationElement = (AutomationElement)ElementInfo.ElementObject;
+            
+            //object expandPattern;
+            //automationElement.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out expandPattern);
+            //if (expandPattern != null)
+            //{
+            //    ((ExpandCollapsePattern)expandPattern).Expand();
+            //    //actionResult.executionInfo = "Successfully expanded the element";
+            //}
+
+            //AutomationElementCollection cbitemList = automationElement.FindAll(TreeScope.Children,
+            //    new PropertyCondition(AutomationElement.LocalizedControlTypeProperty, "list item"));
+
+            //List<ComboBoxElementItem> ComboValues = (List<ComboBoxElementItem>)mUIAutomationHelper.GetElementData(automationElement);
+            //if (ComboValues != null)
+            //{
+            //    foreach (ComboBoxElementItem cb in ComboValues)
+            //    {
+            //        optionalValues.Add(new OptionalValue { Value = cb.Text, IsDefault = false });
+            //    }
+            //}
+
+            AutomationElementCollection itemList = automationElement.FindAll(TreeScope.Descendants, 
+                new PropertyCondition(AutomationElement.LocalizedControlTypeProperty, "list item"));
+            foreach (AutomationElement ae in itemList)
+            {
+                optionalValues.Add(new OptionalValue { Value = ae.Current.Name, IsDefault = false });
+            }
+
+            return optionalValues;
         }
         public bool CanStartAnotherInstance(out string errorMessage)
         {
@@ -1296,7 +1517,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         public bool IsPOMSupported()
         {
-            return false;
+            return true;
         }
 
         public bool IsLiveSpySupported()

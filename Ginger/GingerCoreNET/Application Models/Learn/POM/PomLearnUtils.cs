@@ -246,6 +246,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 if (curElement != null)
                 {
                     //remove invalid chars
+                    if (string.IsNullOrEmpty(curElement.ElementName))
+                    {
+                        curElement.ElementName = curElement.ElementTitle;
+                    }
                     string name = curElement.ElementName.Trim().Replace(".", "").Replace("?", "").Replace("\n", "").Replace("\r", "").Replace("#", "").Replace("!", " ").Replace(",", " ").Replace("   ", "");
                     foreach (char chr in Path.GetInvalidFileNameChars())
                     {

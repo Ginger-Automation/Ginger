@@ -771,8 +771,10 @@ namespace GingerCore.Drivers
         public override object FindElementByLocator(eLocateBy locateBy, string locateValue)
         {
             object element = null;
-            loadwaitSeconds = mLoadTimeOut.Value;
-
+            if (mLoadTimeOut != null)
+            {
+                loadwaitSeconds = mLoadTimeOut.Value;
+            }
             int count = 0;
             bool isLoaded = false;
             while (!isLoaded && !taskFinished)
@@ -5839,7 +5841,7 @@ namespace GingerCore.Drivers
 
         public Bitmap WindowToBitmap(AutomationElement tempWindow)
         {
-            //WinAPIAutomation.ShowWindow(CurrentWindow);            
+            WinAPIAutomation.ShowWindow(CurrentWindow);            
             HandlePaintWindow(CurrentWindow);
             Thread.Sleep(200);
             int width = (int)tempWindow.Current.BoundingRectangle.Width;
