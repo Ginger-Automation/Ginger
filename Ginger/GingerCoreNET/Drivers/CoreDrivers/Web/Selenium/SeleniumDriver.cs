@@ -7178,9 +7178,18 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-                    string elemId = ele.GetProperty("id");
+                    HtmlNode elemNode = null;
+                    string elemId;
+                    try
+                    {
+                        elemId = ele.GetProperty("id");
+                        elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id.Equals(elemId)).FirstOrDefault();
+                    }
+                    catch (Exception exc)
+                    {
+                        elemId = "";
+                    }
 
-                    HtmlNode elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id.Equals(elemId)).FirstOrDefault();
 
                     elemInfo = new HTMLElementInfo();
 
@@ -7189,7 +7198,7 @@ namespace GingerCore.Drivers
                     elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
                     elemInfo.ElementObject = ele;
                     elemInfo.Path = iframeXPath;
-                    elemInfo.XPath = elemNode.XPath;        //await GenerateXpathForIWebElementAsync(ele, string.Empty);
+                    elemInfo.XPath = string.IsNullOrEmpty(elemId) ? await GenerateXpathForIWebElementAsync(ele, string.Empty) : elemNode.XPath;
                     elemInfo.HTMLElementObject = elemNode;
 
                     ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
