@@ -777,11 +777,11 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeDown:
-                        SwipeScreen(eSwipeSide.Down);
+                        SwipeScreen(eSwipeSide.Down, 0.25);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeUp:
-                        SwipeScreen(eSwipeSide.Up);
+                        SwipeScreen(eSwipeSide.Up, 0.25);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
@@ -1072,7 +1072,7 @@ namespace Amdocs.Ginger.CoreNET
             return Pagesource;
         }
 
-        public void SwipeScreen(eSwipeSide side)
+        public void SwipeScreen(eSwipeSide side, double impact=1)
         {
             System.Drawing.Size sz = Driver.Manage().Window.Size;
             double startX;
@@ -1081,20 +1081,20 @@ namespace Amdocs.Ginger.CoreNET
             double endY;
             switch (side)
             {
-                case eSwipeSide.Up: // center of footer
+                case eSwipeSide.Down: // center of footer
                     startX = sz.Width * 0.5;
                     startY = sz.Height * 0.3;
                     endX = sz.Width * 0.5;
-                    endY = sz.Height * 0.7;
+                    endY = sz.Height * 0.7 * impact;
                     break;
-                case eSwipeSide.Down: // center of header
+                case eSwipeSide.Up: // center of header
                     startX = sz.Width * 0.5;
-                    startY = sz.Height * 0.7;
+                    startY = sz.Height * 0.7 * impact;
                     endX = sz.Width * 0.5;
                     endY = sz.Height * 0.3;
                     break;
                 case eSwipeSide.Right: // center of left side
-                    startX = sz.Width * 0.8;
+                    startX = sz.Width * 0.8 * impact;
                     startY = sz.Height * 0.5;
                     endX = sz.Width * 0.1;
                     endY = sz.Height * 0.5;
@@ -1102,7 +1102,7 @@ namespace Amdocs.Ginger.CoreNET
                 case eSwipeSide.Left: // center of right side
                     startX = sz.Width * 0.1;
                     startY = sz.Height * 0.5;
-                    endX = sz.Width * 0.8;
+                    endX = sz.Width * 0.8 * impact;
                     endY = sz.Height * 0.5;
                     break;
                 default:
@@ -1925,9 +1925,9 @@ namespace Amdocs.Ginger.CoreNET
             return false;
         }
 
-        public void PerformScreenSwipe(eSwipeSide swipeSide)
+        public void PerformScreenSwipe(eSwipeSide swipeSide, double impact=1)
         {
-            SwipeScreen(swipeSide);
+            SwipeScreen(swipeSide, impact);
         }
 
         public void PerformSendKey(string key)

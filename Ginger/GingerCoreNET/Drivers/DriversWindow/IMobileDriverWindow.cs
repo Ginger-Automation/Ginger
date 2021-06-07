@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
 
         void PerformDrag(System.Drawing.Point start, System.Drawing.Point end);
 
-        void PerformScreenSwipe(eSwipeSide swipeSide);
+        void PerformScreenSwipe(eSwipeSide swipeSide, double impact = 1);
 
         void SwitchToLandscape();
 

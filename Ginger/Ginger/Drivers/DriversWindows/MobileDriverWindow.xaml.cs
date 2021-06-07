@@ -173,18 +173,16 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xDeviceScreenshotImage_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            System.Windows.Point mMousePoint = e.GetPosition((System.Windows.Controls.Image)sender);
-            DeviceScreenshotImageMouseDragAsync(mMousePoint, new System.Windows.Point(mMousePoint.X, mMousePoint.Y + e.Delta));
-        }
-
-        private void xDeviceScreenshotImage_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Hand;
-        }
-
-        private void xDeviceScreenshotImage_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = null;
+            //System.Windows.Point mMousePoint = e.GetPosition((System.Windows.Controls.Image)sender);
+            //DeviceScreenshotImageMouseDragAsync(mMousePoint, new System.Windows.Point(mMousePoint.X, mMousePoint.Y + e.Delta));
+            if (e.Delta > 0)
+            {
+                PerformScreenSwipe(eSwipeSide.Up, 0.25);
+            }
+            else
+            {
+                PerformScreenSwipe(eSwipeSide.Down, 0.25);
+            }
         }
 
         private void xRefreshButton_Click(object sender, RoutedEventArgs e)
@@ -246,7 +244,7 @@ namespace Ginger.Drivers.DriversWindows
         bool mSwipeIsOn;
         private void xSwipeBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (mPinIsOn)
+            if (mSwipeIsOn)
             {
                 //Turn of Swipe
                 xSwipeDown.Visibility = Visibility.Collapsed;
@@ -264,7 +262,7 @@ namespace Ginger.Drivers.DriversWindows
                 xSwipeBtn.ToolTip = "Hide Swipe Buttons";
             }
 
-            mPinIsOn = !mPinIsOn;
+            mSwipeIsOn = !mSwipeIsOn;
         }
 
         private void SetSwipeButtonsPosition()
@@ -511,12 +509,12 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xSwipeUp_Click(object sender, RoutedEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Up);
+            PerformScreenSwipe(eSwipeSide.Up, 0.25);
         }
 
         private void xSwipeDown_Click(object sender, RoutedEventArgs e)
         {
-            PerformScreenSwipe(eSwipeSide.Down);
+            PerformScreenSwipe(eSwipeSide.Down, 0.25);
         }
 
         private void xDeviceSettingsBtn_Click(object sender, RoutedEventArgs e)
@@ -930,11 +928,11 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
-        private void PerformScreenSwipe(eSwipeSide swipeSide)
+        private void PerformScreenSwipe(eSwipeSide swipeSide, double impact = 1)
         {
             try
             {
-                mDriver.PerformScreenSwipe(swipeSide);
+                mDriver.PerformScreenSwipe(swipeSide, impact);
             }
             catch (Exception ex)
             {

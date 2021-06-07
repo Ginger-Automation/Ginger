@@ -33,7 +33,7 @@
             <UserControls:ucButton x:Name="xRefreshButton"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Bottom" ButtonFontImageSize="18" ButtonImageType="Refresh" Click="xRefreshButton_Click" ToolTip="Refresh Device Screenshot" Margin="0,0,0,0" Visibility="Collapsed"/>
             <UserControls:ucButton x:Name="xConfigurationsBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="17" ButtonImageType="Config" Click="xConfigurationsBtn_Click" ToolTip="Show Configurations" Margin="0,0,5,0" />
             <UserControls:ucButton x:Name="xPinBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="17" ButtonImageType="Pin" Click="xPinBtn_Click" ToolTip="Dock Window" Margin="0,0,30,0" />
-            <UserControls:ucButton x:Name="xSwipeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="14" ButtonImageType="Pointer" Click="xSwipeBtn_Click" ToolTip="Perform Swipe" Margin="35,0,0,2" />
+            <UserControls:ucButton x:Name="xSwipeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="14" ButtonImageType="Pointer" Click="xSwipeBtn_Click" ToolTip="Perform Swipe" Margin="35,0,0,2" Visibility="Collapsed" />
             <UserControls:ucButton x:Name="xPortraiteBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="24" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Portrait" Margin="10,0,0,0" Visibility="Collapsed"/>
             <UserControls:ucButton x:Name="xLandscapeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="24" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Landscape" Margin="10,0,0,0" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
                 <UserControls:ucButton.RenderTransform>
@@ -87,14 +87,12 @@
                 </StackPanel>
 
                 <Canvas x:Name="xDeviceScreenshotCanvas" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" DockPanel.Dock="Top">
-                    <Image x:Name="xDeviceScreenshotImage" Panel.ZIndex="1" Height="{Binding ActualHeight, ElementName=xDeviceScreenshotCanvas}" Width="{Binding ActualWidth, ElementName=xDeviceScreenshotCanvas}"  
+                    <Image x:Name="xDeviceScreenshotImage" Panel.ZIndex="1" Cursor="Hand" Height="{Binding ActualHeight, ElementName=xDeviceScreenshotCanvas}" Width="{Binding ActualWidth, ElementName=xDeviceScreenshotCanvas}"  
                            MouseLeftButtonDown="xDeviceScreenshotImage_MouseLeftButtonDown" 
                            MouseMove="xDeviceScreenshotImage_MouseMove" 
                            MouseLeftButtonUp="xDeviceScreenshotImage_MouseLeftButtonUp" 
-                           MouseEnter="xDeviceScreenshotImage_MouseEnter" 
-                           MouseLeave="xDeviceScreenshotImage_MouseLeave"  
                            MouseWheel="xDeviceScreenshotImage_MouseWheel"
-                           SizeChanged="xDeviceScreenshotImage_SizeChanged">
+                           SizeChanged="xDeviceScreenshotImage_SizeChanged"                           >
                     </Image>
                     <UserControls:ucButton x:Name="xSwipeUp" Panel.ZIndex="10" Canvas.Top="1"  ButtonType="ImageButton"  ButtonFontImageSize="30" ButtonImageType="AngleArrowUp" Click="xSwipeUp_Click" ToolTip="Swipe Up" Margin="0,0,0,0" ButtonImageForground="{StaticResource  $HighlightColor_Purple}" Visibility="Collapsed"/>
                     <UserControls:ucButton x:Name="xSwipeLeft" Panel.ZIndex="10"  Canvas.Left="1"  ButtonType="ImageButton"  ButtonFontImageSize="30" ButtonImageType="AngleArrowLeft" Click="xSwipeLeft_Click" ToolTip="Swipe Left" Margin="0,0,0,0" ButtonImageForground="{StaticResource  $HighlightColor_Purple}" Visibility="Collapsed"/>
