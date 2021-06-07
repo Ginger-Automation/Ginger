@@ -149,32 +149,16 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
             try
             {
-                //get the BF matching test set
-                List<BaseResponseItem> exportedPhase = zephyrEntRepository.GetPhaseById(Convert.ToInt32(bizFlow.ExternalID2));
-                JArray categories = (JArray)exportedPhase.FirstOrDefault().TryGetItem("categories");
-                BaseResponseItem currentPhase = null;
-                BaseResponseItem item = exportedPhase.FirstOrDefault(md => md.id.ToString().Equals(bizFlow.ExternalID));
-                JObject selectedPhase = findPhaseToExportDetails((JObject)categories.First, bizFlow.ExternalID);
-                //if (item == null)
-                //{
-                //    BaseResponseItem firstItem = exportedPhase.FirstOrDefault();
-                //    foreach (var category in (JArray)firstItem.TryGetItem("categories"))
-                //    {
-                //        BaseResponseItem treeNode = category.ToObject<BaseResponseItem>();
-                //        if(treeNode.id.ToString().Equals(bizFlow.ExternalID))
-                //        {
-                //            item = treeNode;
-                //            break;
-                //        }
-                //    }
-                //}
-                if (selectedPhase != null)
+                List<Execution> executions = zephyrEntRepository.GetExecutionsByPhaseId(Convert.ToInt32(bizFlow.ExternalID));
+                if (executions == null || executions.Count == 0)
+                {
+                    executions = zephyrEntRepository.GetModuleExecutionData(Convert.ToInt32(bizFlow.ExternalID));
+                }
+                if (executions != null && executions.Count > 0)
                 {
                     long scheduleId = 0;
                     //get the Test set TC's
-                    List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(selectedPhase["parentId"]));
-                    //get phase execution list
-                    List<Execution> executions = zephyrEntRepository.GetExecutionsByPhaseId(Convert.ToInt64(bizFlow.ExternalID2));
+                    List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(bizFlow.ExternalID));
                     //get all BF Activities groups
                     ObservableList<ActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
                     if (activGroups.Count > 0)

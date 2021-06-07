@@ -309,6 +309,11 @@ namespace Ginger.ALM.ZephyrEnt
                     GetFolderChildTestSets(mCurrentSelectedTreeItem);
                     Mouse.OverrideCursor = null;
                 }
+                if(CurrentSelectedTestSets.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please select Test Set or Folder contains Test Set");
+                    return;
+                }
                 CurrentSelectedTestSets.ToList().ForEach(ts =>
                 {
                     if (!ts.AlreadyImported)
