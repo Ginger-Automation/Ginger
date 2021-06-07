@@ -137,6 +137,10 @@ namespace GingerCore.Actions.WebAPI
                         Client.DefaultRequestHeaders.Add(param, value);
                     }
 
+                    if (param.ToUpper() == "COOKIE")
+                    {
+                        Handler.UseCookies = false;
+                    }
                 }    
             }
         }
