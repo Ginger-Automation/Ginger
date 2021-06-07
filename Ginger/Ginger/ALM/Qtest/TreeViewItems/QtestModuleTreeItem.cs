@@ -39,6 +39,25 @@ namespace Ginger.ALM.Qtest.TreeViewItems
         
 
         private new ContextMenu mContextMenu = new ContextMenu();
+
+        public QtestModuleTreeItem(List<QTestApiModel.ModuleResource> moduleChildrenResources)
+        {
+            CurrentChildrens = new List<ITreeViewItem>();
+            if (moduleChildrenResources != null)
+            {
+                foreach (QTestApiModel.ModuleResource module in moduleChildrenResources)
+                {
+                    QtestModuleTreeItem tvi = new QtestModuleTreeItem(module.Children);
+                    tvi.ID = module.Id.ToString();
+                    tvi.Path = module.Path;
+                    tvi.Name = module.Name;
+                    CurrentChildrens.Add(tvi);
+                }
+            }
+
+            
+        }
+
         Object ITreeViewItem.NodeObject()
         {
             return null;
@@ -46,17 +65,17 @@ namespace Ginger.ALM.Qtest.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(Name, "@ExecutionRes_16x16.png");
+            return TreeViewUtils.CreateItemHeader(Name, "@Folder_16x16.png");
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return null;
+            return CurrentChildrens;
         }
 
         bool ITreeViewItem.IsExpandable()
         {
-            return false;
+            return true;
         }
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)

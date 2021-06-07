@@ -50,7 +50,7 @@ namespace Ginger.ALM.Qtest
             GetTreeData();
             foreach (QTestApiModel.ModuleResource moduleResource in treeData)
             {
-                QtestModuleTreeItem tvi = new QtestModuleTreeItem();
+                QtestModuleTreeItem tvi = new QtestModuleTreeItem(moduleResource.Children);
                 tvi.ID = moduleResource.Id.ToString();
                 tvi.Path = moduleResource.Path;
                 tvi.Name = moduleResource.Name;

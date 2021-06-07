@@ -598,7 +598,7 @@ namespace GingerCore.ALM
                     string stepDesc = testStep.Description;
                     if (testStep.Description.Contains("=>"))
                     {
-                        string[] activityData = testStep.Description.Split(new string[] { "=>" }, StringSplitOptions.None);
+                        string[] activityData = testStep.Description.Split(new[] { "=>" }, StringSplitOptions.None);
                         stepName = activityData[0];
                         stepDesc = activityData[1];
                     }
