@@ -136,11 +136,6 @@ namespace GingerCore.Actions.WebAPI
                     {
                         Client.DefaultRequestHeaders.Add(param, value);
                     }
-
-                    if (param.ToUpper() == "COOKIE")
-                    {
-                        Handler.UseCookies = false;
-                    }
                 }    
             }
         }
@@ -691,6 +686,9 @@ namespace GingerCore.Actions.WebAPI
                         RequestMessage.Headers.Add(ck.Name, ck.Value);
                         Handler.CookieContainer.Add(cooki);
                     }
+                    break;
+                case ApplicationAPIUtils.eCookieMode.HeaderCookie:
+                    Handler.UseCookies = false;
                     break;
             }
         }
