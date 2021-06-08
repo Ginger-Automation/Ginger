@@ -33,6 +33,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using amdocs.ginger.GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Reflection;
 
 namespace GingerCore.ALM
 {
@@ -346,7 +347,7 @@ namespace GingerCore.ALM
                                         {
                                             testCaseStatus = statuses.Where(z => z.Name == "Unexecuted").FirstOrDefault();
                                         }
-                                        else if (stepsStatuses.Where(x => x.Name == "Passed").Count() == testStepsCount || (stepsStatuses.Where(x => x.Name == "Passed").Count() + stepsStatuses.Where(x => x.Name == "Not Applicable").Count()) == testStepsCount)
+                                        else if (stepsStatuses.Where(x => x.Name == "Passed").Count() == testStepsCount || (stepsStatuses.Where(x => x.Name == "Passed").Count() + stepsStatuses.Where(x => x.Name == "Unexecuted").Count()) == testStepsCount)
                                         {
                                             testCaseStatus = statuses.Where(z => z.Name == "Passed").FirstOrDefault();
                                         }
@@ -466,7 +467,9 @@ namespace GingerCore.ALM
                     testCase.Description = activitiesGroup.Description;
                     testCase.Name = activitiesGroup.Name;
                     testCase.ParentId = (long)Convert.ToInt32(parentObjectId);
+                    //create testCase
                     testCase = testcaseApi.CreateTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testCase);
+                    //add testSteps
                     foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
                     {
                         string stepNameWithDesc = ((Activity)actIdent.IdentifiedActivity).ActivityName + "=>" + ((Activity)actIdent.IdentifiedActivity).Description;
@@ -478,6 +481,10 @@ namespace GingerCore.ALM
                         ((Activity)actIdent.IdentifiedActivity).ExternalID = stepResource.Id.ToString();
                         ((Activity)actIdent.IdentifiedActivity).ExternalID2 = stepResource.Id.ToString();
                     }
+
+                    //approve testCase - it needs to be called each time whenever testCase is updated
+                    testcaseApi.ApproveTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testCase.Id);
+
                     activitiesGroup.ExternalID = testCase.Id.ToString();
                     activitiesGroup.ExternalID2 = testCase.Id.ToString();
                 }
@@ -631,8 +638,16 @@ namespace GingerCore.ALM
             testrunApi = new QTestApi.TestrunApi(connObj.Configuration);
             testcaseApi = new QTestApi.TestcaseApi(connObj.Configuration);
 
-            QTestApi.ParametersApi parametersApi = new QTestApi.ParametersApi(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, connObj.Configuration);
-            QTestApiModel.ParameterPostQueryResponse existedParameters = parametersApi.GetAllParameters((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey));
+            QTestApiModel.ParameterPostQueryResponse existedParameters = null;
+            try
+            {
+                QTestApi.ParametersApi parametersApi = new QTestApi.ParametersApi(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, connObj.Configuration);
+                existedParameters = parametersApi.GetAllParameters((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey));
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
             List<QTestApiModel.TestRunWithCustomFieldResource> testRunList = testrunApi.GetOf((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), (long)Convert.ToInt32(TS.ID), "test-suite");
             foreach (QTestApiModel.TestRunWithCustomFieldResource testRun in testRunList)
             {
