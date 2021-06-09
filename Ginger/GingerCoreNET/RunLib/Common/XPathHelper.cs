@@ -476,14 +476,14 @@ namespace GingerCore.Drivers.Common
         }
 
 
-        internal string CreateRelativeXpathWithTagNameAndAttributes(HTMLElementInfo hTMLElement)
+        internal string CreateRelativeXpathWithTagNameAndAttributes(ElementInfo elementInfo)
         {
             var relXpath = string.Empty;
 
             try
             {
                 //creating relative xpath with multiple attribute and tagname
-                if (hTMLElement.Properties.Count > 1)
+                if (elementInfo.Properties.Count > 1)
                 {
                     System.Text.StringBuilder elementAttributes = new System.Text.StringBuilder();
                     var fieldInfos = typeof(ElementProperty).GetFields();
@@ -493,7 +493,7 @@ namespace GingerCore.Drivers.Common
                     {
                         propNames.Add(fieldInfo.GetValue(null).ToString());
                     }
-                    foreach (var prop in hTMLElement.Properties)
+                    foreach (var prop in elementInfo.Properties)
                     {
                         if (!propNames.Contains(prop.Name) && !prop.Name.ToLower().Equals("value") && !prop.Name.ToLower().Equals("id") && !prop.Name.ToLower().Equals("name"))
                         {
@@ -501,8 +501,11 @@ namespace GingerCore.Drivers.Common
                         }
                     }
 
-                    elementAttributes = elementAttributes.Remove(elementAttributes.Length - 5, 5);
-                    relXpath = string.Concat("//", hTMLElement.HTMLElementObject.Name.ToString(), "[", elementAttributes, "]");
+                   if(!string.IsNullOrEmpty(elementAttributes.ToString()))
+                   {
+                        elementAttributes = elementAttributes.Remove(elementAttributes.Length - 5, 5);
+                        relXpath = string.Concat("//", mDriver.GetElementTagName(elementInfo), "[", elementAttributes, "]");
+                   }
                 }
             }
             catch (Exception  ex)
@@ -514,69 +517,54 @@ namespace GingerCore.Drivers.Common
             
         }
 
-        internal string CreateRelativeXpathWithTextMatch(HTMLElementInfo hTMLElementInfo,bool isExactMatch=true)
+        internal string CreateRelativeXpathWithTextMatch(ElementInfo elementInfo,bool isExactMatch=true)
         {
             var relXpath = string.Empty;
-            var htmlNode = hTMLElementInfo.HTMLElementObject;
 
             // checking svg element
-            var isParentContainsSVG = htmlNode.InnerHtml.Contains("<svg");
+            var isParentContainsSVG = mDriver.GetInnerHtml(elementInfo).Contains("<svg");
             if(isParentContainsSVG)
             {
                 return relXpath;
             }
 
-            var tagName = "*";
-           
-            if (htmlNode.Name.ToLower().Equals(eElementType.Label.ToString().ToLower()))
+            var tagStartWithName = "*";
+            var tagName = mDriver.GetElementTagName(elementInfo);
+
+            if (tagName.ToLower().Equals(eElementType.Label.ToString().ToLower()) ||(tagName.ToLower().Equals(eElementType.Div.ToString().ToLower()) && !isExactMatch))
             {
-                tagName = htmlNode.Name;
+                tagStartWithName = tagName;
             }
-            else if (htmlNode.Name.ToLower().Equals(eElementType.Div.ToString().ToLower()) && !isExactMatch)
+            else if (mDriver.GetElementParentNode(elementInfo) != null)
             {
-                tagName = htmlNode.Name;
-            }
-            else if (htmlNode.ParentNode != null)
-            {
-                tagName = string.Concat(htmlNode.ParentNode.Name, "//", "*");
+                tagStartWithName = string.Concat(tagName, "//", "*");
             }
 
-            
+            var innerText = mDriver.GetInnerText(elementInfo);
             if (isExactMatch)
             {
-                relXpath = string.Concat("//", tagName, "[text()=", "\'", htmlNode.InnerText, "\'", "]");
+                relXpath = string.Concat("//", tagStartWithName, "[text()=", "\'", innerText, "\'", "]");
             }
             else
             {
-                relXpath = string.Concat("//", tagName, "[contains(text(),", "\'", htmlNode.InnerText, "\'", ")]");
+                relXpath = string.Concat("//", tagStartWithName, "[contains(text(),", "\'", innerText, "\'", ")]");
             }
 
             return relXpath;
         }
 
         //creating xpath with previous sibling for ex: //*[text()="Name"]//following::input
-        internal string CreateRelativeXpathWithSibling(HTMLElementInfo hTMLElementInfo)
+        internal string CreateRelativeXpathWithSibling(ElementInfo elementInfo)
         {
             var relXpath = string.Empty;
 
-            var previousSibling = hTMLElementInfo.HTMLElementObject.PreviousSibling;
-
-            //looking for text till two level up
-            if (hTMLElementInfo.HTMLElementObject.Name == "input" && previousSibling== null)
+            var previousSiblingInnerText = mDriver.GetPreviousSiblingInnerText(elementInfo);
+            
+            if (!string.IsNullOrEmpty(previousSiblingInnerText))
             {
-                previousSibling = hTMLElementInfo.HTMLElementObject.ParentNode;
-
-                if (string.IsNullOrEmpty(previousSibling.InnerText))
-                {
-                    previousSibling = previousSibling.PreviousSibling;
-                }
-            }
-            if (previousSibling != null && !string.IsNullOrEmpty(previousSibling.InnerText) && previousSibling.ChildNodes.Count ==1)
-            {
-                relXpath = string.Concat("//*[text()=\'",previousSibling.InnerText, "\']//following::",hTMLElementInfo.HTMLElementObject.Name);
+                relXpath = string.Concat("//*[text()=\'", previousSiblingInnerText, "\']//following::",mDriver.GetElementTagName(elementInfo));
             }
             
-
             return relXpath;
         }
     }

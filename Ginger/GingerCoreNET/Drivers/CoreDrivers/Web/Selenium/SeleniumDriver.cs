@@ -3844,7 +3844,13 @@ namespace GingerCore.Drivers
 
                         if (learnElement)
                         {
-                            IWebElement el = Driver.FindElement(By.XPath(htmlElemNode.XPath));
+                            var xpath = htmlElemNode.XPath;
+                            if (htmlElemNode.Name.ToLower().Equals(eElementType.Svg.ToString().ToLower()))
+                            {
+                                xpath= string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()=\'svg\']");
+                            }
+                            
+                            IWebElement el = Driver.FindElement(By.XPath(xpath));
                             if (el == null)
                             {
                                 continue;
@@ -3869,7 +3875,8 @@ namespace GingerCore.Drivers
                             foundElemntInfo.ElementTypeEnum = elementTypeEnum.Item2;
                             foundElemntInfo.ElementObject = el;
                             foundElemntInfo.Path = path;
-                            foundElemntInfo.XPath = htmlElemNode.XPath;
+                            //foundElemntInfo.XPath = htmlElemNode.XPath;
+                            foundElemntInfo.XPath = xpath;
                             foundElemntInfo.HTMLElementObject = htmlElemNode;
                             ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
 
@@ -3910,6 +3917,10 @@ namespace GingerCore.Drivers
 
         private void GetRelativeXpathElementLocators(HTMLElementInfo foundElemntInfo)
         {
+            if (foundElemntInfo.ElementTypeEnum == eElementType.Svg)
+            {
+                return;
+            }
             //relative xpath with multiple attribute and tagname
             var relxPathWithMultipleAtrrs = mXPathHelper.CreateRelativeXpathWithTagNameAndAttributes(foundElemntInfo);
             if (!string.IsNullOrEmpty(relxPathWithMultipleAtrrs) && CheckElementLocateStatus(relxPathWithMultipleAtrrs))
@@ -4081,6 +4092,10 @@ namespace GingerCore.Drivers
             else if (elementTagName.ToUpper() == "H1" || elementTagName.ToUpper() == "H2" || elementTagName.ToUpper() == "H3" || elementTagName.ToUpper() == "H4" || elementTagName.ToUpper() == "H5" || elementTagName.ToUpper() == "H6" || elementTagName.ToUpper() == "P")
             {
                 elementType = eElementType.Text;
+            }
+            else if(elementTagName.ToUpper()=="SVG")
+            {
+                elementType = eElementType.Svg;
             }
             else
                 elementType = eElementType.Unknown;
@@ -7594,7 +7609,7 @@ namespace GingerCore.Drivers
             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
             foundElemntInfo.ElementObject = parentElementObject;
             foundElemntInfo.HTMLElementObject = parentElementHtmlNode;
-            ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo); //why learning complete infoDetails of parent element
+            ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
 
             return foundElemntInfo;
         }
@@ -8038,6 +8053,49 @@ namespace GingerCore.Drivers
                 return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, string.Empty);
             }
             return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
+        }
+
+        public string GetInnerHtml(ElementInfo elementInfo)
+        {
+            var htmlElement = (HTMLElementInfo)elementInfo;
+
+            return htmlElement.HTMLElementObject.InnerHtml;
+        }
+
+        public object GetElementParentNode(ElementInfo elementInfo)
+        {
+            return ((HTMLElementInfo)elementInfo).HTMLElementObject.ParentNode;
+        }
+
+        public string GetInnerText(ElementInfo elementInfo)
+        {
+            return ((HTMLElementInfo)elementInfo).HTMLElementObject.InnerText;
+        }
+
+        public string GetPreviousSiblingInnerText(ElementInfo elementInfo)
+        {
+            var htmlNode = ((HTMLElementInfo)elementInfo).HTMLElementObject;
+            var prevSib = htmlNode.PreviousSibling;
+
+            var innerText = string.Empty;
+
+            //looking for text till two level up
+            if (htmlNode.Name == "input" && prevSib == null)
+            {
+                prevSib = htmlNode.ParentNode;
+
+                if (string.IsNullOrEmpty(prevSib.InnerText))
+                {
+                    prevSib = prevSib.PreviousSibling;
+                }
+            }
+
+            if (prevSib != null && !string.IsNullOrEmpty(prevSib.InnerText) && prevSib.ChildNodes.Count == 1)
+            {
+                innerText = prevSib.InnerText;
+            }
+
+            return innerText;
         }
 
         ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
