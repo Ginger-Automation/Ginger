@@ -49,6 +49,15 @@ namespace Ginger.Actions._Common.ActUIElementLib
             xXCoordinate.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, mAct.GetInputParamValue(ActUIElement.Fields.XCoordinate)));
             xYCoordinate.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.YCoordinate, mAct.GetInputParamValue(ActUIElement.Fields.YCoordinate)));
             xValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.Value, mAct.GetInputParamValue(ActUIElement.Fields.Value)));
+
+            if(mAct.ElementData!=null)
+            {
+                string[] spliter = new string[] { "," };
+                string[] cordinations = Convert.ToString(mAct.ElementData).Split(spliter, StringSplitOptions.RemoveEmptyEntries);
+                mAct.AddOrUpdateInputParamValue("XCoordinate", cordinations[0]);
+                mAct.AddOrUpdateInputParamValue("YCoordinate", cordinations[1]);
+            }
+
             if (mAct.ElementAction == ActUIElement.eElementAction.SendKeysXY)
             {
                 xValuePanel.Visibility = Visibility.Visible;
