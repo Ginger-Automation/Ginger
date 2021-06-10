@@ -42,23 +42,49 @@ namespace GingerCore.ALM.Qtest
             }
         }
         #endregion singlton
-        
+
+        QTestApi.LoginApi connObj = new QTestApi.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
+
+        public bool ConnectALMServer()
+        {
+            try
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Connecting to qTest server");
+                connObj = new QTestApi.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
+                string granttype = "password";
+                string authorization = "Basic bWFoZXNoLmthbGUzQHQtbW9iaWxlLmNvbTo=";
+                QTestApiModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, authorization);
+                connObj.Configuration.MyAPIConfig = new QTestApiClient.QTestClientConfig();
+                connObj.Configuration.AccessToken = response.AccessToken;
+                connObj.Configuration.ApiKey.Add("Authorization", response.AccessToken);
+                connObj.Configuration.ApiKeyPrefix.Add("Authorization", response.TokenType);
+                System.Diagnostics.Trace.WriteLine("Authentication Successful");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Connecting to qTest server", ex);
+                connObj = null;
+                return false;
+            }
+        }
+
         public ObservableList<QTestApiModel.TestCycleResource> GetQTestCyclesByProject(string qTestServerUrl, string qTestUserName, string qTestPassword, string qTestProject)
         {
+            ConnectALMServer();
             ObservableList<QTestApiModel.TestCycleResource> cyclestList;
-
-            QTestApi.LoginApi connObj = new QTestApi.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
-            string granttype = "password";
-            string authorization = "Basic bWFoZXNoLmthbGUzQHQtbW9iaWxlLmNvbTo=";
-            QTestApiModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, authorization);
-            connObj.Configuration.AccessToken = response.AccessToken;
-            connObj.Configuration.ApiKey.Add("Authorization", response.AccessToken);
-            connObj.Configuration.ApiKeyPrefix.Add("Authorization", response.TokenType);
-
             QTestApi.TestcycleApi TestcycleApi = new QTestApi.TestcycleApi(connObj.Configuration);
             cyclestList = new ObservableList<QTestApiModel.TestCycleResource>(TestcycleApi.GetTestCycles((long)Convert.ToInt32(qTestProject), null, null, "descendants"));
-
             return cyclestList;
+        }
+
+        public ObservableList<QTestApiModel.ModuleResource> GetQTestModulesByProject(string qTestServerUrl, string qTestUserName, string qTestPassword, string qTestProject)
+        {
+            ConnectALMServer();
+            ObservableList<QTestApiModel.ModuleResource> modulesList;
+            QTestApi.ModuleApi moduleApi = new QTestApi.ModuleApi(connObj.Configuration);
+            modulesList = new ObservableList<QTestApiModel.ModuleResource>(moduleApi.GetModules((long)Convert.ToInt32(qTestProject), null));
+            return modulesList;
         }
         public string ConvertResourceType(ALM_Common.DataContracts.ResourceType resourceType)
         {
