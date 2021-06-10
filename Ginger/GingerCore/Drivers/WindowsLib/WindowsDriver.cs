@@ -911,8 +911,6 @@ namespace GingerCore.Drivers.WindowsLib
 
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
-            EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
-            EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
             if (ElementInfo.IsElementTypeSupportingOptionalValues(EI.ElementTypeEnum))
             {
                 EI.OptionalValuesObjectsList = ((IWindowExplorer)this).GetOptionalValuesList(EI, eLocateBy.ByXPath, EI.XPath);
@@ -921,6 +919,15 @@ namespace GingerCore.Drivers.WindowsLib
             {
                 EI.OptionalValuesObjectsList[0].IsDefault = true;
             }
+
+            EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
+            EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
+            foreach (var elementLocator in EI.Locators)
+            {
+                elementLocator.Active = true;
+                elementLocator.IsAutoLearned = true;
+            }
+
             return EI;
         }
 
@@ -931,25 +938,28 @@ namespace GingerCore.Drivers.WindowsLib
                 foundElementsList = new ObservableList<ElementInfo>();
             }
             List<ElementInfo> elementInfoList = await mUIAutomationHelper.GetVisibleControls();
-            foreach (UIAElementInfo foundElemntInfo in elementInfoList)
-            {
-                ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
-
-                bool learnElement = true;
-                if (filteredElementType != null)
+            //await Task.Run(() =>
+            //{
+                foreach (UIAElementInfo foundElemntInfo in elementInfoList)
                 {
-                    if (!filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                    ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
+
+                    bool learnElement = true;
+                    if (filteredElementType != null)
                     {
-                        learnElement = false;
+                        if (!filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                        {
+                            learnElement = false;
+                        }
+                    }
+                    if (learnElement)
+                    {
+                        foundElemntInfo.IsAutoLearned = true;
+                        foundElementsList.Add(foundElemntInfo);
                     }
                 }
-                if (learnElement)
-                {
-                    foundElemntInfo.IsAutoLearned = true;
-                    foundElementsList.Add(foundElemntInfo);
-                }
-            }
-            
+            //});
+
             elementInfoList = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
             return elementInfoList;
         }
