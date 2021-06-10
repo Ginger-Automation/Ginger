@@ -697,12 +697,12 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     case ActMobileDevice.eMobileDeviceAction.PressXY:
                         tc = new TouchAction(Driver);
-                        tc.Press(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver));
+                        tc.Press(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver)).Perform();
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.LongPressXY:
                         tc = new TouchAction(Driver);
-                        tc.LongPress(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver));
+                        tc.LongPress(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver)).Perform();
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.TapXY:
@@ -777,11 +777,11 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeDown:
-                        SwipeScreen(eSwipeSide.Down);
+                        SwipeScreen(eSwipeSide.Down, 0.25);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeUp:
-                        SwipeScreen(eSwipeSide.Up);
+                        SwipeScreen(eSwipeSide.Up, 0.25);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
@@ -1072,7 +1072,7 @@ namespace Amdocs.Ginger.CoreNET
             return Pagesource;
         }
 
-        public void SwipeScreen(eSwipeSide side)
+        public void SwipeScreen(eSwipeSide side, double impact=1)
         {
             System.Drawing.Size sz = Driver.Manage().Window.Size;
             double startX;
@@ -1085,24 +1085,24 @@ namespace Amdocs.Ginger.CoreNET
                     startX = sz.Width * 0.5;
                     startY = sz.Height * 0.3;
                     endX = sz.Width * 0.5;
-                    endY = sz.Height * 0.7;
+                    endY = sz.Height * 0.7 * impact;
                     break;
                 case eSwipeSide.Up: // center of header
                     startX = sz.Width * 0.5;
-                    startY = sz.Height * 0.7;
+                    startY = sz.Height * 0.7 * impact;
                     endX = sz.Width * 0.5;
                     endY = sz.Height * 0.3;
                     break;
-                case eSwipeSide.Left: // center of left side
-                    startX = sz.Width * 0.8;
+                case eSwipeSide.Right: // center of left side
+                    startX = sz.Width * 0.8 * impact;
                     startY = sz.Height * 0.5;
                     endX = sz.Width * 0.1;
                     endY = sz.Height * 0.5;
                     break;
-                case eSwipeSide.Right: // center of right side
+                case eSwipeSide.Left: // center of right side
                     startX = sz.Width * 0.1;
                     startY = sz.Height * 0.5;
-                    endX = sz.Width * 0.8;
+                    endX = sz.Width * 0.8 * impact;
                     endY = sz.Height * 0.5;
                     break;
                 default:
@@ -1631,6 +1631,12 @@ namespace Amdocs.Ginger.CoreNET
             TapXY(x, y);
         }
 
+        public void PerformLongPress(long x, long y)
+        {
+            TouchAction tc = new TouchAction(Driver);
+            tc.LongPress(x, y).Perform();
+        }
+
         public void PerformDrag(Point start, Point end)
         {
             DoDrag(start.X, start.Y, end.X, end.Y);
@@ -1919,9 +1925,9 @@ namespace Amdocs.Ginger.CoreNET
             return false;
         }
 
-        public void PerformScreenSwipe(eSwipeSide swipeSide)
+        public void PerformScreenSwipe(eSwipeSide swipeSide, double impact=1)
         {
-            SwipeScreen(swipeSide);
+            SwipeScreen(swipeSide, impact);
         }
 
         public void PerformSendKey(string key)
@@ -1948,6 +1954,19 @@ namespace Amdocs.Ginger.CoreNET
             }
 
             return pageSourceXml;
+        }
+
+        public void OpenDeviceSettings()
+        {
+            switch (DevicePlatformType)
+            {
+                case eDevicePlatformType.Android:
+                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(Convert.ToInt32(ActMobileDevice.ePressKey.Keycode_SETTINGS));
+                    break;
+                case eDevicePlatformType.iOS:
+                    Driver.ActivateApp("com.apple.Preferences");
+                    break;
+            }
         }
     }
 }
