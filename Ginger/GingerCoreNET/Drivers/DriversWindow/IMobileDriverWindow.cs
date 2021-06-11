@@ -30,9 +30,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
 
         void PerformTap(long x, long y);
 
+        void PerformLongPress(long x, long y);
+
         void PerformDrag(System.Drawing.Point start, System.Drawing.Point end);
 
-        void PerformScreenSwipe(eSwipeSide swipeSide);
+        void PerformScreenSwipe(eSwipeSide swipeSide, double impact = 1);
 
         void SwitchToLandscape();
 
@@ -41,5 +43,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
         eDeviceOrientation GetOrientation();
 
         void PerformSendKey(string key);
+
+        void OpenDeviceSettings();
     }
 }
