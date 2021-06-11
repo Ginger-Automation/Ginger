@@ -114,12 +114,14 @@ namespace Amdocs.Ginger.Repository
 
         public enum eCookieMode
         {
-            [EnumValueDescription("Use Session Cookies")]
+            [EnumValueDescription("Use session cookies")]
             Session,
-            [EnumValueDescription("Don't use Cookies")]
+            [EnumValueDescription("Don't use cookies")]
             None,
-            [EnumValueDescription("Use fresh Cookies")]
-            New
+            [EnumValueDescription("Use fresh cookies")]
+            New,
+            [EnumValueDescription("Use cookies from request header")]
+            HeaderCookie
         }
     }
 }
