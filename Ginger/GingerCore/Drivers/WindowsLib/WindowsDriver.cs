@@ -971,7 +971,38 @@ namespace GingerCore.Drivers.WindowsLib
 
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)
         {
-            return GetElementProperties(ElementInfo);       
+            //only return necessery properties
+            ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+            AutomationElement element = (AutomationElement)ElementInfo.ElementObject;
+            UIAElementInfo uIAElement = ((UIAElementInfo)ElementInfo);
+            if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
+            {
+                list.Add(new ControlProperty() { Name = ElementProperty.PlatformElementType, Value = ElementInfo.ElementType });
+            }
+            list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.BoundingRectangle, Value = element.Current.BoundingRectangle.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.LocalizedControlType, Value = element.Current.LocalizedControlType.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.Name, Value = uIAElement.ElementTitle.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.AutomationId, Value = element.Current.AutomationId.ToString() });
+
+            if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
+            {
+                list.Add(new ControlProperty() { Name = ElementProperty.XPath, Value = ElementInfo.XPath });
+            }
+            if (!string.IsNullOrWhiteSpace(ElementInfo.Value))
+            {
+                list.Add(new ControlProperty() { Name = ElementProperty.Value, Value = ElementInfo.Value });
+            }
+            list.Add(new ControlProperty() { Name = ElementProperty.Height, Value = ElementInfo.Height.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.Width, Value = ElementInfo.Width.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.X, Value = ElementInfo.X.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.Y, Value = ElementInfo.Y.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsKeyboardFocusable, Value = element.Current.IsKeyboardFocusable.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsEnabled, Value = element.Current.IsEnabled.ToString() });
+
+            //returns list of all supported properties - GetElementProperties(ElementInfo);
+
+            return list;       
         }
 
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)

@@ -3991,7 +3991,7 @@ namespace GingerCore.Drivers
             }
             if (General.CompareStringsIgnoreCase(ControlType, "title bar"))
             {
-                string value = element.Current.Name.ToString();
+                string value = element.Current.Name;
                 return value;
             }
 
