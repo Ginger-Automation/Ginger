@@ -16,11 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
+using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using GingerCore;
@@ -31,7 +32,7 @@ using System.Collections.Generic;
 namespace Ginger.Run
 {
     public class RunSetConfig : RepositoryItemBase
-    {        
+    {
         private string mName;
         [IsSerializedForLocalRepository]
         public string Name
@@ -99,7 +100,7 @@ namespace Ginger.Run
         /// Been used to identify if Activity Variables were lazy loaded already or not
         /// </summary>
         public bool GingerRunnersLazyLoad { get { return (mGingerRunners != null) ? mGingerRunners.LazyLoad : false; } }
-        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.NodePath)]
+        [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<GingerRunner> GingerRunners
         {
@@ -133,12 +134,12 @@ namespace Ginger.Run
 
         public override string GetNameForFileName() { return Name; }
 
-        public string LastRunsetLoggerFolder { get; set;}
+        public string LastRunsetLoggerFolder { get; set; }
         public bool RunsetExecLoggerPopulated
         {
             get
             {
-                if(System.IO.Directory.Exists(LastRunsetLoggerFolder))
+                if (System.IO.Directory.Exists(LastRunsetLoggerFolder))
                 {
                     return true;
                 }
@@ -153,11 +154,11 @@ namespace Ginger.Run
         /// <summary>
         /// DO_NOT_USE
         /// </summary>
-        public bool SendEmail { get; set; }     
+        public bool SendEmail { get; set; }
         /// <summary>
         /// DO_NOT_USE
         /// </summary>
-        public Email Email{ get; set; }
+        public Email Email { get; set; }
 
         public bool mRunModeParallel = true;
         [IsSerializedForLocalRepository(true)]
@@ -248,6 +249,22 @@ namespace Ginger.Run
             UpdateRunnersBusinessFlowRunsList();
             base.UpdateBeforeSave();
         }
-        
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = new ObservableList<SolutionCategoryDefinition>();
+
+        public override void PostDeserialization()
+        {
+            if (CategoriesDefinitions.Count == 0)
+            {
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Product, null));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.TestType, null));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Release, null));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Iteration, null));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory1, null));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory2, null));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory3, null));
+            }
+        }
     }
 }
