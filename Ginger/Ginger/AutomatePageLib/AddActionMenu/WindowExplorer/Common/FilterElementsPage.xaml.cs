@@ -82,6 +82,8 @@ namespace Ginger.WindowExplorer.Common
 
         private async void DoSearch(object sender, RoutedEventArgs e)
         {
+            _GenWin.Close();
+
             if (mWindowExlorerPage != null)
             {
                 await mWindowExlorerPage.DoSearchControls();
@@ -91,7 +93,6 @@ namespace Ginger.WindowExplorer.Common
                 await mWindowsExplorerNavPage.DoSearchControls();
             }
             //bool isSearched = await Task.Run(() => mWindowExlorerPage.DoSearchControls());
-            _GenWin.Close();
             //int FoundItemsCount = mWindowExlorerPage.WindowControlsGridView.DataSourceList.Count;
             //if (isSearched)
             //{
@@ -101,7 +102,7 @@ namespace Ginger.WindowExplorer.Common
             //}
         }
 
-            private void SetControlsGridView()
+        private void SetControlsGridView()
         {
             //Set the Tool Bar look
             FilterElementsGridView.ShowTitle = Visibility.Collapsed;
@@ -133,8 +134,8 @@ namespace Ginger.WindowExplorer.Common
 
 
             int selectedItems = CountSelectedItems();
-            if (selectedItems < FilterElementsGridView.DataSourceList.Count)            
-                foreach (UIElementFilter UIEFActual in filteringCriteriaList)                
+            if (selectedItems < FilterElementsGridView.DataSourceList.Count)
+                foreach (UIElementFilter UIEFActual in filteringCriteriaList)
                     UIEFActual.Selected = true;
             else if (selectedItems == FilterElementsGridView.DataSourceList.Count)
                 foreach (UIElementFilter UIEFActual in filteringCriteriaList)
@@ -149,7 +150,7 @@ namespace Ginger.WindowExplorer.Common
             foreach (UIElementFilter UIEFActual in FilterElementsGridView.DataSourceList)
             {
                 if (UIEFActual.Selected)
-                     counter++;
+                    counter++;
             }
             return counter;
         }

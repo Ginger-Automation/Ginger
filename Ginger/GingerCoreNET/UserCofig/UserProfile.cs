@@ -810,6 +810,7 @@ namespace Ginger
                 OnPropertyChanged(nameof(UserDepartment));
             }
         }
+        public bool SourceControlUseShellClient { get; internal set; }
 
         public bool SourceControlIgnoreCertificate { get; internal set; }
 
