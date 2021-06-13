@@ -41,28 +41,35 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         #region RunSet
         public void RunSetStart(RunSetConfig runsetConfig)
         {
-            AccountReportRunSet accountReportRunSet = mAccountReportEntitiesDataMapping.MapRunsetStartData(runsetConfig, mContext);
             runsetConfig.StartTimeStamp = DateTime.Now.ToUniversalTime();
+            AccountReportRunSet accountReportRunSet = mAccountReportEntitiesDataMapping.MapRunsetStartData(runsetConfig, mContext);            
+            AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
         }
         public void RunSetEnd(RunSetConfig runsetConfig)
         {
-            AccountReportRunSet accountReportRunSet = mAccountReportEntitiesDataMapping.MapRunsetEndData(runsetConfig, mContext);
             runsetConfig.EndTimeStamp = DateTime.Now.ToUniversalTime();
+            AccountReportRunSet accountReportRunSet = mAccountReportEntitiesDataMapping.MapRunsetEndData(runsetConfig, mContext);            
+            //accountReportRunSet.UpdateData = true;
+            AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);            
         }
         #endregion RunSet   
+
 
         #region Runner
         public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
-            AccountReportRunner accountReportRunner = mAccountReportEntitiesDataMapping.MapRunnerStartData(gingerRunner, mContext);
             gingerRunner.StartTimeStamp = DateTime.Now.ToUniversalTime();
+            AccountReportRunner accountReportRunner = mAccountReportEntitiesDataMapping.MapRunnerStartData(gingerRunner, mContext);            
+            AccountReportApiHandler.SendRunnerExecutionDataToCentralDBAsync(accountReportRunner);
         }
 
         public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
-            AccountReportRunner accountReportRunner = mAccountReportEntitiesDataMapping.MapRunnerEndData(gingerRunner, mContext);
             gingerRunner.EndTimeStamp = DateTime.Now.ToUniversalTime();
+            AccountReportRunner accountReportRunner = mAccountReportEntitiesDataMapping.MapRunnerEndData(gingerRunner, mContext);          
             //gingerRunner.Elapsed = gingerRunner.RunnerExecutionWatch.runWatch.ElapsedMilliseconds;
+            //accountReportRunner.UpdateData = true;
+            //AccountReportApiHandler.SendRunnerExecutionDataToCentralDBAsync(accountReportRunner, true);            
         }
 
         #endregion Runner
@@ -71,10 +78,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
             AccountReportBusinessFlow accountReportBusinessFlow = mAccountReportEntitiesDataMapping.MapBusinessFlowStartData(businessFlow, mContext);
+            AccountReportApiHandler.SendBusinessflowExecutionDataToCentralDBAsync(accountReportBusinessFlow);
         }
         public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
             AccountReportBusinessFlow accountReportBusinessFlow = mAccountReportEntitiesDataMapping.MapBusinessFlowEndData(businessFlow, mContext);
+            //accountReportBusinessFlow.UpdateData = true;
+            //AccountReportApiHandler.SendBusinessflowExecutionDataToCentralDBAsync(accountReportBusinessFlow);
         }       
         #endregion BusinessFlow
 
@@ -82,35 +92,47 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         public override void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
         {
            AccountReportActivity accountReportActivity = mAccountReportEntitiesDataMapping.MapActivityStartData(activity, mContext);
+            AccountReportApiHandler.SendActivityExecutionDataToCentralDBAsync(accountReportActivity);
         }
         public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
             AccountReportActivity accountReportActivity = mAccountReportEntitiesDataMapping.MapActivityEndData(activity, mContext);
-        }     
+            //accountReportActivity.UpdateData = true;
+            //AccountReportApiHandler.SendActivityExecutionDataToCentralDBAsync(accountReportActivity, true);
+        }
         #endregion Activity
+
+        #region Activity Group 
+        public override void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)
+        {
+            AccountReportActivityGroup accountReportActivityGroup = mAccountReportEntitiesDataMapping.MapActivityGroupStartData(activityGroup, mContext);
+            AccountReportApiHandler.SendActivityGroupExecutionDataToCentralDBAsync(accountReportActivityGroup);
+        }
+
+        public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
+        {
+            AccountReportActivityGroup accountReportActivityGroup = mAccountReportEntitiesDataMapping.MapActivityGroupEndData(activityGroup, mContext);
+            // accountReportActivityGroup.UpdateData = true;
+            // AccountReportApiHandler.SendActivityGroupExecutionDataToCentralDBAsync(accountReportActivityGroup, true);
+        }
+
+        #endregion Activity Group
 
         #region Action
         public override void ActionStart(uint eventTime, Act action)
         {
             AccountReportAction accountReportAction = mAccountReportEntitiesDataMapping.MapActionStartData(action, mContext);
-            // CentralExecutionLoggerHelper centralExecutionLogger = new CentralExecutionLoggerHelper(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
-            //AccountReportApiHandler.SendActionExecutionDataToCentralDBAsync(Workspace.instanc.RunsetExecuter.Runset.ExecutionID, mContext.Activity.ExecutionID, action.ExecutionID, accountReportAction);
-
+            //AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+            //apiHandler.SendActionExecutionDataToCentralDBAsync(Workspace.instanc.RunsetExecuter.Runset.ExecutionID, mContext.Activity.ExecutionID, action.ExecutionID, accountReportAction);
+            AccountReportApiHandler.SendActionExecutionDataToCentralDBAsync(accountReportAction);
         }
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode= false)
         {
-            AccountReportAction accountReportAction = mAccountReportEntitiesDataMapping.MapActionEndData(action, mContext);            
-        }
-
-        public virtual void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)
-        {
-            AccountReportActivityGroup accountReportActivityGroup = mAccountReportEntitiesDataMapping.MapActivityGroupStartData(activityGroup, mContext);
-        }
-
-        public virtual void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
-        {
-            AccountReportActivityGroup accountReportActivityGroup = mAccountReportEntitiesDataMapping.MapActivityGroupEndData(activityGroup, mContext);
-        }
+            AccountReportAction accountReportAction = mAccountReportEntitiesDataMapping.MapActionEndData(action, mContext);
+            AccountReportApiHandler.SendScreenShotsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, accountReportAction.ScreenShots);
+            //  accountReportAction.UpdateData = true;
+            AccountReportApiHandler.SendActionExecutionDataToCentralDBAsync(accountReportAction, true);
+        }      
         #endregion Action       
     }
 }

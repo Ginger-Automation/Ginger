@@ -1816,5 +1816,7 @@ namespace GingerCore.Actions
         /// </summary>
         public Guid ExecutionId { get; set; }
 
+        public Guid ParentExecutionId { get; set; }
+
     }
 }

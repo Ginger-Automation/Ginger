@@ -390,6 +390,9 @@ namespace Ginger.Run
         /// </summary>
         public Guid ExecutionId { get; set; }
 
+        public Guid ParentExecutionId { get; set; }
+        public int ExecutionLogBusinessFlowsCounter { get; set; }
+
         public GingerRunner()
         {
             ExecutedFrom = eExecutedFrom.Run;
@@ -410,7 +413,7 @@ namespace Ginger.Run
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             ExecutedFrom = executedFrom;
-
+            
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
@@ -528,7 +531,7 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;
             try
             {
-
+                
                 if (Active == false || BusinessFlows.Count == 0)
                 {
                     runnerExecutionSkipped = true;
@@ -547,7 +550,7 @@ namespace Ginger.Run
                 Status = eRunStatus.Started;
                 IsRunning = true;
                 mStopRun = false;
-                SetupVirtualAgents();
+                SetupVirtualAgents();                
                 if (doContinueRun == false)
                 {
                     RunnerExecutionWatch.StartRunWatch();
@@ -583,7 +586,7 @@ namespace Ginger.Run
                 for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx))
                 {                    
                     BusinessFlow executedBusFlow = (BusinessFlow)BusinessFlows[bfIndx];
-                  
+                    ExecutionLogBusinessFlowsCounter = bfIndx;
                     //stop if needed before executing next BF
                     if (mStopRun)
                     {
@@ -3072,7 +3075,7 @@ namespace Ginger.Run
             }
 
             try
-            {
+            {                
                 activity.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
                 if (activity.Active != false)
                 {
@@ -3091,10 +3094,10 @@ namespace Ginger.Run
                     currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();                    
                     if (currentActivityGroup != null)
                     {
-                        currentActivityGroup.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
+                        currentActivityGroup.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;                        
                         switch (currentActivityGroup.ExecutionLoggerStatus)
                         {
-                            case executionLoggerStatus.NotStartedYet:
+                            case executionLoggerStatus.NotStartedYet:                                
                                 currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.StartedNotFinishedYet;
                                 NotifyActivityGroupStart(currentActivityGroup);
                                 break;
@@ -3104,7 +3107,7 @@ namespace Ginger.Run
                             case executionLoggerStatus.Finished:
                                 // do nothing
                                 break;
-                        }
+                        }                        
                     }
 
                     //add validation for Ginger runner tags
@@ -3544,7 +3547,7 @@ namespace Ginger.Run
             // !!!!!!!!!! remove SW
             Stopwatch st = new Stopwatch();
             try
-            {
+            {           
                 //set Runner details if running in stand alone mode (Automate tab)
                 if (standaloneExecution)
                 {

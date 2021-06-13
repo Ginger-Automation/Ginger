@@ -117,6 +117,13 @@ namespace GingerCore.Activities
 
         public override string GetNameForFileName() { return Name; }
 
+        /// <summary>
+        /// ID which been provided for each execution instance on the Activity
+        /// </summary>
+        public Guid ExecutionId { get; set; }
+
+        public Guid ParentExecutionId { get; set; }
+
         public void AddActivityToGroup(Activity activity, int insertIndx = -1)
         {
             if (activity == null)

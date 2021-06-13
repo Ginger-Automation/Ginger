@@ -67,6 +67,8 @@ namespace GingerCore
         /// </summary>
         public Guid ExecutionId { get; set; }
 
+        public Guid ParentExecutionId { get; set; }
+
         public override string GetNameForFileName() { return Name; }
 
         public enum eBusinessFlowStatus
@@ -1377,7 +1379,7 @@ namespace GingerCore
 
         public int ExecutionLogActivityCounter { get; set; }
 
-        public int ExecutionLogActivityGroupCounter { get; set; }
+        public int ExecutionLogActivityGroupCounter { get; set; }        
 
         // Only for Run time, no need to serialize        
         public DateTime StartTimeStamp { get; set; }
