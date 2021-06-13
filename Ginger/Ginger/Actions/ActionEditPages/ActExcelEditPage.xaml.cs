@@ -98,6 +98,11 @@ namespace Ginger.Actions
             ContextProcessInputValueForDriver();
             //Move code to ExcelFunction no in Act...
             List<string> SheetsList = mExcelOperations.GetSheets(mAct.CalculatedFileName);
+            if (SheetsList == null || SheetsList.Count == 0)
+            {
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                return;
+            }
             GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
         }
 

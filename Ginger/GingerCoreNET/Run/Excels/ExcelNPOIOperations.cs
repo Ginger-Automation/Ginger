@@ -92,17 +92,31 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         public DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows)
         {
-            mWorkbook = GetExcelWorkbook(fileName);
-            mSheet = mWorkbook.GetSheet(sheetName);
-            if (mSheet == null)
+            if (!GetExcelSheet(fileName, sheetName))
             {
-                Reporter.ToLog(eLogLevel.WARN, "Incorrect Sheet name.");
                 return null;
             }
             mExcelDataTable = ConvertSheetToDataTable(mSheet);
             mExcelDataTable.DefaultView.RowFilter = filter ?? "";
             mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
             return mFilteredDataTable;
+        }
+
+        private bool GetExcelSheet(string fileName, string sheetName)
+        {
+            mWorkbook = GetExcelWorkbook(fileName);
+            if(mWorkbook == null)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "File name not Exists.");
+                return false;
+            }
+            mSheet = mWorkbook.GetSheet(sheetName);
+            if(mSheet == null)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Sheet name not Exists.");
+                return false;
+            }
+            return true;
         }
 
         private List<Tuple<string, object>> GetSetDataUsed(string setDataUsed)
@@ -144,28 +158,15 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             try
             {
                 var fileExtension = Path.GetExtension(fullFilePath);
-                switch (fileExtension.ToLower())
+                using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
                 {
-                    case ".xlsx":
-                        using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
-                        {
-                            workbook = new XSSFWorkbook(fs);
-                        }
-                        break;
-                    case ".xls":
-                        using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
-                        {
-                            workbook = new HSSFWorkbook(fs);
-                        }
-                        break;
-                    default:
-                        Reporter.ToLog(eLogLevel.WARN, "Please check file extention" + fullFilePath);
-                        break;
+                    workbook = WorkbookFactory.Create(fs);
                 }
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.WARN, "Invalid Path Name" + fullFilePath, ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Invalid Excel Path Name" + fullFilePath, ex);
+                return null;
             }
             return workbook;
         }
@@ -212,11 +213,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             {
                 return null;
             }
-            mWorkbook = GetExcelWorkbook(fileName);
-            mSheet = mWorkbook.GetSheet(sheetName);
-            if (mSheet == null)
+            if (!GetExcelSheet(fileName, sheetName))
             {
-                Reporter.ToLog(eLogLevel.WARN, "Invalid sheet name");
                 return null;
             }
             CellReference cellFrom;
@@ -301,6 +299,17 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         {
             UpdateCellList = GetSetDataUsed(setDataUsed);
             UpdateCellList.AddRange(updateCellValuesList);
+            if(!String.IsNullOrWhiteSpace(primaryKey))
+            {
+                if (string.IsNullOrWhiteSpace(filter))
+                {
+                    filter = primaryKey;
+                }
+                else
+                {
+                    filter = filter + $"and {primaryKey}";
+                }
+            }
             if (UpdateCellList.Count > 0)
             {
                 UpdateCellList.ForEach(x =>
@@ -323,6 +332,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             List<string> sheets = new List<string>();
             mFileName = fileName;
             var wb = GetExcelWorkbook(mFileName);
+            if(wb == null)
+            {
+                return sheets;
+            }
             for (int i = 0; i < wb.NumberOfSheets; i++)
             {
                 sheets.Add(wb.GetSheetAt(i).SheetName);
