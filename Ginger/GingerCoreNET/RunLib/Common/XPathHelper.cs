@@ -455,11 +455,14 @@ namespace GingerCore.Drivers.Common
                         }
                         continue;
                     }
-                    elemInfo = mDriver.GetElementParent(elemInfo); 
-                    if(relxpath== "" && elemInfo is HTMLElementInfo && !String.IsNullOrEmpty(((HTMLElementInfo)elemInfo).RelXpath))
+                    if(relxpath== "")
                     {
-                        relxpath = xpath.Replace(elemInfo.XPath, ((HTMLElementInfo)elemInfo).RelXpath);
-                        break;
+                        elemInfo = mDriver.GetElementParent(elemInfo);
+                        if (elemInfo is HTMLElementInfo && !string.IsNullOrEmpty(((HTMLElementInfo)elemInfo).RelXpath))
+                        {
+                            relxpath = xpath.Replace(elemInfo.XPath, ((HTMLElementInfo)elemInfo).RelXpath);
+                            break;
+                        }
                     }
                 }
             }
