@@ -277,6 +277,10 @@
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrFolderTreeItem.cs" />
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrCycleTreeItem.cs" />
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrVersionTreeItem.cs" />
+    <Compile Include="ALM\Qtest\QtestModuleExplorerPage.xaml.cs">
+      <DependentUpon>QtestModuleExplorerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\Qtest\TreeViewItems\QtestModuleTreeItem.cs" />
     <Compile Include="ALM\Repository\OctaneRepository.cs" />
     <Compile Include="ALM\Qtest\QtestCyclesExplorerPage.xaml.cs">
       <DependentUpon>QtestCyclesExplorerPage.xaml</DependentUpon>
@@ -2569,6 +2573,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ALM\Qtest\QtestCyclesExplorerPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ALM\Qtest\QtestModuleExplorerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
