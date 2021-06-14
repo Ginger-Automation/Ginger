@@ -56,6 +56,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml;
 
 namespace GingerCore.Drivers
@@ -4914,6 +4915,11 @@ namespace GingerCore.Drivers
             if (e.TagName == "table")  // Table
             {
                 return GetTableData(ElementInfo);
+            }
+            if (e.TagName == "canvas")
+            {
+                ((SeleniumDriver)ElementInfo.WindowExplorer).InjectGingerLiveSpyAndStartClickEvent(ElementInfo);
+                return GetXAndYpointsfromClickEvent(ElementInfo);
             }
             return null;
         }

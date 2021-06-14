@@ -138,6 +138,7 @@ namespace Ginger.ALM.Repository
 
         public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
+            tcsRepositoryList = new List<TestCaseResource>();
             if (businessFlow == null)
             {
                 return false;
@@ -336,7 +337,7 @@ namespace Ginger.ALM.Repository
                 folderId = cyclePhase.id;
                 tcrCatalogTreeId = cyclePhase.tcrCatalogTreeId;
             }
-            else if (bfEntityType.Equals(EntityFolderType.Cycle.ToString()))
+            else if (bfEntityType.Equals(EntityFolderType.Cycle.ToString()) || bfEntityType.Equals(EntityFolderType.CyclePhase.ToString()))
             {
                 cycle = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntCycleById(Convert.ToInt32(testLabUploadPath));
                 cyclePhase = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).CreateNewTestCyclePhase(cycle, businessFlow.Name);
