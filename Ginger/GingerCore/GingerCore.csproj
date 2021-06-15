@@ -284,7 +284,6 @@
     <Compile Include="Actions\ActSendKeys.cs" />
     <Compile Include="Actions\ActSetConfig.cs" />
     <Compile Include="Actions\ActMenuItem.cs" />
-    <Compile Include="Actions\ActScript.cs" />
     <Compile Include="Actions\ActTextSpeech.cs" />
     <Compile Include="Actions\ActWindow.cs" />
     <Compile Include="Actions\Common\ActDeviceButton.cs" />

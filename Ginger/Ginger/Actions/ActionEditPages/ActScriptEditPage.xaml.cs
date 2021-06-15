@@ -140,7 +140,8 @@ namespace Ginger.Actions
             {
                 InterpreterPathPanel.Visibility = Visibility.Visible;
                 fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
-               .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd") || s.ToLower().EndsWith(".py") || s.ToLower().EndsWith(".ps1")).ToArray() ;
+               .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd") 
+               || s.ToLower().EndsWith(".py") || s.ToLower().EndsWith(".ps1") || s.ToLower().EndsWith(".sh")).ToArray() ;
             }
             else if (interpreterType == ActScript.eScriptInterpreterType.BAT)
             {
@@ -157,7 +158,11 @@ namespace Ginger.Actions
                 InterpreterPathPanel.Visibility = Visibility.Collapsed;
                 fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".js");
             }
-
+            else if (interpreterType == ActScript.eScriptInterpreterType.BASH)
+            {
+                InterpreterPathPanel.Visibility = Visibility.Collapsed;
+                fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".sh");
+            }
             if (fileEntries != null)
             {
                 fileEntries = fileEntries.Select(q => q.Replace(SHFilesPath, "")).ToArray();
