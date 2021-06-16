@@ -102,7 +102,7 @@ namespace GingerWPF.WorkSpaceLib
         {
         }
 
-        public bool ValidateEncryptionKey(Solution solution)
+        public bool OpenEncryptionKeyHandler(Solution solution)
         {
             SolutionPage solutionPage = new SolutionPage();
 

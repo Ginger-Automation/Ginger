@@ -66,8 +66,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('c', "ignoreCertificate", Required = false, HelpText = "Ignore certificate errors while cloning solution")]
         public bool ignoreCertificate { get; set; }
 
-
-
+        [Option('k', "encryptionKey", Required = false, HelpText = "Encryption key password vairables")]
+        public string EncryptionKey { get; set; }
     }
 
-    }
+}

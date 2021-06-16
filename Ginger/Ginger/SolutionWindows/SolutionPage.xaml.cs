@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.SolutionGeneral;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -72,7 +73,7 @@ namespace Ginger.SolutionWindows
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Name));
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Folder));
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AccountTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Account));
-                EncryptionKeyPasswordBox.Password = mSolution.EncryptionKey;
+                UCEncryptionKey.EncryptionKeyPasswordBox.Password = mSolution.EncryptionKey;
             }
             else
             {
@@ -80,37 +81,16 @@ namespace Ginger.SolutionWindows
                 xSolutionDetailsStack.Visibility = Visibility.Collapsed;
             }
         }
-        private void ShowPassword_PreviewMouseDown(object sender, MouseButtonEventArgs e) => ShowPasswordFunction();
-        private void ShowPassword_PreviewMouseUp(object sender, MouseButtonEventArgs e) => HidePasswordFunction();
-        private void ShowPassword_MouseLeave(object sender, MouseEventArgs e) => HidePasswordFunction();
-
-        private void ValidateKeyMouseDown(object sender, MouseButtonEventArgs e) => ValidateKey();
-
-        private void ShowPasswordFunction()
-        {
-            //ShowPassword.Text = "HIDE";
-            ShowPassword.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Invisible;
-            EncryptionKeyTextBox.Visibility = Visibility.Visible;
-            EncryptionKeyPasswordBox.Visibility = Visibility.Hidden;
-            EncryptionKeyTextBox.Text = EncryptionKeyPasswordBox.Password;
-        }
-
-        private void HidePasswordFunction()
-        {
-            //ShowPassword.Text = "SHOW";
-            ShowPassword.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Visible;
-            EncryptionKeyTextBox.Visibility = Visibility.Hidden;
-            EncryptionKeyPasswordBox.Visibility = Visibility.Visible;
-        }
+     
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
             SolutionFolderTextBox.IsReadOnly = false;
             SolutionNameTextBox.IsReadOnly = false;
             AccountTextBox.IsReadOnly = false;
-            EncryptionKeyTextBox.IsReadOnly = true;
-            EncryptionKeyPasswordBox.IsEnabled = false;
-            ValidFlag.Visibility = Visibility.Collapsed;
-            InvalidFlag.Visibility = Visibility.Collapsed;
+            UCEncryptionKey.EncryptionKeyTextBox.IsReadOnly = true;
+            UCEncryptionKey.EncryptionKeyPasswordBox.IsEnabled = false;
+            UCEncryptionKey.ValidFlag.Visibility = Visibility.Collapsed;
+            UCEncryptionKey.InvalidFlag.Visibility = Visibility.Collapsed;
             mSolution.SaveBackup();
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
@@ -141,14 +121,19 @@ namespace Ginger.SolutionWindows
         {
 
             Init(solution);
+            UCEncryptionKey.mSolution = solution;
 
             SolutionFolderTextBox.IsReadOnly = true;
             SolutionNameTextBox.IsReadOnly = true;
             AccountTextBox.IsReadOnly = true;
-            EncryptionKeyTextBox.IsReadOnly = false;
-            EncryptionKeyPasswordBox.IsEnabled = true;
-            ValidFlag.Visibility = Visibility.Collapsed;
-            InvalidFlag.Visibility = Visibility.Collapsed;           
+            UCEncryptionKey.EncryptionKeyTextBox.IsReadOnly = false;
+            UCEncryptionKey.EncryptionKeyPasswordBox.IsEnabled = true;
+            UCEncryptionKey.ValidFlag.Visibility = Visibility.Collapsed;
+            UCEncryptionKey.InvalidFlag.Visibility = Visibility.Visible;
+            UCEncryptionKey.Validate.Visibility = Visibility.Visible;
+            xInvalidKeyLabel.Visibility = Visibility.Visible;
+
+            UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
             // Button ValidateBtn = new Button();
@@ -170,24 +155,21 @@ namespace Ginger.SolutionWindows
 
         private void ValidateBtn_Click(object sender, RoutedEventArgs e)
         {
-            ValidateKey();
+            UCEncryptionKey.ValidateKey();
         }
 
-        public bool ValidateKey()
+        private async void EncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
         {
-            mSolution.EncryptionKey = EncryptionKeyPasswordBox.Password;
-            if (mSolution.ValidateKey())
+            //this inner method checks if user is still typing
+            async Task<bool> UserKeepsTyping()
             {
-                ValidFlag.Visibility = Visibility.Visible;
-                InvalidFlag.Visibility = Visibility.Collapsed;
-                return true;
+                string txt = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
+                await Task.Delay(2000);
+                return txt != UCEncryptionKey.EncryptionKeyPasswordBox.Password;
             }
-            else
-            {
-                ValidFlag.Visibility = Visibility.Collapsed;
-                InvalidFlag.Visibility = Visibility.Visible;
-                return false;
-            }
+            if (await UserKeepsTyping()) return;
+
+            UCEncryptionKey.ValidateKey();
         }
 
         private void ReplaceKeyBtn_Click(object sender, RoutedEventArgs e)
@@ -202,7 +184,7 @@ namespace Ginger.SolutionWindows
 
         private void SaveKeyBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (ValidateKey())
+            if (UCEncryptionKey.ValidateKey())
             {
                 mSolution.SaveEncryptionKey();
                 IsValidEncryptionKeyAdded = true;

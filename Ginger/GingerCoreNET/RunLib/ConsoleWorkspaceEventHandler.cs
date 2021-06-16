@@ -61,7 +61,7 @@ namespace Amdocs.Ginger
         }
 
 
-        public bool ValidateEncryptionKey(Solution solution)
+        public bool OpenEncryptionKeyHandler(Solution solution)
         {
             throw new NotImplementedException();
         }

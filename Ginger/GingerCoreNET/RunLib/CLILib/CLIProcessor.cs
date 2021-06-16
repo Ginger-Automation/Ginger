@@ -354,7 +354,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             Reporter.ToLog(eLogLevel.INFO, "Loading Configurations...");
             
             mCLIHandler = new CLIArgs();
-            mCLIHelper.Solution = runOptions.Solution;
+            mCLIHelper.Solution = runOptions.Solution;            
             mCLIHelper.Runset = runOptions.Runset;
             mCLIHelper.Env = runOptions.Environment;
             mCLIHelper.RunAnalyzer = !runOptions.DoNotAnalyze;
@@ -366,6 +366,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.sourceControlType = runOptions.SCMType;
             mCLIHelper.sourceControlPass = runOptions.Pass;
             mCLIHelper.sourceControlPassEncrypted = runOptions.PasswordEncrypted;
+            mCLIHelper.EncryptionKey = runOptions.EncryptionKey;
+
+
 
             if (WorkSpace.Instance.UserProfile == null)
             {

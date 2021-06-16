@@ -480,12 +480,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             executionConfig.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
             executionConfig.VerboseLevel = GingerExecConfig.eVerboseLevel.normal;
+            executionConfig.EncryptionKey = solution.EncryptionKey;
 
             RunsetExecConfig runset = new RunsetExecConfig();
             runset.Exist = true;
             runset.Name = runsetExecutor.RunSetConfig.Name;
             runset.ID = runsetExecutor.RunSetConfig.Guid;
-            runset.Description = runsetExecutor.RunSetConfig.Description;
+            runset.Description = runsetExecutor.RunSetConfig.Description;            
 
             runset.EnvironmentName = runsetExecutor.RunsetExecutionEnvironment.Name;
             runset.EnvironmentID = runsetExecutor.RunsetExecutionEnvironment.Guid;

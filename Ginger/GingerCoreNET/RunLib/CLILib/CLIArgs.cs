@@ -47,7 +47,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             options.DoNotAnalyze = !cliHelper.RunAnalyzer;
             options.ShowUI = cliHelper.ShowAutoRunWindow;
             options.TestArtifactsPath = cliHelper.TestArtifactsFolder;
-           
+
+            options.EncryptionKey = solution.EncryptionKey;
+
             options.URL = cliHelper.SourceControlURL;
             options.User = cliHelper.SourcecontrolUser;
             options.Pass = cliHelper.sourceControlPass;

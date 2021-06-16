@@ -51,13 +51,13 @@ namespace Ginger.SolutionGeneral
             Tags = new ObservableList<RepositoryItemTag>();
         }
 
-        public static Solution LoadSolution(string solutionFileName, bool startDirtyTracking= true)
+        public static Solution LoadSolution(string solutionFileName, bool startDirtyTracking= true, string encryptionKey = null)
         {
             string txt = File.ReadAllText(solutionFileName);
             Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
             solution.FilePath = solutionFileName;
             solution.Folder = Path.GetDirectoryName(solutionFileName);
-            solution.EncryptionKey = GetEncryptionKey(solution.Guid.ToString());            
+            solution.EncryptionKey = encryptionKey ?? GetEncryptionKey(solution.Guid.ToString());            
             if (startDirtyTracking)
             {
                 solution.StartDirtyTracking();
@@ -234,31 +234,32 @@ namespace Ginger.SolutionGeneral
         public string EncryptionKey { get; set; }
 
         [IsSerializedForLocalRepository]
-        public string EncryptedSolutionName {get;set;}
+        public string EncryptedValidationString { get;set;}
 
-        public bool ValidateKey()
+        public bool ValidateKey(string encryptionKey = null)
         {
             try
             {
-                return EncryptionHandler.DecryptwithKey(EncryptedSolutionName, EncryptionKey).Equals("valid");
+                EncryptionKey = encryptionKey ?? EncryptionKey;
+                return EncryptionHandler.DecryptwithKey(EncryptedValidationString, EncryptionKey).Equals("valid");
             }
-            catch
+            catch(Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
             }
             return false;
         }
 
-        public bool EncryptSolutionName()
+        public bool AddValidationString()
         {
             try
             {
-                EncryptedSolutionName = EncryptionHandler.EncryptwithKey("valid", EncryptionKey);
+                EncryptedValidationString = EncryptionHandler.EncryptwithKey("valid", EncryptionKey);
                 return true;
             }
-            catch
-            { 
-            
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
             }
             return false;
         }
@@ -269,9 +270,9 @@ namespace Ginger.SolutionGeneral
             {
                return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
             }
-            catch
+            catch (Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
             }
             return null;
         }
@@ -283,9 +284,9 @@ namespace Ginger.SolutionGeneral
                 EncryptionKey =  GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + Guid);
                 return string.IsNullOrEmpty(EncryptionKey) ? false : true;
             }
-            catch
+            catch (Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
             }
             return false;
         }
@@ -294,13 +295,13 @@ namespace Ginger.SolutionGeneral
         {
             try
             {
-                EncryptSolutionName();
+                AddValidationString();
                 GingerCore.GeneralLib.WinCredentialUtil.SetCredentials("Ginger_Sol_" + Guid, mName, EncryptionKey);
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
             }
             return false;
         }

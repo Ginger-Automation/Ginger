@@ -94,6 +94,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     cliHelper.SetSourceControlUser(exeConfiguration.SolutionScmDetails.User);
                     cliHelper.SetSourceControlPassword(exeConfiguration.SolutionScmDetails.Password);
                     cliHelper.PasswordEncrypted(exeConfiguration.SolutionScmDetails.PasswordEncrypted.ToString());
+                    
                     if (string.IsNullOrEmpty(exeConfiguration.SolutionScmDetails.ProxyServer) == false)
                     {
                         cliHelper.SourceControlProxyServer(exeConfiguration.SolutionScmDetails.ProxyServer);
@@ -127,6 +128,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         }
                     }
                 }
+
+                cliHelper.SetEncryptionKey(exeConfiguration.EncryptionKey);
 
                 if (exeConfiguration.ShowAutoRunWindow != null && exeConfiguration.ShowAutoRunWindow == true)
                 {

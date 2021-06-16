@@ -82,7 +82,7 @@ namespace Amdocs.Ginger.GingerConsole
             Reporter.ToLog(eLogLevel.INFO, "Solution Closed");
         }
 
-        public bool ValidateEncryptionKey(Solution solution)
+        public bool OpenEncryptionKeyHandler(Solution solution)
         {
             throw new NotImplementedException();
         }

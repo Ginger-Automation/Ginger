@@ -47,30 +47,16 @@ namespace Ginger.SolutionWindows
             InitializeComponent();
             mSolution = s;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, s, nameof(Solution.Name));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
+            UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
             GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform);
-        }
+        }        
 
-        private void ShowPassword_PreviewMouseDown(object sender, MouseButtonEventArgs e) => ShowPasswordFunction();
-        private void ShowPassword_PreviewMouseUp(object sender, MouseButtonEventArgs e) => HidePasswordFunction();
-        private void ShowPassword_MouseLeave(object sender, MouseEventArgs e) => HidePasswordFunction();
-
-        private void ShowPasswordFunction()
+        private async void EncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
         {
-            //ShowPassword.Text = "HIDE";
-            ShowPassword.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Invisible;
-            EncryptionKeyTextBox.Visibility = Visibility.Visible;
-            EncryptionKeyPasswordBox.Visibility = Visibility.Hidden;
-            EncryptionKeyTextBox.Text = EncryptionKeyPasswordBox.Password;
+            UCEncryptionKey.CheckKey(UCEncryptionKey.EncryptionKeyPasswordBox.Password.ToString());
         }
 
-        private void HidePasswordFunction()
-        {
-            //ShowPassword.Text = "SHOW";
-            ShowPassword.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Visible;
-            EncryptionKeyTextBox.Visibility = Visibility.Hidden;
-            EncryptionKeyPasswordBox.Visibility = Visibility.Visible;
-        }
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -79,9 +65,9 @@ namespace Ginger.SolutionWindows
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 //check name and folder inputs exists
                 if (SolutionNameTextBox.Text.Trim() == string.Empty || SolutionFolderTextBox.Text.Trim() == string.Empty
-                        || ApplicationTextBox.Text.Trim() == string.Empty 
+                        || ApplicationTextBox.Text.Trim() == string.Empty
                             || MainPlatformComboBox.SelectedItem == null || MainPlatformComboBox.SelectedItem.ToString() == "Null"
-                            || EncryptionKeyPasswordBox.Password.Trim() == string.Empty)
+                            || UCEncryptionKey.EncryptionKeyPasswordBox.Password.Trim() == string.Empty)
                 {
                     Mouse.OverrideCursor = null;
                     Reporter.ToUser(eUserMsgKey.MissingAddSolutionInputs);
@@ -89,11 +75,11 @@ namespace Ginger.SolutionWindows
                 }
 
                 Regex regex = new Regex(@"^.*(?=.{8,16})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!*@#$%^&+=]).*$");
-                if (!regex.IsMatch(EncryptionKeyPasswordBox.Password.ToString()))
+                if (!UCEncryptionKey.CheckKey(UCEncryptionKey.EncryptionKeyPasswordBox.Password.ToString()))
                 {
                     Mouse.OverrideCursor = null;
-                    EncryptionKeyPasswordBox.Password = "";
-                    Reporter.ToUser(eUserMsgKey.InvalidEncryptionKey);
+                    UCEncryptionKey.EncryptionKeyPasswordBox.Password = "";
+                    // Reporter.ToUser(eUserMsgKey.InvalidEncryptionKey);
                     return;
                 }
 
@@ -102,7 +88,7 @@ namespace Ginger.SolutionWindows
                 MainApplicationPlatform.AppName = ApplicationTextBox.Text;
                 MainApplicationPlatform.Platform = (ePlatformType)MainPlatformComboBox.SelectedValue;
                 mSolution.ApplicationPlatforms.Add(MainApplicationPlatform);
-                mSolution.EncryptionKey = EncryptionKeyPasswordBox.Password;
+                mSolution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
                 //TODO: check AppName and platform validity - not empty + app exist in list of apps
 
 
@@ -122,7 +108,8 @@ namespace Ginger.SolutionWindows
                 //check solution not already exist
                 if (System.IO.File.Exists(System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml")) == false)
                 {
-                    mSolution.FilePath = System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml");                    
+                    mSolution.FilePath = System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml");
+                    mSolution.SaveEncryptionKey();
                     mSolution.SaveSolution(false);
                 }
                 else
@@ -136,7 +123,7 @@ namespace Ginger.SolutionWindows
                 WorkSpace.Instance.OpenSolution(mSolution.Folder);
 
                 //Create default items                
-                AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);                
+                AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);
                 App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
                 AddDefaultDataSource();
                 AddDeafultReportTemplate();
@@ -144,8 +131,8 @@ namespace Ginger.SolutionWindows
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(WorkSpace.Instance.GetNewBusinessFlow("Flow 1", true));
                 mSolution.SetReportsConfigurations();
 
-              //  mSolution.EncryptSolutionName();
-                mSolution.SaveEncryptionKey();
+                //  mSolution.EncryptSolutionName();
+
                 //Save again to keep all defualt configurations setup
                 mSolution.SaveSolution(false);
                 //show success message to user
@@ -162,7 +149,7 @@ namespace Ginger.SolutionWindows
 
         private void AddDeafultReportTemplate()
         {
-            HTMLReportConfiguration r = new HTMLReportConfiguration("Default",true);
+            HTMLReportConfiguration r = new HTMLReportConfiguration("Default", true);
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(r);
         }
 
@@ -199,7 +186,7 @@ namespace Ginger.SolutionWindows
                 case ePlatformType.Java:
                     agent.DriverType = Agent.eDriverType.JavaDriver;
                     break;
-                default:                    
+                default:
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No default driver set for first agent");
                     break;
             }
@@ -248,7 +235,7 @@ namespace Ginger.SolutionWindows
 
             RepositoryFolder<DataSourceBase> dsTargetFolder1 = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
             dsTargetFolder1.AddRepositoryItem(lite);
-            
+
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -285,7 +272,7 @@ namespace Ginger.SolutionWindows
             AddApplicationPage AAP = new AddApplicationPage(mSolution);
             AAP.ShowAsWindow();
 
-            if (mSolution.ApplicationPlatforms.Count() >0 )
+            if (mSolution.ApplicationPlatforms.Count() > 0)
             {
                 ApplicationTextBox.Text = mSolution.ApplicationPlatforms[0].AppName;
                 MainPlatformComboBox.SelectedValue = mSolution.ApplicationPlatforms[0].Platform;

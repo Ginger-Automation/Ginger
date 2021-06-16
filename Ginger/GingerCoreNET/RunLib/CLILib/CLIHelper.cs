@@ -45,6 +45,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourceControlURL;
         public string SourcecontrolUser;
         public string sourceControlPass;
+        public string EncryptionKey;
         public eSourceControlType sourceControlType;
         public bool sourceControlPassEncrypted;
         public eAppReporterLoggingLevel AppLoggingLevel;
@@ -326,6 +327,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             sourceControlPass = value;
         }
 
+        internal void SetEncryptionKey(string value)
+        {
+            EncryptionKey = value;
+        }
+
         internal void PasswordEncrypted(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
@@ -438,7 +444,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                return WorkSpace.Instance.OpenSolution(Solution);
+                return WorkSpace.Instance.OpenSolution(Solution, EncryptionKey);
             }
             catch (Exception ex)
             {

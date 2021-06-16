@@ -53,19 +53,19 @@ namespace amdocs.ginger.GingerCoreNET
     // For Ginger.Exe it is one per running app
     // For Web it can be one per user connected
     // DO NOT ADD STATIC FIELDS
-    public class WorkSpace 
-    {        
+    public class WorkSpace
+    {
         private static WorkSpace mWorkSpace;
         private static Mutex mutex = new Mutex(false, "CheckWebReportFolderMutex");
         public static WorkSpace Instance
         {
             get
-            {                
-                return mWorkSpace;                
+            {
+                return mWorkSpace;
             }
         }
 
-        public  OperatingSystemBase OSHelper;
+        public OperatingSystemBase OSHelper;
         static bool lockit;
         public ITargetFrameworkHelper TargetFrameworkHelper
         {
@@ -73,15 +73,15 @@ namespace amdocs.ginger.GingerCoreNET
             {
                 return Amdocs.Ginger.Common.TargetFrameworkHelper.Helper;
             }
-        }      
+        }
         public static void LockWS()
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Lock Workspace");
-            
+
             Task.Factory.StartNew(() =>
             {
                 lock (WorkSpace.Instance)
-                {                    
+                {
                     lockit = true;
                     while (lockit)  // TODO: add timeout max 60 seconds
                     {
@@ -100,7 +100,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         public static void Init(IWorkSpaceEventHandler WSEH, bool startLocalGrid = true)
         {
-         
+
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
@@ -111,7 +111,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             Telemetry.Init();
             mWorkSpace.Telemetry.SessionStarted();
-        }   
+        }
 
         public void StartLocalGrid()
         {
@@ -137,12 +137,12 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     LocalGingerGrid.Stop();
                 }
-                Close();             
+                Close();
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "ReleaseWorkspace error - " + ex.Message, ex);
-            }            
+            }
         }
 
 
@@ -172,11 +172,11 @@ namespace amdocs.ginger.GingerCoreNET
                 WorkSpace.Instance.Telemetry.SessionEnd();
                 mWorkSpace = null;
             }
-            catch (Exception ex)            
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Exception during close workspace",ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception during close workspace", ex);
 
-            }       
+            }
         }
 
         private void InitLocalGrid()
@@ -186,7 +186,7 @@ namespace amdocs.ginger.GingerCoreNET
                 mLocalGingerGrid = new GingerGrid();
                 mLocalGingerGrid.Start();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to start Ginger Grid", e);
             }
@@ -219,12 +219,9 @@ namespace amdocs.ginger.GingerCoreNET
 
 
         PluginsManager mPluginsManager = new PluginsManager();
-        public PluginsManager PlugInsManager { get { return mPluginsManager; }  }        
+        public PluginsManager PlugInsManager { get { return mPluginsManager; } }
 
         static bool bDone = false;
-
-
-        public bool IsEncryptionKeyValid = false;
 
         /// <summary>
         /// Init core classes type dictionary for RepositorySerializer
@@ -249,7 +246,7 @@ namespace amdocs.ginger.GingerCoreNET
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += new UnhandledExceptionEventHandler(StandAloneThreadExceptionHandler);
 
-            Reporter.WorkSpaceReporter = workSpaceReporterBase;            
+            Reporter.WorkSpaceReporter = workSpaceReporterBase;
 
             string phase = string.Empty;
 
@@ -258,10 +255,10 @@ namespace amdocs.ginger.GingerCoreNET
 
             BetaFeatures = BetaFeatures.LoadUserPref();
             BetaFeatures.PropertyChanged += BetaFeatureChanged;
-            
+
             if (BetaFeatures.ShowDebugConsole && !WorkSpace.Instance.RunningFromUnitTest)
             {
-                EventHandler.ShowDebugConsole(true);                
+                EventHandler.ShowDebugConsole(true);
                 BetaFeatures.DisplayStatus();
             }
 
@@ -277,21 +274,21 @@ namespace amdocs.ginger.GingerCoreNET
 
             // TODO: need to add a switch what we get from old ginger based on magic key
 
-            Reporter.ToLog(eLogLevel.INFO, "Loading User Profile");            
+            Reporter.ToLog(eLogLevel.INFO, "Loading User Profile");
             UserProfile = UserProfile.LoadUserProfile();
-            
+
             Reporter.ToLog(eLogLevel.INFO, "Configuring User Type");
-            UserProfile.LoadUserTypeHelper();            
-                        
+            UserProfile.LoadUserTypeHelper();
+
             if (WorkSpace.Instance.LocalGingerGrid != null)
             {
-                Reporter.ToLog(eLogLevel.INFO,"Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);                
+                Reporter.ToLog(eLogLevel.INFO, "Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);
             }
         }
 
         private static void SetLoadingInfo(string text)
         {
-           // FIX Message not shown !!!!!!!!!!!
+            // FIX Message not shown !!!!!!!!!!!
 
             Reporter.ToStatus(eStatusMsgKey.GingerLoadingInfo, text);
             Reporter.ToLog(eLogLevel.DEBUG, "Loading Info: " + text);
@@ -318,7 +315,7 @@ namespace amdocs.ginger.GingerCoreNET
             //Reporter.ToUser(eUserMsgKey.ThreadError, "Error occurred on stand alone thread - " + e.ExceptionObject.ToString());
 
             if (RunningInExecutionMode == false)
-            {                
+            {
                 AppSolutionAutoSave.DoAutoSave();
             }
 
@@ -331,11 +328,10 @@ namespace amdocs.ginger.GingerCoreNET
             // when loading check restore and restore
         }
 
-        public bool OpenSolution(string solutionFolder)
-        {                      
+        public bool OpenSolution(string solutionFolder, string EncryptionKey = null)
+        {
             try
             {
-                IsEncryptionKeyValid = false;
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", solutionFolder));
                 LoadingSolution = true;
 
@@ -358,8 +354,8 @@ namespace amdocs.ginger.GingerCoreNET
                         //Reporter.ToUser(eUserMsgKey.BeginWithNoSelectSolution);
                         Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Solution File Not Found");
                         return false;
-                    }                   
-                }                
+                    }
+                }
 
                 //Checking if Ginger upgrade is needed
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Checking if Ginger Solution items upgrade is needed");
@@ -372,7 +368,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution xml into object");
-                Solution solution = Solution.LoadSolution(solutionFile);
+                Solution solution = Solution.LoadSolution(solutionFile,true, EncryptionKey);
                 if (solution == null)
                 {
                     Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Failed to load the Solution file");
@@ -380,28 +376,19 @@ namespace amdocs.ginger.GingerCoreNET
                     return false;
                 }
 
-                //GetEncryptionKey(solution.Guid.ToString());
-                if (solution.FetchEncryptionKey())
+                if (!solution.ValidateKey())
                 {
-                    if(solution.ValidateKey())
-                    {
-                        IsEncryptionKeyValid = true;
-                    }
-                }
-                //Solution = solution;
-                if (!IsEncryptionKeyValid)
-                {
-                    Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Encryption key validation failed or key is missing. Press Ok to enter the key manually.");
+                    //Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Encryption key validation failed or key is missing. Press Ok to enter the key manually.");
                     Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Encryption key validation failed");
                     if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
                     {
-                        if (!WorkSpace.Instance.EventHandler.ValidateEncryptionKey(solution))
+                        if (!WorkSpace.Instance.EventHandler.OpenEncryptionKeyHandler(solution))
                             return false;
                     }
                     else return false;
                 }
 
-                
+
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Creating Items Repository");
                 SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
                 SolutionRepository.Open(solutionFolder);
@@ -415,21 +402,21 @@ namespace amdocs.ginger.GingerCoreNET
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Updating Application Functionalities to Work with Loaded Solution");
                 ValueExpression.SolutionFolder = solutionFolder;
-                BusinessFlow.SolutionVariables = solution.Variables; 
+                BusinessFlow.SolutionVariables = solution.Variables;
                 solution.SetReportsConfigurations();
                 Solution = solution;
                 UserProfile.LoadRecentAppAgentMapping();
 
                 if (!RunningInExecutionMode)
                 {
-                    AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
+                    AppSolutionRecover.DoSolutionAutoSaveAndRecover();
                 }
 
                 //Solution items upgrade
                 SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
 
                 // No need to add solution to recent if running from CLI
-                if (!RunningInExecutionMode)  
+                if (!RunningInExecutionMode)
                 {
                     UserProfile.AddSolutionToRecent(solution);
                 }
@@ -447,20 +434,20 @@ namespace amdocs.ginger.GingerCoreNET
             }
             finally
             {
-                LoadingSolution = false;                                               
+                LoadingSolution = false;
             }
         }
 
-        
+
 
         private static void HandleSolutionLoadSourceControl(Solution solution)
         {
             string repositoryRootFolder = string.Empty;
             WorkSpace.Instance.EventHandler.SetSolutionSourceControl(solution, ref repositoryRootFolder);
-            
+
             if (solution.SourceControl != null && WorkSpace.Instance.UserProfile != null)
             {
-                if ( string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass))
+                if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass))
                 {
                     if (WorkSpace.Instance.UserProfile.SourceControlUser != null && WorkSpace.Instance.UserProfile.SourceControlPass != null)
                     {
@@ -528,7 +515,7 @@ namespace amdocs.ginger.GingerCoreNET
         {
             if (SolutionRepository != null)
             {
-                foreach(ProjEnvironment env in SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+                foreach (ProjEnvironment env in SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
                 {
                     env.CloseEnvironment();
                 }
@@ -548,7 +535,7 @@ namespace amdocs.ginger.GingerCoreNET
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionAutoSave.SolutionAutoSaveEnd();
-                }                
+                }
             }
 
             //Reset values
@@ -574,7 +561,7 @@ namespace amdocs.ginger.GingerCoreNET
         public GingerGrid LocalGingerGrid
         {
             get
-            {                
+            {
                 return mLocalGingerGrid;
             }
         }
@@ -629,7 +616,7 @@ namespace amdocs.ginger.GingerCoreNET
                 if (mVERefrences == null)
                 {
 
-                 mVERefrences=   VEReferenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json" }));
+                    mVERefrences = VEReferenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json" }));
                 }
 
                 return mVERefrences;
@@ -639,7 +626,7 @@ namespace amdocs.ginger.GingerCoreNET
 
                 mVERefrences = value;
             }
-        }        
+        }
 
         // Running from CLI
         public bool RunningInExecutionMode = false;
@@ -714,7 +701,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        
+
         public SolutionAutoSave AppSolutionAutoSave = new SolutionAutoSave();
         public SolutionRecover AppSolutionRecover = new SolutionRecover();
         public string RecoverFolderPath = null; //???  move to above ? !!!!!!!!!!!
@@ -723,7 +710,7 @@ namespace amdocs.ginger.GingerCoreNET
         {
             BusinessFlow newBF = new BusinessFlow();
             newBF.Name = Name;
-            
+
             Activity defActivity = new Activity() { Active = true };
             defActivity.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
             newBF.AddActivity(defActivity, newBF.AddActivitiesGroup());
@@ -749,7 +736,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        
+
         bool mLoadingSolution;
         public bool LoadingSolution
         {
@@ -803,7 +790,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        
+
 
     }
 }
