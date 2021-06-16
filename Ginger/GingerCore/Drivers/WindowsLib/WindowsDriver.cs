@@ -933,13 +933,15 @@ namespace GingerCore.Drivers.WindowsLib
 
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
-            if (foundElementsList == null)
+            return await Task.Run(async () =>
             {
-                foundElementsList = new ObservableList<ElementInfo>();
-            }
-            List<ElementInfo> elementInfoList = await mUIAutomationHelper.GetVisibleControls();
-            //await Task.Run(() =>
-            //{
+
+                if (foundElementsList == null)
+                {
+                    foundElementsList = new ObservableList<ElementInfo>();
+                }
+                List<ElementInfo> elementInfoList = await mUIAutomationHelper.GetVisibleControls();
+
                 foreach (UIAElementInfo foundElemntInfo in elementInfoList)
                 {
                     ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
@@ -958,10 +960,10 @@ namespace GingerCore.Drivers.WindowsLib
                         foundElementsList.Add(foundElemntInfo);
                     }
                 }
-            //});
 
-            elementInfoList = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
-            return elementInfoList;
+                elementInfoList = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
+                return elementInfoList;
+            });
         }
 
         List<ElementInfo> IWindowExplorer.GetElementChildren(ElementInfo ElementInfo)

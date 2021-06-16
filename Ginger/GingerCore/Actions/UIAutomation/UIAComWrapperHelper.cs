@@ -4727,57 +4727,62 @@ namespace GingerCore.Drivers
         {
             return lastFocusedElement;
         }
-        
+
         //Will get all visible control including recursive drill down, for AE which have invoke method
         public override async Task<List<ElementInfo>> GetVisibleControls()
         {
-            List<ElementInfo> list = new List<ElementInfo>();
-            List<ElementInfo> HTMLlist;
-
-            //TODO: find a better property - since if the window is off screen controls will not show            
-            System.Windows.Automation.Condition cond = new PropertyCondition(AutomationElement.IsOffscreenProperty, false);                        
-            AutomationElementCollection AEC = CurrentWindow.FindAll(TreeScope.Descendants, cond);
-            string IEElementXpath="";
-
-            foreach (AutomationElement AE in AEC) 
+           return await Task.Run(async() =>
             {
-                UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
-                if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
+
+                List<ElementInfo> list = new List<ElementInfo>();
+                List<ElementInfo> HTMLlist;
+
+                //TODO: find a better property - since if the window is off screen controls will not show            
+                System.Windows.Automation.Condition cond = new PropertyCondition(AutomationElement.IsOffscreenProperty, false);
+                AutomationElementCollection AEC = CurrentWindow.FindAll(TreeScope.Descendants, cond);
+                string IEElementXpath = "";
+
+                foreach (AutomationElement AE in AEC)
                 {
-                    ei = (UIAElementInfo)GetElementInfoFor(AE);
-                    IEElementXpath = ei.XPath;
-                    InitializeBrowser(AE);
-                    HTMLlist = await HTMLhelperObj.GetVisibleElement();
-                    list.Add(ei);
-                    if (HTMLlist != null && HTMLlist.Count > 0)
+                    UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
+                    if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
                     {
-                        list.AddRange(HTMLlist);
+                        ei = (UIAElementInfo)GetElementInfoFor(AE);
+                        IEElementXpath = ei.XPath;
+                        InitializeBrowser(AE);
+                        HTMLlist = await HTMLhelperObj.GetVisibleElement();
+                        list.Add(ei);
+                        if (HTMLlist != null && HTMLlist.Count > 0)
+                        {
+                            list.AddRange(HTMLlist);
+                        }
+                        //foreach(ElementInfo e1 in HTMLlist)
+                        //{
+                        //    list.Add(e1);
+                        //}
                     }
-                    //foreach(ElementInfo e1 in HTMLlist)
-                    //{
-                    //    list.Add(e1);
-                    //}
-                }
-                
 
-                if (String.IsNullOrEmpty(IEElementXpath))
-                {
-                    list.Add(ei);
-                }
-                else if (!ei.XPath.Contains(IEElementXpath))
-                {
-                    //TODO: Here we check if automation element is child of IE browser element 
-                    // If yes then we skip it because we already have HTML element for this
-                    // Checking it by XPath makes it slow , because xpath is calculated for this element at runtime
-                    // Need to find a better way to speed up
-                    list.Add(ei);
-                }
-                
-            }
 
-            return list;
+                    if (String.IsNullOrEmpty(IEElementXpath))
+                    {
+                        list.Add(ei);
+                    }
+                    else if (!ei.XPath.Contains(IEElementXpath))
+                    {
+                        //TODO: Here we check if automation element is child of IE browser element 
+                        // If yes then we skip it because we already have HTML element for this
+                        // Checking it by XPath makes it slow , because xpath is calculated for this element at runtime
+                        // Need to find a better way to speed up
+                        list.Add(ei);
+                    }
+
+                }
+
+                return list;
+            });
+
         }
-              
+
         public override string InitializeBrowser(object obj)
         {
             AutomationElement AE = (AutomationElement)obj;

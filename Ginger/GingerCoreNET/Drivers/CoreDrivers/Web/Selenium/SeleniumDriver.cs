@@ -3774,28 +3774,30 @@ namespace GingerCore.Drivers
 
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
-            mIsDriverBusy = true;
-
-            try
+            return await Task.Run(() =>
             {
-                UnhighlightLast();
+                mIsDriverBusy = true;
 
-                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
-                List<ElementInfo> list = new List<ElementInfo>();
-                Driver.SwitchTo().DefaultContent();
-                allReadElem.Clear();
-                list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList));
-                allReadElem.Clear();
-                CurrentFrame = "";
-                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
-                Driver.SwitchTo().DefaultContent();
-                return list;
-            }
-            finally
-            {
-                mIsDriverBusy = false;
-            }
+                try
+                {
+                    UnhighlightLast();
 
+                    Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+                    List<ElementInfo> list = new List<ElementInfo>();
+                    Driver.SwitchTo().DefaultContent();
+                    allReadElem.Clear();
+                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList));
+                    allReadElem.Clear();
+                    CurrentFrame = "";
+                    Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
+                    Driver.SwitchTo().DefaultContent();
+                    return list;
+                }
+                finally
+                {
+                    mIsDriverBusy = false;
+                }
+            });
         }
 
 
