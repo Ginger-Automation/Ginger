@@ -37,6 +37,7 @@ using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Linq;
 using System.Reflection;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 
 namespace GingerCore.Drivers.WindowsLib
 {
@@ -303,7 +304,17 @@ namespace GingerCore.Drivers.WindowsLib
             ActUIElement actUIElement = (ActUIElement)act;
             AutomationElement automationElement = null;
             eElementType elementType=eElementType.Unknown;
-            if (actUIElement.ElementType!= eElementType.Window && actUIElement.ElementAction !=ActUIElement.eElementAction.IsExist)
+
+            if (actUIElement.ElementLocateBy.Equals(eLocateBy.POMElement))
+            {
+                automationElement = HandlePOMElememnt(actUIElement);
+                if (automationElement == null)
+                {
+                    actUIElement.Error = "Element not Found - " + actUIElement.ElementLocateBy + " " + actUIElement.ElementLocateValueForDriver;
+                    return;
+                }
+            }
+            else if (actUIElement.ElementType!= eElementType.Window && actUIElement.ElementAction !=ActUIElement.eElementAction.IsExist)
             {
                 automationElement = (AutomationElement)mUIAutomationHelper.FindElementByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
 
@@ -315,13 +326,12 @@ namespace GingerCore.Drivers.WindowsLib
                 elementType = WindowsPlatform.GetElementType(mUIAutomationHelper.GetElementControlType(automationElement), mUIAutomationHelper.GetControlPropertyValue(automationElement, "ClassName"));
             }
 
-          
             int x, y;
             Boolean isoutputvalue = false;
             ActionResult actionResult = new ActionResult();
 
-                switch (actUIElement.ElementAction)
-                {
+            switch (actUIElement.ElementAction)
+            {
 
                 case ActUIElement.eElementAction.Click:
                     actionResult = mUIElementOperationsHelper.ClickElement(automationElement);
@@ -380,7 +390,7 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
 
                 case ActUIElement.eElementAction.Toggle:
-                    actionResult = mUIElementOperationsHelper.ToggleElement(automationElement,elementType);                    
+                    actionResult = mUIElementOperationsHelper.ToggleElement(automationElement, elementType);
                     break;
 
                 case ActUIElement.eElementAction.Expand:
@@ -391,23 +401,23 @@ namespace GingerCore.Drivers.WindowsLib
                     mUIAutomationHelper.ActUISwitchWindow(actUIElement);
                     actionResult.executionInfo = "Switch window performed successfully";
                     break;
-                
+
                 case ActUIElement.eElementAction.CloseWindow:
                     bool isClosed = mUIAutomationHelper.CloseWindow(actUIElement);
 
-                    Object windowToClose= mUIAutomationHelper.FindWindowByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
-                    if(windowToClose!=null)
+                    Object windowToClose = mUIAutomationHelper.FindWindowByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
+                    if (windowToClose != null)
                     {
-                       actionResult= mUIElementOperationsHelper.CloseWindow((AutomationElement)windowToClose);
+                        actionResult = mUIElementOperationsHelper.CloseWindow((AutomationElement)windowToClose);
                     }
                     else
                     {
                         actionResult.errorMessage = "Failed to find the window";
-                    }               
+                    }
                     break;
 
                 case ActUIElement.eElementAction.IsExist:
-                    if(eElementType.Window==actUIElement.ElementType)
+                    if (eElementType.Window == actUIElement.ElementType)
                     {
                         try
                         {
@@ -429,7 +439,7 @@ namespace GingerCore.Drivers.WindowsLib
                     else
                     {
                         actionResult.outputValue = mUIAutomationHelper.IsElementExist(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver).ToString();
-                    }                    
+                    }
                     isoutputvalue = true;
                     break;
 
@@ -443,7 +453,7 @@ namespace GingerCore.Drivers.WindowsLib
                     {
                         actionResult.errorMessage = "Exception in GetControlPropertyValue";
                     }
-                   
+
                     break;
 
                 //case ActUIElement.eElementAction.DragDrop:
@@ -486,9 +496,9 @@ namespace GingerCore.Drivers.WindowsLib
 
 
                 default:
-                        actUIElement.Error = string.Format("Selected '{0}' Operation not supported for 'WindowsDriver'", actUIElement.ElementAction.ToString());
-                        break;
-                }
+                    actUIElement.Error = string.Format("Selected '{0}' Operation not supported for 'WindowsDriver'", actUIElement.ElementAction.ToString());
+                    break;
+            }
 
             if(string.IsNullOrEmpty(actionResult.errorMessage))
             {
@@ -503,6 +513,58 @@ namespace GingerCore.Drivers.WindowsLib
             }
         }
 
+        private AutomationElement HandlePOMElememnt(ActUIElement act)
+        {
+            ObservableList<ElementLocator> locators = new ObservableList<ElementLocator>();
+            var pomExcutionUtil = new POMExecutionUtils(act);
+            var currentPOM = pomExcutionUtil.GetCurrentPOM();
+
+            ElementInfo currentPOMElementInfo = null;
+            if (currentPOM != null)
+            {
+                currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
+                locators = currentPOMElementInfo.Locators;
+            }
+            foreach (ElementLocator locator in locators)
+            {
+                locator.StatusError = string.Empty;
+                locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
+            }
+
+            AutomationElement windowElement = null;
+
+            foreach (var locateElement in locators.Where(x => x.Active == true).ToList())
+            {
+                ElementLocator evaluatedLocator = locateElement.CreateInstance() as ElementLocator;
+                if (!locateElement.IsAutoLearned)
+                {
+                    ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+                    evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
+                }
+
+                windowElement = LocateElementByLocator(evaluatedLocator, true);
+                if (windowElement != null)
+                {
+                    locateElement.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                    pomExcutionUtil.PriotizeLocatorPosition();
+                    break;
+                }
+                else
+                {
+                    if (!locateElement.Equals(locators.LastOrDefault()))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        locateElement.StatusError = "Element not found";
+                        locateElement.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                    }
+                }
+            }
+
+            return windowElement;
+        }
         ////ActUIElement
         //private void HandleWindowControlUIElementAction(ActUIElement actUIElement, object AE)
         //{
@@ -543,7 +605,7 @@ namespace GingerCore.Drivers.WindowsLib
         //                    actUIElement.ExInfo += status;
         //                }
         //                break;
-                    
+
         //            default:
         //                actUIElement.Error = "Unknown Action  - " + actUIElement.ActionType;
         //                break;
