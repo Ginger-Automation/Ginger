@@ -28,12 +28,13 @@ namespace GingerCore.ALM.Qtest
         public QtestTestParameter Params { get; set; }
         public string CalledTestCaseId { get; set; }
 
-        public QtestTestStep(string stepID, string description, string expected, string calledTestCaseId = null)
+        public QtestTestStep(string stepID, string description, string expected, string calledTestCaseId = null, string stepName = null)
         {
             StepID = stepID;
             Description = description;
             Expected = expected;
             CalledTestCaseId = calledTestCaseId;
+            StepName = stepName;
         }
 
         public QtestTestStep()

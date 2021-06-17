@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.SourceControl;
 using Ginger.SolutionGeneral;
 using Ginger.SourceControl;
 using GingerCore.SourceControl;
@@ -45,15 +46,19 @@ namespace Amdocs.Ginger.GingerConsole
             SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref repositoryRootFolder);
             if (type == SourceControlBase.eSourceControlType.GIT)
             {
-                solution.SourceControl = new GITSourceControl();
+                if (WorkSpace.Instance!=null && WorkSpace.Instance.UserProfile!=null && WorkSpace.Instance.UserProfile.SourceControlUseShellClient)
+                {
+                    solution.SourceControl = new GitSourceControlShellWrapper();
+                }
+                else
+                {
+                    solution.SourceControl = new GITSourceControl();
+                }
+
             }
             else if (type == SourceControlBase.eSourceControlType.SVN)
             {
-                // FIXME after SVN moved to .net core
-
-                // solution.SourceControl = new SVNSourceControl();
-                                
-                Reporter.ToLog(eLogLevel.ERROR, "Source Control of type SVN is not yet supported in GingerConsole");
+                solution.SourceControl = new SVNSourceControlShellWrapper();
             }
         }
 

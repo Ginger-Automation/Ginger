@@ -56,6 +56,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml;
 
 namespace GingerCore.Drivers
@@ -4832,6 +4833,11 @@ namespace GingerCore.Drivers
             {
                 return GetTableData(ElementInfo);
             }
+            if (e.TagName == "canvas")
+            {
+                ((SeleniumDriver)ElementInfo.WindowExplorer).InjectGingerLiveSpyAndStartClickEvent(ElementInfo);
+                return GetXAndYpointsfromClickEvent(ElementInfo);
+            }
             return null;
         }
 
@@ -7178,9 +7184,18 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-                    string elemId = ele.GetProperty("id");
+                    HtmlNode elemNode = null;
+                    string elemId;
+                    try
+                    {
+                        elemId = ele.GetProperty("id");
+                        elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id.Equals(elemId)).FirstOrDefault();
+                    }
+                    catch (Exception exc)
+                    {
+                        elemId = "";
+                    }
 
-                    HtmlNode elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id.Equals(elemId)).FirstOrDefault();
 
                     elemInfo = new HTMLElementInfo();
 
@@ -7189,7 +7204,7 @@ namespace GingerCore.Drivers
                     elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
                     elemInfo.ElementObject = ele;
                     elemInfo.Path = iframeXPath;
-                    elemInfo.XPath = elemNode.XPath;        //await GenerateXpathForIWebElementAsync(ele, string.Empty);
+                    elemInfo.XPath = string.IsNullOrEmpty(elemId) ? await GenerateXpathForIWebElementAsync(ele, string.Empty) : elemNode.XPath;
                     elemInfo.HTMLElementObject = elemNode;
 
                     ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);

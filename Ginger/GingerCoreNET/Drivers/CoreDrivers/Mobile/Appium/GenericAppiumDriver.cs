@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -112,6 +112,11 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredDefault("Live")]
         [UserConfiguredDescription("Determine if the Ginger device screen image will be refresh automatically during use")]
         public eAutoScreenshotRefreshMode DeviceAutoScreenshotRefreshMode { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("true")]
+        [UserConfiguredDescription("Determine if auto set the default capabilities based on OS and application type selection")]
+        public bool AutoSetCapabilities { get; set; }
 
         [UserConfigured]
         [UserConfiguredMultiValues]
@@ -246,6 +251,11 @@ namespace Amdocs.Ginger.CoreNET
             //User customized capabilities
             foreach (DriverConfigParam UserCapability in AppiumCapabilities)
             {
+                if (String.IsNullOrWhiteSpace(UserCapability.Parameter))
+                {
+                    continue;
+                }
+
                 bool boolValue;
                 int intValue = 0;
                 if (bool.TryParse(UserCapability.Value, out boolValue))
@@ -318,19 +328,22 @@ namespace Amdocs.Ginger.CoreNET
                 return mSeleniumDriver.LocateElement(act);
             }
 
-            eLocateBy locateBy = act.LocateBy;
+            eLocateBy locateBy = act is ActUIElement ? (act as ActUIElement).ElementLocateBy : act.LocateBy;
             IWebElement elem = null;
-
+            string locateValue = act is ActUIElement ? (act as ActUIElement).ElementLocateValue : act.LocateValue;
             switch (locateBy)
             {
                 case eLocateBy.ByResourceID:
-                    {
-                        elem = Driver.FindElementById(act.LocateValue);
+                        elem = Driver.FindElementById(locateValue);
                         break;
-                    }
-                default:
-                    elem = mSeleniumDriver.LocateElement(act);
+
+                case eLocateBy.ByRelXPath:
+                case eLocateBy.ByXPath:
+                    elem = Driver.FindElementByXPath(locateValue);
                     break;
+
+                default:
+                    return mSeleniumDriver.LocateElement(act);
             }
 
             return elem;
@@ -684,12 +697,12 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     case ActMobileDevice.eMobileDeviceAction.PressXY:
                         tc = new TouchAction(Driver);
-                        tc.Press(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver));
+                        tc.Press(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver)).Perform();
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.LongPressXY:
                         tc = new TouchAction(Driver);
-                        tc.LongPress(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver));
+                        tc.LongPress(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver)).Perform();
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.TapXY:
@@ -764,11 +777,11 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeDown:
-                        SwipeScreen(eSwipeSide.Down);
+                        SwipeScreen(eSwipeSide.Down, 0.25);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeUp:
-                        SwipeScreen(eSwipeSide.Up);
+                        SwipeScreen(eSwipeSide.Up, 0.25);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
@@ -1059,7 +1072,7 @@ namespace Amdocs.Ginger.CoreNET
             return Pagesource;
         }
 
-        public void SwipeScreen(eSwipeSide side)
+        public void SwipeScreen(eSwipeSide side, double impact=1)
         {
             System.Drawing.Size sz = Driver.Manage().Window.Size;
             double startX;
@@ -1072,24 +1085,24 @@ namespace Amdocs.Ginger.CoreNET
                     startX = sz.Width * 0.5;
                     startY = sz.Height * 0.3;
                     endX = sz.Width * 0.5;
-                    endY = sz.Height * 0.7;
+                    endY = sz.Height * 0.7 * impact;
                     break;
                 case eSwipeSide.Up: // center of header
                     startX = sz.Width * 0.5;
-                    startY = sz.Height * 0.7;
+                    startY = sz.Height * 0.7 * impact;
                     endX = sz.Width * 0.5;
                     endY = sz.Height * 0.3;
                     break;
-                case eSwipeSide.Left: // center of left side
-                    startX = sz.Width * 0.8;
+                case eSwipeSide.Right: // center of left side
+                    startX = sz.Width * 0.8 * impact;
                     startY = sz.Height * 0.5;
                     endX = sz.Width * 0.1;
                     endY = sz.Height * 0.5;
                     break;
-                case eSwipeSide.Right: // center of right side
+                case eSwipeSide.Left: // center of right side
                     startX = sz.Width * 0.1;
                     startY = sz.Height * 0.5;
-                    endX = sz.Width * 0.8;
+                    endX = sz.Width * 0.8 * impact;
                     endY = sz.Height * 0.5;
                     break;
                 default:
@@ -1193,7 +1206,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             if (AppType == eAppType.Web)
             {
-                return await ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(filteredElementType, foundElementsList, isPOMLearn, specificFramePath);
+                return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(filteredElementType, foundElementsList, isPOMLearn, specificFramePath));
             }
 
             List<ElementInfo> list = new List<ElementInfo>();
@@ -1261,61 +1274,67 @@ namespace Amdocs.Ginger.CoreNET
                 return returnTuple;
             }
 
-            if (elementTagName.ToLower() == "android.widget.edittext" || elementTypeAtt.ToLower() == "android.widget.edittext")
+            elementType = GetElementTypeFromTag(elementTagName);
+
+            if (elementType == eElementType.Unknown)
             {
-                elementType = eElementType.TextBox;
+                elementType = GetElementTypeFromTag(elementTypeAtt);
             }
-            else if (elementTagName.ToLower() == "android.widget.button" || elementTypeAtt.ToLower() == "android.widget.button")
-            {
-                elementType = eElementType.Button;
-            }
-            else if (elementTagName.ToLower() == "android.widget.edittext" || elementTypeAtt.ToLower() == "android.widget.edittext")
-            {
-                elementType = eElementType.HyperLink;
-            }
-            else if (elementTagName.ToLower() == "android.widget.checkbox" || elementTypeAtt.ToLower() == "android.widget.checkbox")
-            {
-                elementType = eElementType.CheckBox;
-            }
-            else if (elementTagName.ToLower() == "android.widget.view" || elementTypeAtt.ToLower() == "android.widget.view")
-            {
-                elementType = eElementType.Label;
-            }
-            else if (elementTagName.ToLower() == "android.widget.image" || elementTypeAtt.ToLower() == "android.widget.image")
-            {
-                elementType = eElementType.Image;
-            }
-            else if (elementTagName.ToLower() == "android.widget.radiobutton" || elementTypeAtt.ToLower() == "android.widget.radiobutton")
-            {
-                elementType = eElementType.RadioButton;
-            }
-            else if (elementTagName.ToLower() == "android.widget.canvas" || elementTypeAtt.ToLower() == "android.widget.canvas")
-            {
-                elementType = eElementType.Canvas;
-            }
-            else if (elementTagName.ToLower() == "android.widget.form" || elementTypeAtt.ToLower() == "android.widget.form")
-            {
-                elementType = eElementType.Form;
-            }
-            else if (elementTagName.ToUpper() == "android.widget.checkedtextview" || elementTypeAtt.ToLower() == "android.widget.checkedtextview")
-            {
-                elementType = eElementType.ListItem;
-            }
-            else if (elementTagName.ToLower() == "android.view.view" || elementTypeAtt.ToLower() == "android.view.view")
-            {
-                elementType = eElementType.Div;
-            }
-            else if (elementTagName.ToLower() == "android.widget.framelayout" || elementTypeAtt.ToLower() == "android.widget.framelayout")
-            {
-                elementType = eElementType.Button;
-            }
-            else
-                elementType = eElementType.Unknown;
+
             returnTuple = new Tuple<string, eElementType>(elementTagName, elementType);
 
             return returnTuple;
         }
 
+        public static eElementType GetElementTypeFromTag(string ElementTag)
+        {
+            switch(ElementTag.ToLower())
+            {
+                case "android.widget.edittext":
+                        return eElementType.TextBox;
+
+                case "android.widget.button":
+                case "android.widget.ratingbar":
+                case "android.widget.framelayout":
+                case "android.widget.imageview":
+                case "android.widget.imagebutton":
+                case "android.widget.switch":
+                    return eElementType.Button;
+
+                case "android.widget.spinner":
+                    return eElementType.ComboBox;
+
+                case "android.widget.checkbox":
+                    return eElementType.CheckBox;
+
+                case "android.widget.view":
+                case "android.widget.textview":
+                    return eElementType.Label;
+
+                case "android.widget.image":
+                    return eElementType.Image;
+
+                case "android.widget.radiobutton":
+                    return eElementType.RadioButton;
+
+                case "android.widget.canvas":
+                case "android.widget.linearlayout":
+                case "android.widget.relativelayout":
+                    return eElementType.Canvas;
+
+                case "android.widget.form":
+                    return eElementType.Form;
+
+                case "android.view.view":
+                    return eElementType.Div;
+
+                case "android.widget.checkedtextview":
+                    return eElementType.ListItem;
+
+                default:
+                    return eElementType.Unknown;
+            }
+        }
         private async Task<string> GetNodeXPath(XmlNode xmlNode)
         {
             return await GetXPathToNode(xmlNode);
@@ -1329,11 +1348,11 @@ namespace Amdocs.Ginger.CoreNET
         {
             //TODO: verify XPath return 1 item back to same xmlnode.
 
-            string resid = GetAttrValue(node, "resource-id");
-            if (!string.IsNullOrEmpty(resid))
-            {
-                return string.Format("//*[@resource-id='{0}']", resid);
-            }
+            //string resid = GetAttrValue(node, "resource-id");
+            //if (!string.IsNullOrEmpty(resid))
+            //{
+            //    return string.Format("//*[@resource-id='{0}']", resid);
+            //}
 
             if (node.ParentNode == null)
             {
@@ -1408,24 +1427,14 @@ namespace Amdocs.Ginger.CoreNET
         {
             ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
 
-            // Show XPath, can have relative info
-            list.Add(new ElementLocator()
-            {
-                LocateBy = eLocateBy.ByXPath,
-                LocateValue = ElementInfo.XPath,
-                Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
-            });
-
-
             //Only by Resource ID
             string resid = GetAttrValue(ElementInfo.ElementObject as XmlNode, "resource-id");
             string residXpath = string.Format("//*[@resource-id='{0}']", resid);
-            if (residXpath != ElementInfo.XPath) // We show by res id when it is different then the elem XPath, so not to show twice the same, the AE.Apath can include relative info
+            if (!string.IsNullOrEmpty(resid) && residXpath != ElementInfo.XPath) // We show by res id when it is different then the elem XPath, so not to show twice the same, the AE.Apath can include relative info
             {
                 list.Add(new ElementLocator()
                 {
-                    //LocateBy = eLocateBy.ByXPath,
-                    LocateBy = eLocateBy.ByResourceID,
+                    LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = residXpath,
                     Help = "Use Resource id only when you don't want XPath with relative info, but the resource-id is unique"
                 });
@@ -1437,8 +1446,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
-                    //LocateBy = eLocateBy.ByXPath,
-                    LocateBy = eLocateBy.ByContentDescription,
+                    LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = string.Format("//*[@content-desc='{0}']", contentdesc),
                     Help = "content-desc is Recommended when resource-id not exist"
                 });
@@ -1451,12 +1459,19 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
-                    //LocateBy = eLocateBy.ByXPath,
-                    LocateBy = eLocateBy.ByText,
+                    LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = string.Format("//{0}[@text='{1}']", eClass, eText),    // like: //android.widget.RadioButton[@text='Ginger']" 
                     Help = "use class and text when you have list of items and no resource-id to use"
                 });
             }
+
+            // Show XPath
+            list.Add(new ElementLocator()
+            {
+                LocateBy = eLocateBy.ByXPath,
+                LocateValue = ElementInfo.XPath,
+                Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
+            });
 
             return list;
         }
@@ -1614,6 +1629,12 @@ namespace Amdocs.Ginger.CoreNET
         public void PerformTap(long x, long y)
         {
             TapXY(x, y);
+        }
+
+        public void PerformLongPress(long x, long y)
+        {
+            TouchAction tc = new TouchAction(Driver);
+            tc.LongPress(x, y).Perform();
         }
 
         public void PerformDrag(Point start, Point end)
@@ -1815,7 +1836,6 @@ namespace Amdocs.Ginger.CoreNET
             if (AppType == eAppType.Web)
             {
                 return await Task.Run(() => ((IVisualTestingDriver)mSeleniumDriver).GetElementAtPoint(ptX, ptY));
-                //return await ((IVisualTestingDriver)mSeleniumDriver).GetElementAtPoint(ptX, ptY);
             }
 
             XmlNode foundNode = await FindElementXmlNodeByXY(ptX, ptY);
@@ -1869,49 +1889,45 @@ namespace Amdocs.Ginger.CoreNET
         {
             if (errorType == SerializationErrorType.SetValueException)
             {
-                if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid")
+                if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid" || value == "MobileAppiumIOS" || value == "PerfectoMobileIOS"
+                       || value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb" || value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
                 {
                     agent.DriverType = Agent.eDriverType.Appium;
                     agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
-                    agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
+                    //agent.GetOrCreateParam(nameof(AppiumServer), @"http://127.0.0.1:4723/wd/hub");
+                    agent.GetOrCreateParam(nameof(LoadDeviceWindow),"true");
+                    agent.GetOrCreateParam(nameof(DeviceAutoScreenshotRefreshMode), eAutoScreenshotRefreshMode.Live.ToString());
                     agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
-                    return true;
-                }
-                else if (value == "MobileAppiumIOS" || value == "PerfectoMobileIOS")
-                {
-                    agent.DriverType = Agent.eDriverType.Appium;
-                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
-                    agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
-                    agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
-                    return true;
-                }
-                else if (value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb")
-                {
-                    agent.DriverType = Agent.eDriverType.Appium;
-                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
-                    agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
-                    agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
-                    return true;
-                }
-                else if (value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
-                {
-                    agent.DriverType = Agent.eDriverType.Appium;
-                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                    agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
-                    agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
-                    agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
+
+                    if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid")
+                    {                        
+                        agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
+                        agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());                                                
+                    }
+                    else if (value == "MobileAppiumIOS" || value == "PerfectoMobileIOS")
+                    {
+                        agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
+                        agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
+                    }
+                    else if (value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb")
+                    {
+                        agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
+                        agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
+                    }
+                    else if (value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
+                    {
+                        agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
+                        agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
+                    }
                     return true;
                 }
             }
             return false;
         }
 
-        public void PerformScreenSwipe(eSwipeSide swipeSide)
+        public void PerformScreenSwipe(eSwipeSide swipeSide, double impact=1)
         {
-            SwipeScreen(swipeSide);
+            SwipeScreen(swipeSide, impact);
         }
 
         public void PerformSendKey(string key)
@@ -1938,6 +1954,19 @@ namespace Amdocs.Ginger.CoreNET
             }
 
             return pageSourceXml;
+        }
+
+        public void OpenDeviceSettings()
+        {
+            switch (DevicePlatformType)
+            {
+                case eDevicePlatformType.Android:
+                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(Convert.ToInt32(ActMobileDevice.ePressKey.Keycode_SETTINGS));
+                    break;
+                case eDevicePlatformType.iOS:
+                    Driver.ActivateApp("com.apple.Preferences");
+                    break;
+            }
         }
     }
 }

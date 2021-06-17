@@ -118,16 +118,21 @@ namespace GingerCore.Platforms.PlatformsInfo
                     etd.ElementOperationsList.Remove(ActUIElement.eElementAction.MouseClick);
                     etd.ElementOperationsList.Remove(ActUIElement.eElementAction.MousePressRelease);
                     etd.ElementOperationsList.Remove(ActUIElement.eElementAction.MouseRightClick);
+
+                    if (etd.ElementOperationsList.Contains(ActUIElement.eElementAction.Click) == false)//add click to all elements
+                    {
+                        etd.ElementOperationsList.Add(ActUIElement.eElementAction.Click);
+                    }
                 }
                 if (mPlatformElementTypeOperations.Where(x => x.ElementType == eElementType.Window).FirstOrDefault() != null)
                 {
                     mPlatformElementTypeOperations.Remove(mPlatformElementTypeOperations.Where(x => x.ElementType == eElementType.Window).FirstOrDefault());
                 }
-                ElementTypeData List = mPlatformElementTypeOperations.Where(x => x.ElementType == eElementType.List).FirstOrDefault();
-                if (List != null)
-                {
-                    List.ElementOperationsList.Add(ActUIElement.eElementAction.Click);
-                }
+                //ElementTypeData List = mPlatformElementTypeOperations.Where(x => x.ElementType == eElementType.List).FirstOrDefault();
+                //if (List != null)
+                //{
+                //    List.ElementOperationsList.Add(ActUIElement.eElementAction.Click);
+                //}
             }
             return mPlatformElementTypeOperations;
         }
