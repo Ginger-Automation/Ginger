@@ -28,6 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="TestResources\Files\APlusB.vbs" />
+    <None Remove="TestResources\Files\ScriptWithGingerOutput.vbs" />
+    <None Remove="TestResources\Files\ScriptWithGingerOutputIndexZero.vbs" />
+    <None Remove="TestResources\Files\ScriptWithoutOutput.vbs" />
     <None Remove="TestResources\JSON\Request JSON.TXT" />
     <None Remove="TestResources\Repository\Default Run Set.Ginger.RunSetConfig.xml" />
     <None Remove="TestResources\Repository\dummyAction.xml" />
@@ -35,6 +39,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="TestResources\Files\APlusB.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Files\ScriptWithGingerOutput.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Files\ScriptWithGingerOutputIndexZero.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Files\ScriptWithoutOutput.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\JSON\Request JSON.TXT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -151,6 +167,9 @@
     </None>
     <None Update="TestResources\Excel\NamesWrite.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Files\BatchScriptWithArgs.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Files\BATReturnParam.bat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
