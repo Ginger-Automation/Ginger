@@ -37,7 +37,13 @@ namespace Amdocs.Ginger.Common.UIElement
         public const string LocalizedControlType = "Localized Control Type";
         public const string Name = "Name";
         public const string AutomationId = "AutomationId";
+        public const string Text = "Text";
+        public const string ClassName = "ClassName";
+        public const string ToggleState = "ToggleState";
         public const string IsKeyboardFocusable = "Is Keyboard Focusable";
         public const string IsEnabled = "Is Enabled";
+        public const string IsPassword = "Is Password";
+        public const string IsOffscreen = "Is Offscreen";
+        public const string IsSelected = "Is Selected";
     }
 }

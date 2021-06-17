@@ -3711,6 +3711,10 @@ namespace GingerCore.Drivers
                         propValue = element.Current.BoundingRectangle.Y.ToString();
                         break;
 
+                    case "BoundingRectangle":
+                        propValue = element.Current.BoundingRectangle.ToString();
+                        break;
+
                     case "NativeWindowHandle":
                         propValue = element.Current.NativeWindowHandle.ToString();
                         break;
@@ -5798,6 +5802,35 @@ namespace GingerCore.Drivers
             EI.ElementType= GetElementControlType(AE);
             EI.ElementTypeEnum = WindowsPlatform.GetElementType(EI.ElementType, GetControlPropertyValue(EI.ElementObject, "ClassName"));
             //EI.IsExpandable = AE.Current.IsContentElement;
+            EI.BoundingRectangle = GetControlPropertyValue(EI.ElementObject, "BoundingRectangle");
+            EI.LocalizedControlType = GetControlPropertyValue(EI.ElementObject, "LocalizedControlType");
+            EI.AutomationId = GetControlPropertyValue(EI.ElementObject, "AutomationId");
+            EI.ClassName = GetControlPropertyValue(EI.ElementObject, "ClassName");
+            EI.ToggleState = GetControlPropertyValue(EI.ElementObject, "ToggleState");
+            EI.Text = GetControlPropertyValue(EI.ElementObject, "Text");
+            
+            bool isPropertyValue;
+            if(bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsKeyboardFocusable"),out isPropertyValue))
+            {
+                EI.IsKeyboardFocusable = isPropertyValue;
+            }
+            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsEnabled"), out isPropertyValue))
+            {
+                EI.IsEnabled = isPropertyValue;
+            }
+            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsPassword"), out isPropertyValue))
+            {
+                EI.IsPassword = isPropertyValue;
+            }
+            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsOffscreen"), out isPropertyValue))
+            {
+                EI.IsOffscreen = isPropertyValue;
+            }
+            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsSelected"), out isPropertyValue))
+            {
+                EI.IsSelected = isPropertyValue;
+            }
+            
             return EI;
         }
 

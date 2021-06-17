@@ -525,42 +525,10 @@ namespace GingerCore.Drivers.WindowsLib
                 currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
                 locators = currentPOMElementInfo.Locators;
             }
-            foreach (ElementLocator locator in locators)
+            AutomationElement windowElement = LocateElementByLocators(locators);
+            if (windowElement != null)
             {
-                locator.StatusError = string.Empty;
-                locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
-            }
-
-            AutomationElement windowElement = null;
-
-            foreach (var locateElement in locators.Where(x => x.Active == true).ToList())
-            {
-                ElementLocator evaluatedLocator = locateElement.CreateInstance() as ElementLocator;
-                if (!locateElement.IsAutoLearned)
-                {
-                    ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
-                    evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
-                }
-
-                windowElement = LocateElementByLocator(evaluatedLocator, true);
-                if (windowElement != null)
-                {
-                    locateElement.LocateStatus = ElementLocator.eLocateStatus.Passed;
-                    pomExcutionUtil.PriotizeLocatorPosition();
-                    break;
-                }
-                else
-                {
-                    if (!locateElement.Equals(locators.LastOrDefault()))
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        locateElement.StatusError = "Element not found";
-                        locateElement.LocateStatus = ElementLocator.eLocateStatus.Failed;
-                    }
-                }
+                pomExcutionUtil.PriotizeLocatorPosition();
             }
 
             return windowElement;
@@ -1037,17 +1005,18 @@ namespace GingerCore.Drivers.WindowsLib
         {
             //only return necessery properties
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
-            AutomationElement element = (AutomationElement)ElementInfo.ElementObject;
-            UIAElementInfo uIAElement = ((UIAElementInfo)ElementInfo);
             if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
             {
                 list.Add(new ControlProperty() { Name = ElementProperty.PlatformElementType, Value = ElementInfo.ElementType });
             }
             list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.BoundingRectangle, Value = element.Current.BoundingRectangle.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.LocalizedControlType, Value = element.Current.LocalizedControlType.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.Name, Value = uIAElement.ElementTitle.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.AutomationId, Value = element.Current.AutomationId.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.BoundingRectangle, Value = ElementInfo.BoundingRectangle.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.LocalizedControlType, Value = ElementInfo.LocalizedControlType.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.Name, Value = ElementInfo.ElementTitle.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.AutomationId, Value = ElementInfo.AutomationId.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.Text, Value = ElementInfo.Text.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.ClassName, Value = ElementInfo.ClassName.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.ToggleState, Value = ElementInfo.ToggleState.ToString() });
 
             if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
             {
@@ -1061,8 +1030,12 @@ namespace GingerCore.Drivers.WindowsLib
             list.Add(new ControlProperty() { Name = ElementProperty.Width, Value = ElementInfo.Width.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.X, Value = ElementInfo.X.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.Y, Value = ElementInfo.Y.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.IsKeyboardFocusable, Value = element.Current.IsKeyboardFocusable.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.IsEnabled, Value = element.Current.IsEnabled.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsKeyboardFocusable, Value = ElementInfo.IsKeyboardFocusable.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsEnabled, Value = ElementInfo.IsEnabled.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsKeyboardFocusable, Value = ElementInfo.IsKeyboardFocusable.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsPassword, Value = ElementInfo.IsPassword.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsOffscreen, Value = ElementInfo.IsOffscreen.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsSelected, Value = ElementInfo.IsSelected.ToString() });
 
             //returns list of all supported properties - GetElementProperties(ElementInfo);
 
@@ -1103,24 +1076,12 @@ namespace GingerCore.Drivers.WindowsLib
         
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
-            if (ElementInfo.ElementObject == null)
+            if (ElementInfo.ElementObject == null || locateElementByItLocators)
             {
-                foreach (ElementLocator elementLocator in ElementInfo.Locators.ToList())
+                AutomationElement windowElement = LocateElementByLocators(ElementInfo.Locators);
+                if (windowElement != null)
                 {
-                    try
-                    {
-                        object obj = mUIAutomationHelper.FindElementByLocator(elementLocator.LocateBy, elementLocator.LocateValue);
-                        AutomationElement AE = (AutomationElement)obj;
-                        if (AE != null)
-                        {
-                            ElementInfo.ElementObject = (object)AE;
-                            break;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                    }
+                    ElementInfo.ElementObject = (object)windowElement;
                 }
             }
             HighLightElement(ElementInfo);           
@@ -1390,37 +1351,9 @@ namespace GingerCore.Drivers.WindowsLib
             try
             {
                 mIsDriverBusy = true;
-                foreach (ElementLocator el in EI.Locators)
-                {
-                    el.LocateStatus = ElementLocator.eLocateStatus.Pending;
-                }
-
                 List<ElementLocator> activesElementLocators = EI.Locators.Where(x => x.Active).ToList();
-                foreach (ElementLocator elementLocator in activesElementLocators)
-                {
-                    AutomationElement windowElement = null;
-                    if (!elementLocator.IsAutoLearned)
-                    {
-                        windowElement = LocateElementIfNotAutoLearned(elementLocator);
-                    }
-                    else
-                    {
-                        windowElement = LocateElementByLocator(elementLocator, true);
-                    }
-                    if (windowElement != null)
-                    {
-                        elementLocator.StatusError = string.Empty;
-                        elementLocator.LocateStatus = ElementLocator.eLocateStatus.Passed;
-                        if (GetOutAfterFoundElement)
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        elementLocator.LocateStatus = ElementLocator.eLocateStatus.Failed;
-                    }
-                }
+
+                LocateElementByLocators(EI.Locators, GetOutAfterFoundElement);
 
                 if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
                 {
@@ -1440,6 +1373,45 @@ namespace GingerCore.Drivers.WindowsLib
                 mIsDriverBusy = false;
             }
         }
+
+        public AutomationElement LocateElementByLocators(ObservableList<ElementLocator> Locators, bool GetOutAfterFoundElement = false)
+        {
+            AutomationElement elem = null;
+            foreach (ElementLocator locator in Locators)
+            {
+                locator.StatusError = string.Empty;
+                locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
+            }
+
+            foreach (ElementLocator locator in Locators.Where(x => x.Active == true).ToList())
+            {
+                if (!locator.IsAutoLearned)
+                {
+                    elem = LocateElementIfNotAutoLearned(locator);
+                }
+                else
+                {
+                    elem = LocateElementByLocator(locator, true);
+                }
+
+                if (elem != null)
+                {
+                    locator.StatusError = string.Empty;
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                    if (GetOutAfterFoundElement)
+                    {
+                        return elem;
+                    }
+                }
+                else
+                {
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                }
+            }
+
+            return null;
+        }
+
         private AutomationElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
         {
             locator.StatusError = "";
@@ -1497,25 +1469,15 @@ namespace GingerCore.Drivers.WindowsLib
                 {
                     try
                     {
-                        AutomationElement elem;
-                        foreach (ElementLocator locator in EI.Locators.Where(x => x.Active).ToList())
+                        AutomationElement elem = LocateElementByLocators(EI.Locators);
+                        if (elem != null)
                         {
-                            if (!locator.IsAutoLearned)
-                            {
-                                elem = LocateElementIfNotAutoLearned(locator);
-                            }
-                            else
-                                elem = LocateElementByLocator(locator);
-
-                            if (elem != null)
-                            {
-                                locator.StatusError = string.Empty;
-                                locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
-                            }
-                            else
-                            {
-                                locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
-                            }
+                            EI.ElementObject = elem;
+                            EI.ElementStatus = ElementInfo.eElementStatus.Passed;
+                        }
+                        else
+                        {
+                            EI.ElementStatus = ElementInfo.eElementStatus.Failed;
                         }
                     }
                     catch (Exception ex)
