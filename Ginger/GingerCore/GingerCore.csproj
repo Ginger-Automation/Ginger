@@ -273,7 +273,6 @@
     <Compile Include="Actions\ActActivateRow.cs" />
     <Compile Include="Actions\ActGetMsgboxText.cs" />
     <Compile Include="Actions\ActConsoleCommand.cs" />
-    <Compile Include="Actions\ActExcel.cs" />
     <Compile Include="Actions\ActFunction.cs" />
     <Compile Include="Actions\ActASCFControl.cs" />
     <Compile Include="Actions\ActLaunchJavaWSApplication.cs" />
@@ -847,9 +846,6 @@
     </PackageReference>
     <PackageReference Include="Npgsql">
       <Version>4.0.7</Version>
-    </PackageReference>
-    <PackageReference Include="Oracle.ManagedDataAccess">
-      <Version>19.10.1</Version>
     </PackageReference>
     <PackageReference Include="PDFsharp">
       <Version>1.50.5147</Version>
