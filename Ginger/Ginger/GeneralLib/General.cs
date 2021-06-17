@@ -38,7 +38,7 @@ namespace Ginger
 {
     public static class General
     {
-        static HelpWindow mGingerHelpWindow = null;
+        static GingerWebHelpPage mGingerHelpWindow = null;
 
         public enum eRIPageViewMode
         {
@@ -127,14 +127,14 @@ namespace Ginger
         public static void ShowGingerHelpWindow(string SearchString="")
         {
             if (mGingerHelpWindow == null)
-                mGingerHelpWindow = new HelpWindow(SearchString);
-            else
-            {
-                mGingerHelpWindow.Close();
-                mGingerHelpWindow = new HelpWindow(SearchString);
-            }
+                mGingerHelpWindow = new GingerWebHelpPage();
+            //else  //TODO:implement Close
+            //{
+            //    mGingerHelpWindow.Close();
+            //    mGingerHelpWindow = new HelpWindow(SearchString);
+            //}
 
-            mGingerHelpWindow.Show();            
+            mGingerHelpWindow.ShowAsWindow();            
         }
 
         internal static string SetupBrowseFile(OpenFileDialog dlg, bool isRelativePath = true)

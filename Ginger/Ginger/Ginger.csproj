@@ -505,6 +505,9 @@
     </Compile>
     <Compile Include="GeneralWindows\HelpLayout\DrawArrow.cs" />
     <Compile Include="GeneralWindows\HelpLayout\HelpLayoutArgs.cs" />
+    <Compile Include="Help\GingerWebHelpPage.xaml.cs">
+      <DependentUpon>GingerWebHelpPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RunSetPageLib\RunsetRunnersConfigPage.xaml.cs">
       <DependentUpon>RunsetRunnersConfigPage.xaml</DependentUpon>
     </Compile>
@@ -2921,6 +2924,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Drivers\DriversWindows\MobileDriverWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Help\GingerWebHelpPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
