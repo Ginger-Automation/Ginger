@@ -146,6 +146,9 @@
     <None Update="TestResources\Excel\ExportedDS.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Files\BATReturnParam.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Files\VBSSum2Args.vbs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

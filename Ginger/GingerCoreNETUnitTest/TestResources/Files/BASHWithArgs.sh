@@ -1,4 +1,4 @@
-﻿#GINGER_Description Arguments Display
+#GINGER_Description Arguments Display
 #GINGER_$ Var1
 #GINGER_$ Var2
 

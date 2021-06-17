@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace GingerCoreNETUnitTest.LinuxTransformationTests
@@ -23,7 +24,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         }
         [TestMethod]
         [Timeout(60000)]
-        public void RunVBSFile()
+        public void VBSSum2ArgsTest()
         {
             //Arrange
             ActScript actScript = new ActScript()
@@ -39,24 +40,59 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Act
             actScript.Execute();
-            Tuple<string, string> tuple = new Tuple<string, string>();
 
             //Assert;
-            Assert.AreEqual(actScript.Status, null);
             Assert.AreEqual(actScript.ReturnValues.Count, 3);
-            Assert.AreEqual(actScript.ReturnValues)
-
+            Assert.AreEqual(string.Join(',', actScript.ActReturnValues.Select(x => x.Param).ToList()), "Var1,Var2,sum");
+            Assert.AreEqual(string.Join(',', actScript.ActReturnValues.Select(x => x.Actual).ToList()), "56,77,133");
         }
 
         [TestMethod]
         [Timeout(60000)]
-        public void ConditionFalseEqualCSTest()
+        public void BATFile1ArgTest()
         {
-            //Arrange            
+            //Arrange
+            ActScript actScript = new ActScript()
+            {
+                ScriptName = "BATReturnParam.bat",
+                ScriptCommand = ActScript.eScriptAct.Script
+            };
+            actScript.AddOrUpdateInputParamValueAndCalculatedValue("Param", "BatFile");
+            actScript.ScriptInterpreterType = ActScript.eScriptInterpreterType.BAT;
+            actScript.ScriptPath = TestResources.GetTestResourcesFolder(@"Files");
+            actScript.AddNewReturnParams = true;
 
             //Act
+            actScript.Execute();
 
-            //Assert
+            //Assert;
+            Assert.AreEqual(actScript.ReturnValues.Count, 2);
+            Assert.AreEqual(string.Join(',', actScript.ActReturnValues.Select(x => x.Param).ToList()), "Hello ,Arg ");
+            Assert.AreEqual(string.Join(',', actScript.ActReturnValues.Select(x => x.Actual).ToList()), " hello world, BatFile");
+        }
+        [TestMethod]
+        [Timeout(60000)]
+        public void BASHFileArgTest()
+        {
+            //Arrange
+            ActScript actScript = new ActScript()
+            {
+                ScriptName = "BASHWithArgs.sh",
+                ScriptCommand = ActScript.eScriptAct.Script
+            };
+            actScript.AddOrUpdateInputParamValueAndCalculatedValue("v1", "Shell");
+            actScript.AddOrUpdateInputParamValueAndCalculatedValue("v2", "You");
+            actScript.ScriptInterpreterType = ActScript.eScriptInterpreterType.SH;
+            actScript.ScriptPath = TestResources.GetTestResourcesFolder(@"Files");
+            actScript.AddNewReturnParams = true;
+
+            //Act
+            actScript.Execute();
+
+            //Assert;
+            Assert.AreEqual(actScript.ReturnValues.Count, 2);
+            Assert.AreEqual(string.Join(',', actScript.ActReturnValues.Select(x => x.Param).ToList()), "Value,Thanks");
+            Assert.AreEqual(string.Join(',', actScript.ActReturnValues.Select(x => x.Actual).ToList()), "Shell,You");
         }
     }
 }
