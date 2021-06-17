@@ -20,8 +20,9 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         static BusinessFlow mBF;
         static GingerRunner mGR;
         static bool isOSWindows = true;
-        [ClassInitialize()]
-        public static void ClassInit(TestContext context)
+        
+        [TestInitialize]
+        public void TestInitialize()
         {
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
@@ -43,12 +44,6 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             isOSWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-        }
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            WorkSpace.Init(new WorkSpaceEventHandler());
-            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
         }
         [TestMethod]
         [Timeout(60000)]
