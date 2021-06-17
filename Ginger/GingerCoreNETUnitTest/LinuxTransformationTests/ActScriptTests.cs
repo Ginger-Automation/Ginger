@@ -22,7 +22,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         [Timeout(60000)]
         public void VBSSum2ArgsTest()
         {
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if(!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 return;
             }
@@ -51,7 +51,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         [Timeout(60000)]
         public void BATFile1ArgTest()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 return;
             }
