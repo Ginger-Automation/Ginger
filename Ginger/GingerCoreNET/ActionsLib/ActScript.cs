@@ -206,7 +206,7 @@ namespace GingerCore.Actions
                     }
                     else if (ScriptInterpreterType == eScriptInterpreterType.SH)
                     {
-                        string filePath = Path.Combine(p.StartInfo.WorkingDirectory + ScriptName);
+                        string filePath = Path.Combine(p.StartInfo.WorkingDirectory,ScriptName);
                         p.StartInfo.Arguments = filePath + Params;
                     }
                     else if (ScriptInterpreter != null && ScriptInterpreter.Contains("cmd.exe"))

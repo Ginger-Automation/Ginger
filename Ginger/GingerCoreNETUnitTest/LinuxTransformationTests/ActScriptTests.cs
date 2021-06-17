@@ -41,7 +41,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             //Act
             actScript.Execute();
 
-            //Assert;
+            //Assert
             Assert.AreEqual(actScript.ReturnValues.Count, 3);
             Assert.AreEqual(string.Join(',', actScript.ActReturnValues.Select(x => x.Param).ToList()), "Var1,Var2,sum");
             Assert.AreEqual(string.Join(',', actScript.ActReturnValues.Select(x => x.Actual).ToList()), "56,77,133");
