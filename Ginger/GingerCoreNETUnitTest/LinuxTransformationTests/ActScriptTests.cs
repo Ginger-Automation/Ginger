@@ -69,7 +69,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             //Act
             actScript.Execute();
 
-            //Assert;
+            //Assert
             Assert.AreEqual(actScript.ReturnValues.Count, 2);
             Assert.AreEqual(string.Join(',', actScript.ActReturnValues.Select(x => x.Param).ToList()), "Hello ,Arg ");
             Assert.AreEqual(string.Join(',', actScript.ActReturnValues.Select(x => x.Actual).ToList()), " hello world, BatFile");
@@ -97,7 +97,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             //Act
             actScript.Execute();
 
-            //Assert;
+            //Assert
             Assert.AreEqual(actScript.ReturnValues.Count, 2);
             Assert.AreEqual(string.Join(',', actScript.ActReturnValues.Select(x => x.Param).ToList()), "Value,Thanks");
             Assert.AreEqual(string.Join(',', actScript.ActReturnValues.Select(x => x.Actual).ToList()), "Shell,You");
