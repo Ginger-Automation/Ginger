@@ -202,7 +202,7 @@ namespace GingerCore.Actions
                     }
                     else if (ScriptInterpreterType == eScriptInterpreterType.SH)
                     {
-                        string filePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(Path.Combine(SolutionFolder, @"Documents/scripts/") + ScriptName);
+                        string filePath = Path.Combine(p.StartInfo.WorkingDirectory + ScriptName);
                         p.StartInfo.Arguments = filePath + Params;
                     }
                     else if (ScriptInterpreter != null && ScriptInterpreter.Contains("cmd.exe"))
