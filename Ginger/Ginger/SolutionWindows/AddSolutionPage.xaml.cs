@@ -54,7 +54,7 @@ namespace Ginger.SolutionWindows
 
         private async void EncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
         {
-            UCEncryptionKey.CheckKey(UCEncryptionKey.EncryptionKeyPasswordBox.Password.ToString());
+            UCEncryptionKey.CheckKeyCombination(UCEncryptionKey.EncryptionKeyPasswordBox.Password.ToString());
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
@@ -75,7 +75,7 @@ namespace Ginger.SolutionWindows
                 }
 
                 Regex regex = new Regex(@"^.*(?=.{8,16})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!*@#$%^&+=]).*$");
-                if (!UCEncryptionKey.CheckKey(UCEncryptionKey.EncryptionKeyPasswordBox.Password.ToString()))
+                if (!UCEncryptionKey.CheckKeyCombination(UCEncryptionKey.EncryptionKeyPasswordBox.Password.ToString()))
                 {
                     Mouse.OverrideCursor = null;
                     UCEncryptionKey.EncryptionKeyPasswordBox.Password = "";

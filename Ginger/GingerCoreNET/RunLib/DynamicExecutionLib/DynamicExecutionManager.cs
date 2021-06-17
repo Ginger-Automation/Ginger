@@ -402,7 +402,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
                 {
                     executionConfig.SolutionScmDetails.User = solution.SourceControl.SourceControlUser;
-                    executionConfig.SolutionScmDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+                    executionConfig.SolutionScmDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass,solution.EncryptionKey);
                     executionConfig.SolutionScmDetails.PasswordEncrypted = true;
                 }
                 else

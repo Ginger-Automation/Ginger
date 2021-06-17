@@ -66,7 +66,7 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        public bool CheckKey(string key)
+        public bool CheckKeyCombination(string key)
         {
             Regex regex = new Regex(@"^.*(?=.{8,16})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!*@#$%^&+=]).*$");
             if (!regex.IsMatch(key))
