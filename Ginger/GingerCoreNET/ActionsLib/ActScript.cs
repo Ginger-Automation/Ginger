@@ -75,7 +75,7 @@ namespace GingerCore.Actions
             VBS,
             JS,
             BAT,
-            BASH,
+            SH,
             Other,
         }
         [IsSerializedForLocalRepository]
@@ -106,14 +106,6 @@ namespace GingerCore.Actions
             {
                 return "Script - " + ScriptName;
             }
-        }
-        public new static partial class Fields
-        {
-            public static string ScriptCommand = "ScriptCommand";
-            public static string ScriptName = "ScriptName";
-            public static string ScriptInterpreter = "ScriptInterpreter";
-            public static string ScriptInterpreterType = "ScriptInterpreterType";
-
         }
         public string ExpectString { get; set; }
 
@@ -166,13 +158,12 @@ namespace GingerCore.Actions
                     else
                         p.StartInfo.FileName = @"cscript";
                     break;
-                case eScriptInterpreterType.BASH:
+                case eScriptInterpreterType.SH:
                     p.StartInfo.FileName = "/bin/bash";
                     break;
                 case eScriptInterpreterType.Other:
                     if (!string.IsNullOrEmpty(ScriptInterpreter))
                     {
-                        //p.StartInfo.FileName = ScriptInterpreter.Replace(@"~\", this.SolutionFolder);
                         p.StartInfo.FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScriptInterpreter);
                     }
                     break;
@@ -189,7 +180,14 @@ namespace GingerCore.Actions
             }
             else
             {
-                p.StartInfo.WorkingDirectory = System.IO.Path.Combine(SolutionFolder, @"Documents\scripts\");
+                if(Directory.Exists(Path.Combine(SolutionFolder, "Documents", "scripts")))
+                {
+                    p.StartInfo.WorkingDirectory = Path.Combine(SolutionFolder, "Documents", "scripts");
+                }
+                else
+                {
+                    p.StartInfo.WorkingDirectory = Path.Combine(SolutionFolder, "Documents", "Scripts");
+                }
             }
             p.StartInfo.WorkingDirectory = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(p.StartInfo.WorkingDirectory);
             try
@@ -202,11 +200,10 @@ namespace GingerCore.Actions
                         p.StartInfo.FileName = System.IO.Path.Combine(p.StartInfo.WorkingDirectory, ScriptName);
                         p.StartInfo.Arguments = Params;
                     }
-                    if (ScriptInterpreterType == eScriptInterpreterType.BASH)
+                    else if (ScriptInterpreterType == eScriptInterpreterType.SH)
                     {
                         string filePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(Path.Combine(SolutionFolder, @"Documents/scripts/") + ScriptName);
                         p.StartInfo.Arguments = filePath + Params;
-                        Thread.Sleep(1000);
                     }
                     else if (ScriptInterpreter != null && ScriptInterpreter.Contains("cmd.exe"))
                     {
@@ -227,11 +224,6 @@ namespace GingerCore.Actions
                     {
                         TempFileName = CreateTempFile("bat");
                         p.StartInfo.FileName = TempFileName;
-                    }
-                    else if (ScriptInterpreterType == eScriptInterpreterType.BASH)
-                    {
-                        //TempFileName = CreateTempFile("sh");
-                        //p.StartInfo.FileName = TempFileName;
                     }
                     else if (ScriptInterpreterType == eScriptInterpreterType.Other)
                     {
@@ -265,7 +257,6 @@ namespace GingerCore.Actions
                     }
                     File.WriteAllText(TempFileName, Params);
                 }
-                Reporter.ToLog(eLogLevel.DEBUG, $"file name: {p.StartInfo.FileName} {p.StartInfo.Arguments}");
                 p.Start();
 
                 p.BeginOutputReadLine();
@@ -275,7 +266,6 @@ namespace GingerCore.Actions
                 {
                     Thread.Sleep(100);
                 }
-                Reporter.ToLog(eLogLevel.DEBUG, "action script ended");
             }
             catch (Exception e)
             {
@@ -341,7 +331,6 @@ namespace GingerCore.Actions
                             Value = RCValue;
                         }
                         AddOrUpdateReturnParamActual(Param, Value);
-                        Reporter.ToLog(eLogLevel.DEBUG, $"Param + value {Param},{Value}");
                     }
                 }
             }
@@ -349,8 +338,6 @@ namespace GingerCore.Actions
             {
                 //No params found so return the full output
                 AddOrUpdateReturnParamActual("???", sRC);
-                Thread.Sleep(200);
-                Reporter.ToLog(eLogLevel.DEBUG, $"??? ,{sRC}");
             }
         }
         public string GetCommandText(ActScript act)
