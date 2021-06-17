@@ -154,9 +154,13 @@ namespace GingerCore.Actions
                 case eScriptInterpreterType.JS:
                 case eScriptInterpreterType.VBS:
                     if (File.Exists(GetSystemDirectory() + @"\cscript.exe"))
+                    {
                         p.StartInfo.FileName = GetSystemDirectory() + @"\cscript.exe";
+                    }
                     else
+                    {
                         p.StartInfo.FileName = @"cscript";
+                    }
                     break;
                 case eScriptInterpreterType.SH:
                     p.StartInfo.FileName = "/bin/bash";
