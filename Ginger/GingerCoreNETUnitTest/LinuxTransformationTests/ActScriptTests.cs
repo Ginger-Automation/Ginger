@@ -1,15 +1,11 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Repository;
-using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
+using System.Runtime.InteropServices;
 
 namespace GingerCoreNETUnitTest.LinuxTransformationTests
 {
@@ -26,6 +22,10 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         [Timeout(60000)]
         public void VBSSum2ArgsTest()
         {
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return;
+            }
             //Arrange
             ActScript actScript = new ActScript()
             {
@@ -51,6 +51,10 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         [Timeout(60000)]
         public void BATFile1ArgTest()
         {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return;
+            }
             //Arrange
             ActScript actScript = new ActScript()
             {
@@ -74,6 +78,10 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         [Timeout(60000)]
         public void BASHFileArgTest()
         {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return;
+            }
             //Arrange
             ActScript actScript = new ActScript()
             {
