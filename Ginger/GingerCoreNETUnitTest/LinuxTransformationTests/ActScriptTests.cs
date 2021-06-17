@@ -17,14 +17,13 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
     [TestClass]
     public class ActScriptTests
     {
-        static BusinessFlow mBF;
-        static GingerRunner mGR;
-        static bool isOSWindows = true;
+        GingerRunner mGR;
+        bool isOSWindows = true;
         
         [TestInitialize]
         public void TestInitialize()
         {
-            mBF = new BusinessFlow();
+            BusinessFlow mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Non-Driver Action Test";
             mBF.Active = true;
