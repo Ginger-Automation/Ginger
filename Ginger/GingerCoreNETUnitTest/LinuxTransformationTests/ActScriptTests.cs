@@ -44,12 +44,6 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             isOSWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         }
-
-        [ClassCleanup]
-        public static void ClassCleanUp()
-        {
-
-        }
         [TestInitialize]
         public void TestInitialize()
         {
