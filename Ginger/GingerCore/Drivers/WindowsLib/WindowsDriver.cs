@@ -1005,18 +1005,19 @@ namespace GingerCore.Drivers.WindowsLib
         {
             //only return necessery properties
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+            UIAElementInfo uIAElement  = (UIAElementInfo)ElementInfo;
             if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
             {
                 list.Add(new ControlProperty() { Name = ElementProperty.PlatformElementType, Value = ElementInfo.ElementType });
             }
             list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.BoundingRectangle, Value = ElementInfo.BoundingRectangle.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.LocalizedControlType, Value = ElementInfo.LocalizedControlType.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.BoundingRectangle, Value = uIAElement.BoundingRectangle.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.LocalizedControlType, Value = uIAElement.LocalizedControlType.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.Name, Value = ElementInfo.ElementTitle.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.AutomationId, Value = ElementInfo.AutomationId.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.Text, Value = ElementInfo.Text.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.ClassName, Value = ElementInfo.ClassName.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.ToggleState, Value = ElementInfo.ToggleState.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.AutomationId, Value = uIAElement.AutomationId.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.Text, Value = uIAElement.Text.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.ClassName, Value = uIAElement.ClassName.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.ToggleState, Value = uIAElement.ToggleState.ToString() });
 
             if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
             {
@@ -1030,12 +1031,12 @@ namespace GingerCore.Drivers.WindowsLib
             list.Add(new ControlProperty() { Name = ElementProperty.Width, Value = ElementInfo.Width.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.X, Value = ElementInfo.X.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.Y, Value = ElementInfo.Y.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.IsKeyboardFocusable, Value = ElementInfo.IsKeyboardFocusable.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.IsEnabled, Value = ElementInfo.IsEnabled.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.IsKeyboardFocusable, Value = ElementInfo.IsKeyboardFocusable.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.IsPassword, Value = ElementInfo.IsPassword.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.IsOffscreen, Value = ElementInfo.IsOffscreen.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.IsSelected, Value = ElementInfo.IsSelected.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsKeyboardFocusable, Value = uIAElement.IsKeyboardFocusable.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsEnabled, Value = uIAElement.IsEnabled.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsKeyboardFocusable, Value = uIAElement.IsKeyboardFocusable.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsPassword, Value = uIAElement.IsPassword.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsOffscreen, Value = uIAElement.IsOffscreen.ToString() });
+            list.Add(new ControlProperty() { Name = ElementProperty.IsSelected, Value = uIAElement.IsSelected.ToString() });
 
             //returns list of all supported properties - GetElementProperties(ElementInfo);
 
