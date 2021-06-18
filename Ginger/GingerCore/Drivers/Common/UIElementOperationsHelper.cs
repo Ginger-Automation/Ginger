@@ -673,5 +673,159 @@ namespace GingerCore.Drivers.Common
 
         }
         
+        public ActionResult ClickAndValidte(AutomationElement automationElement, ActUIElement act)
+        {
+            ActionResult actionResult = new ActionResult();
+
+
+            ActUIElement.eElementAction clickType;
+            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString(), out clickType) == false)
+            {
+                actionResult.errorMessage = "Unknown Click Type";
+                return actionResult;
+            }
+
+            ActUIElement.eElementAction validationType;
+            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out validationType) == false)
+            {
+                actionResult.errorMessage = "Unknown Validation Type";
+                return actionResult;
+            }
+            string validationElementType = act.GetInputParamValue(ActUIElement.Fields.ValidationElement);
+
+            eLocateBy validationElementLocateby;
+            if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out validationElementLocateby) == false)
+            {
+                actionResult.errorMessage = "Unknown Validation Element Locate By";
+                return actionResult;
+            }
+
+            string validattionElementLocateValue = act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue);
+            bool LoopNextCheck = false;
+            if ((act.GetInputParamValue(ActUIElement.Fields.LoopThroughClicks).ToString()) == "True")
+            {
+                LoopNextCheck = true;
+            }
+
+            //perform click
+            bool isClicked = performClick(automationElement, clickType);
+            if (isClicked)
+            {
+                //validate
+            }
+            else 
+            {
+                if (LoopNextCheck)
+                {
+                    //click element by other types
+                }
+            }
+
+
+
+
+            return actionResult;
+        }
+
+        public bool performClick(AutomationElement automationElement, ActUIElement.eElementAction clickType)
+        {
+            ActionResult actionResult = new ActionResult();
+            bool result = false;
+            switch (clickType)
+            {
+                case ActUIElement.eElementAction.Click:
+                    actionResult = ClickElement(automationElement);
+                    break;
+
+                case ActUIElement.eElementAction.AsyncClick:
+                    actionResult = AsyncClickElement(automationElement);
+                    break;
+
+                case ActUIElement.eElementAction.MouseClick:
+                    actionResult = MouseClickElement(automationElement);
+                    break;
+            }
+            if (string.IsNullOrEmpty(actionResult.errorMessage))
+            {
+                result = true;
+            }
+            return result;
+        }
+
+        public bool LocateAndValidateElement(AutomationElement elementToValidate, string elementType, ActUIElement.eElementAction actionType, string validationValue = "")
+        {
+            ActionResult actionResult = new ActionResult();
+            bool result = false;
+
+            switch (actionType)
+            {
+                case ActUIElement.eElementAction.IsEnabled:
+                    result = elementToValidate.Current.IsEnabled;
+                    break;
+
+                case ActUIElement.eElementAction.Exist:
+                    if (elementToValidate != null)
+                    {
+                        result = true;
+                    }
+                    break;
+
+                case ActUIElement.eElementAction.NotExist:
+                    if (elementToValidate == null)
+                    {
+                        result = true;
+                    }
+                    break;
+                case ActUIElement.eElementAction.GetValue:
+                    if (elementToValidate == null)
+                    {
+                        result = false;
+                    }
+                    actionResult = GetValue(elementToValidate, eElementType.Unknown);
+                    if (!string.IsNullOrEmpty(actionResult.errorMessage) || string.IsNullOrEmpty(actionResult.outputValue))
+                    {
+                        actionResult = GetText(elementToValidate);
+                    }
+                    if (actionResult.outputValue == validationValue)
+                    {
+                        result = true;
+                    }
+                    break;
+            }
+
+            return result;
+        }
+
+        public ActionResult ClickElementByOthertypes(ActUIElement.eElementAction executedClick, List<ActUIElement.eElementAction> clicks, AutomationElement automationElement, AutomationElement elementToValidate, string validationElementType, ActUIElement.eElementAction validationType)
+        {
+            ActUIElement.eElementAction currentClick;
+            //string result = "";
+            ActionResult actionResult = new ActionResult();
+
+            bool isClicked = false;
+            bool isValidated = false;
+
+            for (int i = 0; i < clicks.Count; i++)
+            {
+                currentClick = clicks[i];
+                if (currentClick != executedClick)
+                {
+                    isClicked = performClick(automationElement, currentClick);
+                    if (isClicked)
+                    {
+                        isValidated = LocateAndValidateElement(elementToValidate, validationElementType, validationType);
+                        if (isValidated)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (isValidated)
+            {
+               actionResult.executionInfo = "Successfully clicked and validated";
+            }
+            return actionResult;
+        }
     }
 }

@@ -475,18 +475,8 @@ namespace GingerCore.Drivers.WindowsLib
                 //    break;
 
                 case ActUIElement.eElementAction.ClickAndValidate:
-                    string status = mUIAutomationHelper.ClickAndValidteHandler(automationElement, actUIElement);
-                    if (!status.Contains("Clicked Successfully"))
-                    {
-                        actionResult.errorMessage += status;
-                    }
-                    else
-                    {
-                        actionResult.executionInfo += status;
-                    }
+                    actionResult = ClickAndValidte(automationElement, actUIElement);
                     break;
-
-
                 case ActUIElement.eElementAction.Maximize:
                     actionResult = mUIElementOperationsHelper.SetWindowState(automationElement, WindowVisualState.Maximized);
                     break;
@@ -520,7 +510,72 @@ namespace GingerCore.Drivers.WindowsLib
                 actUIElement.Error = actionResult.errorMessage;
             }
         }
+        public ActionResult ClickAndValidte(AutomationElement automationElement, ActUIElement act)
+        {
+            ActionResult actionResult = new ActionResult();
+            ActUIElement.eElementAction clickType;
+            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString(), out clickType) == false)
+            {
+                actionResult.errorMessage = "Unknown Click Type";
+                return actionResult;
+            }
 
+            ActUIElement.eElementAction validationType;
+            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out validationType) == false)
+            {
+                actionResult.errorMessage = "Unknown Validation Type";
+                return actionResult;
+            }
+            string validationElementType = act.GetInputParamValue(ActUIElement.Fields.ValidationElement);
+
+            eLocateBy validationElementLocateby;
+            if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out validationElementLocateby) == false)
+            {
+                actionResult.errorMessage = "Unknown Validation Element Locate By";
+                return actionResult;
+            }
+
+            string validattionElementLocateValue = act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue);
+            bool LoopNextCheck = false;
+            if ((act.GetInputParamValue(ActUIElement.Fields.LoopThroughClicks).ToString()) == "True")
+            {
+                LoopNextCheck = true;
+            }
+
+            List<ActUIElement.eElementAction> clicks = PlatformInfoBase.GetPlatformImpl(mUIAutomationHelper.mPlatform).GetPlatformUIClickTypeList();
+            AutomationElement elementToValidate = (AutomationElement)mUIAutomationHelper.FindElementByLocator(validationElementLocateby, validattionElementLocateValue);
+
+            //perform click
+            bool isClicked = mUIElementOperationsHelper.performClick(automationElement, clickType);
+            if (isClicked)
+            {
+                //validate
+                bool isValidated = mUIElementOperationsHelper.LocateAndValidateElement(elementToValidate, validationElementType, validationType);
+                if (isValidated)
+                {
+                    actionResult.executionInfo = "Clicked Successfully And Validated Element.";
+                    return actionResult;
+                }
+                if ((!isValidated) && (LoopNextCheck))
+                {
+                    actionResult = mUIElementOperationsHelper.ClickElementByOthertypes(clickType, clicks, automationElement, elementToValidate, validationElementType, validationType);
+                }
+                else
+                {
+                    actionResult.executionInfo = "Validation Failed.";
+                }
+            }
+            else
+            {
+                if (LoopNextCheck)
+                {
+                    //click element by other types
+                    actionResult = mUIElementOperationsHelper.ClickElementByOthertypes(clickType, clicks, automationElement, elementToValidate, validationElementType, validationType);
+                }
+            }
+
+            return actionResult;
+        }
         private AutomationElement HandlePOMElememnt(ActUIElement act)
         {
             ObservableList<ElementLocator> locators = new ObservableList<ElementLocator>();

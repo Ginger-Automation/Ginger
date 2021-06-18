@@ -285,10 +285,9 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override List<ActUIElement.eElementAction> GetPlatformUIClickTypeList()
         {
             List<ActUIElement.eElementAction> list = new List<ActUIElement.eElementAction>();
-            //list.Add(ActUIElement.eElementAction.DragDrop);
-            list.Add(ActUIElement.eElementAction.InvokeClick);
-            list.Add(ActUIElement.eElementAction.LegacyClick);
+            list.Add(ActUIElement.eElementAction.Click);
             list.Add(ActUIElement.eElementAction.MouseClick);
+            list.Add(ActUIElement.eElementAction.AsyncClick);
 
             return list;
         }
