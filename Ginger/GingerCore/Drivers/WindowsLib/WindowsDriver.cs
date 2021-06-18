@@ -1038,8 +1038,6 @@ namespace GingerCore.Drivers.WindowsLib
             list.Add(new ControlProperty() { Name = ElementProperty.IsOffscreen, Value = uIAElement.IsOffscreen.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.IsSelected, Value = uIAElement.IsSelected.ToString() });
 
-            //returns list of all supported properties - GetElementProperties(ElementInfo);
-
             return list;       
         }
 
@@ -1384,7 +1382,7 @@ namespace GingerCore.Drivers.WindowsLib
                 locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
             }
 
-            foreach (ElementLocator locator in Locators.Where(x => x.Active == true).ToList())
+            foreach (ElementLocator locator in Locators.Where(x => x.Active).ToList())
             {
                 if (!locator.IsAutoLearned)
                 {
@@ -1392,7 +1390,7 @@ namespace GingerCore.Drivers.WindowsLib
                 }
                 else
                 {
-                    elem = LocateElementByLocator(locator, true);
+                    elem = LocateElementByLocator(locator);
                 }
 
                 if (elem != null)
