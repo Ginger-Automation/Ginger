@@ -385,9 +385,12 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public string ConvertSolutionRelativePath(string relativePath)
         {
+            if(String.IsNullOrWhiteSpace(relativePath))
+            {
+                return relativePath;
+            }
             try
             {
-               
                 if (relativePath.TrimStart().StartsWith("~"))
                 {
                     string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });

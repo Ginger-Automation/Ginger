@@ -68,7 +68,7 @@ namespace GingerCoreNET.Application_Models
             POMLatestElements.CollectionChanged += ElementsListCollectionChanged;
         }
 
-        public void LearnDelta()
+        public async Task LearnDelta()
         {
             try
             {
@@ -86,11 +86,11 @@ namespace GingerCoreNET.Application_Models
                     uIElementList.AddRange(PomLearnUtils.AutoMapBasicElementTypesList.ToList());
                     uIElementList.AddRange(PomLearnUtils.AutoMapAdvanceElementTypesList.ToList());
 
-                    mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true,SpecificFramePath);
+                    await mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true,SpecificFramePath);
                 }
                 else
                 {
-                    mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true,SpecificFramePath);
+                   await mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true,SpecificFramePath);
                 }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();
@@ -207,7 +207,18 @@ namespace GingerCoreNET.Application_Models
                 DeltaElementLocator deltaLocator = new DeltaElementLocator();
                 latestLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
                 deltaLocator.ElementLocator = latestLocator;
-                ElementLocator matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy).FirstOrDefault();
+
+                ElementLocator matchingExistingLocator = null;
+
+                if (latestLocator.LocateBy == eLocateBy.ByRelXPath)
+                {
+                    matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy && x.LocateValue == latestLocator.LocateValue).FirstOrDefault();
+                }
+                else
+                {
+                    matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy).FirstOrDefault();
+                }
+
                 if (matchingExistingLocator != null)
                 {
                     latestLocator.Guid = matchingExistingLocator.Guid;

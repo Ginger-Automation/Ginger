@@ -771,8 +771,10 @@ namespace GingerCore.Drivers
         public override object FindElementByLocator(eLocateBy locateBy, string locateValue)
         {
             object element = null;
-            loadwaitSeconds = mLoadTimeOut.Value;
-
+            if (mLoadTimeOut != null)
+            {
+                loadwaitSeconds = mLoadTimeOut.Value;
+            }
             int count = 0;
             bool isLoaded = false;
             while (!isLoaded && !taskFinished)
@@ -3711,6 +3713,10 @@ namespace GingerCore.Drivers
                         propValue = element.Current.BoundingRectangle.Y.ToString();
                         break;
 
+                    case "BoundingRectangle":
+                        propValue = element.Current.BoundingRectangle.ToString();
+                        break;
+
                     case "NativeWindowHandle":
                         propValue = element.Current.NativeWindowHandle.ToString();
                         break;
@@ -3991,7 +3997,7 @@ namespace GingerCore.Drivers
             }
             if (General.CompareStringsIgnoreCase(ControlType, "title bar"))
             {
-                string value = element.Current.Name.ToString();
+                string value = element.Current.Name;
                 return value;
             }
 
@@ -4728,57 +4734,62 @@ namespace GingerCore.Drivers
         {
             return lastFocusedElement;
         }
-        
+
         //Will get all visible control including recursive drill down, for AE which have invoke method
         public override async Task<List<ElementInfo>> GetVisibleControls()
         {
-            List<ElementInfo> list = new List<ElementInfo>();
-            List<ElementInfo> HTMLlist;
-
-            //TODO: find a better property - since if the window is off screen controls will not show            
-            System.Windows.Automation.Condition cond = new PropertyCondition(AutomationElement.IsOffscreenProperty, false);                        
-            AutomationElementCollection AEC = CurrentWindow.FindAll(TreeScope.Descendants, cond);
-            string IEElementXpath="";
-
-            foreach (AutomationElement AE in AEC) 
+           return await Task.Run(async() =>
             {
-                UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
-                if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
+
+                List<ElementInfo> list = new List<ElementInfo>();
+                List<ElementInfo> HTMLlist;
+
+                //TODO: find a better property - since if the window is off screen controls will not show            
+                System.Windows.Automation.Condition cond = new PropertyCondition(AutomationElement.IsOffscreenProperty, false);
+                AutomationElementCollection AEC = CurrentWindow.FindAll(TreeScope.Descendants, cond);
+                string IEElementXpath = "";
+
+                foreach (AutomationElement AE in AEC)
                 {
-                    ei = (UIAElementInfo)GetElementInfoFor(AE);
-                    IEElementXpath = ei.XPath;
-                    InitializeBrowser(AE);
-                    HTMLlist = await HTMLhelperObj.GetVisibleElement();
-                    list.Add(ei);
-                    if (HTMLlist != null && HTMLlist.Count > 0)
+                    UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
+                    if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
                     {
-                        list.AddRange(HTMLlist);
+                        ei = (UIAElementInfo)GetElementInfoFor(AE);
+                        IEElementXpath = ei.XPath;
+                        InitializeBrowser(AE);
+                        HTMLlist = await HTMLhelperObj.GetVisibleElement();
+                        list.Add(ei);
+                        if (HTMLlist != null && HTMLlist.Count > 0)
+                        {
+                            list.AddRange(HTMLlist);
+                        }
+                        //foreach(ElementInfo e1 in HTMLlist)
+                        //{
+                        //    list.Add(e1);
+                        //}
                     }
-                    //foreach(ElementInfo e1 in HTMLlist)
-                    //{
-                    //    list.Add(e1);
-                    //}
-                }
-                
 
-                if (String.IsNullOrEmpty(IEElementXpath))
-                {
-                    list.Add(ei);
-                }
-                else if (!ei.XPath.Contains(IEElementXpath))
-                {
-                    //TODO: Here we check if automation element is child of IE browser element 
-                    // If yes then we skip it because we already have HTML element for this
-                    // Checking it by XPath makes it slow , because xpath is calculated for this element at runtime
-                    // Need to find a better way to speed up
-                    list.Add(ei);
-                }
-                
-            }
 
-            return list;
+                    if (String.IsNullOrEmpty(IEElementXpath))
+                    {
+                        list.Add(ei);
+                    }
+                    else if (!ei.XPath.Contains(IEElementXpath))
+                    {
+                        //TODO: Here we check if automation element is child of IE browser element 
+                        // If yes then we skip it because we already have HTML element for this
+                        // Checking it by XPath makes it slow , because xpath is calculated for this element at runtime
+                        // Need to find a better way to speed up
+                        list.Add(ei);
+                    }
+
+                }
+
+                return list;
+            });
+
         }
-              
+
         public override string InitializeBrowser(object obj)
         {
             AutomationElement AE = (AutomationElement)obj;
@@ -5794,6 +5805,35 @@ namespace GingerCore.Drivers
             EI.ElementType= GetElementControlType(AE);
             EI.ElementTypeEnum = WindowsPlatform.GetElementType(EI.ElementType, GetControlPropertyValue(EI.ElementObject, "ClassName"));
             //EI.IsExpandable = AE.Current.IsContentElement;
+            EI.BoundingRectangle = GetControlPropertyValue(EI.ElementObject, "BoundingRectangle");
+            EI.LocalizedControlType = GetControlPropertyValue(EI.ElementObject, "LocalizedControlType");
+            EI.AutomationId = GetControlPropertyValue(EI.ElementObject, "AutomationId");
+            EI.ClassName = GetControlPropertyValue(EI.ElementObject, "ClassName");
+            EI.ToggleState = GetControlPropertyValue(EI.ElementObject, "ToggleState");
+            EI.Text = GetControlPropertyValue(EI.ElementObject, "Text");
+            
+            bool isPropertyValue;
+            if(bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsKeyboardFocusable"),out isPropertyValue))
+            {
+                EI.IsKeyboardFocusable = isPropertyValue;
+            }
+            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsEnabled"), out isPropertyValue))
+            {
+                EI.IsEnabled = isPropertyValue;
+            }
+            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsPassword"), out isPropertyValue))
+            {
+                EI.IsPassword = isPropertyValue;
+            }
+            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsOffscreen"), out isPropertyValue))
+            {
+                EI.IsOffscreen = isPropertyValue;
+            }
+            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsSelected"), out isPropertyValue))
+            {
+                EI.IsSelected = isPropertyValue;
+            }
+            
             return EI;
         }
 
@@ -5847,7 +5887,12 @@ namespace GingerCore.Drivers
             Thread.Sleep(200);
             int width = (int)tempWindow.Current.BoundingRectangle.Width;
             int height= (int)tempWindow.Current.BoundingRectangle.Height;
-
+            if (width == 0 || height == 0)
+            {
+                WinAPIAutomation.ShowWindow(CurrentWindow);
+                width = (int)tempWindow.Current.BoundingRectangle.Width;
+                height = (int)tempWindow.Current.BoundingRectangle.Height;
+            }
             Bitmap bmp = new Bitmap(width, height);
             
             Graphics memoryGraphics = Graphics.FromImage(bmp);
@@ -6547,6 +6592,26 @@ namespace GingerCore.Drivers
         }
 
         public string GetElementXpath(ElementInfo EI)
+        {
+            return null;
+        }
+
+        public string GetInnerHtml(ElementInfo elementInfo)
+        {
+            return null;
+        }
+
+        public object GetElementParentNode(ElementInfo elementInfo)
+        {
+            return null;
+        }
+
+        public string GetInnerText(ElementInfo elementInfo)
+        {
+            return null;
+        }
+
+        public string GetPreviousSiblingInnerText(ElementInfo elementInfo)
         {
             return null;
         }
