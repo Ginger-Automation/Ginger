@@ -82,6 +82,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Toggle);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Expand);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Collapse);
 
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Maximize);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Minimize);
@@ -339,7 +340,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementsTypeList.Add(eElementType.MenuItem);
                 mElementsTypeList.Add(eElementType.MenuBar);
                 //mElementsTypeList.Add(eElementType.Browser);
-                mElementsTypeList.Add(eElementType.ScrollBar);
+                //mElementsTypeList.Add(eElementType.ScrollBar);
             }
             return mElementsTypeList;
         }
@@ -745,9 +746,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                     elementTypeEnum = eElementType.MenuBar;
                     break;
 
-                case "scroll bar":
-                    elementTypeEnum = eElementType.ScrollBar;
-                    break;
+                //case "scroll bar":
+                //    elementTypeEnum = eElementType.ScrollBar;
+                //    break;
 
                 default:
                     elementTypeEnum = eElementType.Unknown;

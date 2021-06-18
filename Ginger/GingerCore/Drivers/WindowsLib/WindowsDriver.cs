@@ -73,7 +73,7 @@ namespace GingerCore.Drivers.WindowsLib
                     mUIAutomationHelper= new UIAComWrapperHelper();
                     ((UIAComWrapperHelper)mUIAutomationHelper).WindowExplorer = this;
                     ((UIAComWrapperHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
-                    ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = UIAComWrapperHelper.ePlatform.Windows;
+                    ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = ePlatformType.Windows;
 
                     mUIElementOperationsHelper = new UIElementOperationsHelper();
 

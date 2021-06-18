@@ -559,11 +559,6 @@ namespace GingerCore.Drivers.Common
                         actionResult = GetPropertyValue(automationElement, LegacyIAccessiblePatternIdentifiers.ValueProperty);
                     }
                 //}      
-
-                //if (string.IsNullOrEmpty(actionResult.outputValue))
-                //{
-                //    actionResult.outputValue = automationElement.Current.Name;
-                //}
             }
             catch (Exception ex)
             {
@@ -678,94 +673,5 @@ namespace GingerCore.Drivers.Common
 
         }
         
-        public ActionResult ClickAndValidte(AutomationElement automationElement, ActUIElement act)
-        {
-            ActionResult actionResult = new ActionResult();
-
-
-            ActUIElement.eElementAction clickType;
-            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString(), out clickType) == false)
-            {
-                actionResult.errorMessage = "Unknown Click Type";
-                return actionResult;
-            }
-
-            ActUIElement.eElementAction validationType;
-            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out validationType) == false)
-            {
-                actionResult.errorMessage = "Unknown Validation Type";
-                return actionResult;
-            }
-            string validationElementType = act.GetInputParamValue(ActUIElement.Fields.ValidationElement);
-
-            eLocateBy validationElementLocateby;
-            if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out validationElementLocateby) == false)
-            {
-                actionResult.errorMessage = "Unknown Validation Element Locate By";
-                return actionResult;
-            }
-
-            string validattionElementLocateValue = act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue);
-            bool LoopNextCheck = false;
-            if ((act.GetInputParamValue(ActUIElement.Fields.LoopThroughClicks).ToString()) == "True")
-            {
-                LoopNextCheck = true;
-            }
-
-            //perform click
-            bool isClicked = performClick(automationElement, clickType);
-            if (isClicked)
-            {
-                //validate
-            }
-            else 
-            {
-                if (LoopNextCheck)
-                {
-                    //click element by other types
-                }
-            }
-
-
-
-
-            return actionResult;
-        }
-
-        public bool performClick(AutomationElement automationElement, ActUIElement.eElementAction clickType)
-        {
-            ActionResult actionResult = new ActionResult();
-            Boolean clickTriggeredFlag = false;
-            bool result = false;
-            switch (clickType)
-            {
-                case ActUIElement.eElementAction.InvokeClick:
-                    actionResult = ClickUsingInvokePattern(automationElement, ref clickTriggeredFlag);
-                    break;
-
-                case ActUIElement.eElementAction.LegacyClick:
-                    actionResult = ClickUsingLegacyPattern(automationElement, ref clickTriggeredFlag);
-                    break;
-
-                case ActUIElement.eElementAction.MouseClick:
-                    actionResult = MouseClickElement(automationElement);
-                    break;
-            }
-            if (!string.IsNullOrEmpty(actionResult.errorMessage))
-            {
-                result = true;
-            }
-            return result;
-        }
-
-        public bool LocateAndValidateElement(eLocateBy LocateBy, string LocateValue, string elementType, ActUIElement.eElementAction actionType, string validationValue = "")
-        {
-            bool result = false;
-            //object obj = FindElementByLocator(LocateBy, LocateValue);
-
-            
-            return result;
-        }
-
     }
 }
