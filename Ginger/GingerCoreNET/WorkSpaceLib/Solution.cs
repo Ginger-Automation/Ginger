@@ -57,7 +57,7 @@ namespace Ginger.SolutionGeneral
             Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
             solution.FilePath = solutionFileName;
             solution.Folder = Path.GetDirectoryName(solutionFileName);
-            solution.EncryptionKey = encryptionKey ?? GetEncryptionKey(solution.Guid.ToString());            
+            solution.EncryptionKey = encryptionKey ?? GetEncryptionKey(solution.Guid.ToString());      
             if (startDirtyTracking)
             {
                 solution.StartDirtyTracking();
@@ -236,6 +236,8 @@ namespace Ginger.SolutionGeneral
         [IsSerializedForLocalRepository]
         public string EncryptedValidationString { get;set;}
 
+        public bool NeedVariablesReEncryption { get; set; } = false;
+
         public bool ValidateKey(string encryptionKey = null)
         {
             try
@@ -304,6 +306,26 @@ namespace Ginger.SolutionGeneral
                 Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
             }
             return false;
+        }
+
+        public bool ChangeEncryptionOfVariables()
+        {
+            try
+            {
+                bool r = false;
+                foreach (VariableBase var in Variables)
+                {
+                    if (var.VariableType == "")
+                        r = true;
+                        
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+            }
+            return false; 
         }
 
         [IsSerializedForLocalRepository]

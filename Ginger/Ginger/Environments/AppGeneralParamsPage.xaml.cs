@@ -80,24 +80,25 @@ namespace Ginger.Environments
                 GeneralParam selectedEnvParam = (GeneralParam)grdAppParams.CurrentItem;
 
                 String intialValue = selectedEnvParam.Value;
-                bool res = false;
+                
                 if (!string.IsNullOrEmpty(intialValue))
                 {
                     if (selectedEnvParam.Encrypt == true)
                     {
                         //UpdateVariableNameChange(selectedEnvParam); // why is that needed here?
-                        if (!EncryptionHandler.IsStringEncrypted(intialValue))
+
+                        if (!EncryptionHandler.IsStringEncryptedWithKey(intialValue, WorkSpace.Instance.Solution.EncryptionKey))
                         {
-                            selectedEnvParam.Value = EncryptionHandler.EncryptString(intialValue, ref res);
-                            if (res == false)
+                            selectedEnvParam.Value = EncryptionHandler.EncryptwithKey(intialValue, WorkSpace.Instance.Solution.EncryptionKey);
+                            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.EncryptionKey))
                             {
-                                selectedEnvParam.Value = null;
+                                selectedEnvParam.Value = string.Empty;
                             }
                         }
                     }
                     else
                     {
-                        if (EncryptionHandler.IsStringEncrypted(intialValue))
+                        if (EncryptionHandler.IsStringEncryptedWithKey(intialValue, WorkSpace.Instance.Solution.EncryptionKey))
                         {
                             selectedEnvParam.Value = null;
                         }

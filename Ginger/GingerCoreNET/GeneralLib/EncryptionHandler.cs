@@ -30,7 +30,7 @@ namespace GingerCore
     public class EncryptionHandler
     {
         //Configuring the details to create the Encrypt key
-        private static string PASS_PHRASE =Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(0)));
+        private static string PASS_PHRASE = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(0)));
         private static string SALT_VALUE = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(1)));
         private static string INIT_VECTOR = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(2)));
         private static string HASH_ALGORITHM = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(3)));
@@ -101,8 +101,8 @@ namespace GingerCore
                 }
             }
             catch (Exception ex)
-            {                
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Encrypt the value: '{0}'",strToEncrypt), ex);
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Encrypt the value: '{0}'", strToEncrypt), ex);
                 result = false;
                 return string.Empty;
             }
@@ -164,11 +164,11 @@ namespace GingerCore
                 }
             }
             catch (Exception ex)
-            {             
-                if(WriteErrorsToLog)
+            {
+                if (WriteErrorsToLog)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Decrypt the value: '{0}'", strToDecrypt), ex);
-                }                
+                }
                 result = false;
                 return string.Empty;
             }
@@ -176,9 +176,22 @@ namespace GingerCore
 
         public static bool IsStringEncrypted(string strToCheck)
         {
-            bool checkValueDecrypt= false;
+            bool checkValueDecrypt = false;
             DecryptString(strToCheck, ref checkValueDecrypt, false);
             return checkValueDecrypt;
+        }
+
+        public static bool IsStringEncryptedWithKey(string strToCheck, string key)
+        {
+            try
+            {
+                return string.IsNullOrEmpty(DecryptwithKey(strToCheck, key)) ? false : true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Decrypt the value: '{0}'", strToCheck), ex);
+                return false;
+            }
         }
 
         public static RijndaelManaged GetRijndaelManaged(String secretKey)
@@ -243,6 +256,6 @@ namespace GingerCore
             }
             var encryptedBytes = Convert.FromBase64String(encryptedText);
             return Encoding.UTF8.GetString(Decrypt(encryptedBytes, GetRijndaelManaged(key)));
-        }        
+        }
     }
 }

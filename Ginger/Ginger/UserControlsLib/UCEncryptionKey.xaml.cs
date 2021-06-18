@@ -66,10 +66,10 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        public bool CheckKeyCombination(string key)
+        public bool CheckKeyCombination()
         {
             Regex regex = new Regex(@"^.*(?=.{8,16})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!*@#$%^&+=]).*$");
-            if (!regex.IsMatch(key))
+            if (!regex.IsMatch(EncryptionKeyPasswordBox.Password))
             {
                 InvalidFlag.Visibility = Visibility.Visible;
                 ValidFlag.Visibility = Visibility.Collapsed;

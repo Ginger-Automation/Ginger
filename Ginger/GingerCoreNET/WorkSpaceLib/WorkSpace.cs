@@ -371,7 +371,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution xml into object");
-                Solution solution = Solution.LoadSolution(solutionFile,true, EncryptionKey);
+                Solution solution = Solution.LoadSolution(solutionFile, true, EncryptionKey);
                 if (solution == null)
                 {
                     Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Failed to load the Solution file");
@@ -402,7 +402,7 @@ namespace amdocs.ginger.GingerCoreNET
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Doing Source Control Configurations");
                 HandleSolutionLoadSourceControl(solution);
-
+                //WorkSpace.Instance.Solution.Account.
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Updating Application Functionalities to Work with Loaded Solution");
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables;
@@ -417,6 +417,11 @@ namespace amdocs.ginger.GingerCoreNET
 
                 //Solution items upgrade
                 SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
+
+                if (!RunningInExecutionMode && mSolution.NeedVariablesReEncryption)
+                {
+                    ReEncryptVariable();
+                }
 
                 // No need to add solution to recent if running from CLI
                 if (!RunningInExecutionMode)
@@ -441,6 +446,93 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        private static void ReEncryptVariable()
+        {
+            int varReencryptedCount = 0;
+            List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
+            // For BF and Activity
+            Parallel.ForEach(Bfs, Bf =>
+            {
+                try
+                {
+                    bool res = false;
+                    // Get all variables from BF
+                    List<GingerCore.Variables.VariableBase> variables = Bf.GetBFandActivitiesVariabeles(false).Where(f => f.VariableType == "PasswordString").ToList();
+                    variables.ForEach(v =>
+                    {
+                        try
+                        {
+                            ((GingerCore.Variables.VariablePasswordString)v).Password = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptString(((GingerCore.Variables.VariablePasswordString)v).Password, ref res), WorkSpace.Instance.Solution.EncryptionKey);
+                            varReencryptedCount++;
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password variable of {0} for {1}", Bf.Name, v.Name), ex);
+                        }
+                    });
+
+                    if (res)
+                    {
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(Bf);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password variable of {0}.", Bf.Name), ex);
+                }
+            });
+
+            // For Global Variables
+            bool res1 = false;
+            foreach (GingerCore.Variables.VariableBase v in WorkSpace.Instance.Solution.Variables)
+            {
+                try
+                {
+                    ((GingerCore.Variables.VariablePasswordString)v).Password = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptString(((GingerCore.Variables.VariablePasswordString)v).Password, ref res1), WorkSpace.Instance.Solution.EncryptionKey);
+                    varReencryptedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password Global variable {1}", v.Name), ex);
+                }
+            }
+            if (res1)
+            {
+                WorkSpace.Instance.Solution.SaveSolution(false);
+            }
+
+
+            try
+            {
+                List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
+                projEnvironments.ForEach(pe =>
+                {
+                    res1 = false;
+                    foreach (EnvApplication ea in pe.Applications)
+                    {
+                        foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
+                        {
+                            gp.Value = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptString(gp.Value, ref res1), WorkSpace.Instance.Solution.EncryptionKey);
+                            varReencryptedCount++;
+                        }
+                    }
+                    if (res1)
+                    {
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(pe);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password ProjEnvironment variable."), ex);
+            }
+
+            if (varReencryptedCount > 0)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, varReencryptedCount + " Variables Re-encrypted using new Encryption key across Solution.");
+            }
+        }
 
 
         private static void HandleSolutionLoadSourceControl(Solution solution)

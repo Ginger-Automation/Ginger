@@ -35,6 +35,7 @@ namespace Ginger.SolutionWindows
         GenericWindow _pageGenericWin;
         Solution mSolution;
         bool IsValidEncryptionKeyAdded = false;
+        bool IsEncrytedStrAvailableOnSol = false;
         public SolutionPage()
         {
             InitializeComponent();
@@ -122,6 +123,7 @@ namespace Ginger.SolutionWindows
 
             Init(solution);
             UCEncryptionKey.mSolution = solution;
+            IsEncrytedStrAvailableOnSol = !string.IsNullOrEmpty(mSolution.EncryptedValidationString);
 
             SolutionFolderTextBox.IsReadOnly = true;
             SolutionNameTextBox.IsReadOnly = true;
@@ -148,14 +150,20 @@ namespace Ginger.SolutionWindows
             //replaceKeyBtn.Content = "Replace Key";
             //replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
             //winButtons.Add(replaceKeyBtn);
-
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons, true, "Cancel", CloseBtn_Click);
             return IsValidEncryptionKeyAdded;
         }
 
         private void ValidateBtn_Click(object sender, RoutedEventArgs e)
         {
-            UCEncryptionKey.ValidateKey();
+            if (IsEncrytedStrAvailableOnSol)
+            {
+                UCEncryptionKey.ValidateKey();               
+            }
+            else
+            {
+                UCEncryptionKey.CheckKeyCombination();
+            }
         }
 
         private async void EncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
@@ -169,7 +177,14 @@ namespace Ginger.SolutionWindows
             }
             if (await UserKeepsTyping()) return;
 
-            UCEncryptionKey.ValidateKey();
+            if (IsEncrytedStrAvailableOnSol)
+            {
+                UCEncryptionKey.ValidateKey();
+            }
+            else
+            {
+                UCEncryptionKey.CheckKeyCombination();
+            }
         }
 
         private void ReplaceKeyBtn_Click(object sender, RoutedEventArgs e)
@@ -184,7 +199,16 @@ namespace Ginger.SolutionWindows
 
         private void SaveKeyBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (UCEncryptionKey.ValidateKey())
+            if (!IsEncrytedStrAvailableOnSol && UCEncryptionKey.CheckKeyCombination())
+            {
+                mSolution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
+                mSolution.NeedVariablesReEncryption = true;
+                mSolution.SaveEncryptionKey();
+                mSolution.SaveSolution();
+                IsValidEncryptionKeyAdded = true;
+                _pageGenericWin.Close();
+            }
+            else if (IsEncrytedStrAvailableOnSol && UCEncryptionKey.ValidateKey())
             {
                 mSolution.SaveEncryptionKey();
                 IsValidEncryptionKeyAdded = true;
