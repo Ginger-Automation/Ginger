@@ -103,13 +103,15 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             }
         }
 
-        public void PriotizeLocatorPosition()
+        public bool PriotizeLocatorPosition()
         {
+            var locatorPriotize = false;
             try
             {
                 var locatorIndex = GetCurrentPOMElementInfo().Locators.ToList().FindIndex(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed);
                 if (locatorIndex > 0)
                 {
+                    locatorPriotize = true;
                     GetCurrentPOMElementInfo().Locators.Move(locatorIndex, 0);
                 }
             }
@@ -118,6 +120,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 Reporter.ToLog(eLogLevel.INFO, "Error occured during self healing locator position", ex);
             }
 
+            return locatorPriotize;
         }
     }
 }

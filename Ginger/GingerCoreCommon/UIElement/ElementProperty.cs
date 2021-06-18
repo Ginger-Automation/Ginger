@@ -45,5 +45,6 @@ namespace Amdocs.Ginger.Common.UIElement
         public const string IsPassword = "Is Password";
         public const string IsOffscreen = "Is Offscreen";
         public const string IsSelected = "Is Selected";
+        public const string InnerText = "InnerText";
     }
 }

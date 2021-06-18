@@ -260,5 +260,25 @@ namespace GingerCore.Drivers.Common
         {
             return null;
         }
+
+        public string GetInnerHtml(ElementInfo elementInfo)
+        {
+            return null;
+        }
+
+        public object GetElementParentNode(ElementInfo elementInfo)
+        {
+            return null;
+        }
+
+        public string GetInnerText(ElementInfo elementInfo)
+        {
+            return null;
+        }
+
+        public string GetPreviousSiblingInnerText(ElementInfo elementInfo)
+        {
+            return null;
+        }
     }
 }

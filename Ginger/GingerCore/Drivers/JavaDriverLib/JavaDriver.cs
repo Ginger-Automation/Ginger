@@ -519,7 +519,11 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     locateElement.LocateStatus = ElementLocator.eLocateStatus.Passed;
                     act.ExInfo += locateElement.LocateStatus;
-                    pomExcutionUtil.PriotizeLocatorPosition();
+                    
+                    if(pomExcutionUtil.PriotizeLocatorPosition())
+                    {
+                        act.ExInfo += "Locator prioritized during self healing operation";
+                    }
                     break;
                 }
 
