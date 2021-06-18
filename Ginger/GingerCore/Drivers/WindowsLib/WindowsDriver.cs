@@ -301,7 +301,7 @@ namespace GingerCore.Drivers.WindowsLib
             ActUIElement actUIElement = (ActUIElement)act;
             AutomationElement automationElement = null;
             eElementType elementType=eElementType.Unknown;
-            if (actUIElement.ElementType!= eElementType.Window && actUIElement.ElementAction !=ActUIElement.eElementAction.IsExist)
+            if (actUIElement.ElementType != eElementType.Window || (actUIElement.ElementType == eElementType.Window && actUIElement.ElementAction != ActUIElement.eElementAction.IsExist && actUIElement.ElementAction != ActUIElement.eElementAction.Switch))
             {
                 automationElement = (AutomationElement)mUIAutomationHelper.FindElementByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
 
@@ -313,7 +313,6 @@ namespace GingerCore.Drivers.WindowsLib
                 elementType = WindowsPlatform.GetElementType(mUIAutomationHelper.GetElementControlType(automationElement), mUIAutomationHelper.GetControlPropertyValue(automationElement, "ClassName"));
             }
 
-          
             int x, y;
             Boolean isoutputvalue = false;
             ActionResult actionResult = new ActionResult();
@@ -338,7 +337,9 @@ namespace GingerCore.Drivers.WindowsLib
                     y = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
                     actionResult = mUIElementOperationsHelper.ClickElementUsingXY(automationElement, x, y);
                     break;
-
+                case ActUIElement.eElementAction.Collapse:
+                    actionResult = mUIElementOperationsHelper.CollapseElement(automationElement);
+                    break;
                 case ActUIElement.eElementAction.DoubleClickXY:
                     x = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate));
                     y = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
@@ -358,6 +359,18 @@ namespace GingerCore.Drivers.WindowsLib
 
                 case ActUIElement.eElementAction.GetText:
                     actionResult = mUIElementOperationsHelper.GetText(automationElement);
+                    isoutputvalue = true;
+                    break;
+                case ActUIElement.eElementAction.GetWindowTitle:
+                    object windowElement = mUIAutomationHelper.FindWindowByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
+                    if (windowElement != null)
+                    {
+                        actionResult = mUIElementOperationsHelper.GetTitle((AutomationElement)windowElement);
+                    }
+                    else 
+                    {
+                        actionResult = mUIElementOperationsHelper.GetTitle(automationElement);
+                    }
                     isoutputvalue = true;
                     break;
 
@@ -448,31 +461,25 @@ namespace GingerCore.Drivers.WindowsLib
                 //    mUIAutomationHelper.DragAndDrop(AE, actUIElement);
                 //    break;
 
-                //case ActUIElement.eElementAction.ClickAndValidate:
-                //    status = mUIAutomationHelper.ClickAndValidteHandler(AE, actUIElement);
-                //    if (!status.Contains("Clicked Successfully"))
-                //    {
-                //        actUIElement.Error += status;
-                //    }
-                //    else
-                //    {
-                //        actUIElement.ExInfo += status;
-                //    }
-                //    break;     
+                case ActUIElement.eElementAction.ClickAndValidate:
+                    string status = mUIAutomationHelper.ClickAndValidteHandler(automationElement, actUIElement);
+                    if (!status.Contains("Clicked Successfully"))
+                    {
+                        actionResult.errorMessage += status;
+                    }
+                    else
+                    {
+                        actionResult.executionInfo += status;
+                    }
+                    break;
 
 
-                //case ActUIElement.eElementAction.Maximize:
-                //case ActUIElement.eElementAction.Minimize:
-                //    status = mUIAutomationHelper.SetElementVisualState(AE, actUIElement.ElementAction.ToString());
-                //    if (!status.Contains("State set successfully"))
-                //    {
-                //        act.Error = status;
-                //    }
-                //    else
-                //    {
-                //        act.ExInfo += status;
-                //    }
-                //    break;
+                case ActUIElement.eElementAction.Maximize:
+                    actionResult = mUIElementOperationsHelper.SetWindowState(automationElement, WindowVisualState.Maximized);
+                    break;
+                case ActUIElement.eElementAction.Minimize:
+                    actionResult = mUIElementOperationsHelper.SetWindowState(automationElement, WindowVisualState.Minimized);
+                    break;
 
                 //case ActUIElement.eElementAction.ScrollDown:
                 //    mUIAutomationHelper.ScrollDown(AE);

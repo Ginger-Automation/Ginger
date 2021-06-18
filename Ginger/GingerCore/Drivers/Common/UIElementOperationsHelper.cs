@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions.Common;
 using GingerCore.Actions.UIAutomation;
 using System;
 using System.Collections.Generic;
@@ -243,7 +244,23 @@ namespace GingerCore.Drivers.Common
             }
             return actionResult;
         }
+        public ActionResult CollapseElement(AutomationElement automationElement)
+        {
+            ActionResult actionResult = new ActionResult();
+            object collapsePattern;
+            automationElement.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out collapsePattern);
 
+            if (collapsePattern != null)
+            {
+                ((ExpandCollapsePattern)collapsePattern).Collapse();
+                actionResult.executionInfo = "Successfully collapsed the element";
+            }
+            else
+            {
+                actionResult.errorMessage = "Failed to collapse the element";
+            }
+            return actionResult;
+        }
         internal ActionResult ScrollToView(AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
@@ -523,6 +540,7 @@ namespace GingerCore.Drivers.Common
         public ActionResult GetValue(AutomationElement automationElement, eElementType elementType)
         {
             ActionResult actionResult = new ActionResult();
+            object valuePattern;
             try
             {
                 //if(elementType==eElementType.CheckBox)
@@ -540,7 +558,12 @@ namespace GingerCore.Drivers.Common
                     {
                         actionResult = GetPropertyValue(automationElement, LegacyIAccessiblePatternIdentifiers.ValueProperty);
                     }
-                //}                          
+                //}      
+
+                //if (string.IsNullOrEmpty(actionResult.outputValue))
+                //{
+                //    actionResult.outputValue = automationElement.Current.Name;
+                //}
             }
             catch (Exception ex)
             {
@@ -560,7 +583,21 @@ namespace GingerCore.Drivers.Common
                 automationElement.TryGetCurrentPattern(TextPattern.Pattern, out textPattern);
                 if (textPattern != null)
                 {
-                    actionResult.outputValue = ((TextPattern)textPattern).DocumentRange.GetText(-1);                    
+                    actionResult.outputValue = ((TextPattern)textPattern).DocumentRange.GetText(-1);
+                    return actionResult;
+                }
+
+                automationElement.TryGetCurrentPattern(ValuePattern.Pattern, out textPattern);
+                if (textPattern != null)
+                {
+                    var valuePattern = (ValuePattern)textPattern;
+                    actionResult.outputValue = valuePattern.Current.Value;
+                    return actionResult;
+                }
+
+                if (string.IsNullOrEmpty(actionResult.outputValue))
+                {
+                    actionResult.outputValue = automationElement.Current.Name;
                 }
             }
             catch (Exception ex)
@@ -598,6 +635,137 @@ namespace GingerCore.Drivers.Common
             
         }
 
+        public ActionResult GetTitle(AutomationElement window)
+        {
+            ActionResult actionResult = new ActionResult();
+            try
+            {
+                actionResult.outputValue = window.Current.Name;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in Get Title", ex);
+                actionResult.errorMessage = "Failed to Get the Title";
+            }
+            return actionResult;
+
+        }
+
+        public ActionResult SetWindowState(AutomationElement window, WindowVisualState windowVisualState)
+        {
+            ActionResult actionResult = new ActionResult();
+            Object windowPattern;
+
+            try
+            {
+                window.TryGetCurrentPattern(WindowPattern.Pattern, out windowPattern);
+                if (windowPattern != null)
+                {
+                    ((WindowPattern)windowPattern).SetWindowVisualState(windowVisualState);
+                    actionResult.executionInfo = "Window is " + windowVisualState;
+                }
+                else
+                {
+                    actionResult.errorMessage = "Unable to "+ windowVisualState + " the window";
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "SetWindowState", ex);
+                actionResult.errorMessage = "Unable to " + windowVisualState + " the window";
+            }
+            return actionResult;
+
+        }
+        
+        public ActionResult ClickAndValidte(AutomationElement automationElement, ActUIElement act)
+        {
+            ActionResult actionResult = new ActionResult();
+
+
+            ActUIElement.eElementAction clickType;
+            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString(), out clickType) == false)
+            {
+                actionResult.errorMessage = "Unknown Click Type";
+                return actionResult;
+            }
+
+            ActUIElement.eElementAction validationType;
+            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out validationType) == false)
+            {
+                actionResult.errorMessage = "Unknown Validation Type";
+                return actionResult;
+            }
+            string validationElementType = act.GetInputParamValue(ActUIElement.Fields.ValidationElement);
+
+            eLocateBy validationElementLocateby;
+            if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out validationElementLocateby) == false)
+            {
+                actionResult.errorMessage = "Unknown Validation Element Locate By";
+                return actionResult;
+            }
+
+            string validattionElementLocateValue = act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue);
+            bool LoopNextCheck = false;
+            if ((act.GetInputParamValue(ActUIElement.Fields.LoopThroughClicks).ToString()) == "True")
+            {
+                LoopNextCheck = true;
+            }
+
+            //perform click
+            bool isClicked = performClick(automationElement, clickType);
+            if (isClicked)
+            {
+                //validate
+            }
+            else 
+            {
+                if (LoopNextCheck)
+                {
+                    //click element by other types
+                }
+            }
+
+
+
+
+            return actionResult;
+        }
+
+        public bool performClick(AutomationElement automationElement, ActUIElement.eElementAction clickType)
+        {
+            ActionResult actionResult = new ActionResult();
+            Boolean clickTriggeredFlag = false;
+            bool result = false;
+            switch (clickType)
+            {
+                case ActUIElement.eElementAction.InvokeClick:
+                    actionResult = ClickUsingInvokePattern(automationElement, ref clickTriggeredFlag);
+                    break;
+
+                case ActUIElement.eElementAction.LegacyClick:
+                    actionResult = ClickUsingLegacyPattern(automationElement, ref clickTriggeredFlag);
+                    break;
+
+                case ActUIElement.eElementAction.MouseClick:
+                    actionResult = MouseClickElement(automationElement);
+                    break;
+            }
+            if (!string.IsNullOrEmpty(actionResult.errorMessage))
+            {
+                result = true;
+            }
+            return result;
+        }
+
+        public bool LocateAndValidateElement(eLocateBy LocateBy, string LocateValue, string elementType, ActUIElement.eElementAction actionType, string validationValue = "")
+        {
+            bool result = false;
+            //object obj = FindElementByLocator(LocateBy, LocateValue);
+
+            
+            return result;
+        }
 
     }
 }

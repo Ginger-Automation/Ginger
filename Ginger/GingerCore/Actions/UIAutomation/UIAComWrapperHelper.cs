@@ -1816,6 +1816,8 @@ namespace GingerCore.Drivers
 
             result=DoUIElementClick(clickType, AE);
 
+            List<ActUIElement.eElementAction> clicks = PlatformInfoBase.GetPlatformImpl((GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType)mPlatform).GetPlatformUIClickTypeList();
+            
             if (result.Contains("Clicked Successfully"))
             {
                 flag = LocateAndValidateElement(validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
@@ -1825,7 +1827,7 @@ namespace GingerCore.Drivers
                 }
                 if ((!flag) && (LoopNextCheck))
                 {
-                    return ClickElementByOthertypes(clickType, AE, validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
+                    return ClickElementByOthertypes(clickType,clicks, AE, validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
                 }
                 else
                 {
@@ -1836,17 +1838,17 @@ namespace GingerCore.Drivers
             {
                 if (LoopNextCheck)
                 {
-                    return ClickElementByOthertypes(clickType, AE, validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
+                    return ClickElementByOthertypes(clickType, clicks, AE, validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
                 }
             }
             
             return result;     
         }
 
-        public string ClickElementByOthertypes(ActUIElement.eElementAction executedClick, AutomationElement AE, eLocateBy validationElementLocateby,string validattionElementLocateValue,string validationElementType,ActUIElement.eElementAction validationType)
+        public string ClickElementByOthertypes(ActUIElement.eElementAction executedClick, List<ActUIElement.eElementAction> clicks, AutomationElement AE, eLocateBy validationElementLocateby,string validattionElementLocateValue,string validationElementType,ActUIElement.eElementAction validationType)
         {
-            Platforms.PlatformsInfo.PowerBuilderPlatform powerBuilderPlatform = new Platforms.PlatformsInfo.PowerBuilderPlatform();
-            List<ActUIElement.eElementAction> clicks = powerBuilderPlatform.GetPlatformUIClickTypeList();            
+            //Platforms.PlatformsInfo.PowerBuilderPlatform powerBuilderPlatform = new Platforms.PlatformsInfo.PowerBuilderPlatform();
+            //List<ActUIElement.eElementAction> clicks = powerBuilderPlatform.GetPlatformUIClickTypeList();            
             ActUIElement.eElementAction currentClick;
             string result = "";
             bool flag;
@@ -4097,38 +4099,39 @@ namespace GingerCore.Drivers
                     + " Cannot find its value.\n\n");
             }
             
-            string controlType = element.Current.LocalizedControlType;
+            //string controlType = element.Current.LocalizedControlType;
+            
+            //switch (controlType)
+            //{
+            //    // check box handler
+            //    case "check box":
+            //        if (element.Current.IsEnabled)
+            //        {
+            //            return "true";
+            //        }
 
-            switch (controlType)
-            {
-                // check box handler
-                case "check box":
-                    if (element.Current.IsEnabled)
-                    {
-                        return "true";
-                    }
+            //        else
+            //        {
+            //            return "false";
+            //        }
+            //    case "button":
+            //        if (element.Current.IsEnabled)
+            //        {
+            //            return "true";
+            //        }
 
-                    else
-                    {
-                        return "false";
-                    }
-                case "button":
-                    if (element.Current.IsEnabled)
-                    {
-                        return "true";
-                    }
+            //        else
+            //        {
+            //            return "false";
+            //        }
 
-                    else
-                    {
-                        return "false";
-                    }
+            //    default:
+            //        Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
+            //        break;
 
-                default:
-                    Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
-                    break;
-
-            }
-            return "not found";
+            //}
+            //returning the lower case string to handle existing automation
+            return element.Current.IsEnabled.ToString().ToLower();
         }
 
         public override string GetSelectedItem(object obj)
