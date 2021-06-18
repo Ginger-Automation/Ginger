@@ -464,7 +464,7 @@ namespace GingerCore.Drivers
                         {
                             options.EnableMobileEmulation(EmulationDeviceName);
                         }
-                        else if(!string.IsNullOrEmpty(BrowserUserAgent))
+                        else if (!string.IsNullOrEmpty(BrowserUserAgent))
                         {
                             ChromeMobileEmulationDeviceSettings chromeMobileEmulationDevice = new ChromeMobileEmulationDeviceSettings()
                             { UserAgent = BrowserUserAgent.Trim() };
@@ -560,7 +560,7 @@ namespace GingerCore.Drivers
 
                 if (!string.IsNullOrEmpty(BrowserHeight) && !string.IsNullOrEmpty(BrowserWidth))
                 {
-                    Driver.Manage().Window.Size = new Size() { Height = Convert.ToInt32(BrowserHeight),Width=Convert.ToInt32(BrowserWidth) };
+                    Driver.Manage().Window.Size = new Size() { Height = Convert.ToInt32(BrowserHeight), Width = Convert.ToInt32(BrowserWidth) };
                 }
 
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
@@ -3175,7 +3175,11 @@ namespace GingerCore.Drivers
                         }
                         elem = LocateElementByLocators(currentPOMElementInfo.Locators);
                         currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
-                        pomExcutionUtil.PriotizeLocatorPosition();
+                       
+                        if(pomExcutionUtil.PriotizeLocatorPosition())
+                        {
+                            act.ExInfo += "Locator prioritized during self healing operation";
+                        }
                     }
 
                 }
@@ -3841,7 +3845,13 @@ namespace GingerCore.Drivers
 
                         if (learnElement)
                         {
-                            IWebElement el = Driver.FindElement(By.XPath(htmlElemNode.XPath));
+                            var xpath = htmlElemNode.XPath;
+                            if (htmlElemNode.Name.ToLower().Equals(eElementType.Svg.ToString().ToLower()))
+                            {
+                                xpath= string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()=\'svg\']");
+                            }
+                            
+                            IWebElement el = Driver.FindElement(By.XPath(xpath));
                             if (el == null)
                             {
                                 continue;
@@ -3866,9 +3876,12 @@ namespace GingerCore.Drivers
                             foundElemntInfo.ElementTypeEnum = elementTypeEnum.Item2;
                             foundElemntInfo.ElementObject = el;
                             foundElemntInfo.Path = path;
-                            foundElemntInfo.XPath = htmlElemNode.XPath;
+                            //foundElemntInfo.XPath = htmlElemNode.XPath;
+                            foundElemntInfo.XPath = xpath;
                             foundElemntInfo.HTMLElementObject = htmlElemNode;
                             ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
+
+                            GetRelativeXpathElementLocators(foundElemntInfo);
 
                             foundElemntInfo.IsAutoLearned = true;
                             foundElementsList.Add(foundElemntInfo);
@@ -3901,6 +3914,62 @@ namespace GingerCore.Drivers
             }
 
             return foundElementsList;
+        }
+
+        private void GetRelativeXpathElementLocators(HTMLElementInfo foundElemntInfo)
+        {
+            if (foundElemntInfo.ElementTypeEnum == eElementType.Svg)
+            {
+                return;
+            }
+            //relative xpath with multiple attribute and tagname
+            var relxPathWithMultipleAtrrs = mXPathHelper.CreateRelativeXpathWithTagNameAndAttributes(foundElemntInfo);
+            if (!string.IsNullOrEmpty(relxPathWithMultipleAtrrs) && CheckElementLocateStatus(relxPathWithMultipleAtrrs))
+            {
+                var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relxPathWithMultipleAtrrs, IsAutoLearned = true };
+                foundElemntInfo.Locators.Add(elementLocator);
+            }
+
+
+            var innerText = foundElemntInfo.HTMLElementObject.InnerText;
+            if (!string.IsNullOrEmpty(innerText))
+            {
+                //relative xpath with Innertext Exact Match
+                var relXpathwithExactTextMatch = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, true);
+                if (!string.IsNullOrEmpty(relXpathwithExactTextMatch) && CheckElementLocateStatus(relXpathwithExactTextMatch))
+                {
+                    var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithExactTextMatch, IsAutoLearned = true };
+                    foundElemntInfo.Locators.Add(elementLocator);
+                }
+               
+                //relative xpath with Contains Innertext
+                var relXpathwithContainsText = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, false);
+                if (!string.IsNullOrEmpty(relXpathwithContainsText) && CheckElementLocateStatus(relXpathwithContainsText))
+                {
+                    var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithContainsText, IsAutoLearned = true };
+                    foundElemntInfo.Locators.Add(elementLocator);
+                }
+            }
+            
+            //relative xpath with Sibling Text
+            var relXpathwithSiblingText = mXPathHelper.CreateRelativeXpathWithSibling(foundElemntInfo);
+            if (!string.IsNullOrEmpty(relXpathwithSiblingText) && CheckElementLocateStatus(relXpathwithSiblingText))
+            {
+                var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithSiblingText, IsAutoLearned = true };
+                foundElemntInfo.Locators.Add(elementLocator);
+            }
+
+        }
+
+        private bool CheckElementLocateStatus(string relXPath)
+        {
+            IWebElement webElement = Driver.FindElement(By.XPath(relXPath));
+            if (webElement != null)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public static Tuple<string, eElementType> GetElementTypeEnum(IWebElement el = null, string jsType = null, HtmlNode htmlNode = null)
@@ -4024,6 +4093,10 @@ namespace GingerCore.Drivers
             else if (elementTagName.ToUpper() == "H1" || elementTagName.ToUpper() == "H2" || elementTagName.ToUpper() == "H3" || elementTagName.ToUpper() == "H4" || elementTagName.ToUpper() == "H5" || elementTagName.ToUpper() == "H6" || elementTagName.ToUpper() == "P")
             {
                 elementType = eElementType.Text;
+            }
+            else if(elementTagName.ToUpper()=="SVG")
+            {
+                elementType = eElementType.Svg;
             }
             else
                 elementType = eElementType.Unknown;
@@ -4730,40 +4803,7 @@ namespace GingerCore.Drivers
 
                 if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
                 {
-                    if (ElementInfo.IsElementTypeSupportingOptionalValues(ElementInfo.ElementTypeEnum))
-                    {
-                        foreach (HtmlNode childNode in ((HTMLElementInfo)ElementInfo).HTMLElementObject.ChildNodes)
-                        {
-                            if (!childNode.Name.StartsWith("#") && !string.IsNullOrEmpty(childNode.InnerText))
-                            {
-                                string[] tempOpVals = childNode.InnerText.Split('\n');
-                                foreach (string cuVal in tempOpVals)
-                                {
-                                    ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
-                                }
-                            }
-                        }
-                        if (ElementInfo.OptionalValuesObjectsList.Count > 0)
-                        {
-                            ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
-                            list.Add(new ControlProperty() { Name = ElementProperty.OptionalValues, Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
-                        }
-
-                    }
-                    if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
-                    {
-                        HtmlAttributeCollection htmlAttributes = ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes;
-
-                        foreach (HtmlAttribute htmlAttribute in htmlAttributes)
-                        {
-                            ControlProperty existControlProperty = list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
-                            if (existControlProperty == null)
-                            {
-                                ControlProperty controlProperty = new ControlProperty() { Name = htmlAttribute.Name, Value = htmlAttribute.Value };
-                                list.Add(controlProperty);
-                            }
-                        }
-                    }
+                    LearnPropertiesFromHtmlElementObject(ElementInfo, list);
                 }
                 else if (el != null)
                 {
@@ -4820,6 +4860,49 @@ namespace GingerCore.Drivers
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
             }
 
+        }
+
+        private static void LearnPropertiesFromHtmlElementObject(ElementInfo ElementInfo, ObservableList<ControlProperty> list)
+        {
+            var htmlElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject;
+
+            if (ElementInfo.IsElementTypeSupportingOptionalValues(ElementInfo.ElementTypeEnum))
+            {
+                foreach (HtmlNode childNode in htmlElementObject.ChildNodes)
+                {
+                    if (!childNode.Name.StartsWith("#") && !string.IsNullOrEmpty(childNode.InnerText))
+                    {
+                        string[] tempOpVals = childNode.InnerText.Split('\n');
+                        foreach (string cuVal in tempOpVals)
+                        {
+                            ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
+                        }
+                    }
+                }
+                if (ElementInfo.OptionalValuesObjectsList.Count > 0)
+                {
+                    ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
+                    list.Add(new ControlProperty() { Name = ElementProperty.OptionalValues, Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
+                }
+
+            }
+
+            HtmlAttributeCollection htmlAttributes = htmlElementObject.Attributes;
+            foreach (HtmlAttribute htmlAttribute in htmlAttributes)
+            {
+                ControlProperty existControlProperty = list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
+                if (existControlProperty == null)
+                {
+                    ControlProperty controlProperty = new ControlProperty() { Name = htmlAttribute.Name, Value = htmlAttribute.Value };
+                    list.Add(controlProperty);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(htmlElementObject.InnerText) && ElementInfo.OptionalValues.Count == 0 && htmlElementObject.ChildNodes.Count == 0)
+            {
+                list.Add(new ControlProperty() { Name = ElementProperty.InnerText, Value = htmlElementObject.InnerText.ToString() });
+            }
+            
         }
 
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
@@ -7976,6 +8059,49 @@ namespace GingerCore.Drivers
                 return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, string.Empty);
             }
             return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
+        }
+
+        public string GetInnerHtml(ElementInfo elementInfo)
+        {
+            var htmlElement = (HTMLElementInfo)elementInfo;
+
+            return htmlElement.HTMLElementObject.InnerHtml;
+        }
+
+        public object GetElementParentNode(ElementInfo elementInfo)
+        {
+            return ((HTMLElementInfo)elementInfo).HTMLElementObject.ParentNode;
+        }
+
+        public string GetInnerText(ElementInfo elementInfo)
+        {
+            return ((HTMLElementInfo)elementInfo).HTMLElementObject.InnerText;
+        }
+
+        public string GetPreviousSiblingInnerText(ElementInfo elementInfo)
+        {
+            var htmlNode = ((HTMLElementInfo)elementInfo).HTMLElementObject;
+            var prevSib = htmlNode.PreviousSibling;
+
+            var innerText = string.Empty;
+
+            //looking for text till two level up
+            if (htmlNode.Name == "input" && prevSib == null)
+            {
+                prevSib = htmlNode.ParentNode;
+
+                if (string.IsNullOrEmpty(prevSib.InnerText))
+                {
+                    prevSib = prevSib.PreviousSibling;
+                }
+            }
+
+            if (prevSib != null && !string.IsNullOrEmpty(prevSib.InnerText) && prevSib.ChildNodes.Count == 1)
+            {
+                innerText = prevSib.InnerText;
+            }
+
+            return innerText;
         }
 
         ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
