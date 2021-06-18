@@ -301,6 +301,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 case ePlatformType.Java:
                      act = new ActSwitchWindow { LocateBy = eLocateBy.ByTitle, Value = calculatedValue, ValueForDriver = calculatedValue, Active = true };
                     break;
+                case ePlatformType.Windows:
+                    act = new ActSwitchWindow { LocateBy = eLocateBy.ByTitle, LocateValue = calculatedValue, LocateValueCalculated = calculatedValue, Active = true };
+                    break;
             }
             if (act != null)
             {

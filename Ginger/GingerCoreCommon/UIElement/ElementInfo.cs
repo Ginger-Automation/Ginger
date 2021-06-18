@@ -403,6 +403,7 @@ namespace Amdocs.Ginger.Common.UIElement
 
         object mData = null;
 
+
         public ObservableList<ControlProperty> GetElementProperties()
         {
             return this.WindowExplorer.GetElementProperties(this);
