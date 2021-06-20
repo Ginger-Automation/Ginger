@@ -17,9 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore;
@@ -634,7 +633,43 @@ namespace Ginger.SolutionGeneral
             return false;
         }
 
+        [IsSerializedForLocalRepository]
+        public ObservableList<SolutionCategory> SolutionCategories = new ObservableList<SolutionCategory>();
+
+        public override void PostDeserialization()
+        {
+            if (SolutionCategories.Count == 0)
+            {
+                //Add default catrgories
+                SolutionCategory product = new SolutionCategory(eSolutionCategories.Product);
+                product.CategoryOptionalValues.Add(new SolutionCategoryValue("Product 1"));
+                product.CategoryOptionalValues.Add(new SolutionCategoryValue("Product 2"));
+                SolutionCategories.Add(product);
+
+                SolutionCategory testType = new SolutionCategory(eSolutionCategories.TestType);
+                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Regression"));
+                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Progression"));
+                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Sanity"));
+                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Acceptance"));
+                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("End to End"));
+                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Security"));
+                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Performance"));
+                SolutionCategories.Add(testType);
+
+                SolutionCategory release = new SolutionCategory(eSolutionCategories.Release);
+                release.CategoryOptionalValues.Add(new SolutionCategoryValue("Release 1"));
+                release.CategoryOptionalValues.Add(new SolutionCategoryValue("Release 2"));
+                SolutionCategories.Add(release);
+
+                SolutionCategory iteration = new SolutionCategory(eSolutionCategories.Iteration);
+                iteration.CategoryOptionalValues.Add(new SolutionCategoryValue("Iteration 1"));
+                iteration.CategoryOptionalValues.Add(new SolutionCategoryValue("Iteration 2"));
+                SolutionCategories.Add(iteration);
+
+                SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory1));
+                SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory2));
+                SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory3));
+            }
+        }
     }
-
-
 }
