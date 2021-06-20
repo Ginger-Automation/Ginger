@@ -438,6 +438,15 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
+                    ElementType = eElementType.Svg,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.GetValue,
+                                                               ActUIElement.eElementAction.SetValue,
+                                                               }
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
                     ElementType = eElementType.Span,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.GetValue,
