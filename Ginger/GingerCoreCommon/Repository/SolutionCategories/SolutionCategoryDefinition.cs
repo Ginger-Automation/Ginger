@@ -5,11 +5,20 @@ using Amdocs.Ginger.Repository;
 namespace Amdocs.Ginger.Common.Repository.SolutionCategories
 {
     public class SolutionCategoryDefinition : RepositoryItemBase
-    {
-        public SolutionCategoryDefinition(eSolutionCategories category, SolutionCategoryValue value)
+    {        
+        public static object Solution
+        {
+            get;set;
+        }
+
+        public SolutionCategoryDefinition()
+        {
+
+        }
+
+        public SolutionCategoryDefinition(eSolutionCategories category)
         {
             this.Category = category;
-            this.SelectedValue = value;
         }
 
         [IsSerializedForLocalRepository]
@@ -23,27 +32,29 @@ namespace Amdocs.Ginger.Common.Repository.SolutionCategories
         {
             get
             {
-                return string.Format("{0}='{1}'", this.Category.ToString(), this.SelectedValue.Value);
+                return this.Category.ToString();
             }
             set
             {
                 this.Category = (eSolutionCategories)Enum.Parse(typeof(eSolutionCategories), value.ToString());
             }
         }
+        
+        public string CategoryName { get; set; }
+        public string Description { get; set; }
+        public ObservableList<SolutionCategoryValue> CategoryOptionalValues { get; set; }
 
-        public ObservableList<SolutionCategoryValue> CategoryOptionalValues;
-
-        private SolutionCategoryValue mSelectedValue;
+        private Guid mSelectedValueID;
         [IsSerializedForLocalRepository]
-        public SolutionCategoryValue SelectedValue
+        public Guid SelectedValueID
         {
-            get { return mSelectedValue; }
+            get { return mSelectedValueID; }
             set
             {
-                if (mSelectedValue != value)
+                if (mSelectedValueID != value)
                 {
-                    mSelectedValue = value;
-                    OnPropertyChanged(nameof(SelectedValue));
+                    mSelectedValueID = value;
+                    OnPropertyChanged(nameof(SelectedValueID));
                 }
             }
         }

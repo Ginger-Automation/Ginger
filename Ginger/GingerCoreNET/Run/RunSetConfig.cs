@@ -81,6 +81,27 @@ namespace Ginger.Run
             }
         }
 
+        private string mRunDescription;
+        /// <summary>
+        /// Used by the user to describe the logic of the Runset run with a specific set of variables values
+        /// </summary>
+        [IsSerializedForLocalRepository]
+        public string RunDescription
+        {
+            get
+            {
+                return mRunDescription;
+            }
+            set
+            {
+                if (mRunDescription != value)
+                {
+                    mRunDescription = value;
+                    OnPropertyChanged(nameof(RunDescription));
+                }
+            }
+        }
+
         private Guid? mExecutionID;
         public Guid? ExecutionID
         {
@@ -257,13 +278,13 @@ namespace Ginger.Run
         {
             if (CategoriesDefinitions.Count == 0)
             {
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Product, null));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.TestType, null));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Release, null));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Iteration, null));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory1, null));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory2, null));
-                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory3, null));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Product));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.TestType));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Release));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Iteration));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory1));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory2));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory3));
             }
         }
     }

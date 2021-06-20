@@ -4,6 +4,10 @@ namespace Amdocs.Ginger.CoreNET.Run.SolutionCategory
 {
     public class SolutionCategoryValue : RepositoryItemBase
     {
+        public SolutionCategoryValue()
+        {
+        }
+
         public SolutionCategoryValue (string value)
         {
             this.Value = value;

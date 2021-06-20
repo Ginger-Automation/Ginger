@@ -511,10 +511,10 @@
     <Compile Include="Run\RunSetActions\RunSetActionSendDataToExternalSourceEditPage.xaml.cs">
       <DependentUpon>RunSetActionSendDataToExternalSourceEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionWindows\SolutionCategories\SolutionCategoriesPage.xaml.cs">
+    <Compile Include="SolutionCategories\SolutionCategoriesPage.xaml.cs">
       <DependentUpon>SolutionCategoriesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionWindows\SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml.cs">
+    <Compile Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml.cs">
       <DependentUpon>SolutionCategoryOptionalValuesEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\LiveSpyHandler.xaml.cs">
@@ -2934,11 +2934,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SolutionWindows\SolutionCategories\SolutionCategoriesPage.xaml">
+    <Page Include="SolutionCategories\SolutionCategoriesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SolutionWindows\SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml">
+    <Page Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
