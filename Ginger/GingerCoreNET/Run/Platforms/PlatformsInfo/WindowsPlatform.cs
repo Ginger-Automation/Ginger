@@ -36,6 +36,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             if (mElementLocatorsTypeList == null)
             {
                 mElementLocatorsTypeList = new List<eLocateBy>();
+                mElementLocatorsTypeList.Add(eLocateBy.POMElement);
                 mElementLocatorsTypeList.Add(eLocateBy.ByAutomationID);
                 mElementLocatorsTypeList.Add(eLocateBy.ByRelXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
@@ -734,6 +735,16 @@ namespace GingerCore.Platforms.PlatformsInfo
                     break;
             }
             return elementTypeEnum;
+        }
+
+        public override string GetPageUrlRadioLabelText()
+        {
+            return "Window Title";
+        }
+
+        public override string GetNextBtnToolTip()
+        {
+            return "Switch Window";
         }
     }
  }
