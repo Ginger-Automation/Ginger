@@ -3,15 +3,16 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:ginger="clr-namespace:Ginger"
+      xmlns:ginger="clr-namespace:Ginger" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800" IsVisibleChanged="Page_IsVisibleChanged"
       Title="SolutionCategoriesPage">
 
     <Grid x:Name="xMainGrid">
         <Grid.Resources>
-            <DataTemplate x:Key="OpenEditLocalPossibleValuesPage">
-                <Button x:Name="OpenEditLocalPossibleValuesPageButton" Content="..." Click="OpenEditLocalPossibleValuesPageButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            <DataTemplate x:Key="xOpenEditLocalPossibleValuesPage">
+                <!--<Button x:Name="OpenEditLocalPossibleValuesPageButton" Content="..." Click="OpenEditLocalPossibleValuesPageButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>-->
+                <usercontrols:ucButton x:Name="xOpenEditLocalPossibleValuesPageButton" Click="OpenEditLocalPossibleValuesPageButton_Click" ButtonType="ImageButton"  HorizontalAlignment="Center" VerticalAlignment="Center"  ButtonImageType="Edit" ToolTip="Edit Optional Values" Height="20" ButtonFontImageSize="12"/>
             </DataTemplate>
         </Grid.Resources>
         
