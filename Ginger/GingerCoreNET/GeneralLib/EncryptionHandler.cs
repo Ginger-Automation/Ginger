@@ -194,7 +194,7 @@ namespace GingerCore
             }
         }
 
-        public static RijndaelManaged GetRijndaelManaged(String secretKey)
+        private static RijndaelManaged GetRijndaelManaged(String secretKey)
         {
             var keyBytes = new byte[16];
             var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
@@ -210,13 +210,13 @@ namespace GingerCore
             };
         }
 
-        public static byte[] Encrypt(byte[] plainBytes, RijndaelManaged rijndaelManaged)
+        private static byte[] Encrypt(byte[] plainBytes, RijndaelManaged rijndaelManaged)
         {
             return rijndaelManaged.CreateEncryptor()
                 .TransformFinalBlock(plainBytes, 0, plainBytes.Length);
         }
 
-        public static byte[] Decrypt(byte[] encryptedData, RijndaelManaged rijndaelManaged)
+        private static byte[] Decrypt(byte[] encryptedData, RijndaelManaged rijndaelManaged)
         {
             return rijndaelManaged.CreateDecryptor()
                 .TransformFinalBlock(encryptedData, 0, encryptedData.Length);

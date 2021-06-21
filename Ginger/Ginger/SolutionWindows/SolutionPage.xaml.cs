@@ -204,7 +204,7 @@ namespace Ginger.SolutionWindows
                 mSolution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
                 mSolution.NeedVariablesReEncryption = true;
                 mSolution.SaveEncryptionKey();
-                mSolution.SaveSolution();
+                mSolution.SaveSolution(false);
                 IsValidEncryptionKeyAdded = true;
                 _pageGenericWin.Close();
             }
