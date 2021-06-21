@@ -30,18 +30,13 @@ using GingerCore.Drivers.PBDriver;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using System.Threading.Tasks;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Drivers.Common
 {
     public abstract class UIAutomationHelperBase
     {
-        public enum ePlatform
-        {
-            PowerBuilder,
-            Windows
-        }
-
-        public ePlatform mPlatform;
+        public ePlatformType mPlatform;
         int LastHighLightHWND = 0;
         public int? mLoadTimeOut;
 
@@ -173,7 +168,7 @@ namespace GingerCore.Drivers.Common
             }
             
             //TODO: Fix the issue with X,Y Calculations for Windows Driver. meanwhile showing x,y locator only for PB
-            if (mPlatform == ePlatform.PowerBuilder)
+            if (mPlatform == ePlatformType.PowerBuilder)
             {
                 double x;
                 double y;

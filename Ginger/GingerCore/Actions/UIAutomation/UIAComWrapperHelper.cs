@@ -35,6 +35,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 // a lot of samples from Microsoft on UIA at: https://uiautomationverify.svn.codeplex.com/svn/UIAVerify/
 // DO NOT add any specific driver here, this is generic windows app driver helper 
@@ -423,7 +424,7 @@ namespace GingerCore.Drivers
             {
                 List<object> AppWindows = GetListOfWindows();
 
-                if (mPlatform == ePlatform.Windows)
+                if (mPlatform == ePlatformType.Windows)
                 {
                     int gingerProcessId = Process.GetCurrentProcess().Id;
 
@@ -832,7 +833,7 @@ namespace GingerCore.Drivers
                             }
 
                             //For old compatibility where Name was the text we fail over to search by Text, PB Only, it is slower as it scan the tree and call win api to get the text
-                            if (element == null && mPlatform == ePlatform.PowerBuilder)
+                            if (element == null && mPlatform == ePlatformType.PowerBuilder)
                             {
                                 element = GetElementByText(CurrentWindow, locateValue);
                             }
@@ -1818,6 +1819,9 @@ namespace GingerCore.Drivers
 
             result=DoUIElementClick(clickType, AE);
 
+            
+            List<ActUIElement.eElementAction> clicks = PlatformInfoBase.GetPlatformImpl(mPlatform).GetPlatformUIClickTypeList();
+            
             if (result.Contains("Clicked Successfully"))
             {
                 flag = LocateAndValidateElement(validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
@@ -1827,7 +1831,7 @@ namespace GingerCore.Drivers
                 }
                 if ((!flag) && (LoopNextCheck))
                 {
-                    return ClickElementByOthertypes(clickType, AE, validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
+                    return ClickElementByOthertypes(clickType,clicks, AE, validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
                 }
                 else
                 {
@@ -1838,17 +1842,15 @@ namespace GingerCore.Drivers
             {
                 if (LoopNextCheck)
                 {
-                    return ClickElementByOthertypes(clickType, AE, validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
+                    return ClickElementByOthertypes(clickType, clicks, AE, validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
                 }
             }
             
             return result;     
         }
 
-        public string ClickElementByOthertypes(ActUIElement.eElementAction executedClick, AutomationElement AE, eLocateBy validationElementLocateby,string validattionElementLocateValue,string validationElementType,ActUIElement.eElementAction validationType)
+        public string ClickElementByOthertypes(ActUIElement.eElementAction executedClick, List<ActUIElement.eElementAction> clicks, AutomationElement AE, eLocateBy validationElementLocateby,string validattionElementLocateValue,string validationElementType,ActUIElement.eElementAction validationType)
         {
-            Platforms.PlatformsInfo.PowerBuilderPlatform powerBuilderPlatform = new Platforms.PlatformsInfo.PowerBuilderPlatform();
-            List<ActUIElement.eElementAction> clicks = powerBuilderPlatform.GetPlatformUIClickTypeList();            
             ActUIElement.eElementAction currentClick;
             string result = "";
             bool flag;
@@ -2911,7 +2913,7 @@ namespace GingerCore.Drivers
                     case "text":
                     case "edit":
                     case "list view":
-                        if (mPlatform == ePlatform.PowerBuilder)
+                        if (mPlatform == ePlatformType.PowerBuilder)
                         {
                             try
                             {
@@ -2975,7 +2977,7 @@ namespace GingerCore.Drivers
                     case "combo box":
                         //Catching the exception here will pass the action without error. For exception action should be failed and it is handled inside driver.
                         Reporter.ToLog(eLogLevel.DEBUG, "In Combo Box ::");
-                        if (mPlatform == ePlatform.PowerBuilder)
+                        if (mPlatform == ePlatformType.PowerBuilder)
                         {
                             string isReadOnly = element.GetCurrentPropertyValue(ValuePattern.IsReadOnlyProperty).ToString();
                             bool isKeyBoardFocusable = element.Current.IsKeyboardFocusable;
@@ -3243,7 +3245,7 @@ namespace GingerCore.Drivers
                         break;
 
                 }
-                if (mPlatform == ePlatform.PowerBuilder)
+                if (mPlatform == ePlatformType.PowerBuilder)
                 {
                     string str = "";
                     if (element.Current.LocalizedControlType.Equals("radio button") || element.Current.LocalizedControlType.Equals("list item"))
@@ -3863,7 +3865,7 @@ namespace GingerCore.Drivers
             string val = string.Empty;
             try
             {
-                if (element.Current.BoundingRectangle == null || mPlatform.Equals(ePlatform.Windows))
+                if (element.Current.BoundingRectangle == null || mPlatform.Equals(ePlatformType.Windows))
                 {
                     return val;
                 }
@@ -3936,7 +3938,7 @@ namespace GingerCore.Drivers
             if (General.CompareStringsIgnoreCase(ControlType, "text"))
             {
                 string value = GetElementValueByValuePattern(element);
-                if (string.IsNullOrEmpty(value) && mPlatform.Equals(ePlatform.PowerBuilder))
+                if (string.IsNullOrEmpty(value) && mPlatform.Equals(ePlatformType.PowerBuilder))
                 {
                     value = GetControlValueFromChildControl(element);
                 }
@@ -4103,38 +4105,8 @@ namespace GingerCore.Drivers
                     + " Cannot find its value.\n\n");
             }
             
-            string controlType = element.Current.LocalizedControlType;
-
-            switch (controlType)
-            {
-                // check box handler
-                case "check box":
-                    if (element.Current.IsEnabled)
-                    {
-                        return "true";
-                    }
-
-                    else
-                    {
-                        return "false";
-                    }
-                case "button":
-                    if (element.Current.IsEnabled)
-                    {
-                        return "true";
-                    }
-
-                    else
-                    {
-                        return "false";
-                    }
-
-                default:
-                    Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
-                    break;
-
-            }
-            return "not found";
+            //returning the lower case string to handle existing automation
+            return element.Current.IsEnabled.ToString().ToLower();
         }
 
         public override string GetSelectedItem(object obj)
