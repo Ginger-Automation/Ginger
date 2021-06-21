@@ -894,10 +894,20 @@ namespace GingerCore.Actions.Common
                 string[] xy = locateValue.Split(',');
                 if ((xy != null) && (xy.Count() > 1))
                 {
-                    if (!double.TryParse(xy[0].Split('=')[1], out X))
-                        X = 0;
-                    if (!double.TryParse(xy[1].Split('=')[1], out Y))
-                        Y = 0;
+                    if (xy[0].Contains("="))
+                    {
+                        if (!double.TryParse(xy[0].Split('=')[1], out X))
+                            X = 0;
+                        if (!double.TryParse(xy[1].Split('=')[1], out Y))
+                            Y = 0;
+                    }
+                    else
+                    {
+                        if (!double.TryParse(xy[0], out X))
+                            X = 0;
+                        if (!double.TryParse(xy[1], out Y))
+                            Y = 0;
+                    }
                 }
                 else
                 {

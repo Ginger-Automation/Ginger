@@ -435,8 +435,23 @@ namespace Ginger.SourceControl
                 string ProjectURI = string.Empty;
                 if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 {
-                    ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
-                    sol.SourceControlLocation : WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
+
+                    if(WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        ProjectURI = sol.SourceControlLocation;
+                    }
+                    else
+                    {
+                        if(WorkSpace.Instance.GingerCLIMode==Amdocs.Ginger.CoreNET.RunLib.CLILib.eGingerCLIMode.run)
+                        {
+                            ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
+                        }
+                        else
+                        {
+                            ProjectURI= WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
+                        }
+                    }
+                   
                 }
                 else
                 {

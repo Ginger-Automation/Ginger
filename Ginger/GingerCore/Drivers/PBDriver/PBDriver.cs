@@ -80,7 +80,7 @@ namespace GingerCore.Drivers.PBDriver
                     mUIAutomationHelper = new UIAComWrapperHelper();
                     ((UIAComWrapperHelper)mUIAutomationHelper).WindowExplorer = this;
                     ((UIAComWrapperHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
-                    ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = UIAComWrapperHelper.ePlatform.PowerBuilder;
+                    ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = ePlatformType.PowerBuilder;
                     break;
                                    
             }

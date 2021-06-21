@@ -29,6 +29,7 @@ using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models
 {
@@ -159,7 +160,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             ScreenShot = ((IVisualTestingDriver)Agent.Driver).GetScreenShot(new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
         }
 
-        public void Learn()
+        public async Task Learn()
         {
             ClearStopLearning();
             PrepareLearningConfigurations();
@@ -185,12 +186,12 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true, SpecificFramePath);
+                    await IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true, SpecificFramePath);
                 }
             }
             else
             {
-                IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true, SpecificFramePath);
+                await IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true, SpecificFramePath);
             }
         }
 
