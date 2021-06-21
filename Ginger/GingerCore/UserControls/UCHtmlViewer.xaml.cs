@@ -53,7 +53,6 @@ namespace GingerCore.UserControls
 
         public void ClearTreeItems()
         {
-            //htmlTree.Items.Clear();
             htmlTree.ItemsSource = null;
         }
 
@@ -105,11 +104,7 @@ namespace GingerCore.UserControls
             StringBuilder result = new StringBuilder();
             switch (htmlN.NodeType)
             {
-                //case HtmlNodeType.Comment:
-                //    result.Append(htmlN.InnerText);
-                //    break;
                 case HtmlNodeType.Document:
-                    //result.Append("root");
                     result.Append(htmlDocument.DocumentNode.Name);
                     break;
                 case HtmlNodeType.Element:
