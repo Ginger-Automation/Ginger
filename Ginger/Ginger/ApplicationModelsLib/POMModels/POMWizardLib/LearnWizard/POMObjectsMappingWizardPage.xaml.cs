@@ -105,7 +105,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     mWizard.mPomLearnUtils.ClearStopLearning();
                     xStopLoadButton.Visibility = Visibility.Visible;
 
-                    await Task.Run(() => mWizard.mPomLearnUtils.Learn());
+                    await mWizard.mPomLearnUtils.Learn();
 
                     mWizard.IsLearningWasDone = true;
                 }

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.SolutionCategories;
 using Ginger.SolutionGeneral;
 using System.Threading.Tasks;
 using System.Windows;
@@ -75,11 +76,14 @@ namespace Ginger.SolutionWindows
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Folder));
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AccountTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Account));
                 UCEncryptionKey.EncryptionKeyPasswordBox.Password = mSolution.EncryptionKey;
+                xCategoriesExpander.Visibility = Visibility.Visible;
+                xCategoriesFrame.Content = new SolutionCategoriesPage(eSolutionCategoriesPageMode.OptionalValuesDefinition);
             }
             else
             {
                 xLoadSolutionlbl.Visibility = Visibility.Visible;
                 xSolutionDetailsStack.Visibility = Visibility.Collapsed;
+                xCategoriesExpander.Visibility = Visibility.Collapsed;
             }
         }
      
@@ -103,6 +107,9 @@ namespace Ginger.SolutionWindows
             undoBtn.Content = "Undo & Close";
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
             winButtons.Add(undoBtn);
+
+            this.Height = 600;
+            this.Width = 800;
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons, startupLocationWithOffset: startupLocationWithOffset);
         }
