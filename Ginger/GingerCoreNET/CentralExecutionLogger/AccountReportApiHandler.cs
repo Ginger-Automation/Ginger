@@ -41,12 +41,12 @@ namespace Amdocs.Ginger.CoreNET.CentralExecutionLogger
         private string EndPointUrl { get; set; }
 
         RestClient restClient;
-        private const string SEND_RUNSET_EXECUTION_DATA = "api/AccountReport/AddRunSetToAccountDB/";
+        private const string SEND_RUNSET_EXECUTION_DATA = "api/AccountReport/runset/";
         private const string SEND_ACTION_EXECUTION_DATA = "api/AccountReport/action/";
-        private const string SEND_ACTIVITY_EXECUTION_DATA = "api/AccountReport/AddActivityToAccountDB/";
-        private const string SEND_ACTIVITYGROUP_EXECUTION_DATA = "api/AccountReport/AddActivityGroupToAccountDB/";
-        private const string SEND_BUSINESSFLOW_EXECUTION_DATA = "api/AccountReport/AddBusinessFlowToAccountDB/";
-        private const string SEND_RUNNER_EXECUTION_DATA = "api/AccountReport/AddRunnerToAccountDB/";        
+        private const string SEND_ACTIVITY_EXECUTION_DATA = "api/AccountReport/activity/";
+        private const string SEND_ACTIVITYGROUP_EXECUTION_DATA = "api/AccountReport/activitygroup/";
+        private const string SEND_BUSINESSFLOW_EXECUTION_DATA = "api/AccountReport/businessflow/";
+        private const string SEND_RUNNER_EXECUTION_DATA = "api/AccountReport/runner/";        
         public AccountReportApiHandler(string apiUrl)
         {
             EndPointUrl = apiUrl;          
@@ -88,13 +88,13 @@ namespace Amdocs.Ginger.CoreNET.CentralExecutionLogger
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Publishing Execution data to central DB");
             RestRequest restRequest = (RestRequest)new RestRequest(SEND_RUNSET_EXECUTION_DATA, isUpdate ? Method.PUT : Method.POST) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportRunSet);
-            string message = string.Format(" execution data to Central DB for Runset: {0} , Execution Id:{1}", accountReportRunSet.Name, accountReportRunSet.Id);
+            string message = string.Format(" execution data to Central DB for Runset : ");
             try
             {            
                 IRestResponse response = await restClient.ExecuteTaskAsync(restRequest);
                 if(response.IsSuccessful)
                 {                    
-                    Reporter.ToLog(eLogLevel.INFO, "Successfully sent "+message);
+                    Reporter.ToLog(eLogLevel.INFO, "Successfully sent "+ message);                        
                 }
                 else
                 {
@@ -111,13 +111,13 @@ namespace Amdocs.Ginger.CoreNET.CentralExecutionLogger
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Publishing Runner Execution data to central DB");
             RestRequest restRequest = (RestRequest)new RestRequest(SEND_RUNNER_EXECUTION_DATA, isUpdate ? Method.PUT : Method.POST) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportRunner);            
-            string message = string.Format(" execution data to Central DB for Runner: {0} , Execution Id:{1}, Parent Execution Id : 2} ", accountReportRunner.Name, accountReportRunner.Id, accountReportRunner.AccountReportDbRunSetId);
+            string message = string.Format(" execution data to Central DB for Runner: {0} , Execution Id:{1}, Parent Execution Id : {2} ", accountReportRunner.Name, accountReportRunner.Id, accountReportRunner.AccountReportDbRunSetId);
             try
             {
                 IRestResponse response = await restClient.ExecuteTaskAsync(restRequest);
                 if (response.IsSuccessful)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "Successfully sent " + message);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
                 }
                 else
                 {

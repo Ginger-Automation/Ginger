@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             runsetConfig.EndTimeStamp = DateTime.Now.ToUniversalTime();
             AccountReportRunSet accountReportRunSet = mAccountReportEntitiesDataMapping.MapRunsetEndData(runsetConfig, mContext);            
             //accountReportRunSet.UpdateData = true;
-            AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);            
+            AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);            
         }
         #endregion RunSet   
 
@@ -69,7 +69,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             AccountReportRunner accountReportRunner = mAccountReportEntitiesDataMapping.MapRunnerEndData(gingerRunner, mContext);          
             //gingerRunner.Elapsed = gingerRunner.RunnerExecutionWatch.runWatch.ElapsedMilliseconds;
             //accountReportRunner.UpdateData = true;
-            //AccountReportApiHandler.SendRunnerExecutionDataToCentralDBAsync(accountReportRunner, true);            
+            AccountReportApiHandler.SendRunnerExecutionDataToCentralDBAsync(accountReportRunner, true);            
         }
 
         #endregion Runner
@@ -84,7 +84,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             AccountReportBusinessFlow accountReportBusinessFlow = mAccountReportEntitiesDataMapping.MapBusinessFlowEndData(businessFlow, mContext);
             //accountReportBusinessFlow.UpdateData = true;
-            //AccountReportApiHandler.SendBusinessflowExecutionDataToCentralDBAsync(accountReportBusinessFlow);
+            AccountReportApiHandler.SendBusinessflowExecutionDataToCentralDBAsync(accountReportBusinessFlow, true);
         }       
         #endregion BusinessFlow
 
@@ -98,7 +98,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             AccountReportActivity accountReportActivity = mAccountReportEntitiesDataMapping.MapActivityEndData(activity, mContext);
             //accountReportActivity.UpdateData = true;
-            //AccountReportApiHandler.SendActivityExecutionDataToCentralDBAsync(accountReportActivity, true);
+            AccountReportApiHandler.SendActivityExecutionDataToCentralDBAsync(accountReportActivity, true);
         }
         #endregion Activity
 
@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             AccountReportActivityGroup accountReportActivityGroup = mAccountReportEntitiesDataMapping.MapActivityGroupEndData(activityGroup, mContext);
             // accountReportActivityGroup.UpdateData = true;
-            // AccountReportApiHandler.SendActivityGroupExecutionDataToCentralDBAsync(accountReportActivityGroup, true);
+            AccountReportApiHandler.SendActivityGroupExecutionDataToCentralDBAsync(accountReportActivityGroup, true);
         }
 
         #endregion Activity Group
