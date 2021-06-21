@@ -334,8 +334,8 @@ namespace Amdocs.Ginger.CoreNET
             switch (locateBy)
             {
                 case eLocateBy.ByResourceID:
-                        elem = Driver.FindElementById(locateValue);
-                        break;
+                    elem = Driver.FindElementById(locateValue);
+                    break;
                 default:
                     elem = Driver.FindElementByXPath(locateValue);
                     break;
@@ -1026,11 +1026,11 @@ namespace Amdocs.Ginger.CoreNET
                 case eDevicePlatformType.Android:
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(Convert.ToInt32(Enum.Parse(typeof(ActMobileDevice.ePressKey), key)));
                     break;
-                //case eDevicePlatformType.iOS:
-                //    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
-                //    commandArgs.Add("name", key);
-                //    Driver.ExecuteScript("mobile: pressButton", commandArgs);
-                //    break;
+                    //case eDevicePlatformType.iOS:
+                    //    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
+                    //    commandArgs.Add("name", key);
+                    //    Driver.ExecuteScript("mobile: pressButton", commandArgs);
+                    //    break;
             }
         }
 
@@ -1195,6 +1195,13 @@ namespace Amdocs.Ginger.CoreNET
 
         AppWindow IWindowExplorer.GetActiveWindow()
         {
+            //if (Driver != null)
+            //{
+            //    AppWindow aw = new AppWindow();
+            //    aw.Title = "TBD";
+            //    return aw;
+            //}
+
             return null;
         }
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
@@ -1244,6 +1251,9 @@ namespace Amdocs.Ginger.CoreNET
             EI.XPath = await GetNodeXPath(xmlNode);
             EI.WindowExplorer = this;
 
+            //EI.Locators = EI.GetElementLocators();
+            //EI.Properties = EI.GetElementProperties();
+
             return EI;
         }
 
@@ -1286,19 +1296,23 @@ namespace Amdocs.Ginger.CoreNET
             switch(ElementTag.ToLower())
             {
                 case "android.widget.edittext":
-                        return eElementType.TextBox;
+                    return eElementType.TextBox;
 
                 case "android.widget.button":
                 case "android.widget.ratingbar":
                 case "android.widget.framelayout":
                 case "android.widget.imageview":
                 case "android.widget.imagebuton":
+                case "xcuielementtypebutton":
+                case "xcuielementtypeswitch":
                     return eElementType.Button;
 
                 case "android.widget.spinner":
+                case "xcuielementtypecombobox":
                     return eElementType.ComboBox;
 
                 case "android.widget.checkbox":
+                case "xcuielementtypecheckbox":
                     return eElementType.CheckBox;
 
                 case "android.widget.view":
@@ -1309,10 +1323,18 @@ namespace Amdocs.Ginger.CoreNET
                     return eElementType.Image;
 
                 case "android.widget.radiobutton":
+                case "xcuielementtyperadiobutton":
                     return eElementType.RadioButton;
 
                 case "android.widget.canvas":
+                case "xcuielementtypeother":
                     return eElementType.Canvas;
+
+                case "xcuielementtypetab":
+                    return eElementType.Tab;
+
+                case "xcuielementtypelink":
+                    return eElementType.HyperLink;
 
                 case "android.widget.form":
                     return eElementType.Form;
@@ -1429,6 +1451,18 @@ namespace Amdocs.Ginger.CoreNET
                     LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = residXpath,
                     Help = "Use Resource id only when you don't want XPath with relative info, but the resource-id is unique"
+                });
+            }
+
+            //by Name
+            string elemName = GetAttrValue(ElementInfo.ElementObject as XmlNode, "name");
+            if (!string.IsNullOrEmpty(elemName)) // We show by res id when it is different then the elem XPath, so not to show twice the same, the AE.Apath can include relative info
+            {
+                list.Add(new ElementLocator()
+                {
+                    LocateBy = eLocateBy.ByName,
+                    LocateValue = elemName,
+                    Help = "Use Name only when you don't want XPath with relative info, but the resource-id is unique"
                 });
             }
 
@@ -1561,6 +1595,7 @@ namespace Amdocs.Ginger.CoreNET
         public void UnHighLightElements()
         {
             throw new NotImplementedException();
+            //Reporter.ToLog(eLogLevel.ERROR, "UnHighlight not yet implemented for Mobile");
         }
 
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
@@ -1576,6 +1611,7 @@ namespace Amdocs.Ginger.CoreNET
         public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
         {
             throw new NotImplementedException();
+            //return mSeleniumDriver.GetMatchingElement(latestElement, originalElements);
         }
 
         public void StartSpying()
@@ -1752,10 +1788,13 @@ namespace Amdocs.Ginger.CoreNET
                             case eDevicePlatformType.iOS:    // SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
                                 try
                                 {
-                                    element_Start_X = Convert.ToInt64(elementNode.Attributes["x"].Value);
-                                    element_Start_Y = Convert.ToInt64(elementNode.Attributes["y"].Value);
-                                    element_Max_X = element_Start_X + Convert.ToInt64(elementNode.Attributes["width"].Value);
-                                    element_Max_Y = element_Start_Y + Convert.ToInt64(elementNode.Attributes["height"].Value);
+                                    if (elementNode.Attributes.Count > 0)
+                                    {
+                                        element_Start_X = Convert.ToInt64(elementNode.Attributes["x"].Value);
+                                        element_Start_Y = Convert.ToInt64(elementNode.Attributes["y"].Value);
+                                        element_Max_X = element_Start_X + Convert.ToInt64(elementNode.Attributes["width"].Value);
+                                        element_Max_Y = element_Start_Y + Convert.ToInt64(elementNode.Attributes["height"].Value);
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
@@ -1829,6 +1868,152 @@ namespace Amdocs.Ginger.CoreNET
             return foundNode != null ? await GetElementInfoforXmlNode(foundNode) : null;
         }
 
+        public override Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
+        {
+            Point pointOnAppScreen = new Point();
+            double ratio_X = 1, ratio_Y = 1;
+
+            switch (DevicePlatformType)
+            {
+                case eDevicePlatformType.Android:
+
+                    if (AppType == eAppType.Web)
+                    {
+                        ratio_X = (SrcWidth / 3) / ActWidth;
+                        ratio_Y = (SrcHeight / 3) / ActHeight;
+                    }
+                    else
+                    {
+                        ratio_X = SrcWidth / ActWidth;
+                        ratio_Y = SrcHeight / ActHeight;
+                    }
+
+                    break;
+                case eDevicePlatformType.iOS:
+
+                    if (AppType == eAppType.Web)
+                    {
+                        ratio_X = (SrcWidth / 2) / ActWidth;
+                        ratio_Y = (SrcHeight / 2) / ActHeight;
+                    }
+                    else
+                    {
+                        ratio_X = SrcWidth / ActWidth;
+                        ratio_Y = SrcHeight / ActHeight;
+                    }
+
+                    break;
+            }
+
+            pointOnAppScreen.X = (int)(clickedPoint.X * ratio_X);
+            pointOnAppScreen.Y = (int)(clickedPoint.Y * ratio_Y);
+
+            return pointOnAppScreen;
+        }
+
+        public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo)
+        {
+            double ratio_X, ratio_Y;
+
+            XmlNode rectangleXmlNode = clickedElementInfo.ElementObject as XmlNode;
+            switch (DevicePlatformType)
+            {
+                case eDevicePlatformType.Android:
+
+                    if (AppType == eAppType.Web)
+                    {
+                        ratio_X = (SrcWidth * 3) / ActWidth;
+                        ratio_Y = (SrcHeight * 3) / ActHeight;
+
+                        ElementStartPoints.X = (int)(ElementStartPoints.X * ratio_X);
+                        ElementStartPoints.Y = (int)(ElementStartPoints.Y * ratio_Y);
+
+                        ElementMaxPoints.X = (int)(ElementMaxPoints.X * ratio_X);
+                        ElementMaxPoints.Y = (int)(ElementMaxPoints.Y * ratio_Y);
+                    }
+                    else
+                    {
+                        ratio_X = SrcWidth / ActWidth;
+                        ratio_Y = SrcHeight / ActHeight;
+
+                        string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
+                        bounds = bounds.Replace("[", ",");
+                        bounds = bounds.Replace("]", ",");
+                        string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (boundsXY.Count() == 4)
+                        {
+                            ElementStartPoints.X = (int)(Convert.ToInt64(boundsXY[0]) / ratio_X);
+                            ElementStartPoints.Y = (int)(Convert.ToInt64(boundsXY[1]) / ratio_Y);
+
+                            ElementMaxPoints.X = (int)(Convert.ToInt64(boundsXY[2]) / ratio_X);
+                            ElementMaxPoints.Y = (int)(Convert.ToInt64(boundsXY[3]) / ratio_Y);
+                        }
+                    }
+
+                    break;
+
+                case eDevicePlatformType.iOS:
+                    if (AppType == eAppType.Web)
+                    {
+                        ratio_X = SrcWidth / ActWidth;
+                        ratio_Y = SrcHeight / ActHeight;
+
+                        ElementStartPoints.X = (int)(ElementStartPoints.X * ratio_X);
+                        ElementStartPoints.Y = (int)(ElementStartPoints.Y * ratio_Y);
+                        ElementMaxPoints.X = (int)(ElementMaxPoints.X * ratio_X);
+                        ElementMaxPoints.Y = (int)(ElementMaxPoints.Y * ratio_Y);
+                    }
+                    else
+                    {
+                        ratio_X = (SrcWidth / 3) / ActWidth;
+                        ratio_Y = (SrcHeight / 3) / ActHeight;
+
+                        string x = rectangleXmlNode.Attributes["x"].Value;
+                        string y = rectangleXmlNode.Attributes["y"].Value;
+                        string hgt = rectangleXmlNode.Attributes["height"].Value;
+                        string wdth = rectangleXmlNode.Attributes["width"].Value;
+
+                        ElementStartPoints.X = (int)(Convert.ToInt32(x) * ratio_X);
+                        ElementStartPoints.Y = (int)(Convert.ToInt32(y) * ratio_Y);
+                        ElementMaxPoints.X = ElementStartPoints.X + Convert.ToInt32(wdth);
+                        ElementMaxPoints.Y = ElementStartPoints.X + Convert.ToInt32(hgt);
+
+                        //ElementStartPoints.X = Convert.ToInt32(x);
+                        //ElementStartPoints.Y = Convert.ToInt32(y);
+                        //ElementMaxPoints.X = ElementStartPoints.X + Convert.ToInt32(wdth);
+                        //ElementMaxPoints.Y = ElementStartPoints.X + Convert.ToInt32(hgt);
+
+                        //ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
+                        //ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
+                        //ElementMaxPoints.X = (int)((ElementStartPoints.X + Convert.ToInt32(wdth)) / ratio_X);
+                        //ElementMaxPoints.Y = (int)((ElementStartPoints.X + Convert.ToInt32(hgt)) / ratio_Y);
+
+                        //string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
+
+                        //bounds = bounds.Replace("[", ",");
+                        //bounds = bounds.Replace("]", ",");
+                        //string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        //if (boundsXY.Count() == 4)
+                        //{
+                        //    ElementStartPoints.X = (int)(Convert.ToInt64(boundsXY[0]) / ratio_X);
+                        //    ElementStartPoints.Y = (int)(Convert.ToInt64(boundsXY[1]) / ratio_Y);
+                        //    ElementMaxPoints.X = (int)(Convert.ToInt64(boundsXY[2]) / ratio_X);
+                        //    ElementMaxPoints.Y = (int)(Convert.ToInt64(boundsXY[3]) / ratio_Y);
+                        //}
+
+                        //element_Start_X = (Convert.ToInt64(rectangleXmlNode.Attributes["x"].Value)) / ratio_X;
+                        //element_Start_Y = (Convert.ToInt64(rectangleXmlNode.Attributes["y"].Value)) / ratio_Y;
+
+                        //element_Max_X = element_Start_X + (Convert.ToInt64(rectangleXmlNode.Attributes["width"].Value) / ratio_X);
+                        //element_Max_Y = element_Start_Y + (Convert.ToInt64(rectangleXmlNode.Attributes["height"].Value) / ratio_Y);
+                    }
+
+                    break;
+            }
+
+            return true;
+        }
+
         public bool IsRecordingSupported()
         {
             return false;
@@ -1886,9 +2071,9 @@ namespace Amdocs.Ginger.CoreNET
                     agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
 
                     if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid")
-                    {                        
+                    {
                         agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
-                        agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());                                                
+                        agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
                     }
                     else if (value == "MobileAppiumIOS" || value == "PerfectoMobileIOS")
                     {

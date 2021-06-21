@@ -192,7 +192,7 @@ namespace Ginger.WindowExplorer
                 hNode = ((sender as TreeView).SelectedItem as TreeViewItem).Tag as HtmlNode;
             }
 
-            if (hNode != null)
+            if (hNode != null && hNode.NodeType == HtmlNodeType.Element)
             {
                 HTMLElementInfo EI = new HTMLElementInfo()
                 {
@@ -1150,7 +1150,7 @@ namespace Ginger.WindowExplorer
 
             System.Windows.Point pointOnImg = e.GetPosition((System.Windows.Controls.Image)sender);
 
-            await HighlightSelectedElement(pointOnImg);
+            await HighlightSelectedElement(new System.Drawing.Point((int)pointOnImg.X, (int)pointOnImg.Y));
 
             LastSearchFinished = true;
         }
@@ -1189,7 +1189,7 @@ namespace Ginger.WindowExplorer
 
                     System.Windows.Point pointOnImg = e.GetPosition((System.Windows.Controls.Image)sender);
 
-                    await HighlightSelectedElement(pointOnImg);
+                    await HighlightSelectedElement(new System.Drawing.Point((int)pointOnImg.X, (int)pointOnImg.Y));
 
                     mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(currentHighlightedElement);
 
@@ -1219,17 +1219,16 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private async Task HighlightSelectedElement(System.Windows.Point pointOnImg)
+        private async Task HighlightSelectedElement(System.Drawing.Point ClickedPoint)
         {
             try
             {
                 //calculate clicked point on mobile
-                System.Windows.Point pointOnAppScreen = GetPointOnAppWindow(pointOnImg);
-                long pointOnMobile_X = (long)pointOnAppScreen.X;
-                long pointOnMobile_Y = (long)pointOnAppScreen.Y;
+                System.Drawing.Point pointOnAppScreen = ((DriverBase)mWindowExplorerDriver).GetPointOnAppWindow(ClickedPoint, mScreenShotViewPage.xMainImage.Source.Width, 
+                    mScreenShotViewPage.xMainImage.Source.Height, mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight);
 
                 //get the clicked element
-                ElementInfo inspectElementInfo = await ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetElementAtPoint(pointOnMobile_X, pointOnMobile_Y);
+                ElementInfo inspectElementInfo = await ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetElementAtPoint(pointOnAppScreen.X, pointOnAppScreen.Y);
                 if (inspectElementInfo != null && inspectElementInfo != currentHighlightedElement)
                 {
                     //mark the element bounds on image
@@ -1245,119 +1244,38 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private void DrawElementRectangleAsync(ElementInfo clickedElementNode)
+        private void DrawElementRectangleAsync(ElementInfo clickedElementInfo)
         {
             try
             {
                 //remove previous rectangle
                 RemoveElemntRectangle();
 
-                //rectangleXmlNode = clickedElementNode;
-
                 //get the element location
-                double ratio_X = 0;
-                double ratio_Y = 0;
-                double element_Start_X = clickedElementNode.X;
-                double element_Start_Y = clickedElementNode.Y;
-                double element_Max_X = clickedElementNode.X + clickedElementNode.Width;
-                double element_Max_Y = clickedElementNode.Y + clickedElementNode.Height;
+                System.Drawing.Point ElementStartPoint = new System.Drawing.Point(clickedElementInfo.X, clickedElementInfo.Y);
+                System.Drawing.Point ElementMaxPoint = new System.Drawing.Point(clickedElementInfo.X + clickedElementInfo.Width, clickedElementInfo.Y + clickedElementInfo.Height);
 
                 //draw the rectangle
                 //mHighightRectangle = new System.Windows.Shapes.Rectangle();
-                double rectangleWidth = -1, rectangleHeight = -1;
+                double rectangleWidth = clickedElementInfo.Width;
+                double rectangleHeight = clickedElementInfo.Height;
 
-                /// Mobile specific calculations
-                if (mWindowExplorerDriver is GenericAppiumDriver)
+                if(((DriverBase)mWindowExplorerDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, mScreenShotViewPage.xMainImage.Source.Width, mScreenShotViewPage.xMainImage.Source.Height,
+                    mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight, clickedElementInfo))
                 {
-                    XmlNode rectangleXmlNode = clickedElementNode.ElementObject as XmlNode;
-                    switch (((GenericAppiumDriver)mWindowExplorerDriver).DevicePlatformType)
-                    {
-                        case Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eDevicePlatformType.Android:
-
-                            if (mApplicationAgent.Agent.Driver is GenericAppiumDriver &&
-                                ((GenericAppiumDriver)mApplicationAgent.Agent.Driver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.Web)
-                            {
-                                ratio_X = (mScreenShotViewPage.xMainImage.Source.Width * 3) / mScreenShotViewPage.xMainImage.ActualWidth;
-                                ratio_Y = (mScreenShotViewPage.xMainImage.Source.Height * 3) / mScreenShotViewPage.xMainImage.ActualHeight;
-
-                                element_Start_X = element_Start_X * ratio_X;
-                                element_Start_Y = element_Start_Y * ratio_Y;
-                                element_Max_X = element_Max_X * ratio_X;
-                                element_Max_Y = element_Max_Y * ratio_Y;
-                            }
-                            else
-                            {
-                                ratio_X = mScreenShotViewPage.xMainImage.Source.Width / mScreenShotViewPage.xMainImage.ActualWidth;
-                                ratio_Y = mScreenShotViewPage.xMainImage.Source.Height / mScreenShotViewPage.xMainImage.ActualHeight;
-
-                                string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
-                                bounds = bounds.Replace("[", ",");
-                                bounds = bounds.Replace("]", ",");
-                                string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                                if (boundsXY.Count() == 4)
-                                {
-                                    element_Start_X = (Convert.ToInt64(boundsXY[0])) / ratio_X;
-                                    //rectangleStartPoint_X = (long)element_Start_X;
-                                    element_Start_Y = (Convert.ToInt64(boundsXY[1])) / ratio_Y;
-                                    //rectangleStartPoint_Y = (long)element_Start_Y;
-                                    element_Max_X = (Convert.ToInt64(boundsXY[2])) / ratio_X;
-                                    element_Max_Y = (Convert.ToInt64(boundsXY[3])) / ratio_Y;
-                                }
-                            }
-
-                            break;
-
-                        case Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eDevicePlatformType.iOS:
-                            if (mApplicationAgent.Agent.Driver is GenericAppiumDriver &&
-                                ((GenericAppiumDriver)mApplicationAgent.Agent.Driver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.Web)
-                            {
-                                ratio_X = mScreenShotViewPage.xMainImage.Source.Width / mScreenShotViewPage.xMainImage.ActualWidth;
-                                ratio_Y = mScreenShotViewPage.xMainImage.Source.Height / mScreenShotViewPage.xMainImage.ActualHeight;
-
-                                element_Start_X = element_Start_X * ratio_X;
-                                element_Start_Y = element_Start_Y * ratio_Y;
-                                element_Max_X = element_Max_X * ratio_X;
-                                element_Max_Y = element_Max_Y * ratio_Y;
-                            }
-                            else
-                            {
-                                ratio_X = (mScreenShotViewPage.xMainImage.Source.Width / 2) / mScreenShotViewPage.xMainImage.ActualWidth;
-                                ratio_Y = (mScreenShotViewPage.xMainImage.Source.Height / 2) / mScreenShotViewPage.xMainImage.ActualHeight;
-
-                                string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
-
-                                bounds = bounds.Replace("[", ",");
-                                bounds = bounds.Replace("]", ",");
-                                string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                                if (boundsXY.Count() == 4)
-                                {
-                                    element_Start_X = (Convert.ToInt64(boundsXY[0])) / ratio_X;
-                                    element_Start_Y = (Convert.ToInt64(boundsXY[1])) / ratio_Y;
-                                    element_Max_X = (Convert.ToInt64(boundsXY[2])) / ratio_X;
-                                    element_Max_Y = (Convert.ToInt64(boundsXY[3])) / ratio_Y;
-                                }
-
-                                //element_Start_X = (Convert.ToInt64(rectangleXmlNode.Attributes["x"].Value)) / ratio_X;
-                                //element_Start_Y = (Convert.ToInt64(rectangleXmlNode.Attributes["y"].Value)) / ratio_Y;
-
-                                //element_Max_X = element_Start_X + (Convert.ToInt64(rectangleXmlNode.Attributes["width"].Value) / ratio_X);
-                                //element_Max_Y = element_Start_Y + (Convert.ToInt64(rectangleXmlNode.Attributes["height"].Value) / ratio_Y);
-                            }
-
-                            break;
-                    }
-
-                    rectangleWidth = element_Max_X - element_Start_X;
-                    rectangleHeight = element_Max_Y - element_Start_Y;
+                    /// Driver/Platform specific calculations
+                    rectangleWidth = ElementMaxPoint.X - ElementStartPoint.X;
+                    rectangleHeight = ElementMaxPoint.Y - ElementStartPoint.Y;
                 }
                 else
                 {
-                    rectangleWidth = clickedElementNode.Width;
-                    rectangleHeight = clickedElementNode.Height;
+                    /// Regular/Common calculations
+                    rectangleWidth = clickedElementInfo.Width;
+                    rectangleHeight = clickedElementInfo.Height;
                 }
 
-                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.LeftProperty, element_Start_X + ((mScreenShotViewPage.xMainCanvas.ActualWidth - mScreenShotViewPage.xMainImage.ActualWidth) / 2));
-                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.TopProperty, element_Start_Y + ((mScreenShotViewPage.xMainCanvas.ActualHeight - mScreenShotViewPage.xMainImage.ActualHeight) / 2));
+                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.LeftProperty, ElementStartPoint.X + ((mScreenShotViewPage.xMainCanvas.ActualWidth - mScreenShotViewPage.xMainImage.ActualWidth) / 2));
+                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + ((mScreenShotViewPage.xMainCanvas.ActualHeight - mScreenShotViewPage.xMainImage.ActualHeight) / 2));
                 mScreenShotViewPage.xHighlighterBorder.Margin = new Thickness(0);
 
                 mScreenShotViewPage.xHighlighterBorder.Width = rectangleWidth;
@@ -1376,28 +1294,6 @@ namespace Ginger.WindowExplorer
             {
                 mScreenShotViewPage.xHighlighterBorder.Visibility = Visibility.Collapsed;
             }
-        }
-
-        private System.Windows.Point GetPointOnAppWindow(System.Windows.Point clickedPoint)
-        {
-            System.Windows.Point pointOnAppScreen = new System.Windows.Point();
-            double ratio_X, ratio_Y;
-
-            if (mApplicationAgent.Agent.Driver is GenericAppiumDriver && ((GenericAppiumDriver)mApplicationAgent.Agent.Driver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.Web)
-            {
-                ratio_X = (mScreenShotViewPage.xMainImage.Source.Width / 3) / mScreenShotViewPage.xMainImage.ActualWidth;
-                ratio_Y = (mScreenShotViewPage.xMainImage.Source.Height / 3) / mScreenShotViewPage.xMainImage.ActualHeight;
-            }
-            else
-            {
-                ratio_X = mScreenShotViewPage.xMainImage.Source.Width / mScreenShotViewPage.xMainImage.ActualWidth;
-                ratio_Y = mScreenShotViewPage.xMainImage.Source.Height / mScreenShotViewPage.xMainImage.ActualHeight;
-            }
-
-            pointOnAppScreen.X = (long)(clickedPoint.X * ratio_X);
-            pointOnAppScreen.Y = (long)(clickedPoint.Y * ratio_Y);
-
-            return pointOnAppScreen;
         }
 
         private async void ViewsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
