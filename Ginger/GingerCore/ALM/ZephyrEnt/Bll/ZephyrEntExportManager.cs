@@ -1,4 +1,22 @@
-﻿using ALM_Common.DataContracts;
+#region License
+/*
+Copyright © 2014-2021 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -6,6 +24,7 @@ using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -130,16 +149,16 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
             try
             {
-                //get the BF matching test set
-                List<BaseResponseItem> eportedPhase = zephyrEntRepository.GetPhaseById(Convert.ToInt32(bizFlow.ExternalID2));
-                BaseResponseItem item = eportedPhase.FirstOrDefault(md => md.id.ToString().Equals(bizFlow.ExternalID));
-                if (item != null)
+                List<Execution> executions = zephyrEntRepository.GetExecutionsByPhaseId(Convert.ToInt32(bizFlow.ExternalID));
+                if (executions == null || executions.Count == 0)
+                {
+                    executions = zephyrEntRepository.GetModuleExecutionData(Convert.ToInt32(bizFlow.ExternalID));
+                }
+                if (executions != null && executions.Count > 0)
                 {
                     long scheduleId = 0;
                     //get the Test set TC's
-                    List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(item.TryGetItem("id")));
-                    //get phase execution list
-                    List<Execution> executions = zephyrEntRepository.GetExecutionsByPhaseId(Convert.ToInt64(bizFlow.ExternalID2));
+                    List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(bizFlow.ExternalID));
                     //get all BF Activities groups
                     ObservableList<ActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
                     if (activGroups.Count > 0)
@@ -245,6 +264,23 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             }
 
             return false; // Remove it at the end
+        }
+
+        private JObject findPhaseToExportDetails(JObject exportedCategories, string id)
+        {
+            if(exportedCategories.GetValue("id").ToString().Equals(id))
+            {
+                return exportedCategories;
+            }
+            if(exportedCategories.GetValue("categories").Count() > 0)
+            {
+                return findPhaseToExportDetails((JObject)exportedCategories.GetValue("categories").First, id);
+            }
+            if (exportedCategories.Next != null)
+            {
+                return findPhaseToExportDetails((JObject)exportedCategories.Next, id);
+            }
+            return null;
         }
 
         private List<TestStepResource> CreateTestSteps(ObservableList<ActivityIdentifiers> testStepsList, long tcVersionId, long tcId)

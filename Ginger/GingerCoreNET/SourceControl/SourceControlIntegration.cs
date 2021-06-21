@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Core;
+using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -348,15 +349,35 @@ namespace Ginger.SourceControl
                 SourceControlBase mSourceControl;
                 if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
-                    mSourceControl = new GITSourceControl();
+
+                    if (WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.SourceControlUseShellClient)
+                    {
+                        mSourceControl = new GitSourceControlShellWrapper();
+                    }
+                    else
+                    {
+                        mSourceControl = new GITSourceControl();
+                    }
+
+
+                    
                 }
                 else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 {
-                    mSourceControl = RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
+
+                    if (WorkSpace.Instance != null && WorkSpace.Instance.UserProfile != null && WorkSpace.Instance.UserProfile.SourceControlUseShellClient)
+                    {
+                        mSourceControl = new SVNSourceControlShellWrapper();
+                    }
+                    else
+                    {
+                        mSourceControl = TargetFrameworkHelper.Helper.GetNewSVnRepo();
+                    }
+                
                 }
                 else
                 {
-                    mSourceControl = RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
+                    mSourceControl = TargetFrameworkHelper.Helper.GetNewSVnRepo();
                 }
 
                 if (mSourceControl != null)
@@ -366,6 +387,8 @@ namespace Ginger.SourceControl
                     mSourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
                     mSourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
                     mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+                    mSourceControl.IgnoreCertificate = WorkSpace.Instance.UserProfile.SourceControlIgnoreCertificate;
+
                     mSourceControl.SolutionFolder = SolutionFolder;
 
                     mSourceControl.SourceControlConfigureProxy = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
@@ -412,8 +435,23 @@ namespace Ginger.SourceControl
                 string ProjectURI = string.Empty;
                 if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 {
-                    ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
-                    sol.SourceControlLocation : WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
+
+                    if(WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        ProjectURI = sol.SourceControlLocation;
+                    }
+                    else
+                    {
+                        if(WorkSpace.Instance.GingerCLIMode==Amdocs.Ginger.CoreNET.RunLib.CLILib.eGingerCLIMode.run)
+                        {
+                            ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
+                        }
+                        else
+                        {
+                            ProjectURI= WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
+                        }
+                    }
+                   
                 }
                 else
                 {
@@ -434,14 +472,14 @@ namespace Ginger.SourceControl
                         Reporter.ToLog(eLogLevel.INFO, "Reverting local Solution changes");
                         try
                         {                            
-                            RepositoryItemHelper.RepositoryItemFactory.Revert(sol.LocalFolder, mSourceControl);
+                            TargetFrameworkHelper.Helper.Revert(sol.LocalFolder, mSourceControl);
                         }
                         catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Failed to revert local Solution changes, error: " + ex.Message);
                         }
                     }
-                    return RepositoryItemHelper.RepositoryItemFactory.GetLatest(sol.LocalFolder, mSourceControl);
+                    return TargetFrameworkHelper.Helper.GetLatest(sol.LocalFolder, mSourceControl);
                 }
                 else
                 {

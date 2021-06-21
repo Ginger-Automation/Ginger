@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1324,7 +1324,7 @@ namespace GingerCore.Actions
         public void ActionDescriptionTextBlock(object ActionRecUseCaseTextBlock)
         {
 
-            ITextBoxFormatter TBH= RepositoryItemHelper.RepositoryItemFactory.CreateTextBoxFormatter(ActionRecUseCaseTextBlock);
+            ITextBoxFormatter TBH= TargetFrameworkHelper.Helper.CreateTextBoxFormatter(ActionRecUseCaseTextBlock);
   
             TBH.AddHeader1("Description:");
             TBH.AddLineBreak();
@@ -1818,5 +1818,9 @@ namespace GingerCore.Actions
 
         public Guid ParentExecutionId { get; set; }
 
+        public virtual void DoNewActionSetup()
+        {
+            // Base - do nothing
+        }
     }
 }

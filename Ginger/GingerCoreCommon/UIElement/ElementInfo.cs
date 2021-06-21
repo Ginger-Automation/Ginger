@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -403,6 +403,7 @@ namespace Amdocs.Ginger.Common.UIElement
 
         object mData = null;
 
+
         public ObservableList<ControlProperty> GetElementProperties()
         {
             return this.WindowExplorer.GetElementProperties(this);
@@ -570,6 +571,8 @@ namespace Amdocs.Ginger.Common.UIElement
             MenuBar,
             [EnumValueDescription("Tree View")]
             TreeView,
+            [EnumValueDescription("Tree Item")]
+            TreeItem,
             Window,
             HyperLink,
             [EnumValueDescription("Scroll Bar")]
@@ -578,6 +581,8 @@ namespace Amdocs.Ginger.Common.UIElement
             Canvas,
             Text,
             Tab,
+            [EnumValueDescription("Tab Item")]
+            TabItem,
             [EnumValueDescription("Editor Pane")]
             EditorPane,
             [EnumValueDescription("Editor Table")]
@@ -588,8 +593,10 @@ namespace Amdocs.Ginger.Common.UIElement
             Form,
             Browser,
             [EnumValueDescription("Date Picker")]
-            DatePicker
-        }
+            DatePicker,
+            Document,
+            Svg
+    }
 
     
 }

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -667,13 +667,6 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-
-        //TODO: remove from here get in init
-
-            //TODO: move to common global for others to use if needed 
-            // public static Assembly GingerCoreNETAssembly = typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryItem).Assembly;
-        public static Assembly GingerCoreCommonAssembly = typeof(RepositoryItemBase).Assembly;        
-
         private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null, string filePath = "")
         {
             //TODO: check order of creation and remove unused
@@ -881,26 +874,59 @@ namespace Amdocs.Ginger.Repository
         static Dictionary<string, Type> mClassDictionary = new Dictionary<string, Type>();
 
         static List<Assembly> mAssemblies = new List<Assembly>();
-        public static void AddClassesFromAssembly(Assembly assembly)
+        public enum eAssemblyType { Ginger, GingerCore, GingerCoreCommon, GingerCoreCommonTest, GingerCoreNET }
+        public static void AddClassesFromAssembly(eAssemblyType assemblyType)
         {
+            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().Where(x => x.FullName.Contains(assemblyType.ToString()+",")).FirstOrDefault();
+            if (assembly == null)
+            {
+                string err = string.Format("Failed to load the assembly '{0}' into NewRepositorySerializer", assemblyType.ToString());
+                Reporter.ToLog(eLogLevel.ERROR, err);
+                throw new Exception(err) ;
+            }
+
             lock (mAssemblies) // Avoid reentry to add assembly - can happen in unit tests
             {
                 if (mAssemblies.Contains(assembly))
                 {
                     return;
                 }
-                var RepositoryItemTypes =
-                  from type in assembly.GetTypes()
-                      //where type.IsSubclassOf(typeof(RepositoryItemBase))              
-                    where typeof(RepositoryItemBase).IsAssignableFrom(type) // Will load all sub classes including level 2,3 etc.
-                    select type;
+                try
+                {
+                    var RepositoryItemTypes =
+                     from type in assembly.GetTypes()
+                          //where type.IsSubclassOf(typeof(RepositoryItemBase))              
+                      where typeof(RepositoryItemBase).IsAssignableFrom(type) // Will load all sub classes including level 2,3 etc.
+                      select type;
 
-                foreach (Type t in RepositoryItemTypes)
-                {                    
-                    mClassDictionary.Add(t.Name, t);
-                    mClassDictionary.Add(t.FullName, t);
+                    foreach (Type t in RepositoryItemTypes)
+                    {
+                        mClassDictionary.Add(t.Name, t);
+                        mClassDictionary.Add(t.FullName, t);
+                    }
+                    mAssemblies.Add(assembly);
                 }
-                mAssemblies.Add(assembly);
+                catch (ReflectionTypeLoadException ex)
+                {
+                    //get exactly what is missing/failling to be loaded
+                    StringBuilder sb = new StringBuilder();
+                    foreach (Exception exSub in ex.LoaderExceptions)
+                    {
+                        sb.AppendLine(exSub.Message);
+                        FileNotFoundException exFileNotFound = exSub as FileNotFoundException;
+                        if (exFileNotFound != null)
+                        {
+                            if (!string.IsNullOrEmpty(exFileNotFound.FusionLog))
+                            {
+                                sb.AppendLine("Fusion Log:");
+                                sb.AppendLine(exFileNotFound.FusionLog);
+                            }
+                        }
+                        sb.AppendLine();
+                    }
+                    string errorMessage = sb.ToString();
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to load Assembly Classes for '{0}', Error:'{1}'", assembly.ToString(), errorMessage), ex);
+                }
             }
         }
 
@@ -1116,7 +1142,6 @@ namespace Amdocs.Ginger.Repository
                         {
                             if (propertyInfo.CanWrite)
                             {
-
                                 SetObjAttrValue(obj, propertyInfo, Value);
                             }
                             else
@@ -1213,8 +1238,8 @@ namespace Amdocs.Ginger.Repository
                             RepositoryItemKey repositoryItemKey = new RepositoryItemKey();
                             repositoryItemKey.Key = sValue;
                             propertyInfo.SetValue(obj, repositoryItemKey);
-                            
-                        }                       
+
+                        }
                         else
                         {
                             //check if this is nullable enum  like: Activity Status? 
@@ -1284,16 +1309,24 @@ namespace Amdocs.Ginger.Repository
             }
             catch
             {
-                string err;
-                if (propertyInfo != null)
+                if (obj is RepositoryItemBase
+                     && ((RepositoryItemBase)obj).SerializationError(SerializationErrorType.SetValueException, propertyInfo.Name, sValue.ToString()))
                 {
-                    err = "Obj=" + obj + ", Property=" + propertyInfo.Name + ", Value=" + sValue.ToString();
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Property value converted successfully: object='{0}', property='{1}', value='{2}'", obj.GetType().Name, propertyInfo.Name, sValue.ToString()));
                 }
                 else
                 {
-                    err = "Property Not found: Obj=" + obj + " Value=" + sValue.ToString();
+                    string err;
+                    if (propertyInfo != null)
+                    {
+                        err = "Obj=" + obj + ", Property=" + propertyInfo.Name + ", Value=" + sValue.ToString();
+                    }
+                    else
+                    {
+                        err = "Property Not found: Obj=" + obj + " Value=" + sValue.ToString();
+                    }
+                    throw new Exception(err);
                 }
-                throw new Exception(err);
             }
         }
 

@@ -47,7 +47,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new RepoCoreItem());
+            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new DotnetCoreHelper());
             WorkSpace.Instance.OpenSolution(mSolutionFolder);
             WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = Ginger.Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
@@ -114,21 +114,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             //Assert.AreEqual(....
         }
 
-        [TestMethod]
-        public void TestNewReportFolderCreation()
-        {
-            // Arrange
-
-
-            //Act
-
-            // Which method are we testing here Path.Combine ??? the creation of the folder?
-            string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
-
-            //Assert
-            Assert.IsTrue(Directory.Exists(clientAppFolderPath));
-        }
-
+        
         [TestMethod]
         public void CopyWebRep()
         {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -603,12 +603,13 @@ namespace Ginger
         }
         public Visibility ShowSearch
         {
-            get { return lblSearch.Visibility; }
+            get { return txtSearch.Visibility; }
             set
             {
-                lblSearch.Visibility = value;
+                //lblSearch.Visibility = value;
                 txtSearch.Visibility = value;
                 btnClearSearch.Visibility = value;
+                xSearchBtn.Visibility = value;
             }
         }
         public Visibility ShowToolsBar
@@ -804,6 +805,11 @@ namespace Ginger
             btnCopy.Click += handler;
         }
 
+        public void SetRefreshBtnHandler(RoutedEventHandler handler)
+        {
+            btnRefresh.Click += handler;
+        }
+
         public void SetbtnPastHandler(RoutedEventHandler handler)
         {
             btnPaste.Click -= new System.Windows.RoutedEventHandler(btnPaste_Click);
@@ -875,16 +881,23 @@ namespace Ginger
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             //Cancel editing incase of user started search without going out of cell edit.
+            this.grdMain.CommitEdit(DataGridEditingUnit.Row, true);
+            this.grdMain.CommitEdit();
             this.grdMain.CancelEdit(DataGridEditingUnit.Row);
+            this.grdMain.CancelEdit();
             if (txtSearch.Text.Length > 0)
             {
-                SetBtnImage(btnClearSearch, "@Clear_16x16.png");
-                btnClearSearch.IsEnabled = true;
+                btnClearSearch.Visibility = Visibility.Visible;
+                xSearchBtn.Visibility = Visibility.Collapsed;
+                //SetBtnImage(btnClearSearch, "@Clear_16x16.png");
+                //btnClearSearch.IsEnabled = true;
             }
             else
             {
-                SetBtnImage(btnClearSearch, "@DisabledClear_16x16.png");
-                btnClearSearch.IsEnabled = false;
+                btnClearSearch.Visibility = Visibility.Collapsed;
+                xSearchBtn.Visibility = Visibility.Visible;
+                //SetBtnImage(btnClearSearch, "@DisabledClear_16x16.png");
+                //btnClearSearch.IsEnabled = false;
             }
 
             string search = txtSearch.Text.ToUpper();
@@ -900,7 +913,7 @@ namespace Ginger
                 {
                     this.Dispatcher.Invoke(() =>
                     {
-                        CollectFilterData();
+                        CollectFilterData();                       
                         mCollectionView.Refresh();
                     });
                 }
@@ -1500,7 +1513,68 @@ public void RemoveCustomView(string viewName)
             return template;
         }
 
-        
+        public static DataTemplate GetGridComboBoxTemplate(string valuesListField, string selectedValueField, string selectedValuePathField, string displayMemberPathField, bool allowEdit = false, bool selectedByDefault = false,
+                                                            string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null, Style style=null)
+        {
+            DataTemplate template = new DataTemplate();
+            FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));
+
+            Binding valuesBinding = new Binding(valuesListField);
+            valuesBinding.Mode = BindingMode.TwoWay;
+            valuesBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            combo.SetBinding(ComboBox.ItemsSourceProperty, valuesBinding);
+
+            Binding selectedValueBinding = new Binding(selectedValueField);
+            selectedValueBinding.Mode = BindingMode.TwoWay;
+            selectedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            combo.SetBinding(ComboBox.SelectedValueProperty, selectedValueBinding);
+
+            if (!string.IsNullOrEmpty(selectedValuePathField))
+            {
+                combo.SetValue(ComboBox.SelectedValuePathProperty, selectedValuePathField);
+            }
+
+            if (!string.IsNullOrEmpty(displayMemberPathField))
+            {
+                combo.SetValue(ComboBox.DisplayMemberPathProperty, displayMemberPathField);
+            }
+
+            if (isreadonly)
+            {
+                Binding ReadonlyBinding = new Binding(readonlyfield);
+                ReadonlyBinding.Mode = BindingMode.OneWay;
+                ReadonlyBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                combo.SetBinding(ComboBox.IsHitTestVisibleProperty, ReadonlyBinding);
+            }
+            else
+            {
+                if (allowEdit == true)
+                {
+                    combo.SetValue(ComboBox.IsEditableProperty, true);
+                }
+            }
+
+            if (selectedByDefault == true)
+            {
+                {
+                    combo.SetValue(ComboBox.SelectedIndexProperty, 0);
+                }
+            }
+
+            if (comboSelectionChangedHandler != null)
+            {
+                combo.AddHandler(ComboBox.SelectionChangedEvent, comboSelectionChangedHandler);
+            }
+
+            if (style != null)
+            {
+                combo.SetValue(ComboBox.StyleProperty, style);
+            }
+
+            template.VisualTree = combo;
+            return template;
+        }
+
 
         public static DataTemplate getDataColValueExpressionTemplate(string Path,Context context)
         {
@@ -1711,15 +1785,17 @@ public void RemoveCustomView(string viewName)
             tool.Content = userControl;
             tool.Click += clickHandler;
 
-            toolbar.Items.Remove(lblSearch);
+            //toolbar.Items.Remove(lblSearch);
             toolbar.Items.Remove(txtSearch);
+            toolbar.Items.Remove(xSearchBtn);
             toolbar.Items.Remove(btnClearSearch);
             toolbar.Items.Remove(lblView);
             toolbar.Items.Remove(comboView);
             toolbar.Items.Remove(TagsViewer);
             toolbar.Items.Add(tool);
-            toolbar.Items.Add(lblSearch);
+            //toolbar.Items.Add(lblSearch);
             toolbar.Items.Add(txtSearch);
+            toolbar.Items.Add(xSearchBtn);
             toolbar.Items.Add(btnClearSearch);
             toolbar.Items.Add(TagsViewer);
             toolbar.Items.Add(lblView);

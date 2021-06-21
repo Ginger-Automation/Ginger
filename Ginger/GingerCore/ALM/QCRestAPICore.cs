@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.QCRestAPI;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using QCRestClient;
 
 namespace GingerCore.ALM
@@ -109,7 +110,11 @@ namespace GingerCore.ALM
             get { return ImportFromQCRest.GingerActivitiesRepo; }
             set { ImportFromQCRest.GingerActivitiesRepo = value; }
         }
-
+        public override ObservableList<ApplicationPlatform> ApplicationPlatforms
+        {
+            get { return ImportFromQCRest.ApplicationPlatforms; }
+            set { ImportFromQCRest.ApplicationPlatforms = value; }
+        }
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
             return UpdatedAlmFields(ImportFromQCRest.GetALMItemFields(resourceType));

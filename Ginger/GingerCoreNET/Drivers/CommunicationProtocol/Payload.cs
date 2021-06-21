@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -452,6 +453,35 @@ namespace GingerCore.Drivers.CommunicationProtocol
         public string GetErrorValue()
         {
             return "Error:- " + GetValueInt() + ":" + GetValueString();
+        }
+
+        public Point GetValuePoint()
+        {
+            Point pt = new Point(-1, -1);
+
+            byte pointByte = ReadValueType();
+
+            if(pointByte == StringType)
+            {
+                string str = ReadString();
+
+                string[] ptArr = str.Split('_');
+                if (ptArr.Length == 2)
+                {
+                    pt.X = int.Parse(ptArr[0]);
+                    pt.Y = int.Parse(ptArr[1]);
+
+                    return pt;
+                }
+                else
+                {
+                    throw new Exception("String Parsing Error/wrong value type str=" + str + " Name of the payload is" + Name + " Buffer Index is: " + mBufferIndex);
+                }
+            }
+            else
+            {
+                throw new Exception("String Parsing Error/wrong value type pointByte=" + pointByte + " Name of the payload is" + Name + " Buffer Index is: " + mBufferIndex);
+            }
         }
 
         public string GetValueString()

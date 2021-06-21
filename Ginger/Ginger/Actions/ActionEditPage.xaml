@@ -47,8 +47,11 @@
                 <Button x:Name="ClearExpectedValueBtn" Content="X" Click="GridClearExpectedValueBtn_Click"  Style="{DynamicResource DataGridCellButtonStyle}" ToolTip="Clear Expected Value"/>
             </DataTemplate>
         </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <Grid>
+        <Grid Grid.Row="0">
             <!--Tabs Area-->
             <TabControl x:Name="xActionTabs" Margin="0,0,0,0" HorizontalAlignment="Stretch" SelectionChanged="xActionTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0" >
                 <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="0" Tag="False">
@@ -56,7 +59,7 @@
                         <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="General Details">
                             <DockPanel >
                                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Info" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
-                                <TextBlock Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                <TextBlock Text="Details" x:Name="xDetailsTabTextBlock" Style="{StaticResource $CoolTabTextBlockStyle}" />
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
@@ -92,7 +95,7 @@
                         <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Operation to Perform Settings">
                             <DockPanel>
                                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Action" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                <TextBlock  Text="Operation Settings" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                <TextBlock  Text="Operation Settings" x:Name="xOperationsTabTextBlock" Style="{StaticResource $CoolTabTextBlockStyle}" />
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
@@ -242,7 +245,7 @@
                     <TabItem.Header>
                         <Border Style="{StaticResource $CoolTabBorderStyle}">
                             <DockPanel Margin="0,0,0,0">
-                                <TextBlock Text="Execution Report" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                <TextBlock Text="Execution Report" x:Name="xExecutionReportTabTextBlock" Style="{StaticResource $CoolTabTextBlockStyle}" />
                                 <uclistview:UcItemExecutionStatus x:Name="xExecutionStatusTabImage" StatusViewMode="Image" StatusSize="16" Margin="5,0,0,0" VerticalAlignment="Center"/>
                             </DockPanel>
                         </Border>

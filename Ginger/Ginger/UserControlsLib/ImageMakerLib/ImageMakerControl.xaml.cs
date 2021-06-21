@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -761,7 +761,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Mobile:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Mobile);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MobilePhone);
                     break;
 
                 case eImageType.Codepen:
@@ -845,6 +845,18 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.SignOut:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.SignOut);
                     break;
+                case eImageType.AngleArrowUp:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleUp);
+                    break;
+                case eImageType.AngleArrowDown:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleDown);
+                    break;
+                case eImageType.AngleArrowLeft:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleLeft);
+                    break;
+                case eImageType.AngleArrowRight:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleRight);
+                    break;
                 #endregion
 
                 #region ElementType Images
@@ -901,6 +913,36 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.TreeView:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
+                    break;
+                case eImageType.Pin:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbTack);
+                    break;
+                case eImageType.Square:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Square);
+                    break;
+                case eImageType.Triangle:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Play);
+                    break;
+                case eImageType.Circle:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Circle);
+                    break;
+                case eImageType.Ios:
+                    SetAsStaticImage("ios.png");
+                    break;
+                case eImageType.IosOutline:
+                    SetAsStaticImage("iosOutline.png");
+                    break;
+                case eImageType.IosWhite:
+                    SetAsStaticImage("iosWhite.png");
+                    break;
+                case eImageType.Android:
+                    SetAsStaticImage("android.png");
+                    break;
+                case eImageType.AndroidOutline:
+                    SetAsStaticImage("androidOutline.png");
+                    break;
+                case eImageType.AndroidWhite:
+                    SetAsStaticImage("androidWhite.png");
                     break;
                 #endregion
 

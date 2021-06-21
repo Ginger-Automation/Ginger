@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Automation;
 using Amdocs.Ginger.Common.UIElement;
+using System.Threading.Tasks;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -57,10 +58,11 @@ namespace GingerCore.Drivers.PBDriver
         List<ElementInfo> frameElementsList = new List<ElementInfo>();
         AutomationElement AEBrowser;
 
-        public List<ElementInfo> GetVisibleElement()
+        public async Task<List<ElementInfo>> GetVisibleElement()
         {
-            List<ElementInfo> list = GetElementList();
-            return list;
+            //List<ElementInfo> list = await GetElementList();
+            //return list;
+            return await GetElementList();
         }
 
         public HTMLHelper(InternetExplorer IE,AutomationElement AE)
@@ -544,6 +546,10 @@ namespace GingerCore.Drivers.PBDriver
             EI.ElementObject = h1;
             EI.XPath = getXPath(h1);
             EI.RelXpath = "";
+            EI.Height = h1.offsetHeight;
+            EI.Width = h1.offsetWidth;
+            EI.X = h1.offsetLeft;
+            EI.Y = h1.offsetTop;
             return EI;
         }
 
@@ -591,17 +597,17 @@ namespace GingerCore.Drivers.PBDriver
             return xpath;
         }
 
-        public List<ElementInfo> GetElementList()
+        public async Task<List<ElementInfo>> GetElementList()
         {
             List<ElementInfo> list = new List<ElementInfo>();
             frameElementsList.Clear();
-            AddDocumentsAllElements(dispHtmlDocument);
+            await AddDocumentsAllElements(dispHtmlDocument);
             list.AddRange(frameElementsList);
             frameElementsList.Clear();
             return list;
         }
 
-        void AddDocumentsAllElements(DispHTMLDocument DispDoc)
+        async Task AddDocumentsAllElements(DispHTMLDocument DispDoc)
         {
             IHTMLElementCollection ElementCollection;
             HTMLElementInfo HTMLEI;
@@ -626,13 +632,13 @@ namespace GingerCore.Drivers.PBDriver
                         frameContent = (IHTMLDocument2)domNode2.document;
 
                         DispDoc = (DispHTMLDocument)frameContent;
-                        AddDocumentsAllElements(DispDoc);
+                        await AddDocumentsAllElements(DispDoc);
                     }
                     catch(Exception ex)
                     {
                         if (InitFrame(h1) == "true")
                         {
-                            AddDocumentsAllElements(currentFrameDocument);
+                            await AddDocumentsAllElements(currentFrameDocument);
                         }
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
@@ -2439,6 +2445,26 @@ namespace GingerCore.Drivers.PBDriver
         }
 
         public string GetElementXpath(ElementInfo EI)
+        {
+            return null;
+        }
+
+        public string GetInnerHtml(ElementInfo elementInfo)
+        {
+            return null;
+        }
+
+        public object GetElementParentNode(ElementInfo elementInfo)
+        {
+            return null;
+        }
+
+        public string GetInnerText(ElementInfo elementInfo)
+        {
+            return null;
+        }
+
+        public string GetPreviousSiblingInnerText(ElementInfo elementInfo)
         {
             return null;
         }

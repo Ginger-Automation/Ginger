@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,5 +33,18 @@ namespace Amdocs.Ginger.Common.UIElement
         public const string Y = "Y";
         public const string Value = "Value";
         public const string OptionalValues="Optional Values";
+        public const string BoundingRectangle = "Bounding Rectangle";
+        public const string LocalizedControlType = "Localized Control Type";
+        public const string Name = "Name";
+        public const string AutomationId = "AutomationId";
+        public const string Text = "Text";
+        public const string ClassName = "ClassName";
+        public const string ToggleState = "ToggleState";
+        public const string IsKeyboardFocusable = "Is Keyboard Focusable";
+        public const string IsEnabled = "Is Enabled";
+        public const string IsPassword = "Is Password";
+        public const string IsOffscreen = "Is Offscreen";
+        public const string IsSelected = "Is Selected";
+        public const string InnerText = "InnerText";
     }
 }

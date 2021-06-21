@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml;
@@ -706,30 +707,33 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public System.Collections.Generic.List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        public async Task<System.Collections.Generic.List<ElementInfo>> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
-            List<ElementInfo> Eil = new System.Collections.Generic.List<ElementInfo>();
-
-            foreach (XMLScreenField xf in MFE.GetScreenAsXML().Fields)
+            return await Task.Run(() =>
             {
-                ElementInfo EI = new ElementInfo();
+                List<ElementInfo> Eil = new System.Collections.Generic.List<ElementInfo>();
 
-                EI.ElementTitle = xf.Text;
-                if (xf.Attributes.FieldType == "Hidden")
+                foreach (XMLScreenField xf in MFE.GetScreenAsXML().Fields)
                 {
-                    EI.ElementType = "Password";
-                }
-                if (xf.Attributes.Protected)
-                {
-                    if (xf.Attributes.FieldType == "High")
+                    ElementInfo EI = new ElementInfo();
+
+                    EI.ElementTitle = xf.Text;
+                    if (xf.Attributes.FieldType == "Hidden")
                     {
-                        EI.ElementType = "High";
+                        EI.ElementType = "Password";
                     }
+                    if (xf.Attributes.Protected)
+                    {
+                        if (xf.Attributes.FieldType == "High")
+                        {
+                            EI.ElementType = "High";
+                        }
+                    }
+                    Eil.Add(EI);
                 }
-                Eil.Add(EI);
-            }
 
-            return Eil;
+                return Eil;
+            });
         }
 
         public System.Collections.Generic.List<ElementInfo> GetElementChildren(ElementInfo ElementInfo)
@@ -771,7 +775,6 @@ namespace GingerCore.Drivers.MainFrame
 
         public void UnHighLightElements()
         {
-            throw new NotImplementedException();
         }
 
 
@@ -803,6 +806,46 @@ namespace GingerCore.Drivers.MainFrame
         List<AppWindow> IWindowExplorer.GetWindowAllFrames()
         {
             throw new NotImplementedException();
+        }
+
+        public bool IsRecordingSupported()
+        {
+            return false;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return false;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return false;
+        }
+
+        public bool IsWinowSelectionRequired()
+        {
+            return true;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { /*eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView*/ };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.none;
+        }
+
+        public string SelectionWindowText()
+        {
+            return "Window:";
+        }
+
+        public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
         }
     }
 }

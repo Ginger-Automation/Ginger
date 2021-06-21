@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.ActionsLib;
 using GingerCore;
 using GingerCore.Actions;
 using System;
@@ -36,7 +38,7 @@ namespace Ginger.Actions
     {       
         public ActionEditPage actp;
         private ActExcel mAct;
-
+        private IExcelOperations mExcelOperations = new ExcelNPOIOperations();
         public ActExcelEditPage(ActExcel act)
         {
             InitializeComponent();
@@ -47,14 +49,14 @@ namespace Ginger.Actions
         
         public void Bind()
         {            
-            ExcelActionComboBox.BindControl(mAct, ActExcel.Fields.ExcelActionType);
-            ExcelFileNameTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.ExcelFileName);
-            SheetNamComboBox.BindControl(mAct, ActExcel.Fields.SheetName);
-            SelectRowsWhereTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.SelectRowsWhere);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SelectAllRows,CheckBox.IsCheckedProperty,mAct, ActExcel.Fields.SelectAllRows);
-            PrimaryKeyColumnTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.PrimaryKeyColumn);
-            SetDataUsedTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.SetDataUsed);
-            ColMappingRulesTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, ActExcel.Fields.ColMappingRules);
+            ExcelActionComboBox.BindControl(mAct, nameof(ActExcel.ExcelActionType));
+            ExcelFileNameTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ExcelFileName));
+            SheetNamComboBox.BindControl(mAct, nameof(ActExcel.SheetName));
+            SelectRowsWhereTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SelectRowsWhere));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SelectAllRows,CheckBox.IsCheckedProperty,mAct, nameof(ActExcel.SelectAllRows));
+            PrimaryKeyColumnTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.PrimaryKeyColumn));
+            SetDataUsedTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SetDataUsed));
+            ColMappingRulesTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ColMappingRules));
             
             if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData)
             {                
@@ -80,22 +82,13 @@ namespace Ginger.Actions
 
         private void BrowseExcelButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-
-            dlg.DefaultExt = "*.xlsx or .xls or .xlsm";
-            dlg.Filter = "Excel Files (*.xlsx, *.xls, *.xlsm)|*.xlsx;*.xls;*.xlsm";
-            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper(); 
-            
-            if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
             {
-                // replace Absolute file name with relative to solution
-                string FileName = dlg.FileName.ToUpper();
-                if (FileName.Contains(SolutionFolder))
-                {
-                    FileName = FileName.Replace(SolutionFolder, @"~\");
-                }
-                
-                ExcelFileNameTextBox.ValueTextBox.Text = FileName;
+                DefaultExt = "*.xlsx or .xls or .xlsm",
+                Filter = "Excel Files (*.xlsx, *.xls, *.xlsm)|*.xlsx;*.xls;*.xlsm"
+            }) is string fileName)
+            {
+                ExcelFileNameTextBox.ValueTextBox.Text = fileName;
                 FillSheetCombo();
             }
         }
@@ -104,7 +97,12 @@ namespace Ginger.Actions
         {
             ContextProcessInputValueForDriver();
             //Move code to ExcelFunction no in Act...
-            List<string> SheetsList = mAct.GetSheets();
+            List<string> SheetsList = mExcelOperations.GetSheets(mAct.CalculatedFileName);
+            if (SheetsList == null || SheetsList.Count == 0)
+            {
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                return;
+            }
             GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
         }
 
@@ -121,20 +119,44 @@ namespace Ginger.Actions
         {
             ContextProcessInputValueForDriver();
 
-            DataTable dt = mAct.GetExcelSheetData(null);
-            if (dt != null)
-                ExcelDataGrid.ItemsSource = dt.AsDataView();
+            DataTable dt = GetExcelSheetData(true);
+            if (dt == null)
+            {
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                return;
+            }
+            ExcelDataGrid.ItemsSource = dt.AsDataView();
         }
 
         private void ViewWhereButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!mAct.CheckMandatoryFieldsExists(new List<string>() { 
+                nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName),  nameof(mAct.CalculatedFilter)}))
+            {
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                return;
+            }
             ContextProcessInputValueForDriver();
-
-            DataTable dt = mAct.GetExcelSheetDataWithWhere();
-            if(dt!=null)
-                ExcelDataGrid.ItemsSource = dt.AsDataView();
+            DataTable dt = GetExcelSheetData(false);
+            if (dt == null)
+            {
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                return;
+            }
+            ExcelDataGrid.ItemsSource = dt.AsDataView();
         }
-
+        DataTable GetExcelSheetData(bool isViewAllData)
+        {
+            if(!mAct.CheckMandatoryFieldsExists(new List<string>() { nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName) }))
+            {
+                return null;
+            }
+            if (!isViewAllData && mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData && !string.IsNullOrWhiteSpace(mAct.CalculatedFilter))
+            {
+                return mExcelOperations.ReadCellData(mAct.CalculatedFileName, mAct.CalculatedSheetName, mAct.CalculatedFilter, true);
+            }
+            return mExcelOperations.ReadData(mAct.CalculatedFileName, mAct.CalculatedSheetName, isViewAllData ? null : mAct.CalculatedFilter, true);
+        }
         private void ExcelActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ContextProcessInputValueForDriver();
@@ -161,19 +183,30 @@ namespace Ginger.Actions
 
         private void SheetNamComboBox_DropDownOpened(object sender, EventArgs e)
         {
+            if (!mAct.CheckMandatoryFieldsExists(new List<string>() { nameof(mAct.CalculatedFileName) }))
+            {
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                return;
+            }
             FillSheetCombo();
         }
 
         private void SheetNamVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActExcel.Fields.SheetName, Context.GetAsContext(mAct.Context));
+            ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, nameof(ActExcel.SheetName), Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             SheetNamComboBox.Text = mAct.SheetName;
         }
 
         private void xOpenExcelButton_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(mAct.GetExcelFileNameForDriver());
+            if (!mAct.CheckMandatoryFieldsExists(new List<string>() { nameof(mAct.CalculatedFileName) }))
+            {
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                return;
+            }
+            Process.Start(mAct.CalculatedFileName);
         }
+            
     }
 }

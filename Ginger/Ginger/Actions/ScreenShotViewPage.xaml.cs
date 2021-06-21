@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,6 +41,18 @@ namespace Ginger.Actions.UserControls
         public Action<object, MouseUponScrenshot> MouseUpOnScreenshot { get; set; }
 
         public Action<object, MouseMoveonScrenshot> MouseMoveOnScreenshot { get; set; }
+
+        public Cursor ImageMouseCursor
+        {
+            get
+            {
+                return xMainImage.Cursor;
+            }
+            set
+            {
+                xMainImage.Cursor = value;
+            }
+        }
 
         public ScreenShotViewPage(string Name, BitmapImage bitmapImage)
         {

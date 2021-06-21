@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.RQM;
 using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using RQM_Repository;
 using RQM_Repository.Data_Contracts;
 using System;
@@ -49,6 +50,7 @@ namespace GingerCore.ALM.Rally
     {
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public static ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
 
         public static int totalValues = 0;
         public static string populatedValue = string.Empty;
@@ -79,7 +81,7 @@ namespace GingerCore.ALM.Rally
                     {
                         tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)(repoActivsGroup)).CreateInstance();
                         busFlow.AddActivitiesGroup(tcActivsGroup);
-                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
+                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
                         busFlow.AttachActivitiesGroupsAndActivities();
                     }
                     else // TC not exist in Ginger repository so create new one

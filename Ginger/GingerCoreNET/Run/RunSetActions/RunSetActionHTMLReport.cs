@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -167,35 +167,19 @@ namespace Ginger.Run.RunSetActions
             string reportName = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
             if (isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(HTMLReportFolderName))
             {
-                reportsResultFolder = Path.Combine(HTMLReportFolderName, "Reports", "Ginger-Web-Client");
+                reportsResultFolder = Path.Combine(HTMLReportFolderName, "Reports");
             }
             else
             {
-                reportsResultFolder = Path.Combine(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports", "Ginger-Web-Client");
+                reportsResultFolder = Path.Combine(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports");
             }
-            if (!String.IsNullOrEmpty(reportsResultFolder))
-            {
-                webReporterRunner.RunNewHtmlReport(null, null, true);
-            }
-            string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
             if (isHTMLReportPermanentFolderNameUsed)
             {
-                if (!Directory.Exists(reportsResultFolder))
-                {
-                    IoHandler.Instance.CopyFolderRec(clientAppFolderPath, reportsResultFolder, true);
-                }
-                else
-                {
-                    webReporterRunner.DeleteFoldersData(Path.Combine(reportsResultFolder, "assets", "Execution_Data"));
-                    webReporterRunner.DeleteFoldersData(Path.Combine(reportsResultFolder, "assets", "screenshots"));
-                    IoHandler.Instance.CopyFolderRec(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"), Path.Combine(reportsResultFolder, "assets", "Execution_Data"), true);
-                    IoHandler.Instance.CopyFolderRec(Path.Combine(clientAppFolderPath, "assets", "screenshots"), Path.Combine(reportsResultFolder, "assets", "screenshots"), true);
-
-                }
+                webReporterRunner.RunNewHtmlReport(Path.Combine(reportsResultFolder, "Ginger-Web-Client"), null, null, false);
             }
-            else
+            else 
             {
-                IoHandler.Instance.CopyFolderRec(clientAppFolderPath, $"{reportsResultFolder}_{reportName}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}", true);
+                webReporterRunner.RunNewHtmlReport(Path.Combine(reportsResultFolder, $"{reportName}_{DateTime.UtcNow.ToString("yyyymmddhhmmssfff")}"), null, null, false);
             }
         }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -580,10 +580,11 @@ namespace Ginger.GherkinLib
                 AG1 = new ActivitiesGroup();
                 AG1.Name = "Optimized Activities - Not in Use";
                 mBizFlow.ActivitiesGroups.Add(AG1);
-            }          
+            }
 
-            foreach(ActivityIdentifiers ia in AG.ActivitiesIdentifiers)
+            for (int i = 0; i < AG.ActivitiesIdentifiers.Count; i++)
             {
+                ActivityIdentifiers ia = AG.ActivitiesIdentifiers[i];
                 Activity a1 = (Activity)(from x in mBizFlow.Activities where x.Guid == ia.ActivityGuid select x).FirstOrDefault();
                 if (!AG1.CheckActivityInGroup(a1))
                     AG1.AddActivityToGroup(a1);

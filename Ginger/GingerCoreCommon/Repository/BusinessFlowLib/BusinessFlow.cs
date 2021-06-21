@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ using GingerCore.FlowControlLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore
 {
@@ -866,62 +867,6 @@ namespace GingerCore
         //    }
         //}
 
-        public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup, ObservableList<Activity> activitiesRepository, bool inSilentMode = true, bool keepOriginalTargetApplicationMapping = false)
-        {
-            string missingActivities = string.Empty;
-
-            if (activitiesGroup != null && activitiesGroup.ActivitiesIdentifiers.Count == 0) return true;
-
-            //import Activities
-            if (activitiesGroup != null && activitiesRepository != null)
-            {
-                foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
-                {
-                    Activity repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
-                    if (repoAct == null)
-                        repoAct = activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
-                    if (repoAct == null)
-                        repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
-                    if (repoAct != null)
-                    {
-                        Activity actInstance = (Activity)repoAct.CreateInstance(true);
-                        actInstance.ActivitiesGroupID = activitiesGroup.Name;
-
-                        if (keepOriginalTargetApplicationMapping == false)
-                        {
-                            SetActivityTargetApplication(actInstance);
-                        }
-
-                        this.AddActivity(actInstance, insertIndex: this.Activities.Count);
-                        actIdent.IdentifiedActivity = actInstance;
-                    }
-                    else
-                    {
-                        missingActivities += "'" + actIdent.ActivityName + "', ";
-                    }
-                }
-
-                //notify on missing activities
-                if (missingActivities != string.Empty && inSilentMode == false)
-                {
-                    missingActivities = missingActivities.TrimEnd(new char[] { ',', ' ' });
-                    Reporter.ToUser(eUserMsgKey.PartOfActivitiesGroupActsNotFound, missingActivities);
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-
-            if (inSilentMode == false)
-            {
-                Reporter.ToUser(eUserMsgKey.ActivitiesGroupActivitiesNotFound);
-            }
-
-            return false;
-        }
-
         private bool mAttachActivitiesGroupsWasDone = false;
         public void AttachActivitiesGroupsAndActivities(ObservableList<Activity> activitiesList = null)
         {
@@ -1212,9 +1157,91 @@ namespace GingerCore
 
 
 
+        public bool ImportActivitiesGroupActivitiesFromRepository(ActivitiesGroup activitiesGroup, ObservableList<Activity> activitiesRepository, ObservableList<ApplicationPlatform> ApplicationPlatforms, bool inSilentMode = true)
+        {
+            string missingActivities = string.Empty;
+
+            if (activitiesGroup != null && activitiesGroup.ActivitiesIdentifiers.Count == 0) return true;
 
 
+            eUserMsgSelection userSelection = inSilentMode ? eUserMsgSelection.OK : eUserMsgSelection.None;
 
+            //import Activities
+            if (activitiesGroup != null && activitiesRepository != null)
+            {
+                foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
+                {
+                    Activity repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                    if (repoAct == null)
+                        repoAct = activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                    if (repoAct == null)
+                        repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
+                    if (repoAct != null)
+                    {
+                        Activity actInstance = (Activity)repoAct.CreateInstance(true);
+                        actInstance.ActivitiesGroupID = activitiesGroup.Name;
+
+                        this.AddActivity(actInstance, insertIndex: this.Activities.Count);
+
+                        userSelection = this.MapTAToBF(userSelection, actInstance, ApplicationPlatforms);
+
+                        actIdent.IdentifiedActivity = actInstance;
+                    }
+                    else
+                    {
+                        missingActivities += "'" + actIdent.ActivityName + "', ";
+                    }
+                }
+
+                //notify on missing activities
+                if (missingActivities != string.Empty && inSilentMode == false)
+                {
+                    missingActivities = missingActivities.TrimEnd(new char[] { ',', ' ' });
+                    Reporter.ToUser(eUserMsgKey.PartOfActivitiesGroupActsNotFound, missingActivities);
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+            if (inSilentMode == false)
+            {
+                Reporter.ToUser(eUserMsgKey.ActivitiesGroupActivitiesNotFound);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check if mapping Activity Target Application is missing in BF, if missing, map it to BF
+        /// </summary>
+        /// <param name="businessFlow">BF to check it in</param>
+        /// <param name="userSelection">userselection to check if user need to be prompted or not</param>
+        /// <param name="activityIns">Activity from which TA to check</param>
+        /// <returns></returns>
+        public eUserMsgSelection MapTAToBF(eUserMsgSelection userSelection, Activity activityIns, ObservableList<ApplicationPlatform> ApplicationPlatforms)
+        {
+            if (!this.TargetApplications.Where(x => x.Name == activityIns.TargetApplication).Any())
+            {
+                if (userSelection == eUserMsgSelection.None)
+                {
+                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activies Target application to BF.");
+                }
+
+                if (userSelection == eUserMsgSelection.OK)
+                {
+                    ApplicationPlatform appAgent = ApplicationPlatforms.Where(x => x.AppName == activityIns.TargetApplication).FirstOrDefault();
+                    if (appAgent != null)
+                    {
+                        this.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
+                    }
+                }
+            }
+
+            return userSelection;
+        }
         public object GetValidationsStat(ref bool isValidaionsExist)
         {
             List<StatItem> lst = new List<StatItem>();

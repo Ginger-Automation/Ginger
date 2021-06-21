@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -91,11 +91,10 @@ namespace Ginger
             // TODO: remove after we don't need old serializer to load old repo items
             NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;
 
-            // Add all RI classes from GingerCore
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
-
+            // Add all RI classes from GingerCore           
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCore); 
             // add from Ginger
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(Ginger.App).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.Ginger);
 
             // Each class which moved from GingerCore to GingerCoreCommon needed to be added here, so it will auto translate
             // For backward compatibility of loading old object name in xml
@@ -253,7 +252,7 @@ namespace Ginger
             // add additional classes from Ginger and GingerCore
             InitClassTypesDictionary();
            
-            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());            
+            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper());            
             
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();            
 

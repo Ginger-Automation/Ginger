@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ using GingerCore.External;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
 using System.Linq;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM
 {
@@ -114,6 +115,12 @@ namespace GingerCore.ALM
         {
             get { return ImportFromRQM.GingerActivitiesRepo; }
             set { ImportFromRQM.GingerActivitiesRepo = value; }
+        }
+
+        public override ObservableList<ApplicationPlatform> ApplicationPlatforms
+        {
+            get { return ImportFromRQM.ApplicationPlatforms; }
+            set { ImportFromRQM.ApplicationPlatforms = value; }
         }
 
         public override void SetALMConfigurations(  string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword,

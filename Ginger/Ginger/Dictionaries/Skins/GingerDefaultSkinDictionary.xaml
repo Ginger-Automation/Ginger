@@ -11,6 +11,7 @@
     <SolidColorBrush x:Key="$BackgroundColor_LightGray" Color="#EDEFF5" />
     <SolidColorBrush x:Key="$BackgroundColor_DarkGray" Color="DarkGray" />
     <SolidColorBrush x:Key="$BackgroundColor_White" Color="White" />
+    <SolidColorBrush x:Key="$BackgroundColor_WhiteSmoke" Color="WhiteSmoke" />
 
     <!--Selection Colors-->
     <SolidColorBrush x:Key="$SelectionColor_Pink" Color="#F26F6F" />
@@ -190,6 +191,58 @@
     <Style TargetType="Button" x:Key="$ImageButtonStyle">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="Transparent" BorderThickness="1">
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
+                            <Setter Property="Background" Value="Transparent" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="$ImageButtonStyle_WhiteSmoke">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="WhiteSmoke" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="Transparent" BorderThickness="1">
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
+                            <Setter Property="Background" Value="Transparent" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="$ImageButtonStyle_Pink">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -629,6 +682,7 @@
         <Setter Property="FontSize" Value="18" />
         <Setter Property="Margin" Value="0,0,0,0" />
         <Setter Property="Padding" Value="0,0,0,0"/>
+        <Setter Property="Opacity" Value="1" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -648,6 +702,34 @@
                             <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>
                     </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="$PanelButtonStyle_Disabled">
+        <Setter Property="Background" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontFamily" Value="Seoge UI" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Padding" Value="0,0,0,0"/>
+        <Setter Property="Opacity" Value="0.4" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}"  CornerRadius="6,6,6,6" BorderThickness="2,2,2,2" >
+                        <ContentPresenter 
+                                TextElement.Foreground="White" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Opacity="40"
+                                RecognizesAccessKey="True"/>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -973,8 +1055,8 @@
 
     <Style TargetType="Expander" x:Key="$ExpanderStyle" >
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
-        <Setter Property="BorderThickness" Value="1"/>
+        <!--<Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
+        <Setter Property="BorderThickness" Value="1"/>-->
     </Style>
     
     <Style TargetType="ComboBox" x:Key="$FlatEditInputComboBoxStyle" >
@@ -1910,15 +1992,14 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-                
-        <Style TargetType="DataGridCell" x:Key="DataGridCellStyle" >
-           
-    <Style.Triggers>
-        <Trigger Property="IsSelected" Value="True">
-            <Setter Property="Background" Value="DeepSkyBlue"/>
-            <Setter Property="Foreground" Value="White"/>
-        </Trigger>
-    </Style.Triggers>
+
+    <Style TargetType="DataGridCell" x:Key="DataGridCellStyle" >
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="DeepSkyBlue"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="DataGrid" x:Key="DataGridAlternatingRowBackground" >
@@ -1928,7 +2009,8 @@
     <Style TargetType="{x:Type Button}" x:Key="DataGridCellButtonStyle">
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}" />
+        <!--<Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}" />-->
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Template">
@@ -3036,29 +3118,32 @@
 
     <Style TargetType="DataGridColumnHeader" x:Key="@DataGridColumnHeader" >
         <Setter Property="Height" Value="20" />
-        <Setter Property="Background" Value="#CFD6E5"/>
-        <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
-        <Setter Property="FontWeight"  Value="Bold"/>
-        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        <Setter Property="BorderThickness" Value="0.6"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource $Color_DarkBlue}"/>
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="2,0,0,0"/>
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
     </Style>
 
     <Style TargetType="DataGridCell" x:Key="@DataGridCellStyle" >
-        <Setter Property="BorderThickness" Value="0.5"/>
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="{DynamicResource $SelectionColor_LightBlue}"/>
-                <Setter Property="Foreground" Value="White"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource $Color_DarkBlue}"/>
-                <Setter Property="BorderThickness" Value="0.8"/>
+                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
+                <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="BorderThickness" Value="0,1,0,1"/>
+                <Setter Property="FontWeight" Value="Bold"/>
             </Trigger>
-            <Trigger Property="IsEditing" Value="True">
-                <Setter Property="Background" Value="{DynamicResource $SelectionColor_VeryLightBlue}"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource $SelectionColor_VeryLightBlue}"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-
-            </Trigger>
+            <!--<Trigger Property="IsEditing" Value="True">
+                <Setter Property="Background" Value="{StaticResource $SelectionColor_Pink}"/>
+                --><!--<Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>--><!--
+            </Trigger>-->
         </Style.Triggers>
     </Style>
 

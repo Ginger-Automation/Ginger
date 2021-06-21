@@ -18,7 +18,7 @@
 
         <StackPanel Grid.Row="0">
             <StackPanel Orientation="Horizontal">
-                <Label Content="Locate By:" Style="{StaticResource $LabelStyle}"  VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Label x:Name="xLocateByLbl" Content="Locate By:" Style="{StaticResource $LabelStyle}"  VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 <ComboBox  x:Name="ElementLocateByComboBox"  Style="{StaticResource $FlatInputComboBoxStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="How to Locate the Element on the screen"  Margin="45,0,0,0"/>
             </StackPanel>
 

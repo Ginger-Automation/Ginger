@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -269,20 +269,23 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     pageContent = new UIElementDragAndDropEditPage(mAction, mPlatform);
                     break;
 
-                case eElementAction.DoubleClick:
-                case eElementAction.WinClick:
-                case eElementAction.MouseClick:
-                case eElementAction.MousePressRelease:
                 case eElementAction.ClickXY:
                 case eElementAction.DoubleClickXY:
                 case eElementAction.SendKeysXY:
+                    pageContent = new UIElementXYCoordinatePage(mAction);
+                    break;
+
+
+                case eElementAction.DoubleClick:
+                case eElementAction.WinClick:
+                case eElementAction.MouseClick:
+                case eElementAction.MousePressRelease:               
                     pageContent = null;
                     if ((mAction.Platform.Equals(ePlatformType.Java) && (mAction.ElementType.Equals(eElementType.RadioButton)
                                                                || mAction.ElementType.Equals(eElementType.CheckBox))
                                                                || mAction.ElementType.Equals(eElementType.ComboBox)
                                                                || mAction.ElementType.Equals(eElementType.Button)
-                                                               )
-                        || (mAction.Platform.Equals(ePlatformType.Web)))
+                                                               ))
                     {
                         pageContent = new UIElementXYCoordinatePage(mAction);
                     }
@@ -416,7 +419,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         propertyListString.Add(property.ToString());
                     }
 
-                    elementList.Add(GetElementConfigControl("Property Name", Fields.ValueToSelect, eElementType.ComboBox, propertyListString));
+                    elementList.Add(GetElementConfigControl("Property_Name", Fields.ValueToSelect, eElementType.ComboBox, propertyListString));
                     break;
                 case eElementAction.Switch:
                     if(mAction.ElementType.Equals(eElementType.Window))

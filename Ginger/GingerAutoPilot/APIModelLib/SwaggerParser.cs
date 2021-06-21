@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,20 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Repository;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NJsonSchema;
 using NSwag;
-
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.APIModelLib;
-using YamlDotNet;
 using System.IO;
+using System.Linq;
 using YamlDotNet.Serialization;
-using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Xml;
 
@@ -1218,7 +1219,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return list;
         }
         
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,bool isPOMLearn = false, string specificFramePath = null)
         {
             //TODO: impl
             return null;
@@ -1358,6 +1359,46 @@ namespace GingerCore.Drivers.InternalBrowserLib
         List<AppWindow> IWindowExplorer.GetWindowAllFrames()
         {
             throw new NotImplementedException();
+        }
+
+        public bool IsRecordingSupported()
+        {
+            return false;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return false;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return false;
+        }
+
+        public bool IsWinowSelectionRequired()
+        {
+            return true;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { /*eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView */ };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.none;
+        }
+
+        public string SelectionWindowText()
+        {
+            return "Page:";
+        }
+
+        public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
         }
     }
 }

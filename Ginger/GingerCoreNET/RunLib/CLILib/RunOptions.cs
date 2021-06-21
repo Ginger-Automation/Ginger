@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using CommandLine;
+using GingerCoreNET.SourceControl;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -34,15 +35,41 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         [Option('e', "env", Required = false, Default = "Default", HelpText = "Set environment name")]
         public string Environment { get; set; }
-        
+
 
         [Option('d', "do-not-analyze", Required = false, HelpText = "runAnalyzer")]
         public bool DoNotAnalyze { get; set; }
 
-        [Option('u', "showui", Required = false, Default = false, HelpText = "Show Auto Run Window UI - Windows only")]
+        [Option('i', "showui", Required = false, Default = false, HelpText = "Show Auto Run Window UI - Windows only")]
         public bool ShowUI { get; set; }
 
-        [Option('t', "artifacts-path", Required = false, HelpText = "Select Artifacts output directory")]
+        [Option('a', "artifacts-path", Required = false, HelpText = "Select Artifacts output directory")]
         public string TestArtifactsPath { get; set; }
+
+
+
+        [Option('t', "type", Required = false, HelpText = "Source Control Management type i.e: GIT, SVN")]
+        public SourceControlBase.eSourceControlType SCMType { get; set; }
+
+        [Option('h', "url", Required = false, HelpText = "Source Control URL")]
+        public string URL { get; set; }
+
+        [Option('u', "user", Required = false, HelpText = "Source Control User")]
+        public string User { get; set; }
+
+        [Option('p', "pass", Required = false, HelpText = "Source Control Pass")]
+        public string Pass { get; set; }
+
+        [Option('g', "encrypted", Required = false, Default = false, HelpText = "password is encrypted")]
+        public bool PasswordEncrypted { get; set; }
+
+        [Option('c', "ignoreCertificate", Required = false, HelpText = "Ignore certificate errors while cloning solution")]
+        public bool ignoreCertificate { get; set; }
+
+        [Option('g', "useScmShell", Required = false, HelpText = "Use shell Git Client")]
+        public bool useScmShell { get; set; }
+
+
     }
+
 }

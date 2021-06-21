@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestCases>
+<TestCase>
+	<Environment>PAR_ENV</Environment>
+	<Username>PAR_USER</Username>
+	<Password>PAR_PASS</Password>
+    <ResponseFile>ResponseExample.json</ResponseFile>
+    <RestMethod>GET</RestMethod>
+    <Bucket>PAR_BUCKET</Bucket>
+    <ValidationQuery>PAR_QUERY</ValidationQuery>
+</TestCase>
+</TestCases>

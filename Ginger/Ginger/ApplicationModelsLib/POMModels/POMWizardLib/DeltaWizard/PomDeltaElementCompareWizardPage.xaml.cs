@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     xStopLoadButton.IsEnabled = true;                    
                     xStopLoadButton.Visibility = Visibility.Visible;                    
 
-                    await Task.Run(() => mWizard.mPomDeltaUtils.LearnDelta());
+                    await mWizard.mPomDeltaUtils.LearnDelta();
                 }
                 catch (Exception ex)
                 {

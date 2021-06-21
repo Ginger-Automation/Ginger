@@ -1,10 +1,29 @@
-﻿using ALM_Common.Data_Contracts;
+#region License
+/*
+Copyright © 2014-2021 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using ALM_Common.Data_Contracts;
 using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.QC;
 using GingerCore.ALM.ZephyrEnt.Bll;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -23,6 +42,11 @@ namespace GingerCore.ALM
         private ZephyrEntImportManager zephyrEntImportManager;
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public override ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public override ObservableList<ApplicationPlatform> ApplicationPlatforms
+        {
+            get { return ZephyrEntImportManager.ApplicationPlatforms; }
+            set { ZephyrEntImportManager.ApplicationPlatforms = value; }
+        }
         public ZephyrEntCore()
         {
             zephyrEntRepository = new Zepyhr_Ent_Repository.ZephyrEntRepository(new LoginDTO()
@@ -180,13 +204,18 @@ namespace GingerCore.ALM
         {
             return zephyrEntRepository.GetTestRepositoryFolderType(treeId);
         }
+        public TreeNode GetTestRepositoryFolderById(int treeId)
+        {
+            return zephyrEntRepository.GetTestRepositoryFolderById(treeId);
+        }
         public override bool IsServerConnected()
         {
             throw new NotImplementedException();
         }
         public List<BaseResponseItem> GetTreeByCretiria(string type, int releaseId, int revisionId, int parentId)
         {
-            return zephyrEntRepository.GetTreeByCretiria(type, releaseId, revisionId, parentId);
+            TreeNode treeNode = zephyrEntRepository.GetTestRepositoryFolderById(parentId);
+            return zephyrEntRepository.GetTreeByCretiria(type, releaseId, Convert.ToInt32(treeNode.revision), parentId);
         }
 
         public List<BaseResponseItem> GetZephyrEntTreeData(int releaseId, string entityType, bool v2)
@@ -239,12 +268,13 @@ namespace GingerCore.ALM
             if (testInstance != null)
             {
                 //Regular TC
-                newTSTest.TestID = testInstance["id"].ToString();
+                newTSTest.TestID = testInstance["testcaseId"].ToString();
+                newTSTest.LinkedTestID = testInstance["id"].ToString();
                 newTSTest.TestName = testInstance["name"].ToString();
                 newTSTest.Description = testInstance["description"] == null ? "" : testInstance["description"].ToString();
             }
 
-            var testSteps = zephyrEntRepository.GetTeststepByTestcaseId(Convert.ToInt32(newTSTest.TestID), versionId);
+            var testSteps = zephyrEntRepository.GetTeststepByTestcaseId(Convert.ToInt32(newTSTest.LinkedTestID), versionId);
             //Get the TC design steps
             if (testSteps.Count > 0)
             {

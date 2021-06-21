@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -105,7 +105,7 @@ namespace GingerCore
         private static Regex VBSRegex = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
         private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
 
-        private static Regex rfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((.*)([^\\)}])*\\)}", RegexOptions.Compiled | RegexOptions.Singleline);
+        private static Regex rNestedfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\(([^()])*\\)}", RegexOptions.Compiled);
 
         // Enable setting value simply by assigned string, 
         // so no need to create new VE class everywhere in code
@@ -996,11 +996,12 @@ namespace GingerCore
                                 nextavail = true;
                             }
 
-                            if (litedbquery != "" && Markasdone == true)
+                            if (litedbquery != "" )
                             {
-                                liteDB.RunQuery(litedbquery, 0, tableName[0], Markasdone, nextavail);
+                                liteDB.RunQuery(litedbquery, rowNumber, tableName[0], Markasdone, nextavail);
                                 mValueCalculated = "";
                             }
+
                         }
                     }
                     else
@@ -1057,9 +1058,13 @@ namespace GingerCore
                 matches = VBSRegex.Matches(value);
                 if (matches.Count == 0)
                 {
-                    matches = rfunc.Matches(value);
+                    matches = rNestedfunc.Matches(value);
+
                     if (matches.Count == 0)
+                    {
                         return;
+                    }
+
                 }
             }
 
@@ -1095,8 +1100,9 @@ namespace GingerCore
 
         private void ProcessGeneralFuncations()
         {
-            MatchCollection mc = rfunc.Matches(mValueCalculated);
-            if(mc.Count==0)
+            var mc = rNestedfunc.Matches(mValueCalculated);
+
+            if (mc.Count==0)
             {
                 return;
             }

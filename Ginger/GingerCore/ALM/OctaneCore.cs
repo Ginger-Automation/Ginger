@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at 
@@ -24,6 +24,7 @@ using GingerCore.Activities;
 using GingerCore.ALM.Octane;
 using GingerCore.ALM.QC;
 using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Octane_Repository;
 using OctaneSdkStandard.Connector;
 using OctaneSdkStandard.Connector.Credentials;
@@ -54,6 +55,7 @@ namespace GingerCore.ALM
     {
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public override ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public override ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
         public ProjectArea ProjectArea { get; private set; }
         List<Release> releases;
         public RestConnector mOctaneRestConnector;
@@ -326,7 +328,7 @@ namespace GingerCore.ALM
                     newDefect.SetValue("severity", new BaseEntity()
                     {
                         TypeName = "list_node",
-                        Id = "list_node.severity." + defectForOpening.Value["severity"].ToLower()
+                        Id = defectForOpening.Value["severity"].Split('*')[1]
                     });
                 }
                 else
@@ -1142,7 +1144,7 @@ namespace GingerCore.ALM
 
                 tcActivsGroup.ExternalID2 = tc.TestID;
                 busFlow.AddActivitiesGroup(tcActivsGroup);
-                busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
+                busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
                 busFlow.AttachActivitiesGroupsAndActivities();
             }
             else //TC not exist in Ginger repository so create new one
@@ -1669,7 +1671,7 @@ namespace GingerCore.ALM
                                     test.SetValue(field.ExternalID, new BaseEntity()
                                     {
                                         TypeName = "list_node",
-                                        Id = "list_node.severity." + field.SelectedValue.ToLower()
+                                        Id = field.SelectedValue.Split('*')[1]
                                     });
                                 }
                                 else if (field.ExternalID == "detected_by")
@@ -1700,7 +1702,7 @@ namespace GingerCore.ALM
                                                 new BaseEntity()
                                                 {
                                                     TypeName = "list_node",
-                                                    Id = "list_node."+field.ExternalID +"."+field.SelectedValue.ToLower()
+                                                    Id = field.SelectedValue.Split('*')[1]
                                                 }
                                             }
                                         });
@@ -1710,7 +1712,7 @@ namespace GingerCore.ALM
                                         test.SetValue(field.ExternalID, new BaseEntity()
                                         {
                                             TypeName = "list_node",
-                                            Id = "list_node." + field.ExternalID + "." + field.SelectedValue
+                                            Id = field.SelectedValue.Split('*')[1]
                                         });
                                     }
                                 }
@@ -1832,3 +1834,4 @@ namespace GingerCore.ALM
         }
     }
 }
+

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -459,6 +459,20 @@ namespace Ginger.Variables
             finally
             {
                 Reporter.HideStatusMessage();
+            }
+        }
+
+        private void InputOutputChecked(object sender, RoutedEventArgs e)
+        {
+            xPublishcheckbox.Visibility = Visibility.Visible;
+        }
+
+        private void InputOutputUnChecked(object sender, RoutedEventArgs e)
+        {
+            if (xSetAsInputValueCheckBox.IsChecked == false && xSetAsOutputValueCheckBox.IsChecked == false)
+            {
+                xPublishcheckbox.IsChecked = false;
+                xPublishcheckbox.Visibility = Visibility.Collapsed;
             }
         }
     }

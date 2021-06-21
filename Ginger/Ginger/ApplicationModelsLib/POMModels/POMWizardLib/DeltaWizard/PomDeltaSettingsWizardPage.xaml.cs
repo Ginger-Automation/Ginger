@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -85,36 +85,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             if (mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList.Count == 0)
             {
-                switch (mAppPlatform)
-                {
-                    case ePlatformType.Web:
-                        SetPlatformAutoMapElements(new WebPlatform().GetPlatformElementTypesData().ToList());
-                        break;
-                    case ePlatformType.Java:
-                        var elementList = new JavaPlatform().GetUIElementFilterList();
-                        mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
-                        mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
-                        break;
-                }
+                var elementList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetUIElementFilterList();
+                mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
+                mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
             }
             xAutoMapBasicElementTypesGrid.DataSourceList = mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList;
             xAutoMapAdvancedElementTypesGrid.DataSourceList = mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList;
         }
 
-        private void SetPlatformAutoMapElements(List<PlatformInfoBase.ElementTypeData> elemenTypeDataList)
-        {
-            foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in elemenTypeDataList)
-            {
-                if (elementTypeOperation.IsCommonElementType)
-                {
-                    mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
-                }
-                else
-                {
-                    mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
-                }
-            }
-        }
 
        
 
@@ -122,15 +100,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             if (mWizard.mPomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList.Count == 0)
             {
-                switch (mAppPlatform)
-                {
-                    case ePlatformType.Web:
-                        mWizard.mPomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList = new WebPlatform().GetLearningLocators();
-                        break;
-                    case ePlatformType.Java:
-                        mWizard.mPomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList = new JavaPlatform().GetLearningLocators();
-                        break;
-                }
+                mWizard.mPomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetLearningLocators();
             }
             xElementLocatorsSettingsGrid.DataSourceList = mWizard.mPomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList;
         }

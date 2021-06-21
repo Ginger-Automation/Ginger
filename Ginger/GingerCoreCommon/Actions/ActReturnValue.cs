@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Expressions;
+using Amdocs.Ginger.Common.OS;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -86,7 +85,6 @@ namespace Amdocs.Ginger.Repository
 
         private string mExpectedCalculated;
         public string ExpectedCalculated { get { return mExpectedCalculated; } set { mExpectedCalculated = value; OnPropertyChanged(Fields.ExpectedCalculated); } }
-
         public string ExpectedCalculatedValue { get; set; }
         private eStatus mStatus { get; set; }
         public eStatus Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(Fields.Status); } }
@@ -133,8 +131,6 @@ namespace Amdocs.Ginger.Repository
                 OnPropertyChanged(Fields.StoreTo);
             }
         }
-
-       
 
         private string mStoreToValue;
         [IsSerializedForLocalRepository]

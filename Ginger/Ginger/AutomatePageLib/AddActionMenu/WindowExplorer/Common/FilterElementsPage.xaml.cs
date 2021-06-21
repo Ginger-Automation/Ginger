@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -82,16 +82,17 @@ namespace Ginger.WindowExplorer.Common
 
         private async void DoSearch(object sender, RoutedEventArgs e)
         {
+            _GenWin.Close();
+
             if (mWindowExlorerPage != null)
             {
-                mWindowExlorerPage.DoSearchControls();
+                await mWindowExlorerPage.DoSearchControls();
             }
             else if (mWindowsExplorerNavPage != null)
             {
-                mWindowsExplorerNavPage.DoSearchControls();
+                await mWindowsExplorerNavPage.DoSearchControls();
             }
             //bool isSearched = await Task.Run(() => mWindowExlorerPage.DoSearchControls());
-            _GenWin.Close();
             //int FoundItemsCount = mWindowExlorerPage.WindowControlsGridView.DataSourceList.Count;
             //if (isSearched)
             //{
@@ -101,7 +102,7 @@ namespace Ginger.WindowExplorer.Common
             //}
         }
 
-            private void SetControlsGridView()
+        private void SetControlsGridView()
         {
             //Set the Tool Bar look
             FilterElementsGridView.ShowTitle = Visibility.Collapsed;
@@ -133,8 +134,8 @@ namespace Ginger.WindowExplorer.Common
 
 
             int selectedItems = CountSelectedItems();
-            if (selectedItems < FilterElementsGridView.DataSourceList.Count)            
-                foreach (UIElementFilter UIEFActual in filteringCriteriaList)                
+            if (selectedItems < FilterElementsGridView.DataSourceList.Count)
+                foreach (UIElementFilter UIEFActual in filteringCriteriaList)
                     UIEFActual.Selected = true;
             else if (selectedItems == FilterElementsGridView.DataSourceList.Count)
                 foreach (UIElementFilter UIEFActual in filteringCriteriaList)
@@ -149,7 +150,7 @@ namespace Ginger.WindowExplorer.Common
             foreach (UIElementFilter UIEFActual in FilterElementsGridView.DataSourceList)
             {
                 if (UIEFActual.Selected)
-                     counter++;
+                    counter++;
             }
             return counter;
         }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,20 +18,19 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.SolutionCategories;
+using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using log4net;
-using log4net.Config;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Security;
 using System.Xml;
 
@@ -428,6 +427,21 @@ namespace GingerCoreNET.GeneralLib
                 Reporter.ToLog(eLogLevel.ERROR, "Error Occurred while exporting to excel", ex);
                 return false;
             }
+        }
+
+        public static string GetSolutionCategoryValue(SolutionCategoryDefinition solutionCategoryDefinition)
+        {
+            SolutionCategory cat = WorkSpace.Instance.Solution.SolutionCategories.Where(x => x.Category == solutionCategoryDefinition.Category).FirstOrDefault();
+            if (cat != null)
+            {
+                SolutionCategoryValue catValue = cat.CategoryOptionalValues.Where(x => x.Guid == solutionCategoryDefinition.SelectedValueID).FirstOrDefault();
+                if (catValue != null)
+                {
+                    return catValue.Value;
+                }
+            }
+
+            return null;
         }
     }
 

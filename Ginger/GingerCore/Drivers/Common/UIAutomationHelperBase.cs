@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,18 +29,14 @@ using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
+using System.Threading.Tasks;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Drivers.Common
 {
     public abstract class UIAutomationHelperBase
     {
-        public enum ePlatform
-        {
-            PowerBuilder,
-            Windows
-        }
-
-        public ePlatform mPlatform;
+        public ePlatformType mPlatform;
         int LastHighLightHWND = 0;
         public int? mLoadTimeOut;
 
@@ -146,7 +142,9 @@ namespace GingerCore.Drivers.Common
 
         public abstract object GetElementFromCursor();
 
-        public abstract List<ElementInfo> GetVisibleControls();
+        public abstract object GetElementAtPoint(System.Windows.Point point);
+
+        public abstract Task<List<ElementInfo>> GetVisibleControls();
                 
         public  ObservableList<ElementLocator> GetElementLocators(ElementInfo ei)
         {
@@ -170,7 +168,7 @@ namespace GingerCore.Drivers.Common
             }
             
             //TODO: Fix the issue with X,Y Calculations for Windows Driver. meanwhile showing x,y locator only for PB
-            if (mPlatform == ePlatform.PowerBuilder)
+            if (mPlatform == ePlatformType.PowerBuilder)
             {
                 double x;
                 double y;

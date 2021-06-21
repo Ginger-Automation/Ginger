@@ -20,11 +20,11 @@
         <ListBox.ItemTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Horizontal" Height="21.5" VerticalAlignment="Center">
-                    <TextBlock x:Name="xAppNameTextBlock" Text="{Binding Path=AppName}" ToolTip="{Binding Path=AppName}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" FontWeight="Normal" Width="70" FontSize="12" Style="{StaticResource $TextBlockStyle}" VerticalAlignment="Center" Margin="0,2,0,0"/>
+                    <TextBlock x:Name="xAppNameTextBlock" Text="{Binding Path=AppName}" ToolTip="{Binding Path=AppName}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" FontWeight="Normal" Width="100" FontSize="12" Style="{StaticResource $TextBlockStyle}" VerticalAlignment="Center" Margin="0,2,0,0"/>
 
                     <UserControls:ImageMakerControl ImageType="ArrowRight" SetAsFontImageWithSize="12" Width="12" Height="12" ToolTip="Mapped to..." Foreground="{Binding Path=Agent, Converter={StaticResource AgentForgroundTypeConverterKey}}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2,2,0"/>
 
-                    <ComboBox x:Name="xAgentNameComboBox" ContextMenu="{x:Null}" ItemsSource="{Binding Path=PossibleAgents, Mode=OneWay}" SelectedValue="{Binding Path=Agent}" DisplayMemberPath="Name" ToolTip="{Binding Path=AgentName}" Width="100" FontSize="12" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="2,0,0,0" DropDownOpened="XAgentNameComboBox_DropDownOpened" VerticalAlignment="Top" SelectionChanged="XAgentNameComboBox_SelectionChanged"/>
+                    <ComboBox x:Name="xAgentNameComboBox" ContextMenu="{x:Null}" ItemsSource="{Binding Path=PossibleAgents, Mode=OneWay}" SelectedValue="{Binding Path=Agent}" DisplayMemberPath="Name" ToolTip="{Binding Path=AgentName}" Width="150" FontSize="12" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="2,0,0,0" DropDownOpened="XAgentNameComboBox_DropDownOpened" VerticalAlignment="Top" SelectionChanged="XAgentNameComboBox_SelectionChanged"/>
 
                     <UserControls:ucButton x:Name="xStartCloseAgentBtn" ButtonType="ImageButton" HorizontalAlignment="Right" AutomationProperties.AutomationId="AID_StartCloseAgentBtn" ButtonFontImageSize="14" ButtonImageType="Power" Visibility="{Binding Path=Agent, Converter={StaticResource AgentVisibilityTypeConverterKey}}" ToolTip="{Binding Path=Agent.Status, Converter={StaticResource AgentStatusTooltipConverterKey}}" ButtonImageForground="{Binding Path=Agent.Status, Converter={StaticResource AgentStatusColorTypeConverterKey}}" Click="xStartCloseAgentBtn_Click" IsEnabled="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}, Path=Tag}" Margin="0,0,0,0"/>
                 </StackPanel>

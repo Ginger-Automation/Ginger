@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -59,5 +59,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         Task Execute(RunsetExecutor runsetExecutor);
 
         bool IsFileBasedConfig { get; }
+    }
+
+
+    /// <summary>
+    /// in which mode CLI processor was used
+    /// </summary>
+    public enum eGingerCLIMode
+    {
+        none, run, grid, config, script, dynamic
     }
 }

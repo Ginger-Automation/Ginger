@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -199,11 +199,9 @@ namespace Ginger.Actions
 
         private void BrowseJavaAppPath_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) 
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()) is string fileName)
             {
-                mAct.URL = dlg.FileName;
+                mAct.URL = fileName;
             }
         }
 

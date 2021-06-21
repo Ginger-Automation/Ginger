@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ using GingerCore.Platforms;
 using GingerCoreNET;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
@@ -35,7 +36,18 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     public partial class WindowsExplorerNavPage : Page, INavPanelPage
     {
         Context mContext;
-        IWindowExplorer mDriver;
+        private IWindowExplorer mWindowExplorerDriver;
+        IWindowExplorer WindowExplorerDriver
+        {
+            get
+            {
+                return mWindowExplorerDriver;
+            }
+            set
+            {
+                mWindowExplorerDriver = value;
+            }
+        }
         List<AgentPageMappingHelper> mWinExplorerPageList = null;
         WindowExplorerPage mCurrentLoadedPage = null;
 
@@ -48,11 +60,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             if (mContext.Agent != null)
             {
-                mDriver = mContext.Agent.Driver as IWindowExplorer;
+                WindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
             }
             else
             {
-                mDriver = null;
+                WindowExplorerDriver = null;
             }
 
             LoadWindowExplorerPage();            
@@ -71,11 +83,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     if (mContext.Agent != null)
                     {
-                        mDriver = mContext.Agent.Driver as IWindowExplorer;
+                        WindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
                     }
                     else
                     {
-                        mDriver = null;
+                        WindowExplorerDriver = null;
                     }
 
                     if (e.PropertyName == nameof(Context.Agent) && mContext.Agent != null)
@@ -84,7 +96,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     else
                     {
-                        mCurrentLoadedPage.SetDriver(mDriver);
+                        mCurrentLoadedPage.SetDriver(WindowExplorerDriver);
                     }
                 }
             }
@@ -94,9 +106,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// This method is used to do the search
         /// </summary>
         /// <returns></returns>
-        public bool DoSearchControls()
+        public async Task<bool> DoSearchControls()
         {            
-            return mCurrentLoadedPage.DoSearchControls();
+            return await mCurrentLoadedPage.DoSearchControls();
         }
 
         /// <summary>
@@ -125,7 +137,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     if (appAgent != null)
                     {
                         mCurrentLoadedPage = new WindowExplorerPage(appAgent, mContext);
-                        mCurrentLoadedPage.SetDriver(mDriver);
+                        mCurrentLoadedPage.SetDriver(WindowExplorerDriver);
                         if (mWinExplorerPageList == null)
                         {
                             mWinExplorerPageList = new List<AgentPageMappingHelper>();
@@ -142,15 +154,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mContext.Agent != null)
             {
-                mDriver = mContext.Agent.Driver as IWindowExplorer;
+                WindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
                 LoadWindowExplorerPage();
             }
             else
             {
-                mDriver = null;
+                WindowExplorerDriver = null;
             }
 
-            mCurrentLoadedPage.SetDriver(mDriver);
+            mCurrentLoadedPage.SetDriver(WindowExplorerDriver);
         }
     }
 }

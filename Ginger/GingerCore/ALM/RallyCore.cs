@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ using Rally.RestApi.Response;
 using GingerCore.ALM.Rally;
 using Amdocs.Ginger.Repository;
 using System.Linq;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM
 {
@@ -215,6 +216,12 @@ namespace GingerCore.ALM
         {
             get { return ImportFromRally.GingerActivitiesRepo; }
             set { ImportFromRally.GingerActivitiesRepo = value; }
+        }
+
+        public override ObservableList<ApplicationPlatform> ApplicationPlatforms
+        {
+            get { return ImportFromRally.ApplicationPlatforms; }
+            set { ImportFromRally.ApplicationPlatforms = value; }
         }
     }
 }

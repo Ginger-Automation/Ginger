@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using static GingerCoreNET.SourceControl.SourceControlBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -44,6 +45,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourceControlURL;
         public string SourcecontrolUser;
         public string sourceControlPass;
+        public eSourceControlType sourceControlType;
+        public bool sourceControlPassEncrypted;
         public eAppReporterLoggingLevel AppLoggingLevel;
 
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
@@ -181,7 +184,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             if (ShowAutoRunWindow)
             {
-                RepositoryItemHelper.RepositoryItemFactory.WaitForAutoRunWindowClose();
+                TargetFrameworkHelper.Helper.WaitForAutoRunWindowClose();
             }
         }
 
@@ -235,7 +238,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (ShowAutoRunWindow)
             {
                 Reporter.ToLog(eLogLevel.INFO, "Showing Auto Run Window");
-                RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
+                TargetFrameworkHelper.Helper.ShowAutoRunWindow();
             }
             else
             {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ using System.ComponentModel;
 using TDAPIOLELib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM
 {
@@ -79,7 +80,11 @@ namespace GingerCore.ALM
             get { return ImportFromQC.GingerActivitiesRepo; }
             set { ImportFromQC.GingerActivitiesRepo = value; }
         }
-
+        public override ObservableList<ApplicationPlatform> ApplicationPlatforms
+        {
+            get { return ImportFromQC.ApplicationPlatforms; }
+            set { ImportFromQC.ApplicationPlatforms = value; }
+        }
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
             return UpdatedAlmFields(ImportFromQC.GetALMItemFields());

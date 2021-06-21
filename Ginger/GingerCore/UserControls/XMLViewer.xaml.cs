@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using HtmlAgilityPack;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Xml;
@@ -31,6 +37,14 @@ namespace GingerCore.UserControls
     {
         private XmlDocument _xmldocument;
 
+        public TreeView XMLTree
+        {
+            get
+            {
+                return xmlTree;
+            }
+        }
+
         public XMLViewer()
         {
             InitializeComponent();
@@ -41,19 +55,28 @@ namespace GingerCore.UserControls
             get { return _xmldocument; }
             set
             {
-                _xmldocument = value;
-                BindXMLDocument();
+                if (_xmldocument != value)
+                {
+                    _xmldocument = value;
+                    ClearTreeItems();
+                    BindXMLDocument();
+                }
             }
         }
- 
+
+        public void ClearTreeItems()
+        {
+            xmlTree.ItemsSource = null;
+        }
+
         private void BindXMLDocument()
         {
             if (_xmldocument == null)
             {
-                xmlTree.ItemsSource = null;
+                ClearTreeItems();
                 return;
             }
- 
+
             XmlDataProvider provider = new XmlDataProvider();
             provider.Document = _xmldocument;
             Binding binding = new Binding();
@@ -61,5 +84,6 @@ namespace GingerCore.UserControls
             binding.XPath = "child::node()";
             xmlTree.SetBinding(TreeView.ItemsSourceProperty, binding);
         }
+
     }
 }

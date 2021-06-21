@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -71,7 +71,9 @@ namespace GingerCoreNET.SourceControl
 
         bool mSourceControlConfigureProxy;
         public bool SourceControlConfigureProxy { get { return mSourceControlConfigureProxy; } set { mSourceControlConfigureProxy = value; OnPropertyChanged(nameof(SourceControlConfigureProxy)); } }
-
+      
+        bool mIgnoreCertificate;
+        public bool IgnoreCertificate { get { return mIgnoreCertificate; } set { mIgnoreCertificate = value; } }
 
         string mSolutionSourceControlAuthorName;
         public string SolutionSourceControlAuthorName { get { return mSolutionSourceControlAuthorName; } set { mSolutionSourceControlAuthorName = value; OnPropertyChanged(nameof(SourceControlConfigureProxy)); } }

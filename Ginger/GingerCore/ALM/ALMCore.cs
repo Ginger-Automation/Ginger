@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.Rally;
 using GingerCore.ALM.RQM;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using OctaneSdkStandard.Connector.Credentials;
 using System;
 using System.Collections.Generic;
@@ -211,6 +212,11 @@ namespace GingerCore.ALM
             get; set;
         }
 
+        public abstract ObservableList<ApplicationPlatform> ApplicationPlatforms
+        {
+            get; set;
+        }
+
         internal ObservableList<ExternalItemFieldBase> UpdatedAlmFields(ObservableList<ExternalItemFieldBase> tempFieldsList)
         {
             AlmItemFields = new ObservableList<ExternalItemFieldBase>();
@@ -219,6 +225,13 @@ namespace GingerCore.ALM
                 AlmItemFields.Add((ExternalItemFieldBase)item.CreateCopy());
             }
             return tempFieldsList;
+        }
+
+        public void InitCoreObjs()
+        {
+            this.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            this.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            this.ApplicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms;
         }
     }
 }

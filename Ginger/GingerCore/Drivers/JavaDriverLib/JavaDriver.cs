@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
+using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -44,8 +45,6 @@ using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Windows.Input;
 using System.Windows.Threading;
-using GingerCore.Platforms.PlatformsInfo;
-using Amdocs.Ginger.Plugin.Core;
 
 namespace GingerCore.Drivers.JavaDriverLib
 {
@@ -132,7 +131,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             LocateElement,
             UnHighlight,
             GetWindowAllFrames,
-            GetFrameControls
+            GetFrameControls,
+            GetElementAtPoint
         }
         public override void StartDriver()
         {
@@ -519,6 +519,11 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     locateElement.LocateStatus = ElementLocator.eLocateStatus.Passed;
                     act.ExInfo += locateElement.LocateStatus;
+                    
+                    if(pomExcutionUtil.PriotizeLocatorPosition())
+                    {
+                        act.ExInfo += "Locator prioritized during self healing operation";
+                    }
                     break;
                 }
 
@@ -812,13 +817,13 @@ namespace GingerCore.Drivers.JavaDriverLib
                     PL.AddValue(actJavaBrowserElement.LocateValueCalculated);
                     PL.AddValue(actJavaBrowserElement.ImplicitWait);
                     List<string> jsList = new List<string>();
-                    jsList.Add(MinifyJS(Properties.Resources.html2canvas));
-                    jsList.Add(MinifyJS(Properties.Resources.ArrayBuffer));
-                    jsList.Add(MinifyJS(Properties.Resources.PayLoad));
-                    jsList.Add(MinifyJS(Properties.Resources.GingerHTMLHelper));
-                    jsList.Add(MinifyJS(Properties.Resources.GingerLibXPath));
-                    jsList.Add((Properties.Resources.wgxpath_install));
-                    jsList.Add(MinifyJS(Properties.Resources.jquery_min));
+                    jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.html2canvas, performManifyJS:true));
+                    jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.ArrayBuffer, performManifyJS: true));
+                    jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.PayLoad, performManifyJS: true));
+                    jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLHelper, performManifyJS: true));
+                    jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLibXPath, performManifyJS: true));
+                    jsList.Add((JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install)));
+                    jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min, performManifyJS: true));
                     PL.AddValue(jsList);
                     PL.ClosePackage();
 
@@ -2049,105 +2054,109 @@ namespace GingerCore.Drivers.JavaDriverLib
             return true;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
+            return await Task.Run(() =>
+            {
 
-            List<ElementInfo> list = new List<ElementInfo>();
+                List<ElementInfo> list = new List<ElementInfo>();
 
-            PayLoad Request;
-            PayLoad Response;
-            //Get Current window, Specific Frame controls
-            if (!string.IsNullOrEmpty(specificFramePath))
-            {
-                Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
-                Request.AddEnumValue(WindowExplorerOperationType.GetFrameControls);
-                Request.AddValue(specificFramePath);
-                Request.ClosePackage();
-            }
-            //Get Current window all Controls
-            else
-            {
-                Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
-                Request.AddEnumValue(WindowExplorerOperationType.GetCurrentWindowVisibleControls);
-                Request.ClosePackage();
-            }
-            Response = Send(Request);
-
-            if (Response.IsErrorPayLoad())
-            {
-                string ErrMsg = Response.GetErrorValue();
-                throw new Exception(ErrMsg);
-            }
-            else
-            {
-                List<PayLoad> ControlsPL = Response.GetListPayLoad();
-                foreach (var pl in ControlsPL)
+                PayLoad Request;
+                PayLoad Response;
+                //Get Current window, Specific Frame controls
+                if (!string.IsNullOrEmpty(specificFramePath))
                 {
-                    if (mStopProcess)
-                    {
-                        break;
-                    }
-                    JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
+                    Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+                    Request.AddEnumValue(WindowExplorerOperationType.GetFrameControls);
+                    Request.AddValue(specificFramePath);
+                    Request.ClosePackage();
+                }
+                //Get Current window all Controls
+                else
+                {
+                    Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+                    Request.AddEnumValue(WindowExplorerOperationType.GetCurrentWindowVisibleControls);
+                    Request.ClosePackage();
+                }
+                Response = Send(Request);
 
-                    if (isPOMLearn)
+                if (Response.IsErrorPayLoad())
+                {
+                    string ErrMsg = Response.GetErrorValue();
+                    throw new Exception(ErrMsg);
+                }
+                else
+                {
+                    List<PayLoad> ControlsPL = Response.GetListPayLoad();
+                    foreach (var pl in ControlsPL)
                     {
-                        if (ci.ElementType.Contains("browser") && ci.ElementTypeEnum.Equals(eElementType.Browser))
+                        if (mStopProcess)
                         {
-                            GetWidgetsElementList(filteredElementType, foundElementsList, ci.XPath);
+                            break;
+                        }
+                        JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
+
+                        if (isPOMLearn)
+                        {
+                            if (ci.ElementType.Contains("browser") && ci.ElementTypeEnum.Equals(eElementType.Browser))
+                            {
+                                GetWidgetsElementList(filteredElementType, foundElementsList, ci.XPath);
+                            }
+                            else
+                            {
+                                ((IWindowExplorer)this).LearnElementInfoDetails(ci);
+                                // set the Flag in case you wish to learn the element or not
+                                bool learnElement = true;
+                                if (filteredElementType != null)
+                                {
+                                    if (!filteredElementType.Contains(ci.ElementTypeEnum))
+                                        learnElement = false;
+                                }
+                                if (learnElement)
+                                {
+                                    ci.IsAutoLearned = true;
+                                    foundElementsList.Add(ci);
+                                }
+                            }
                         }
                         else
                         {
-                            ((IWindowExplorer)this).LearnElementInfoDetails(ci);
-                            // set the Flag in case you wish to learn the element or not
-                            bool learnElement = true;
-                            if (filteredElementType != null)
+                            list.Add(ci);
+                            List<ElementInfo> HTMLControlsPL = new List<ElementInfo>();
+                            if (ci.ElementTypeEnum == eElementType.Browser)
                             {
-                                if (!filteredElementType.Contains(ci.ElementTypeEnum))
-                                    learnElement = false;
-                            }
-                            if (learnElement)
-                            {
-                                ci.IsAutoLearned = true;
-                                foundElementsList.Add(ci);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        list.Add(ci);
-                        List<ElementInfo> HTMLControlsPL = new List<ElementInfo>();
-                        if (ci.ElementTypeEnum == eElementType.Browser)
-                        {
-                            PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
-                            String flag = PL.GetValueString();
+                                PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
+                                String flag = PL.GetValueString();
 
-                            if (flag.Contains("True"))
-                            {
-                                InitializeBrowser(ci);
+                                if (flag.Contains("True"))
+                                {
+                                    InitializeBrowser(ci);
 
+                                    HTMLControlsPL = GetBrowserVisibleControls();
+                                    if (HTMLControlsPL != null)
+                                        list.AddRange(HTMLControlsPL);
+                                }
+                            }
+                            //TODO: J.G. use elementTypeEnum instead of contains
+                            else if (ci.ElementType != null && ci.ElementType.Contains("JEditor"))
+                            {
+                                InitializeJEditorPane(ci);
                                 HTMLControlsPL = GetBrowserVisibleControls();
                                 if (HTMLControlsPL != null)
                                     list.AddRange(HTMLControlsPL);
                             }
                         }
-                        //TODO: J.G. use elementTypeEnum instead of contains
-                        else if (ci.ElementType != null && ci.ElementType.Contains("JEditor"))
-                        {
-                            InitializeJEditorPane(ci);
-                            HTMLControlsPL = GetBrowserVisibleControls();
-                            if (HTMLControlsPL != null)
-                                list.AddRange(HTMLControlsPL);
-                        }
+
                     }
-
                 }
-            }
 
-            if (isPOMLearn)
-            {
-                list = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
-            }
-            return list;
+                if (isPOMLearn)
+                {
+                    list = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
+                }
+                return list;
+
+            });
 
         }
 
@@ -2203,13 +2212,13 @@ namespace GingerCore.Drivers.JavaDriverLib
         public List<string> GetJSFilesList()
         {
             List<string> jsList = new List<string>();
-            jsList.Add(MinifyJS(Properties.Resources.html2canvas));
-            jsList.Add(MinifyJS(Properties.Resources.ArrayBuffer));
-            jsList.Add(MinifyJS(Properties.Resources.PayLoad));
-            jsList.Add(MinifyJS(Properties.Resources.GingerHTMLHelper));
-            jsList.Add(MinifyJS(Properties.Resources.GingerLibXPath));
-            jsList.Add((Properties.Resources.wgxpath_install));
-            jsList.Add(MinifyJS(Properties.Resources.jquery_min));
+            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.html2canvas, performManifyJS: true)); 
+            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.ArrayBuffer, performManifyJS: true));
+            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.PayLoad, performManifyJS: true));
+            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLHelper, performManifyJS: true));
+            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLibXPath, performManifyJS: true));
+            jsList.Add((JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install)));
+            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min, performManifyJS: true));
 
             return jsList;
         }
@@ -2237,13 +2246,13 @@ namespace GingerCore.Drivers.JavaDriverLib
             PL.AddValue(JEI.XPath);
             PL.AddValue(120);// We giving default wait time of 120 seconds for initialize browser to finish
             List<string> jsList = new List<string>();
-            jsList.Add(MinifyJS(Properties.Resources.html2canvas));
-            jsList.Add(MinifyJS(Properties.Resources.ArrayBuffer));
-            jsList.Add(MinifyJS(Properties.Resources.PayLoad));
-            jsList.Add(MinifyJS(Properties.Resources.GingerHTMLHelper));
-            jsList.Add(MinifyJS(Properties.Resources.GingerLibXPath));
-            jsList.Add((Properties.Resources.wgxpath_install));
-            jsList.Add(MinifyJS(Properties.Resources.jquery_min));
+            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.html2canvas, performManifyJS: true));
+            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.ArrayBuffer, performManifyJS: true));
+            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.PayLoad, performManifyJS: true));
+            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLHelper, performManifyJS: true));
+            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLibXPath, performManifyJS: true));
+            jsList.Add((JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install)));
+            jsList.Add(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min, performManifyJS: true));
             PL.AddValue(jsList);
             PL.ClosePackage();
             General.DoEvents();
@@ -2314,18 +2323,18 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
-        private string MinifyJS(string script)
-        {
-            var minifier = new Microsoft.Ajax.Utilities.Minifier();
-            var minifiedString = minifier.MinifyJavaScript(script);
-            if (minifier.Errors.Count > 0)
-            {
-                //There are ERRORS !!!
-                Console.WriteLine(script);
-                return null;
-            }
-            return minifiedString + ";";
-        }
+        //private string MinifyJS(string script)
+        //{
+        //    var minifier = new Microsoft.Ajax.Utilities.Minifier();
+        //    var minifiedString = minifier.MinifyJavaScript(script);
+        //    if (minifier.Errors.Count > 0)
+        //    {
+        //        //There are ERRORS !!!
+        //        Console.WriteLine(script);
+        //        return null;
+        //    }
+        //    return minifiedString + ";";
+        //}
 
 
 
@@ -2467,7 +2476,12 @@ namespace GingerCore.Drivers.JavaDriverLib
                     if (valueList.Count != 0)
                         PValue = valueList.ElementAt(0);
                 }
-                list.Add(new ControlProperty() { Name = PName, Value = PValue });
+
+                if (!string.IsNullOrEmpty(PValue))
+                {
+                    list.Add(new ControlProperty() { Name = PName, Value = PValue });
+                }
+
             }
             //TODO:J.G: Fix it for JEDITOR Elements
 
@@ -2579,7 +2593,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             if (!(String.IsNullOrEmpty(bName)))
             {
-                ElementLocator locator = new ElementLocator();
+                ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                 if (ElementInfo.XPath == "/") // If it is root node the  only by title is applicable
                     locator.LocateBy = eLocateBy.ByTitle;
                 else
@@ -2592,7 +2606,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 if (ElementInfo.XPath != "/")
                 {
-                    ElementLocator locator = new ElementLocator();
+                    ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                     locator.LocateBy = eLocateBy.ByXPath;
                     locator.LocateValue = ElementInfo.XPath;
                     locatorList.Add(locator);
@@ -2606,7 +2620,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     if (ElementInfo.XPath != "/")
                     {
-                        ElementLocator locator = new ElementLocator();
+                        ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                         locator.LocateBy = eLocateBy.ByRelXPath;
                         locator.LocateValue = ((HTMLElementInfo)ElementInfo).RelXpath;
                         locatorList.Add(locator);
@@ -2617,7 +2631,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     if (ElementInfo.XPath != "/" && !ElementInfo.ElementType.Contains("JEditor"))//?????????
                     {
-                        ElementLocator locator = new ElementLocator();
+                        ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                         locator.LocateBy = eLocateBy.ByID;
                         locator.LocateValue = ((HTMLElementInfo)ElementInfo).ID;
                         locatorList.Add(locator);
@@ -2628,14 +2642,13 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     if (!String.IsNullOrEmpty(ElementInfo.Path))
                     {
-                        ElementLocator locator = new ElementLocator();
+                        ElementLocator locator = new ElementLocator() { IsAutoLearned = true, Active = true };
                         locator.LocateBy = eLocateBy.ByCSSSelector;
                         locator.LocateValue = ((HTMLElementInfo)ElementInfo).Path;
                         locatorList.Add(locator);
                     }
                 }
             }
-            locatorList.ToList().ForEach(x => x.IsAutoLearned = true);
             return locatorList;
         }
 
@@ -2787,7 +2800,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad plJE = new PayLoad("CheckJExplorerExists");
             plJE.ClosePackage();
 
-            string recordingScript = MinifyJS(Properties.Resources.GingerHTMLRecorder);
+            string recordingScript = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLRecorder, performManifyJS: true);
             List<string> jsList = GetJSFilesList();
 
             PayLoad rPlJE = Send(plJE);
@@ -2796,7 +2809,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(rPlJE);
                 InitializeBrowser(ci);
-                recordingScript = MinifyJS(Properties.Resources.GingerHTMLRecorder);
+                recordingScript = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLRecorder, performManifyJS: true);
 
                 //Adding automatically action for InitializeBrowser when recording starts 
                 //and JExplorer browser is visible. 
@@ -3917,6 +3930,86 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
 
             return optionalValues;
+        }
+
+        public async Task<ElementInfo> GetElementAtPoint(long ptX, long ptY)
+        {
+            PayLoad Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+            Request.AddEnumValue(WindowExplorerOperationType.GetElementAtPoint);
+            Request.AddValue(ptX + "_" + ptY);
+            Request.ClosePackage();
+            General.DoEvents();
+
+            PayLoad Response = Send(Request);
+            if (!(Response.IsErrorPayLoad()))
+            {
+                if (Response.Name == "HTMLElement")
+                {
+                    return GetHTMLElementInfoFromPL(Response);
+                }
+                else if (Response.Name == "RequireInitializeBrowser")
+                {
+                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                    JavaElementInfo JE = (JavaElementInfo)GetControlInfoFromPayLoad(Response);
+                    InitializeBrowser(JE);
+                    //Adding automatically action for InitializeBrowser
+                    BusinessFlow.AddAct(new ActBrowserElement
+                    {
+                        Description = "Initialize Browser Automatically - JExplorerBrowser",
+                        LocateBy = eLocateBy.ByXPath,
+                        LocateValue = JE.XPath,
+                        Value = ""
+                    });
+
+                    Mouse.OverrideCursor = null;
+                    Reporter.ToUser(eUserMsgKey.InitializeBrowser);
+                    return null;
+                }
+                else
+                    return GetControlInfoFromPayLoad(Response);
+            }
+            return null;
+            throw new NotImplementedException();
+        }
+
+        public bool IsRecordingSupported()
+        {
+            return true;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return true;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return true;
+        }
+
+        public bool IsWinowSelectionRequired()
+        {
+            return true;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { eTabView.GridView, eTabView.TreeView };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.TreeView;
+        }
+
+        public string SelectionWindowText()
+        {
+            return "Window:";
+        }
+
+        public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
         }
     }
 }

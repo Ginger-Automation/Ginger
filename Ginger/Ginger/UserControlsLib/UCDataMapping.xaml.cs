@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -155,7 +155,7 @@ namespace Ginger.UserControlsLib
             }
             else if (MappedType == eDataType.OutputVariable.ToString())
             {
-                BindingHandler.ObjFieldBinding(xOptionalValuesComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedValueGUID));
+                BindingHandler.ObjFieldBinding(xOptionalValuesComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedValue));
             }
             else if (MappedType == eDataType.ApplicationModelParameter.ToString())
             {
@@ -256,7 +256,8 @@ namespace Ginger.UserControlsLib
 
             if ((MappedType != eDataType.None.ToString() && MappedValue == string.Empty)
                 || (MappedType == eDataType.Variable.ToString() && !GingerCore.General.CheckComboItemExist(xVariablesComboBox, MappedValue))
-                || ((MappedType == eDataType.OutputVariable.ToString() || MappedType == eDataType.GlobalVariable.ToString() || MappedType == eDataType.ApplicationModelParameter.ToString()) && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, "Guid"))
+                || ((MappedType == eDataType.OutputVariable.ToString() && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, nameof(VariableBase.VariableInstanceInfo)))
+                || (MappedType == eDataType.GlobalVariable.ToString() || MappedType == eDataType.ApplicationModelParameter.ToString()) && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, "Guid"))
                 || (MappedType == eDataType.DataSource.ToString() && GingerCoreNET.GeneralLib.General.CheckDataSource(MappedValue, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>()) != string.Empty))               
             {
                 isValid = false;
@@ -324,9 +325,9 @@ namespace Ginger.UserControlsLib
             }
             else if (MappedType == eDataType.OutputVariable.ToString())
             {
-                xOptionalValuesComboBox.DisplayMemberPath = nameof(VariableBase.Name);
-                xOptionalValuesComboBox.SelectedValuePath = nameof(VariableBase.Guid);
-                xOptionalValuesComboBox.ItemsSource = mOutputVariablesList.OrderBy(nameof(VariableBase.Name));
+                xOptionalValuesComboBox.DisplayMemberPath = nameof(VariableBase.Path);
+                xOptionalValuesComboBox.SelectedValuePath = nameof(VariableBase.VariableInstanceInfo);
+                xOptionalValuesComboBox.ItemsSource = mOutputVariablesList;
             }
             else if (MappedType == eDataType.ApplicationModelParameter.ToString())
             {

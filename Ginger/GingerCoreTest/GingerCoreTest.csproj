@@ -76,8 +76,6 @@
     <Compile Include="Misc\UsedVariablesTest.cs" />
     <Compile Include="Misc\ValueExpressionTest.cs" />
     <Compile Include="Misc\ScriptTest.cs" />
-    <Compile Include="Misc\WebServicesTest.cs" />
-    <Compile Include="Misc\XLSFunctionsTest.cs" />
     <Compile Include="Misc\XMLTagValidationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Script\VBSDateTimeTests.cs" />
