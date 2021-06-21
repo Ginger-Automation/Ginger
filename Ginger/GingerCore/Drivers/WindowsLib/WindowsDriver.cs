@@ -546,7 +546,7 @@ namespace GingerCore.Drivers.WindowsLib
             AutomationElement elementToValidate = (AutomationElement)mUIAutomationHelper.FindElementByLocator(validationElementLocateby, validattionElementLocateValue);
 
             //perform click
-            bool isClicked = mUIElementOperationsHelper.performClick(automationElement, clickType);
+            bool isClicked = mUIElementOperationsHelper.PerformClick(automationElement, clickType);
             if (isClicked)
             {
                 //validate
