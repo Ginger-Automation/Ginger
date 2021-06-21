@@ -1301,6 +1301,7 @@ namespace Amdocs.Ginger.CoreNET
             switch(ElementTag.ToLower())
             {
                 case "android.widget.edittext":
+                case "xcuielementtypetextfield":
                     return eElementType.TextBox;
 
                 case "android.widget.button":
@@ -1309,6 +1310,8 @@ namespace Amdocs.Ginger.CoreNET
                 case "android.widget.imageview":
                 case "android.widget.imagebutton":
                 case "android.widget.switch":
+                case "xcuielementtypebutton":
+                case "xcuielementtypeswitch":
                     return eElementType.Button;
 
                 case "android.widget.spinner":
@@ -1324,6 +1327,7 @@ namespace Amdocs.Ginger.CoreNET
                     return eElementType.Label;
 
                 case "android.widget.image":
+                case "xcuielementtypeimage":
                     return eElementType.Image;
 
                 case "android.widget.radiobutton":
@@ -1333,10 +1337,21 @@ namespace Amdocs.Ginger.CoreNET
                 case "android.widget.canvas":
                 case "android.widget.linearlayout":
                 case "android.widget.relativelayout":
+                case "xcuielementtypeother":
                     return eElementType.Canvas;
 
                 case "xcuielementtypetab":
                     return eElementType.Tab;
+
+                case "xcuielementtypebrowser":
+                    return eElementType.Browser;
+
+                case "xcuielementtypetable":
+                    return eElementType.Table;
+
+                case "xcuielementtypetablerow":
+                case "xcuielementtypetablecolumn":
+                    return eElementType.TableItem;
 
                 case "xcuielementtypelink":
                     return eElementType.HyperLink;
