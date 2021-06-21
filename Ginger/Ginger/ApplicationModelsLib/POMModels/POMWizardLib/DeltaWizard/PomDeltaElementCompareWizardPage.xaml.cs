@@ -76,7 +76,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     xStopLoadButton.IsEnabled = true;                    
                     xStopLoadButton.Visibility = Visibility.Visible;                    
 
-                    await Task.Run(() => mWizard.mPomDeltaUtils.LearnDelta());
+                    await mWizard.mPomDeltaUtils.LearnDelta();
                 }
                 catch (Exception ex)
                 {

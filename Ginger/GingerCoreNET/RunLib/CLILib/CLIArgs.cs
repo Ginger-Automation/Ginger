@@ -19,6 +19,7 @@ limitations under the License.
 using CommandLine;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
+using GingerCore;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -37,7 +38,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 return null;
             }
         }
-        
+
         public string CreateConfigurationsContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             RunOptions options = new RunOptions();
@@ -55,6 +56,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             options.PasswordEncrypted = cliHelper.sourceControlPassEncrypted;
             options.SCMType = cliHelper.sourceControlType;
 
+            if (cliHelper.DownloadUpgradeSolutionFromSourceControl)
+            {
+
+                options.URL = solution.SourceControl.SourceControlURL;
+                options.User = solution.SourceControl.SourceControlUser;
+              
+                options.Pass = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+
+                options.PasswordEncrypted = true;
+                options.SCMType = solution.SourceControl.GetSourceControlType;
+            }
+           
             var args = CommandLine.Parser.Default.FormatCommandLine<RunOptions>(options);
 
             // !!!!!!!!!!!!!!!!!!!
@@ -89,6 +102,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void LoadGeneralConfigurations(string content, CLIHelper cliHelper)
         {
+  
+            cliHelper.SetSourceControlPassword(cliHelper.sourceControlPass);
+            cliHelper.PasswordEncrypted(cliHelper.sourceControlPassEncrypted.ToString());
+
 
         }
 

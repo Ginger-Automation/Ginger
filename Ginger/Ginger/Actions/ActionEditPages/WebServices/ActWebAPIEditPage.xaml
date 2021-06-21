@@ -38,7 +38,7 @@
                     <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">Response Content Type:</Label>
                     <UserControlsLib:UCComboBox x:Name="ResponseTypeComboBox"></UserControlsLib:UCComboBox>
                 </StackPanel>
-                <StackPanel Width="160" Margin="10,0,10,0">
+                <StackPanel Width="195" Margin="10,0,10,0">
                     <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">Cookies:</Label>
                     <UserControlsLib:UCComboBox x:Name="CookieMode"></UserControlsLib:UCComboBox>
                 </StackPanel>

@@ -80,7 +80,7 @@ namespace GingerCore.Drivers.PBDriver
                     mUIAutomationHelper = new UIAComWrapperHelper();
                     ((UIAComWrapperHelper)mUIAutomationHelper).WindowExplorer = this;
                     ((UIAComWrapperHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
-                    ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = UIAComWrapperHelper.ePlatform.PowerBuilder;
+                    ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = ePlatformType.PowerBuilder;
                     break;
                                    
             }
@@ -991,7 +991,6 @@ namespace GingerCore.Drivers.PBDriver
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             HighLightElement(ElementInfo);
-            
         }
         string IWindowExplorer.GetFocusedControl()
         {
@@ -1081,7 +1080,6 @@ namespace GingerCore.Drivers.PBDriver
         
         void IWindowExplorer.UnHighLightElements()
         {
-            throw new NotImplementedException();
         }
 
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
@@ -1220,6 +1218,11 @@ namespace GingerCore.Drivers.PBDriver
         public string SelectionWindowText()
         {
             return "Window:";
+        }
+
+        public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
         }
     }
 }

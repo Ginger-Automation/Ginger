@@ -277,6 +277,10 @@
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrFolderTreeItem.cs" />
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrCycleTreeItem.cs" />
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrVersionTreeItem.cs" />
+    <Compile Include="ALM\Qtest\QtestModuleExplorerPage.xaml.cs">
+      <DependentUpon>QtestModuleExplorerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\Qtest\TreeViewItems\QtestModuleTreeItem.cs" />
     <Compile Include="ALM\Repository\OctaneRepository.cs" />
     <Compile Include="ALM\Qtest\QtestCyclesExplorerPage.xaml.cs">
       <DependentUpon>QtestCyclesExplorerPage.xaml</DependentUpon>
@@ -404,6 +408,9 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaSettingsWizardPage.xaml.cs">
       <DependentUpon>PomDeltaSettingsWizardPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaMappingElementsComparePage.xaml.cs">
+      <DependentUpon>PomDeltaMappingElementsComparePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaViewPage.xaml.cs">
       <DependentUpon>PomDeltaViewPage.xaml</DependentUpon>
     </Compile>
@@ -503,6 +510,15 @@
     </Compile>
     <Compile Include="Run\RunSetActions\RunSetActionSendDataToExternalSourceEditPage.xaml.cs">
       <DependentUpon>RunSetActionSendDataToExternalSourceEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionCategories\SolutionCategoriesPage.xaml.cs">
+      <DependentUpon>SolutionCategoriesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml.cs">
+      <DependentUpon>SolutionCategoryOptionalValuesEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\LiveSpyHandler.xaml.cs">
+      <DependentUpon>LiveSpyHandler.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\TextEditor\ValueExpression\ValueExpressionFlowDetailsEditorPage.xaml.cs">
       <DependentUpon>ValueExpressionFlowDetailsEditorPage.xaml</DependentUpon>
@@ -2566,6 +2582,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ALM\Qtest\QtestModuleExplorerPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ALM\ZephyrEnt\ZephyrEntRepositoryExplorerPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2746,6 +2766,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaMappingElementsComparePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2909,6 +2933,18 @@
     <Page Include="RunSetPageLib\RunsetRunnersConfigPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SolutionCategories\SolutionCategoriesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\LiveSpyHandler.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\TextEditor\ValueExpression\ValueExpressionFlowDetailsEditorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -4750,6 +4786,9 @@
     </PackageReference>
     <PackageReference Include="NSwag.Core.Yaml">
       <Version>12.0.9</Version>
+    </PackageReference>
+    <PackageReference Include="Oracle.ManagedDataAccess">
+      <Version>19.10.1</Version>
     </PackageReference>
     <PackageReference Include="RestSharp">
       <Version>106.11.4</Version>

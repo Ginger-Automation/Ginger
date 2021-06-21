@@ -609,6 +609,7 @@ namespace Ginger
                 //lblSearch.Visibility = value;
                 txtSearch.Visibility = value;
                 btnClearSearch.Visibility = value;
+                xSearchBtn.Visibility = value;
             }
         }
         public Visibility ShowToolsBar
@@ -804,6 +805,11 @@ namespace Ginger
             btnCopy.Click += handler;
         }
 
+        public void SetRefreshBtnHandler(RoutedEventHandler handler)
+        {
+            btnRefresh.Click += handler;
+        }
+
         public void SetbtnPastHandler(RoutedEventHandler handler)
         {
             btnPaste.Click -= new System.Windows.RoutedEventHandler(btnPaste_Click);
@@ -875,7 +881,10 @@ namespace Ginger
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             //Cancel editing incase of user started search without going out of cell edit.
+            this.grdMain.CommitEdit(DataGridEditingUnit.Row, true);
+            this.grdMain.CommitEdit();
             this.grdMain.CancelEdit(DataGridEditingUnit.Row);
+            this.grdMain.CancelEdit();
             if (txtSearch.Text.Length > 0)
             {
                 btnClearSearch.Visibility = Visibility.Visible;
@@ -904,7 +913,7 @@ namespace Ginger
                 {
                     this.Dispatcher.Invoke(() =>
                     {
-                        CollectFilterData();
+                        CollectFilterData();                       
                         mCollectionView.Refresh();
                     });
                 }
@@ -1504,7 +1513,68 @@ public void RemoveCustomView(string viewName)
             return template;
         }
 
-        
+        public static DataTemplate GetGridComboBoxTemplate(string valuesListField, string selectedValueField, string selectedValuePathField, string displayMemberPathField, bool allowEdit = false, bool selectedByDefault = false,
+                                                            string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null, Style style=null)
+        {
+            DataTemplate template = new DataTemplate();
+            FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));
+
+            Binding valuesBinding = new Binding(valuesListField);
+            valuesBinding.Mode = BindingMode.TwoWay;
+            valuesBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            combo.SetBinding(ComboBox.ItemsSourceProperty, valuesBinding);
+
+            Binding selectedValueBinding = new Binding(selectedValueField);
+            selectedValueBinding.Mode = BindingMode.TwoWay;
+            selectedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            combo.SetBinding(ComboBox.SelectedValueProperty, selectedValueBinding);
+
+            if (!string.IsNullOrEmpty(selectedValuePathField))
+            {
+                combo.SetValue(ComboBox.SelectedValuePathProperty, selectedValuePathField);
+            }
+
+            if (!string.IsNullOrEmpty(displayMemberPathField))
+            {
+                combo.SetValue(ComboBox.DisplayMemberPathProperty, displayMemberPathField);
+            }
+
+            if (isreadonly)
+            {
+                Binding ReadonlyBinding = new Binding(readonlyfield);
+                ReadonlyBinding.Mode = BindingMode.OneWay;
+                ReadonlyBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                combo.SetBinding(ComboBox.IsHitTestVisibleProperty, ReadonlyBinding);
+            }
+            else
+            {
+                if (allowEdit == true)
+                {
+                    combo.SetValue(ComboBox.IsEditableProperty, true);
+                }
+            }
+
+            if (selectedByDefault == true)
+            {
+                {
+                    combo.SetValue(ComboBox.SelectedIndexProperty, 0);
+                }
+            }
+
+            if (comboSelectionChangedHandler != null)
+            {
+                combo.AddHandler(ComboBox.SelectionChangedEvent, comboSelectionChangedHandler);
+            }
+
+            if (style != null)
+            {
+                combo.SetValue(ComboBox.StyleProperty, style);
+            }
+
+            template.VisualTree = combo;
+            return template;
+        }
+
 
         public static DataTemplate getDataColValueExpressionTemplate(string Path,Context context)
         {

@@ -315,8 +315,7 @@ namespace Ginger.ALM.Repository
                 }
 
                 //Refresh Ginger repository and allow GingerQC to use it
-                ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-                ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                ALMIntegration.Instance.AlmCore.InitCoreObjs();
 
                 foreach (JiraZephyrTreeItem obj in selectedObjects)
                 {
@@ -401,8 +400,7 @@ namespace Ginger.ALM.Repository
 
         private void SetImportedTS(JiraTestSet importedTS, string importDestinationPath)
         {
-            ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-            ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ALMIntegration.Instance.AlmCore.InitCoreObjs();
             try
             {
                 //import test set data

@@ -42,7 +42,7 @@
                     <Button x:Name="btnSaveSelectedChanges" ToolTip="Save Selected Changes" Visibility="Collapsed">
                         <Image Source="{DynamicResource @Save_16x16}"/>
                     </Button>
-                    <Button x:Name="btnRefresh" usercontrols:ImageMaker.Content="Refresh" Width="20" ToolTip="Refresh" Click="btnSaveAllChanges_Click">
+                    <Button x:Name="btnRefresh" usercontrols:ImageMaker.Content="Refresh" Width="20" ToolTip="Refresh">
                     </Button>
                     <Button x:Name="btnUndo" ToolTip="Undo Delete Changes" Click="btnUndo_Click" Visibility="Collapsed">
                         <Image Source="{DynamicResource @Undo_16x16}" />

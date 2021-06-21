@@ -84,6 +84,18 @@ namespace Ginger.ALM.Repository
 
         public override string SelectALMTestPlanPath()
         {
+            //show Test Modules for selecting the Path
+            QtestModuleExplorerPage win = new QtestModuleExplorerPage();
+            object selectedPathObject = win.ShowAsWindow(eWindowShowStyle.Dialog);
+            if (selectedPathObject is QtestModuleTreeItem)
+            {
+                return ((QtestModuleTreeItem)selectedPathObject).ID.ToString();
+            }
+            return string.Empty;
+        }
+
+        public override string SelectALMTestLabPath()
+        {
             //show Test Cycles browser for selecting the Path
             QtestCyclesExplorerPage win = new QtestCyclesExplorerPage(string.Empty, true);
             object selectedPathObject = win.ShowAsWindow(eWindowShowStyle.Dialog);
@@ -96,13 +108,6 @@ namespace Ginger.ALM.Repository
                 return ((QtestCycleTreeItem)selectedPathObject).ID.ToString();
             }
             return string.Empty;
-        }
-
-        public override string SelectALMTestLabPath()
-        {
-            //show Test Lab browser for selecting the Test Set/s
-            QCTestLabExplorerPage win = new QCTestLabExplorerPage(QCTestLabExplorerPage.eExplorerTestLabPageUsageType.BrowseFolders);
-            return (string)win.ShowAsWindow(eWindowShowStyle.Dialog);
         }
 
         public override List<string> GetTestLabExplorer(string path)
@@ -172,8 +177,7 @@ namespace Ginger.ALM.Repository
                 }
 
                 //Refresh Ginger repository and allow GingerQC to use it
-                ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();               
-                ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                ALMIntegration.Instance.AlmCore.InitCoreObjs();
 
                 foreach (QtestSuiteTreeItem testSetItemtoImport in testSuitesItemsToImport)
                 {
@@ -317,7 +321,7 @@ namespace Ginger.ALM.Repository
             return false;
         }
 
-        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Silence, string parentObjectId = null, string testLabUploadPath = null)
+        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Silence, string parentObjectId = null, string testCaseParentObjectId = null)
         {
             if (businessFlow == null)
             {
@@ -379,14 +383,14 @@ namespace Ginger.ALM.Repository
                 if (matchingTC == null && String.IsNullOrEmpty(parentObjectId))
                 {
                     //get the QC Test Plan path to upload the activities group to
-                    parentObjectId = SelectALMTestPlanPath();
-                    if (String.IsNullOrEmpty(parentObjectId))
+                    testCaseParentObjectId = SelectALMTestPlanPath();
+                    if (String.IsNullOrEmpty(testCaseParentObjectId))
                     {
                         //no path to upload to
                         return false;
                     }
                 }
-                ExportActivitiesGroupToALM(ag, parentObjectId);
+                ExportActivitiesGroupToALM(ag, testCaseParentObjectId);
             }
 
             if (matchingTS == null && string.IsNullOrEmpty(parentObjectId))
@@ -394,6 +398,12 @@ namespace Ginger.ALM.Repository
                 if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportQCNewTestSetSelectDiffFolder);
+                }
+                parentObjectId = SelectALMTestLabPath();
+                if (String.IsNullOrEmpty(parentObjectId))
+                {
+                    //no path to upload to
+                    return false;
                 }
             }
 

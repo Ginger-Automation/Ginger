@@ -68,7 +68,7 @@ namespace GingerCoreNET.Application_Models
             POMLatestElements.CollectionChanged += ElementsListCollectionChanged;
         }
 
-        public void LearnDelta()
+        public async Task LearnDelta()
         {
             try
             {
@@ -86,11 +86,11 @@ namespace GingerCoreNET.Application_Models
                     uIElementList.AddRange(PomLearnUtils.AutoMapBasicElementTypesList.ToList());
                     uIElementList.AddRange(PomLearnUtils.AutoMapAdvanceElementTypesList.ToList());
 
-                    mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true,SpecificFramePath);
+                    await mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true,SpecificFramePath);
                 }
                 else
                 {
-                    mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true,SpecificFramePath);
+                   await mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true,SpecificFramePath);
                 }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();
@@ -207,7 +207,18 @@ namespace GingerCoreNET.Application_Models
                 DeltaElementLocator deltaLocator = new DeltaElementLocator();
                 latestLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
                 deltaLocator.ElementLocator = latestLocator;
-                ElementLocator matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy).FirstOrDefault();
+
+                ElementLocator matchingExistingLocator = null;
+
+                if (latestLocator.LocateBy == eLocateBy.ByRelXPath)
+                {
+                    matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy && x.LocateValue == latestLocator.LocateValue).FirstOrDefault();
+                }
+                else
+                {
+                    matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy).FirstOrDefault();
+                }
+
                 if (matchingExistingLocator != null)
                 {
                     latestLocator.Guid = matchingExistingLocator.Guid;
@@ -511,11 +522,11 @@ namespace GingerCoreNET.Application_Models
         public void UpdateOriginalPom()
         {
             //selected elements
-            List<DeltaElementInfo> elementsToUpdate = DeltaViewElements.Where(x => x.IsSelected == true).ToList();
-            
-            MapDeletedElementWithNewAddedElement(elementsToUpdate);
+            var elementsToUpdate = DeltaViewElements.Where(x => x.IsSelected == true);
 
-            foreach (DeltaElementInfo elementToUpdate in elementsToUpdate)
+            MapDeletedElementWithNewAddedElement(elementsToUpdate.ToList());
+
+            foreach (DeltaElementInfo elementToUpdate in elementsToUpdate.ToList())
             {
                 //Add the New onces to the last of the list
                 if (elementToUpdate.DeltaStatus == eDeltaStatus.Added)
@@ -608,6 +619,17 @@ namespace GingerCoreNET.Application_Models
         private ElementInfo GetOriginalItem(ObservableList<ElementInfo> group, ElementInfo copiedItem)
         {
             return group.Where(x => x.Guid == copiedItem.Guid).First();
+        }
+
+        public ObservableList<ElementInfo> GetElementInfoListFromDeltaElementInfo(ObservableList<DeltaElementInfo> deltaElementInfos)
+        {
+            ObservableList<ElementInfo> elementInfos = new ObservableList<ElementInfo>();
+            foreach (var deltaElementInfo in deltaElementInfos)
+            {
+                elementInfos.Add(deltaElementInfo.ElementInfo);
+            }
+
+            return elementInfos;
         }
 
     }

@@ -22,16 +22,28 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
 
         void PerformMenuButtonPress();
 
+        void PerformVolumeButtonPress(eVolumeOperation volumeOperation);
+
+        void PerformLockButtonPress(eLockOperation lockOperation);
+
         Byte[] GetScreenshotImage();
 
         void PerformTap(long x, long y);
 
+        void PerformLongPress(long x, long y);
+
         void PerformDrag(System.Drawing.Point start, System.Drawing.Point end);
+
+        void PerformScreenSwipe(eSwipeSide swipeSide, double impact = 1);
 
         void SwitchToLandscape();
 
         void SwitchToPortrait();
 
         eDeviceOrientation GetOrientation();
+
+        void PerformSendKey(string key);
+
+        void OpenDeviceSettings();
     }
 }
