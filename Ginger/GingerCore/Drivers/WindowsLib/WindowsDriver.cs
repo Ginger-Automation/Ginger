@@ -374,6 +374,12 @@ namespace GingerCore.Drivers.WindowsLib
                     actionResult = mUIElementOperationsHelper.GetText(automationElement);
                     isoutputvalue = true;
                     break;
+
+                case ActUIElement.eElementAction.GetSelectedValue:
+                    actionResult = mUIElementOperationsHelper.GetSelectedValue(automationElement);
+                    isoutputvalue = true;
+                    break;
+
                 case ActUIElement.eElementAction.GetWindowTitle:
                     object windowElement = mUIAutomationHelper.FindWindowByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
                     if (windowElement != null)
@@ -1512,6 +1518,7 @@ namespace GingerCore.Drivers.WindowsLib
         public override void ActionCompleted(Act act)
         {
             mUIAutomationHelper.taskFinished = true;
+            mUIElementOperationsHelper.taskFinished = true;
             if (!String.IsNullOrEmpty(act.Error) && act.Error.StartsWith("Time out !"))
             {
                 Thread.Sleep(1000);

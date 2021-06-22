@@ -74,6 +74,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.RightClickXY);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetSelectedValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
@@ -154,9 +155,10 @@ namespace GingerCore.Platforms.PlatformsInfo
                     break;
 
                 case eElementType.List:
-                    //windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetSelectedValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetSelectedValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
                     break;
 
                 case eElementType.ListItem:
