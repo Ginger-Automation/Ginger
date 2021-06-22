@@ -588,7 +588,7 @@ namespace GingerCore.Drivers.WindowsLib
                 currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
                 locators = currentPOMElementInfo.Locators;
             }
-            AutomationElement windowElement = LocateElementByLocators(locators);
+            AutomationElement windowElement = LocateElementByLocators(locators, true);
             if (windowElement != null)
             {
                 pomExcutionUtil.PriotizeLocatorPosition();
@@ -1140,7 +1140,7 @@ namespace GingerCore.Drivers.WindowsLib
         {
             if (ElementInfo.ElementObject == null || locateElementByItLocators)
             {
-                AutomationElement windowElement = LocateElementByLocators(ElementInfo.Locators);
+                AutomationElement windowElement = LocateElementByLocators(ElementInfo.Locators, true);
                 if (windowElement != null)
                 {
                     ElementInfo.ElementObject = (object)windowElement;
@@ -1471,7 +1471,7 @@ namespace GingerCore.Drivers.WindowsLib
                 }
             }
 
-            return null;
+            return elem;
         }
 
         private AutomationElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
