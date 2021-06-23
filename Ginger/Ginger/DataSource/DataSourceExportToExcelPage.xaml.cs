@@ -328,7 +328,14 @@ namespace Ginger.DataSource
             if (xRdoByCustomExport.IsChecked==true)
             {
                 CreateQueryBasedWhereCondition();
-                mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mActDSTableElement.ExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected), mExcelConfig.WhereConditionStringList, mDataTable.TableName, mDataSourceTable.DSC.DSType);
+                if (mActDSTableElement != null)
+                {
+                    mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mActDSTableElement.ExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected), mExcelConfig.WhereConditionStringList, mDataTable.TableName, mDataSourceTable.DSC.DSType); 
+                }
+                else if(mDataSourceTable != null)
+                {
+                    mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mColumnList.ToList().FindAll(x => x.IsSelected), mExcelConfig.WhereConditionStringList, mDataTable.TableName, mDataSourceTable.DSC.DSType);
+                }
             }
             else
             {
