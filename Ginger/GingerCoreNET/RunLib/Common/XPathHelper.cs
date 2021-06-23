@@ -541,11 +541,7 @@ namespace GingerCore.Drivers.Common
             {
                 tagStartWithName = tagName;
             }
-            //else if (mDriver.GetElementParentNode(elementInfo) != null)
-            //{
-            //    tagStartWithName = string.Concat(tagName, "//", "*");
-            //}
-
+            
             var innerText = mDriver.GetInnerText(elementInfo);
             if (isExactMatch)
             {

@@ -3800,6 +3800,7 @@ namespace GingerCore.Drivers
                 finally
                 {
                     mIsDriverBusy = false;
+                    Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
                 }
             });
         }
@@ -3977,6 +3978,10 @@ namespace GingerCore.Drivers
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Error occured when creating relative xapth with attributes values", ex);
+            }
+            finally
+            {
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
             }
             return false;
         }
@@ -4332,18 +4337,25 @@ namespace GingerCore.Drivers
 
         List<ElementInfo> IWindowExplorer.GetElementChildren(ElementInfo ElementInfo)
         {
-            allReadElem.Clear();
-            allReadElem.Add(ElementInfo);
-            List<ElementInfo> list = new List<ElementInfo>();
-            ReadOnlyCollection<IWebElement> el;
-            Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
-            Driver.SwitchTo().DefaultContent();
-            SwitchFrame(ElementInfo.Path, ElementInfo.XPath);
-            string elementPath = GeneratePath(ElementInfo.XPath);
-            el = Driver.FindElements(By.XPath(elementPath));
-            Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
-            list = GetElementsFromIWebElementList(el, ElementInfo.Path, ElementInfo.XPath);
-            return list;
+            try
+            {
+                allReadElem.Clear();
+                allReadElem.Add(ElementInfo);
+                List<ElementInfo> list = new List<ElementInfo>();
+                ReadOnlyCollection<IWebElement> el;
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+                Driver.SwitchTo().DefaultContent();
+                SwitchFrame(ElementInfo.Path, ElementInfo.XPath);
+                string elementPath = GeneratePath(ElementInfo.XPath);
+                el = Driver.FindElements(By.XPath(elementPath));
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
+                list = GetElementsFromIWebElementList(el, ElementInfo.Path, ElementInfo.XPath);
+                return list;
+            }
+            finally
+            {
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+            }
         }
 
         private string GeneratePath(string xpath)
@@ -5168,7 +5180,7 @@ namespace GingerCore.Drivers
             }
             finally
             {
-                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
             }
             return null;
         }
@@ -7650,16 +7662,23 @@ namespace GingerCore.Drivers
 
         List<ElementInfo> IXPath.GetElementChildren(ElementInfo ElementInfo)
         {
-            List<ElementInfo> list = new List<ElementInfo>();
-            ReadOnlyCollection<IWebElement> el;
-            Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
-            SwitchFrame(ElementInfo.Path, ElementInfo.XPath);
-            string elementPath = GeneratePath(ElementInfo.XPath);
-            el = Driver.FindElements(By.XPath(elementPath));
-            Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
-            list = GetElementsFromIWebElementList(el, ElementInfo.Path, ElementInfo.XPath);
-            Driver.SwitchTo().DefaultContent();
-            return list;
+            try
+            {
+                List<ElementInfo> list = new List<ElementInfo>();
+                ReadOnlyCollection<IWebElement> el;
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+                SwitchFrame(ElementInfo.Path, ElementInfo.XPath);
+                string elementPath = GeneratePath(ElementInfo.XPath);
+                el = Driver.FindElements(By.XPath(elementPath));
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
+                list = GetElementsFromIWebElementList(el, ElementInfo.Path, ElementInfo.XPath);
+                Driver.SwitchTo().DefaultContent();
+                return list;
+            }
+            finally
+            {
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+            }
         }
 
         ElementInfo IXPath.FindFirst(ElementInfo ElementInfo, List<XpathPropertyCondition> conditions)
