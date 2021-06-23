@@ -3965,12 +3965,19 @@ namespace GingerCore.Drivers
 
         private bool CheckElementLocateStatus(string relXPath)
         {
-            IWebElement webElement = Driver.FindElement(By.XPath(relXPath));
-            if (webElement != null)
+            try
             {
-                return true;
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 3);
+                IWebElement webElement = Driver.FindElement(By.XPath(relXPath));
+                if (webElement != null)
+                {
+                    return true;
+                }
             }
-
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured when creating relative xapth with attributes values", ex);
+            }
             return false;
         }
 
