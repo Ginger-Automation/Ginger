@@ -77,8 +77,6 @@ namespace Ginger.SolutionWindows
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Folder));
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AccountTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Account));
                 UCEncryptionKey.EncryptionKeyPasswordBox.Password = mSolution.EncryptionKey;
-                xCategoriesExpander.Visibility = Visibility.Visible;
-                xCategoriesFrame.Content = new SolutionCategoriesPage(eSolutionCategoriesPageMode.OptionalValuesDefinition);
             }
             else
             {
@@ -90,6 +88,9 @@ namespace Ginger.SolutionWindows
      
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
+            xCategoriesExpander.Visibility = Visibility.Visible;
+            xCategoriesFrame.Content = new SolutionCategoriesPage(eSolutionCategoriesPageMode.OptionalValuesDefinition);
+
             SolutionFolderTextBox.IsReadOnly = false;
             SolutionNameTextBox.IsReadOnly = false;
             AccountTextBox.IsReadOnly = false;
@@ -146,6 +147,8 @@ namespace Ginger.SolutionWindows
             UCEncryptionKey.InvalidFlag.Visibility = Visibility.Visible;
             UCEncryptionKey.Validate.Visibility = Visibility.Visible;
             xInvalidKeyLabel.Visibility = Visibility.Visible;
+
+            xCategoriesExpander.Visibility = Visibility.Collapsed;
 
             UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
 
