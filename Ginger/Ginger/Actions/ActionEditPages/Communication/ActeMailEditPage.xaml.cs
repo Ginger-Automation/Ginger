@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions.Communication;
@@ -146,13 +147,9 @@ namespace Ginger.Actions.Communication
         private void xSMTPPassTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             bool res = false;
-            if (!EncryptionHandler.IsStringEncrypted(xSMTPPassTextBox.Text))
+            if (!EncryptionHandler.IsStringEncryptedWithKey(xSMTPPassTextBox.Text, WorkSpace.Instance.Solution.EncryptionKey))
             {
-                xSMTPPassTextBox.Text = EncryptionHandler.EncryptString(xSMTPPassTextBox.Text, ref res);
-                if (res == false)
-                {
-                    xSMTPPassTextBox.Text = string.Empty;
-                }
+                xSMTPPassTextBox.Text = EncryptionHandler.EncryptwithKey(xSMTPPassTextBox.Text, WorkSpace.Instance.Solution.EncryptionKey);                
             }
         }
 

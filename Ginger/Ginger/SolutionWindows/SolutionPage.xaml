@@ -17,6 +17,8 @@
             <TextBox x:Name="SolutionNameTextBox" Style="{StaticResource $TextBoxStyle}" FontWeight="Bold" FontSize="14" Width="300" HorizontalAlignment="Left"/>
             <Label Style="{StaticResource $LabelStyle}" Content="Account:" />
             <TextBox x:Name="AccountTextBox" Style="{StaticResource $TextBoxStyle}"  Width="300" HorizontalAlignment="Left"/>
+            <usercontrols1:UCEncryptionKey x:Name="UCEncryptionKey"></usercontrols1:UCEncryptionKey>
+            <Label x:Name="xInvalidKeyLabel" Style="{StaticResource $LabelStyle}" Content="*Encryption key is Invalid or Missing. Please add it." Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
         </StackPanel>
         <Expander x:Name="xCategoriesExpander" DockPanel.Dock="Top" ExpandDirection="Down"  IsExpanded="True" Style="{StaticResource $ExpanderStyle}">
         <Expander.Header>

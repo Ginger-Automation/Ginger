@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.SolutionCategories;
 using Ginger.SolutionGeneral;
+using Ginger.UserControlsLib;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -107,6 +108,10 @@ namespace Ginger.SolutionWindows
             undoBtn.Content = "Undo & Close";
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
             winButtons.Add(undoBtn);
+            Button replaceKeyBtn = new Button();
+            replaceKeyBtn.Content = "Replace Key";
+            replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
+            winButtons.Add(replaceKeyBtn);
 
             this.Height = 600;
             this.Width = 800;
@@ -153,10 +158,10 @@ namespace Ginger.SolutionWindows
             uSaveKeyBtn.Content = "Ok";
             uSaveKeyBtn.Click += new RoutedEventHandler(SaveKeyBtn_Click);
             winButtons.Add(uSaveKeyBtn);
-            //Button replaceKeyBtn = new Button();
-            //replaceKeyBtn.Content = "Replace Key";
-            //replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
-            //winButtons.Add(replaceKeyBtn);
+            Button replaceKeyBtn = new Button();
+            replaceKeyBtn.Content = "Replace Key";
+            replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
+            winButtons.Add(replaceKeyBtn);
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons, true, "Cancel", CloseBtn_Click);
             return IsValidEncryptionKeyAdded;
         }
@@ -196,7 +201,13 @@ namespace Ginger.SolutionWindows
 
         private void ReplaceKeyBtn_Click(object sender, RoutedEventArgs e)
         {
-            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Not implemented yet.");
+            ReplaceEncryptionKeyPage replaceEncryptionKeyPage = new ReplaceEncryptionKeyPage();
+
+            _pageGenericWin.Close();
+            replaceEncryptionKeyPage.ShowAsWindow(mSolution);
+
+//GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Actions Conversion", this);
+            //Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Not implemented yet.");
         }
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)

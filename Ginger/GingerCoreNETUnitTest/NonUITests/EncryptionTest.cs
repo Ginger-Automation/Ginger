@@ -55,7 +55,7 @@ namespace UnitTests.NonUITests
             bool result = false;
 
             //Act
-            encryptedString = EncryptionHandler.EncryptString("ginger",ref result);
+            encryptedString = EncryptionHandler.EncryptwithKey("ginger");
 
             //Assert
             Assert.AreEqual("mDL33JRKM3Zv1FdtGQMNZg==", encryptedString);

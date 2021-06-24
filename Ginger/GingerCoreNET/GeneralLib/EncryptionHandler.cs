@@ -19,7 +19,6 @@ limitations under the License.
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using Amdocs.Ginger.Common;
@@ -39,7 +38,12 @@ namespace GingerCore
 
         private static readonly string ENCRYPTION_KEY = ExtraInfo.getInfo().ElementAt(4);
 
-        public static string EncryptString(string strToEncrypt, ref bool result)
+        public static string GetDefaultKey()
+        {
+            return PASS_PHRASE;
+        }
+
+        public static string EncryptString(string strToEncrypt, ref bool result, string key = null)
         {
             try
             {
@@ -48,9 +52,15 @@ namespace GingerCore
                 byte[] _saltValueBytes = Encoding.UTF8.GetBytes(SALT_VALUE);
 
                 // Create a password, from which the key will be derived
-                PasswordDeriveBytes _password =
-                    new PasswordDeriveBytes(PASS_PHRASE, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
-
+                PasswordDeriveBytes _password;
+                if (!string.IsNullOrEmpty(key))
+                {
+                    _password = new PasswordDeriveBytes(key, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
+                }
+                else
+                {
+                    _password = new PasswordDeriveBytes(PASS_PHRASE, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
+                }
                 // Use the password to generate pseudo-random bytes for the encryption key
                 byte[] _keyBytes = _password.GetBytes(KEY_SIZE / 8);
 
@@ -102,13 +112,14 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Encrypt the value: '{0}'", strToEncrypt), ex);
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Encrypt the value"), ex);
+                
                 result = false;
                 return string.Empty;
             }
         }
 
-        public static string DecryptString(string strToDecrypt, ref bool result, bool WriteErrorsToLog = true)
+        public static string DecryptString(string strToDecrypt, ref bool result, bool WriteErrorsToLog = true, string key = null)
         {
             try
             {
@@ -117,8 +128,15 @@ namespace GingerCore
                 byte[] _saltValueBytes = Encoding.UTF8.GetBytes(SALT_VALUE);
 
                 // Create a password, from which the key will be derived
-                PasswordDeriveBytes _password = new PasswordDeriveBytes(PASS_PHRASE, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
-
+                PasswordDeriveBytes _password;//= new PasswordDeriveBytes(key, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
+                if (!string.IsNullOrEmpty(key))
+                {
+                    _password = new PasswordDeriveBytes(key, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
+                }
+                else
+                {
+                    _password = new PasswordDeriveBytes(PASS_PHRASE, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
+                }
                 // Use the password to generate pseudo-random bytes for the encryption key
                 byte[] _keyBytes = _password.GetBytes(KEY_SIZE / 8);
 
@@ -189,7 +207,6 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Decrypt the value: '{0}'", strToCheck), ex);
                 return false;
             }
         }
@@ -228,18 +245,21 @@ namespace GingerCore
         /// <param name="plainText">Plain text to encrypt</param>
         /// <param name="key">Secret key</param>
         /// <returns>Base64 encoded string</returns>
-        public static String EncryptwithKey(String plainText, String key = "")
+        public static string EncryptwithKey(String plainText, String key)
         {
-            if (string.IsNullOrEmpty(key))
-            {
-                key = ENCRYPTION_KEY;
-            }
-            if (plainText == null)
-            {
-                plainText = string.Empty;
-            }
-            var plainBytes = Encoding.UTF8.GetBytes(plainText);
-            return Convert.ToBase64String(Encrypt(plainBytes, GetRijndaelManaged(key)));
+            bool res = false;
+            return EncryptString(plainText, ref res, key);
+            //Below code commented as part of security enhancement
+            //if (string.IsNullOrEmpty(key))
+            //{
+            //    key = ENCRYPTION_KEY;
+            //}
+            //if (plainText == null)
+            //{
+            //    plainText = string.Empty;
+            //}
+            //var plainBytes = Encoding.UTF8.GetBytes(plainText);
+            //return Convert.ToBase64String(Encrypt(plainBytes, GetRijndaelManaged(key)));
         }
 
         /// <summary>
@@ -248,8 +268,12 @@ namespace GingerCore
         /// <param name="encryptedText">Base64 Encoded String</param>
         /// <param name="key">Secret Key</param>
         /// <returns>Decrypted String</returns>
-        public static string DecryptwithKey(string encryptedText, string key = "")
+        public static string DecryptwithKey(string encryptedText, string key)
         {
+            bool res = false;
+            string decryptVal = DecryptString(encryptedText, ref res, true, key);
+            if (res)
+                return decryptVal;
             if (string.IsNullOrEmpty(key))
             {
                 key = ENCRYPTION_KEY;

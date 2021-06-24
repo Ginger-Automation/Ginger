@@ -1157,10 +1157,9 @@ namespace GingerCore
             {
                 if (DecryptFlag == true && vb is VariablePasswordString)
                 {
-                    bool res = false;
                     String strValuetoPass;
-                    strValuetoPass = EncryptionHandler.DecryptString(vb.Value, ref res);
-                    if (res == true) mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
+                    strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value, WorkSpace.Instance.Solution.EncryptionKey);
+                    if (!string.IsNullOrEmpty(strValuetoPass)) mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
                     else mValueCalculated = mValueCalculated.Replace(p, vb.Value);
                 }
                 else
@@ -1315,11 +1314,9 @@ namespace GingerCore
                     ParamValue = GP.Value + "";  // Autohandle in case param is null convert to empty string
 
                     if (DecryptFlag == true && GP.Encrypt == true)
-                    {
-                        bool res = false;
-                        String strValuetoPass;
-                        strValuetoPass = EncryptionHandler.DecryptString(GP.Value, ref res);
-                        if (res == true) mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
+                    {                        
+                        String strValuetoPass = EncryptionHandler.DecryptwithKey(GP.Value, WorkSpace.Instance.Solution.EncryptionKey);
+                        if (!string.IsNullOrEmpty(strValuetoPass)) mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
                         else mValueCalculated = mValueCalculated.Replace(p, ParamValue);
                     }
                     else

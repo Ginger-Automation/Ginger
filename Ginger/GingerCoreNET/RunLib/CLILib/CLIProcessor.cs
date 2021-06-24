@@ -372,8 +372,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.sourceControlPass = runOptions.Pass;
             mCLIHelper.sourceControlPassEncrypted = runOptions.PasswordEncrypted;
             mCLIHelper.EncryptionKey = runOptions.EncryptionKey;
-
-
+            mCLIHelper.SourceControlProxyServer(runOptions.SourceControlProxyServer);
+            mCLIHelper.SourceControlProxyPort(runOptions.SourceControlProxyPort);
+            mCLIHelper.ExecutionId = runOptions.RunSetExecutionId;
 
             if (WorkSpace.Instance.UserProfile == null)
             {
@@ -393,11 +394,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 mCLIHandler.LoadGeneralConfigurations("", mCLIHelper);
 
             }
-     
-
-
 
             WorkSpace.Instance.RunningInExecutionMode = true;
+
+            if (!string.IsNullOrEmpty(runOptions.RunSetExecutionId) && !Guid.TryParse(runOptions.RunSetExecutionId, out Guid temp))
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Invalid Execution Id provied in argument.");
+                Environment.ExitCode = 1;
+                return Environment.ExitCode;
+            }
+
             if (!CLILoadAndPrepare())
             {
                 Reporter.ToLog(eLogLevel.WARN, "Issue occured while doing CLI Load and Prepare so aborting execution");

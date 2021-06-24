@@ -79,5 +79,10 @@ namespace Ginger.UserControlsLib
             ValidFlag.Visibility = Visibility.Visible;
             return true;
         }
+
+        public void ChangeLabel(string newLabel)
+        {
+            this.Label.Content = newLabel;
+        }
     }
 }

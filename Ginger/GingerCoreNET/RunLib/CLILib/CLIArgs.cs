@@ -20,6 +20,7 @@ using CommandLine;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
+using System;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -29,7 +30,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         bool ICLI.IsFileBasedConfig => false;
 
         string ICLI.Verb => RunOptions.Verb;
-        
+
 
         string ICLI.FileExtension
         {
@@ -63,13 +64,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
                 options.URL = solution.SourceControl.SourceControlURL;
                 options.User = solution.SourceControl.SourceControlUser;
-              
+
                 options.Pass = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass, solution.EncryptionKey);
 
                 options.PasswordEncrypted = true;
                 options.SCMType = solution.SourceControl.GetSourceControlType;
             }
-           
+
             var args = CommandLine.Parser.Default.FormatCommandLine<RunOptions>(options);
 
             // !!!!!!!!!!!!!!!!!!!
@@ -104,7 +105,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void LoadGeneralConfigurations(string content, CLIHelper cliHelper)
         {
-  
+
             cliHelper.SetSourceControlPassword(cliHelper.sourceControlPass);
             cliHelper.PasswordEncrypted(cliHelper.sourceControlPassEncrypted.ToString());
 
@@ -113,13 +114,23 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
-
+            try
+            {
+                if (!string.IsNullOrEmpty(cliHelper.ExecutionId))
+                {
+                    runsetExecutor.RunSetConfig.ExecutionID = Guid.Parse(cliHelper.ExecutionId);
+                }
+            }
+            catch (Exception ex)
+            {
+                new Exception("Invalid Exectuion id provided in arguments.", ex.InnerException);
+            }
         }
 
         public async Task Execute(RunsetExecutor runsetExecutor)
         {
             await runsetExecutor.RunRunset();
-        }       
+        }
 
 
     }

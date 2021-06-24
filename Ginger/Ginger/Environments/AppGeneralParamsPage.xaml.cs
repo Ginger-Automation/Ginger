@@ -36,14 +36,14 @@ namespace Ginger.Environments
     public partial class AppGeneralParamsPage : Page
     {
         public EnvApplication AppOwner { get; set; }
-       
+
         public AppGeneralParamsPage(EnvApplication applicationOwner)
         {
             InitializeComponent();
-            AppOwner = applicationOwner;          
+            AppOwner = applicationOwner;
             //Set grid look and data
             SetGridView();
-            SetGridData();    
+            SetGridData();
             //Added for Encryption
             if (grdAppParams.grdMain != null)
             {
@@ -80,7 +80,7 @@ namespace Ginger.Environments
                 GeneralParam selectedEnvParam = (GeneralParam)grdAppParams.CurrentItem;
 
                 String intialValue = selectedEnvParam.Value;
-                
+
                 if (!string.IsNullOrEmpty(intialValue))
                 {
                     if (selectedEnvParam.Encrypt == true)
@@ -106,7 +106,7 @@ namespace Ginger.Environments
                 }
             }
         }
-       
+
         public void UpdateVariableNameChange(GeneralParam parameter)
         {
             if (parameter == null) return;
@@ -153,12 +153,12 @@ namespace Ginger.Environments
             //Set the Data Grid columns
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = GeneralParam.Fields.Name, WidthWeight = 40});
+            view.GridColsView.Add(new GridColView() { Field = GeneralParam.Fields.Name, WidthWeight = 40 });
             view.GridColsView.Add(new GridColView() { Field = GeneralParam.Fields.Value, WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appGenParamsPageGrid.Resources["ParamValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = GeneralParam.Fields.Encrypt, WidthWeight = 5,MaxWidth = 100, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = GeneralParam.Fields.Description, WidthWeight = 25});
-            
+            view.GridColsView.Add(new GridColView() { Field = GeneralParam.Fields.Encrypt, WidthWeight = 5, MaxWidth = 100, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = GeneralParam.Fields.Description, WidthWeight = 25 });
+
             grdAppParams.SetAllColumnsDefaultView(view);
             grdAppParams.InitViewItems();
         }
@@ -180,25 +180,22 @@ namespace Ginger.Environments
                 GeneralParam param = (GeneralParam)sender;
                 String intialValue = param.Value;
                 bool res = false;
-                if (!string.IsNullOrEmpty(intialValue))
+                if (!string.IsNullOrEmpty(intialValue) && param.Encrypt)
                 {
-                    if (param.Encrypt == true)
+                    if (!EncryptionHandler.IsStringEncryptedWithKey(intialValue, WorkSpace.Instance.Solution.EncryptionKey))
                     {
-                        if (!EncryptionHandler.IsStringEncrypted(intialValue))
+                        param.Value = EncryptionHandler.EncryptwithKey(intialValue, WorkSpace.Instance.Solution.EncryptionKey);
+                        if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.EncryptionKey))
                         {
-                            param.Value = EncryptionHandler.EncryptString(intialValue, ref res);
-                            if (res == false)
-                            {
-                                param.Value = null;
-                            }
+                            param.Value = string.Empty;
                         }
                     }
-                    else
+                }
+                else
+                {
+                    if (EncryptionHandler.IsStringEncryptedWithKey(intialValue, WorkSpace.Instance.Solution.EncryptionKey))
                     {
-                        if (EncryptionHandler.IsStringEncrypted(intialValue))
-                        {
-                            param.Value = null;
-                        }
+                        param.Value = null;
                     }
                 }
             }
@@ -211,7 +208,7 @@ namespace Ginger.Environments
             if (grdAppParams.Grid.SelectedItems.Count > 0)
             {
                 foreach (object obj in grdAppParams.Grid.SelectedItems)
-                {                    
+                {
                     ObservableList<ProjEnvironment> envs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
                     foreach (ProjEnvironment env in envs)
                     {
@@ -221,7 +218,7 @@ namespace Ginger.Environments
                             if (matchingApp.GeneralParams.Where(x => x.Name == ((GeneralParam)obj).Name).FirstOrDefault() == null)
                             {
                                 GeneralParam param = (GeneralParam)(((RepositoryItemBase)obj).CreateCopy());
-                                matchingApp.GeneralParams.Add(param);                               
+                                matchingApp.GeneralParams.Add(param);
                                 paramsWereAdded = true;
                             }
                         }
@@ -235,12 +232,12 @@ namespace Ginger.Environments
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
         #endregion Functions
-        
+
         private void ParamsGridVEButton_Click(object sender, RoutedEventArgs e)
-        {           
+        {
             GeneralParam selectedVarb = (GeneralParam)grdAppParams.CurrentItem;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedVarb, GeneralParam.Fields.Value, null);
-            VEEW.ShowAsWindow();            
+            VEEW.ShowAsWindow();
         }
     }
 }

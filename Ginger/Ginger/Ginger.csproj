@@ -517,6 +517,9 @@
     <Compile Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml.cs">
       <DependentUpon>SolutionCategoryOptionalValuesEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SolutionWindows\ReplaceEncryptionKeyPage.xaml.cs">
+      <DependentUpon>ReplaceEncryptionKeyPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\LiveSpyHandler.xaml.cs">
       <DependentUpon>LiveSpyHandler.xaml</DependentUpon>
     </Compile>
@@ -2942,6 +2945,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SolutionWindows\ReplaceEncryptionKeyPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

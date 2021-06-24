@@ -331,7 +331,7 @@ namespace amdocs.ginger.GingerCoreNET
             // when loading check restore and restore
         }
 
-        public bool OpenSolution(string solutionFolder, string EncryptionKey = null)
+        public bool OpenSolution(string solutionFolder, string encryptionKey = null)
         {
             try
             {
@@ -371,7 +371,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution xml into object");
-                Solution solution = Solution.LoadSolution(solutionFile, true, EncryptionKey);
+                Solution solution = Solution.LoadSolution(solutionFile, true, encryptionKey);
                 if (solution == null)
                 {
                     Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Failed to load the Solution file");
@@ -383,10 +383,21 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     //Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Encryption key validation failed or key is missing. Press Ok to enter the key manually.");
                     Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Encryption key validation failed");
-                    if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
+                    if (Instance.RunningInExecutionMode == false && Instance.RunningFromUnitTest == false)
                     {
-                        if (!WorkSpace.Instance.EventHandler.OpenEncryptionKeyHandler(solution))
+                        if (string.IsNullOrEmpty(solution.EncryptedValidationString))
+                        {
+                            // To support existing solutions, 
+                            solution.EncryptionKey = EncryptionHandler.GetDefaultKey();
+                            solution.NeedVariablesReEncryption = false;
+                            solution.SaveEncryptionKey();
+                            solution.SaveSolution(false);
+                            ReEncryptVariable();
+                        }
+                        else if (!Instance.EventHandler.OpenEncryptionKeyHandler(solution))
+                        {
                             return false;
+                        }
                     }
                     else return false;
                 }
@@ -446,7 +457,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        private static void ReEncryptVariable()
+        public static void ReEncryptVariable(string oldKey = null)
         {
             int varReencryptedCount = 0;
             List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
@@ -462,7 +473,15 @@ namespace amdocs.ginger.GingerCoreNET
                     {
                         try
                         {
-                            ((GingerCore.Variables.VariablePasswordString)v).Password = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptString(((GingerCore.Variables.VariablePasswordString)v).Password, ref res), WorkSpace.Instance.Solution.EncryptionKey);
+                            if (string.IsNullOrEmpty(oldKey))
+                            {                                
+                                ((GingerCore.Variables.VariablePasswordString)v).Password = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptString(((GingerCore.Variables.VariablePasswordString)v).Password, ref res), WorkSpace.Instance.Solution.EncryptionKey);
+                            }
+                            else
+                            {
+                                ((GingerCore.Variables.VariablePasswordString)v).Password = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptwithKey(((GingerCore.Variables.VariablePasswordString)v).Password,oldKey), WorkSpace.Instance.Solution.EncryptionKey);
+                                res = true;
+                            }
                             varReencryptedCount++;
                         }
                         catch (Exception ex)
@@ -485,11 +504,20 @@ namespace amdocs.ginger.GingerCoreNET
 
             // For Global Variables
             bool res1 = false;
-            foreach (GingerCore.Variables.VariableBase v in WorkSpace.Instance.Solution.Variables)
+            foreach (GingerCore.Variables.VariableBase v in WorkSpace.Instance.Solution.Variables.Where(f => f.VariableType == "PasswordString"))
             {
                 try
                 {
-                    ((GingerCore.Variables.VariablePasswordString)v).Password = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptString(((GingerCore.Variables.VariablePasswordString)v).Password, ref res1), WorkSpace.Instance.Solution.EncryptionKey);
+                    if (string.IsNullOrEmpty(oldKey))
+                    {
+                        ((GingerCore.Variables.VariablePasswordString)v).Password = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptString(((GingerCore.Variables.VariablePasswordString)v).Password, ref res1), WorkSpace.Instance.Solution.EncryptionKey);
+                    }
+                    else
+                    {
+                        ((GingerCore.Variables.VariablePasswordString)v).Password = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptwithKey(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey), WorkSpace.Instance.Solution.EncryptionKey);
+                        res1 = true;
+                    }
+                   
                     varReencryptedCount++;
                 }
                 catch (Exception ex)
@@ -513,7 +541,15 @@ namespace amdocs.ginger.GingerCoreNET
                     {
                         foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
                         {
-                            gp.Value = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptString(gp.Value, ref res1), WorkSpace.Instance.Solution.EncryptionKey);
+                            if (string.IsNullOrEmpty(oldKey))
+                            {
+                                gp.Value = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptString(gp.Value, ref res1), WorkSpace.Instance.Solution.EncryptionKey);
+                            }
+                            else
+                            {
+                                gp.Value = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptwithKey(gp.Value, oldKey), WorkSpace.Instance.Solution.EncryptionKey);                                
+                                res1 = true;
+                            }                           
                             varReencryptedCount++;
                         }
                     }

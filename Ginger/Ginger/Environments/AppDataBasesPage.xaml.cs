@@ -85,10 +85,10 @@ namespace Ginger.Environments
                 if (!string.IsNullOrEmpty(intialValue))
                 {
                     bool res = false;
-                    if (!EncryptionHandler.IsStringEncrypted(intialValue))
+                    if (!EncryptionHandler.IsStringEncryptedWithKey(intialValue, WorkSpace.Instance.Solution.EncryptionKey))
                     {
-                        selectedEnvDB.Pass = EncryptionHandler.EncryptString(intialValue, ref res);
-                        if (res == false)
+                        selectedEnvDB.Pass = EncryptionHandler.EncryptwithKey(intialValue,WorkSpace.Instance.Solution.EncryptionKey);
+                        if (string.IsNullOrEmpty(selectedEnvDB.Pass))
                         {
                             selectedEnvDB.Pass = null;
                         }

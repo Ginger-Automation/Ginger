@@ -315,10 +315,8 @@ namespace GingerCore.GeneralLib
 
                 if (ConfigureCredential)
                 {
-                    bool checkValueDecrypt;
-                    checkValueDecrypt = true;
-                    string DecryptPass = EncryptionHandler.DecryptString(SMTPPass, ref checkValueDecrypt);
-                    if (checkValueDecrypt)
+                    string DecryptPass = EncryptionHandler.DecryptwithKey(SMTPPass, WorkSpace.Instance.Solution.EncryptionKey);
+                    if (!string.IsNullOrEmpty(DecryptPass))
                     {
                         smtp.Credentials = new NetworkCredential(SMTPUser, DecryptPass);
                     }

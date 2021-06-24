@@ -49,6 +49,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public eSourceControlType sourceControlType;
         public bool sourceControlPassEncrypted;
         public eAppReporterLoggingLevel AppLoggingLevel;
+        public string ExecutionId;
 
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
@@ -360,7 +361,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SourceControlProxyPort(string value)
         {
-            if (value == "")
+            if (string.IsNullOrEmpty(value))
             {
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
             }
@@ -376,19 +377,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         internal void SourceControlProxyServer(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyServer: '" + value + "'");
-            if (value == "")
+            if (string.IsNullOrEmpty(value))
             {
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
             }
             else
             {
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
-            }
-
-            if (value != "" && !value.ToUpper().StartsWith("HTTP://"))
-            {
-                value = "http://" + value;
-            }
+                if (!value.ToUpper().StartsWith("HTTP://"))
+                {
+                    value = "http://" + value;
+                }
+            }        
 
             WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = value;
         }

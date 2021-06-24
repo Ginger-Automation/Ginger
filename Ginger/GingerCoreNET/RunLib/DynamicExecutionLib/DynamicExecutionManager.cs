@@ -72,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
                 {
                     dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.SourceControlUser;
-                    dynamicExecution.SolutionDetails.SourceControlDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+                    dynamicExecution.SolutionDetails.SourceControlDetails.Password =  EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass, solution.EncryptionKey);
                     dynamicExecution.SolutionDetails.SourceControlDetails.PasswordEncrypted = "Y";
                 }
                 else
@@ -439,13 +439,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         if (userProfileAlmConfig != null)
                         {
                             almDetails.User = userProfileAlmConfig.ALMUserName;
-                            almDetails.Password = EncryptionHandler.EncryptwithKey(userProfileAlmConfig.ALMPassword);
+                            almDetails.Password = EncryptionHandler.EncryptwithKey(userProfileAlmConfig.ALMPassword, solution.EncryptionKey);
                             almDetails.PasswordEncrypted = true;
                         }
                         else
                         {
                             almDetails.User = solutionAlmConfig.ALMUserName;
-                            almDetails.Password = EncryptionHandler.EncryptwithKey(solutionAlmConfig.ALMPassword);
+                            almDetails.Password = EncryptionHandler.EncryptwithKey(solutionAlmConfig.ALMPassword, solution.EncryptionKey);
                             almDetails.PasswordEncrypted = true;
                         }
                         if (!string.IsNullOrEmpty(solutionAlmConfig.ALMDomain))

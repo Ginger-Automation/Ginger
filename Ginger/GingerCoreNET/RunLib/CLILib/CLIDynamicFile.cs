@@ -250,7 +250,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         {
                             if (almDetails.PasswordEncrypted)
                             {
-                                string pass = EncryptionHandler.DecryptwithKey(almDetails.Password);
+                                string pass = EncryptionHandler.DecryptwithKey(almDetails.Password, WorkSpace.Instance.Solution.EncryptionKey);
                                 solutionAlmConfig.ALMPassword = pass;
                                 userProfileAlmConfig.ALMPassword = pass;
                             }
