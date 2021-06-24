@@ -772,10 +772,6 @@ namespace GingerCore.Drivers
         public override object FindElementByLocator(eLocateBy locateBy, string locateValue)
         {
             object element = null;
-            if (mImplicitWait != null)
-            {
-                loadwaitSeconds = mImplicitWait.Value;
-            }
             int count = 0;
             bool isLoaded = false;
             while (!isLoaded && !taskFinished)
@@ -891,7 +887,7 @@ namespace GingerCore.Drivers
                         continue;
                 }
                 Reporter.ToLog(eLogLevel.DEBUG, "** Total time" + (DateTime.Now - startingTime).TotalSeconds + "  Load Wait Time  :  " + loadwaitSeconds);
-                if (element == null && (DateTime.Now - startingTime).TotalSeconds <= loadwaitSeconds && !taskFinished)
+                if (element == null && (DateTime.Now - startingTime).TotalSeconds <= mImplicitWait && !taskFinished)
                 {
                     continue;
                 }
@@ -1973,11 +1969,20 @@ namespace GingerCore.Drivers
         }
         public bool LocateAndValidateElement(eLocateBy LocateBy, string LocateValue, string elementType, ActUIElement.eElementAction actionType,string validationValue="")
         {
-            int? tempLoadTimeout = mLoadTimeOut;
-            if(actionType== ActUIElement.eElementAction.NotExist)            
-                mLoadTimeOut = -1;            
-            object obj = FindElementByLocator(LocateBy, LocateValue);
-            mLoadTimeOut = tempLoadTimeout;
+            object obj = null;
+            try
+            {
+                if (actionType == ActUIElement.eElementAction.NotExist)
+                {
+                    mImplicitWait = -1;
+                }
+                obj = FindElementByLocator(LocateBy, LocateValue);
+            }
+            finally
+            {
+                //reset implicit wait time
+                mImplicitWait = mImplicitWaitCopy;
+            }
 
             AutomationElement AE = (AutomationElement)obj;
 
@@ -2122,8 +2127,7 @@ namespace GingerCore.Drivers
                     bool ishandled = false;
                     if (DefineHandleAction == true)
                     {
-                        int? loadTime = mLoadTimeOut.Value;
-                        mLoadTimeOut = -1;
+                        mImplicitWait = -1;
                         ishandled = LocateAndHandleActionElement(handleElementLocateby, handleElementLocateValue, subElementType, handleActionType);
                         Reporter.ToLog(eLogLevel.DEBUG, "ishandled:" + ishandled);
                         if (ishandled)
@@ -2133,8 +2137,9 @@ namespace GingerCore.Drivers
                         else
                         {
                             iClick = 1;
-                        }                            
-                        mLoadTimeOut = loadTime;                        
+                        }
+                        //reset implicit wait time
+                        mImplicitWait = mImplicitWaitCopy;                        
                         Reporter.ToLog(eLogLevel.DEBUG, "DefineHandleAction:" + iClick);
                     }
                     else
@@ -2189,11 +2194,20 @@ namespace GingerCore.Drivers
 
         public bool SelectFromPane(eLocateBy LocateBy, string LocateValue, string elementType, ActUIElement.eElementAction actionType, string validationValue = "")
         {
-            int? tempLoadTimeout = mLoadTimeOut;
-            if (actionType == ActUIElement.eElementAction.NotExist)
-                mLoadTimeOut = -1;
-            object obj = FindElementByLocator(LocateBy, LocateValue);
-            mLoadTimeOut = tempLoadTimeout;
+            object obj = null;
+            try
+            {
+                if (actionType == ActUIElement.eElementAction.NotExist)
+                {
+                    mImplicitWait = -1;
+                }
+                obj = FindElementByLocator(LocateBy, LocateValue);
+            }
+            finally
+            {
+                //reset implicit wait time
+                mImplicitWait = mImplicitWaitCopy;
+            }
 
             AutomationElement AE = (AutomationElement)obj;
 
@@ -2377,7 +2391,7 @@ namespace GingerCore.Drivers
             {
                 MaxTimeout = mLoadTimeOut;
             }
-            mLoadTimeOut = -1;           
+            mImplicitWait = -1;
             switch (act.SmartSyncAction)
             {
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
@@ -2427,6 +2441,8 @@ namespace GingerCore.Drivers
                     }
                     break;
             }
+            //reset implicit wait time
+            mImplicitWait = mImplicitWaitCopy;
             return;
         }
 

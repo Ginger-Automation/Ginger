@@ -58,10 +58,10 @@ namespace GingerCore.Drivers.WindowsLib
             { mActionTimeout = value; }
         }
 
-        int mImplicitWait = 10;
+        int mImplicitWait = 30;
 
         [UserConfigured]
-        [UserConfiguredDefault("10")]
+        [UserConfiguredDefault("30")]
         [UserConfiguredDescription("Amount of time the driver should wait when searching for an element if it is not immediately present")]
         public int ImplicitWait 
         {
@@ -98,6 +98,7 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
 
             }
+            mUIAutomationHelper.ImplicitWait = mImplicitWait;
         }
 
         public override void UpdateContext(Context context)
@@ -123,7 +124,6 @@ namespace GingerCore.Drivers.WindowsLib
             string actClass = act.GetType().Name;
 
             mUIAutomationHelper.mLoadTimeOut = mActionTimeout;
-            mUIAutomationHelper.mImplicitWait = mImplicitWait;
             mUIAutomationHelper.taskFinished = false;
 
             if (!actClass.Equals(typeof(ActSwitchWindow)) || (actClass.Equals(typeof(ActWindow)) && ((ActWindow)act).WindowActionType != ActWindow.eWindowActionType.Switch))
@@ -1534,15 +1534,15 @@ namespace GingerCore.Drivers.WindowsLib
             AutomationElement AE = (AutomationElement)obj;
             return AE;
         }
-        //public override void ActionCompleted(Act act)
-        //{
-        //    mUIAutomationHelper.taskFinished = true;
-        //    mUIElementOperationsHelper.taskFinished = true;
-        //    if (!String.IsNullOrEmpty(act.Error) && act.Error.StartsWith("Time out !"))
-        //    {
-        //        Thread.Sleep(1000);
-        //    }
-        //}
+        public override void ActionCompleted(Act act)
+        {
+            mUIAutomationHelper.taskFinished = true;
+            mUIElementOperationsHelper.taskFinished = true;
+            if (!String.IsNullOrEmpty(act.Error) && act.Error.StartsWith("Time out !"))
+            {
+                Thread.Sleep(1000);
+            }
+        }
 
         public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
         {
