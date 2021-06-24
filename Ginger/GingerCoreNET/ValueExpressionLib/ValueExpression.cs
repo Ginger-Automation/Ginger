@@ -1158,7 +1158,7 @@ namespace GingerCore
                 if (DecryptFlag == true && vb is VariablePasswordString)
                 {
                     String strValuetoPass;
-                    strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value, WorkSpace.Instance.Solution.EncryptionKey);
+                    strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
                     if (!string.IsNullOrEmpty(strValuetoPass)) mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
                     else mValueCalculated = mValueCalculated.Replace(p, vb.Value);
                 }
@@ -1315,7 +1315,7 @@ namespace GingerCore
 
                     if (DecryptFlag == true && GP.Encrypt == true)
                     {                        
-                        String strValuetoPass = EncryptionHandler.DecryptwithKey(GP.Value, WorkSpace.Instance.Solution.EncryptionKey);
+                        String strValuetoPass = EncryptionHandler.DecryptwithKey(GP.Value);
                         if (!string.IsNullOrEmpty(strValuetoPass)) mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
                         else mValueCalculated = mValueCalculated.Replace(p, ParamValue);
                     }

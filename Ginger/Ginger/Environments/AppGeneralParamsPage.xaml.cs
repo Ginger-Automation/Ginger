@@ -87,9 +87,9 @@ namespace Ginger.Environments
                     {
                         //UpdateVariableNameChange(selectedEnvParam); // why is that needed here?
 
-                        if (!EncryptionHandler.IsStringEncryptedWithKey(intialValue, WorkSpace.Instance.Solution.EncryptionKey))
+                        if (!EncryptionHandler.IsStringEncrypted(intialValue))
                         {
-                            selectedEnvParam.Value = EncryptionHandler.EncryptwithKey(intialValue, WorkSpace.Instance.Solution.EncryptionKey);
+                            selectedEnvParam.Value = EncryptionHandler.EncryptwithKey(intialValue);
                             if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.EncryptionKey))
                             {
                                 selectedEnvParam.Value = string.Empty;
@@ -98,7 +98,7 @@ namespace Ginger.Environments
                     }
                     else
                     {
-                        if (EncryptionHandler.IsStringEncryptedWithKey(intialValue, WorkSpace.Instance.Solution.EncryptionKey))
+                        if (EncryptionHandler.IsStringEncrypted(intialValue))
                         {
                             selectedEnvParam.Value = null;
                         }
@@ -182,9 +182,9 @@ namespace Ginger.Environments
                 bool res = false;
                 if (!string.IsNullOrEmpty(intialValue) && param.Encrypt)
                 {
-                    if (!EncryptionHandler.IsStringEncryptedWithKey(intialValue, WorkSpace.Instance.Solution.EncryptionKey))
+                    if (!EncryptionHandler.IsStringEncrypted(intialValue))
                     {
-                        param.Value = EncryptionHandler.EncryptwithKey(intialValue, WorkSpace.Instance.Solution.EncryptionKey);
+                        param.Value = EncryptionHandler.EncryptwithKey(intialValue);
                         if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.EncryptionKey))
                         {
                             param.Value = string.Empty;
@@ -193,7 +193,7 @@ namespace Ginger.Environments
                 }
                 else
                 {
-                    if (EncryptionHandler.IsStringEncryptedWithKey(intialValue, WorkSpace.Instance.Solution.EncryptionKey))
+                    if (EncryptionHandler.IsStringEncrypted(intialValue))
                     {
                         param.Value = null;
                     }

@@ -32,6 +32,7 @@ namespace Ginger.SolutionWindows
         Solution _solution = null;
         Button uOkBtn;
         Button uSaveKeyBtn;
+        bool validKeyAdded = false;
         public ReplaceEncryptionKeyPage()
         {
             InitializeComponent();
@@ -48,7 +49,7 @@ namespace Ginger.SolutionWindows
 
             UCEncryptionKeyPrevious.EncryptionKeyPasswordBox.PasswordChanged += PrevEncryptionKeyBox_Changed;
             UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
-        }      
+        }
 
         private void SetGridsView()
         {
@@ -56,13 +57,13 @@ namespace Ginger.SolutionWindows
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.Name), WidthWeight = 10, Header = GingerDicser.GetTermResValue(eTermResKey.Variable) + " Name", ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.ParentType), WidthWeight = 10, Header = GingerDicser.GetTermResValue(eTermResKey.Variable) + "  Type", ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.Password), WidthWeight = 10, Header = "Value" });            
+            defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.Password), WidthWeight = 10, Header = "Value" });
             variablesGrid.SetAllColumnsDefaultView(defView);
             variablesGrid.InitViewItems();
             variablesGrid.SetTitleLightStyle = true;
         }
 
-        public void ShowAsWindow(Solution solution, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        public bool ShowAsWindow(Solution solution, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             UCEncryptionKey.mSolution = solution;
             UCEncryptionKeyPrevious.mSolution = solution;
@@ -80,6 +81,7 @@ namespace Ginger.SolutionWindows
             winButtons.Add(uSaveKeyBtn);
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Replace/Forget Encryption key", this, winButtons, true, "Cancel", CloseBtn_Click);
+            return validKeyAdded;
         }
 
         private async void PrevEncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
@@ -118,7 +120,7 @@ namespace Ginger.SolutionWindows
             }
         }
 
-        private async void SaveKeyBtn_Click(object sender, RoutedEventArgs e)
+        private void SaveKeyBtn_Click(object sender, RoutedEventArgs e)
         {
             if (ForgetRadioBtn.IsChecked.Value && UCEncryptionKey.CheckKeyCombination())
             {
@@ -131,6 +133,7 @@ namespace Ginger.SolutionWindows
                 ForgetRadioBtn.IsEnabled = false;
                 ReplaceRadioBtn.IsEnabled = false;
                 UCEncryptionKey.IsEnabled = false;
+                validKeyAdded = true;
                 InitGrid();
             }
             else if (ReplaceRadioBtn.IsChecked.Value && UCEncryptionKeyPrevious.ValidateKey() && UCEncryptionKey.CheckKeyCombination())
@@ -146,11 +149,12 @@ namespace Ginger.SolutionWindows
                 }
                 WorkSpace.ReEncryptVariable(UCEncryptionKeyPrevious.EncryptionKeyPasswordBox.Password);
                 variablesGrid.Visibility = Visibility.Collapsed;
+                validKeyAdded = true;
                 _pageGenericWin.Close();
             }
         }
 
-        private async void InitGrid()
+        private void InitGrid()
         {
             if (WorkSpace.Instance.SolutionRepository == null)
             {
@@ -170,7 +174,7 @@ namespace Ginger.SolutionWindows
                 }
             });
 
-            foreach (GingerCore.Variables.VariablePasswordString v in _solution.Variables.Where(f => f.VariableType == "PasswordString"))
+            foreach (GingerCore.Variables.VariablePasswordString v in _solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString))
             {
                 v.Password = "";
                 v.ParentType = string.IsNullOrEmpty(v.ParentType) ? "Solution Variables" : v.ParentType;
@@ -207,17 +211,23 @@ namespace Ginger.SolutionWindows
 
         private void grdGroups_RowChangedEvent(object sender, EventArgs e)
         {
+            EncryptGridValues();
+        }
+
+        public void EncryptGridValues()
+        {
             foreach (GingerCore.Variables.VariablePasswordString vp in variablesGrid.DataSourceList)
             {
-                if (!string.IsNullOrEmpty(vp.Password) && !EncryptionHandler.IsStringEncryptedWithKey(vp.Password, _solution.EncryptionKey))
+                if (!string.IsNullOrEmpty(vp.Password) && !EncryptionHandler.IsStringEncrypted(vp.Password))
                 {
-                    vp.Password = EncryptionHandler.EncryptwithKey(vp.Password, _solution.EncryptionKey);
+                    vp.Password = EncryptionHandler.EncryptwithKey(vp.Password);
                 }
             }
         }
 
-        private async void OkBtn_Click(object sender, RoutedEventArgs e)
+        private void OkBtn_Click(object sender, RoutedEventArgs e)
         {
+            EncryptGridValues();
             List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
             // For BF and Activity
             Parallel.ForEach(Bfs, Bf =>
@@ -250,36 +260,32 @@ namespace Ginger.SolutionWindows
             });
 
 
-            if (_solution.Variables.Where(f => f.VariableType == "PasswordString").Any())
-            {
-                _solution.SaveSolution(false);
-            }
+            //if (_solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString).Any())
 
-            Reporter.ToUser(eUserMsgKey.ShowInfoMessage,"Encryption Key is updated and Password values are changed. Please reload the solution.");
+            _solution.SaveSolution(false);
+
+            //  Reporter.ToUser(eUserMsgKey.ShowInfoMessage,"Encryption Key is updated and Password values are changed. Please reload the solution.");
             _pageGenericWin.Close();
         }
+
         private void radioBtn_Click(object sender, RoutedEventArgs e)
         {
-            UCEncryptionKey.ValidFlag.Visibility = Visibility.Collapsed;
-            UCEncryptionKey.InvalidFlag.Visibility = Visibility.Visible;
-            UCEncryptionKey.Validate.Visibility = Visibility.Visible;
+            //    UCEncryptionKey.ValidFlag.Visibility = Visibility.Collapsed;
+            //    UCEncryptionKey.InvalidFlag.Visibility = Visibility.Visible;
 
             if (ForgetRadioBtn.IsChecked.Value)
             {
-                // variablesGrid.Visibility = Visibility.Visible;
                 UCEncryptionKeyPrevious.Visibility = Visibility.Collapsed;
-                UCEncryptionKey.Visibility = Visibility.Visible;
 
-                UCEncryptionKeyPrevious.ValidFlag.Visibility = Visibility.Collapsed;
-                UCEncryptionKeyPrevious.InvalidFlag.Visibility = Visibility.Collapsed;
-                UCEncryptionKeyPrevious.Validate.Visibility = Visibility.Collapsed;
+                UCEncryptionKey.Visibility = Visibility.Visible;
+                UCEncryptionKey.Validate.Visibility = Visibility.Hidden;
             }
             else if (ReplaceRadioBtn.IsChecked.Value)
             {
-                // variablesGrid.Visibility = Visibility.Collapsed;
                 UCEncryptionKeyPrevious.Visibility = Visibility.Visible;
                 UCEncryptionKey.Visibility = Visibility.Visible;
 
+                UCEncryptionKeyPrevious.Visibility = Visibility.Visible;
                 UCEncryptionKeyPrevious.ValidFlag.Visibility = Visibility.Collapsed;
                 UCEncryptionKeyPrevious.InvalidFlag.Visibility = Visibility.Visible;
                 UCEncryptionKeyPrevious.Validate.Visibility = Visibility.Visible;

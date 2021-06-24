@@ -74,7 +74,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
                 {
                     sConfig += "SourceControlUser=" + solution.SourceControl.SourceControlUser + Environment.NewLine;
-                    sConfig += "SourceControlPassword=" + EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass, solution.EncryptionKey) + Environment.NewLine;
+                    sConfig += "SourceControlPassword=" + EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass) + Environment.NewLine;
                     sConfig += "PasswordEncrypted=" + "Y" + Environment.NewLine;
                 }
                 else

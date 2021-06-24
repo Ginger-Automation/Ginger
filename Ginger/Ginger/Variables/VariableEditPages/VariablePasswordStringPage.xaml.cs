@@ -54,9 +54,9 @@ namespace Ginger.Variables
 
         private void txtPasswordValue_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            if (!EncryptionHandler.IsStringEncryptedWithKey(txtPasswordValue.Text, WorkSpace.Instance.Solution.EncryptionKey))
+            if (!EncryptionHandler.IsStringEncrypted(txtPasswordValue.Text))
             {                
-                txtPasswordValue.Text = EncryptionHandler.EncryptwithKey(txtPasswordValue.Text, WorkSpace.Instance.Solution.EncryptionKey);
+                txtPasswordValue.Text = EncryptionHandler.EncryptwithKey(txtPasswordValue.Text);
                 if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.EncryptionKey))
                 {
                     txtPasswordValue.Text = string.Empty;

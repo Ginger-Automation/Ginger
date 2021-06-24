@@ -341,7 +341,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 try
                 {
-                    pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass,EncryptionKey);
+                    pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass);
                 }
                 catch(Exception ex)
                 {

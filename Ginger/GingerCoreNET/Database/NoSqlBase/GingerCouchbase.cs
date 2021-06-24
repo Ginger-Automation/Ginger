@@ -48,7 +48,7 @@ namespace GingerCore.NoSqlBase
                     Servers = new List<Uri> { new Uri(Db.TNSCalculated.ToString()) },                    
                 });
                 //TODO: need to decrypt the password in the Database->PassCalculated
-                String deCryptValue = EncryptionHandler.DecryptwithKey(Db.PassCalculated.ToString(), WorkSpace.Instance.Solution.EncryptionKey);
+                String deCryptValue = EncryptionHandler.DecryptwithKey(Db.PassCalculated.ToString());
                 if (!string.IsNullOrEmpty(deCryptValue))
                 {
                     clusterCB.Authenticate(Db.UserCalculated.ToString(), deCryptValue);
@@ -69,7 +69,7 @@ namespace GingerCore.NoSqlBase
         public override bool MakeSureConnectionIsOpen()
         {
             string password = string.Empty;
-            string pass = EncryptionHandler.DecryptwithKey(Db.PassCalculated.ToString(),WorkSpace.Instance.Solution.EncryptionKey);
+            string pass = EncryptionHandler.DecryptwithKey(Db.PassCalculated.ToString());
             if (!string.IsNullOrEmpty(pass))
             {
                 password = pass;

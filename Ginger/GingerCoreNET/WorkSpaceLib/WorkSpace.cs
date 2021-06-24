@@ -379,6 +379,7 @@ namespace amdocs.ginger.GingerCoreNET
                     return false;
                 }
 
+                EncryptionHandler.SetCustomKey(solution.EncryptionKey);
                 if (!solution.ValidateKey())
                 {
                     //Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Encryption key validation failed or key is missing. Press Ok to enter the key manually.");
@@ -389,10 +390,9 @@ namespace amdocs.ginger.GingerCoreNET
                         {
                             // To support existing solutions, 
                             solution.EncryptionKey = EncryptionHandler.GetDefaultKey();
-                            solution.NeedVariablesReEncryption = false;
+                            solution.NeedVariablesReEncryption = true;
                             solution.SaveEncryptionKey();
                             solution.SaveSolution(false);
-                            ReEncryptVariable();
                         }
                         else if (!Instance.EventHandler.OpenEncryptionKeyHandler(solution))
                         {
@@ -401,7 +401,6 @@ namespace amdocs.ginger.GingerCoreNET
                     }
                     else return false;
                 }
-
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Creating Items Repository");
                 SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
@@ -466,21 +465,21 @@ namespace amdocs.ginger.GingerCoreNET
             {
                 try
                 {
-                    bool res = false;
                     // Get all variables from BF
-                    List<GingerCore.Variables.VariableBase> variables = Bf.GetBFandActivitiesVariabeles(false).Where(f => f.VariableType == "PasswordString").ToList();
+                    List<GingerCore.Variables.VariableBase> variables = Bf.GetBFandActivitiesVariabeles(false).Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
                     variables.ForEach(v =>
                     {
                         try
                         {
                             if (string.IsNullOrEmpty(oldKey))
-                            {                                
-                                ((GingerCore.Variables.VariablePasswordString)v).Password = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptString(((GingerCore.Variables.VariablePasswordString)v).Password, ref res), WorkSpace.Instance.Solution.EncryptionKey);
+                            {
+                                ((GingerCore.Variables.VariablePasswordString)v).Password =
+                                EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password);
                             }
                             else
                             {
-                                ((GingerCore.Variables.VariablePasswordString)v).Password = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptwithKey(((GingerCore.Variables.VariablePasswordString)v).Password,oldKey), WorkSpace.Instance.Solution.EncryptionKey);
-                                res = true;
+                                ((GingerCore.Variables.VariablePasswordString)v).Password =
+                                EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);      
                             }
                             varReencryptedCount++;
                         }
@@ -490,7 +489,7 @@ namespace amdocs.ginger.GingerCoreNET
                         }
                     });
 
-                    if (res)
+                    if (variables.Any())
                     {
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(Bf);
                     }
@@ -503,21 +502,24 @@ namespace amdocs.ginger.GingerCoreNET
             });
 
             // For Global Variables
-            bool res1 = false;
-            foreach (GingerCore.Variables.VariableBase v in WorkSpace.Instance.Solution.Variables.Where(f => f.VariableType == "PasswordString"))
+            bool res = false;
+            foreach (GingerCore.Variables.VariableBase v in WorkSpace.Instance.Solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString))
             {
                 try
                 {
                     if (string.IsNullOrEmpty(oldKey))
                     {
-                        ((GingerCore.Variables.VariablePasswordString)v).Password = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptString(((GingerCore.Variables.VariablePasswordString)v).Password, ref res1), WorkSpace.Instance.Solution.EncryptionKey);
+                        ((GingerCore.Variables.VariablePasswordString)v).Password =
+                            EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password);
+                        res = true;
                     }
                     else
                     {
-                        ((GingerCore.Variables.VariablePasswordString)v).Password = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptwithKey(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey), WorkSpace.Instance.Solution.EncryptionKey);
-                        res1 = true;
+                        ((GingerCore.Variables.VariablePasswordString)v).Password =
+                            EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);
+                        res = true;
                     }
-                   
+
                     varReencryptedCount++;
                 }
                 catch (Exception ex)
@@ -525,7 +527,7 @@ namespace amdocs.ginger.GingerCoreNET
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password Global variable {1}", v.Name), ex);
                 }
             }
-            if (res1)
+            if (res)
             {
                 WorkSpace.Instance.Solution.SaveSolution(false);
             }
@@ -536,24 +538,24 @@ namespace amdocs.ginger.GingerCoreNET
                 List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
                 projEnvironments.ForEach(pe =>
                 {
-                    res1 = false;
+                    res = false;
                     foreach (EnvApplication ea in pe.Applications)
                     {
                         foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
                         {
                             if (string.IsNullOrEmpty(oldKey))
                             {
-                                gp.Value = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptString(gp.Value, ref res1), WorkSpace.Instance.Solution.EncryptionKey);
+                                gp.Value = EncryptionHandler.ReEncryptString(gp.Value);
                             }
                             else
                             {
-                                gp.Value = EncryptionHandler.EncryptwithKey(EncryptionHandler.DecryptwithKey(gp.Value, oldKey), WorkSpace.Instance.Solution.EncryptionKey);                                
-                                res1 = true;
-                            }                           
+                                gp.Value = EncryptionHandler.ReEncryptString(gp.Value, oldKey);
+                                res = true;
+                            }
                             varReencryptedCount++;
                         }
                     }
-                    if (res1)
+                    if (res)
                     {
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(pe);
                     }

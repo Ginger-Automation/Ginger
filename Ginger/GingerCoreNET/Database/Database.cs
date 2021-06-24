@@ -261,7 +261,7 @@ namespace GingerCore.Environments
                 connStr = CreateConnectionString();
             }
             connStr = ConnectionStringCalculated.Replace("{USER}", UserCalculated);
-            String deCryptValue = EncryptionHandler.DecryptwithKey(PassCalculated, WorkSpace.Instance.Solution.EncryptionKey);
+            String deCryptValue = EncryptionHandler.DecryptwithKey(PassCalculated);
             if (!string.IsNullOrEmpty(deCryptValue))
             { connStr = connStr.Replace("{PASS}", deCryptValue); }
             else

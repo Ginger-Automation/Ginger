@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 options.URL = solution.SourceControl.SourceControlURL;
                 options.User = solution.SourceControl.SourceControlUser;
 
-                options.Pass = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass, solution.EncryptionKey);
+                options.Pass = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
 
                 options.PasswordEncrypted = true;
                 options.SCMType = solution.SourceControl.GetSourceControlType;

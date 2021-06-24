@@ -85,7 +85,7 @@ namespace GingerCore.NoSqlBase
                         }
                         else
                         {
-                            String deCryptValue = EncryptionHandler.DecryptwithKey(Db.PassCalculated.ToString(), WorkSpace.Instance.Solution.EncryptionKey);
+                            String deCryptValue = EncryptionHandler.DecryptwithKey(Db.PassCalculated.ToString());
                             if (!string.IsNullOrEmpty(deCryptValue))
                             {
                                 mongoCredential = MongoCredential.CreateCredential(HostPortDB[HostPortDB.Length-1], Db.UserCalculated, deCryptValue);

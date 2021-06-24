@@ -243,7 +243,7 @@ namespace GingerCore.ALM
                                         OctaneSettings octaneSettings = JsonUtils.DeserializeObject<OctaneSettings>(File.ReadAllText(octaneSettingsFilePath));
                                         if (octaneSettings.IsCertificatePasswordEncrypted)
                                         {
-                                            octaneSettings.CertificatePassword = EncryptionHandler.DecryptwithKey(octaneSettings.CertificatePassword, WorkSpace.Instance.Solution.EncryptionKey);
+                                            octaneSettings.CertificatePassword = EncryptionHandler.DecryptwithKey(octaneSettings.CertificatePassword);
                                         }
                                         clientCertificateData = new ClientCertificateData() { Path = Path.GetFullPath(octaneSettings.CertificateFilePath), Password = octaneSettings.CertificatePassword };
                                     }

@@ -55,7 +55,7 @@ namespace UnitTests.NonUITests
             bool result = false;
 
             //Act
-            encryptedString = EncryptionHandler.EncryptwithKey("ginger", "D3^hdfr7%ws4Kb56=Qt");
+            encryptedString = EncryptionHandler.EncryptwithKey("ginger");
 
             //Assert
             Assert.AreEqual("mDL33JRKM3Zv1FdtGQMNZg==", encryptedString);
@@ -69,7 +69,7 @@ namespace UnitTests.NonUITests
             bool result = false;
 
             //Act
-            decryptedString = EncryptionHandler.DecryptString("mDL33JRKM3Zv1FdtGQMNZg==",ref result);
+            decryptedString = EncryptionHandler.DecryptwithKey("mDL33JRKM3Zv1FdtGQMNZg==");
 
             //Assert
             Assert.AreEqual("ginger", decryptedString);

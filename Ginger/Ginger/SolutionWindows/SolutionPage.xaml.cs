@@ -205,12 +205,8 @@ namespace Ginger.SolutionWindows
         private void ReplaceKeyBtn_Click(object sender, RoutedEventArgs e)
         {
             ReplaceEncryptionKeyPage replaceEncryptionKeyPage = new ReplaceEncryptionKeyPage();
-
             _pageGenericWin.Close();
-            replaceEncryptionKeyPage.ShowAsWindow(mSolution);
-
-//GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Actions Conversion", this);
-            //Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Not implemented yet.");
+            IsValidEncryptionKeyAdded = replaceEncryptionKeyPage.ShowAsWindow(mSolution);
         }
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
