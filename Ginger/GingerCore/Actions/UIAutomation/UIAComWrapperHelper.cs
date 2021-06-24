@@ -772,9 +772,9 @@ namespace GingerCore.Drivers
         public override object FindElementByLocator(eLocateBy locateBy, string locateValue)
         {
             object element = null;
-            if (mLoadTimeOut != null)
+            if (mImplicitWait != null)
             {
-                loadwaitSeconds = mLoadTimeOut.Value;
+                loadwaitSeconds = mImplicitWait.Value;
             }
             int count = 0;
             bool isLoaded = false;

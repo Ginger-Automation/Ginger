@@ -97,6 +97,7 @@ namespace GingerCore.Drivers.PBDriver
             //TODO: add func to Act + Enum for switch
             string actClass = act.GetType().ToString();
             mUIAutomationHelper.mLoadTimeOut = mActionTimeout;
+            mUIAutomationHelper.mImplicitWait = mActionTimeout;
             mUIAutomationHelper.taskFinished = false;
             //TODO: avoid hard coded string... 
             actClass = actClass.Replace("GingerCore.Actions.", "");

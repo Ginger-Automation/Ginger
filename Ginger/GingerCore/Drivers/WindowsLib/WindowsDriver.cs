@@ -46,8 +46,8 @@ namespace GingerCore.Drivers.WindowsLib
         int mActionTimeout = 10;
 
         [UserConfigured]
-        [UserConfiguredDefault("30")] 
-        [UserConfiguredDescription("Action Timeout - default is 30 seconds")]
+        [UserConfiguredDefault("150")] 
+        [UserConfiguredDescription("Action Timeout - default is 150 seconds")]
         public override int ActionTimeout
         {
             get
@@ -57,6 +57,24 @@ namespace GingerCore.Drivers.WindowsLib
             set
             { mActionTimeout = value; }
         }
+
+        int mImplicitWait = 10;
+
+        [UserConfigured]
+        [UserConfiguredDefault("10")]
+        [UserConfiguredDescription("Amount of time the driver should wait when searching for an element if it is not immediately present")]
+        public int ImplicitWait 
+        {
+            get
+            {
+                return mImplicitWait;
+            }
+            set
+            {
+                mImplicitWait = value;
+            }
+        }
+
 
         public WindowsDriver(BusinessFlow BF, eUIALibraryType type= eUIALibraryType.ComWrapper)
         {
@@ -105,6 +123,7 @@ namespace GingerCore.Drivers.WindowsLib
             string actClass = act.GetType().Name;
 
             mUIAutomationHelper.mLoadTimeOut = mActionTimeout;
+            mUIAutomationHelper.mImplicitWait = mImplicitWait;
             mUIAutomationHelper.taskFinished = false;
 
             if (!actClass.Equals(typeof(ActSwitchWindow)) || (actClass.Equals(typeof(ActWindow)) && ((ActWindow)act).WindowActionType != ActWindow.eWindowActionType.Switch))
@@ -1515,15 +1534,15 @@ namespace GingerCore.Drivers.WindowsLib
             AutomationElement AE = (AutomationElement)obj;
             return AE;
         }
-        public override void ActionCompleted(Act act)
-        {
-            mUIAutomationHelper.taskFinished = true;
-            mUIElementOperationsHelper.taskFinished = true;
-            if (!String.IsNullOrEmpty(act.Error) && act.Error.StartsWith("Time out !"))
-            {
-                Thread.Sleep(1000);
-            }
-        }
+        //public override void ActionCompleted(Act act)
+        //{
+        //    mUIAutomationHelper.taskFinished = true;
+        //    mUIElementOperationsHelper.taskFinished = true;
+        //    if (!String.IsNullOrEmpty(act.Error) && act.Error.StartsWith("Time out !"))
+        //    {
+        //        Thread.Sleep(1000);
+        //    }
+        //}
 
         public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
         {

@@ -119,6 +119,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetText);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeys);
                     break;
@@ -126,6 +127,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.Tab:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
 
                     break;
 
@@ -134,6 +136,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
                     break;
 
 
@@ -143,6 +146,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Toggle);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
                     break;
 
                 case eElementType.RadioButton:
@@ -151,6 +155,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
 
                     break;
 
@@ -167,12 +172,14 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
 
                     break;
 
                 case eElementType.TreeView:                    
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
                     break;
 
                 case eElementType.TreeItem:
@@ -183,6 +190,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClickXY);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Expand);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
 
                     break;
 
@@ -224,7 +232,23 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
 
                     break;
+                case eElementType.HyperLink:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
 
+                    break;
+                case eElementType.Document:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetText);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeys);
+
+                    break;
             }
 
             windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.IsExist);

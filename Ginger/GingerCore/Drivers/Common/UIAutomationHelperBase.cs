@@ -39,6 +39,7 @@ namespace GingerCore.Drivers.Common
         public ePlatformType mPlatform;
         int LastHighLightHWND = 0;
         public int? mLoadTimeOut;
+        public int? mImplicitWait;
 
         public BusinessFlow BusinessFlow { get; set; }
         public IWindowExplorer WindowExplorer { get; set; }
