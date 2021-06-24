@@ -511,6 +511,12 @@
     <Compile Include="Run\RunSetActions\RunSetActionSendDataToExternalSourceEditPage.xaml.cs">
       <DependentUpon>RunSetActionSendDataToExternalSourceEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SolutionCategories\SolutionCategoriesPage.xaml.cs">
+      <DependentUpon>SolutionCategoriesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml.cs">
+      <DependentUpon>SolutionCategoryOptionalValuesEditPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\LiveSpyHandler.xaml.cs">
       <DependentUpon>LiveSpyHandler.xaml</DependentUpon>
     </Compile>
@@ -2927,6 +2933,14 @@
     <Page Include="RunSetPageLib\RunsetRunnersConfigPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SolutionCategories\SolutionCategoriesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\LiveSpyHandler.xaml">
       <SubType>Designer</SubType>
