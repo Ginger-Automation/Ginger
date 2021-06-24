@@ -43,7 +43,7 @@ namespace Ginger.SolutionCategories
             {
                 view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategory.Description), Header = "Description", ReadOnly = mReadOnly, WidthWeight = 25 });
                 view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategory.CategoryOptionalValuesString), Header = "Optional Values", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay });
-                view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, ReadOnly= mReadOnly, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xMainGrid.Resources["OpenEditLocalPossibleValuesPage"] });
+                view.GridColsView.Add(new GridColView() { Field = "Edit", WidthWeight = 5, ReadOnly= mReadOnly, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xMainGrid.Resources["xOpenEditLocalPossibleValuesPage"] });
             }
             else
             {

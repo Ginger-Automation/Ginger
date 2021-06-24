@@ -7,22 +7,22 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <SolidColorBrush Color="Blue" x:Key="xmlValueBrush"/>
-        <SolidColorBrush Color="Red" x:Key="xmAttributeBrush"/>
-        <SolidColorBrush Color="DarkMagenta" x:Key="xmlTagBrush"/>
-        <SolidColorBrush Color="Blue" x:Key="xmlMarkBrush"/>
+        <SolidColorBrush Color="Blue" x:Key="htmlValueBrush"/>
+        <SolidColorBrush Color="Red" x:Key="htmlAttributeBrush"/>
+        <SolidColorBrush Color="DarkMagenta" x:Key="htmlTagBrush"/>
+        <SolidColorBrush Color="Brown" x:Key="htmlMarkBrush"/>
 
         <DataTemplate x:Key="attributeTemplate">
             <StackPanel Orientation="Horizontal" 
                         Margin="3,0,0,0" HorizontalAlignment="Center">
                 <TextBlock Text="{Binding Path=Name}" 
-                           Foreground="{StaticResource xmAttributeBrush}"/>
+                           Foreground="{StaticResource htmlAttributeBrush}"/>
                 <TextBlock Text="=&quot;" 
-                           Foreground="{StaticResource xmlMarkBrush}"/>
+                           Foreground="{StaticResource htmlMarkBrush}"/>
                 <TextBlock Text="{Binding Path=Value}" 
-                           Foreground="{StaticResource xmlValueBrush}"/>
-                <TextBlock Text="&quot;" 
-                           Foreground="{StaticResource xmlMarkBrush}"/>
+                           Foreground="{StaticResource htmlValueBrush}"/>
+                <TextBlock Text="=&quot;" 
+                           Foreground="{StaticResource htmlMarkBrush}"/>
             </StackPanel>
         </DataTemplate>
 
@@ -30,19 +30,19 @@
             <Setter Property="IsExpanded" Value="True"/>
         </Style>
 
-        <HierarchicalDataTemplate x:Key="htmlTreeViewTemplate" 
+        <HierarchicalDataTemplate x:Key="htmlTreeViewTemplate"
                                   ItemsSource="{Binding XPath=child::node()}">
             <StackPanel Orientation="Horizontal" Margin="3,0,0,0" 
                         HorizontalAlignment="Center">
                 <TextBlock Text="&lt;" HorizontalAlignment="Center" 
-                           Foreground="{StaticResource xmlMarkBrush}" 
+                           Foreground="{StaticResource htmlMarkBrush}" 
                            x:Name="startTag"/>
 
                 <TextBlock Text="{Binding Path=Name}"
                     Margin="0"
                     HorizontalAlignment="Center"
-                    x:Name="xmlTag"
-                    Foreground="{StaticResource xmlTagBrush}"/>
+                    x:Name="htmlTag"
+                    Foreground="{StaticResource htmlTagBrush}"/>
 
                 <ItemsControl
                     ItemTemplate="{StaticResource attributeTemplate}"
@@ -56,16 +56,16 @@
                 </ItemsControl>
 
                 <TextBlock Text="&gt;" HorizontalAlignment="Center" 
-                           Foreground="{StaticResource xmlMarkBrush}" 
+                           Foreground="{StaticResource htmlMarkBrush}" 
                            x:Name="endTag"/>
             </StackPanel>
 
             <HierarchicalDataTemplate.Triggers>
                 <DataTrigger Binding="{Binding NodeType}">
                     <Setter Property="Text" Value="{Binding InnerText}" 
-                            TargetName="xmlTag"/>
+                            TargetName="htmlTag"/>
                     <Setter Property="Foreground" Value="Blue" 
-                            TargetName="xmlTag"/>
+                            TargetName="htmlTag"/>
                     <Setter Property="Visibility" Value="Collapsed" 
                             TargetName="startTag"/>
                     <Setter Property="Visibility" Value="Collapsed" 
@@ -80,7 +80,24 @@
     </UserControl.Resources>
 
     <Grid>
-        <TreeView Grid.Row="2" Grid.ColumnSpan="2" Name="htmlTree" />
+        <TreeView Grid.Row="2" Grid.ColumnSpan="2" Name="htmlTree" >
+            <!--ItemTemplate="{StaticResource htmlTreeViewTemplate}"/>-->
+        <!--<TreeViewItem Header="&lt;div class='aaa'>" />
+            <TreeViewItem Header="&lt;div class='aaa'>" />
+            <TreeViewItem IsExpanded="True">
+                <TreeViewItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&lt;" Foreground="Brown"/>
+                        <TextBlock Text="div" Foreground="Brown"/>
+                        <TextBlock Text="   "/>
+                        <TextBlock Text="class" Foreground="Red"/>
+                        <TextBlock Text="=" Foreground="RosyBrown"/>
+                        <TextBlock Text="'aaa'" Foreground="Blue"/>
+                        <TextBlock Text=">"/>
+                    </StackPanel>
+                </TreeViewItem.Header>
+            </TreeViewItem>-->
+        </TreeView>
     </Grid>
 
 </UserControl>

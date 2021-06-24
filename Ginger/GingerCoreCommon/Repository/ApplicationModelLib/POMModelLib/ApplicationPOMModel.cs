@@ -202,6 +202,9 @@ namespace Amdocs.Ginger.Repository
                 case ePlatformType.Windows:
                     eImageType = eImageType.Window;
                     break;
+                case ePlatformType.Mobile:
+                    eImageType = eImageType.Mobile;
+                    break;
                 default:
                     eImageType = eImageType.ApplicationPOMModel;
                 break;

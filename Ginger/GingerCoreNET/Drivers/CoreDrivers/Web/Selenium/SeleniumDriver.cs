@@ -4116,7 +4116,7 @@ namespace GingerCore.Drivers
                 EI.ElementTypeEnum = elementTypeEnum.Item2;
             }
 
-            if (string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/")
+            if ((string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/") && EI.ElementObject != null)
             {
                 if (string.IsNullOrWhiteSpace(EI.Path) || (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe")))
                 {
@@ -7329,62 +7329,6 @@ namespace GingerCore.Drivers
             return elemInfo;
         }
 
-        //ElementInfo IVisualTestingDriver.GetElementAtPoint(long ptX, long ptY)
-        //{
-        //    Driver.SwitchTo().DefaultContent();
-
-        //    var ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return document.elementFromPoint(arguments[0], arguments[1])", ptX, ptY);
-
-        //    HTMLElementInfo elemInfo = null;
-
-        //    if (ele != null)
-        //    {
-
-        //        string iframeElementPath = string.Empty;
-
-        //        if (ele.TagName == "frame" || ele.TagName == "iframe" || ele.TagName == "frameset")
-        //        {
-        //            Driver.SwitchTo().Frame(ele);
-        //            iframeElementPath = ele.GetProperty("xpath");
-        //            ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return document.elementFromPoint(arguments[0], arguments[1])", ptX, ptY);
-        //            Driver.SwitchTo().ParentFrame();
-        //        }
-
-        //        HtmlNode elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id == ele.GetProperty("id")).FirstOrDefault();
-
-        //        elemInfo = new HTMLElementInfo();
-        //        var elemTypeEnum = GetElementTypeEnum(ele);
-        //        elemInfo.ElementType = elemTypeEnum.Item1;
-        //        elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
-        //        elemInfo.ElementObject = ele;
-        //        elemInfo.Path = "";
-        //        elemInfo.XPath = string.IsNullOrEmpty(iframeElementPath) ? elemNode.XPath : iframeElementPath + "," + elemNode.XPath;
-        //        elemInfo.HTMLElementObject = elemNode;
-
-        //        ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
-        //    }
-
-        //    //if (elem == null)
-        //    //{
-        //    //    foreach (ElementInfo elemInfo in PageElements.Where(e => e.X <= ptX && e.Y <= ptY).OrderByDescending(e => e.Y))
-        //    //    {
-        //    //        if (elemInfo.X <= ptX)
-        //    //        {
-        //    //            if((elemInfo.X + elemInfo.Width) >= ptX)
-        //    //            {
-        //    //                if(elemInfo.Y == ptY || (elemInfo.Y < ptY && (elemInfo.Y + elemInfo.Height) >= ptY))
-        //    //                {
-        //    //                    elem = elemInfo;
-        //    //                    break;
-        //    //                }
-        //    //            }
-        //    //        }
-        //    //    }
-        //    //}
-
-        //    return elemInfo;
-        //}
-
         public RemoteWebElement GetElementFromPoint(long X, long Y)
         {
             while (true)
@@ -7612,7 +7556,7 @@ namespace GingerCore.Drivers
                 return parentEI;
             }
 
-            IWebElement parentElementObject = Driver.FindElement(By.XPath(parentElementHtmlNode.XPath));
+            IWebElement parentElementObject = parentElementHtmlNode != null ? Driver.FindElement(By.XPath(parentElementHtmlNode.XPath)) : null;
 
             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
             foundElemntInfo.ElementObject = parentElementObject;
