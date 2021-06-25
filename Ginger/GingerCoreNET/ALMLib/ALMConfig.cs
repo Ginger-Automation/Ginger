@@ -174,6 +174,14 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
+        public string ALMConfigPackageFolderPathCalculated
+        {
+            get
+            {
+                return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mALMConfigPackageFolderPath);
+            }
+        }
+
         private bool mDefaultAlm;
         [IsSerializedForLocalRepository]
         public bool DefaultAlm

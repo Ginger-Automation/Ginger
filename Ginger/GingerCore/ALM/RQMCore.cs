@@ -146,7 +146,7 @@ namespace GingerCore.ALM
             AlmConfig.ALMProjectName = ALMProject;
             AlmConfig.ALMProjectKey = ALMProjectKey;
             AlmConfig.AlmType = almType;
-            AlmConfig.ALMConfigPackageFolderPath = ALMConfigPackageFolderPath;
+            AlmConfig.ALMConfigPackageFolderPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(ALMConfigPackageFolderPath); ;
             AlmConfig.JiraTestingALM = testingALMType;
 
             AlmCoreConfig = AlmConfig;

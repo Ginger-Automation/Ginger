@@ -190,6 +190,7 @@ namespace GingerCore.ALM
                     AlmConfig.ALMConfigPackageFolderPath = ALMConfigPackageFolderPath;
                 }
             }
+            AlmConfig.ALMConfigPackageFolderPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(AlmConfig.ALMConfigPackageFolderPath);
         }
 
         public BusinessFlow ConvertRQMTestPlanToBF(RQMTestPlan testPlan)
