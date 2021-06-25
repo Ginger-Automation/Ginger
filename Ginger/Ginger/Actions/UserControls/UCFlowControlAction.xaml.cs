@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Ginger.Run;
 using GingerCore;
@@ -144,7 +145,8 @@ namespace Ginger.Actions.UserControls
             }
             else
             {
-                if (mActParentActivity != null && mActParentActivity.GetType() == typeof(ErrorHandler))
+                if (mActParentActivity != null && (mActParentActivity.GetType() == typeof(ErrorHandler) 
+                    || mActParentActivity.GetType() == typeof(CleanUpActivity)))
                 {
                     List<eFlowControlAction> ErrorFlowControlActions = FC.GetFlowControlActionsForErrorAndPopupHandler();
 

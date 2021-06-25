@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -1197,7 +1198,7 @@ namespace Ginger.Run
                     ObservableList<ErrorHandler> lstPopUpHandlers = GetAllErrorHandlersByType(eHandlerType.Popup_Handler);
                     if (lstPopUpHandlers.Count > 0)
                     {
-                        executeErrorAndPopUpHandler(lstPopUpHandlers);
+                        ExecuteErrorHandlerActivities(lstPopUpHandlers);
                     }
 
                     if (!mErrorHandlerExecuted
@@ -1222,7 +1223,7 @@ namespace Ginger.Run
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
                         NotifyActionStart(act);
 
-                        executeErrorAndPopUpHandler(lstMappedErrorHandlers);
+                        ExecuteErrorHandlerActivities(lstMappedErrorHandlers);
                         mErrorHandlerExecuted = true;
                     }
                     else
@@ -1279,6 +1280,15 @@ namespace Ginger.Run
         {
             ObservableList<ErrorHandler> lstErrorHandler = new ObservableList<ErrorHandler>(CurrentBusinessFlow.Activities.Where(a => a.GetType() == typeof(ErrorHandler) && a.Active == true
               && ((GingerCore.ErrorHandler)a).HandlerType == errHandlerType).Cast<ErrorHandler>().ToList());
+
+            return lstErrorHandler;
+        }
+
+
+        private ObservableList<CleanUpActivity> GetCureentBusinessFlowCleanUpActivities()
+        {
+            ObservableList<CleanUpActivity> lstErrorHandler = new ObservableList<CleanUpActivity>(CurrentBusinessFlow.Activities.Where(a => a.GetType() == typeof(CleanUpActivity) && a.Active == true
+              ).Cast<CleanUpActivity>().ToList());
 
             return lstErrorHandler;
         }
@@ -1658,7 +1668,20 @@ namespace Ginger.Run
             NotifyUpdateActionStatusEnd(act);
         }
 
-        private void executeErrorAndPopUpHandler(ObservableList<ErrorHandler> errorHandlerActivity)
+        private void ExecuteCleanUpActivities()
+        {
+            ObservableList<CleanUpActivity> cleanUpActivities = GetCureentBusinessFlowCleanUpActivities();
+
+            if (cleanUpActivities.Count > 0)
+            {
+                foreach(CleanUpActivity cleanUpActivity in cleanUpActivities)
+                {
+                    RunActivity(cleanUpActivity);
+                }    
+            }
+        }
+
+        private void ExecuteErrorHandlerActivities(ObservableList<ErrorHandler> errorHandlerActivities)
         {
             Activity originActivity = CurrentBusinessFlow.CurrentActivity;
             
@@ -1668,12 +1691,12 @@ namespace Ginger.Run
                 Act orginAction = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;                
                 
                 eActionExecutorType ActionExecutorType = eActionExecutorType.RunWithoutDriver;
-                foreach (ErrorHandler errActivity in errorHandlerActivity)
+                foreach (ErrorHandler errActivity in errorHandlerActivities)
                 {
                     CurrentBusinessFlow.CurrentActivity = errActivity;
                     SetCurrentActivityAgent();
                     Stopwatch stE = new Stopwatch();
-                    stE.Start();                    
+                    stE.Start();
                     Reporter.ToLog(eLogLevel.INFO, "Error Handler '" + errActivity.ActivityName.ToString() + "' Started");
                     foreach (Act act in errActivity.Acts)
                     {
@@ -3099,7 +3122,7 @@ namespace Ginger.Run
                     //check if Activity is allowed to run
                     if (CurrentBusinessFlow == null ||
                         activity.Acts.Count == 0 || //no Actions to run
-                            activity.GetType() == typeof(ErrorHandler) ||//don't run error handler from RunActivity
+                            activity.GetType() == typeof(ErrorHandler) ||//don't run error handler from RunActivity                            
                                 activity.CheckIfVaribalesDependenciesAllowsToRun(CurrentBusinessFlow, true) == false || //Variables-Dependencies not allowing to run
                                     (FilterExecutionByTags == true && CheckIfActivityTagsMatch() == false))//add validation for Ginger runner tags
                     {
@@ -3649,7 +3672,7 @@ namespace Ginger.Run
 
                 while (ExecutingActivity != null)
                 {
-                    if (ExecutingActivity.GetType() == typeof(ErrorHandler))
+                    if (ExecutingActivity.GetType() == typeof(ErrorHandler) || ExecutingActivity.GetType() == typeof(CleanUpActivity))
                     {
                         if (!CurrentBusinessFlow.Activities.IsLastItem())
                         {                            
@@ -3721,7 +3744,7 @@ namespace Ginger.Run
                         }
 
                     }
-                }
+                }         
             }
             catch (Exception ex)
             {
@@ -3729,6 +3752,11 @@ namespace Ginger.Run
             }
             finally
             {
+
+                if (mStopRun==false)
+                {
+                    ExecuteCleanUpActivities();
+                }
                 SetBusinessFlowActivitiesAndActionsSkipStatus();
                 if (doContinueRun == false)
                 {
