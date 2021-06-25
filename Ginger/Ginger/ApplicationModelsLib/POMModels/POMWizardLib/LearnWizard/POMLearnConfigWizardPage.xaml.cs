@@ -88,8 +88,16 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (mAppPlatform.Equals(ePlatformType.Web))
             {
-                mWizard.mPomLearnUtils.RelativeXpathTemplateList = xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList;
+                if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true)
+                {
+                    mWizard.mPomLearnUtils.RelativeXpathTemplateList = xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList;
+                }
+                else
+                {
+                    mWizard.mPomLearnUtils.RelativeXpathTemplateList.Clear();
+                }
             }
+
         }
 
         private void ShowsCustomRelativePathTemplateConfig()
@@ -102,7 +110,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Collapsed;
             }
-            
         }
 
         private void ShowSpecficFrameLearnConfigPanel()

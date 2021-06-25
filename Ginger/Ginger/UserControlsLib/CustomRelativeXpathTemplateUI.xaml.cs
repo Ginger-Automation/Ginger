@@ -36,6 +36,7 @@ namespace Ginger.UserControlsLib.POMLearnig
         {
             InitializeComponent();
             ShowsRelativePathCofigGridView();
+            xRelXpathSettingsGrid.Grid.RowValidationRules.Add(new ValidateCustomRelativeXpath());
         }
 
         private void ShowsRelativePathCofigGridView()
@@ -56,43 +57,9 @@ namespace Ginger.UserControlsLib.POMLearnig
 
             xRelXpathSettingsGrid.DataSourceList = RelativeXpathTemplateList;
             xRelXpathSettingsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddRelativexPathTemplateRow));
-            xRelXpathSettingsGrid.Grid.LostFocus += Grid_LostFocus; ;
         }
 
-        private void Grid_LostFocus(object sender, RoutedEventArgs e)
-        {
-            UpdateXpathTemplateStatus();
-        }
-
-        private async void UpdateXpathTemplateStatus()
-        {
-            // this inner method checks if user is still typing
-            async Task<bool> UserKeepsTyping()
-            {
-                var relXpath = (CustomRelativeXpathTemplate)xRelXpathSettingsGrid.CurrentItem;
-                await Task.Delay(1000);
-                return relXpath.Value != ((CustomRelativeXpathTemplate)xRelXpathSettingsGrid.CurrentItem).Value;
-            }
-            if (await UserKeepsTyping()) return;
-
-            UpdateRelativeXpathTemplateStatus();
-        }
-
-        private void UpdateRelativeXpathTemplateStatus()
-        {
-           
-            Regex rexXpathReg = new Regex("\\/\\/(\\*|[a-zA-Z]*)\\[[^[(){}\\]]*\\]$", RegexOptions.Compiled);
-
-            var relXpath = (CustomRelativeXpathTemplate)xRelXpathSettingsGrid.CurrentItem;
-
-            var status = CustomRelativeXpathTemplate.SyntaxValidationStatus.Failed;
-            if (relXpath.Value != null && rexXpathReg.IsMatch(relXpath.Value))
-            {
-                status = CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed;
-            }
-            relXpath.Status= status;
-        }
-
+      
         private void AddDefaultTemplate()
         {
             if (RelativeXpathTemplateList == null)

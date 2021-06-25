@@ -535,6 +535,7 @@
     <Compile Include="UserControlsLib\ucShowItemID.xaml.cs">
       <DependentUpon>ucShowItemID.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\ValidateCustomRelativeXpath.cs" />
     <Compile Include="Variables\ValidationRule\NumberValidationRule.cs" />
     <Compile Include="Variables\ValidationRule\DateTimeFormatValidationRule.cs" />
     <Compile Include="Variables\VariableEditPages\VariableDateTimePage.xaml.cs">

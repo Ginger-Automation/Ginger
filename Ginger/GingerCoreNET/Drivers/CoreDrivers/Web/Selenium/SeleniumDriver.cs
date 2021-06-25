@@ -3912,7 +3912,7 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, relativeXpathTemplateList);
                             Driver.SwitchTo().ParentFrame();
                         }
                     }

@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models;
+using Amdocs.Ginger.CoreNET.Application_Models.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Drivers;
@@ -59,6 +60,7 @@ namespace GingerCoreNET.Application_Models
         }
 
         public string SpecificFramePath { get; set; }
+        public ObservableList<CustomRelativeXpathTemplate> RelativeXpathTemplateList =new ObservableList<CustomRelativeXpathTemplate>();
 
         public PomDeltaUtils(ApplicationPOMModel pom, Agent agent)
         {
@@ -86,11 +88,11 @@ namespace GingerCoreNET.Application_Models
                     uIElementList.AddRange(PomLearnUtils.AutoMapBasicElementTypesList.ToList());
                     uIElementList.AddRange(PomLearnUtils.AutoMapAdvanceElementTypesList.ToList());
 
-                    await mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true,SpecificFramePath);
+                    await mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true,SpecificFramePath, GetRelativeXpathTemplateList());
                 }
                 else
                 {
-                   await mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true,SpecificFramePath);
+                   await mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true,SpecificFramePath, GetRelativeXpathTemplateList());
                 }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();
@@ -101,6 +103,17 @@ namespace GingerCoreNET.Application_Models
             }            
         }
 
+        private List<string> GetRelativeXpathTemplateList()
+        {
+            var customRelXpathTemplateList = new List<string>();
+
+            foreach (var item in RelativeXpathTemplateList)
+            {
+                customRelXpathTemplateList.Add(item.Value);
+            }
+
+            return customRelXpathTemplateList;
+        }
         public void StopLearning()
         {            
             ((DriverBase)Agent.Driver).mStopProcess = true;
