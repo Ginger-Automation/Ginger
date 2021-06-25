@@ -707,7 +707,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public async Task<System.Collections.Generic.List<ElementInfo>> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        public async Task<System.Collections.Generic.List<ElementInfo>> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null)
         {
             List<ElementInfo> Eil = new System.Collections.Generic.List<ElementInfo>();
 

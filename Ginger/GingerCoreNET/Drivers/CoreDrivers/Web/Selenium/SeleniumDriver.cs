@@ -3776,7 +3776,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null,List<string> relativeXpathTemplateList=null)
         {
             mIsDriverBusy = true;
 
@@ -3788,7 +3788,7 @@ namespace GingerCore.Drivers
                 List<ElementInfo> list = new List<ElementInfo>();
                 Driver.SwitchTo().DefaultContent();
                 allReadElem.Clear();
-                list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList));
+                list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList,relativeXpathTemplateList));
                 allReadElem.Clear();
                 CurrentFrame = "";
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -3803,7 +3803,7 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,List<string> relativeXpathTemplateList = null)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -3883,6 +3883,14 @@ namespace GingerCore.Drivers
 
                             GetRelativeXpathElementLocators(foundElemntInfo);
 
+                            if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
+                            {
+                                foreach (var template in relativeXpathTemplateList)
+                                {
+                                    CreateXpathFromUserTemplate(template,foundElemntInfo);
+                                }
+                            }
+
                             foundElemntInfo.IsAutoLearned = true;
                             foundElementsList.Add(foundElemntInfo);
 
@@ -3914,6 +3922,45 @@ namespace GingerCore.Drivers
             }
 
             return foundElementsList;
+        }
+
+        Regex AttRegex = new Regex("@[a-zA-Z]*",RegexOptions.Compiled);
+        private void CreateXpathFromUserTemplate(string xPathTemplate,HTMLElementInfo hTMLElement)
+        {
+            try
+            {
+                var relXpath = string.Empty;
+
+                var attributeCount = 0;
+
+                var attList = AttRegex.Matches(xPathTemplate);
+                var strList = new List<string>();
+                foreach (var item in attList)
+                {
+                    strList.Add(item.ToString().Remove(0, 1));
+                }
+
+                foreach (var item in hTMLElement.HTMLElementObject.Attributes)
+                {
+                    if (strList.Contains(item.Name))
+                    {
+                        relXpath = xPathTemplate.Replace(item.Name + "=\'\'", item.Name + "=\'" + item.Value + "\'");
+
+                        xPathTemplate = relXpath;
+                        attributeCount++;
+                    }
+                }
+
+                if (relXpath != string.Empty && attributeCount == attList.Count && CheckElementLocateStatus(xPathTemplate))
+                {
+                    var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpath, IsAutoLearned = true };
+                    hTMLElement.Locators.Add(elementLocator);
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during pom learining", ex);
+            }
         }
 
         private void GetRelativeXpathElementLocators(HTMLElementInfo foundElemntInfo)

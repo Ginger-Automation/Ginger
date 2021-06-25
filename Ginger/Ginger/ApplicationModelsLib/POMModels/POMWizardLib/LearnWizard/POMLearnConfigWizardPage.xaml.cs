@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models;
+using Amdocs.Ginger.CoreNET.Application_Models.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Agents;
 using Ginger.UserControls;
@@ -29,7 +30,10 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -72,8 +76,33 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     SetElementLocatorsSettingsGridView();
                     UpdateConfigsBasedOnAgentStatus();
                     ShowSpecficFrameLearnConfigPanel();
+                    ShowsCustomRelativePathTemplateConfig();
+                    break;
+                case EventType.LeavingForNextPage:
+                    UpdateCustomTemplateList();
                     break;
             }
+        }
+
+        private void UpdateCustomTemplateList()
+        {
+            if (mAppPlatform.Equals(ePlatformType.Web))
+            {
+                mWizard.mPomLearnUtils.RelativeXpathTemplateList = xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList;
+            }
+        }
+
+        private void ShowsCustomRelativePathTemplateConfig()
+        {
+            if (mAppPlatform.Equals(ePlatformType.Web))
+            {
+                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Collapsed;
+            }
+            
         }
 
         private void ShowSpecficFrameLearnConfigPanel()
@@ -114,6 +143,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
 
             ShowSpecficFrameLearnConfigPanel();
+
+            ShowsCustomRelativePathTemplateConfig();
         }
 
         private void AddValidations()

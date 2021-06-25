@@ -511,6 +511,9 @@
     <Compile Include="Run\RunSetActions\RunSetActionSendDataToExternalSourceEditPage.xaml.cs">
       <DependentUpon>RunSetActionSendDataToExternalSourceEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml.cs">
+      <DependentUpon>CustomRelativeXpathTemplateUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\LiveSpyHandler.xaml.cs">
       <DependentUpon>LiveSpyHandler.xaml</DependentUpon>
     </Compile>
@@ -2927,6 +2930,10 @@
     <Page Include="RunSetPageLib\RunsetRunnersConfigPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\LiveSpyHandler.xaml">
       <SubType>Designer</SubType>

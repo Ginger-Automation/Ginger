@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions.VisualTesting;
@@ -82,6 +83,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public Bitmap ScreenShot { get; set; }
         public string SpecificFramePath { get; set; }
+        public ObservableList<CustomRelativeXpathTemplate> RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>();
 
         public PomLearnUtils(ApplicationPOMModel pom, Agent agent=null, RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {
@@ -185,13 +187,25 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true, SpecificFramePath);
+                    IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList());
                 }
             }
             else
             {
-                IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true, SpecificFramePath);
+                IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList());
             }
+        }
+
+        private List<string> GetRelativeXpathTemplateList()
+        {
+            var customRelXpathTemplateList = new List<string>();
+
+            foreach (var item in RelativeXpathTemplateList)
+            {
+                customRelXpathTemplateList.Add(item.Value);
+            }
+
+            return customRelXpathTemplateList;
         }
 
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
