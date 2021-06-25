@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.Repository
         public const int cLearnScreenWidth= 1000;
         public const int cLearnScreenHeight = 1000;
 
-        public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web , ePlatformType.Java };
+        public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web , ePlatformType.Java , ePlatformType.Windows};
 
         private string mPageURL = string.Empty;
 
@@ -201,6 +201,9 @@ namespace Amdocs.Ginger.Repository
                     break;
                 case ePlatformType.Windows:
                     eImageType = eImageType.Window;
+                    break;
+                case ePlatformType.Mobile:
+                    eImageType = eImageType.Mobile;
                     break;
                 default:
                     eImageType = eImageType.ApplicationPOMModel;

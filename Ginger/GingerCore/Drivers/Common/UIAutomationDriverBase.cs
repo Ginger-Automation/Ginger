@@ -163,12 +163,16 @@ namespace GingerCore.Drivers.Common
 
         public ObservableList<ControlProperty> GetElementProperties(ElementInfo ElementInfo)
         {
+            ObservableList<ControlProperty> list = null;
             if (ElementInfo.GetType() == typeof(HTMLElementInfo))
             {
-                ObservableList<ControlProperty> list = ((HTMLHelper)mUIAutomationHelper.GetHTMLHelper()).GetHTMLElementProperties(ElementInfo);
-                return list;
+                list = ((HTMLHelper)mUIAutomationHelper.GetHTMLHelper()).GetHTMLElementProperties(ElementInfo);
             }
-            return null;
+            else
+            {
+                list = mUIAutomationHelper.GetElementProperties(ElementInfo.ElementObject);
+            }
+            return list;
         }
 
         public List<ElementInfo> GetElementChildren(ElementInfo ElementInfo)

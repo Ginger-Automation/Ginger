@@ -511,6 +511,12 @@
     <Compile Include="Run\RunSetActions\RunSetActionSendDataToExternalSourceEditPage.xaml.cs">
       <DependentUpon>RunSetActionSendDataToExternalSourceEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SolutionCategories\SolutionCategoriesPage.xaml.cs">
+      <DependentUpon>SolutionCategoriesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml.cs">
+      <DependentUpon>SolutionCategoryOptionalValuesEditPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml.cs">
       <DependentUpon>CustomRelativeXpathTemplateUI.xaml</DependentUpon>
     </Compile>
@@ -2931,6 +2937,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="SolutionCategories\SolutionCategoriesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -4779,6 +4793,9 @@
     </PackageReference>
     <PackageReference Include="NSwag.Core.Yaml">
       <Version>12.0.9</Version>
+    </PackageReference>
+    <PackageReference Include="Oracle.ManagedDataAccess">
+      <Version>19.10.1</Version>
     </PackageReference>
     <PackageReference Include="RestSharp">
       <Version>106.11.4</Version>

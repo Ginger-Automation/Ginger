@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.Common
         SolutionFileNotFound, PlugInFileNotFound,
         MissingAddSolutionInputs, SolutionAlreadyExist, AddSolutionSucceed, AddSolutionFailed,
         MobileConnectionFailed, MobileRefreshScreenShotFailed, MobileShowElementDetailsFailed, MobileActionWasAdded,
-        RefreshTreeGroupFailed, FailedToDeleteRepoItem, RunsetNoGingerPresentForBusinessFlow, ExcelNoWorksheetSelected, ExcelBadWhereClause,
+        RefreshTreeGroupFailed, FailedToDeleteRepoItem, RunsetNoGingerPresentForBusinessFlow, ExcelInvalidFieldData, ExcelNoWorksheetSelected, ExcelBadWhereClause,
         RecommendNewVersion,
         DragDropOperationFailed,
         ActionIDNotFound,
@@ -356,6 +356,7 @@ namespace Amdocs.Ginger.Common
             #endregion Runset Messages
 
             #region Excel Messages
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ExcelInvalidFieldData, new UserMsg(eUserMsgType.WARN, "Missing Field data", "Missing field data, please check.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExcelNoWorksheetSelected, new UserMsg(eUserMsgType.WARN, "Missing worksheet", "Please select a worksheet", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExcelBadWhereClause, new UserMsg(eUserMsgType.WARN, "Problem with WHERE clause", "Please check your WHERE clause. Do all column names exist and are they spelled correctly?", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion Excel Messages
