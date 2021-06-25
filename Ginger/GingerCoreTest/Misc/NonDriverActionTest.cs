@@ -178,67 +178,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(action.Error, null, "Act.Error");
         }
 
-        [TestMethod]
-        public void ActScriptTestWithIndexZero()
-        {
-            //Arrange
-            ActScript actScript = new ActScript();
-            actScript.ScriptInterpreter = ActScript.eScriptInterpreterType.VBS.ToString();
-            actScript.ScriptCommand = ActScript.eScriptAct.Script;
-            actScript.ScriptName = TestResources.GetTestResourcesFile(@"Script\ScriptWithGingerOutputIndexZero.vbs");
-            actScript.Active = true;
-            actScript.AddNewReturnParams = true;
-
-            //Act
-            mGR.RunAction(actScript);
-
-            //Assert
-            Assert.AreEqual(eRunStatus.Passed, actScript.Status, "Action Status");
-            Assert.AreEqual(2, actScript.ReturnValues.Count);
-            Assert.AreEqual("OK", actScript.ReturnValues[0].Actual);
-        }
-
-        [TestMethod]
-        public void ActScriptTestWithGingerOutput()
-        {
-            //with index > 0
-            //Arrange
-            ActScript actScript = new ActScript();
-            actScript.ScriptInterpreter = ActScript.eScriptInterpreterType.VBS.ToString();
-            actScript.ScriptCommand = ActScript.eScriptAct.Script;
-            actScript.ScriptName = TestResources.GetTestResourcesFile(@"Script\ScriptWithGingerOutput.vbs");
-            actScript.Active = true;
-            actScript.AddNewReturnParams = true;
-
-            //Act
-            mGR.RunAction(actScript);
-
-            //Assert
-            Assert.AreEqual(eRunStatus.Passed, actScript.Status, "Action Status");
-            Assert.AreEqual(2, actScript.ReturnValues.Count);
-            Assert.AreEqual("OK", actScript.ReturnValues[0].Actual);
-        }
-
-        [TestMethod]
-        public void ActScriptTestWithoutOutput()
-        {
-            //with index=-1
-            //Arrange
-            ActScript actScript = new ActScript();
-            actScript.ScriptInterpreter = ActScript.eScriptInterpreterType.VBS.ToString();
-            actScript.ScriptCommand = ActScript.eScriptAct.Script;
-            actScript.ScriptName = TestResources.GetTestResourcesFile(@"Script\ScriptWithoutOutput.vbs");
-            actScript.Active = true;
-            actScript.AddNewReturnParams = true;
-
-            //Act
-            mGR.RunAction(actScript);
-
-            //Assert
-            Assert.AreEqual(eRunStatus.Passed, actScript.Status, "Action Status");
-            Assert.AreEqual(1, actScript.ReturnValues.Count);
-            Assert.AreEqual("\n\nHello\nSNO=1\n\n", actScript.ReturnValues[0].Actual);
-        }
+        
 
         [TestMethod]
         public void CloseAgentNullTest()

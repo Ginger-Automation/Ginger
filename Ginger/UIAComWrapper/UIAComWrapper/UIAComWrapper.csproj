@@ -100,6 +100,9 @@
     <Compile Include="WindowPattern.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="BatchScriptWithArgs.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="CustomInterop.UIAutomationClient.il" />
     <None Include="UIAComWrapper.ruleset" />
   </ItemGroup>
