@@ -20,6 +20,7 @@ using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using System.Threading.Tasks;
 using GingerCoreNET.ALMLib;
+using GingerCore;
 
 namespace WorkspaceHold
 {
@@ -977,8 +978,8 @@ namespace WorkspaceHold
 
 
         private void PrepareForCLICreationAndExecution(string runsetName= "Default Run Set", string envName = "Default")
-        {            
-            WorkSpace.Instance.OpenSolution(mSolutionFolder);
+        {
+            WorkSpace.Instance.OpenSolution(mSolutionFolder, EncryptionHandler.GetDefaultKey()); ;
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
             RunsetExecutor runsetExecutor = new RunsetExecutor();
             runsetExecutor.RunsetExecutionEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == envName select x).SingleOrDefault();
