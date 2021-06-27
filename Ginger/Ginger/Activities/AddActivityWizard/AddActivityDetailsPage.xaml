@@ -29,6 +29,7 @@
             <Label Content="Type:" Style="{StaticResource $LabelStyle}" FontWeight="Bold"/>
             <RadioButton x:Name="xRegularType" Content="Regular" Style="{StaticResource $InputRadioButtonStyle}" Checked="XType_Checked" Unchecked="XType_Checked" Margin="5,0,0,0"/>
             <RadioButton x:Name="xErrorHandlerType" Content="Error Handler" Style="{StaticResource $InputRadioButtonStyle}" Checked="XType_Checked" Unchecked="XType_Checked" Margin="5,0,0,0"/>
+            <RadioButton x:Name="xCleanActivityType" Content="Clean Up Activity" Style="{StaticResource $InputRadioButtonStyle}" Checked="XType_Checked" Unchecked="XType_Checked" Margin="5,0,0,0" ToolTip="Always executed at the end of BusinessFlow"/>
         </StackPanel>
     </StackPanel>
 </Page>

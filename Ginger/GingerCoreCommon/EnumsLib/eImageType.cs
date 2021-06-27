@@ -216,6 +216,7 @@ namespace Amdocs.Ginger.Common.Enums
         Pointer,
         Camera,
         Wrench,
+        Eraser,
         Power,
         ArrowDown,
         ArrowRight,

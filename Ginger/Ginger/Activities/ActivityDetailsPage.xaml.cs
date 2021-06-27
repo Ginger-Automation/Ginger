@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Ginger.Activities;
 using GingerCore;
 using GingerCore.GeneralLib;
@@ -140,6 +141,11 @@ namespace Ginger.BusinessFlowPages
                 xHandlerTypeStack.Visibility = Visibility.Visible;
                 xHandlerMappingStack.Visibility = Visibility.Collapsed;
                 xHandlerTypeCombo.BindControl(mActivity, nameof(ErrorHandler.HandlerType));
+            }
+            else if(mActivity.GetType() == typeof(CleanUpActivity))
+            {
+                xHandlerTypeStack.Visibility = Visibility.Collapsed;
+                xHandlerMappingStack.Visibility = Visibility.Collapsed;
             }
             else
             {

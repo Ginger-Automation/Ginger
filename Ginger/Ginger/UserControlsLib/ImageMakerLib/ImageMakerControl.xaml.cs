@@ -671,6 +671,11 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Fix:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Wrench);
                     break;
+
+                case eImageType.Eraser:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Eraser);
+                    break;
+
                 case eImageType.ArrowDown:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.AngleDown);
                     break;
