@@ -36,6 +36,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 int colCount = headerRow.LastCellNum;
                 for (var c = 0; c < colCount; c++)
                 {
+                    if(headerRow.GetCell(c) == null)
+                    {
+                        continue;
+                    }
                     if (!dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
                     {
                         dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString());
@@ -97,6 +101,17 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 return null;
             }
             mExcelDataTable = ConvertSheetToDataTable(mSheet);
+            string currentFilter = filter ?? "";
+            string columnName = "";
+            //foreach (DataColumn item in mExcelDataTable.Columns)
+            //{
+            //    if(item.ColumnName.Trim().Equals("USED"))
+            //    {
+            //        columnName = item.ColumnName;
+            //        break;
+            //    }
+            //}
+            //mExcelDataTable = mExcelDataTable.Select(currentFilter).CopyToDataTable();
             mExcelDataTable.DefaultView.RowFilter = filter ?? "";
             mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
             return mFilteredDataTable;
@@ -158,9 +173,23 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             try
             {
                 var fileExtension = Path.GetExtension(fullFilePath);
-                using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
+                switch (fileExtension.ToLower())
                 {
-                    workbook = WorkbookFactory.Create(fs);
+                    case ".xlsx":
+                        using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
+                        {
+                            workbook = new XSSFWorkbook(fs);
+                        }
+                        break;
+                    case ".xls":
+                        using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
+                        {
+                            workbook = WorkbookFactory.Create(fs);
+                        }
+                        break;
+                    default:
+                        Reporter.ToLog(eLogLevel.WARN, "Please check file extention" + fullFilePath);
+                        break;
                 }
             }
             catch(Exception ex)
