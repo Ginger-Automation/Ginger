@@ -206,8 +206,6 @@
     <PackageReference Include="Eyes.Images" Version="2.16.0" />
   
     <PackageReference Include="Eyes.Sdk.Core" Version="2.34.1" />
-  
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="1.0.8" />
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="1.0.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
@@ -273,6 +271,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Ginger.ExecuterService.Contracts">
+      <HintPath>DLLS\Ginger.ExecuterService.Contracts.dll</HintPath>
+    </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
     </Reference>
