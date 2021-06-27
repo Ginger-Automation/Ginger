@@ -29,9 +29,9 @@ namespace Ginger.SolutionWindows
     public partial class ReplaceEncryptionKeyPage : Page
     {
         GenericWindow _pageGenericWin = null;
-        Solution _solution = null;
-        Button uOkBtn;
-        Button uSaveKeyBtn;
+        Solution _solution = null;        
+        Button uSaveKeyBtn, uCloseBtn, uOkBtn;
+
         bool validKeyAdded = false;
         public ReplaceEncryptionKeyPage()
         {
@@ -79,8 +79,13 @@ namespace Ginger.SolutionWindows
             uSaveKeyBtn.Content = "Save Key";
             uSaveKeyBtn.Click += new RoutedEventHandler(SaveKeyBtn_Click);
             winButtons.Add(uSaveKeyBtn);
+            uCloseBtn = new Button();
+            uCloseBtn.Content = "Cancel";
+            uCloseBtn.Click += new RoutedEventHandler(CloseBtn_Click);
+            winButtons.Add(uCloseBtn);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Replace/Forget Encryption key", this, winButtons, true, "Cancel", CloseBtn_Click);
+
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Replace/Forget Encryption key", this, winButtons, false, "Cancel", CloseBtn_Click);
             return validKeyAdded;
         }
 
@@ -93,7 +98,7 @@ namespace Ginger.SolutionWindows
                 await Task.Delay(2000);
                 return txt != UCEncryptionKeyPrevious.EncryptionKeyPasswordBox.Password;
             }
-            if (await UserKeepsTyping()) return;
+            if (await UserKeepsTyping()) { return; }
 
             UCEncryptionKeyPrevious.ValidateKey();
         }
@@ -117,6 +122,9 @@ namespace Ginger.SolutionWindows
             if (ForgetRadioBtn.IsEnabled)
             {
                 _pageGenericWin.Close();
+            }
+            else {
+                Reporter.ToUser(eUserMsgKey.ShowInfoMessage,"Please populate all Values in grid.");
             }
         }
 
@@ -243,7 +251,6 @@ namespace Ginger.SolutionWindows
             projEnvironments.ForEach(pe =>
             {
                 bool res1 = false;
-                GingerCore.Variables.VariablePasswordString vp;
                 foreach (EnvApplication ea in pe.Applications)
                 {
                     foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
@@ -259,20 +266,12 @@ namespace Ginger.SolutionWindows
                 }
             });
 
-
-            //if (_solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString).Any())
-
             _solution.SaveSolution(false);
-
-            //  Reporter.ToUser(eUserMsgKey.ShowInfoMessage,"Encryption Key is updated and Password values are changed. Please reload the solution.");
             _pageGenericWin.Close();
         }
 
         private void radioBtn_Click(object sender, RoutedEventArgs e)
         {
-            //    UCEncryptionKey.ValidFlag.Visibility = Visibility.Collapsed;
-            //    UCEncryptionKey.InvalidFlag.Visibility = Visibility.Visible;
-
             if (ForgetRadioBtn.IsChecked.Value)
             {
                 UCEncryptionKeyPrevious.Visibility = Visibility.Collapsed;

@@ -117,7 +117,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Encrypt the value"), ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Encrypt the value", ex);
 
                 result = false;
                 return string.Empty;
@@ -133,7 +133,7 @@ namespace GingerCore
                 byte[] _saltValueBytes = Encoding.UTF8.GetBytes(SALT_VALUE);
 
                 // Create a password, from which the key will be derived
-                PasswordDeriveBytes _password;//= new PasswordDeriveBytes(key, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
+                PasswordDeriveBytes _password;
                 if (!string.IsNullOrEmpty(key))
                 {
                     _password = new PasswordDeriveBytes(key, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
@@ -246,17 +246,6 @@ namespace GingerCore
         {
             bool res = false;
             return EncryptString(plainText, ref res);
-            //Below code commented as part of security enhancement
-            //if (string.IsNullOrEmpty(key))
-            //{
-            //    key = ENCRYPTION_KEY;
-            //}
-            //if (plainText == null)
-            //{
-            //    plainText = string.Empty;
-            //}
-            //var plainBytes = Encoding.UTF8.GetBytes(plainText);
-            //return Convert.ToBase64String(Encrypt(plainBytes, GetRijndaelManaged(key)));
         }
 
         /// <summary>
@@ -268,9 +257,11 @@ namespace GingerCore
         public static string DecryptwithKey(string encryptedText)
         {
             bool res = false;
-            string decryptVal = DecryptString(encryptedText, ref res, true);
+            string decryptVal = DecryptString(encryptedText, ref res);
             if (res)
+            {
                 return decryptVal;
+            }
             var encryptedBytes = Convert.FromBase64String(encryptedText);
             return Encoding.UTF8.GetString(Decrypt(encryptedBytes, GetRijndaelManaged(ENCRYPTION_KEY)));
         }

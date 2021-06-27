@@ -35,7 +35,6 @@ namespace Ginger.UserControlsLib
 
         private void ShowPasswordFunction()
         {
-            //ShowPassword.Text = "HIDE";
             ShowPassword.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Invisible;
             EncryptionKeyTextBox.Visibility = Visibility.Visible;
             EncryptionKeyPasswordBox.Visibility = Visibility.Hidden;
@@ -44,7 +43,6 @@ namespace Ginger.UserControlsLib
 
         private void HidePasswordFunction()
         {
-            //ShowPassword.Text = "SHOW";
             ShowPassword.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Visible;
             EncryptionKeyTextBox.Visibility = Visibility.Hidden;
             EncryptionKeyPasswordBox.Visibility = Visibility.Visible;

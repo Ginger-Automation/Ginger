@@ -532,7 +532,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void SolutionActionsLazyLoadTest_NotLoaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey()); ;
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act

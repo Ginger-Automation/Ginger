@@ -1157,10 +1157,10 @@ namespace GingerCore
             {
                 if (DecryptFlag == true && vb is VariablePasswordString)
                 {
-                    String strValuetoPass;
+                    string strValuetoPass;
                     strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
-                    if (!string.IsNullOrEmpty(strValuetoPass)) mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
-                    else mValueCalculated = mValueCalculated.Replace(p, vb.Value);
+                    if (!string.IsNullOrEmpty(strValuetoPass)) { mValueCalculated = mValueCalculated.Replace(p, strValuetoPass); }
+                    else { mValueCalculated = mValueCalculated.Replace(p, vb.Value); }
                 }
                 else
                 {

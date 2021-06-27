@@ -153,10 +153,6 @@ namespace Ginger.SolutionWindows
             UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
-            // Button ValidateBtn = new Button();
-            //ValidateBtn.Content = "Validate";
-            //ValidateBtn.Click += new RoutedEventHandler(ValidateBtn_Click);
-            //winButtons.Add(ValidateBtn);
             Button uSaveKeyBtn = new Button();
             uSaveKeyBtn.Content = "Ok";
             uSaveKeyBtn.Click += new RoutedEventHandler(SaveKeyBtn_Click);
@@ -190,7 +186,7 @@ namespace Ginger.SolutionWindows
                 await Task.Delay(2000);
                 return txt != UCEncryptionKey.EncryptionKeyPasswordBox.Password;
             }
-            if (await UserKeepsTyping()) return;
+            if (await UserKeepsTyping()) { return; }
 
             if (IsEncrytedStrAvailableOnSol)
             {

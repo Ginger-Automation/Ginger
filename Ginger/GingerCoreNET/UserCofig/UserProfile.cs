@@ -332,45 +332,11 @@ namespace Ginger
         public string SourceControlPass
         {
              get;set;
-            //get
-            //{
-            //    bool res = false;
-            //    string pass = string.Empty;
-            //    if (EncryptedSourceControlPass != null)
-            //        pass = EncryptionHandler.DecryptString(EncryptedSourceControlPass, ref res);
-            //    if (res && String.IsNullOrEmpty(pass) == false)
-            //        return pass;
-            //    else
-            //        return string.Empty;
-            //}
-            //set
-            //{
-            //    bool res = false;
-            //    if (value != null)
-            //        EncryptedSourceControlPass = EncryptionHandler.EncryptString(value, ref res);
-            //}
         }
 
         public string SolutionSourceControlPass
         {
              get;set;
-            //get
-            //{
-            //    bool res = false;
-            //    string pass = string.Empty;
-            //    if (EncryptedSolutionSourceControlPass != null)
-            //        pass = EncryptionHandler.DecryptString(EncryptedSolutionSourceControlPass, ref res);
-            //    if (res && String.IsNullOrEmpty(pass) == false)
-            //        return pass;
-            //    else
-            //        return string.Empty;
-            //}
-            //set
-            //{
-            //    bool res = false;
-            //    if (value != null)
-            //        EncryptedSolutionSourceControlPass = EncryptionHandler.EncryptString(value, ref res);
-            //}
         }
 
         [IsSerializedForLocalRepository]

@@ -283,7 +283,7 @@ namespace Ginger.SolutionGeneral
             try
             {
                 EncryptionKey = GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + Guid);
-                return string.IsNullOrEmpty(EncryptionKey) ? false : true;
+                return string.IsNullOrEmpty(EncryptionKey);
             }
             catch (Exception ex)
             {
@@ -300,26 +300,6 @@ namespace Ginger.SolutionGeneral
                 EncryptionHandler.SetCustomKey(EncryptionKey);
                 AddValidationString();
                 return true;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
-            }
-            return false;
-        }
-
-        public bool ChangeEncryptionOfVariables()
-        {
-            try
-            {
-                bool r = false;
-                foreach (VariableBase var in Variables)
-                {
-                    if (var.VariableType == "")
-                        r = true;
-
-                }
-
             }
             catch (Exception ex)
             {

@@ -104,17 +104,8 @@ namespace Ginger.SourceControl
 
         private  void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            //this inner method checks if user is still typing, add async to method
-            //async Task<bool> UserKeepsTyping()
-            //{
-            //    string txt = SourceControlPassTextBox.Password;
-            //    await Task.Delay(3000);
-            //    return txt != SourceControlPassTextBox.Password;
-            //}
-            //if (await UserKeepsTyping()) return;
-
             WorkSpace.Instance.Solution.SourceControl.SourceControlPass = ((PasswordBox)sender).Password;
-             WorkSpace.Instance.UserProfile.SaveUserProfile();//todo: check if needed
+            WorkSpace.Instance.UserProfile.SaveUserProfile();//todo: check if needed
             SourceControlIntegration.Init( WorkSpace.Instance.Solution.SourceControl);
         }
 

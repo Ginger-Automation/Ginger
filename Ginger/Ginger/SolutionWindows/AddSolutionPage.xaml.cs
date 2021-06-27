@@ -79,7 +79,6 @@ namespace Ginger.SolutionWindows
                 {
                     Mouse.OverrideCursor = null;
                     UCEncryptionKey.EncryptionKeyPasswordBox.Password = "";
-                    // Reporter.ToUser(eUserMsgKey.InvalidEncryptionKey);
                     return;
                 }
 
@@ -130,8 +129,6 @@ namespace Ginger.SolutionWindows
                 GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment();
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(WorkSpace.Instance.GetNewBusinessFlow("Flow 1", true));
                 mSolution.SetReportsConfigurations();
-
-                //  mSolution.EncryptSolutionName();
 
                 //Save again to keep all defualt configurations setup
                 mSolution.SaveSolution(false);

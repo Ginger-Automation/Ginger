@@ -381,10 +381,9 @@ namespace amdocs.ginger.GingerCoreNET
 
                 EncryptionHandler.SetCustomKey(solution.EncryptionKey);
                 if (!solution.ValidateKey())
-                {
-                    //Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Encryption key validation failed or key is missing. Press Ok to enter the key manually.");
+                {                    
                     Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Encryption key validation failed");
-                    if (Instance.RunningInExecutionMode == false && Instance.RunningFromUnitTest == false)
+                    if (Instance.RunningInExecutionMode && Instance.RunningFromUnitTest)
                     {
                         if (string.IsNullOrEmpty(solution.EncryptedValidationString))
                         {
@@ -399,7 +398,7 @@ namespace amdocs.ginger.GingerCoreNET
                             return false;
                         }
                     }
-                    else return false;
+                    else { return false; }
                 }
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Creating Items Repository");
@@ -563,7 +562,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password ProjEnvironment variable."), ex);
+                Reporter.ToLog(eLogLevel.ERROR, "ReEncryptVariable- Failed to Reencrypt password ProjEnvironment variable.", ex);
             }
 
             if (varReencryptedCount > 0)
