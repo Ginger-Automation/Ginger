@@ -273,6 +273,7 @@
   <ItemGroup>
     <Reference Include="Ginger.ExecuterService.Contracts">
       <HintPath>DLLS\Ginger.ExecuterService.Contracts.dll</HintPath>
+      <Private>true</Private>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>

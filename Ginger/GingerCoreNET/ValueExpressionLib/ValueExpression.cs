@@ -1316,7 +1316,7 @@ namespace GingerCore
                     if (DecryptFlag == true && GP.Encrypt == true)
                     {                        
                         String strValuetoPass = EncryptionHandler.DecryptwithKey(GP.Value);
-                        if (!string.IsNullOrEmpty(strValuetoPass)) mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
+                        if (!string.IsNullOrEmpty(strValuetoPass)) { mValueCalculated = mValueCalculated.Replace(p, strValuetoPass); }
                         else mValueCalculated = mValueCalculated.Replace(p, ParamValue);
                     }
                     else

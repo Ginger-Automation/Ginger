@@ -383,7 +383,7 @@ namespace amdocs.ginger.GingerCoreNET
                 if (!solution.ValidateKey())
                 {                    
                     Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Encryption key validation failed");
-                    if (Instance.RunningInExecutionMode && Instance.RunningFromUnitTest)
+                    if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
                     {
                         if (string.IsNullOrEmpty(solution.EncryptedValidationString))
                         {

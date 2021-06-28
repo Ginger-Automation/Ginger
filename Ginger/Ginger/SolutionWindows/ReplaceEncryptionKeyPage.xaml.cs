@@ -112,7 +112,7 @@ namespace Ginger.SolutionWindows
                 await Task.Delay(2000);
                 return txt != UCEncryptionKey.EncryptionKeyPasswordBox.Password;
             }
-            if (await UserKeepsTyping()) return;
+            if (await UserKeepsTyping()) { return; }
 
             UCEncryptionKey.CheckKeyCombination();
         }
