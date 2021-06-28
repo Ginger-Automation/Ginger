@@ -38,11 +38,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 {
                     if(headerRow.GetCell(c) == null)
                     {
+                        dtExcelTable.Columns.Add("Col " + c);
                         continue;
                     }
                     if (!dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
                     {
-                        dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString());
+                        dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString().Trim());
                     }
                 }
                 var i = 1;
@@ -96,25 +97,22 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         public DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows)
         {
-            if (!GetExcelSheet(fileName, sheetName))
+            try
             {
+                if (!GetExcelSheet(fileName, sheetName))
+                {
+                    return null;
+                }
+                mExcelDataTable = ConvertSheetToDataTable(mSheet);
+                mExcelDataTable.DefaultView.RowFilter = filter ?? "";
+                mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
+                return mFilteredDataTable;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Can't read sheet data, " + ex.Message);
                 return null;
             }
-            mExcelDataTable = ConvertSheetToDataTable(mSheet);
-            string currentFilter = filter ?? "";
-            string columnName = "";
-            //foreach (DataColumn item in mExcelDataTable.Columns)
-            //{
-            //    if(item.ColumnName.Trim().Equals("USED"))
-            //    {
-            //        columnName = item.ColumnName;
-            //        break;
-            //    }
-            //}
-            //mExcelDataTable = mExcelDataTable.Select(currentFilter).CopyToDataTable();
-            mExcelDataTable.DefaultView.RowFilter = filter ?? "";
-            mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
-            return mFilteredDataTable;
         }
 
         private bool GetExcelSheet(string fileName, string sheetName)
@@ -173,26 +171,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             try
             {
                 var fileExtension = Path.GetExtension(fullFilePath);
-                switch (fileExtension.ToLower())
+                using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
                 {
-                    case ".xlsx":
-                        using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
-                        {
-                            workbook = new XSSFWorkbook(fs);
-                        }
-                        break;
-                    case ".xls":
-                        using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
-                        {
-                            workbook = WorkbookFactory.Create(fs);
-                        }
-                        break;
-                    default:
-                        Reporter.ToLog(eLogLevel.WARN, "Please check file extention" + fullFilePath);
-                        break;
+                    workbook = WorkbookFactory.Create(fs);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Invalid Excel Path Name" + fullFilePath, ex);
                 return null;
