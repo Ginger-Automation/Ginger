@@ -4763,7 +4763,7 @@ namespace Ginger.Run
         private void NotifyActivityGroupStart(ActivitiesGroup activityGroup)
         {
             uint eventTime = RunListenerBase.GetEventTime();
-            activityGroup.StartTimeStamp = eventTime; 
+            activityGroup.StartTimeStamp = DateTime.UtcNow; 
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivityGroupStart(eventTime, activityGroup);
@@ -4773,7 +4773,7 @@ namespace Ginger.Run
         private void NotifyActivityGroupEnd(ActivitiesGroup activityGroup, bool offlineMode = false)
         {
             uint eventTime = RunListenerBase.GetEventTime();
-            activityGroup.EndTimeStamp = eventTime;
+            activityGroup.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 if(runnerListener.ToString().Contains("Ginger.Run.ExecutionLExecutionLoggerManagerogger"))

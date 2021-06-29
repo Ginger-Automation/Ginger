@@ -402,9 +402,9 @@ namespace GingerCore.Activities
         public string TempReportFolder { get; set; }
 
         // Only for Run time, no need to serialize
-        public uint StartTimeStamp { get; set; }
+        public DateTime StartTimeStamp { get; set; }
 
-        public uint EndTimeStamp { get; set; }
+        public DateTime EndTimeStamp { get; set; }
 
         private eActivitiesGroupRunStatus mRunStatus;
         public eActivitiesGroupRunStatus RunStatus

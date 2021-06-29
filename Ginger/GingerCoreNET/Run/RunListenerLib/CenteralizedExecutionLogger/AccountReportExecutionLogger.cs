@@ -38,17 +38,19 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         #region RunSet
         public void RunSetStart(RunSetConfig runsetConfig)
-        {           
-                runsetConfig.StartTimeStamp = DateTime.Now.ToUniversalTime();
-                AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetStartData(runsetConfig, mContext);
-                AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);                        
+        {
+            Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Publishing Execution data to central DB");
+            runsetConfig.StartTimeStamp = DateTime.Now.ToUniversalTime();
+            AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetStartData(runsetConfig, mContext);
+            AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);            
         }
         public void RunSetEnd(RunSetConfig runsetConfig)
         {
             runsetConfig.EndTimeStamp = DateTime.Now.ToUniversalTime();
             AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runsetConfig, mContext);            
             //accountReportRunSet.UpdateData = true;
-            AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);            
+            AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
+            Reporter.HideStatusMessage();
         }
         #endregion RunSet   
 

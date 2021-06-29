@@ -136,7 +136,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivityGroup.Name = activitiesGroup.Name;
             accountReportActivityGroup.Description = activitiesGroup.Description;
             accountReportActivityGroup.AutomationPrecentage = activitiesGroup.AutomationPrecentage;
-            accountReportActivityGroup.StartTimeStamp = RunListenerBase.GetDateTime(activitiesGroup.StartTimeStamp);           
+            accountReportActivityGroup.StartTimeStamp = activitiesGroup.StartTimeStamp;           
             accountReportActivityGroup.ExecutedActivitiesGUID = activitiesGroup.ExecutedActivities.Select(x => x.Key).ToList();           
             return accountReportActivityGroup;
         }
@@ -149,7 +149,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivityGroup.AccountReportDbBusinessFlowId = activitiesGroup.ParentExecutionId;
             accountReportActivityGroup.ExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
             accountReportActivityGroup.Name = activitiesGroup.Name;
-            accountReportActivityGroup.EndTimeStamp = RunListenerBase.GetDateTime(activitiesGroup.EndTimeStamp);
+            accountReportActivityGroup.EndTimeStamp = activitiesGroup.EndTimeStamp;
             accountReportActivityGroup.ElapsedEndTimeStamp = activitiesGroup.Elapsed;
             accountReportActivityGroup.RunStatus = activitiesGroup.RunStatus.ToString();            
             return accountReportActivityGroup;
