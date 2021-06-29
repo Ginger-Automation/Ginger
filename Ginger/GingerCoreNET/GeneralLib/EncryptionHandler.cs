@@ -256,6 +256,10 @@ namespace GingerCore
         /// <returns>Decrypted String</returns>
         public static string DecryptwithKey(string encryptedText)
         {
+            if (String.IsNullOrEmpty(encryptedText))
+            {
+                return string.Empty;
+            }
             bool res = false;
             string decryptVal = DecryptString(encryptedText, ref res);
             if (res)
