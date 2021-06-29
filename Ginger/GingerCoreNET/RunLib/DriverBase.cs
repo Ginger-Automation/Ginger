@@ -23,6 +23,7 @@ using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 
@@ -225,6 +226,25 @@ namespace GingerCore.Drivers
         /// <param name="value"></param>
         /// <returns></returns>
         public virtual bool SerializationError(Agent agent, SerializationErrorType errorType, string name, string value)
+        {
+            return false;
+        }
+
+        public virtual Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
+        {
+            Point pointOnAppScreen = new Point();
+            double ratio_X, ratio_Y;
+
+            ratio_X = SrcWidth / ActWidth;
+            ratio_Y = SrcHeight / ActHeight;
+
+            pointOnAppScreen.X = (int)(clickedPoint.X * ratio_X);
+            pointOnAppScreen.Y = (int)(clickedPoint.Y * ratio_Y);
+
+            return pointOnAppScreen;
+        }
+
+        public virtual bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, Amdocs.Ginger.Common.UIElement.ElementInfo clickedElementInfo)
         {
             return false;
         }
