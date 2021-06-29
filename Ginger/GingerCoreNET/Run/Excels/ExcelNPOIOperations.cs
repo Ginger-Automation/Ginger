@@ -97,6 +97,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         public DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows)
         {
+            filter = filter ?? "";
             try
             {
                 if (!GetExcelSheet(fileName, sheetName))
@@ -104,13 +105,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     return null;
                 }
                 mExcelDataTable = ConvertSheetToDataTable(mSheet);
-                mExcelDataTable.DefaultView.RowFilter = filter ?? "";
+                mExcelDataTable.DefaultView.RowFilter = filter.Replace("[","").Replace("]","");
                 mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
                 return mFilteredDataTable;
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Can't read sheet data, " + ex.Message);
+                Reporter.ToLog(eLogLevel.WARN, "Can't read sheet data, " + ex.Message);
                 return null;
             }
         }
@@ -146,7 +147,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 string[] setData = d.Split('=');
                 if (setData.Length == 2)
                 {
-                    string rowToSet = setData[0].Replace("[|]", "");
+                    string rowToSet = setData[0].Replace("[", "").Replace("]","");
                     object valueToSet = setData[1].Replace("'", "");
                     columnNameAndValue.Add(new Tuple<string, object>(rowToSet, valueToSet));
                 }
