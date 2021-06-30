@@ -39,7 +39,21 @@ namespace GingerCore.Drivers.Common
         public ePlatformType mPlatform;
         int LastHighLightHWND = 0;
         public int? mLoadTimeOut;
+        public int mImplicitWaitCopy;
 
+        public int mImplicitWait;
+        public int ImplicitWait
+        {
+            get
+            {
+                return mImplicitWait;
+            }
+            set
+            {
+                mImplicitWaitCopy = value;
+                mImplicitWait = value;
+            }
+        }
         public BusinessFlow BusinessFlow { get; set; }
         public IWindowExplorer WindowExplorer { get; set; }
         public bool taskFinished;
