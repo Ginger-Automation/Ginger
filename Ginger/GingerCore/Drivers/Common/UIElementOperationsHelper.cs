@@ -43,7 +43,7 @@ namespace GingerCore.Drivers.Common
     {
 
         private WinAPIAutomation winAPI = new WinAPIAutomation();
-
+        public bool taskFinished;
         public ActionResult ToggleElement(AutomationElement automationElement, eElementType elementType)
         {
             ActionResult actionResult = new ActionResult();           
@@ -601,6 +601,79 @@ namespace GingerCore.Drivers.Common
                 actionResult.errorMessage = "Failed to Get the text";
             }
             return actionResult;
+        }
+        public ActionResult GetSelectedValue(AutomationElement automationElement)
+        {
+            ActionResult actionResult = new ActionResult();
+            string ListItems = null;
+            taskFinished = false;
+            try
+            {
+                bool isMultiSelect = (bool)automationElement.GetCurrentPropertyValue(SelectionPatternIdentifiers.CanSelectMultipleProperty);
+                if (isMultiSelect)
+                {
+                    ListItems = GetSelectedItems(automationElement);
+                }
+                else
+                {
+                    object vp;
+                    automationElement.TryGetCurrentPattern(ValuePattern.Pattern, out vp);
+                    if (vp != null)
+                    {
+                        actionResult = GetValue(automationElement, eElementType.Unknown);
+                    }
+                    else
+                    {
+                        AutomationElement elementNode = TreeWalker.RawViewWalker.GetFirstChild(automationElement);
+                        string isItemSelected;
+                        while (elementNode != null && !taskFinished)
+                        {
+                            isItemSelected = (elementNode.GetCurrentPropertyValue(SelectionItemPatternIdentifiers.IsSelectedProperty)).ToString();
+                            if (isItemSelected == "True")
+                            {
+                                if (ListItems == null && isItemSelected == "True")
+                                {
+                                    ListItems = elementNode.Current.Name;
+                                }
+                                else if (isItemSelected == "True")
+                                {
+                                    ListItems += "," + elementNode.Current.Name;
+                                }
+                            }
+                            elementNode = TreeWalker.RawViewWalker.GetNextSibling(elementNode);
+                        }
+                        actionResult.executionInfo = "No Item selected";
+                    }
+                }
+                actionResult.outputValue = ListItems;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in Get selected value", ex);
+                actionResult.errorMessage = "Failed to Get selected value";
+            }
+            return actionResult;
+        }
+
+        private string GetSelectedItems(AutomationElement element)
+        {
+            AutomationElement elementNode = TreeWalker.RawViewWalker.GetFirstChild(element);
+            String ListItems = null;
+            do
+            {
+                string isItemSelected = (elementNode.GetCurrentPropertyValue(SelectionItemPatternIdentifiers.IsSelectedProperty)).ToString();
+                if (ListItems == null && isItemSelected == "True")
+                {
+                    ListItems = elementNode.Current.Name;
+                }
+                else if (isItemSelected == "True")
+                {
+                    ListItems += "," + elementNode.Current.Name;
+                }
+
+                elementNode = TreeWalker.RawViewWalker.GetNextSibling(elementNode);
+            } while (elementNode != null && !taskFinished);
+            return ListItems;
         }
 
         public ActionResult CloseWindow(AutomationElement window)
