@@ -55,10 +55,11 @@
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label x:Name="ConfigPackageLabel" Style="{StaticResource @InputFieldLabelStyle}">Configuration Package:</Label>
-                                <TextBlock x:Name="DownloadPackageLink" FontSize="10" Foreground="Gray" Margin="0,7,0,0" Visibility="Collapsed">
-                                <Hyperlink NavigateUri="http://ginger/" RequestNavigate="HandleLinkClick">Download</Hyperlink>
+                                <TextBlock x:Name="DownloadPackageLink" FontSize="10" Foreground="Gray" Margin="0,7,0,0" Visibility="Visible">
+                                    <Hyperlink NavigateUri="http://ginger/" RequestNavigate="HandleLinkClick">Download</Hyperlink>
                                 </TextBlock>
-                                
+                                <Label x:Name="PackageHint" Visibility="Collapsed" Foreground="Gray"></Label>
+
                             </StackPanel>
 
                             <Grid>

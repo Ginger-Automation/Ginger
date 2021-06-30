@@ -476,6 +476,7 @@ namespace Ginger.ALM
                     ConfigPackageLabel.Visibility = Visibility.Collapsed;
                     ConfigPackageTextBox.Visibility = Visibility.Collapsed;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    PackageHint.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:8080/almbin";
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
@@ -492,6 +493,7 @@ namespace Ginger.ALM
                     ConfigPackageLabel.Visibility = Visibility.Visible;
                     ConfigPackageTextBox.Visibility = Visibility.Visible;
                     DownloadPackageLink.Visibility = Visibility.Visible;
+                    PackageHint.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 1);
                     SetLoadPackageButtonContent();
                     ServerURLTextBox.IsReadOnly = true;
@@ -508,6 +510,7 @@ namespace Ginger.ALM
                     ConfigPackageLabel.Visibility = Visibility.Collapsed;
                     ConfigPackageTextBox.Visibility = Visibility.Collapsed;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    PackageHint.Visibility = Visibility.Collapsed;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:8080/almbin";                    
@@ -522,6 +525,7 @@ namespace Ginger.ALM
                     ConfigPackageLabel.Visibility = Visibility.Visible;
                     ConfigPackageTextBox.Visibility = Visibility.Visible;
                     DownloadPackageLink.Visibility = Visibility.Visible;
+                    PackageHint.Visibility = Visibility.Visible;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     SetLoadPackageButtonContent();                 
@@ -537,7 +541,9 @@ namespace Ginger.ALM
                     ConfigPackageTextBox.Visibility = Visibility.Visible;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     DownloadPackageLink.Visibility = Visibility.Visible;
+                    PackageHint.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
+                    SetLoadPackageButtonContent();
                     ExampleURLHint.Content = "Example: https://qtest-url.com/ ";                    
                     ServerURLTextBox.Cursor = null;
                     RestAPICheckBox.IsChecked = true;
@@ -553,6 +559,7 @@ namespace Ginger.ALM
                     ConfigPackageTextBox.Visibility = Visibility.Collapsed;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    PackageHint.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:port ";
                     ServerURLTextBox.Cursor = null;
@@ -570,6 +577,7 @@ namespace Ginger.ALM
                     ConfigPackageTextBox.Visibility = Visibility.Collapsed;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    PackageHint.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:port ";
                     ServerURLTextBox.Cursor = null;
@@ -640,6 +648,7 @@ namespace Ginger.ALM
                         break;
                 }
                 //Clear bindings
+                BindingOperations.ClearAllBindings(ConfigPackageTextBox);
                 BindingOperations.ClearAllBindings(ServerURLTextBox);
                 BindingOperations.ClearAllBindings(RestAPICheckBox);
                 BindingOperations.ClearAllBindings(UserNameTextBox);
@@ -671,6 +680,7 @@ namespace Ginger.ALM
 
         private void SetLoadPackageButtonContent()
         {
+            Bind();//need to check why we need to bind again
             if (string.IsNullOrEmpty(ConfigPackageTextBox.Text))
             {
                 RQMLoadConfigPackageButton.Content = "Load";
@@ -682,11 +692,11 @@ namespace Ginger.ALM
 
             if (!string.IsNullOrEmpty(ConfigPackageTextBox.Text))
             {
-                ExampleURLHint.Content = "and click Replace to change " + CurrentAlmConfigurations.AlmType + " Configuration Package";
+                PackageHint.Content = "Replace " + CurrentAlmConfigurations.AlmType + " Configuration Package";
             }
             else
             {
-                ExampleURLHint.Content = "and Load " + CurrentAlmConfigurations.AlmType + " Configuration Package";
+                PackageHint.Content = "Load " + CurrentAlmConfigurations.AlmType + " Configuration Package";
             }
         }
 
