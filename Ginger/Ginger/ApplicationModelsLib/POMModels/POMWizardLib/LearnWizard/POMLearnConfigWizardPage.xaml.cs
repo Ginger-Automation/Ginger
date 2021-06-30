@@ -90,14 +90,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true)
                 {
-                    mWizard.mPomLearnUtils.RelativeXpathTemplateList = xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList;
+                    mWizard.mPomLearnUtils.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate> (xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
                 }
                 else
                 {
                     mWizard.mPomLearnUtils.RelativeXpathTemplateList.Clear();
                 }
             }
-
         }
 
         private void ShowsCustomRelativePathTemplateConfig()

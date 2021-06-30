@@ -56,10 +56,14 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Common
             set
             {
                 mStatus = value;
-                OnPropertyChanged(nameof(Value));
                 OnPropertyChanged(nameof(Status));
             }
         }
-        public override string ItemName { get { return this.Value; }  set { Value = this.Value; } }
+        public override string ItemName { get { return this.Value; }  
+            set 
+            { 
+                //do nothing 
+            } 
+        }
     }
 }
