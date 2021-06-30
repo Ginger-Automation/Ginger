@@ -276,6 +276,11 @@ namespace Ginger.Run
 
         public override void PostDeserialization()
         {
+            AddCategories();
+        }
+
+        public void AddCategories()
+        {
             if (CategoriesDefinitions.Count == 0)
             {
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Product));
