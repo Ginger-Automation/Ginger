@@ -756,5 +756,12 @@ namespace GingerCore.ALM
                 return HTMLText;
             }
         }
+        public override GingerCoreNET.ALMLib.ALMIntegration.eALMType ALMType
+        {
+            get
+            {
+                return GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest;
+            }
+        }
     }
 }

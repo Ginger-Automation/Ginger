@@ -324,17 +324,6 @@
     <Compile Include="Actions\XML\ActXMLTagValidation.cs" />
     <Compile Include="Actions\XML\ActXMLProcessing.cs" />
     <Compile Include="Actions\XML\XMLProcessor.cs" />
-    <Compile Include="ALM\ALMCore.cs" />
-    <Compile Include="ALM\JiraCore.cs" />
-    <Compile Include="ALM\JIRA\Bll\JiraExportManager.cs" />
-    <Compile Include="ALM\JIRA\Data Contracts\TestRunData.cs" />
-    <Compile Include="ALM\JIRA\Bll\JiraImportManager.cs" />
-    <Compile Include="ALM\JIRA\JiraTestSet.cs" />
-    <Compile Include="ALM\JIRA\JiraTest.cs" />
-    <Compile Include="ALM\JIRA\JiraTestParameter.cs" />
-    <Compile Include="ALM\JIRA\JiraTestStep.cs" />
-    <Compile Include="ALM\OctaneCore.cs" />
-    <Compile Include="ALM\Octane\OctaneSettings.cs" />
     <Compile Include="ALM\QtestCore.cs" />
     <Compile Include="ALM\Qtest\ImportFromQtest.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
@@ -378,11 +367,6 @@
     <Compile Include="ALM\RQM\RQMFieldsMappingConfig.cs" />
     <Compile Include="ALM\RQM\RQMTestPlan.cs" />
     <Compile Include="ALM\RQM\RQMConnect.cs" />
-    <Compile Include="ALM\JIRA\Bll\JiraConnectManager.cs" />
-    <Compile Include="ALM\ZephyrEntCore.cs" />
-    <Compile Include="ALM\ZephyrEnt\Bll\ExportEntity.cs" />
-    <Compile Include="ALM\ZephyrEnt\Bll\ZephyrEntExportManager.cs" />
-    <Compile Include="ALM\ZephyrEnt\Bll\ZephyrEntImportManager.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
     <Compile Include="Common\Devices\DeviceConfig.cs" />
     <Compile Include="Common\Devices\DeviceButton.cs" />
@@ -530,12 +514,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\ObjectsUtils.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLLs\OctaneSdkStandard.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLLs\Octane_Repository.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\QCRestClient.dll">

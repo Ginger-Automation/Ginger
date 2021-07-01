@@ -48,7 +48,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="DLLS\ALM_Common.dll" />
     <None Remove="DLLS\LibGit2Sharp.dll" />
+    <None Remove="DLLS\OctaneSdkStandard.dll" />
+    <None Remove="DLLS\Octane_Repository.dll" />
     <None Remove="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
     <None Remove="log4netLib\log4net.config" />
     <None Remove="Reports\Ginger-Web-Client\main.83a800d55fc7d8ada5fd.js" />
@@ -96,7 +99,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="DLLS\ALM_Common.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="DLLS\LibGit2Sharp.dll" />
+    <Content Include="DLLS\OctaneSdkStandard.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DLLS\Octane_Repository.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\GingerExecutionReport\assets\css\bootstrap.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -271,11 +283,32 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="ALM_Common">
+      <HintPath>DLLS\ALM_Common.dll</HintPath>
+    </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
     </Reference>
+    <Reference Include="JiraRepository">
+      <HintPath>DLLS\JiraRepository.dll</HintPath>
+    </Reference>
     <Reference Include="LibGit2Sharp">
       <HintPath>DLLS\LibGit2Sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="OctaneSdkStandard">
+      <HintPath>DLLS\OctaneSdkStandard.dll</HintPath>
+    </Reference>
+    <Reference Include="Octane_Repository">
+      <HintPath>DLLS\Octane_Repository.dll</HintPath>
+    </Reference>
+    <Reference Include="QCSdkStandard">
+      <HintPath>DLLS\QCSdkStandard.dll</HintPath>
+    </Reference>
+    <Reference Include="ZephyrEntSDK">
+      <HintPath>DLLS\ZephyrEntSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Zepyhr_Ent_Repository">
+      <HintPath>DLLS\Zepyhr_Ent_Repository.dll</HintPath>
     </Reference>
   </ItemGroup>
 

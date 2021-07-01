@@ -21,11 +21,10 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
-using GingerCore.ALM.QCRestAPI;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json.Linq;
-using QCRestClient;
+using QCSdkStandard.DataContract;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -57,98 +56,98 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
         #region Public Functions
       
-        public QC.QCTSTest ImportTSTest(QCTestInstance testInstance)
-        {
-            QC.QCTSTest newTSTest = new QC.QCTSTest();
-            QCTestCase testCase = QCRestAPIConnect.GetTestCases(new List<string>() { testInstance.TestId })[0];
-            string linkedTest = CheckLinkedTSTestName(testCase);
+        //public QCTSTest ImportTSTest(QCTestInstance testInstance)
+        //{
+        //    QCTSTest newTSTest = new QCTSTest();
+        //    QCTestCase testCase = QCRestAPIConnect.GetTestCases(new List<string>() { testInstance.TestId })[0];
+        //    string linkedTest = CheckLinkedTSTestName(testCase);
 
-            if (testInstance != null)
-            {
-                //Get the TC general details
-                if (linkedTest != null)
-                {
-                    //Linked TC
-                    string[] linkTest = linkedTest.Split(';');
-                    newTSTest.TestID = testInstance.Id;
-                    newTSTest.TestName = linkTest[0];
-                    newTSTest.LinkedTestID = linkTest[1];
-                }
-                else
-                {
-                    //Regular TC
-                    newTSTest.TestID = testInstance.Id;
-                    newTSTest.TestName = testInstance.Name ?? testCase.Name;
-                    newTSTest.LinkedTestID = testInstance.TestId;
-                }
-            }
+        //    if (testInstance != null)
+        //    {
+        //        //Get the TC general details
+        //        if (linkedTest != null)
+        //        {
+        //            //Linked TC
+        //            string[] linkTest = linkedTest.Split(';');
+        //            newTSTest.TestID = testInstance.Id;
+        //            newTSTest.TestName = linkTest[0];
+        //            newTSTest.LinkedTestID = linkTest[1];
+        //        }
+        //        else
+        //        {
+        //            //Regular TC
+        //            newTSTest.TestID = testInstance.Id;
+        //            newTSTest.TestName = testInstance.Name ?? testCase.Name;
+        //            newTSTest.LinkedTestID = testInstance.TestId;
+        //        }
+        //    }
 
-            //Get the TC design steps
-            QCTestCaseStepsColl TSTestSteps = GetListTSTestSteps(testCase);
-            foreach (QCTestCaseStep testcaseStep in TSTestSteps)
-            {
-                QC.QCTSTestStep newtsStep = new QC.QCTSTestStep();
-                newtsStep.StepID = testcaseStep.Id.ToString();
-                newtsStep.StepName = testcaseStep.Name;
-                newtsStep.Description = testcaseStep.Description;
-                newtsStep.Expected = testcaseStep.ElementsField["expected"].ToString();
-                newTSTest.Steps.Add(newtsStep);
-            }
+        //    //Get the TC design steps
+        //    QCTestCaseStepsColl TSTestSteps = GetListTSTestSteps(testCase);
+        //    foreach (QCTestCaseStep testcaseStep in TSTestSteps)
+        //    {
+        //        QCTSTestStep newtsStep = new QCTSTestStep();
+        //        newtsStep.StepID = testcaseStep.Id.ToString();
+        //        newtsStep.StepName = testcaseStep.Name;
+        //        newtsStep.Description = testcaseStep.Description;
+        //        newtsStep.Expected = testcaseStep.ElementsField["expected"].ToString();
+        //        newTSTest.Steps.Add(newtsStep);
+        //    }
 
-            //Get the TC parameters and their selected value
-            if (linkedTest != null)
-            {
-                if (linkedTest.Split(';')[0] != testCase.Name)
-                {
-                    if (newTSTest.Description == null)
-                    {
-                        newTSTest.Description = string.Empty;
-                    }
-                    newTSTest.Description = testCase.Name.ToString() + System.Environment.NewLine + newTSTest.Description;
-                }
+        //    //Get the TC parameters and their selected value
+        //    if (linkedTest != null)
+        //    {
+        //        if (linkedTest.Split(';')[0] != testCase.Name)
+        //        {
+        //            if (newTSTest.Description == null)
+        //            {
+        //                newTSTest.Description = string.Empty;
+        //            }
+        //            newTSTest.Description = testCase.Name.ToString() + System.Environment.NewLine + newTSTest.Description;
+        //        }
 
-                //Linked TC
-                QCTestCaseStep TSLinkedTestCaseStep = GetListTSTestVars(testCase);
-                if (TSLinkedTestCaseStep != null)
-                {
-                    FillRelevantDataForStepParams(newTSTest, TSLinkedTestCaseStep);
-                }
-            }
-            else
-            {
-                ////Regular TC
-                QCTestCaseStepsColl TSLinkedTestCaseSteps = QCRestAPIConnect.GetTestCaseSteps(testCase.Id);
-                foreach (QCTestCaseStep step in TSLinkedTestCaseSteps)
-                {
-                    FillRelevantDataForStepParams(newTSTest, step);
-                }
-            }
+        //        //Linked TC
+        //        QCTestCaseStep TSLinkedTestCaseStep = GetListTSTestVars(testCase);
+        //        if (TSLinkedTestCaseStep != null)
+        //        {
+        //            FillRelevantDataForStepParams(newTSTest, TSLinkedTestCaseStep);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        ////Regular TC
+        //        QCTestCaseStepsColl TSLinkedTestCaseSteps = QCRestAPIConnect.GetTestCaseSteps(testCase.Id);
+        //        foreach (QCTestCaseStep step in TSLinkedTestCaseSteps)
+        //        {
+        //            FillRelevantDataForStepParams(newTSTest, step);
+        //        }
+        //    }
 
-            //Get the TC execution history
-            try
-            {
-                QCRunColl TSTestRuns = GetListTSTestRuns(testCase);
+        //    //Get the TC execution history
+        //    try
+        //    {
+        //        QCRunColl TSTestRuns = GetListTSTestRuns(testCase);
 
-                foreach (QCRun run in TSTestRuns)
-                {
-                    QC.QCTSTestRun newtsRun = new QC.QCTSTestRun();
-                    newtsRun.RunID = run.Id;
-                    newtsRun.RunName = run.Name;
-                    newtsRun.Status = run.Status;
-                    newtsRun.ExecutionDate = (run.ElementsField["execution-date"]).ToString();
-                    newtsRun.ExecutionTime = (run.ElementsField["execution-time"]).ToString();
-                    newtsRun.Tester = (run.Owner).ToString();
-                    newTSTest.Runs.Add(newtsRun);
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
-                newTSTest.Runs = new List<QC.QCTSTestRun>();
-            }
+        //        foreach (QCRun run in TSTestRuns)
+        //        {
+        //            QCTSTestRun newtsRun = new QCTSTestRun();
+        //            newtsRun.RunID = run.Id;
+        //            newtsRun.RunName = run.Name;
+        //            newtsRun.Status = run.Status;
+        //            newtsRun.ExecutionDate = (run.ElementsField["execution-date"]).ToString();
+        //            newtsRun.ExecutionTime = (run.ElementsField["execution-time"]).ToString();
+        //            newtsRun.Tester = (run.Owner).ToString();
+        //            newTSTest.Runs.Add(newtsRun);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Reporter.ToLog(eLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
+        //        newTSTest.Runs = new List<QCTSTestRun>();
+        //    }
 
-            return newTSTest;
-        }
+        //    return newTSTest;
+        //}
 
         public List<string[]> GetTCsDataSummary(int tsId)
         {
@@ -188,7 +187,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             }
         }
 
-        public BusinessFlow ConvertQCTestSetToBF(QC.QCTestSet testSet)
+        public BusinessFlow ConvertQCTestSetToBF(QCTestSet testSet)
         {
             GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
@@ -209,7 +208,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                 Dictionary<string, string> busVariables = new Dictionary<string, string>();//will store linked variables
 
                 //Create Activities Group + Activities for each TC
-                foreach (QC.QCTSTest tc in testSet.Tests)
+                foreach (QCTSTest tc in testSet.Tests)
                 {
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
@@ -251,7 +250,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     }
 
                     //Add the TC steps as Activities if not already on the Activities group
-                    foreach (QC.QCTSTestStep step in tc.Steps)
+                    foreach (QCTSTestStep step in tc.Steps)
                     {
                         Activity stepActivity;
                         bool toAddStepActivity = false;
@@ -300,7 +299,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                             //get the param value
                             string paramSelectedValue = string.Empty;
                             bool? isflowControlParam = null;
-                            QC.QCTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                            QCTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
 
                             //get the param value
                             if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
@@ -446,7 +445,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                         {
                             startGroupActsIndxInBf = busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
                         }
-                        foreach (QC.QCTSTestStep step in tc.Steps)
+                        foreach (QCTSTestStep step in tc.Steps)
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
                             ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
@@ -519,95 +518,95 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
         #region private functions
 
-        private static QCTestCaseStep GetListTSTestVars(QCTestCase testCase)
-        {
-            QCTestCaseStepsColl steps = QCRestAPIConnect.GetTestCaseSteps(testCase.Id);
+        //private static QCTestCaseStep GetListTSTestVars(QCTestCase testCase)
+        //{
+        //    QCTestCaseStepsColl steps = QCRestAPIConnect.GetTestCaseSteps(testCase.Id);
 
-            foreach (QCTestCaseStep step in steps)
-            {
-                if (step.ElementsField.ContainsKey("link-test"))
-                {
-                    return step;
-                }
-            }
-            return null;
-        }
+        //    foreach (QCTestCaseStep step in steps)
+        //    {
+        //        if (step.ElementsField.ContainsKey("link-test"))
+        //        {
+        //            return step;
+        //        }
+        //    }
+        //    return null;
+        //}
 
-        private static BusinessFlow CreateBusinessFlow(QCTestSet tS)
-        {
-            BusinessFlow busFlow = new BusinessFlow();
-            busFlow.Name = tS.Name;
-            busFlow.ExternalID = tS.Id;
-            busFlow.Description = tS.ElementsField["description"].ToString();
-            busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-            busFlow.Activities = new ObservableList<Activity>();
-            busFlow.Variables = new ObservableList<VariableBase>();
+        //private static BusinessFlow CreateBusinessFlow(TestSetData tS)
+        //{
+        //    BusinessFlow busFlow = new BusinessFlow();
+        //    busFlow.Name = tS.Name;
+        //    busFlow.ExternalID = tS.Id;
+        //    busFlow.Description = tS.ElementsField["description"].ToString();
+        //    busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
+        //    busFlow.Activities = new ObservableList<Activity>();
+        //    busFlow.Variables = new ObservableList<VariableBase>();
 
-            return busFlow;
-        }
+        //    return busFlow;
+        //}
 
-        private static ActivitiesGroup CheckIfTCAlreadyExistInRepo(BusinessFlow busFlow, QCTestInstance testInstance, QCTestCaseStepsColl tSTestCaseSteps)
-        {
-            ActivitiesGroup tcActivsGroup;
-            ActivitiesGroup repoActivsGroup = null;
-            QCTestCaseStepsColl relevantTestCaseSteps = QCRestAPIConnect.GetTestCaseSteps(testInstance.TestId);
-            QCTestCaseStep relevantStep = null;
-            foreach (QCTestCaseStep testcaseStep in relevantTestCaseSteps)
-            {
-                if (testcaseStep.ElementsField.ContainsKey("link-test"))
-                {
-                    relevantStep = testcaseStep;
-                }
-            }
-            if (relevantStep != null)
-            {
-                repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == relevantStep.ElementsField["link-test"].ToString()).FirstOrDefault();
-            }
-            if (repoActivsGroup == null)
-            {
-                repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == testInstance.Id).FirstOrDefault();
-            }
-            if (repoActivsGroup != null)
-            {
-                List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
-                                                                               .Where(x => !tSTestCaseSteps.Where(item => item.TestId == testInstance.TestId).Select(y => y.Id).ToList().Contains(x.ExternalID)).ToList();
+        //private static ActivitiesGroup CheckIfTCAlreadyExistInRepo(BusinessFlow busFlow, QCTestInstance testInstance, QCTestCaseStepsColl tSTestCaseSteps)
+        //{
+        //    ActivitiesGroup tcActivsGroup;
+        //    ActivitiesGroup repoActivsGroup = null;
+        //    QCTestCaseStepsColl relevantTestCaseSteps = QCRestAPIConnect.GetTestCaseSteps(testInstance.TestId);
+        //    QCTestCaseStep relevantStep = null;
+        //    foreach (QCTestCaseStep testcaseStep in relevantTestCaseSteps)
+        //    {
+        //        if (testcaseStep.ElementsField.ContainsKey("link-test"))
+        //        {
+        //            relevantStep = testcaseStep;
+        //        }
+        //    }
+        //    if (relevantStep != null)
+        //    {
+        //        repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == relevantStep.ElementsField["link-test"].ToString()).FirstOrDefault();
+        //    }
+        //    if (repoActivsGroup == null)
+        //    {
+        //        repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == testInstance.Id).FirstOrDefault();
+        //    }
+        //    if (repoActivsGroup != null)
+        //    {
+        //        List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
+        //                                                                       .Where(x => !tSTestCaseSteps.Where(item => item.TestId == testInstance.TestId).Select(y => y.Id).ToList().Contains(x.ExternalID)).ToList();
 
-                tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance();
+        //        tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance();
 
-                var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID));
-                for (int indx = 0; indx < tcActivsGroup.ActivitiesIdentifiers.Count; indx++)
-                {
-                    if ((indx < tcActivsGroup.ActivitiesIdentifiers.Count) && (ActivitySIdentifiersToRemove.Contains(tcActivsGroup.ActivitiesIdentifiers[indx])))
-                    {
-                        tcActivsGroup.ActivitiesIdentifiers.Remove(tcActivsGroup.ActivitiesIdentifiers[indx]);
-                        indx--;
-                    }
-                }
+        //        var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID));
+        //        for (int indx = 0; indx < tcActivsGroup.ActivitiesIdentifiers.Count; indx++)
+        //        {
+        //            if ((indx < tcActivsGroup.ActivitiesIdentifiers.Count) && (ActivitySIdentifiersToRemove.Contains(tcActivsGroup.ActivitiesIdentifiers[indx])))
+        //            {
+        //                tcActivsGroup.ActivitiesIdentifiers.Remove(tcActivsGroup.ActivitiesIdentifiers[indx]);
+        //                indx--;
+        //            }
+        //        }
 
-                tcActivsGroup.ExternalID2 = testInstance.Id;
-                busFlow.AddActivitiesGroup(tcActivsGroup);
-                busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
-                busFlow.AttachActivitiesGroupsAndActivities();
-            }
-            else //TC not exist in Ginger repository so create new one
-            {
-                tcActivsGroup = new ActivitiesGroup();
-                tcActivsGroup.Name = testInstance.Name;
-                if (relevantStep == null)
-                {
-                    tcActivsGroup.ExternalID = testInstance.Id;
-                    tcActivsGroup.ExternalID2 = testInstance.Id;
-                }
-                else
-                {
-                    tcActivsGroup.ExternalID = relevantStep.ElementsField["link-test"].ToString();
-                    tcActivsGroup.ExternalID2 = testInstance.Id; 
-                }
-                busFlow.AddActivitiesGroup(tcActivsGroup);
-            }
+        //        tcActivsGroup.ExternalID2 = testInstance.Id;
+        //        busFlow.AddActivitiesGroup(tcActivsGroup);
+        //        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
+        //        busFlow.AttachActivitiesGroupsAndActivities();
+        //    }
+        //    else //TC not exist in Ginger repository so create new one
+        //    {
+        //        tcActivsGroup = new ActivitiesGroup();
+        //        tcActivsGroup.Name = testInstance.Name;
+        //        if (relevantStep == null)
+        //        {
+        //            tcActivsGroup.ExternalID = testInstance.Id;
+        //            tcActivsGroup.ExternalID2 = testInstance.Id;
+        //        }
+        //        else
+        //        {
+        //            tcActivsGroup.ExternalID = relevantStep.ElementsField["link-test"].ToString();
+        //            tcActivsGroup.ExternalID2 = testInstance.Id; 
+        //        }
+        //        busFlow.AddActivitiesGroup(tcActivsGroup);
+        //    }
 
-            return tcActivsGroup;
-        }
+        //    return tcActivsGroup;
+        //}
 
         private static Activity LinkStepAndUpdate(BusinessFlow busFlow, ActivityIdentifiers groupStepActivityIdent, QCTestCaseStep step, QCTestInstance testInstance)
         {
@@ -660,7 +659,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         }
 
 
-        private static void FillRelevantDataForStepParams(QC.QCTSTest newTSTest, QCTestCaseStep tSLinkedTestCaseStep)
+        private static void FillRelevantDataForStepParams(QCTSTest newTSTest, QCTestCaseStep tSLinkedTestCaseStep)
         {
             string description = StripHTML(tSLinkedTestCaseStep.Description).Replace("\n", "");
             MatchCollection mc = Regex.Matches(description, "\\w*\\s*=\\s*\\w*");
@@ -670,48 +669,48 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                 string[] currentParam = m.ToString().Split('=');
                 string paramName = currentParam[0].Trim(' ');
                 string paramValue = currentParam[1].Trim(' ');
-                QC.QCTSTestParameter newtsVar = new QC.QCTSTestParameter();
+                QCTSTestParameter newtsVar = new QCTSTestParameter();
                 if (paramName != null) { newtsVar.Name = paramName; }
                 if (paramValue != null) { newtsVar.Value = paramValue; }
                 newTSTest.Parameters.Add(newtsVar);
             }
         }
 
-        private string CheckLinkedTSTestName(QCTestCase testCase)
-        {
-            QCTestCaseStepsColl testCasesSteps = QCRestAPIConnect.GetTestCaseSteps(testCase.Id);
+        //private string CheckLinkedTSTestName(QCTestCase testCase)
+        //{
+        //    QCTestCaseStepsColl testCasesSteps = QCRestAPIConnect.GetTestCaseSteps(testCase.Id);
 
-            foreach (QCTestCaseStep step in testCasesSteps)
-            {
-                if (step.ElementsField.ContainsKey("link-test"))
-                {
-                    QCTestCase linkedTestCase = QCRestAPIConnect.GetTestCases(new List<string>() { step.ElementsField["link-test"].ToString() })[0];
-                    return linkedTestCase.Name + ";" + linkedTestCase.Id;
-                }
-            }
+        //    foreach (QCTestCaseStep step in testCasesSteps)
+        //    {
+        //        if (step.ElementsField.ContainsKey("link-test"))
+        //        {
+        //            QCTestCase linkedTestCase = QCRestAPIConnect.GetTestCases(new List<string>() { step.ElementsField["link-test"].ToString() })[0];
+        //            return linkedTestCase.Name + ";" + linkedTestCase.Id;
+        //        }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
-        private QCTestCaseStepsColl GetListTSTestSteps(QCTestCase testCase)
-        {
-            QCTestCaseStepsColl testCaseSteps = QCRestAPIConnect.GetTestCaseSteps(testCase.Id);
+        //private QCTestCaseStepsColl GetListTSTestSteps(QCTestCase testCase)
+        //{
+        //    QCTestCaseStepsColl testCaseSteps = QCRestAPIConnect.GetTestCaseSteps(testCase.Id);
 
-            foreach (QCTestCaseStep step in testCaseSteps)
-            {
-                if (step.ElementsField.ContainsKey("link-test"))
-                {
-                    QCTestCaseStepsColl linkTestCaseSteps = QCRestAPIConnect.GetTestCasesSteps(new List<string>() { step.ElementsField["link-test"].ToString() });
-                    return linkTestCaseSteps;
-                }
-            }
+        //    foreach (QCTestCaseStep step in testCaseSteps)
+        //    {
+        //        if (step.ElementsField.ContainsKey("link-test"))
+        //        {
+        //            QCTestCaseStepsColl linkTestCaseSteps = QCRestAPIConnect.GetTestCasesSteps(new List<string>() { step.ElementsField["link-test"].ToString() });
+        //            return linkTestCaseSteps;
+        //        }
+        //    }
 
-            return testCaseSteps;
-        }
-        private QCRunColl GetListTSTestRuns(QCTestCase testCase)
-        {
-            return QCRestAPIConnect.GetRunsByTestId(testCase.Id);
-        }
+        //    return testCaseSteps;
+        //}
+        //private QCRunColl GetListTSTestRuns(QCTestCase testCase)
+        //{
+        //    return QCRestAPIConnect.GetRunsByTestId(testCase.Id);
+        //}
 
         #endregion private functions
         public ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)

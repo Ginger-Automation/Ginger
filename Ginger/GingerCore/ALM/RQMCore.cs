@@ -245,5 +245,16 @@ namespace GingerCore.ALM
         {
             ImportFromRQM.UpdateBusinessFlow(ref busFlow, testPlan);
         }
+        public BusinessFlow ConvertRQMTestPlanToBF(RQMTestPlan testPlan)
+        {
+            return ImportFromRQM.ConvertRQMTestPlanToBF(testPlan);
+        }
+        public override GingerCoreNET.ALMLib.ALMIntegration.eALMType ALMType
+        {
+            get
+            {
+                return GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;
+            }
+        }
     }
 }

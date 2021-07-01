@@ -16,27 +16,20 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.Abstractions;
 using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
-using GingerCore.External;
 using GingerCore.Variables;
-using Newtonsoft.Json;
-using ALM_Common.Data_Contracts;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using JiraRepository.Data_Contracts;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web;
-using JiraRepository;
-using JiraRepository.Data_Contracts;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM.JIRA
 {
