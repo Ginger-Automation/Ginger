@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models;
-using Amdocs.Ginger.CoreNET.Application_Models.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Agents;
 using Ginger.UserControls;
@@ -29,11 +28,7 @@ using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -90,11 +85,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true)
                 {
-                    mWizard.mPomLearnUtils.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate> (xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
+                    mWizard.mPomLearnUtils.POM.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate> (xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
                 }
                 else
                 {
-                    mWizard.mPomLearnUtils.RelativeXpathTemplateList.Clear();
+                    mWizard.mPomLearnUtils.POM.RelativeXpathTemplateList.Clear();
                 }
             }
         }

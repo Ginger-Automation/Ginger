@@ -16,11 +16,9 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-using Amdocs.Ginger.CoreNET.Application_Models.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using System;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -54,20 +52,25 @@ namespace Ginger.UserControlsLib.POMLearnig
             xRelXpathSettingsGrid.InitViewItems();
 
             AddDefaultTemplate();
+            
+            xRelXpathSettingsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddRelativexPathTemplateRow));
 
             xRelXpathSettingsGrid.DataSourceList = RelativeXpathTemplateList;
-            xRelXpathSettingsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddRelativexPathTemplateRow));
         }
 
-      
+
         private void AddDefaultTemplate()
         {
             if (RelativeXpathTemplateList == null)
             {
                 RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>();
             }
-            RelativeXpathTemplateList.Add(new CustomRelativeXpathTemplate() { Value = "//*[@placeholder=\'\' and @type=\'\']",Status = CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed});
-            RelativeXpathTemplateList.Add(new CustomRelativeXpathTemplate() { Value = "//*[@AutomationID=\'\' or @type=\'\']",Status = CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed });
+
+            if (RelativeXpathTemplateList.Count == 0)
+            {
+                RelativeXpathTemplateList.Add(new CustomRelativeXpathTemplate() { Value = "//*[@placeholder=\'\' and @type=\'\']", Status = CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed });
+                RelativeXpathTemplateList.Add(new CustomRelativeXpathTemplate() { Value = "//*[@AutomationID=\'\' or @type=\'\']", Status = CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed });
+            }
         }
 
         private void AddRelativexPathTemplateRow(object sender, RoutedEventArgs e)
@@ -85,6 +88,16 @@ namespace Ginger.UserControlsLib.POMLearnig
             {
                 xRelXpathSettingsGrid.Visibility = Visibility.Collapsed;
             }
+        }
+
+        internal void UpdateCustomRelPathGridList(ObservableList<CustomRelativeXpathTemplate> relativeXpathTemplateList)
+        {
+            xCustomRelativeXpathCofigChkBox.IsChecked = true;
+            xRelXpathSettingsGrid.Visibility = Visibility.Visible;
+            
+            RelativeXpathTemplateList.Clear();
+            RelativeXpathTemplateList = relativeXpathTemplateList;
+            xRelXpathSettingsGrid.DataSourceList = RelativeXpathTemplateList;
         }
     }
 }

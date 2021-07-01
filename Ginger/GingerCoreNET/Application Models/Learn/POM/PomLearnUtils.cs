@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.Application_Models.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions.VisualTesting;
@@ -84,7 +83,6 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public Bitmap ScreenShot { get; set; }
         public string SpecificFramePath { get; set; }
-        public ObservableList<CustomRelativeXpathTemplate> RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>();
 
         public PomLearnUtils(ApplicationPOMModel pom, Agent agent=null, RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {
@@ -201,7 +199,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         {
             var customRelXpathTemplateList = new List<string>();
 
-            foreach (var item in RelativeXpathTemplateList)
+            foreach (var item in POM.RelativeXpathTemplateList)
             {
                 customRelXpathTemplateList.Add(item.Value);
             }

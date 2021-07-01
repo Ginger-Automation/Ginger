@@ -1,5 +1,4 @@
-﻿using Amdocs.Ginger.Repository;
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -16,8 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-
-namespace Amdocs.Ginger.CoreNET.Application_Models.Common
+namespace Amdocs.Ginger.Repository
 {
     public class CustomRelativeXpathTemplate : RepositoryItemBase
     {
@@ -29,10 +27,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Common
 
         private string mValue;
 
-        public CustomRelativeXpathTemplate()
-        {
-        }
-
+        [IsSerializedForLocalRepository]
         public string Value
         {
             get
@@ -47,7 +42,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Common
         }
 
         private SyntaxValidationStatus mStatus;
-        public SyntaxValidationStatus Status 
+        public SyntaxValidationStatus Status
         {
             get
             {
@@ -59,11 +54,13 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Common
                 OnPropertyChanged(nameof(Status));
             }
         }
-        public override string ItemName { get { return this.Value; }  
-            set 
-            { 
+        public override string ItemName
+        {
+            get { return this.Value; }
+            set
+            {
                 //do nothing 
-            } 
+            }
         }
     }
 }

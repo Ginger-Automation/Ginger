@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-using Amdocs.Ginger.CoreNET.Application_Models.Common;
+using Amdocs.Ginger.Repository;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;

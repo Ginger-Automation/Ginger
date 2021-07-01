@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models;
-using Amdocs.Ginger.CoreNET.Application_Models.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Drivers;
@@ -27,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GingerCoreNET.Application_Models
@@ -60,8 +58,6 @@ namespace GingerCoreNET.Application_Models
         }
 
         public string SpecificFramePath { get; set; }
-        public ObservableList<CustomRelativeXpathTemplate> RelativeXpathTemplateList =new ObservableList<CustomRelativeXpathTemplate>();
-
         public PomDeltaUtils(ApplicationPOMModel pom, Agent agent)
         {
             POM = pom;            
@@ -107,7 +103,7 @@ namespace GingerCoreNET.Application_Models
         {
             var customRelXpathTemplateList = new List<string>();
 
-            foreach (var item in RelativeXpathTemplateList)
+            foreach (var item in POM.RelativeXpathTemplateList)
             {
                 customRelXpathTemplateList.Add(item.Value);
             }

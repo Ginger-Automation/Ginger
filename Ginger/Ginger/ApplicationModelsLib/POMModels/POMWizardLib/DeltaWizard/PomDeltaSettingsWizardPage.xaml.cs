@@ -79,11 +79,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             {
                 if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true)
                 {
-                    mWizard.mPomDeltaUtils.RelativeXpathTemplateList = xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList;
+                    mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList = xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList;
                 }
                 else
                 {
-                    mWizard.mPomDeltaUtils.RelativeXpathTemplateList.Clear();
+                    mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList.Clear();
                 }
             }
         }
@@ -92,6 +92,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             if (mAppPlatform.Equals(ePlatformType.Web))
             {
                 xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Visible;
+                if (mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList.Count > 0)
+                {
+                    xCustomRelativeXpathTemplateFrame.UpdateCustomRelPathGridList(mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList);
+                }
             }
             else
             {
