@@ -134,12 +134,5 @@ namespace GingerCore.ALM
         {
             return ImportFromQCRest.GetQCTest(testID);
         }
-        public override GingerCoreNET.ALMLib.ALMIntegration.eALMType ALMType
-        {
-            get
-            {
-                return GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
-            }
-        }
     }
 }

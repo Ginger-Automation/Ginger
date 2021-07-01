@@ -16,20 +16,26 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using GingerCore.Activities;
 using GingerCore.ALM.JIRA;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using JiraRepository.BLL;
-using JiraRepository.Data_Contracts;
+using Ginger;
 using System;
 using System.Collections.Generic;
+using GingerCore.Activities;
+using ALM_Common.DataContracts;
 using System.ComponentModel;
 using System.IO;
+using System.Xml;
 using System.IO.Compression;
+using Newtonsoft.Json;
+using GingerCore.External;
+using Amdocs.Ginger.Repository;
+using GingerCore.ALM.JIRA.Bll;
+using JiraRepository.BLL;
+using JiraRepository.Data_Contracts;
+using amdocs.ginger.GingerCoreNET;
 using System.Linq;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM
 {
@@ -268,13 +274,6 @@ namespace GingerCore.ALM
                 Reporter.ToLog(eLogLevel.WARN, "Jira Configuration package not exist in solution, Jira Settings not exist at: " + Path.Combine(CurrJiraConfigPath, "JiraSettings"));
             }
             return false;
-        }
-        public override GingerCoreNET.ALMLib.ALMIntegration.eALMType ALMType
-        {
-            get
-            {
-                return GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira;
-            }
         }
     }
 }

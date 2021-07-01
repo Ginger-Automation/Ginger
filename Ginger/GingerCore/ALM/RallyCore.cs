@@ -223,16 +223,5 @@ namespace GingerCore.ALM
             get { return ImportFromRally.ApplicationPlatforms; }
             set { ImportFromRally.ApplicationPlatforms = value; }
         }
-        public BusinessFlow ConvertRallyTestPlanToBF(RallyTestPlan testPlan)
-        {
-            return ImportFromRally.ConvertRallyTestPlanToBF(testPlan);
-        }
-        public override GingerCoreNET.ALMLib.ALMIntegration.eALMType ALMType
-        {
-            get
-            {
-                return GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY;
-            }
-        }
     }
 }

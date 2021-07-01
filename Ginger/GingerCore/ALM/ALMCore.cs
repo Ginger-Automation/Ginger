@@ -18,13 +18,18 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
+using GingerCore.ALM.Rally;
+using GingerCore.ALM.RQM;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using OctaneSdkStandard.Connector.Credentials;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GingerCore.ALM
 {
@@ -38,7 +43,41 @@ namespace GingerCore.ALM
         public GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig()
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = null;
-            AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == ALMType).FirstOrDefault();
+            if (this.GetType() == typeof(GingerCore.ALM.QCCore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC).FirstOrDefault();
+            }
+            if (this.GetType() == typeof(GingerCore.ALM.QCRestAPICore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC).FirstOrDefault();
+            }
+            if (this.GetType() == typeof(GingerCore.ALM.RQMCore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM).FirstOrDefault();
+            }
+            if (this.GetType() == typeof(GingerCore.ALM.JiraCore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira).FirstOrDefault();
+            }
+            if (this.GetType() == typeof(GingerCore.ALM.QtestCore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest).FirstOrDefault();
+            }
+            if (this.GetType() == typeof(GingerCore.ALM.OctaneCore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane).FirstOrDefault();
+            }
+
+            if (this.GetType() == typeof(GingerCore.ALM.RallyCore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY).FirstOrDefault();
+            }
+
+            if (this.GetType() == typeof(GingerCore.ALM.ZephyrEntCore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise).FirstOrDefault();
+            }
+
             if (AlmConfig != null)
             {
                 GingerCoreNET.ALMLib.ALMUserConfig AlmUserConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == AlmConfig.AlmType);
@@ -152,6 +191,17 @@ namespace GingerCore.ALM
                 }
             }
         }
+
+        public BusinessFlow ConvertRQMTestPlanToBF(RQMTestPlan testPlan)
+        {
+            return ImportFromRQM.ConvertRQMTestPlanToBF(testPlan);
+        }
+
+        public BusinessFlow ConvertRallyTestPlanToBF(RallyTestPlan testPlan)
+        {
+            return ImportFromRally.ConvertRallyTestPlanToBF(testPlan);
+        }
+
         public abstract ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
         {
             get; set;
@@ -167,7 +217,7 @@ namespace GingerCore.ALM
             get; set;
         }
 
-        public ObservableList<ExternalItemFieldBase> UpdatedAlmFields(ObservableList<ExternalItemFieldBase> tempFieldsList)
+        internal ObservableList<ExternalItemFieldBase> UpdatedAlmFields(ObservableList<ExternalItemFieldBase> tempFieldsList)
         {
             AlmItemFields = new ObservableList<ExternalItemFieldBase>();
             foreach (ExternalItemFieldBase item in tempFieldsList)
@@ -182,10 +232,6 @@ namespace GingerCore.ALM
             this.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             this.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             this.ApplicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms;
-        }
-        public abstract GingerCoreNET.ALMLib.ALMIntegration.eALMType ALMType
-        {
-            get;
         }
     }
 }

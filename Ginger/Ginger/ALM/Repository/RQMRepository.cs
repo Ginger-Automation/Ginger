@@ -118,7 +118,7 @@ namespace Ginger.ALM.Repository
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testPlan.Name);
 
                         // convert test set into BF
-                        BusinessFlow tsBusFlow = ((RQMCore)ALMIntegration.Instance.AlmCore).ConvertRQMTestPlanToBF(testPlan);
+                        BusinessFlow tsBusFlow = ALMIntegration.Instance.AlmCore.ConvertRQMTestPlanToBF(testPlan);
 
                         if ( WorkSpace.Instance.Solution.MainApplication != null)
                         {
