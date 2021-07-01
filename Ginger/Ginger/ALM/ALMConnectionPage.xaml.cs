@@ -680,7 +680,6 @@ namespace Ginger.ALM
 
         private void SetLoadPackageButtonContent()
         {
-            Bind();//need to check why we need to bind again
             if (string.IsNullOrEmpty(ConfigPackageTextBox.Text))
             {
                 RQMLoadConfigPackageButton.Content = "Load";
