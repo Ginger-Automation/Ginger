@@ -95,6 +95,10 @@ namespace GingerCore.ALM
                 {
                     AlmConfig.ALMConfigPackageFolderPath = AlmUserConfig.ALMConfigPackageFolderPath;
                 }
+                if (!string.IsNullOrEmpty(AlmConfig.ALMConfigPackageFolderPath))
+                {
+                    AlmConfig.ALMConfigPackageFolderPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(AlmConfig.ALMConfigPackageFolderPath);
+                }
                 AlmConfig.ALMUserName = AlmUserConfig.ALMUserName;
                 AlmConfig.ALMPassword = AlmUserConfig.ALMPassword;
             }
@@ -189,6 +193,10 @@ namespace GingerCore.ALM
                 {
                     AlmConfig.ALMConfigPackageFolderPath = ALMConfigPackageFolderPath;
                 }
+            }
+            if (!string.IsNullOrEmpty(AlmConfig.ALMConfigPackageFolderPath))
+            {
+                AlmConfig.ALMConfigPackageFolderPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(AlmConfig.ALMConfigPackageFolderPath);
             }
         }
 

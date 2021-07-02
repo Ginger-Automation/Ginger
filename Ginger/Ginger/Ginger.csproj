@@ -1997,9 +1997,7 @@
     <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
-    <None Include="ALMRESTConfiguration\appsettings_QTest.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="ALMRESTConfiguration\appsettings_QTest.json" />
     <None Include="Ginger.ruleset" />
     <EmbeddedResource Include="Resources\LiteDB.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
