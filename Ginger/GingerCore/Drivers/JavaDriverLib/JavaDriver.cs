@@ -2854,7 +2854,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 mGetRecordingTimer.Stop();
             }
 
-
+            Thread.Sleep(100);
             PayLoad plAC = new PayLoad("StopRecording");
             plAC.ClosePackage();
             Send(plAC);
@@ -3047,7 +3047,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             RequestPL.ClosePackage();
 
             PayLoad RCPL = Send(RequestPL);
-            if (RCPL.IsErrorPayLoad())
+            if (RCPL.IsErrorPayLoad() || RCPL.Name.Equals("Recording Stopped"))
             {
                 return null;
             }
