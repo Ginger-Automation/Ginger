@@ -241,8 +241,12 @@ namespace Ginger.SolutionGeneral
         {
             try
             {
-                EncryptionKey = encryptionKey ?? EncryptionKey;
-                return EncryptionHandler.DecryptwithKey(EncryptedValidationString).Equals("valid");
+                bool isDecrypted = EncryptionHandler.DecryptwithKey(EncryptedValidationString, encryptionKey ?? EncryptionKey).Equals("valid");
+                if (isDecrypted)
+                {
+                    EncryptionKey = encryptionKey ?? EncryptionKey;
+                }
+                return isDecrypted;
             }
             catch (Exception ex)
             {

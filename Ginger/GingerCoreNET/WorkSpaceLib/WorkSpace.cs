@@ -381,7 +381,7 @@ namespace amdocs.ginger.GingerCoreNET
 
                 EncryptionHandler.SetCustomKey(solution.EncryptionKey);
                 if (!solution.ValidateKey())
-                {                    
+                {
                     Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Encryption key validation failed");
                     if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
                     {
@@ -455,120 +455,155 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public static void ReEncryptVariable(string oldKey = null)
+        public async void ReEncryptVariable(string oldKey = null)
         {
-            int varReencryptedCount = 0;
-            List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
-            // For BF and Activity
-            Parallel.ForEach(Bfs, Bf =>
+            await Task.Run(() =>
             {
-                try
-                {
-                    // Get all variables from BF
-                    List<GingerCore.Variables.VariableBase> variables = Bf.GetBFandActivitiesVariabeles(false).Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
-                    variables.ForEach(v =>
-                    {
-                        try
-                        {
-                            if (string.IsNullOrEmpty(oldKey))
-                            {
-                                ((GingerCore.Variables.VariablePasswordString)v).Password =
-                                EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password);
-                            }
-                            else
-                            {
-                                ((GingerCore.Variables.VariablePasswordString)v).Password =
-                                EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);      
-                            }
-                            varReencryptedCount++;
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password variable of {0} for {1}", Bf.Name, v.Name), ex);
-                        }
-                    });
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Re-Encrypting password variables");
+                int varReencryptedCount = 0;
+                List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
+                // For BF and Activity
+                Parallel.ForEach(Bfs, Bf =>
+                 {
+                     try
+                     {
+                         // Get all variables from BF
+                         List<GingerCore.Variables.VariableBase> variables = Bf.GetBFandActivitiesVariabeles(false).Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                         variables.ForEach(v =>
+                         {
+                             try
+                             {
+                                 ((GingerCore.Variables.VariablePasswordString)v).Password =
+                                 EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);
 
-                    if (variables.Any())
-                    {
-                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(Bf);
-                    }
+                                 varReencryptedCount++;
+                             }
+                             catch (Exception ex)
+                             {
+                                 Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password variable of {0} for {1}", Bf.Name, v.Name), ex);
+                             }
+                         });
 
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password variable of {0}.", Bf.Name), ex);
-                }
-            });
+                         if (variables.Any())
+                         {
+                             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(Bf);
+                         }
 
-            // For Global Variables
-            bool res = false;
-            foreach (GingerCore.Variables.VariableBase v in WorkSpace.Instance.Solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString))
-            {
-                try
+                     }
+                     catch (Exception ex)
+                     {
+                         Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password variable of {0}.", Bf.Name), ex);
+                     }
+                 });
+
+                // For Global Variables
+                bool res = false;
+                foreach (GingerCore.Variables.VariableBase v in WorkSpace.Instance.Solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString))
                 {
-                    if (string.IsNullOrEmpty(oldKey))
-                    {
-                        ((GingerCore.Variables.VariablePasswordString)v).Password =
-                            EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password);
-                        res = true;
-                    }
-                    else
+                    try
                     {
                         ((GingerCore.Variables.VariablePasswordString)v).Password =
                             EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);
                         res = true;
+
+                        varReencryptedCount++;
                     }
-
-                    varReencryptedCount++;
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password Global variable {1}", v.Name), ex);
-                }
-            }
-            if (res)
-            {
-                WorkSpace.Instance.Solution.SaveSolution(false);
-            }
-
-
-            try
-            {
-                List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
-                projEnvironments.ForEach(pe =>
-                {
-                    res = false;
-                    foreach (EnvApplication ea in pe.Applications)
+                    catch (Exception ex)
                     {
-                        foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password Global variable {1}", v.Name), ex);
+                    }
+                }
+                if (res)
+                {
+                    WorkSpace.Instance.Solution.SaveSolution(false);
+                }
+
+                //For project environment variable
+                try
+                {
+                    List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
+                    projEnvironments.ForEach(pe =>
+                    {
+                        res = false;
+                        foreach (EnvApplication ea in pe.Applications)
                         {
-                            if (string.IsNullOrEmpty(oldKey))
-                            {
-                                gp.Value = EncryptionHandler.ReEncryptString(gp.Value);
-                            }
-                            else
+                            foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
                             {
                                 gp.Value = EncryptionHandler.ReEncryptString(gp.Value, oldKey);
                                 res = true;
+                                varReencryptedCount++;
                             }
-                            varReencryptedCount++;
                         }
-                    }
-                    if (res)
+                        if (res)
+                        {
+                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(pe);
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "ReEncryptVariable- Failed to Reencrypt password ProjEnvironment variable.", ex);
+                }
+
+                //For Shared Variales
+                List<GingerCore.Variables.VariableBase> sharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Variables.VariableBase>().Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                Parallel.ForEach(sharedRepoVarsList, sharedVar =>
+                {
+                    try
                     {
-                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(pe);
+                        ((GingerCore.Variables.VariablePasswordString)sharedVar).Password =
+                        EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)sharedVar).Password, oldKey);
+
+                        varReencryptedCount++;
+
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(sharedVar);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt shared password variable of {0}.", sharedVar.Name), ex);
                     }
                 });
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "ReEncryptVariable- Failed to Reencrypt password ProjEnvironment variable.", ex);
-            }
 
-            if (varReencryptedCount > 0)
-            {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, varReencryptedCount + " Variables Re-encrypted using new Encryption key across Solution.");
-            }
+                //For Shared Activites
+                List<Activity> sharedActivityList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().ToList();
+                Parallel.ForEach(sharedActivityList, sharedAct =>
+                {
+                    try
+                    {
+                        List<GingerCore.Variables.VariableBase> variables = sharedAct.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                        variables.ForEach(v =>
+                        {
+                            try
+                            {
+                                ((GingerCore.Variables.VariablePasswordString)v).Password =
+                                EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);
+                                varReencryptedCount++;
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password variable of shared activity {0} for {1}", sharedAct.ActivityName, v.Name), ex);
+                            }
+                        });
+
+                        if (variables.Any())
+                        {
+                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(sharedAct);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to update shared activity {0}.", sharedAct.ActivityName), ex);
+                    }
+                });
+
+
+                if (varReencryptedCount > 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, varReencryptedCount + " Variables Re-encrypted using new Encryption key across Solution.");
+                }
+
+                Reporter.HideStatusMessage();
+            });
         }
 
 

@@ -29,7 +29,8 @@ namespace GingerCore.GeneralLib
                 Target = target,
                 Username = username,
                 Password = password,
-                PersistanceType = persistenceType
+                PersistanceType = persistenceType,
+                Type = CredentialType.Generic
             }.Save();
         }
 

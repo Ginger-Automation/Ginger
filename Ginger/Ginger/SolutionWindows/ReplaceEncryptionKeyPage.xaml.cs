@@ -29,7 +29,7 @@ namespace Ginger.SolutionWindows
     public partial class ReplaceEncryptionKeyPage : Page
     {
         GenericWindow _pageGenericWin = null;
-        Solution _solution = null;        
+        Solution _solution = null;
         Button uSaveKeyBtn, uCloseBtn, uOkBtn;
 
         bool validKeyAdded = false;
@@ -123,8 +123,9 @@ namespace Ginger.SolutionWindows
             {
                 _pageGenericWin.Close();
             }
-            else {
-                Reporter.ToUser(eUserMsgKey.ShowInfoMessage,"Please populate all Values in grid.");
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.ShowInfoMessage, "Please populate all Values in grid.");
             }
         }
 
@@ -155,57 +156,80 @@ namespace Ginger.SolutionWindows
                     WorkSpace.Instance.SolutionRepository.Open(_solution.ContainingFolderFullPath);
                     WorkSpace.Instance.Solution = _solution;
                 }
-                WorkSpace.ReEncryptVariable(UCEncryptionKeyPrevious.EncryptionKeyPasswordBox.Password);
+                WorkSpace.Instance.ReEncryptVariable(UCEncryptionKeyPrevious.EncryptionKeyPasswordBox.Password);
                 variablesGrid.Visibility = Visibility.Collapsed;
                 validKeyAdded = true;
                 _pageGenericWin.Close();
             }
         }
 
-        private void InitGrid()
+        private async void InitGrid()
         {
-            if (WorkSpace.Instance.SolutionRepository == null)
-            {
-                WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-                WorkSpace.Instance.SolutionRepository.Open(_solution.ContainingFolderFullPath);
-            }
             ObservableList<GingerCore.Variables.VariablePasswordString> variables = new ObservableList<GingerCore.Variables.VariablePasswordString>();
-            List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
-            // For BF and Activity
-            Parallel.ForEach(Bfs, Bf =>
+            await Task.Run(() =>
             {
-                bool res = false;
-                foreach (GingerCore.Variables.VariablePasswordString item in Bf.GetBFandActivitiesVariabeles(true).Where(f => f is GingerCore.Variables.VariablePasswordString))
+                if (WorkSpace.Instance.SolutionRepository == null)
                 {
-                    item.Password = "";
-                    variables.Add(item);
+                    WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+                    WorkSpace.Instance.SolutionRepository.Open(_solution.ContainingFolderFullPath);
                 }
-            });
-
-            foreach (GingerCore.Variables.VariablePasswordString v in _solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString))
-            {
-                v.Password = "";
-                v.ParentType = string.IsNullOrEmpty(v.ParentType) ? "Solution Variables" : v.ParentType;
-                variables.Add(v);
-            }
-
-            List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
-            projEnvironments.ForEach(pe =>
-            {
-                bool res1 = false;
-                GingerCore.Variables.VariablePasswordString vp;
-                foreach (EnvApplication ea in pe.Applications)
+                
+                List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
+                // For BF and Activity
+                Parallel.ForEach(Bfs, Bf =>
                 {
-                    foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
+                    foreach (GingerCore.Variables.VariablePasswordString item in Bf.GetBFandActivitiesVariabeles(true).Where(f => f is GingerCore.Variables.VariablePasswordString))
                     {
-                        vp = new GingerCore.Variables.VariablePasswordString();
-                        vp.Name = gp.Name;
-                        vp.Password = "";
-                        vp.ParentType = "Environment Variables";
-                        vp.Guid = gp.Guid;
-                        variables.Add(vp);
+                        item.Password = "";
+                        variables.Add(item);
                     }
+                });
+
+                foreach (GingerCore.Variables.VariablePasswordString v in _solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString))
+                {
+                    v.Password = "";
+                    v.ParentType = string.IsNullOrEmpty(v.ParentType) ? "Solution Variables" : v.ParentType;
+                    variables.Add(v);
                 }
+
+                List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
+                projEnvironments.ForEach(pe =>
+                {
+                    bool res1 = false;
+                    GingerCore.Variables.VariablePasswordString vp;
+                    foreach (EnvApplication ea in pe.Applications)
+                    {
+                        foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
+                        {
+                            vp = new GingerCore.Variables.VariablePasswordString();
+                            vp.Name = gp.Name;
+                            vp.Password = "";
+                            vp.ParentType = "Environment Variables";
+                            vp.Guid = gp.Guid;
+                            variables.Add(vp);
+                        }
+                    }
+                });
+
+                //For Shared Variales
+                List<GingerCore.Variables.VariableBase> sharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Variables.VariableBase>().Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                Parallel.ForEach(sharedRepoVarsList, sharedVar =>
+                {
+                    ((GingerCore.Variables.VariablePasswordString)sharedVar).Password = "";
+                    variables.Add((GingerCore.Variables.VariablePasswordString)sharedVar);
+                });
+
+                //For Shared Activites
+                List<Activity> sharedActivityList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().ToList();
+                Parallel.ForEach(sharedActivityList, sharedAct =>
+                {
+                    List<GingerCore.Variables.VariableBase> variables = sharedAct.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                    foreach (GingerCore.Variables.VariablePasswordString v in variables)
+                    {
+                        v.Password = "";
+                        variables.Add(v);
+                    }
+                });               
             });
 
             SetGridsView();
@@ -233,40 +257,60 @@ namespace Ginger.SolutionWindows
             }
         }
 
-        private void OkBtn_Click(object sender, RoutedEventArgs e)
+        private async void OkBtn_Click(object sender, RoutedEventArgs e)
         {
-            EncryptGridValues();
-            List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
-            // For BF and Activity
-            Parallel.ForEach(Bfs, Bf =>
+            await Task.Run(() =>
             {
-                if (Bf.GetBFandActivitiesVariabeles(false).Where(f => f is GingerCore.Variables.VariablePasswordString).Any())
+                EncryptGridValues();
+                List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
+                // For BF and Activity
+                Parallel.ForEach(Bfs, Bf =>
                 {
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(Bf);
-                }
-            });
-
-
-            List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
-            projEnvironments.ForEach(pe =>
-            {
-                bool res1 = false;
-                foreach (EnvApplication ea in pe.Applications)
-                {
-                    foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
+                    if (Bf.GetBFandActivitiesVariabeles(false).Where(f => f is GingerCore.Variables.VariablePasswordString).Any())
                     {
-                        gp.Value = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList).Where(f => f.Guid.Equals(gp.Guid)).FirstOrDefault().Password;
-                        res1 = true;
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(Bf);
                     }
-                }
+                });
 
-                if (res1)
+
+                List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
+                projEnvironments.ForEach(pe =>
                 {
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(pe);
-                }
+                    bool res1 = false;
+                    foreach (EnvApplication ea in pe.Applications)
+                    {
+                        foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
+                        {
+                            gp.Value = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList).Where(f => f.Guid.Equals(gp.Guid)).FirstOrDefault().Password;
+                            res1 = true;
+                        }
+                    }
+
+                    if (res1)
+                    {
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(pe);
+                    }
+                });
+
+                List<GingerCore.Variables.VariableBase> sharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Variables.VariableBase>().Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                Parallel.ForEach(sharedRepoVarsList, sharedVar =>
+                {
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(sharedVar);
+                });
+
+                //For Shared Activites
+                List<Activity> sharedActivityList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().ToList();
+                Parallel.ForEach(sharedActivityList, sharedAct =>
+                {
+                    if (sharedAct.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString).Any())
+                    {
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(sharedAct);
+                    }
+                });
+
+                _solution.SaveSolution(false);
             });
 
-            _solution.SaveSolution(false);
             _pageGenericWin.Close();
         }
 

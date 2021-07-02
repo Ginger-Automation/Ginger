@@ -90,7 +90,7 @@ namespace Ginger.Environments
                         if (!EncryptionHandler.IsStringEncrypted(intialValue))
                         {
                             selectedEnvParam.Value = EncryptionHandler.EncryptwithKey(intialValue);
-                            if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.EncryptionKey))
+                            if (string.IsNullOrEmpty(selectedEnvParam.Value))
                             {
                                 selectedEnvParam.Value = string.Empty;
                             }
@@ -185,7 +185,7 @@ namespace Ginger.Environments
                     if (!EncryptionHandler.IsStringEncrypted(intialValue))
                     {
                         param.Value = EncryptionHandler.EncryptwithKey(intialValue);
-                        if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.EncryptionKey))
+                        if (string.IsNullOrEmpty(param.Value))
                         {
                             param.Value = string.Empty;
                         }

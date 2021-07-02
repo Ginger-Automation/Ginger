@@ -40,12 +40,12 @@ using amdocs.ginger.GingerCoreNET;
 namespace GingerCore.Environments
 {
     public class Database : RepositoryItemBase, IDatabase
-    {        
+    {
 
         public enum eDBTypes
         {
             Oracle,
-            MSSQL,            
+            MSSQL,
             MSAccess,
             DB2,
             Cassandra,
@@ -58,11 +58,11 @@ namespace GingerCore.Environments
         public enum eConfigType
         {
             Manual = 0,
-            ConnectionString =1,            
+            ConnectionString = 1,
         }
 
         public ProjEnvironment ProjEnvironment { get; set; }
-       
+
         private BusinessFlow mBusinessFlow;
         public BusinessFlow BusinessFlow
         {
@@ -76,7 +76,7 @@ namespace GingerCore.Environments
             }
         }
 
-        public  static class Fields
+        public static class Fields
         {
             public static string Name = "Name";
             public static string Description = "Description";
@@ -99,7 +99,7 @@ namespace GingerCore.Environments
         {
             get
             {
-                
+
                 return mKeepConnectionOpen;
             }
             set
@@ -118,11 +118,14 @@ namespace GingerCore.Environments
         public string Description { get; set; }
         public eDBTypes mDBType;
         [IsSerializedForLocalRepository]
-        public eDBTypes DBType { get { return mDBType; }
-            set {
+        public eDBTypes DBType
+        {
+            get { return mDBType; }
+            set
+            {
                 mDBType = value;
                 OnPropertyChanged(Fields.Type);
-                if (DBType==eDBTypes.Cassandra)
+                if (DBType == eDBTypes.Cassandra)
                 {
                     DBVer = "2.2";
                 }
@@ -130,7 +133,8 @@ namespace GingerCore.Environments
                 {
                     DBVer = "";
                 }
-            } }
+            }
+        }
 
 
         ValueExpression mVE = null;
@@ -209,7 +213,7 @@ namespace GingerCore.Environments
         }
 
         //TODO: Why it is needed?!
-        public static List<string> DbTypes 
+        public static List<string> DbTypes
         {
             get
             {
@@ -266,7 +270,7 @@ namespace GingerCore.Environments
             { connStr = connStr.Replace("{PASS}", deCryptValue); }
             else
             { connStr = connStr.Replace("{PASS}", PassCalculated); }
-            
+
             return connStr;
         }
 
@@ -321,21 +325,21 @@ namespace GingerCore.Environments
             Boolean isCoonected = true;
 
             if ((oConn == null) || (oConn.State != ConnectionState.Open))
-                isCoonected= Connect();
+                isCoonected = Connect();
 
             //make sure that the connection was not refused by the server               
             TimeSpan timeDiff = DateTime.Now - LastConnectionUsedTime;
             if (timeDiff.TotalMinutes > 5)
             {
-                isCoonected= Connect();                
+                isCoonected = Connect();
             }
             else
             {
-                LastConnectionUsedTime = DateTime.Now;                
+                LastConnectionUsedTime = DateTime.Now;
             }
             return isCoonected;
         }
-        
+
         public static string GetMissingDLLErrorDescription()
         {
             string message = "Connect to the DB failed." + Environment.NewLine + "The file Oracle.ManagedDataAccess.dll is missing," + Environment.NewLine + "Please download the file, place it under the below folder, restart Ginger and retry." + Environment.NewLine + AppDomain.CurrentDomain.BaseDirectory + Environment.NewLine + "Links to download the file:" + Environment.NewLine + "https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149" + Environment.NewLine + "http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html";
@@ -343,7 +347,7 @@ namespace GingerCore.Environments
         }
 
         public Boolean Connect(bool displayErrorPopup = false)
-        {      
+        {
             DbProviderFactory factory;
             string connectConnectionString = string.Empty;
             if (DBType != eDBTypes.Cassandra && DBType != eDBTypes.Couchbase && DBType != eDBTypes.MongoDb)
@@ -365,7 +369,7 @@ namespace GingerCore.Environments
                         //Try Catch for Connecting DB Which having Oracle Version Less then 10.2                         
                         try
                         {
-                      
+
                             oConn = WorkSpace.Instance.TargetFrameworkHelper.GetOracleConnection(connectConnectionString);
                             oConn.Open();
                             break;
@@ -376,13 +380,13 @@ namespace GingerCore.Environments
                             //if (Temp.Contains ("ORA-03111"))
                             if (Temp.Contains("ORA-03111"))
                             {
-                     
-                              
+
+
                                 oConn = SqlClientFactory.Instance.CreateConnection();
                                 oConn.ConnectionString = "Provider=msdaora;" + connectConnectionString;
                                 oConn.Open();
                                 break;
-                            }                          
+                            }
                             else
                             {
                                 throw e;
@@ -434,7 +438,7 @@ namespace GingerCore.Environments
                     case eDBTypes.Cassandra:
                         GingerCassandra CassandraDriver = new GingerCassandra(this);
                         bool isConnection;
-                        isConnection= CassandraDriver.Connect();
+                        isConnection = CassandraDriver.Connect();
                         if (isConnection == true)
                         {
                             LastConnectionUsedTime = DateTime.Now;
@@ -443,7 +447,7 @@ namespace GingerCore.Environments
                         else
                         {
                             return false;
-                        }                        
+                        }
                     case eDBTypes.Couchbase:
                         GingerCouchbase CouchbaseDriver = new GingerCouchbase(this);
                         bool isConnectionCB;
@@ -457,7 +461,7 @@ namespace GingerCore.Environments
                         {
                             return false;
                         }
-                        
+
 
                     case eDBTypes.MySQL:
                         oConn = new MySqlConnection();
@@ -483,8 +487,8 @@ namespace GingerCore.Environments
                     LastConnectionUsedTime = DateTime.Now;
                     return true;
                 }
-                
-                
+
+
             }
             catch (Exception e)
             {
@@ -493,7 +497,7 @@ namespace GingerCore.Environments
             }
             return false;
         }
-       
+
         public void CloseConnection()
         {
             try
@@ -514,8 +518,8 @@ namespace GingerCore.Environments
             }
         }
 
-       //prep for Db edit page
-       public static List<eConfigType> GetSupportedConfigurations(eDBTypes CurrentDbType)
+        //prep for Db edit page
+        public static List<eConfigType> GetSupportedConfigurations(eDBTypes CurrentDbType)
         {
             List<eConfigType> SupportedConfigs = new List<eConfigType>();
 
@@ -528,13 +532,13 @@ namespace GingerCore.Environments
                     SupportedConfigs.Add(eConfigType.ConnectionString);
                     break;
             }
-            
+
             return SupportedConfigs;
         }
 
         public List<string> GetTablesList(string Keyspace = null)
         {
-           
+
             List<string> rc = new List<string>() { "" };
             if (MakeSureConnectionIsOpen())
             {
@@ -546,7 +550,8 @@ namespace GingerCore.Environments
                         NoSqlBase.NoSqlBase NoSqlDriver = null;
                         NoSqlDriver = new GingerCassandra(this);
                         rc = NoSqlDriver.GetTableList(Keyspace);
-                    } else if (DBType == Database.eDBTypes.Couchbase)
+                    }
+                    else if (DBType == Database.eDBTypes.Couchbase)
                     {
                         NoSqlBase.NoSqlBase NoSqlDriver = null;
                         NoSqlDriver = new GingerCouchbase(this);
@@ -595,7 +600,7 @@ namespace GingerCore.Environments
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list for DB:" + DBType.ToString(), e);
                     throw (e);
                 }
-            }           
+            }
             return rc;
         }
 
@@ -604,7 +609,7 @@ namespace GingerCore.Environments
         {
             DbDataReader reader = null;
             List<string> rc = new List<string>() { "" };
-            if ((oConn == null || string.IsNullOrEmpty(table))&& (DBType != Database.eDBTypes.Cassandra) && (DBType != Database.eDBTypes.MongoDb))
+            if ((oConn == null || string.IsNullOrEmpty(table)) && (DBType != Database.eDBTypes.Cassandra) && (DBType != Database.eDBTypes.MongoDb))
             {
                 return rc;
             }
@@ -613,7 +618,8 @@ namespace GingerCore.Environments
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCassandra(this);
                 rc = NoSqlDriver.GetColumnList(table);
-            }else if (DBType == Database.eDBTypes.Couchbase)
+            }
+            else if (DBType == Database.eDBTypes.Couchbase)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCouchbase(this);
@@ -625,13 +631,13 @@ namespace GingerCore.Environments
                 NoSqlDriver = new GingerMongoDb(this);
                 rc = NoSqlDriver.GetColumnList(table);
             }
-            else 
+            else
             {
                 try
                 {
                     DbCommand command = oConn.CreateCommand();
                     // Do select with zero records
-                    switch(DBType)
+                    switch (DBType)
                     {
                         case eDBTypes.PostgreSQL:
                             command.CommandText = "select * from public.\"" + table + "\" where 1 = 0";
@@ -666,12 +672,12 @@ namespace GingerCore.Environments
             }
             return rc;
         }
-        
+
         public string fUpdateDB(string updateCmd, bool commit)
-        {            
+        {
             string result = "";
             //if (oConn == null) Connect();
-            if(MakeSureConnectionIsOpen())
+            if (MakeSureConnectionIsOpen())
             {
                 using (DbCommand command = oConn.CreateCommand())
                 {
@@ -696,17 +702,17 @@ namespace GingerCore.Environments
                     catch (Exception e)
                     {
                         tran.Rollback();
-                        Reporter.ToLog(eLogLevel.ERROR,"Commit failed for:"+updateCmd, e);
+                        Reporter.ToLog(eLogLevel.ERROR, "Commit failed for:" + updateCmd, e);
                         throw e;
                     }
                 }
-            }            
+            }
             return result;
         }
 
         public string fTableColWhere(string Table, string Column, string Where)
         {
-          
+
 
             string sql = "SELECT {0} FROM {1} WHERE {2}";
             sql = String.Format(sql, Column, Table, Where);
@@ -739,74 +745,74 @@ namespace GingerCore.Environments
                         reader.Close();
                     }
                 }
-            }            
+            }
             return rc;
         }
 
 
-        public List<object> FreeSQL(string SQL, int? timeout=null)
+        public List<object> FreeSQL(string SQL, int? timeout = null)
         {
             MakeSureConnectionIsOpen();
-            List<string>  Headers = new List<string>();
-            List<List<string>> Records = new List<List<string>> ();
+            List<string> Headers = new List<string>();
+            List<List<string>> Records = new List<List<string>>();
             bool IsConnected = false;
-            List<object> ReturnList = new List<object> ();
+            List<object> ReturnList = new List<object>();
 
             DbDataReader reader = null;
             try
             {
                 if (oConn == null)
                     IsConnected = Connect();
-                    if (IsConnected || oConn!=null)
+                if (IsConnected || oConn != null)
+                {
+                    DbCommand command = oConn.CreateCommand();
+                    command.CommandText = SQL;
+                    command.CommandType = CommandType.Text;
+                    if ((timeout != null) && (timeout > 0))
+                        command.CommandTimeout = (int)timeout;
+
+
+                    // Retrieve the data.
+                    reader = command.ExecuteReader();
+
+                    // Create columns headers
+                    for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        DbCommand command = oConn.CreateCommand();
-                        command.CommandText = SQL;
-                        command.CommandType = CommandType.Text;
-                        if ((timeout != null) && (timeout > 0))
-                            command.CommandTimeout = (int)timeout;
+                        Headers.Add(reader.GetName(i));
+                    }
 
+                    while (reader.Read())
+                    {
 
-                        // Retrieve the data.
-                        reader = command.ExecuteReader();
-
-                        // Create columns headers
+                        List<string> record = new List<string>();
                         for (int i = 0; i < reader.FieldCount; i++)
                         {
-                            Headers.Add(reader.GetName(i));
+                            record.Add(reader[i].ToString());
                         }
+                        Records.Add(record);
+                    }
 
-                        while (reader.Read())
-                        {
-
-                            List<string> record = new List<string>();
-                            for (int i = 0; i < reader.FieldCount; i++)
-                            {
-                                record.Add(reader[i].ToString());
-                            }
-                            Records.Add(record);
-                        }
-
-                        ReturnList.Add(Headers);
-                        ReturnList.Add(Records);
-                    }                
+                    ReturnList.Add(Headers);
+                    ReturnList.Add(Records);
+                }
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Failed to execute query:"+ SQL, e);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + SQL, e);
                 throw e;
             }
             finally
             {
-                if(reader!=null)
+                if (reader != null)
                     reader.Close();
             }
-                return ReturnList;            
+            return ReturnList;
         }
 
 
         internal string GetRecordCount(string SQL)
         {
-           
+
             string sql = "SELECT COUNT(1) FROM " + SQL;
 
             String rc = null;
@@ -840,7 +846,7 @@ namespace GingerCore.Environments
                     }
                 }
             }
-            
+
             return rc;
         }
 

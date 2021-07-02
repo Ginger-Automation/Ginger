@@ -98,6 +98,8 @@ namespace Ginger.SolutionWindows
             UCEncryptionKey.EncryptionKeyPasswordBox.IsEnabled = false;
             UCEncryptionKey.ValidFlag.Visibility = Visibility.Collapsed;
             UCEncryptionKey.InvalidFlag.Visibility = Visibility.Collapsed;
+            UCEncryptionKey.EncryptionKeyPasswordBox.Password = mSolution.EncryptionKey;
+            UCEncryptionKey.CopyToClipboard.Visibility = Visibility.Visible;            
             mSolution.SaveBackup();
 
             ObservableList<Button> winButtons = new ObservableList<Button>();

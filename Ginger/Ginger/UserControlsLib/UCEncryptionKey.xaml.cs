@@ -33,6 +33,8 @@ namespace Ginger.UserControlsLib
 
         private void ValidateKeyMouseDown(object sender, MouseButtonEventArgs e) => ValidateKey();
 
+        private void CopyToClipboardKeyMouseDown(object sender, MouseButtonEventArgs e) => CopyToClipBoard();
+
         private void ShowPasswordFunction()
         {
             ShowPassword.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Invisible;
@@ -50,7 +52,7 @@ namespace Ginger.UserControlsLib
 
         public bool ValidateKey()
         {
-            if (mSolution.ValidateKey(EncryptionKeyPasswordBox.Password))
+            if (!string.IsNullOrEmpty(EncryptionKeyPasswordBox.Password) && mSolution.ValidateKey(EncryptionKeyPasswordBox.Password))
             {
                 ValidFlag.Visibility = Visibility.Visible;
                 InvalidFlag.Visibility = Visibility.Collapsed;
@@ -78,6 +80,10 @@ namespace Ginger.UserControlsLib
             return true;
         }
 
+        public void CopyToClipBoard()
+        {
+            Clipboard.SetText(EncryptionKeyPasswordBox.Password);
+        }
         public void ChangeLabel(string newLabel)
         {
             this.Label.Content = newLabel;

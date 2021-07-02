@@ -117,7 +117,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Encrypt the value", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to Encrypt the value", ex);
 
                 result = false;
                 return string.Empty;
@@ -194,7 +194,7 @@ namespace GingerCore
             {
                 if (WriteErrorsToLog)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Decrypt the value: '{0}'", strToDecrypt), ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to Decrypt the value: '{0}'", strToDecrypt), ex);
                 }
                 result = false;
                 return string.Empty;
@@ -254,20 +254,36 @@ namespace GingerCore
         /// <param name="encryptedText">Base64 Encoded String</param>
         /// <param name="key">Secret Key</param>
         /// <returns>Decrypted String</returns>
-        public static string DecryptwithKey(string encryptedText)
+        public static string DecryptwithKey(string encryptedText, string key = null)
         {
-            if (String.IsNullOrEmpty(encryptedText))
+            try
             {
+                if (String.IsNullOrEmpty(encryptedText))
+                {
+                    return string.Empty;
+                }
+                bool res = false;
+                string decryptVal = DecryptString(encryptedText, ref res, true, key);
+                if (res)
+                {
+                    return decryptVal;
+                }
+                var encryptedBytes = Convert.FromBase64String(encryptedText);
+
+                if (!string.IsNullOrEmpty(key))
+                {
+                    return Encoding.UTF8.GetString(Decrypt(encryptedBytes, GetRijndaelManaged(key)));
+                }
+                else
+                {
+                    return Encoding.UTF8.GetString(Decrypt(encryptedBytes, GetRijndaelManaged(ENCRYPTION_KEY)));
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to Decrypt the value: '{0}'", encryptedText), ex);
                 return string.Empty;
             }
-            bool res = false;
-            string decryptVal = DecryptString(encryptedText, ref res);
-            if (res)
-            {
-                return decryptVal;
-            }
-            var encryptedBytes = Convert.FromBase64String(encryptedText);
-            return Encoding.UTF8.GetString(Decrypt(encryptedBytes, GetRijndaelManaged(ENCRYPTION_KEY)));
         }
 
         /// <summary>
@@ -276,7 +292,7 @@ namespace GingerCore
         /// <param name="strToReEncrypt"></param>
         /// <param name="oldKey"></param>
         /// <returns></returns>
-        public static string ReEncryptString(string strToReEncrypt,string oldKey = null)
+        public static string ReEncryptString(string strToReEncrypt, string oldKey = null)
         {
             bool res = false;
             if (!string.IsNullOrEmpty(oldKey))
@@ -285,7 +301,7 @@ namespace GingerCore
             }
             else
             {
-                return EncryptwithKey(EncryptionHandler.DecryptString(strToReEncrypt, ref res,false, PASS_PHRASE));
+                return EncryptwithKey(EncryptionHandler.DecryptString(strToReEncrypt, ref res, false, PASS_PHRASE));
             }
         }
     }

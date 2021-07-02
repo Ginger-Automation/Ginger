@@ -50,6 +50,7 @@ namespace Ginger.SolutionWindows
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
             UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
             GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform);
+            UCEncryptionKey.InvalidFlag.Visibility = Visibility.Visible;
         }        
 
         private async void EncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
