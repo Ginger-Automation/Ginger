@@ -287,10 +287,10 @@ namespace Ginger
         [IsSerializedForLocalRepository(80)]
         public int SolutionSourceControlTimeout { get; set; }
 
-        [IsSerializedForLocalRepository]
+        //[IsSerializedForLocalRepository]
         public string EncryptedSourceControlPass { get; set; }
 
-        [IsSerializedForLocalRepository]
+        //[IsSerializedForLocalRepository]
         public string EncryptedSolutionSourceControlPass { get; set; }
 
         [IsSerializedForLocalRepository]
@@ -331,12 +331,12 @@ namespace Ginger
 
         public string SourceControlPass
         {
-             get;set;
+            get; set;
         }
 
         public string SolutionSourceControlPass
         {
-             get;set;
+            get; set;
         }
 
         [IsSerializedForLocalRepository]
@@ -402,7 +402,7 @@ namespace Ginger
         }
 
         public void SaveUserProfile()
-        {            
+        {
             if (mSharedUserProfileBeenUsed)
             {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Not performing User Profile Save because Shared User Profile is been used"));
@@ -501,7 +501,7 @@ namespace Ginger
             JObject UserConfigJsonObj = null;
             Dictionary<string, string> UserConfigdictObj = null;
             if (System.IO.File.Exists(InstallationConfigurationPath))
-            {                
+            {
                 UserConfigJsonString = System.IO.File.ReadAllText(InstallationConfigurationPath);
                 UserConfigJsonObj = JObject.Parse(UserConfigJsonString);
                 UserConfigdictObj = UserConfigJsonObj.ToObject<Dictionary<string, string>>();
@@ -534,7 +534,7 @@ namespace Ginger
                         Reporter.ToLog(eLogLevel.INFO, "Creating backup copy for the User Profile file");
                         File.Copy(UserProfileFilePath, UserProfileFilePath.Replace("Ginger.UserProfile.xml", "Ginger.UserProfile-Backup.xml"), true);
                     }
-                    catch(Exception ex2)
+                    catch (Exception ex2)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to create backup copy for the User Profile file", ex2);
                     }
@@ -555,13 +555,36 @@ namespace Ginger
         public static UserProfile LoadPasswords(UserProfile userProfile)
         {
             //Get sourcecontrol password
-            userProfile.SourceControlPass = WinCredentialUtil.GetCredential("Ginger_SourceControl_" + userProfile.SourceControlType);
-            userProfile.SolutionSourceControlPass = WinCredentialUtil.GetCredential("Ginger_SolutionSourceControl");
+            if (!string.IsNullOrEmpty(userProfile.EncryptedSourceControlPass))
+            {
+                userProfile.SourceControlPass = EncryptionHandler.DecryptwithKey(userProfile.EncryptedSourceControlPass);
+            }
+            else
+            {
+                userProfile.SourceControlPass = WinCredentialUtil.GetCredential("Ginger_SourceControl_" + userProfile.SourceControlType);
+            }
+
+            if (!string.IsNullOrEmpty(userProfile.EncryptedSolutionSourceControlPass))
+            {
+                userProfile.SolutionSourceControlPass = EncryptionHandler.DecryptwithKey(userProfile.EncryptedSolutionSourceControlPass);
+            }
+            else
+            {
+                userProfile.SolutionSourceControlPass = WinCredentialUtil.GetCredential("Ginger_SolutionSourceControl");
+            }
+
 
             //Get ALM passwords
             foreach (GingerCoreNET.ALMLib.ALMUserConfig almConfig in userProfile.ALMUserConfigs)
             {
-                almConfig.ALMPassword = WinCredentialUtil.GetCredential("Ginger_ALM_" + almConfig.AlmType);
+                if (!string.IsNullOrEmpty(almConfig.EncryptedALMPassword))
+                {
+                    almConfig.ALMPassword = EncryptionHandler.DecryptwithKey(almConfig.EncryptedALMPassword);
+                }
+                else
+                {
+                    almConfig.ALMPassword = WinCredentialUtil.GetCredential("Ginger_ALM_" + almConfig.AlmType);
+                }
             }
 
             return userProfile;
@@ -570,12 +593,17 @@ namespace Ginger
         public void SavePasswords()
         {
             //Save source control password
-            WinCredentialUtil.SetCredentials("Ginger_SourceControl_" + SourceControlType, SourceControlUser, SourceControlPass);
-            WinCredentialUtil.SetCredentials("Ginger_SolutionSourceControl", SolutionSourceControlUser, SolutionSourceControlPass);
-
+            if (!string.IsNullOrEmpty(SourceControlPass))
+            {
+                WinCredentialUtil.SetCredentials("Ginger_SourceControl_" + SourceControlType, SourceControlUser, SourceControlPass);
+            }
+            if (!string.IsNullOrEmpty(SolutionSourceControlPass))
+            {
+                WinCredentialUtil.SetCredentials("Ginger_SolutionSourceControl", SolutionSourceControlUser, SolutionSourceControlPass);
+            }
 
             //Save ALM passwords on windows credential manager
-            foreach (GingerCoreNET.ALMLib.ALMUserConfig almConfig in ALMUserConfigs)
+            foreach (GingerCoreNET.ALMLib.ALMUserConfig almConfig in ALMUserConfigs.Where(f => !string.IsNullOrEmpty(f.ALMPassword)))
             {
                 WinCredentialUtil.SetCredentials("Ginger_ALM_" + almConfig.AlmType, almConfig.ALMUserName, almConfig.ALMPassword);
             }
