@@ -517,6 +517,9 @@
     <Compile Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml.cs">
       <DependentUpon>SolutionCategoryOptionalValuesEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml.cs">
+      <DependentUpon>CustomRelativeXpathTemplateUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\LiveSpyHandler.xaml.cs">
       <DependentUpon>LiveSpyHandler.xaml</DependentUpon>
     </Compile>
@@ -532,6 +535,7 @@
     <Compile Include="UserControlsLib\ucShowItemID.xaml.cs">
       <DependentUpon>ucShowItemID.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\ValidateCustomRelativeXpath.cs" />
     <Compile Include="Variables\ValidationRule\NumberValidationRule.cs" />
     <Compile Include="Variables\ValidationRule\DateTimeFormatValidationRule.cs" />
     <Compile Include="Variables\VariableEditPages\VariableDateTimePage.xaml.cs">
@@ -2939,6 +2943,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
