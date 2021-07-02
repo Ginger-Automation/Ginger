@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GingerCoreNET.Application_Models
@@ -59,7 +58,6 @@ namespace GingerCoreNET.Application_Models
         }
 
         public string SpecificFramePath { get; set; }
-
         public PomDeltaUtils(ApplicationPOMModel pom, Agent agent)
         {
             POM = pom;            
@@ -86,11 +84,11 @@ namespace GingerCoreNET.Application_Models
                     uIElementList.AddRange(PomLearnUtils.AutoMapBasicElementTypesList.ToList());
                     uIElementList.AddRange(PomLearnUtils.AutoMapAdvanceElementTypesList.ToList());
 
-                    await mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true,SpecificFramePath);
+                    await mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true,SpecificFramePath, GetRelativeXpathTemplateList());
                 }
                 else
                 {
-                   await mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true,SpecificFramePath);
+                   await mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true,SpecificFramePath, GetRelativeXpathTemplateList());
                 }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();
@@ -101,6 +99,17 @@ namespace GingerCoreNET.Application_Models
             }            
         }
 
+        private List<string> GetRelativeXpathTemplateList()
+        {
+            var customRelXpathTemplateList = new List<string>();
+
+            foreach (var item in POM.RelativeXpathTemplateList)
+            {
+                customRelXpathTemplateList.Add(item.Value);
+            }
+
+            return customRelXpathTemplateList;
+        }
         public void StopLearning()
         {            
             ((DriverBase)Agent.Driver).mStopProcess = true;
