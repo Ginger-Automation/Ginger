@@ -36,9 +36,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 int colCount = headerRow.LastCellNum;
                 for (var c = 0; c < colCount; c++)
                 {
+                    if(headerRow.GetCell(c) == null)
+                    {
+                        dtExcelTable.Columns.Add("Col " + c);
+                        continue;
+                    }
                     if (!dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
                     {
-                        dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString());
+                        dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString().Trim());
                     }
                 }
                 var i = 1;
@@ -92,14 +97,23 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         public DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows)
         {
-            if (!GetExcelSheet(fileName, sheetName))
+            filter = filter ?? "";
+            try
             {
+                if (!GetExcelSheet(fileName, sheetName))
+                {
+                    return null;
+                }
+                mExcelDataTable = ConvertSheetToDataTable(mSheet);
+                mExcelDataTable.DefaultView.RowFilter = filter.Replace("[","").Replace("]","");
+                mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
+                return mFilteredDataTable;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Can't read sheet data, " + ex.Message);
                 return null;
             }
-            mExcelDataTable = ConvertSheetToDataTable(mSheet);
-            mExcelDataTable.DefaultView.RowFilter = filter ?? "";
-            mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
-            return mFilteredDataTable;
         }
 
         private bool GetExcelSheet(string fileName, string sheetName)
@@ -133,7 +147,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 string[] setData = d.Split('=');
                 if (setData.Length == 2)
                 {
-                    string rowToSet = setData[0].Replace("[|]", "");
+                    string rowToSet = setData[0].Replace("[", "").Replace("]","");
                     object valueToSet = setData[1].Replace("'", "");
                     columnNameAndValue.Add(new Tuple<string, object>(rowToSet, valueToSet));
                 }
@@ -163,7 +177,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     workbook = WorkbookFactory.Create(fs);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Invalid Excel Path Name" + fullFilePath, ex);
                 return null;

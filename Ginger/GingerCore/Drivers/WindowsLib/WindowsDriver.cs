@@ -46,8 +46,8 @@ namespace GingerCore.Drivers.WindowsLib
         int mActionTimeout = 10;
 
         [UserConfigured]
-        [UserConfiguredDefault("30")] 
-        [UserConfiguredDescription("Action Timeout - default is 30 seconds")]
+        [UserConfiguredDefault("150")] 
+        [UserConfiguredDescription("Action Timeout - default is 150 seconds")]
         public override int ActionTimeout
         {
             get
@@ -57,6 +57,24 @@ namespace GingerCore.Drivers.WindowsLib
             set
             { mActionTimeout = value; }
         }
+
+        int mImplicitWait = 30;
+
+        [UserConfigured]
+        [UserConfiguredDefault("30")]
+        [UserConfiguredDescription("Amount of time the driver should wait when searching for an element if it is not immediately present")]
+        public int ImplicitWait 
+        {
+            get
+            {
+                return mImplicitWait;
+            }
+            set
+            {
+                mImplicitWait = value;
+            }
+        }
+
 
         public WindowsDriver(BusinessFlow BF, eUIALibraryType type= eUIALibraryType.ComWrapper)
         {
@@ -80,6 +98,7 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
 
             }
+            mUIAutomationHelper.ImplicitWait = mImplicitWait;
         }
 
         public override void UpdateContext(Context context)
@@ -374,6 +393,12 @@ namespace GingerCore.Drivers.WindowsLib
                     actionResult = mUIElementOperationsHelper.GetText(automationElement);
                     isoutputvalue = true;
                     break;
+
+                case ActUIElement.eElementAction.GetSelectedValue:
+                    actionResult = mUIElementOperationsHelper.GetSelectedValue(automationElement);
+                    isoutputvalue = true;
+                    break;
+
                 case ActUIElement.eElementAction.GetWindowTitle:
                     object windowElement = mUIAutomationHelper.FindWindowByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
                     if (windowElement != null)
@@ -588,7 +613,7 @@ namespace GingerCore.Drivers.WindowsLib
                 currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
                 locators = currentPOMElementInfo.Locators;
             }
-            AutomationElement windowElement = LocateElementByLocators(locators);
+            AutomationElement windowElement = LocateElementByLocators(locators, true);
             if (windowElement != null)
             {
                 pomExcutionUtil.PriotizeLocatorPosition();
@@ -1024,7 +1049,7 @@ namespace GingerCore.Drivers.WindowsLib
             return EI;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null)
         {
             return await Task.Run(async () =>
             {
@@ -1140,7 +1165,7 @@ namespace GingerCore.Drivers.WindowsLib
         {
             if (ElementInfo.ElementObject == null || locateElementByItLocators)
             {
-                AutomationElement windowElement = LocateElementByLocators(ElementInfo.Locators);
+                AutomationElement windowElement = LocateElementByLocators(ElementInfo.Locators, true);
                 if (windowElement != null)
                 {
                     ElementInfo.ElementObject = (object)windowElement;
@@ -1471,7 +1496,7 @@ namespace GingerCore.Drivers.WindowsLib
                 }
             }
 
-            return null;
+            return elem;
         }
 
         private AutomationElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
@@ -1512,6 +1537,7 @@ namespace GingerCore.Drivers.WindowsLib
         public override void ActionCompleted(Act act)
         {
             mUIAutomationHelper.taskFinished = true;
+            mUIElementOperationsHelper.taskFinished = true;
             if (!String.IsNullOrEmpty(act.Error) && act.Error.StartsWith("Time out !"))
             {
                 Thread.Sleep(1000);
