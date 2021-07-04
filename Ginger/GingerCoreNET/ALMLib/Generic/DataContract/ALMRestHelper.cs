@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -15,26 +15,20 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 
-namespace GingerCore.ALM.QC
+namespace Amdocs.Ginger.CoreNET.ALMLib.DataContract
 {
-    public class QCTSTest
+    public static class ALMRestHelper
     {
-        public QCTSTest()
+        public static IEnumerable<XElement> GetFieldsElements(XElement fields)
         {
-            this.Parameters = new List<QCTSTestParameter>();
-            this.Steps = new List<QCTSTestStep>();
+            var fieldsElements = fields.Elements("Fields").Elements();
+            if (fields.Elements("Fields").Elements().Count() == 0)
+                fieldsElements = fields.Elements();
+            return fieldsElements;
         }
-
-        public string TestName { get; set; }
-        public string TestID { get; set; }
-        public string LinkedTestID { get; set; }
-        public string Description { get; set; }
-        //Called Test Parameters
-        public List<QCTSTestParameter> Parameters { get; set; }
-        public List<QCTSTestStep> Steps { get; set; }
-        public List<QCTSTestRun> Runs { get; set; }
     }
 }

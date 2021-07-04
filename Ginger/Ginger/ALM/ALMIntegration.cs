@@ -729,9 +729,9 @@ namespace Ginger.ALM
             return AlmRepo.GetTestSetExplorer(path);
         }
 
-        public QCTestSetSummary GetTSRunStatus(QCTestSetSummary tsItem)
+        public ALMTestSetSummary GetTSRunStatus(ALMTestSetSummary tsItem)
         {
-            return (QCTestSetSummary)AlmRepo.GetTSRunStatus(tsItem);
+            return (ALMTestSetSummary)AlmRepo.GetTSRunStatus(tsItem);
         }
 
         public List<string> GetTestPlanExplorer(string path)

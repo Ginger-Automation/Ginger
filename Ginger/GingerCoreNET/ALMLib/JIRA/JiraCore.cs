@@ -16,26 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using GingerCore.Activities;
 using GingerCore.ALM.JIRA;
-using Ginger;
+using GingerCoreNET.ALMLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using JiraRepositoryStandard;
+using JiraRepositoryStandard.BLL;
+using JiraRepositoryStandard.Data_Contracts;
 using System;
 using System.Collections.Generic;
-using GingerCore.Activities;
-using ALM_Common.DataContracts;
 using System.ComponentModel;
 using System.IO;
-using System.Xml;
 using System.IO.Compression;
-using Newtonsoft.Json;
-using GingerCore.External;
-using Amdocs.Ginger.Repository;
-using GingerCore.ALM.JIRA.Bll;
-using JiraRepository.BLL;
-using JiraRepository.Data_Contracts;
-using amdocs.ginger.GingerCoreNET;
 using System.Linq;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM
 {
@@ -45,7 +41,7 @@ namespace GingerCore.ALM
         private JiraConnectManager jiraConnectObj;
         private JiraImportManager jiraImportObj;
         private JiraManagerZephyr jmz;
-        private JiraRepository.JiraRepository jiraRepObj;
+        private JiraRepository jiraRepObj;
         public static string ALMProjectGroupName { get; set; }
         public static string ALMProjectGuid { get; set; }
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
@@ -63,10 +59,13 @@ namespace GingerCore.ALM
             get { return jiraImportObj.ApplicationPlatforms; }
             set { jiraImportObj.ApplicationPlatforms = value; }
         }
+
+        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.Jira;
+
         public JiraCore()
         {
             string settingsPath = DefaultAlmConfig.ALMConfigPackageFolderPath;
-            jiraRepObj = new JiraRepository.JiraRepository(settingsPath, (TestingALMType)Enum.Parse(typeof(TestingALMType), ALMCore.DefaultAlmConfig.JiraTestingALM.ToString()));
+            jiraRepObj = new JiraRepository(settingsPath, (TestingALMType)Enum.Parse(typeof(TestingALMType), ALMCore.DefaultAlmConfig.JiraTestingALM.ToString()));
             exportMananger = new JIRA.Bll.JiraExportManager(jiraRepObj);
             jiraConnectObj = new JiraConnectManager(jiraRepObj);
             jiraImportObj = new JiraImportManager(jiraRepObj);

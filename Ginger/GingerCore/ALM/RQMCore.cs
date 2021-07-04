@@ -35,6 +35,7 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
 using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNET.ALMLib;
 
 namespace GingerCore.ALM
 {
@@ -122,6 +123,8 @@ namespace GingerCore.ALM
             get { return ImportFromRQM.ApplicationPlatforms; }
             set { ImportFromRQM.ApplicationPlatforms = value; }
         }
+
+        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.RQM;
 
         public override void SetALMConfigurations(  string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword,
                                                     string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType,
@@ -244,6 +247,10 @@ namespace GingerCore.ALM
         public void UpdateBusinessFlow(ref BusinessFlow busFlow, RQMTestPlan testPlan)
         {
             ImportFromRQM.UpdateBusinessFlow(ref busFlow, testPlan);
+        }
+        public BusinessFlow ConvertRQMTestPlanToBF(RQMTestPlan testPlan)
+        {
+            return ImportFromRQM.ConvertRQMTestPlanToBF(testPlan);
         }
     }
 }

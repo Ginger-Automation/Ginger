@@ -110,6 +110,9 @@
       <HintPath>..\GingerCore\DLLs\Interop.TDAPIOLELib.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
+    <Reference Include="JiraRepositoryStandard">
+      <HintPath>..\GingerCoreNET\DLLS\JiraRepositoryStandard.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
@@ -147,10 +150,6 @@
     <Reference Include="System.Printing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
-    <Reference Include="JiraRepository, Version=8.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GingerCore\DLLs\JiraRepository.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.DataVisualization" />
     <Reference Include="System.Web.Services" />
@@ -171,7 +170,7 @@
     <Reference Include="WindowsFormsIntegration" />
     <Reference Include="ZephyrEntSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GingerCore\DLLs\ZephyrEntSDK.dll</HintPath>
+      <HintPath>DLLs\ZephyrEntSDK.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

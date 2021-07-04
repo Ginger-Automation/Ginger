@@ -28,6 +28,7 @@ using GingerCore.ALM.Rally;
 using Amdocs.Ginger.Repository;
 using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNET.ALMLib;
 
 namespace GingerCore.ALM
 {
@@ -222,6 +223,13 @@ namespace GingerCore.ALM
         {
             get { return ImportFromRally.ApplicationPlatforms; }
             set { ImportFromRally.ApplicationPlatforms = value; }
+        }
+
+        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.RALLY;
+
+        public BusinessFlow ConvertRallyTestPlanToBF(RallyTestPlan testPlan)
+        {
+            return ImportFromRally.ConvertRallyTestPlanToBF(testPlan);
         }
     }
 }

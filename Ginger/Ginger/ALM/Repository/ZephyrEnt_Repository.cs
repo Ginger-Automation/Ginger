@@ -460,7 +460,7 @@ namespace Ginger.ALM.Repository
                     {
                         //import test set data
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.Name);
-                        GingerCore.ALM.QC.QCTestSet TS = new GingerCore.ALM.QC.QCTestSet();
+                        GingerCore.ALM.QC.ALMTestSet TS = new GingerCore.ALM.QC.ALMTestSet();
                         TS.TestSetID = testSetItemtoImport.Id;
                         TS.TestSetName = testSetItemtoImport.Name;
                         TS.TestSetPath = testSetItemtoImport.Path;

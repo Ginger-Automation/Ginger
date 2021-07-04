@@ -27,6 +27,7 @@ using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.QCRestAPI;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using QCRestClient;
 
@@ -63,12 +64,12 @@ namespace GingerCore.ALM
             return QCRestAPIConnect.GetQCDomainProjects(ALMCore.DefaultAlmConfig.ALMDomain);
         }
 
-        public QC.QCTestSet ImportTestSetData(QC.QCTestSet testSet)
+        public QC.ALMTestSet ImportTestSetData(QC.ALMTestSet testSet)
         {
             return ImportFromQCRest.ImportTestSetData(testSet);
         }
 
-        public BusinessFlow ConvertQCTestSetToBF(QC.QCTestSet testSet)
+        public BusinessFlow ConvertQCTestSetToBF(QC.ALMTestSet testSet)
         {
             return ImportFromQCRest.ConvertQCTestSetToBF(testSet);
         }
@@ -115,6 +116,9 @@ namespace GingerCore.ALM
             get { return ImportFromQCRest.ApplicationPlatforms; }
             set { ImportFromQCRest.ApplicationPlatforms = value; }
         }
+
+        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.QC;
+
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
             return UpdatedAlmFields(ImportFromQCRest.GetALMItemFields(resourceType));

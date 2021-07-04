@@ -18,12 +18,14 @@ using ALM_Common.DataContracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.ALMLib.DataContract;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.Octane;
 using GingerCore.ALM.QC;
 using GingerCore.Variables;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Octane_Repository;
 using OctaneSdkStandard.Connector;
@@ -36,7 +38,6 @@ using OctaneSdkStandard.Entities.WorkItems;
 using OctaneSdkStandard.Services;
 using OctaneSdkStandard.Services.Queries;
 using OctaneSdkStandard.Services.RequestContext;
-using QCRestClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -47,7 +48,6 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using QCTestSet = QCRestClient.QCTestSet;
 
 namespace GingerCore.ALM
 {
@@ -57,6 +57,9 @@ namespace GingerCore.ALM
         public override ObservableList<Activity> GingerActivitiesRepo { get; set; }
         public override ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
         public ProjectArea ProjectArea { get; private set; }
+
+        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.Octane;
+
         List<Release> releases;
         public RestConnector mOctaneRestConnector;
         protected WorkspaceContext workspaceContext;
@@ -165,9 +168,9 @@ namespace GingerCore.ALM
             return this.loginDto;
         }
 
-        public List<QCTestSetSummary> GetTestSetExplorer(string PathNode)
+        public List<ALMTestSetSummary> GetTestSetExplorer(string PathNode)
         {
-            List<QCTestSetSummary> testlabPathList = new List<QCTestSetSummary>();
+            List<ALMTestSetSummary> testlabPathList = new List<ALMTestSetSummary>();
             string[] separatePath = PathNode.Split('\\');
             try
             {
@@ -192,7 +195,7 @@ namespace GingerCore.ALM
 
                 foreach (TestSuite testset in testSets)
                 {
-                    QCTestSetSummary QCTestSetTreeItem = new QCTestSetSummary();
+                    ALMTestSetSummary QCTestSetTreeItem = new ALMTestSetSummary();
                     QCTestSetTreeItem.TestSetID = testset.Id;
                     QCTestSetTreeItem.TestSetName = testset.Name;
                     testlabPathList.Add(QCTestSetTreeItem);
@@ -475,7 +478,7 @@ namespace GingerCore.ALM
                     publishToALMConfig.VariableForTCRunName = "GingerRun_" + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
                 }
                 //get the BF matching test set
-                QCTestSet testSet = this.GetTestSuiteById(bizFlow.ExternalID);//bf.externalID holds the TestSet TSTests collection id
+                ALMTestSetData testSet = this.GetTestSuiteById(bizFlow.ExternalID);//bf.externalID holds the TestSet TSTests collection id
                 if (testSet != null)
                 {
                     //get the Test set TC's
@@ -492,7 +495,7 @@ namespace GingerCore.ALM
                             || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
                             || publishToALMConfig.FilterStatus == FilterByStatus.All)
                             {
-                                QCTestInstance tsTest = null;
+                                ALMTestInstance tsTest = null;
                                 //go by TC ID = TC Instances ID
                                 tsTest = qcTSTests.Find(x => x.TestId == activGroup.ExternalID && x.Id == activGroup.ExternalID2);
 
@@ -632,7 +635,7 @@ namespace GingerCore.ALM
             }
         }
 
-        private RunSuite CreateRunSuite(PublishToALMConfig publishToALMConfig, BusinessFlow bizFlow, QCTestSet testSet, ObservableList<ExternalItemFieldBase> runFields)
+        private RunSuite CreateRunSuite(PublishToALMConfig publishToALMConfig, BusinessFlow bizFlow, ALMTestSetData testSet, ObservableList<ExternalItemFieldBase> runFields)
         {
             try
             {
@@ -689,7 +692,7 @@ namespace GingerCore.ALM
             }
         }
 
-        private Run CrateTestRun(PublishToALMConfig publishToALMConfig, ActivitiesGroup activGroup, QCTestInstance tsTest, EntityId runSuiteId, ObservableList<ExternalItemFieldBase> runFields)
+        private Run CrateTestRun(PublishToALMConfig publishToALMConfig, ActivitiesGroup activGroup, ALMTestInstance tsTest, EntityId runSuiteId, ObservableList<ExternalItemFieldBase> runFields)
         {
             Run runToExport = new Run();
 
@@ -865,11 +868,11 @@ namespace GingerCore.ALM
 
         }
 
-        public QC.QCTestSet ImportTestSetData(QC.QCTestSet testSet)
+        public QC.ALMTestSet ImportTestSetData(QC.ALMTestSet testSet)
         {
             QCTestInstanceColl testInstances = GetTestsFromTSId(testSet.TestSetID);
 
-            foreach (QCTestInstance testInstance in testInstances)
+            foreach (ALMTestInstance testInstance in testInstances)
             {
                 testSet.Tests.Add(ImportTSTest(testInstance));
             }
@@ -889,7 +892,7 @@ namespace GingerCore.ALM
                 TSLink = octaneRepository.GetEntities<TestSuite_Test_Link>(GetLoginDTO(), filter);
                 foreach (TestSuite_Test_Link item in TSLink)
                 {
-                    testCollection.Add(new QCTestInstance() { Id = item.Test.Id, TestId = item.Test.Id, Name = item.Test.Name, CycleId = testSetID });
+                    testCollection.Add(new ALMTestInstance() { Id = item.Test.Id, TestId = item.Test.Id, Name = item.Test.Name, CycleId = testSetID });
                 }
                 return testCollection;
             }
@@ -900,7 +903,7 @@ namespace GingerCore.ALM
             }
         }
 
-        public QCTestCase GetTestCases(string testcaseID)
+        public ALMTestCase GetTestCases(string testcaseID)
         {
             LogicalQueryPhrase qd = new LogicalQueryPhrase("id", testcaseID, ComparisonOperator.Equal);
             IList<IQueryPhrase> filter = new List<IQueryPhrase> { qd };
@@ -908,12 +911,12 @@ namespace GingerCore.ALM
             if (test.Any())
             {
                 Test testTemp = test.Where(f => true).FirstOrDefault();
-                return new QCTestCase() { Id = testcaseID, TestId = testcaseID, Name = testTemp.Name };
+                return new ALMTestCase() { Id = testcaseID, TestId = testcaseID, Name = testTemp.Name };
             }
             return null;
         }
 
-        public QCTestCaseStepsColl GetListTSTestSteps(QCTestCase testcase)
+        public QCTestCaseStepsColl GetListTSTestSteps(ALMTestCase testcase)
         {
             var lineBreaks = new[] { '\n' };
             QCTestCaseStepsColl stepsColl = new QCTestCaseStepsColl();
@@ -926,7 +929,7 @@ namespace GingerCore.ALM
             {
                 foreach (string step in steps.Split(lineBreaks))
                 {
-                    stepsColl.Add(new QCTestCaseStep() { Id = testcase.Id + "_" + Convert.ToString(i), TestId = testcase.Id, Description = step, Name = step, StepOrder = Convert.ToString(i++) });
+                    stepsColl.Add(new ALMTestCaseStep() { Id = testcase.Id + "_" + Convert.ToString(i), TestId = testcase.Id, Description = step, Name = step, StepOrder = Convert.ToString(i++) });
                 }
             }
             return stepsColl;
@@ -962,7 +965,7 @@ namespace GingerCore.ALM
             return callingTCs;
         }
 
-        private void CheckForParameter(QC.QCTSTest newTSTest, string steps)
+        private void CheckForParameter(QC.ALMTSTest newTSTest, string steps)
         {
             string hasParams = @"(<[a-zA-Z0-9,+/-_()~!@#$%^&*=]+>)";
             MatchCollection mc = Regex.Matches(steps, hasParams);
@@ -970,21 +973,21 @@ namespace GingerCore.ALM
             {
                 foreach (Match m in mc)
                 {
-                    QC.QCTSTestParameter newtsVar = new QC.QCTSTestParameter();
+                    QC.ALMTSTestParameter newtsVar = new QC.ALMTSTestParameter();
                     newtsVar.Name = m.Value.Substring(1, m.Value.Length - 2);
                     newTSTest.Parameters.Add(newtsVar);
                 }
             }
         }
 
-        public QC.QCTSTest ImportTSTest(QCTestInstance testInstance)
+        public QC.ALMTSTest ImportTSTest(ALMTestInstance testInstance)
         {
-            QC.QCTSTest newTSTest = new QC.QCTSTest();
+            QC.ALMTSTest newTSTest = new QC.ALMTSTest();
             if (newTSTest.Runs == null)
             {
-                newTSTest.Runs = new List<QCTSTestRun>();
+                newTSTest.Runs = new List<ALMTSTestRun>();
             }
-            QCTestCase testCase = GetTestCases(testInstance.Id);
+            ALMTestCase testCase = GetTestCases(testInstance.Id);
             testCase.TestSetId = testInstance.CycleId;
             if (testInstance != null)
             {
@@ -995,9 +998,9 @@ namespace GingerCore.ALM
 
             //Get the TC design steps
             QCTestCaseStepsColl TSTestSteps = GetListTSTestSteps(testCase);
-            foreach (QCTestCaseStep testcaseStep in TSTestSteps)
+            foreach (ALMTestCaseStep testcaseStep in TSTestSteps)
             {
-                QC.QCTSTestStep newtsStep = new QC.QCTSTestStep();
+                QC.ALMTSTestStep newtsStep = new QC.ALMTSTestStep();
                 newtsStep.StepID = testcaseStep.Id.ToString();
                 newtsStep.StepName = testcaseStep.Name;
                 newtsStep.Description = testcaseStep.Description;
@@ -1014,7 +1017,7 @@ namespace GingerCore.ALM
 
                 foreach (RunSuite run in TSTestRuns)
                 {
-                    QC.QCTSTestRun newtsRun = new QC.QCTSTestRun();
+                    QC.ALMTSTestRun newtsRun = new QC.ALMTSTestRun();
                     newtsRun.RunID = run.Id;
                     newtsRun.RunName = run.Name;
                     newtsRun.Status = run.NativeStatus.Name;
@@ -1027,7 +1030,7 @@ namespace GingerCore.ALM
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
-                newTSTest.Runs = new List<QC.QCTSTestRun>();
+                newTSTest.Runs = new List<QC.ALMTSTestRun>();
             }
             return newTSTest;
         }
@@ -1062,7 +1065,7 @@ namespace GingerCore.ALM
             return TSItem;
         }
 
-        public BusinessFlow ConvertQCTestSetToBF(QC.QCTestSet testSet)
+        public BusinessFlow ConvertQCTestSetToBF(QC.ALMTestSet testSet)
         {
             try
             {
@@ -1084,7 +1087,7 @@ namespace GingerCore.ALM
                 Dictionary<string, string> busVariables = new Dictionary<string, string>();//will store linked variables
 
                 //Create Activities Group + Activities for each TC
-                foreach (QC.QCTSTest tc in testSet.Tests)
+                foreach (QC.ALMTSTest tc in testSet.Tests)
                 {
                     AddTCtoFlow(busFlow, busVariables, tc);
                 }
@@ -1111,7 +1114,7 @@ namespace GingerCore.ALM
             }
         }
 
-        private void AddTCtoFlow(BusinessFlow busFlow, Dictionary<string, string> busVariables, QCTSTest tc)
+        private void AddTCtoFlow(BusinessFlow busFlow, Dictionary<string, string> busVariables, ALMTSTest tc)
         {
             //check if the TC is already exist in repository
             ActivitiesGroup tcActivsGroup;
@@ -1166,7 +1169,7 @@ namespace GingerCore.ALM
             }
 
             //Add the TC steps as Activities if not already on the Activities group
-            foreach (QC.QCTSTestStep step in tc.Steps)
+            foreach (QC.ALMTSTestStep step in tc.Steps)
             {
                 Activity stepActivity;
                 bool toAddStepActivity = false;
@@ -1217,7 +1220,7 @@ namespace GingerCore.ALM
                     //get the param value
                     string paramSelectedValue = string.Empty;
                     bool? isflowControlParam = null;
-                    QC.QCTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                    QC.ALMTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
 
                     //get the param value
                     if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
@@ -1366,7 +1369,7 @@ namespace GingerCore.ALM
             try
             {
                 int startGroupActsIndxInBf = busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
-                foreach (QC.QCTSTestStep step in tc.Steps)
+                foreach (QC.ALMTSTestStep step in tc.Steps)
                 {
                     int stepIndx = tc.Steps.IndexOf(step) + 1;
                     ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
@@ -1410,7 +1413,7 @@ namespace GingerCore.ALM
             {
                 foreach (var item in CallingTCs)
                 {
-                    var temp = ImportTSTest(new QCTestInstance() { Id = item, CycleId = busFlow.ExternalID });
+                    var temp = ImportTSTest(new ALMTestInstance() { Id = item, CycleId = busFlow.ExternalID });
                     if (temp != null)
                     {
                         AddTCtoFlow(busFlow, busVariables, temp);
@@ -1419,7 +1422,7 @@ namespace GingerCore.ALM
             }
         }
 
-        public bool ExportBusinessFlow(BusinessFlow businessFlow, QCTestSet mappedTestSet, string fatherId, ObservableList<ExternalItemFieldBase> testSetFields, ObservableList<ExternalItemFieldBase> testInstanceFields, ref string result)
+        public bool ExportBusinessFlow(BusinessFlow businessFlow, ALMTestSetData mappedTestSet, string fatherId, ObservableList<ExternalItemFieldBase> testSetFields, ObservableList<ExternalItemFieldBase> testInstanceFields, ref string result)
         {
             int testSetId = 0;
             try
@@ -1464,7 +1467,7 @@ namespace GingerCore.ALM
 
             return testSuiteId;
         }
-        private int UpdateExistingTestSet(BusinessFlow businessFlow, QCTestSet existingTS, string fatherId, ObservableList<ExternalItemFieldBase> testSetFields)
+        private int UpdateExistingTestSet(BusinessFlow businessFlow, ALMTestSetData existingTS, string fatherId, ObservableList<ExternalItemFieldBase> testSetFields)
         {
             TestSuite testSuite = new TestSuite();
             testSuite.Id = existingTS.Id;
@@ -1556,7 +1559,7 @@ namespace GingerCore.ALM
             return module.Id.ToString();
         }
 
-        public bool ExportActivitiesGroupToALM(ActivitiesGroup activitiesGroup, QCTestCase mappedTest, string fatherId, ObservableList<ExternalItemFieldBase> testCaseFields, ObservableList<ExternalItemFieldBase> designStepsFields, ObservableList<ExternalItemFieldBase> designStepsParamsFields, ref string result)
+        public bool ExportActivitiesGroupToALM(ActivitiesGroup activitiesGroup, ALMTestCase mappedTest, string fatherId, ObservableList<ExternalItemFieldBase> testCaseFields, ObservableList<ExternalItemFieldBase> designStepsFields, ObservableList<ExternalItemFieldBase> designStepsParamsFields, ref string result)
         {
             try
             {
@@ -1777,7 +1780,7 @@ namespace GingerCore.ALM
             return "";
         }
 
-        public QCTestSet GetTestSuiteById(string tsId)
+        public ALMTestSetData GetTestSuiteById(string tsId)
         {
             List<TestSuite> testsuite = Task.Run(() =>
             {
@@ -1790,9 +1793,9 @@ namespace GingerCore.ALM
                 EntityList<BaseEntity> father = (EntityList<BaseEntity>)testsuite[0].GetValue("product_areas");
                 if (father != null && father.data.Any())
                 {
-                    return new QCTestSet() { Id = testsuite[0].Id, Name = testsuite[0].Name, ParentId = father.data[0].Id };
+                    return new ALMTestSetData() { Id = testsuite[0].Id, Name = testsuite[0].Name, ParentId = father.data[0].Id };
                 }
-                return new QCTestSet() { Id = testsuite[0].Id, Name = testsuite[0].Name, ParentId = GetRootFolderId() };
+                return new ALMTestSetData() { Id = testsuite[0].Id, Name = testsuite[0].Name, ParentId = GetRootFolderId() };
             }
             return null;
         }

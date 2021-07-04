@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ALM_Common.Abstractions;
+using JiraRepositoryStandard;
 
 namespace GingerCore.ALM.JIRA
 {
@@ -34,15 +35,15 @@ namespace GingerCore.ALM.JIRA
         bool connectedToProject;
         IProjectDefinitions connectedProjectDefenition;
         AlmDomainColl jiraDomainsProjectsDataList;
-        private JiraRepository.JiraRepository jiraRepositoryObj;
+        private JiraRepository jiraRepositoryObj;
 
-        public JiraConnectManager(JiraRepository.JiraRepository jiraRep)
+        public JiraConnectManager(JiraRepository jiraRep)
         {
             this.jiraRepositoryObj = jiraRep;
         }
         public void CreateJiraRepository()
         {
-            jiraRepositoryObj = new JiraRepository.JiraRepository(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath);
+            jiraRepositoryObj = new JiraRepository(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath);
         }
         public bool SetJiraProjectFullDetails()
         {

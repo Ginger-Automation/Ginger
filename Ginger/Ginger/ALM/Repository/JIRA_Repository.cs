@@ -16,27 +16,24 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using ALM_Common.DataContracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.ALM.JIRA;
+using Ginger.ALM.JIRA.TreeViewItems;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.ALM.JIRA;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using JiraRepositoryStandard.Data_Contracts;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using Ginger.ALM.JIRA.TreeViewItems;
-using JiraRepository.Data_Contracts;
-using Ginger.ALM.JIRA;
+using System.Linq;
 
 namespace Ginger.ALM.Repository
 {

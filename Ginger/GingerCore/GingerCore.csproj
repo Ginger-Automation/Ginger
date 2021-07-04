@@ -76,9 +76,8 @@
       <HintPath>DLLs\ALMRestClient.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="ALM_Common, Version=7.7.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\ALM_Common.dll</HintPath>
+    <Reference Include="ALM_Common">
+      <HintPath>..\GingerCoreNET\DLLS\ALM_Common.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -104,13 +103,11 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>D:\Sandesh workspace\Microsoft.Office.Interop.Outlook.dll</HintPath>
     </Reference>
-    <Reference Include="OctaneSdkStandard, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\OctaneSdkStandard.dll</HintPath>
+    <Reference Include="OctaneSdkStandard">
+      <HintPath>..\GingerCoreNET\DLLS\OctaneSdkStandard.dll</HintPath>
     </Reference>
-    <Reference Include="Octane_Repository, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\Octane_Repository.dll</HintPath>
+    <Reference Include="Octane_Repository">
+      <HintPath>..\GingerCoreNET\DLLS\Octane_Repository.dll</HintPath>
     </Reference>
     <Reference Include="Open3270, Version=1.5.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -171,7 +168,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="ZephyrEntSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\ZephyrEntSDK.dll</HintPath>
+      <HintPath>..\GingerCoreNET\DLLS\ZephyrEntSDK.dll</HintPath>
     </Reference>
     <Reference Include="Zepyhr_Ent_Repository, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -324,17 +321,6 @@
     <Compile Include="Actions\XML\ActXMLTagValidation.cs" />
     <Compile Include="Actions\XML\ActXMLProcessing.cs" />
     <Compile Include="Actions\XML\XMLProcessor.cs" />
-    <Compile Include="ALM\ALMCore.cs" />
-    <Compile Include="ALM\JiraCore.cs" />
-    <Compile Include="ALM\JIRA\Bll\JiraExportManager.cs" />
-    <Compile Include="ALM\JIRA\Data Contracts\TestRunData.cs" />
-    <Compile Include="ALM\JIRA\Bll\JiraImportManager.cs" />
-    <Compile Include="ALM\JIRA\JiraTestSet.cs" />
-    <Compile Include="ALM\JIRA\JiraTest.cs" />
-    <Compile Include="ALM\JIRA\JiraTestParameter.cs" />
-    <Compile Include="ALM\JIRA\JiraTestStep.cs" />
-    <Compile Include="ALM\OctaneCore.cs" />
-    <Compile Include="ALM\Octane\OctaneSettings.cs" />
     <Compile Include="ALM\QtestCore.cs" />
     <Compile Include="ALM\Qtest\ImportFromQtest.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
@@ -345,12 +331,6 @@
     <Compile Include="ALM\QCCore.cs" />
     <Compile Include="ALM\QC\ImportFromQC.cs" />
     <Compile Include="ALM\QC\QCConnect.cs" />
-    <Compile Include="ALM\QC\QCTestSet.cs" />
-    <Compile Include="ALM\QC\QCTestSetSummary.cs" />
-    <Compile Include="ALM\QC\QCTSTest.cs" />
-    <Compile Include="ALM\QC\QCTSTestParameter.cs" />
-    <Compile Include="ALM\QC\QCTSTestRun.cs" />
-    <Compile Include="ALM\QC\QCTSTestStep.cs" />
     <Compile Include="ALM\Qtest\QtestTestRun.cs" />
     <Compile Include="ALM\Qtest\QtestTestSuite.cs" />
     <Compile Include="ALM\Qtest\QtestTest.cs" />
@@ -378,11 +358,6 @@
     <Compile Include="ALM\RQM\RQMFieldsMappingConfig.cs" />
     <Compile Include="ALM\RQM\RQMTestPlan.cs" />
     <Compile Include="ALM\RQM\RQMConnect.cs" />
-    <Compile Include="ALM\JIRA\Bll\JiraConnectManager.cs" />
-    <Compile Include="ALM\ZephyrEntCore.cs" />
-    <Compile Include="ALM\ZephyrEnt\Bll\ExportEntity.cs" />
-    <Compile Include="ALM\ZephyrEnt\Bll\ZephyrEntExportManager.cs" />
-    <Compile Include="ALM\ZephyrEnt\Bll\ZephyrEntImportManager.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
     <Compile Include="Common\Devices\DeviceConfig.cs" />
     <Compile Include="Common\Devices\DeviceButton.cs" />
@@ -522,20 +497,11 @@
     <Content Include="DLLs\ALMRestClient.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DLLs\ALM_Common.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="DLLs\Interop.TDAPIOLELib.dll" />
     <Content Include="DLLs\LibGit2Sharp.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\ObjectsUtils.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLLs\OctaneSdkStandard.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLLs\Octane_Repository.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\QCRestClient.dll">

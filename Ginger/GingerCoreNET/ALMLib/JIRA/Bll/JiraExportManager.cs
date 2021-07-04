@@ -18,30 +18,30 @@ limitations under the License.
 
 using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.ALM.JIRA.Data_Contracts;
 using GingerCore.Variables;
-using JiraRepository.Data_Contracts;
+using JiraRepositoryStandard;
+using JiraRepositoryStandard.BLL;
+using JiraRepositoryStandard.Data_Contracts;
+using JiraRepositoryStandard.Helpers;
+using JiraRepositoryStandard.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Amdocs.Ginger.Common.InterfacesLib;
-using JiraRepository.Settings;
-using JiraRepository.BLL;
 
 namespace GingerCore.ALM.JIRA.Bll
 {
     public class JiraExportManager
     {
-        private JiraRepository.JiraRepository jiraRepObj;
+        private JiraRepository jiraRepObj;
         private JiraManagerZephyr jmz;
 
-        public JiraExportManager(JiraRepository.JiraRepository jiraRep)
+        public JiraExportManager(JiraRepository jiraRep)
         {
             this.jiraRepObj = jiraRep;
             this.jmz = new JiraManagerZephyr();
@@ -109,7 +109,7 @@ namespace GingerCore.ALM.JIRA.Bll
 
             //and based on status, fetch statuses from JiraSettings.json 
             DefectStatusColl jiraDefectStatuses = null;
-            JiraRepository.Helpers.JiraHelper jiraHelper = new JiraRepository.Helpers.JiraHelper();
+            JiraHelper jiraHelper = new JiraHelper();
             if (jiraHelper.TryGetJiraDefectStatuses(out jiraDefectStatuses))
             {
                 foreach (DefectStatus defectStatus in jiraDefectStatuses)
@@ -182,7 +182,7 @@ namespace GingerCore.ALM.JIRA.Bll
         private JiraIssueExport CreateDefectData(KeyValuePair<Guid, Dictionary<string, string>> defectForOpening, List<ExternalItemFieldBase> defectsFields)
         {
             string jiraResource = string.Empty;
-            JiraRepository.Helpers.JiraHelper jiraHelper = new JiraRepository.Helpers.JiraHelper();
+            JiraHelper jiraHelper = new JiraHelper();
             jiraHelper.TryGetJiraResource(ResourceType.DEFECT, out jiraResource);
 
             JiraIssueExport jiraIssue = new JiraIssueExport();

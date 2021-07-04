@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.QC;
 using GingerCore.ALM.ZephyrEnt.Bll;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json.Linq;
 using System;
@@ -47,6 +48,9 @@ namespace GingerCore.ALM
             get { return ZephyrEntImportManager.ApplicationPlatforms; }
             set { ZephyrEntImportManager.ApplicationPlatforms = value; }
         }
+
+        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.ZephyrEnterprise;
+
         public ZephyrEntCore()
         {
             zephyrEntRepository = new Zepyhr_Ent_Repository.ZephyrEntRepository(new LoginDTO()
@@ -246,7 +250,7 @@ namespace GingerCore.ALM
             return zephyrEntRepository.GetTCsByTreeId(treeId);
         }
 
-        public QC.QCTestSet ImportTestSetData(QC.QCTestSet testSet)
+        public QC.ALMTestSet ImportTestSetData(QC.ALMTestSet testSet)
         {
             List<BaseResponseItem> selectedTcs = GetZephyrEntTcsByTreeId(Convert.ToInt32(testSet.TestSetID));
             var token = (JToken)selectedTcs[0].TryGetItem("results");
@@ -256,12 +260,12 @@ namespace GingerCore.ALM
             }
             return testSet;
         }
-        public QC.QCTSTest ImportTSTest(JToken testInstance)
+        public QC.ALMTSTest ImportTSTest(JToken testInstance)
         {
-            QC.QCTSTest newTSTest = new QC.QCTSTest();
+            QC.ALMTSTest newTSTest = new QC.ALMTSTest();
             if (newTSTest.Runs == null)
             {
-                newTSTest.Runs = new List<QCTSTestRun>();
+                newTSTest.Runs = new List<ALMTSTestRun>();
             }
 
             int versionId = Convert.ToInt32(testInstance["tcrVersionNumber"]);
@@ -282,7 +286,7 @@ namespace GingerCore.ALM
                 foreach (var testcaseStep in testStepsToken)
                 {
 
-                    QC.QCTSTestStep newtsStep = new QC.QCTSTestStep();
+                    QC.ALMTSTestStep newtsStep = new QC.ALMTSTestStep();
                     newtsStep.StepID = testcaseStep["id"].ToString();
                     newtsStep.StepName = testcaseStep["step"].ToString();
                     newtsStep.Description = testcaseStep["data"].ToString();
@@ -303,7 +307,7 @@ namespace GingerCore.ALM
             return zephyrEntExportManager.CreateNewTestCycle();
         }
 
-        public BusinessFlow ConvertQCTestSetToBF(QC.QCTestSet tS)
+        public BusinessFlow ConvertQCTestSetToBF(QC.ALMTestSet tS)
         {
             return zephyrEntImportManager.ConvertQCTestSetToBF(tS);
         }

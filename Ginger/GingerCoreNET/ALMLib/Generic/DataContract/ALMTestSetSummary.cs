@@ -17,13 +17,14 @@ limitations under the License.
 #endregion
 
 
+using System.Collections.Generic;
+
 namespace GingerCore.ALM.QC
 {
-    public class QCTSTestStep
+    public partial class ALMTestSetSummary
     {
-        public string StepID { get; set; }
-        public string StepName { get; set; }
-        public string Description { get; set; }
-        public string Expected { get; set; }
+        public string TestSetName { get; set; }
+        public dynamic TestSetID { get; set; }
+        public List<string[]> TestSetStatuses { get; set; }
     }
 }

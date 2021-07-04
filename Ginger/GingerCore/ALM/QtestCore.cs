@@ -34,6 +34,7 @@ using System.Web;
 using amdocs.ginger.GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Reflection;
+using GingerCoreNET.ALMLib;
 
 namespace GingerCore.ALM
 {
@@ -134,6 +135,9 @@ namespace GingerCore.ALM
             get { return ImportFromQtest.ApplicationPlatforms; }
             set { ImportFromQtest.ApplicationPlatforms = value; }
         }
+
+        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.Qtest;
+
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
             ConnectALMServer();

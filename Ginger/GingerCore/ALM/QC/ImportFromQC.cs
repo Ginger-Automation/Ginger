@@ -42,7 +42,7 @@ namespace GingerCore.ALM.QC
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
         public static ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
-        public static QCTestSet ImportTestSetData(QCTestSet TS)
+        public static ALMTestSet ImportTestSetData(ALMTestSet TS)
         {
             //fetch all TestStepTests in TS //(equivalent to Activities)
             List TSTests = GetListTSTest(TS);
@@ -55,9 +55,9 @@ namespace GingerCore.ALM.QC
             return TS;
         }
 
-        public static QCTSTest ImportTSTest(TSTest tsTest)
+        public static ALMTSTest ImportTSTest(TSTest tsTest)
         {
-            QCTSTest newTSTest = new QCTSTest();
+            ALMTSTest newTSTest = new ALMTSTest();
             string linkedTest = CheckLinkedTSTestName(tsTest);
 
             //Get the TC general details
@@ -81,7 +81,7 @@ namespace GingerCore.ALM.QC
             List TSTestSteps = GetListTSTestSteps(tsTest);
             foreach (DesignStep tsStep in TSTestSteps)
             {
-                QCTSTestStep newtsStep = new QCTSTestStep();
+                ALMTSTestStep newtsStep = new ALMTSTestStep();
                 newtsStep.StepID = tsStep.ID.ToString();
                 newtsStep.StepName = tsStep.StepName;
                 newtsStep.Description = tsStep.StepDescription;
@@ -105,7 +105,7 @@ namespace GingerCore.ALM.QC
                 DesignStep TestParam = GetListTSTestVars(tsTest);
                 for (int i = 0; i <= TestParam.LinkedParams.Count - 1; i++)
                 {
-                    QCTSTestParameter newtsVar = new QCTSTestParameter();
+                    ALMTSTestParameter newtsVar = new ALMTSTestParameter();
                     if (TestParam.LinkedParams.ParamName(i) != null) { newtsVar.Name = TestParam.LinkedParams.ParamName(i); }
                     if (TestParam.LinkedParams.ParamValue(i) != null) { newtsVar.Value = TestParam.LinkedParams.ParamValue(i).ToString(); }
                     if (TestParam.LinkedParams.Type(i) != null) { newtsVar.Type = TestParam.LinkedParams.Type(i).ToString(); }
@@ -117,7 +117,7 @@ namespace GingerCore.ALM.QC
                 //Regular TC
                 for (int i = 0; i <= tsTest.Params.Count - 1; i++)
                 {
-                    QCTSTestParameter newtsVar = new QCTSTestParameter();
+                    ALMTSTestParameter newtsVar = new ALMTSTestParameter();
                     if (tsTest.Params.ParamName(i) != null) { newtsVar.Name = tsTest.Params.ParamName(i); }
                     if (tsTest.Params.ParamValue(i) != null) { newtsVar.Value = tsTest.Params.ParamValue(i).ToString(); }
                     if (tsTest.Params.Type(i) != null) { newtsVar.Type = tsTest.Params.Type(i).ToString(); }
@@ -129,10 +129,10 @@ namespace GingerCore.ALM.QC
             try
             {
                 List TSTestRuns = GetListTSTestRuns(tsTest);
-                newTSTest.Runs = new List<QCTSTestRun>();
+                newTSTest.Runs = new List<ALMTSTestRun>();
                 foreach (Run run in TSTestRuns)
                 {
-                    QCTSTestRun newtsRun = new QCTSTestRun();
+                    ALMTSTestRun newtsRun = new ALMTSTestRun();
                     newtsRun.RunID = run.ID.ToString();
                     newtsRun.RunName = run.Name;
                     newtsRun.Status = run.Status;
@@ -144,7 +144,7 @@ namespace GingerCore.ALM.QC
             }catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
-                newTSTest.Runs = new List<QCTSTestRun>();
+                newTSTest.Runs = new List<ALMTSTestRun>();
             }
 
             return newTSTest;
@@ -190,7 +190,7 @@ namespace GingerCore.ALM.QC
             return null;
         }
 
-        public static List GetListTSTest(QCTestSet TS)
+        public static List GetListTSTest(ALMTestSet TS)
         {
             //TODO filter by name, path, id so only one will return
             TestSetFactory TSetFact = mTDConn.TestSetFactory;
@@ -281,7 +281,7 @@ namespace GingerCore.ALM.QC
             return null;
         }
 
-        public static BusinessFlow ConvertQCTestSetToBF(QCTestSet testSet)
+        public static BusinessFlow ConvertQCTestSetToBF(ALMTestSet testSet)
         {
             try
             {
@@ -297,7 +297,7 @@ namespace GingerCore.ALM.QC
                 Dictionary<string, string> busVariables = new Dictionary<string, string>();//will store linked variables
 
                 //Create Activities Group + Activities for each TC
-                foreach (QCTSTest tc in testSet.Tests)
+                foreach (ALMTSTest tc in testSet.Tests)
                 {
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
@@ -347,7 +347,7 @@ namespace GingerCore.ALM.QC
                     }
 
                     //Add the TC steps as Activities if not already on the Activities group
-                    foreach (QCTSTestStep step in tc.Steps)
+                    foreach (ALMTSTestStep step in tc.Steps)
                     {
                         Activity stepActivity;
                         bool toAddStepActivity = false;
@@ -399,7 +399,7 @@ namespace GingerCore.ALM.QC
                             //get the param value
                             string paramSelectedValue=string.Empty;
                             bool? isflowControlParam=null;
-                            QCTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                            ALMTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
 
                             //get the param value
                             if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
@@ -530,7 +530,7 @@ namespace GingerCore.ALM.QC
                     try
                     {
                         int startGroupActsIndxInBf = busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
-                        foreach (QCTSTestStep step in tc.Steps)
+                        foreach (ALMTSTestStep step in tc.Steps)
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
                             ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
@@ -591,14 +591,14 @@ namespace GingerCore.ALM.QC
             }
         }
 
-        public static void UpdatedQCTestInBF(ref BusinessFlow busFlow, List<QCTSTest> tcsList)
+        public static void UpdatedQCTestInBF(ref BusinessFlow busFlow, List<ALMTSTest> tcsList)
         {
             if ((busFlow == null) || (tcsList == null) || (tcsList.Count < 1)) return;
             Dictionary<string, string> busVariables = new Dictionary<string, string>();
 
             int startGroupActsIndxInBf = 0;
             Dictionary<string, int> activityGroupsToRemoveIndexes = new Dictionary<string, int>();
-            foreach (QCTSTest tc in tcsList)
+            foreach (ALMTSTest tc in tcsList)
             {
                 var activitiesToRemove = busFlow.Activities.Where(x => x.ActivitiesGroupID == tc.TestName).ToList();
                 foreach (Activity activityToRemove in activitiesToRemove)
@@ -619,7 +619,7 @@ namespace GingerCore.ALM.QC
             }
 
             int activityGroupToRemoveIndex;
-            foreach (QCTSTest tc in tcsList)
+            foreach (ALMTSTest tc in tcsList)
             {
                 activityGroupsToRemoveIndexes.TryGetValue(tc.TestID, out activityGroupToRemoveIndex);
 
@@ -642,7 +642,7 @@ namespace GingerCore.ALM.QC
                 busFlow.AddActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
 
                 //Add the TC steps as Activities if not already on the Activities group
-                foreach (QCTSTestStep step in tc.Steps)
+                foreach (ALMTSTestStep step in tc.Steps)
                 {
                     Activity stepActivity;
                     bool toAddStepActivity = false;
@@ -691,7 +691,7 @@ namespace GingerCore.ALM.QC
                         //get the param value
                         string paramSelectedValue = string.Empty;
                         bool? isflowControlParam = null;
-                        QCTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                        ALMTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
 
                         //get the param value
                         if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
@@ -821,7 +821,7 @@ namespace GingerCore.ALM.QC
                 //order the Activities Group activities according to the order of the matching steps in the TC
                 try
                 {
-                    foreach (QCTSTestStep step in tc.Steps)
+                    foreach (ALMTSTestStep step in tc.Steps)
                     {
                         int stepIndx = tc.Steps.IndexOf(step) + 1;
                         ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
@@ -862,7 +862,7 @@ namespace GingerCore.ALM.QC
             return;
         }
 
-        public static void UpdateBusinessFlow(ref BusinessFlow busFlow, List<QCTSTest> tcsList)
+        public static void UpdateBusinessFlow(ref BusinessFlow busFlow, List<ALMTSTest> tcsList)
         {
             if ((busFlow == null) || (tcsList == null) || (tcsList.Count < 1)) return;
             Dictionary<string, string> busVariables = new Dictionary<string, string>();
@@ -871,7 +871,7 @@ namespace GingerCore.ALM.QC
             busFlow.Activities.Clear();
             busFlow.ActivitiesGroups.Clear();
 
-            foreach (QCTSTest tc in tcsList)
+            foreach (ALMTSTest tc in tcsList)
             {
                 //check if the TC is already exist in repository
                 ActivitiesGroup tcActivsGroup = new ActivitiesGroup();
@@ -892,7 +892,7 @@ namespace GingerCore.ALM.QC
                 busFlow.AddActivitiesGroup(tcActivsGroup);
 
                 //Add the TC steps as Activities if not already on the Activities group
-                foreach (QCTSTestStep step in tc.Steps)
+                foreach (ALMTSTestStep step in tc.Steps)
                 {
                     Activity stepActivity;
                     bool toAddStepActivity = false;
@@ -941,7 +941,7 @@ namespace GingerCore.ALM.QC
                         //get the param value
                         string paramSelectedValue = string.Empty;
                         bool? isflowControlParam = null;
-                        QCTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                        ALMTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
 
                         //get the param value
                         if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
@@ -1071,7 +1071,7 @@ namespace GingerCore.ALM.QC
                 //order the Activities Group activities according to the order of the matching steps in the TC
                 try
                 {
-                    foreach (QCTSTestStep step in tc.Steps)
+                    foreach (ALMTSTestStep step in tc.Steps)
                     {
                         int stepIndx = tc.Steps.IndexOf(step) + 1;
                         ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
@@ -1171,9 +1171,9 @@ namespace GingerCore.ALM.QC
             return null;
         }
         
-        public static List<QCTSTest> GetTSQCTestsList(string testSetID, List<string> TCsIDs = null)
+        public static List<ALMTSTest> GetTSQCTestsList(string testSetID, List<string> TCsIDs = null)
         {
-            List<QCTSTest> TSQCTestsList = new List<QCTSTest>(); 
+            List<ALMTSTest> TSQCTestsList = new List<ALMTSTest>(); 
 
             TestSet testSet = ImportFromQC.GetQCTestSet(testSetID);
             if (testSet != null)

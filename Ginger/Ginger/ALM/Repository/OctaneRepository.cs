@@ -16,25 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.DataContracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ALMLib.DataContract;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM.QC;
 using Ginger.ALM.QC.TreeViewItems;
-using Ginger.ALM.Repository;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using QCRestClient;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Ginger.ALM.Repository
@@ -43,7 +39,7 @@ namespace Ginger.ALM.Repository
     {
         OctaneCore octaneCore;
 
-        QCTestCase matchingTC = null;
+        ALMTestCase matchingTC = null;
         public OctaneRepository(ALMCore almCore)
         {
             octaneCore = (OctaneCore)almCore;
@@ -161,7 +157,7 @@ namespace Ginger.ALM.Repository
                 return false;
             }
 
-            QCTestSet matchingTS = null;
+            ALMTestSetData matchingTS = null;
 
             Amdocs.Ginger.Common.eUserMsgSelection userSelec;
             //TO DO MaheshK : check if the businessFlow already mapped to Octane Test Suite
@@ -223,7 +219,7 @@ namespace Ginger.ALM.Repository
             }
             else
             {
-                matchingTC = new QCTestCase();
+                matchingTC = new ALMTestCase();
             } 
             //check if all of the business flow activities groups already exported to Octane and export the ones which not
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
@@ -340,7 +336,7 @@ namespace Ginger.ALM.Repository
                     {
                         //import test set data
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.TestSetName);
-                        GingerCore.ALM.QC.QCTestSet TS = new GingerCore.ALM.QC.QCTestSet();
+                        GingerCore.ALM.QC.ALMTestSet TS = new GingerCore.ALM.QC.ALMTestSet();
                         TS.TestSetID = testSetItemtoImport.TestSetID;
                         TS.TestSetName = testSetItemtoImport.TestSetName;
                         TS.TestSetPath = testSetItemtoImport.Path;
