@@ -289,7 +289,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
                 if (fileType == "config" || fileType == "dynamic")  // not needed for script
                 {
-                    if (!CLILoadAndPrepare(runsetConfigs: fileContent))
+                    if (!await CLILoadAndPrepare(runsetConfigs: fileContent))
                     {
                         Reporter.ToLog(eLogLevel.WARN, "Issue occured while doing CLI Load and Prepare so aborting execution");
                         Environment.ExitCode = 1;
@@ -404,7 +404,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 return Environment.ExitCode;
             }
 
-            if (!CLILoadAndPrepare())
+            if (!await CLILoadAndPrepare())
             {
                 Reporter.ToLog(eLogLevel.WARN, "Issue occured while doing CLI Load and Prepare so aborting execution");
                 Environment.ExitCode = 1;
@@ -514,11 +514,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.CloseSolution();            
         }
 
-        private bool CLILoadAndPrepare(string runsetConfigs="")
+        private async Task<bool> CLILoadAndPrepare(string runsetConfigs="")
         {
             try
             {
-                if (!mCLIHelper.LoadSolution())
+                if (!await mCLIHelper.LoadSolution())
                 {
                     return false;//failed to load Solution;
                 }

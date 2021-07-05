@@ -76,7 +76,7 @@ namespace Ginger
             }
         }
 
-        private void RecentSolution_Click(object sender, RequestNavigateEventArgs e)
+        private async void RecentSolution_Click(object sender, RequestNavigateEventArgs e)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace Ginger
 
                 if (selectedSol != null)
                 {
-                    WorkSpace.Instance.OpenSolution(selectedSol.Folder);                    
+                    await WorkSpace.Instance.OpenSolution(selectedSol.Folder);                    
                 }
                 else
                     Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Selected Solution was not found");

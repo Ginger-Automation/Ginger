@@ -105,9 +105,15 @@ namespace GingerWPF.WorkSpaceLib
         public bool OpenEncryptionKeyHandler(Solution solution)
         {
             SolutionPage solutionPage = new SolutionPage();
-
-            return solutionPage.ShowAsWindow(solution);
-
+            if(solution==null)
+            {
+                solutionPage.ShowAsWindow();
+                return true;
+            }
+            else
+            {
+                return solutionPage.ShowAsWindow(solution);
+            }
         }
     }
 }

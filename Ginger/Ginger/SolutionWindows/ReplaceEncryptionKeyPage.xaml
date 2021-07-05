@@ -10,11 +10,14 @@
 
     <StackPanel Background="{StaticResource $BackgroundColor_LightGray}" >
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">
-            <Label x:Name="Label" Margin="0,5,0,0" Style="{StaticResource @InputFieldLabelStyle}">Select Operaion: </Label>
+            <Label x:Name="Label" Margin="0,5,0,0" Style="{StaticResource @InputFieldLabelStyle}">Select Operation: </Label>
         <RadioButton x:Name="ReplaceRadioBtn" Content="Replace Encryption Key" GroupName="Options" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <RadioButton x:Name="ForgetRadioBtn"  Content="Forgot Encryption Key" GroupName="Options" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="ForgetRadioBtn"  Content="Forgot Encryption Key" GroupName="Options" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>        
         </StackPanel>
-        <StackPanel  Margin="15,10,10,10">
+        <StackPanel>
+            <Label x:Name="xDescriptionLabel" Margin="15"  Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" FontSize="14" Foreground="Red"></Label>
+        </StackPanel>
+        <StackPanel  Margin="15,30,10,10">
             <usercontrols1:UCEncryptionKey x:Name="UCEncryptionKeyPrevious"></usercontrols1:UCEncryptionKey>
             <usercontrols1:UCEncryptionKey x:Name="UCEncryptionKey"></usercontrols1:UCEncryptionKey>
         </StackPanel>
@@ -24,5 +27,7 @@
                 <GingerCore:ucTextDicResource Text="List of [Variables]"/>
             </Ginger:ucGrid.Title>
         </Ginger:ucGrid>
+
+       
     </StackPanel>
 </Page>

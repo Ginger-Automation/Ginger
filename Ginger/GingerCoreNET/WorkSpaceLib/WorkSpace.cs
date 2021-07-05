@@ -331,7 +331,7 @@ namespace amdocs.ginger.GingerCoreNET
             // when loading check restore and restore
         }
 
-        public bool OpenSolution(string solutionFolder, string encryptionKey = null)
+        public async Task<bool> OpenSolution(string solutionFolder, string encryptionKey = null)
         {
             try
             {
@@ -382,7 +382,7 @@ namespace amdocs.ginger.GingerCoreNET
                 EncryptionHandler.SetCustomKey(solution.EncryptionKey);
                 if (!solution.ValidateKey())
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Encryption key validation failed");
+                   
                     if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
                     {
                         if (string.IsNullOrEmpty(solution.EncryptedValidationString))
@@ -398,7 +398,11 @@ namespace amdocs.ginger.GingerCoreNET
                             return false;
                         }
                     }
-                    else { return false; }
+                    else 
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Encryption key validation failed");
+                        return false; 
+                    }
                 }
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Creating Items Repository");
@@ -429,7 +433,15 @@ namespace amdocs.ginger.GingerCoreNET
 
                 if (!RunningInExecutionMode && mSolution.NeedVariablesReEncryption)
                 {
-                    ReEncryptVariable();
+                    int varReencryptedCount= await ReEncryptVariable();
+                    if(varReencryptedCount>0)
+                    {
+                        Reporter.ToUser(eUserMsgKey.SolutionEncryptionKeyUpgrade, "Going forward each solution needs to have its own encryption key." +
+                            "We have re-encrypted " + varReencryptedCount + " password variables with default key." +
+                            "Make a note of key from Solution details page. This key is now mandatory for opening solution and all CLI integrations." +
+                            "Also Ensure to Check-in all solution changes");
+                        Instance.EventHandler.OpenEncryptionKeyHandler(null);
+                    }
                 }
 
                 // No need to add solution to recent if running from CLI
@@ -455,9 +467,9 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public async void ReEncryptVariable(string oldKey = null)
+        public async Task<int> ReEncryptVariable(string oldKey = null)
         {
-            await Task.Run(() =>
+            return await Task.Run(() =>
             {
                 Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Re-Encrypting password variables");
                 int varReencryptedCount = 0;
@@ -597,12 +609,9 @@ namespace amdocs.ginger.GingerCoreNET
                 });
 
 
-                if (varReencryptedCount > 0)
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, varReencryptedCount + " Variables Re-encrypted using new Encryption key across Solution.");
-                }
-
+              
                 Reporter.HideStatusMessage();
+                return varReencryptedCount;
             });
         }
 

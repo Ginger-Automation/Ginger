@@ -28,6 +28,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using static GingerCoreNET.SourceControl.SourceControlBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -140,14 +141,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         //UserProfile WorkSpace.Instance.UserProfile;
         RunSetConfig mRunSetConfig;
 
-        public bool LoadSolution()
+        public async Task<bool> LoadSolution()
         {
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution...");
                 // SetDebugLevel();//disabling because it is overwriting the UserProfile setting for logging level
                 DownloadSolutionFromSourceControl();
-                return OpenSolution();
+                return await OpenSolution();
             }
             catch (Exception ex)
             {
@@ -440,11 +441,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        private bool OpenSolution()
+        private async Task<bool> OpenSolution()
         {
             try
             {
-                return WorkSpace.Instance.OpenSolution(Solution, EncryptionKey);
+                return await WorkSpace.Instance.OpenSolution(Solution, EncryptionKey);
             }
             catch (Exception ex)
             {

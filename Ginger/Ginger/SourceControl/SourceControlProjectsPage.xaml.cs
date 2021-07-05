@@ -284,12 +284,12 @@ namespace Ginger.SourceControl
             }
         }
 
-        private void OpenSolution(string Path, string ProjectURI)
+        private async void OpenSolution(string Path, string ProjectURI)
         {
             string SoFileName = CheckForSolutionFileName(Path);
             if (System.IO.File.Exists(SoFileName))
             {
-                WorkSpace.Instance.OpenSolution(System.IO.Path.GetDirectoryName(SoFileName));
+                await WorkSpace.Instance.OpenSolution(System.IO.Path.GetDirectoryName(SoFileName));
             }
             else
             {

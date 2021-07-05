@@ -58,7 +58,7 @@ namespace Ginger.SolutionWindows
             UCEncryptionKey.CheckKeyCombination();
         }
 
-        private void OKButton_Click(object sender, RoutedEventArgs e)
+        private async void OKButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace Ginger.SolutionWindows
                     return;
                 }
 
-                WorkSpace.Instance.OpenSolution(mSolution.Folder);
+               await WorkSpace.Instance.OpenSolution(mSolution.Folder);
 
                 //Create default items                
                 AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);

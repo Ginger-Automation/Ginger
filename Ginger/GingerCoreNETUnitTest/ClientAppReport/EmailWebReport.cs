@@ -42,13 +42,13 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             CreateWorkspace();
         }
 
-        static void CreateWorkspace()
+        async static void CreateWorkspace()
         {
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
             WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new DotnetCoreHelper());
-            WorkSpace.Instance.OpenSolution(mSolutionFolder);
+            await WorkSpace.Instance.OpenSolution(mSolutionFolder);
             WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = Ginger.Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
             RunsetExecutor runsetExecutor = new RunsetExecutor();
