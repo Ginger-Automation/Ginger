@@ -381,8 +381,7 @@ namespace amdocs.ginger.GingerCoreNET
 
                 EncryptionHandler.SetCustomKey(solution.EncryptionKey);
                 if (!solution.ValidateKey())
-                {
-                   
+                {                   
                     if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
                     {
                         if (string.IsNullOrEmpty(solution.EncryptedValidationString))

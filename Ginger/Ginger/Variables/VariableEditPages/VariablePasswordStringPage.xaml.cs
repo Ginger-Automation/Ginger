@@ -56,11 +56,7 @@ namespace Ginger.Variables
         {
             if (!EncryptionHandler.IsStringEncrypted(txtPasswordValue.Text))
             {                
-                txtPasswordValue.Text = EncryptionHandler.EncryptwithKey(txtPasswordValue.Text);
-                if (String.IsNullOrEmpty(WorkSpace.Instance.Solution.EncryptionKey))
-                {
-                    txtPasswordValue.Text = string.Empty;
-                }
+                txtPasswordValue.Text = EncryptionHandler.EncryptwithKey(txtPasswordValue.Text);                
             }
         }
 

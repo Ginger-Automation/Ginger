@@ -244,7 +244,7 @@ namespace Ginger.SolutionGeneral
                 bool isDecrypted = EncryptionHandler.DecryptwithKey(EncryptedValidationString, encryptionKey ?? EncryptionKey).Equals("valid");
                 if (isDecrypted)
                 {
-                    EncryptionKey = encryptionKey ?? EncryptionKey;
+                    EncryptionKey = encryptionKey ?? (EncryptionKey ?? EncryptionHandler.GetDefaultKey());
                 }
                 return isDecrypted;
             }
