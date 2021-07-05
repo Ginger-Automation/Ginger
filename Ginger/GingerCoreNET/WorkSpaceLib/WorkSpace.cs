@@ -48,6 +48,7 @@ using System.Threading.Tasks;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 
+
 namespace amdocs.ginger.GingerCoreNET
 {
     // WorkSpace is one object per user accessible from anywhere and hold the current status of the user selection
@@ -381,7 +382,7 @@ namespace amdocs.ginger.GingerCoreNET
 
                 EncryptionHandler.SetCustomKey(solution.EncryptionKey);
                 if (!solution.ValidateKey())
-                {                   
+                {
                     if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
                     {
                         if (string.IsNullOrEmpty(solution.EncryptedValidationString))
@@ -397,10 +398,10 @@ namespace amdocs.ginger.GingerCoreNET
                             return false;
                         }
                     }
-                    else 
+                    else
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Encryption key validation failed");
-                        return false; 
+                        return false;
                     }
                 }
 
@@ -432,15 +433,18 @@ namespace amdocs.ginger.GingerCoreNET
 
                 if (!RunningInExecutionMode && mSolution.NeedVariablesReEncryption)
                 {
-                    int varReencryptedCount= await ReEncryptVariable();
-                    if(varReencryptedCount>0)
+                    int varReencryptedCount = await ReEncryptVariable();
+                    string msg = "Going forward each solution needs to have its own encryption key.";
+
+                    if (varReencryptedCount > 0)
                     {
-                        Reporter.ToUser(eUserMsgKey.SolutionEncryptionKeyUpgrade, "Going forward each solution needs to have its own encryption key." +
-                            "We have re-encrypted " + varReencryptedCount + " password variables with default key." +
-                            "Make a note of key from Solution details page. This key is now mandatory for opening solution and all CLI integrations." +
-                            "Also Ensure to Check-in all solution changes");
-                        Instance.EventHandler.OpenEncryptionKeyHandler(null);
+                        msg += "We have re-encrypted " + varReencryptedCount + " password variables with default key.";
                     }
+
+                    msg += "Make a note of key from Solution details page. This key is now mandatory for opening solution and all CLI integrations." +
+                          "Also Ensure to Check-in all solution changes";
+                    Reporter.ToUser(eUserMsgKey.SolutionEncryptionKeyUpgrade, msg);
+                    Instance.EventHandler.OpenEncryptionKeyHandler(null);
                 }
 
                 // No need to add solution to recent if running from CLI
@@ -470,7 +474,7 @@ namespace amdocs.ginger.GingerCoreNET
         {
             return await Task.Run(() =>
             {
-                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Re-Encrypting password variables");
+                WorkSpace.Instance.ReencryptingVariables = true;
                 int varReencryptedCount = 0;
                 List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
                 // For BF and Activity
@@ -607,9 +611,8 @@ namespace amdocs.ginger.GingerCoreNET
                     }
                 });
 
+                WorkSpace.Instance.ReencryptingVariables = false;
 
-              
-                Reporter.HideStatusMessage();
                 return varReencryptedCount;
             });
         }
@@ -641,6 +644,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
 
                 string error = string.Empty;
+
                 solution.SourceControl.SolutionFolder = solution.Folder;
                 solution.SourceControl.RepositoryRootFolder = repositoryRootFolder;
                 solution.SourceControl.SourceControlURL = solution.SourceControl.GetRepositoryURL(ref error);
@@ -929,6 +933,23 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+
+        bool mReencryptingVariables;
+        public bool ReencryptingVariables
+        {
+            get
+            {
+                return mReencryptingVariables;
+            }
+            set
+            {
+                if (mReencryptingVariables != value)
+                {
+                    mReencryptingVariables = value;
+                    OnPropertyChanged(nameof(ReencryptingVariables));
+                }
+            }
+        }
         public Telemetry Telemetry { get; internal set; }
 
         // Unified ;location to get the ExecutionResults Folder

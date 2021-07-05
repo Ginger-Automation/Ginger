@@ -156,7 +156,7 @@ namespace Ginger.SolutionWindows
                     WorkSpace.Instance.SolutionRepository.Open(_solution.ContainingFolderFullPath);
                     WorkSpace.Instance.Solution = _solution;
                 }
-                int varReencryptedCount= await WorkSpace.Instance.ReEncryptVariable(UCEncryptionKeyPrevious.EncryptionKeyPasswordBox.Password);
+                int varReencryptedCount = await WorkSpace.Instance.ReEncryptVariable(UCEncryptionKeyPrevious.EncryptionKeyPasswordBox.Password);
                 if (varReencryptedCount > 0)
                 {
                     Reporter.ToUser(eUserMsgKey.StaticInfoMessage, varReencryptedCount + " Variables Re-encrypted using new Encryption key across Solution.\n Please check in all changes to source control");
@@ -168,11 +168,31 @@ namespace Ginger.SolutionWindows
             }
         }
 
+        private void SetStatus(string txt)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                StatusLabel.Visibility = Visibility.Visible;
+                StatusLabel.Content = txt;
+                uOkBtn.IsEnabled = false;
+            });
+        }
+
+        private void HideStatus()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                StatusLabel.Visibility = Visibility.Collapsed;
+                uOkBtn.IsEnabled = true;
+            });
+        }
+
         private async Task InitGrid()
         {
             ObservableList<GingerCore.Variables.VariablePasswordString> variables = new ObservableList<GingerCore.Variables.VariablePasswordString>();
             await Task.Run(() =>
             {
+                this.SetStatus("Loading Password Variables....");
                 try
                 {
                     if (WorkSpace.Instance.SolutionRepository == null)//?why this will be null ?????
@@ -222,7 +242,8 @@ namespace Ginger.SolutionWindows
                     List<GingerCore.Variables.VariableBase> sharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Variables.VariableBase>().Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
                     Parallel.ForEach(sharedRepoVarsList, sharedVar =>
                     {
-                        ((GingerCore.Variables.VariablePasswordString)sharedVar).Password = "";                        
+                        ((GingerCore.Variables.VariablePasswordString)sharedVar).Password = "";
+                        sharedVar.ParentType = "Shared Variable";
                         variables.Add((GingerCore.Variables.VariablePasswordString)sharedVar);
                     });
 
@@ -234,14 +255,16 @@ namespace Ginger.SolutionWindows
                         foreach (GingerCore.Variables.VariablePasswordString v in sharedActivityVariables)
                         {
                             v.Password = "";
+                            v.ParentType = "Shared Activity";
                             variables.Add(v);
                         }
                     });
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Retrieving encrypted variables for setting new value",ex);
-                }            
+                    Reporter.ToLog(eLogLevel.WARN, "Retrieving encrypted variables for setting new value", ex);
+                }
+                this.HideStatus();
             });
 
             SetGridsView();
@@ -273,6 +296,7 @@ namespace Ginger.SolutionWindows
         {
             await Task.Run(() =>
             {
+                this.SetStatus("Saving Password Variables....");
                 EncryptGridValues();
                 List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
                 // For BF and Activity
@@ -321,6 +345,7 @@ namespace Ginger.SolutionWindows
                 });
 
                 _solution.SaveSolution(false);
+                this.HideStatus();
             });
 
             _pageGenericWin.Close();
@@ -331,7 +356,8 @@ namespace Ginger.SolutionWindows
             if (ForgetRadioBtn.IsChecked.Value)
             {
                 xDescriptionLabel.Content = "Setting a new key will clear all encrypted values and list of encrypted variables will be shown to set a new values. " +
-                    "\nAlso the new encryption key needs to be updated on all integrations like Jenkins, Bamboo, eTDM etc. Ensure to make a note of new Key";
+                    "\nAlso the new encryption key needs to be updated on all integrations like Jenkins, Bamboo, eTDM etc." +
+                    "\nEnsure to make a note of new Key.";
                 UCEncryptionKeyPrevious.Visibility = Visibility.Collapsed;
 
                 UCEncryptionKey.Visibility = Visibility.Visible;
@@ -341,7 +367,8 @@ namespace Ginger.SolutionWindows
             {
 
                 xDescriptionLabel.Content = "Replacing a key will reencrypt all the encrypted values with a new key." +
-                    "\nAlso the new key needs to be updated on all integrations like Jenkins, Bamboo, eTDM etc. Ensure to make a note of new Key";
+                    "\nAlso the new key needs to be updated on all integrations like Jenkins, Bamboo, eTDM etc." +
+                    "\nEnsure to make a note of new Key.";
                 UCEncryptionKeyPrevious.Visibility = Visibility.Visible;
                 UCEncryptionKey.Visibility = Visibility.Visible;
 

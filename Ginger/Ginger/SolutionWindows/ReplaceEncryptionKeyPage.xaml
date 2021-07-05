@@ -15,19 +15,17 @@
         <RadioButton x:Name="ForgetRadioBtn"  Content="Forgot Encryption Key" GroupName="Options" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>        
         </StackPanel>
         <StackPanel>
-            <Label x:Name="xDescriptionLabel" Margin="15"  Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" FontSize="14" Foreground="Red"></Label>
+            <Label x:Name="xDescriptionLabel" Margin="10,10,0,0"  Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" FontSize="14" Foreground="Red"></Label>
         </StackPanel>
-        <StackPanel  Margin="15,30,10,10">
+        <StackPanel  Margin="15,10,10,10">
             <usercontrols1:UCEncryptionKey x:Name="UCEncryptionKeyPrevious"></usercontrols1:UCEncryptionKey>
             <usercontrols1:UCEncryptionKey x:Name="UCEncryptionKey"></usercontrols1:UCEncryptionKey>
         </StackPanel>
-
-        <Ginger:ucGrid x:Name="variablesGrid" Width="800" Grid.Row="0" ShowTagsFilter="Collapsed" IsReadOnly="False" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed"  ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed" ShowSaveAllChanges="Visible" ShowToolsBar="Collapsed">
+        <Label x:Name="StatusLabel" Visibility="Collapsed" Content="Status: " Foreground="{StaticResource $SelectionColor_Pink}" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Ginger:ucGrid x:Name="variablesGrid" Width="800" Height="350px" Grid.Row="0" ShowTagsFilter="Collapsed" IsReadOnly="False" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed"  ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed" ShowSaveAllChanges="Visible" ShowToolsBar="Collapsed">
             <Ginger:ucGrid.Title>
                 <GingerCore:ucTextDicResource Text="List of [Variables]"/>
             </Ginger:ucGrid.Title>
-        </Ginger:ucGrid>
-
-       
+        </Ginger:ucGrid>       
     </StackPanel>
 </Page>
