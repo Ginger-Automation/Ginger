@@ -34,7 +34,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZephyrEntSDK.Models;
 using ZephyrEntSDK.Models.Base;
-using Zepyhr_Ent_Repository;
+using ZepyhrEntRepositoryStandard;
 
 namespace GingerCore.ALM.ZephyrEnt.Bll
 {

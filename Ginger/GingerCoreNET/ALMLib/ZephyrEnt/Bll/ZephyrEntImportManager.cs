@@ -33,7 +33,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using ZephyrEntSDK.Models;
 using ZephyrEntSDK.Models.Base;
-using Zepyhr_Ent_Repository;
+using ZepyhrEntRepositoryStandard;
 
 namespace GingerCore.ALM.ZephyrEnt.Bll
 {

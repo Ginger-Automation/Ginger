@@ -102,9 +102,8 @@
     <Reference Include="ALMRestClient">
       <HintPath>..\GingerCore\DLLs\ALMRestClient.dll</HintPath>
     </Reference>
-    <Reference Include="ALM_Common, Version=7.9.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GingerCore\DLLs\ALM_Common.dll</HintPath>
+    <Reference Include="ALM_Common">
+      <HintPath>..\GingerCoreNET\DLLS\ALM_Common.dll</HintPath>
     </Reference>
     <Reference Include="Interop.TDAPIOLELib">
       <HintPath>..\GingerCore\DLLs\Interop.TDAPIOLELib.dll</HintPath>
@@ -168,9 +167,8 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="ZephyrEntSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\ZephyrEntSDK.dll</HintPath>
+    <Reference Include="ZephyrEntSDK">
+      <HintPath>..\GingerCoreNET\DLLS\ZephyrEntSDK.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

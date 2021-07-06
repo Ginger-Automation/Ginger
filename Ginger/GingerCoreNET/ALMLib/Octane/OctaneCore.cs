@@ -27,7 +27,7 @@ using GingerCore.ALM.QC;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Octane_Repository;
+using OctaneRepositoryStandard;
 using OctaneSdkStandard.Connector;
 using OctaneSdkStandard.Connector.Credentials;
 using OctaneSdkStandard.Entities.Base;
@@ -758,22 +758,22 @@ namespace GingerCore.ALM
 
             if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
             {
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_CASE);
+                resourse = OctaneRepositoryStandard.BLL.Extensions.ConvertResourceType(ResourceType.TEST_CASE);
                 ExtractFields(fields, resourse, "Test Case", _loginDto, listnodes);
 
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_SET);
+                resourse = OctaneRepositoryStandard.BLL.Extensions.ConvertResourceType(ResourceType.TEST_SET);
                 ExtractFields(fields, resourse, "Test Suite", _loginDto, listnodes);
 
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.REQUIREMENT);
+                resourse = OctaneRepositoryStandard.BLL.Extensions.ConvertResourceType(ResourceType.REQUIREMENT);
                 ExtractFields(fields, resourse, "Requirement", _loginDto, listnodes);
 
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_RUN);
+                resourse = OctaneRepositoryStandard.BLL.Extensions.ConvertResourceType(ResourceType.TEST_RUN);
                 ExtractFields(fields, resourse, "Run", _loginDto, listnodes);
             }
             else
             {
 
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(resourceType);
+                resourse = OctaneRepositoryStandard.BLL.Extensions.ConvertResourceType(resourceType);
 
                 ExtractFields(fields, resourse, resourse, _loginDto, listnodes);
             }

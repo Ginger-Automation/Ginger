@@ -38,7 +38,7 @@ namespace GingerCore.ALM
 {
     public class ZephyrEntCore : ALMCore
     {
-        protected Zepyhr_Ent_Repository.ZephyrEntRepository zephyrEntRepository;
+        protected ZepyhrEntRepositoryStandard.ZephyrEntRepository zephyrEntRepository;
         private ZephyrEntExportManager zephyrEntExportManager;
         private ZephyrEntImportManager zephyrEntImportManager;
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
@@ -53,7 +53,7 @@ namespace GingerCore.ALM
 
         public ZephyrEntCore()
         {
-            zephyrEntRepository = new Zepyhr_Ent_Repository.ZephyrEntRepository(new LoginDTO()
+            zephyrEntRepository = new ZepyhrEntRepositoryStandard.ZephyrEntRepository(new LoginDTO()
             {
                 User = ALMCore.DefaultAlmConfig.ALMUserName,
                 Password = ALMCore.DefaultAlmConfig.ALMPassword,

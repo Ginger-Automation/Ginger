@@ -291,17 +291,17 @@
     <Reference Include="LibGit2Sharp">
       <HintPath>DLLS\LibGit2Sharp.dll</HintPath>
     </Reference>
+    <Reference Include="OctaneRepositoryStandard">
+      <HintPath>DLLS\OctaneRepositoryStandard.dll</HintPath>
+    </Reference>
     <Reference Include="OctaneSdkStandard">
       <HintPath>DLLS\OctaneSdkStandard.dll</HintPath>
     </Reference>
-    <Reference Include="Octane_Repository">
-      <HintPath>DLLS\Octane_Repository.dll</HintPath>
+    <Reference Include="ZephyrEntRepositoryStandard">
+      <HintPath>DLLS\ZephyrEntRepositoryStandard.dll</HintPath>
     </Reference>
     <Reference Include="ZephyrEntSDK">
       <HintPath>DLLS\ZephyrEntSDK.dll</HintPath>
-    </Reference>
-    <Reference Include="Zepyhr_Ent_Repository">
-      <HintPath>DLLS\Zepyhr_Ent_Repository.dll</HintPath>
     </Reference>
   </ItemGroup>
 
