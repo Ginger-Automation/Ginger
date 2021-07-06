@@ -436,12 +436,12 @@ namespace amdocs.ginger.GingerCoreNET
                     int varReencryptedCount = await ReEncryptVariable();
                     string msg = "Going forward each solution needs to have its own encryption key.";
 
-                    if (varReencryptedCount > 0)
-                    {
-                        msg += "We have re-encrypted " + varReencryptedCount + " password variables with default key.";
-                    }
+                    //if (varReencryptedCount > 0)
+                    //{
+                    //    msg += "We have re-encrypted " + varReencryptedCount + " password variables with default key.";
+                    //}
 
-                    msg += "Make a note of key from Solution details page. This key is now mandatory for opening solution and all CLI integrations." +
+                    msg += "Make a note of default key from Solution details page. This key is now mandatory for opening solution and all CLI integrations." +
                           "Also Ensure to Check-in all solution changes";
                     Reporter.ToUser(eUserMsgKey.SolutionEncryptionKeyUpgrade, msg);
                     Instance.EventHandler.OpenEncryptionKeyHandler(null);
