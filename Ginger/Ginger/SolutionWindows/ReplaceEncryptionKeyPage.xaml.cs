@@ -267,6 +267,10 @@ namespace Ginger.SolutionWindows
                 this.HideStatus();
             });
 
+            if (!variables.Any())
+            {
+                _pageGenericWin.Close();
+            }
             SetGridsView();
 
             variablesGrid.DataSourceList = variables;
