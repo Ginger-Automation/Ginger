@@ -112,7 +112,7 @@ namespace Ginger.SolutionWindows
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
             winButtons.Add(undoBtn);
             Button replaceKeyBtn = new Button();
-            replaceKeyBtn.Content = "Replace Key";
+            replaceKeyBtn.Content = "Update Key";
             replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
             winButtons.Add(replaceKeyBtn);
 

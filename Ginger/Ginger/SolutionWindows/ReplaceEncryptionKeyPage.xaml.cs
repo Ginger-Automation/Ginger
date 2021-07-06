@@ -2,6 +2,7 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerCore;
@@ -31,6 +32,8 @@ namespace Ginger.SolutionWindows
         GenericWindow _pageGenericWin = null;
         Solution _solution = null;
         Button uSaveKeyBtn, uCloseBtn, uOkBtn;
+
+        ImageMakerControl loaderElement;
 
         bool validKeyAdded = false;
         public ReplaceEncryptionKeyPage()
@@ -84,8 +87,14 @@ namespace Ginger.SolutionWindows
             uCloseBtn.Click += new RoutedEventHandler(CloseBtn_Click);
             winButtons.Add(uCloseBtn);
 
+            loaderElement = new ImageMakerControl();
+            loaderElement.Name = "xProcessingImage";
+            loaderElement.Height = 30;
+            loaderElement.Width = 30;
+            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
+            loaderElement.Visibility = Visibility.Collapsed;
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Replace/Forget Encryption key", this, winButtons, false, "Cancel", CloseBtn_Click);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Replace/Forget Encryption key", this, winButtons, false, "Cancel", CloseBtn_Click, false,loaderElement);
             return validKeyAdded;
         }
 
@@ -147,6 +156,7 @@ namespace Ginger.SolutionWindows
             }
             else if (ReplaceRadioBtn.IsChecked.Value && UCEncryptionKeyPrevious.ValidateKey() && UCEncryptionKey.CheckKeyCombination())
             {
+                this.ShowLoader();
                 _solution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
                 _solution.SaveEncryptionKey();
                 _solution.SaveSolution(false);
@@ -164,25 +174,25 @@ namespace Ginger.SolutionWindows
 
                 variablesGrid.Visibility = Visibility.Collapsed;
                 validKeyAdded = true;
+                this.HideLoader();
                 _pageGenericWin.Close();
             }
         }
 
-        private void SetStatus(string txt)
+        private void ShowLoader()
         {
             this.Dispatcher.Invoke(() =>
             {
-                StatusLabel.Visibility = Visibility.Visible;
-                StatusLabel.Content = txt;
+                loaderElement.Visibility = Visibility.Visible;
                 uOkBtn.IsEnabled = false;
             });
         }
 
-        private void HideStatus()
+        private void HideLoader()
         {
             this.Dispatcher.Invoke(() =>
             {
-                StatusLabel.Visibility = Visibility.Collapsed;
+                loaderElement.Visibility = Visibility.Collapsed;
                 uOkBtn.IsEnabled = true;
             });
         }
@@ -192,7 +202,7 @@ namespace Ginger.SolutionWindows
             ObservableList<GingerCore.Variables.VariablePasswordString> variables = new ObservableList<GingerCore.Variables.VariablePasswordString>();
             await Task.Run(() =>
             {
-                this.SetStatus("Loading Password Variables....");
+                this.ShowLoader();
                 try
                 {
                     if (WorkSpace.Instance.SolutionRepository == null)//?why this will be null ?????
@@ -264,7 +274,7 @@ namespace Ginger.SolutionWindows
                 {
                     Reporter.ToLog(eLogLevel.WARN, "Retrieving encrypted variables for setting new value", ex);
                 }
-                this.HideStatus();
+                this.HideLoader();
             });
 
             if (!variables.Any())
@@ -300,7 +310,7 @@ namespace Ginger.SolutionWindows
         {
             await Task.Run(() =>
             {
-                this.SetStatus("Saving Password Variables....");
+                this.ShowLoader();
                 EncryptGridValues();
                 List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
                 // For BF and Activity
@@ -349,7 +359,7 @@ namespace Ginger.SolutionWindows
                 });
 
                 _solution.SaveSolution(false);
-                this.HideStatus();
+                this.HideLoader();
             });
 
             _pageGenericWin.Close();

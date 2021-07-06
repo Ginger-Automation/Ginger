@@ -433,7 +433,7 @@ namespace amdocs.ginger.GingerCoreNET
 
                 if (!RunningInExecutionMode && mSolution.NeedVariablesReEncryption)
                 {
-                    int varReencryptedCount = await ReEncryptVariable();
+                    //int varReencryptedCount = await ReEncryptVariable();
                     string msg = "Going forward each solution needs to have its own encryption key.";
 
                     //if (varReencryptedCount > 0)
@@ -474,7 +474,7 @@ namespace amdocs.ginger.GingerCoreNET
         {
             return await Task.Run(() =>
             {
-                WorkSpace.Instance.ReencryptingVariables = true;
+               // WorkSpace.Instance.ReencryptingVariables = true;
                 int varReencryptedCount = 0;
                 List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
                 // For BF and Activity
@@ -611,7 +611,7 @@ namespace amdocs.ginger.GingerCoreNET
                     }
                 });
 
-                WorkSpace.Instance.ReencryptingVariables = false;
+                //WorkSpace.Instance.ReencryptingVariables = false;
 
                 return varReencryptedCount;
             });
