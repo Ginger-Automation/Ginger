@@ -1,12 +1,16 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Functionalities;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
+using Ginger.Run;
+using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Environments;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +74,7 @@ namespace Ginger.SolutionWindows
 
         public bool ShowAsWindow(Solution solution, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            UCEncryptionKey.mSolution = solution;            
+            UCEncryptionKey.mSolution = solution;
             UCEncryptionKeyPrevious.mSolution = solution;
             _solution = solution;
 
@@ -253,7 +257,7 @@ namespace Ginger.SolutionWindows
                                 vp = new GingerCore.Variables.VariablePasswordString();
                                 vp.Name = db.Name;
                                 vp.Password = "";
-                                vp.ParentType = "Datebase Password";
+                                vp.ParentType = "Database Password";
                                 vp.ParentName = ea.Name;
                                 vp.Guid = db.Guid;
                                 variables.Add(vp);
@@ -292,6 +296,62 @@ namespace Ginger.SolutionWindows
                             variables.Add(v);
                         }
                     });
+
+                    //For Email passwords
+                    var runSetConfigs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                    foreach (var rsc in runSetConfigs)
+                    {
+                        GingerCore.Variables.VariablePasswordString vp;
+                        foreach (var ra in rsc.RunSetActions)
+                        {
+                            try
+                            {
+                                if (ra is RunSetActionHTMLReportSendEmail)
+                                {
+                                    if (((RunSetActionHTMLReportSendEmail)ra).Email != null && !string.IsNullOrEmpty(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass))
+                                    {
+                                        vp = new GingerCore.Variables.VariablePasswordString();
+                                        vp.Name = ra.ItemName;
+                                        vp.Password = "";
+                                        vp.ParentType = "Run Set Actions";
+                                        vp.ParentName = rsc.Name;
+                                        vp.Guid = ((RunSetActionHTMLReportSendEmail)ra).Email.Guid;
+                                        variables.Add(vp);
+                                    }
+                                }
+                                else if (ra is RunSetActionSendFreeEmail)
+                                {
+                                    if (((RunSetActionSendFreeEmail)ra).Email != null && !string.IsNullOrEmpty(((RunSetActionSendFreeEmail)ra).Email.SMTPPass))
+                                    {
+                                        vp = new GingerCore.Variables.VariablePasswordString();
+                                        vp.Name = ra.ItemName;
+                                        vp.Password = "";
+                                        vp.ParentType = "Run Set Actions";
+                                        vp.ParentName = rsc.Name;
+                                        vp.Guid = ((RunSetActionSendFreeEmail)ra).Email.Guid;
+                                        variables.Add(vp);
+                                    }
+                                }
+                                else if (ra is RunSetActionSendSMS)
+                                {
+                                    if (((RunSetActionSendSMS)ra).SMSEmail != null && !string.IsNullOrEmpty(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass))
+                                    {
+                                        vp = new GingerCore.Variables.VariablePasswordString();
+                                        vp.Name = ra.ItemName;
+                                        vp.Password = "";
+                                        vp.ParentType = "Run Set Actions";
+                                        vp.ParentName = rsc.Name;
+                                        vp.Guid = ((RunSetActionSendSMS)ra).SMSEmail.Guid;
+                                        variables.Add(vp);
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.WARN, "Error while Retrieving encrypted SMTP password for " + rsc.Name, ex); throw;
+                            }
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -387,7 +447,7 @@ namespace Ginger.SolutionWindows
                                 }
 
                                 foreach (Database db in ea.Dbs)
-                                {                                    
+                                {
                                     db.Pass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList).Where(f => f.Guid.Equals(db.Guid)).FirstOrDefault().Password;
                                     res1 = true;
                                 }
@@ -432,6 +492,49 @@ namespace Ginger.SolutionWindows
                         catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Replace Key Page: Error while encrypting Shared variable password  " + sharedAct.ActivityName, ex);
+                        }
+                    }
+
+                    //Email Passwords
+                    var runSetConfigs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                    bool res = false;
+                    foreach (var rsc in runSetConfigs)
+                    {
+                        try
+                        {
+                            res = false;
+                            foreach (var ra in rsc.RunSetActions)
+                            {
+                                if (ra is RunSetActionHTMLReportSendEmail && ((RunSetActionHTMLReportSendEmail)ra).Email != null
+                                && !string.IsNullOrEmpty(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass))
+                                {
+                                    ((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList)
+                                    .Where(f => f.Guid.Equals(((RunSetActionHTMLReportSendEmail)ra).Email.Guid)).FirstOrDefault().Password;
+                                    res = true;
+                                }
+                                else if (ra is RunSetActionSendFreeEmail && ((RunSetActionSendFreeEmail)ra).Email != null
+                                && !string.IsNullOrEmpty(((RunSetActionSendFreeEmail)ra).Email.SMTPPass))
+                                {
+                                    ((RunSetActionSendFreeEmail)ra).Email.SMTPPass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList)
+                                    .Where(f => f.Guid.Equals(((RunSetActionSendFreeEmail)ra).Email.Guid)).FirstOrDefault().Password;
+                                    res = true;
+                                }
+                                else if (ra is RunSetActionSendSMS && ((RunSetActionSendSMS)ra).SMSEmail != null
+                                    && !string.IsNullOrEmpty(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass))
+                                {
+                                    ((RunSetActionSendSMS)ra).SMSEmail.SMTPPass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList)
+                                    .Where(f => f.Guid.Equals(((RunSetActionSendSMS)ra).SMSEmail.Guid)).FirstOrDefault().Password;
+                                    res = true;
+                                }
+                            }
+                            if (res)
+                            {
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(rsc);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Replace Key Page: Error while encrypting Email SMTP password of " + rsc.Name, ex);
                         }
                     }
 

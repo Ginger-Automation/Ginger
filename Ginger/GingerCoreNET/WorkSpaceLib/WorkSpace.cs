@@ -47,7 +47,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
-
+using Ginger.Run.RunSetActions;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -617,6 +617,51 @@ namespace amdocs.ginger.GingerCoreNET
                     }
                 });
 
+                //Email Passwords
+                var runSetConfigs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                res = false;
+                foreach (var rsc in runSetConfigs)
+                {
+                    try
+                    {
+                        res = false;
+                        foreach (var ra in rsc.RunSetActions)
+                        {
+                            if (ra is RunSetActionHTMLReportSendEmail && ((RunSetActionHTMLReportSendEmail)ra).Email != null
+                            && !string.IsNullOrEmpty(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass))
+                            {
+                                ((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass =
+                                EncryptionHandler.ReEncryptString(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass, oldKey);
+                                res = true;
+                                varReencryptedCount++;
+                            }
+                            else if (ra is RunSetActionSendFreeEmail && ((RunSetActionSendFreeEmail)ra).Email != null
+                            && !string.IsNullOrEmpty(((RunSetActionSendFreeEmail)ra).Email.SMTPPass))
+                            {
+                                ((RunSetActionSendFreeEmail)ra).Email.SMTPPass =
+                                EncryptionHandler.ReEncryptString(((RunSetActionSendFreeEmail)ra).Email.SMTPPass, oldKey);
+                                res = true;
+                                varReencryptedCount++;
+                            } 
+                            else if (ra is RunSetActionSendSMS && ((RunSetActionSendSMS)ra).SMSEmail != null
+                            && !string.IsNullOrEmpty(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass))
+                            {
+                                ((RunSetActionSendSMS)ra).SMSEmail.SMTPPass =
+                                EncryptionHandler.ReEncryptString(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass, oldKey);
+                                res = true;
+                                varReencryptedCount++;
+                            }
+                        }
+                        if (res)
+                        {
+                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(rsc);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Rencrypting password: Error while encrypting Email SMTP password of " + rsc.Name, ex);
+                    }
+                }
                 //WorkSpace.Instance.ReencryptingVariables = false;
 
                 return varReencryptedCount;
