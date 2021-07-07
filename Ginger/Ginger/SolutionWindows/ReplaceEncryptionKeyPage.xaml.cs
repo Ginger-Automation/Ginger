@@ -39,8 +39,8 @@ namespace Ginger.SolutionWindows
         public ReplaceEncryptionKeyPage()
         {
             InitializeComponent();
-            UCEncryptionKeyPrevious.ChangeLabel("Old Encryption Key");
-            UCEncryptionKey.ChangeLabel("New Encryption Key");
+            UCEncryptionKeyPrevious.ChangeLabel("Solution Passwords Old Encryption Key");
+            UCEncryptionKey.ChangeLabel("Solution Password New Encryption Key");
 
             ReplaceRadioBtn.Click += radioBtn_Click;
             ForgetRadioBtn.Click += radioBtn_Click;
@@ -58,8 +58,10 @@ namespace Ginger.SolutionWindows
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.Name), WidthWeight = 10, Header = GingerDicser.GetTermResValue(eTermResKey.Variable) + " Name", ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.ParentType), WidthWeight = 10, Header = GingerDicser.GetTermResValue(eTermResKey.Variable) + "  Type", ReadOnly = true });
+
+            defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.ParentType), WidthWeight = 5, Header = "Item Type", ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.Name), WidthWeight = 8, Header = "Item Name", ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.ParentName), WidthWeight = 7, Header = "Parent Name", ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.Password), WidthWeight = 10, Header = "Value" });
             variablesGrid.SetAllColumnsDefaultView(defView);
             variablesGrid.InitViewItems();
@@ -68,9 +70,18 @@ namespace Ginger.SolutionWindows
 
         public bool ShowAsWindow(Solution solution, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            UCEncryptionKey.mSolution = solution;
+            UCEncryptionKey.mSolution = solution;            
             UCEncryptionKeyPrevious.mSolution = solution;
             _solution = solution;
+
+            if (!string.IsNullOrEmpty(solution.EncryptionKey))
+            {
+                UCEncryptionKeyPrevious.EncryptionKeyPasswordBox.Password = solution.EncryptionKey;
+                if (!UCEncryptionKeyPrevious.ValidateKey())
+                {
+                    UCEncryptionKeyPrevious.EncryptionKeyPasswordBox.Password = "";
+                }
+            }
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
             uOkBtn = new Button();
@@ -94,7 +105,7 @@ namespace Ginger.SolutionWindows
             loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
             loaderElement.Visibility = Visibility.Collapsed;
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Replace/Forget Encryption key", this, winButtons, false, "Cancel", CloseBtn_Click, false,loaderElement);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Replace/Forget Encryption key", this, winButtons, false, "Cancel", CloseBtn_Click, false, loaderElement);
             return validKeyAdded;
         }
 
@@ -134,7 +145,7 @@ namespace Ginger.SolutionWindows
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.ShowInfoMessage, "Please populate all Values in grid.");
+                Reporter.ToUser(eUserMsgKey.ShowInfoMessage, "Please populate all Values in grid. Or Click Ok.");
             }
         }
 
@@ -211,8 +222,8 @@ namespace Ginger.SolutionWindows
                         WorkSpace.Instance.SolutionRepository.Open(_solution.ContainingFolderFullPath);
                     }
 
-                    List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()?.ToList();
                     // For BF and Activity
+                    List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()?.ToList();
                     Parallel.ForEach(Bfs, Bf =>
                     {
                         foreach (GingerCore.Variables.VariablePasswordString item in Bf.GetBFandActivitiesVariabeles(true).Where(f => f is GingerCore.Variables.VariablePasswordString))
@@ -222,6 +233,7 @@ namespace Ginger.SolutionWindows
                         }
                     });
 
+                    //for Golbal Variables 
                     foreach (GingerCore.Variables.VariablePasswordString v in _solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString))
                     {
                         v.Password = "";
@@ -229,19 +241,30 @@ namespace Ginger.SolutionWindows
                         variables.Add(v);
                     }
 
+                    //For Project environments
                     List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
                     projEnvironments.ForEach(pe =>
                     {
-                        bool res1 = false;
                         GingerCore.Variables.VariablePasswordString vp;
                         foreach (EnvApplication ea in pe.Applications)
                         {
+                            foreach (Database db in ea.Dbs)
+                            {
+                                vp = new GingerCore.Variables.VariablePasswordString();
+                                vp.Name = db.Name;
+                                vp.Password = "";
+                                vp.ParentType = "Datebase Password";
+                                vp.ParentName = ea.Name;
+                                vp.Guid = db.Guid;
+                                variables.Add(vp);
+                            }
                             foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
                             {
                                 vp = new GingerCore.Variables.VariablePasswordString();
                                 vp.Name = gp.Name;
                                 vp.Password = "";
                                 vp.ParentType = "Environment Param";
+                                vp.ParentName = ea.Name;
                                 vp.Guid = gp.Guid;
                                 variables.Add(vp);
                             }
@@ -274,7 +297,10 @@ namespace Ginger.SolutionWindows
                 {
                     Reporter.ToLog(eLogLevel.WARN, "Retrieving encrypted variables for setting new value", ex);
                 }
-                this.HideLoader();
+                finally
+                {
+                    this.HideLoader();
+                }
             });
 
             if (!variables.Any())
@@ -310,56 +336,115 @@ namespace Ginger.SolutionWindows
         {
             await Task.Run(() =>
             {
-                this.ShowLoader();
-                EncryptGridValues();
-                List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
-                // For BF and Activity
-                Parallel.ForEach(Bfs, Bf =>
+                try
                 {
-                    if (Bf.GetBFandActivitiesVariabeles(false).Where(f => f is GingerCore.Variables.VariablePasswordString).Any())
-                    {
-                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(Bf);
-                    }
-                });
+                    this.ShowLoader();
+                    EncryptGridValues();
 
-
-                List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
-                projEnvironments.ForEach(pe =>
-                {
-                    bool res1 = false;
-                    foreach (EnvApplication ea in pe.Applications)
+                    // For BF and Activity
+                    List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
+                    Parallel.ForEach(Bfs, Bf =>
                     {
-                        foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
+                        try
                         {
-                            gp.Value = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList).Where(f => f.Guid.Equals(gp.Guid)).FirstOrDefault().Password;
-                            res1 = true;
+                            if (Bf.GetBFandActivitiesVariabeles(false).Where(f => f is GingerCore.Variables.VariablePasswordString).Any())
+                            {
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(Bf);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Replace Key Page: Error while encrypting variable password of " + Bf.Name, ex);
+                        }
+                    });
+
+                    // For Global Variables
+                    foreach (GingerCore.Variables.VariableBase v in WorkSpace.Instance.Solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString))
+                    {
+                        try
+                        {
+                            WorkSpace.Instance.Solution.SaveSolution(false);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password Global variable {1}", v.Name), ex);
                         }
                     }
 
-                    if (res1)
+                    //For Environment parameters
+                    List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
+                    projEnvironments.ForEach(pe =>
                     {
-                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(pe);
-                    }
-                });
+                        try
+                        {
+                            bool res1 = false;
+                            foreach (EnvApplication ea in pe.Applications)
+                            {
+                                foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
+                                {
+                                    gp.Value = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList).Where(f => f.Guid.Equals(gp.Guid)).FirstOrDefault().Password;
+                                    res1 = true;
+                                }
 
-                List<GingerCore.Variables.VariableBase> sharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Variables.VariableBase>().Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
-                Parallel.ForEach(sharedRepoVarsList, sharedVar =>
-                {
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(sharedVar);
-                });
+                                foreach (Database db in ea.Dbs)
+                                {                                    
+                                    db.Pass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList).Where(f => f.Guid.Equals(db.Guid)).FirstOrDefault().Password;
+                                    res1 = true;
+                                }
+                            }
 
-                //For Shared Activites
-                List<Activity> sharedActivityList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().ToList();
-                Parallel.ForEach(sharedActivityList, sharedAct =>
-                {
-                    if (sharedAct.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString).Any())
+                            if (res1)
+                            {
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(pe);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Replace Key Page: Error while encrypting Environment parameter password of " + pe.Name, ex);
+                        }
+                    });
+
+                    //For shared variables
+                    List<GingerCore.Variables.VariableBase> sharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Variables.VariableBase>().Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                    foreach (GingerCore.Variables.VariableBase sharedVar in sharedRepoVarsList)
                     {
-                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(sharedAct);
+                        try
+                        {
+                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(sharedVar);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Replace Key Page: Error while encrypting Shared variable password  " + sharedVar.Name, ex);
+                        }
                     }
-                });
 
-                _solution.SaveSolution(false);
-                this.HideLoader();
+                    //For Shared Activites
+                    List<Activity> sharedActivityList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().ToList();
+                    foreach (Activity sharedAct in sharedActivityList)
+                    {
+                        try
+                        {
+                            if (sharedAct.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString).Any())
+                            {
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(sharedAct);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Replace Key Page: Error while encrypting Shared variable password  " + sharedAct.ActivityName, ex);
+                        }
+                    }
+
+                    _solution.SaveSolution(false);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error while in Encrypting variables passwords", ex);
+                }
+                finally
+                {
+                    this.HideLoader();
+                }
             });
 
             _pageGenericWin.Close();
@@ -375,7 +460,7 @@ namespace Ginger.SolutionWindows
                 UCEncryptionKeyPrevious.Visibility = Visibility.Collapsed;
 
                 UCEncryptionKey.Visibility = Visibility.Visible;
-                UCEncryptionKey.Validate.Visibility = Visibility.Hidden;
+                //UCEncryptionKey.Validate.Visibility = Visibility.Hidden;
             }
             else if (ReplaceRadioBtn.IsChecked.Value)
             {
@@ -388,8 +473,8 @@ namespace Ginger.SolutionWindows
 
                 UCEncryptionKeyPrevious.Visibility = Visibility.Visible;
                 UCEncryptionKeyPrevious.ValidFlag.Visibility = Visibility.Collapsed;
-                UCEncryptionKeyPrevious.InvalidFlag.Visibility = Visibility.Visible;
-                UCEncryptionKeyPrevious.Validate.Visibility = Visibility.Visible;
+                //UCEncryptionKeyPrevious.InvalidFlag.Visibility = Visibility.Collapsed;
+                //UCEncryptionKeyPrevious.Validate.Visibility = Visibility.Visible;
             }
         }
     }

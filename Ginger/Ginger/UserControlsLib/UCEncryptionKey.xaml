@@ -12,7 +12,7 @@
             <ColumnDefinition Width="50*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Horizontal">
-            <Label x:Name="Label" Style="{StaticResource @InputFieldLabelStyle}" ToolTip="Key for Encrypting/Descrypting all solution passwords">Encryption Key:</Label>
+            <Label x:Name="Label" Style="{StaticResource @InputFieldLabelStyle}" ToolTip="Key for Encrypting/Descrypting all solution passwords">Solution Passwords Encryption Key:</Label>
             <usercontrols:ImageMakerControl x:Name="InvalidFlag" SetAsFontImageWithSize="18" ImageType="Failed" ToolTip="Invalid Key" Foreground="Red" Width="20" Height="20" Margin="0,-20,0,0" Visibility="Collapsed"/>
             <usercontrols:ImageMakerControl x:Name="ValidFlag" SetAsFontImageWithSize="18" ImageType="Check" ToolTip="Valid Key" Foreground="Green" Width="20" Height="20" Margin="0,-20,0,0" Visibility="Collapsed"/>
         </StackPanel>
@@ -21,7 +21,8 @@
         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,29,0,0">
             <usercontrols:ImageMakerControl HorizontalAlignment="Left" SetAsFontImageWithSize="18" ImageType="Visible" ToolTip="Show Password" Width="20" Height="20" Foreground="{StaticResource $BackgroundColor_DarkBlue}" x:Name="ShowPassword" PreviewMouseDown="ShowPassword_PreviewMouseDown" PreviewMouseUp="ShowPassword_PreviewMouseUp" MouseLeave="ShowPassword_MouseLeave"/>
             <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Copy" ToolTip="Copy To Clipboard" Width="20" Height="20"  Foreground="{StaticResource $BackgroundColor_DarkBlue}" x:Name="CopyToClipboard" PreviewMouseDown="CopyToClipboardKeyMouseDown" Margin="5,0,0,0" Visibility="Collapsed"/>
-            <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Check" ToolTip="Valid Key" Width="20" Height="20"  Foreground="{StaticResource $BackgroundColor_DarkBlue}" x:Name="Validate" PreviewMouseDown="ValidateKeyMouseDown" Margin="5,0,0,0" Visibility="Hidden"/>            
+            <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Edit" ToolTip="Update Key" Width="20" Height="20"  Foreground="{StaticResource $BackgroundColor_DarkBlue}" x:Name="UpdateKey" PreviewMouseDown="UpdateKeyMouseDown" Margin="5,0,0,0" Visibility="Hidden"/>
+            <!--<usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Check" ToolTip="Valid Key" Width="20" Height="20"  Foreground="{StaticResource $BackgroundColor_DarkBlue}" x:Name="Validate" PreviewMouseDown="ValidateKeyMouseDown" Margin="5,0,0,0" Visibility="Collapsed"/>-->            
         </StackPanel>
         
     </Grid>

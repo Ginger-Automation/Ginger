@@ -1,4 +1,5 @@
 ﻿using Ginger.SolutionGeneral;
+using Ginger.SolutionWindows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace Ginger.UserControlsLib
 {
     /// <summary>
     /// Interaction logic for UCEncryptionKey.xaml
-    /// </summary>
+    /// </summary>  
     public partial class UCEncryptionKey : UserControl
     {
         public Solution mSolution;
@@ -34,6 +35,8 @@ namespace Ginger.UserControlsLib
         private void ValidateKeyMouseDown(object sender, MouseButtonEventArgs e) => ValidateKey();
 
         private void CopyToClipboardKeyMouseDown(object sender, MouseButtonEventArgs e) => CopyToClipBoard();
+
+        private void UpdateKeyMouseDown(object sender, MouseButtonEventArgs e) => UpdateKeyClick();
 
         private void ShowPasswordFunction()
         {
@@ -87,6 +90,11 @@ namespace Ginger.UserControlsLib
         public void ChangeLabel(string newLabel)
         {
             this.Label.Content = newLabel;
+        }
+
+        public void UpdateKeyClick()
+        {
+
         }
     }
 }

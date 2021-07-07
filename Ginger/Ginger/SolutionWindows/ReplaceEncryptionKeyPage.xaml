@@ -21,10 +21,12 @@
             <usercontrols1:UCEncryptionKey x:Name="UCEncryptionKeyPrevious"></usercontrols1:UCEncryptionKey>
             <usercontrols1:UCEncryptionKey x:Name="UCEncryptionKey"></usercontrols1:UCEncryptionKey>
         </StackPanel>
-        <Ginger:ucGrid x:Name="variablesGrid" Width="800" Height="350px" Grid.Row="0" ShowTagsFilter="Collapsed" IsReadOnly="False" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed"  ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed" ShowSaveAllChanges="Visible" ShowToolsBar="Collapsed">
+
+        <Ginger:ucGrid  x:Name="variablesGrid" Height="370px" ShowTagsFilter="Collapsed" IsReadOnly="False" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed"  ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed" ShowSaveAllChanges="Visible" ShowToolsBar="Collapsed">
             <Ginger:ucGrid.Title>
                 <GingerCore:ucTextDicResource Text="List of [Variables]"/>
             </Ginger:ucGrid.Title>
-        </Ginger:ucGrid>       
+        </Ginger:ucGrid>
+
     </StackPanel>
 </Page>

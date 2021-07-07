@@ -43,6 +43,8 @@ namespace Ginger.SolutionWindows
             InitializeComponent();
 
             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+            UCEncryptionKey.UpdateKey.PreviewMouseDown += ReplaceKeyBtn_Click;
+
             Init();
         }
 
@@ -53,6 +55,7 @@ namespace Ginger.SolutionWindows
                 Init();
             }
         }
+
 
         private void Init(Solution solution = null)
         {
@@ -99,7 +102,8 @@ namespace Ginger.SolutionWindows
             UCEncryptionKey.ValidFlag.Visibility = Visibility.Collapsed;
             UCEncryptionKey.InvalidFlag.Visibility = Visibility.Collapsed;
             UCEncryptionKey.EncryptionKeyPasswordBox.Password = mSolution.EncryptionKey;
-            UCEncryptionKey.CopyToClipboard.Visibility = Visibility.Visible;            
+            UCEncryptionKey.CopyToClipboard.Visibility = Visibility.Visible;
+            UCEncryptionKey.UpdateKey.Visibility = Visibility.Visible;
             mSolution.SaveBackup();
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
@@ -111,10 +115,10 @@ namespace Ginger.SolutionWindows
             undoBtn.Content = "Undo & Close";
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
             winButtons.Add(undoBtn);
-            Button replaceKeyBtn = new Button();
-            replaceKeyBtn.Content = "Update Key";
-            replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
-            winButtons.Add(replaceKeyBtn);
+            //Button replaceKeyBtn = new Button();
+            //replaceKeyBtn.Content = "Update Key";
+            //replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
+            //winButtons.Add(replaceKeyBtn);
 
             this.Height = 600;
             this.Width = 800;
@@ -147,7 +151,8 @@ namespace Ginger.SolutionWindows
             UCEncryptionKey.EncryptionKeyPasswordBox.IsEnabled = true;
             UCEncryptionKey.ValidFlag.Visibility = Visibility.Collapsed;
             UCEncryptionKey.InvalidFlag.Visibility = Visibility.Visible;
-            UCEncryptionKey.Validate.Visibility = Visibility.Visible;
+            //UCEncryptionKey.Validate.Visibility = Visibility.Visible;
+            UCEncryptionKey.UpdateKey.Visibility = Visibility.Visible;
             xInvalidKeyLabel.Visibility = Visibility.Visible;
 
             xCategoriesExpander.Visibility = Visibility.Collapsed;
@@ -159,10 +164,10 @@ namespace Ginger.SolutionWindows
             uSaveKeyBtn.Content = "Ok";
             uSaveKeyBtn.Click += new RoutedEventHandler(SaveKeyBtn_Click);
             winButtons.Add(uSaveKeyBtn);
-            Button replaceKeyBtn = new Button();
-            replaceKeyBtn.Content = "Replace Key";
-            replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
-            winButtons.Add(replaceKeyBtn);
+            //Button replaceKeyBtn = new Button();
+            //replaceKeyBtn.Content = "Update Key";
+            //replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
+            //winButtons.Add(replaceKeyBtn);
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons, true, "Cancel", CloseBtn_Click);
             return IsValidEncryptionKeyAdded;
         }

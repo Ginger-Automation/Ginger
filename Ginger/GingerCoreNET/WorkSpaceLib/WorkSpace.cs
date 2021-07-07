@@ -548,6 +548,12 @@ namespace amdocs.ginger.GingerCoreNET
                                 res = true;
                                 varReencryptedCount++;
                             }
+                            foreach (Database db in ea.Dbs)
+                            {
+                                db.Pass = EncryptionHandler.ReEncryptString(db.Pass, oldKey);
+                                res = true;
+                                varReencryptedCount++;
+                            }
                         }
                         if (res)
                         {
@@ -560,7 +566,7 @@ namespace amdocs.ginger.GingerCoreNET
                     Reporter.ToLog(eLogLevel.ERROR, "ReEncryptVariable- Failed to Reencrypt password ProjEnvironment variable.", ex);
                 }
 
-                //For Shared Variales
+                //For Shared Variables
                 List<GingerCore.Variables.VariableBase> sharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Variables.VariableBase>().Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
                 Parallel.ForEach(sharedRepoVarsList, sharedVar =>
                 {
