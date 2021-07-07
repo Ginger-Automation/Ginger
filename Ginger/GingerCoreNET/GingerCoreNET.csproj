@@ -271,7 +271,7 @@
 
   <ItemGroup>
     <Reference Include="AccountReport.Contracts">
-      <HintPath>..\..\..\..\Users\sudarshs\source\repos\GingerWebInterfaces_New\GingerGenericServices\AccountReport.Contracts\bin\Debug\netstandard2.0\AccountReport.Contracts.dll</HintPath>
+      <HintPath>..\..\..\..\GingerWebInterfaces\GingerGenericServices\AccountReport.Contracts\bin\Debug\netstandard2.0\AccountReport.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>

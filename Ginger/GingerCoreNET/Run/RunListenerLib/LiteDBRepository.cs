@@ -16,27 +16,25 @@ limitations under the License.
 */
 #endregion
 
+using AccountReport.Contracts;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
+using Ginger.Reports;
+using Ginger.Run;
+using GingerCore;
+using GingerCore.Activities;
+using LiteDB;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AccountReport.Contracts;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.CentralExecutionLogger;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.CoreNET.LiteDBFolder;
-using AutoMapper;
-using Ginger.Reports;
-using Ginger.Run;
-using GingerCore;
-using GingerCore.Activities;
-using GingerCore.Environments;
-using LiteDB;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib

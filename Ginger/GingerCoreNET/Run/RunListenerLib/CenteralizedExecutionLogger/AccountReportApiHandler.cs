@@ -17,22 +17,17 @@ limitations under the License.
 #endregion
 
 using AccountReport.Contracts;
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
-using Ginger.Reports;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace Amdocs.Ginger.CoreNET.CentralExecutionLogger
+namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 {
     public class AccountReportApiHandler
     {

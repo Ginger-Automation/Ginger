@@ -3,23 +3,16 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.CoreNET.LiteDBFolder;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Run;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
-using GingerCore.DataSource;
-using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 {
@@ -275,6 +268,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             AccountReportRunSet accountReportRunSet = new AccountReportRunSet();
             accountReportRunSet.Id = (Guid)runSetConfig.ExecutionID;
+            accountReportRunSet.ExecutionId = (Guid)runSetConfig.ExecutionID;
             accountReportRunSet.EntityId = runSetConfig.Guid;
             accountReportRunSet.Seq = 1;
             accountReportRunSet.Name = runSetConfig.Name;
@@ -299,6 +293,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             AccountReportRunSet accountReportRunSet = new AccountReportRunSet();
             accountReportRunSet.Id = (Guid)runSetConfig.ExecutionID;
+            accountReportRunSet.ExecutionId = (Guid)runSetConfig.ExecutionID;
             accountReportRunSet.EntityId = runSetConfig.Guid;
             accountReportRunSet.Name = runSetConfig.Name;
             accountReportRunSet.ElapsedEndTimeStamp = runSetConfig.Elapsed;
