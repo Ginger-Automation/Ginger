@@ -69,6 +69,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('g', "useScmShell", Required = false, HelpText = "Use shell Git Client")]
         public bool useScmShell { get; set; }
 
+        [Option('z', "sourceControlProxyServer", Required = false, HelpText = "Proxy for Source cotnrol URL")]
+        public string SourceControlProxyServer { get; set; }
+
+        [Option('x', "sourceControlProxyPort", Required = false, HelpText = "Proxy port")]
+        public string SourceControlProxyPort { get; set; }
+
+        [Option('q', "executionId", Required = false, HelpText = "Execution Id")]
+        public string RunSetExecutionId { get; set; }
 
     }
 
