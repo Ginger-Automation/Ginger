@@ -72,6 +72,10 @@ namespace Ginger.Reports
                 nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB), PublishLogToCentralDBRadioButton_CheckedHandler);
             //, new RoutedEventHandler(PublishLogToCentralDBRadioButton_Click)
 
+            xPublishingPhaseRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDataPublishingPhase),
+            xPublishingPhasePanel, _selectedExecutionLoggerConfiguration,
+            nameof(ExecutionLoggerConfiguration.DataPublishingPhase));
+
             xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
             xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
             nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
@@ -216,6 +220,8 @@ namespace Ginger.Reports
                  xEndPointURLTextBox.Visibility = Visibility.Visible;
                 xDeleteLocalData.Visibility = Visibility.Visible;
                 xDeleteLocalDataOnPublishPanel.Visibility = Visibility.Visible;
+                xPublishingPhase.Visibility = Visibility.Visible;
+                xPublishingPhasePanel.Visibility = Visibility.Visible;
             }
            else
             {
@@ -223,6 +229,8 @@ namespace Ginger.Reports
                 xEndPointURLTextBox.Visibility = Visibility.Collapsed;
                 xDeleteLocalData.Visibility = Visibility.Collapsed;
                 xDeleteLocalDataOnPublishPanel.Visibility = Visibility.Collapsed;
+                xPublishingPhase.Visibility = Visibility.Collapsed;
+                xPublishingPhasePanel.Visibility = Visibility.Collapsed;
             }
         }               
     }

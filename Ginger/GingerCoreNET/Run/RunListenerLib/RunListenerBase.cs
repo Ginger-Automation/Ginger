@@ -57,7 +57,7 @@ namespace Amdocs.Ginger.Run
 
         }
         #endregion General
-
+       
         #region Runner
         public virtual void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {

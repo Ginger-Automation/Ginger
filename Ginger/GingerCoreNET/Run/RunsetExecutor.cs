@@ -417,6 +417,11 @@ namespace Ginger.Run
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
                 }
 
+                if(mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
+                {
+                    Runners[0].Centeralized_Logger.RunSetStart(RunSetConfig);
+                }                
+
                 //Start Run 
                 if (doContinueRun == false)
                 {
@@ -434,7 +439,7 @@ namespace Ginger.Run
                 if (RunSetConfig.RunModeParallel)
                 {
                     foreach (GingerRunner GR in Runners)
-                    {
+                    {                        
                         if (mStopRun)
                         {
                             return;
@@ -513,11 +518,15 @@ namespace Ginger.Run
 
                 Task.WaitAll(runnersTasks.ToArray());
                 mStopwatch.Stop();
-
+                RunSetConfig.Elapsed = mStopwatch.ElapsedMilliseconds;
                 //Do post execution items
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 //ExecutionLoggerManager.RunSetEnd();
                 Runners[0].ExecutionLoggerManager.RunSetEnd();
+                if (mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
+                {
+                    Runners[0].Centeralized_Logger.RunSetEnd(RunSetConfig);
+                }
                 if (mStopRun == false)
                 {
                     // Process all post execution RunSet Operations
@@ -530,7 +539,10 @@ namespace Ginger.Run
                 CloseAllEnvironments();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
-                await  Runners[0].ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
+                if(mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.PostExecution)
+                {
+                    await Runners[0].ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
+                }                
                
             }
             finally

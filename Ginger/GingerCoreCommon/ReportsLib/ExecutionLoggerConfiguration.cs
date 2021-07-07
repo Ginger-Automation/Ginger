@@ -58,6 +58,14 @@ namespace Ginger.Reports
             No
         }
 
+        public enum eDataPublishingPhase
+        {
+            [EnumValueDescription("Post Execution")]
+            PostExecution,
+            [EnumValueDescription("During Execution")]
+            DuringExecution
+        }
+
         // Why we serialzie!!?
 
         [IsSerializedForLocalRepository]
@@ -116,6 +124,21 @@ namespace Ginger.Reports
             set
             {
                 mPublishLogToCentralDB = value;               
+            }
+        }
+
+        private eDataPublishingPhase mDataPublishingPhase = eDataPublishingPhase.PostExecution;
+
+        [IsSerializedForLocalRepository]
+        public eDataPublishingPhase DataPublishingPhase
+        {
+            get
+            {
+                return mDataPublishingPhase;
+            }
+            set
+            {
+                mDataPublishingPhase = value;
             }
         }
 

@@ -117,6 +117,13 @@ namespace GingerCore.Activities
 
         public override string GetNameForFileName() { return Name; }
 
+        /// <summary>
+        /// ID which been provided for each execution instance on the Activity
+        /// </summary>
+        public Guid ExecutionId { get; set; }
+
+        public Guid ParentExecutionId { get; set; }
+
         public void AddActivityToGroup(Activity activity, int insertIndx = -1)
         {
             if (activity == null)
@@ -395,9 +402,9 @@ namespace GingerCore.Activities
         public string TempReportFolder { get; set; }
 
         // Only for Run time, no need to serialize
-        public uint StartTimeStamp { get; set; }
+        public DateTime StartTimeStamp { get; set; }
 
-        public uint EndTimeStamp { get; set; }
+        public DateTime EndTimeStamp { get; set; }
 
         private eActivitiesGroupRunStatus mRunStatus;
         public eActivitiesGroupRunStatus RunStatus
