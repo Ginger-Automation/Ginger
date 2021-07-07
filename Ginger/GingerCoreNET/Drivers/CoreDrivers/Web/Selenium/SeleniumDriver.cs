@@ -5399,9 +5399,16 @@ namespace GingerCore.Drivers
 
         public void InjectGingerLiveSpy()
         {
-            AddJavaScriptToPage(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLiveSpy));
-            ((IJavaScriptExecutor)Driver).ExecuteScript("define_GingerLibLiveSpy();", null);
-            string rc = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.AddScript(arguments[0]);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min));
+            try
+            {
+                AddJavaScriptToPage(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLiveSpy));
+                ((IJavaScriptExecutor)Driver).ExecuteScript("define_GingerLibLiveSpy();", null);
+                string rc = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.AddScript(arguments[0]);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min));
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during InjectGingerLiveSpy", ex);
+            }
         }
 
         public string XPoint;
