@@ -543,7 +543,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (!string.IsNullOrEmpty(currentPOMElementInfo.Path))
                     {
-                        PayLoad PLSwitchFrame = new PayLoad("HTMLElementAction", "SwitchFrame", eLocateBy.ByXPath.ToString(), currentPOMElementInfo.XPath, string.Empty);
+                        PayLoad PLSwitchFrame = new PayLoad("HTMLElementAction", "SwitchFrame", eLocateBy.ByXPath.ToString(), currentPOMElementInfo.Path, string.Empty);
                         PayLoad ResponseSwitchFrame = Send(PLSwitchFrame);
 
                         if(ResponseSwitchFrame.IsErrorPayLoad())
