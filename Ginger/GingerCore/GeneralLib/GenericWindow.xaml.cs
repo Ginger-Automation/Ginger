@@ -212,13 +212,13 @@ namespace Ginger
 
             if (loaderElement != null)
             {
-                loaderElement.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
+                loaderElement.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
                 Thickness margin = loaderElement.Margin;
-                if (margin.Right < 10)
-                    margin.Right = 10;
+                if (margin.Left < 10)
+                    margin.Left = 10;
                 loaderElement.Margin = margin;
                 //loaderElement.Style = this.FindResource("$RoundTextButtonStyle_Generic") as Style;
-                DockPanel.SetDock(loaderElement, Dock.Right);
+                DockPanel.SetDock(loaderElement, Dock.Left);
                 BottomPanel.Children.Add(loaderElement);
 
             }

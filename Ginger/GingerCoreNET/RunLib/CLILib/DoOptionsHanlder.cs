@@ -45,10 +45,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        private async static void DoInfo(string solution)
+        private static void DoInfo(string solution)
         {
             // TODO: print info on solution, how many BFs etc, try to read all items - for Linux deser test
-            await WorkSpace.Instance.OpenSolution(solution);
+            WorkSpace.Instance.OpenSolution(solution);
             StringBuilder stringBuilder = new StringBuilder(Environment.NewLine);
             stringBuilder.Append("Solution Name  :").Append(WorkSpace.Instance.Solution.Name).Append(Environment.NewLine);
             stringBuilder.Append("Business Flows :").Append(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Count).Append(Environment.NewLine);
@@ -59,9 +59,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
         }
 
-        private async static void DoAnalyze(string solution)
+        private static void DoAnalyze(string solution)
         {
-            await WorkSpace.Instance.OpenSolution(solution);
+            WorkSpace.Instance.OpenSolution(solution);
 
             AnalyzerUtils analyzerUtils = new AnalyzerUtils();
             ObservableList<AnalyzerItemBase> issues = new ObservableList<AnalyzerItemBase>();

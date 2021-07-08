@@ -52,12 +52,12 @@ namespace Ginger.SolutionWindows
             GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform);
         }        
 
-        private async void EncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
+        private void EncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
         {
             UCEncryptionKey.CheckKeyCombination();
         }
 
-        private async void OKButton_Click(object sender, RoutedEventArgs e)
+        private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace Ginger.SolutionWindows
                     return;
                 }
 
-               await WorkSpace.Instance.OpenSolution(mSolution.Folder);
+                WorkSpace.Instance.OpenSolution(mSolution.Folder);
 
                 //Create default items                
                 AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);

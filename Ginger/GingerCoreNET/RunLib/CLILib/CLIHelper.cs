@@ -141,14 +141,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         //UserProfile WorkSpace.Instance.UserProfile;
         RunSetConfig mRunSetConfig;
 
-        public async Task<bool> LoadSolution()
+        public bool LoadSolution()
         {
             try
             {
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution...");
                 // SetDebugLevel();//disabling because it is overwriting the UserProfile setting for logging level
                 DownloadSolutionFromSourceControl();
-                return await OpenSolution();
+                return OpenSolution();
             }
             catch (Exception ex)
             {
@@ -446,11 +446,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        private async Task<bool> OpenSolution()
+        private bool OpenSolution()
         {
             try
             {
-                return await WorkSpace.Instance.OpenSolution(Solution, EncryptionKey);
+                return WorkSpace.Instance.OpenSolution(Solution, EncryptionKey);
             }
             catch (Exception ex)
             {

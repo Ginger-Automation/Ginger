@@ -153,7 +153,7 @@ namespace Ginger.SolutionWindows
             UCEncryptionKey.InvalidFlag.Visibility = Visibility.Visible;
             //UCEncryptionKey.Validate.Visibility = Visibility.Visible;
             UCEncryptionKey.UpdateKey.Visibility = Visibility.Visible;
-            xInvalidKeyLabel.Visibility = Visibility.Visible;
+            //xInvalidKeyLabel.Visibility = Visibility.Visible;
 
             xCategoriesExpander.Visibility = Visibility.Collapsed;
 

@@ -1,6 +1,5 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Functionalities;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
@@ -10,21 +9,13 @@ using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Environments;
-using GingerCore.GeneralLib;
+using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.SolutionWindows
 {
@@ -46,11 +37,11 @@ namespace Ginger.SolutionWindows
             UCEncryptionKeyPrevious.ChangeLabel("Solution Passwords Old Encryption Key");
             UCEncryptionKey.ChangeLabel("Solution Password New Encryption Key");
 
-            ReplaceRadioBtn.Click += radioBtn_Click;
-            ForgetRadioBtn.Click += radioBtn_Click;
+            xReplaceRadioButton.Click += radioBtn_Click;
+            xForgetRadioButton.Click += radioBtn_Click;
 
-            variablesGrid.btnMarkAll.Visibility = Visibility.Collapsed;
-            variablesGrid.Visibility = Visibility.Collapsed;
+            xSolutionPasswordsParamtersGrid.btnMarkAll.Visibility = Visibility.Collapsed;
+            xSolutionPasswordsParamtersGrid.Visibility = Visibility.Collapsed;
             UCEncryptionKeyPrevious.Visibility = Visibility.Collapsed;
             UCEncryptionKey.Visibility = Visibility.Collapsed;
 
@@ -67,9 +58,9 @@ namespace Ginger.SolutionWindows
             defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.Name), WidthWeight = 8, Header = "Item Name", ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.ParentName), WidthWeight = 7, Header = "Parent Name", ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = nameof(GingerCore.Variables.VariablePasswordString.Password), WidthWeight = 10, Header = "Value" });
-            variablesGrid.SetAllColumnsDefaultView(defView);
-            variablesGrid.InitViewItems();
-            variablesGrid.SetTitleLightStyle = true;
+            xSolutionPasswordsParamtersGrid.SetAllColumnsDefaultView(defView);
+            xSolutionPasswordsParamtersGrid.InitViewItems();
+            xSolutionPasswordsParamtersGrid.SetTitleLightStyle = true;
         }
 
         public bool ShowAsWindow(Solution solution, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
@@ -92,25 +83,52 @@ namespace Ginger.SolutionWindows
             uOkBtn.Content = "Ok";
             uOkBtn.Click += new RoutedEventHandler(OkBtn_Click);
             uOkBtn.Visibility = Visibility.Collapsed;
-            winButtons.Add(uOkBtn);
+            
             uSaveKeyBtn = new Button();
             uSaveKeyBtn.Content = "Save Key";
             uSaveKeyBtn.Click += new RoutedEventHandler(SaveKeyBtn_Click);
-            winButtons.Add(uSaveKeyBtn);
+           
             uCloseBtn = new Button();
             uCloseBtn.Content = "Cancel";
             uCloseBtn.Click += new RoutedEventHandler(CloseBtn_Click);
             winButtons.Add(uCloseBtn);
-
+            winButtons.Add(uSaveKeyBtn);
+            winButtons.Add(uOkBtn);
             loaderElement = new ImageMakerControl();
             loaderElement.Name = "xProcessingImage";
             loaderElement.Height = 30;
             loaderElement.Width = 30;
-            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
+            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;            
             loaderElement.Visibility = Visibility.Collapsed;
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Replace/Forget Encryption key", this, winButtons, false, "Cancel", CloseBtn_Click, false, loaderElement);
             return validKeyAdded;
+        }
+
+        private void radioBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (xForgetRadioButton.IsChecked.Value)
+            {
+                xDescriptionLabel.Content = "Setting a new key will clear all encrypted values and list of encrypted variables will be shown to set a new values. " +
+                    "\nAlso the new encryption key needs to be updated on all integrations like Jenkins, Bamboo, eTDM etc." +
+                    "\nEnsure to make a note of new Key.";
+                UCEncryptionKeyPrevious.Visibility = Visibility.Collapsed;
+
+                UCEncryptionKey.Visibility = Visibility.Visible;
+                //UCEncryptionKey.Validate.Visibility = Visibility.Hidden;
+            }
+            else if (xReplaceRadioButton.IsChecked.Value)
+            {
+
+                xDescriptionLabel.Content = "Replacing a key will re-encrypt all the encrypted values with a new key." +
+                    "\nAlso the new key needs to be updated on all integrations like Jenkins, Bamboo, eTDM etc." +
+                    "\nEnsure to make a note of new Key.";
+                UCEncryptionKeyPrevious.Visibility = Visibility.Visible;
+                UCEncryptionKey.Visibility = Visibility.Visible;
+
+                UCEncryptionKeyPrevious.Visibility = Visibility.Visible;
+                UCEncryptionKeyPrevious.ValidFlag.Visibility = Visibility.Collapsed;
+            }
         }
 
         private async void PrevEncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
@@ -141,63 +159,12 @@ namespace Ginger.SolutionWindows
             UCEncryptionKey.CheckKeyCombination();
         }
 
-        private void CloseBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (ForgetRadioBtn.IsEnabled)
-            {
-                _pageGenericWin.Close();
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.ShowInfoMessage, "Please populate all Values in grid. Or Click Ok.");
-            }
-        }
 
-        private async void SaveKeyBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (ForgetRadioBtn.IsChecked.Value && UCEncryptionKey.CheckKeyCombination())
-            {
-                _solution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
-                _solution.SaveEncryptionKey();
-                _solution.SaveSolution(false);
-
-                uOkBtn.Visibility = Visibility.Visible;
-                uSaveKeyBtn.IsEnabled = false;
-                ForgetRadioBtn.IsEnabled = false;
-                ReplaceRadioBtn.IsEnabled = false;
-                UCEncryptionKey.IsEnabled = false;
-                validKeyAdded = true;
-                await InitGrid();
-            }
-            else if (ReplaceRadioBtn.IsChecked.Value && UCEncryptionKeyPrevious.ValidateKey() && UCEncryptionKey.CheckKeyCombination())
-            {
-                this.ShowLoader();
-                _solution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
-                _solution.SaveEncryptionKey();
-                _solution.SaveSolution(false);
-                if (WorkSpace.Instance.SolutionRepository == null)
-                {
-                    WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-                    WorkSpace.Instance.SolutionRepository.Open(_solution.ContainingFolderFullPath);
-                    WorkSpace.Instance.Solution = _solution;
-                }
-                int varReencryptedCount = await WorkSpace.Instance.ReEncryptVariable(UCEncryptionKeyPrevious.EncryptionKeyPasswordBox.Password);
-                if (varReencryptedCount > 0)
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, varReencryptedCount + " Variables Re-encrypted using new Encryption key across Solution.\n Please check in all changes to source control");
-                }
-
-                variablesGrid.Visibility = Visibility.Collapsed;
-                validKeyAdded = true;
-                this.HideLoader();
-                _pageGenericWin.Close();
-            }
-        }
 
         private void ShowLoader()
         {
             this.Dispatcher.Invoke(() =>
-            {
+            {                
                 loaderElement.Visibility = Visibility.Visible;
                 uOkBtn.IsEnabled = false;
             });
@@ -212,172 +179,23 @@ namespace Ginger.SolutionWindows
             });
         }
 
-        private async Task InitGrid()
+        private void ShowStatusMessage(string message)
         {
-            ObservableList<GingerCore.Variables.VariablePasswordString> variables = new ObservableList<GingerCore.Variables.VariablePasswordString>();
-            await Task.Run(() =>
+            xStatusLabel.Dispatcher.Invoke(() =>
             {
-                this.ShowLoader();
-                try
-                {
-                    if (WorkSpace.Instance.SolutionRepository == null)//?why this will be null ?????
-                    {
-                        WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-                        WorkSpace.Instance.SolutionRepository.Open(_solution.ContainingFolderFullPath);
-                    }
-
-                    // For BF and Activity
-                    List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()?.ToList();
-                    Parallel.ForEach(Bfs, Bf =>
-                    {
-                        foreach (GingerCore.Variables.VariablePasswordString item in Bf.GetBFandActivitiesVariabeles(true).Where(f => f is GingerCore.Variables.VariablePasswordString))
-                        {
-                            item.Password = "";
-                            variables.Add(item);
-                        }
-                    });
-
-                    //for Golbal Variables 
-                    foreach (GingerCore.Variables.VariablePasswordString v in _solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString))
-                    {
-                        v.Password = "";
-                        v.ParentType = string.IsNullOrEmpty(v.ParentType) ? "Global Variable" : v.ParentType;
-                        variables.Add(v);
-                    }
-
-                    //For Project environments
-                    List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
-                    projEnvironments.ForEach(pe =>
-                    {
-                        GingerCore.Variables.VariablePasswordString vp;
-                        foreach (EnvApplication ea in pe.Applications)
-                        {
-                            foreach (Database db in ea.Dbs)
-                            {
-                                if (!string.IsNullOrEmpty(db.Pass))
-                                {
-                                    vp = new GingerCore.Variables.VariablePasswordString();
-                                    vp.Name = db.Name;
-                                    vp.Password = "";
-                                    vp.ParentType = "Database Password";
-                                    vp.ParentName = ea.Name;
-                                    vp.Guid = db.Guid;
-                                    variables.Add(vp);
-                                }
-                            }
-                            foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
-                            {
-                                vp = new GingerCore.Variables.VariablePasswordString();
-                                vp.Name = gp.Name;
-                                vp.Password = "";
-                                vp.ParentType = "Environment Param";
-                                vp.ParentName = ea.Name;
-                                vp.Guid = gp.Guid;
-                                variables.Add(vp);
-                            }
-                        }
-                    });
-
-                    //For Shared Variales
-                    List<GingerCore.Variables.VariableBase> sharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Variables.VariableBase>().Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
-                    Parallel.ForEach(sharedRepoVarsList, sharedVar =>
-                    {
-                        ((GingerCore.Variables.VariablePasswordString)sharedVar).Password = "";
-                        sharedVar.ParentType = "Shared Variable";
-                        variables.Add((GingerCore.Variables.VariablePasswordString)sharedVar);
-                    });
-
-                    //For Shared Activites
-                    List<Activity> sharedActivityList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().ToList();
-                    Parallel.ForEach(sharedActivityList, sharedAct =>
-                    {
-                        List<GingerCore.Variables.VariableBase> sharedActivityVariables = sharedAct.Variables?.Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
-                        foreach (GingerCore.Variables.VariablePasswordString v in sharedActivityVariables)
-                        {
-                            v.Password = "";
-                            v.ParentType = "Shared Activity";
-                            variables.Add(v);
-                        }
-                    });
-
-                    //For Email passwords
-                    var runSetConfigs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                    foreach (var rsc in runSetConfigs)
-                    {
-                        GingerCore.Variables.VariablePasswordString vp;
-                        foreach (var ra in rsc.RunSetActions)
-                        {
-                            try
-                            {
-                                if (ra is RunSetActionHTMLReportSendEmail)
-                                {
-                                    if (((RunSetActionHTMLReportSendEmail)ra).Email != null && !string.IsNullOrEmpty(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass))
-                                    {
-                                        vp = new GingerCore.Variables.VariablePasswordString();
-                                        vp.Name = ra.ItemName;
-                                        vp.Password = "";
-                                        vp.ParentType = "Run Set Actions";
-                                        vp.ParentName = rsc.Name;
-                                        vp.Guid = ((RunSetActionHTMLReportSendEmail)ra).Email.Guid;
-                                        variables.Add(vp);
-                                    }
-                                }
-                                else if (ra is RunSetActionSendFreeEmail)
-                                {
-                                    if (((RunSetActionSendFreeEmail)ra).Email != null && !string.IsNullOrEmpty(((RunSetActionSendFreeEmail)ra).Email.SMTPPass))
-                                    {
-                                        vp = new GingerCore.Variables.VariablePasswordString();
-                                        vp.Name = ra.ItemName;
-                                        vp.Password = "";
-                                        vp.ParentType = "Run Set Actions";
-                                        vp.ParentName = rsc.Name;
-                                        vp.Guid = ((RunSetActionSendFreeEmail)ra).Email.Guid;
-                                        variables.Add(vp);
-                                    }
-                                }
-                                else if (ra is RunSetActionSendSMS)
-                                {
-                                    if (((RunSetActionSendSMS)ra).SMSEmail != null && !string.IsNullOrEmpty(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass))
-                                    {
-                                        vp = new GingerCore.Variables.VariablePasswordString();
-                                        vp.Name = ra.ItemName;
-                                        vp.Password = "";
-                                        vp.ParentType = "Run Set Actions";
-                                        vp.ParentName = rsc.Name;
-                                        vp.Guid = ((RunSetActionSendSMS)ra).SMSEmail.Guid;
-                                        variables.Add(vp);
-                                    }
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.WARN, "Error while Retrieving encrypted SMTP password for " + rsc.Name, ex); throw;
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.WARN, "Retrieving encrypted variables for setting new value", ex);
-                }
-                finally
-                {
-                    this.HideLoader();
-                }
+                xStatusLabel.Visibility = Visibility.Visible;
+                xStatusLabel.Content = message;
             });
-
-            if (!variables.Any())
-            {
-                _pageGenericWin.Close();
-            }
-            SetGridsView();
-
-            variablesGrid.DataSourceList = variables;
-            variablesGrid.RowChangedEvent += grdGroups_RowChangedEvent;
-            variablesGrid.Title = "List of Password " + GingerDicser.GetTermResValue(eTermResKey.Variable);
-
-            variablesGrid.Visibility = Visibility.Visible;
         }
+        private void HideStatusMessage()
+        {
+            xStatusLabel.Dispatcher.Invoke(() =>
+            {
+                xStatusLabel.Visibility = Visibility.Collapsed;
+                xStatusLabel.Content = "";
+            });
+        }
+
 
         private void grdGroups_RowChangedEvent(object sender, EventArgs e)
         {
@@ -386,12 +204,66 @@ namespace Ginger.SolutionWindows
 
         public void EncryptGridValues()
         {
-            foreach (GingerCore.Variables.VariablePasswordString vp in variablesGrid.DataSourceList)
+            foreach (GingerCore.Variables.VariablePasswordString vp in xSolutionPasswordsParamtersGrid.DataSourceList)
             {
                 if (!string.IsNullOrEmpty(vp.Password) && !EncryptionHandler.IsStringEncrypted(vp.Password))
                 {
                     vp.Password = EncryptionHandler.EncryptwithKey(vp.Password);
                 }
+            }
+        }
+
+   
+        private async void SaveKeyBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (xForgetRadioButton.IsChecked.Value && UCEncryptionKey.CheckKeyCombination())
+            {
+                if (Reporter.ToUser(eUserMsgKey.ForgotKeySaveChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                {
+                    _solution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
+                    _solution.SaveEncryptionKey();
+                    _solution.SaveSolution(false);
+
+                    uOkBtn.Visibility = Visibility.Visible;                   
+                    uSaveKeyBtn.Visibility = Visibility.Collapsed;
+                    uCloseBtn.Visibility = Visibility.Collapsed;
+    
+                    xForgetRadioButton.IsEnabled = false;
+                    xReplaceRadioButton.IsEnabled = false;
+                    UCEncryptionKey.IsEnabled = false;
+                    validKeyAdded = true;
+                    await LoadEncryptedParamtersList();
+                }
+
+
+            }
+            else if (xReplaceRadioButton.IsChecked.Value && UCEncryptionKeyPrevious.ValidateKey() && UCEncryptionKey.CheckKeyCombination())
+            {
+                this.ShowLoader();
+                ShowStatusMessage("Updating new encryption key for solution");
+                uSaveKeyBtn.Visibility = Visibility.Collapsed;
+                uCloseBtn.Visibility = Visibility.Collapsed;
+                _solution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
+                _solution.SaveEncryptionKey();
+                _solution.SaveSolution(false);
+                if (WorkSpace.Instance.SolutionRepository == null)
+                {
+                    WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+                    WorkSpace.Instance.SolutionRepository.Open(_solution.ContainingFolderFullPath);
+                    WorkSpace.Instance.Solution = _solution;
+                }
+                int varReencryptedCount = await HandlePasswordValuesReEncryption(UCEncryptionKeyPrevious.EncryptionKeyPasswordBox.Password);
+                this.HideLoader();
+                HideStatusMessage();
+                if (varReencryptedCount > 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, varReencryptedCount + " Variables Re-encrypted using new Encryption key across Solution.\n Please check in all changes to source control");
+                }
+
+                xSolutionPasswordsParamtersGrid.Visibility = Visibility.Collapsed;
+                validKeyAdded = true;
+               
+                _pageGenericWin.Close();
             }
         }
 
@@ -402,6 +274,7 @@ namespace Ginger.SolutionWindows
                 try
                 {
                     this.ShowLoader();
+                    ShowStatusMessage("Saving the new password values for parameters...");
                     EncryptGridValues();
 
                     // For BF and Activity
@@ -445,7 +318,7 @@ namespace Ginger.SolutionWindows
                             {
                                 foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
                                 {
-                                    gp.Value = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList).Where(f => f.Guid.Equals(gp.Guid)).FirstOrDefault().Password;
+                                    gp.Value = ((ObservableList<GingerCore.Variables.VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList).Where(f => f.Guid.Equals(gp.Guid)).FirstOrDefault().Password;
                                     res1 = true;
                                 }
 
@@ -453,7 +326,7 @@ namespace Ginger.SolutionWindows
                                 {
                                     if (!string.IsNullOrEmpty(db.Pass))
                                     {
-                                        db.Pass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList).Where(f => f.Guid.Equals(db.Guid)).FirstOrDefault().Password;
+                                        db.Pass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList).Where(f => f.Guid.Equals(db.Guid)).FirstOrDefault().Password;
                                         res1 = true;
                                     }
                                 }
@@ -514,21 +387,21 @@ namespace Ginger.SolutionWindows
                                 if (ra is RunSetActionHTMLReportSendEmail && ((RunSetActionHTMLReportSendEmail)ra).Email != null
                                 && !string.IsNullOrEmpty(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass))
                                 {
-                                    ((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList)
+                                    ((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList)
                                     .Where(f => f.Guid.Equals(((RunSetActionHTMLReportSendEmail)ra).Email.Guid)).FirstOrDefault().Password;
                                     res = true;
                                 }
                                 else if (ra is RunSetActionSendFreeEmail && ((RunSetActionSendFreeEmail)ra).Email != null
                                 && !string.IsNullOrEmpty(((RunSetActionSendFreeEmail)ra).Email.SMTPPass))
                                 {
-                                    ((RunSetActionSendFreeEmail)ra).Email.SMTPPass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList)
+                                    ((RunSetActionSendFreeEmail)ra).Email.SMTPPass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList)
                                     .Where(f => f.Guid.Equals(((RunSetActionSendFreeEmail)ra).Email.Guid)).FirstOrDefault().Password;
                                     res = true;
                                 }
                                 else if (ra is RunSetActionSendSMS && ((RunSetActionSendSMS)ra).SMSEmail != null
                                     && !string.IsNullOrEmpty(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass))
                                 {
-                                    ((RunSetActionSendSMS)ra).SMSEmail.SMTPPass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList)
+                                    ((RunSetActionSendSMS)ra).SMSEmail.SMTPPass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList)
                                     .Where(f => f.Guid.Equals(((RunSetActionSendSMS)ra).SMSEmail.Guid)).FirstOrDefault().Password;
                                     res = true;
                                 }
@@ -553,38 +426,425 @@ namespace Ginger.SolutionWindows
                 finally
                 {
                     this.HideLoader();
+                    HideStatusMessage();
                 }
             });
 
             _pageGenericWin.Close();
         }
 
-        private void radioBtn_Click(object sender, RoutedEventArgs e)
+
+        private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (ForgetRadioBtn.IsChecked.Value)
+            _pageGenericWin.Close();
+        }
+
+        private async Task LoadEncryptedParamtersList()
+        {
+            ObservableList<GingerCore.Variables.VariablePasswordString> variables = new ObservableList<GingerCore.Variables.VariablePasswordString>();
+            await Task.Run(() =>
             {
-                xDescriptionLabel.Content = "Setting a new key will clear all encrypted values and list of encrypted variables will be shown to set a new values. " +
-                    "\nAlso the new encryption key needs to be updated on all integrations like Jenkins, Bamboo, eTDM etc." +
-                    "\nEnsure to make a note of new Key.";
-                UCEncryptionKeyPrevious.Visibility = Visibility.Collapsed;
+                this.ShowLoader();
+                this.ShowStatusMessage("Searching all password values in the solution...");
+                try
+                {
+                    if (WorkSpace.Instance.SolutionRepository == null)
+                    {
+                        WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+                        WorkSpace.Instance.SolutionRepository.Open(_solution.ContainingFolderFullPath);
+                    }
 
-                UCEncryptionKey.Visibility = Visibility.Visible;
-                //UCEncryptionKey.Validate.Visibility = Visibility.Hidden;
-            }
-            else if (ReplaceRadioBtn.IsChecked.Value)
+                    // For BF and Activity
+                    List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()?.ToList();
+                    Parallel.ForEach(Bfs, Bf =>
+                    {
+                        foreach (GingerCore.Variables.VariablePasswordString item in Bf.GetBFandActivitiesVariabeles(true).Where(f => f is GingerCore.Variables.VariablePasswordString))
+                        {
+                            item.Password = "";
+                            variables.Add(item);
+                        }
+                    });
+
+                    //for Golbal Variables 
+                    foreach (GingerCore.Variables.VariablePasswordString v in _solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString))
+                    {
+                        v.Password = "";
+                        v.ParentType = string.IsNullOrEmpty(v.ParentType) ? "Global Variable" : v.ParentType;
+                        variables.Add(v);
+                    }
+
+                    //For Project environments
+                    List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
+                    projEnvironments.ForEach(pe =>
+                    {
+                       // GingerCore.Variables.VariablePasswordString vp;
+                        foreach (EnvApplication ea in pe.Applications)
+                        {
+                            foreach (Database db in ea.Dbs)
+                            {
+                                if (!string.IsNullOrEmpty(db.Pass))
+                                {
+                                    variables.Add(CreatePasswordVariable(db.Name, "Database Password", pe.Name+"-->"+ea.Name, db.Guid));
+                                }
+                            }
+                            foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
+                            {
+                                variables.Add(CreatePasswordVariable(gp.Name, "Environment Parameter", pe.Name + "-->" + ea.Name, gp.Guid));
+                            }
+                        }
+                    });
+
+                    //For Shared Variales
+                    List<GingerCore.Variables.VariableBase> sharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Variables.VariableBase>().Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                    Parallel.ForEach(sharedRepoVarsList, sharedVar =>
+                    {
+                        ((GingerCore.Variables.VariablePasswordString)sharedVar).Password = "";
+                        sharedVar.ParentType = "Shared Variable";
+                        variables.Add((GingerCore.Variables.VariablePasswordString)sharedVar);
+                    });
+
+                    //For Shared Activites
+                    List<Activity> sharedActivityList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().ToList();
+                    Parallel.ForEach(sharedActivityList, sharedAct =>
+                    {
+                        List<GingerCore.Variables.VariableBase> sharedActivityVariables = sharedAct.Variables?.Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                        foreach (GingerCore.Variables.VariablePasswordString v in sharedActivityVariables)
+                        {
+                            v.Password = "";
+                            v.ParentType = "Shared Activity";
+                            variables.Add(v);
+                        }
+                    });
+
+                    //For Email passwords
+                    var runSetConfigs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                    foreach (var rsc in runSetConfigs)
+                    {
+                        //VariablePasswordString vp;
+                        foreach (var ra in rsc.RunSetActions)
+                        {
+                            try
+                            {
+                                if (ra is RunSetActionHTMLReportSendEmail)
+                                {
+                                    if (((RunSetActionHTMLReportSendEmail)ra).Email != null && !string.IsNullOrEmpty(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass))
+                                    {
+                                        variables.Add(CreatePasswordVariable(ra.ItemName, "Run Set Operation", rsc.Name,((RunSetActionHTMLReportSendEmail)ra).Email.Guid));
+                                    }
+                                }
+                                else if (ra is RunSetActionSendFreeEmail)
+                                {
+                                    if (((RunSetActionSendFreeEmail)ra).Email != null && !string.IsNullOrEmpty(((RunSetActionSendFreeEmail)ra).Email.SMTPPass))
+                                    {
+                                        variables.Add(CreatePasswordVariable(ra.ItemName, "Run Set Operation", rsc.Name, ((RunSetActionSendFreeEmail)ra).Email.Guid));
+                                    }
+                                }
+                                else if (ra is RunSetActionSendSMS)
+                                {
+                                    if (((RunSetActionSendSMS)ra).SMSEmail != null && !string.IsNullOrEmpty(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass))
+                                    {
+                                        variables.Add(CreatePasswordVariable(ra.ItemName, "Run Set Operation", rsc.Name, ((RunSetActionSendSMS)ra).SMSEmail.Guid));
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.WARN, "Error while Retrieving encrypted SMTP password for " + rsc.Name, ex); throw;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Retrieving encrypted variables for setting new value", ex);
+                }
+                finally
+                {
+                    this.HideLoader();
+                    ShowStatusMessage("Please set the new values for password paramters");
+                }
+            });
+
+            if (!variables.Any())
             {
-
-                xDescriptionLabel.Content = "Replacing a key will reencrypt all the encrypted values with a new key." +
-                    "\nAlso the new key needs to be updated on all integrations like Jenkins, Bamboo, eTDM etc." +
-                    "\nEnsure to make a note of new Key.";
-                UCEncryptionKeyPrevious.Visibility = Visibility.Visible;
-                UCEncryptionKey.Visibility = Visibility.Visible;
-
-                UCEncryptionKeyPrevious.Visibility = Visibility.Visible;
-                UCEncryptionKeyPrevious.ValidFlag.Visibility = Visibility.Collapsed;
-                //UCEncryptionKeyPrevious.InvalidFlag.Visibility = Visibility.Collapsed;
-                //UCEncryptionKeyPrevious.Validate.Visibility = Visibility.Visible;
+                _pageGenericWin.Close();
             }
+            SetGridsView();
+
+            xSolutionPasswordsParamtersGrid.DataSourceList = variables;
+            xSolutionPasswordsParamtersGrid.RowChangedEvent += grdGroups_RowChangedEvent;
+            xSolutionPasswordsParamtersGrid.Title = "List of Passwords/Encrypted Values to update new value";
+
+            xSolutionPasswordsParamtersGrid.Visibility = Visibility.Visible;
+        }
+
+        private VariablePasswordString CreatePasswordVariable(string itemName, string parentType, string parentName, Guid guid)
+        {
+            VariablePasswordString variablePassword= new VariablePasswordString();
+            variablePassword.Name = itemName;            
+            variablePassword.ParentType = parentType;
+            variablePassword.ParentName = parentName;
+            variablePassword.Guid = guid;
+            variablePassword.Password = "";
+            return variablePassword;
+        }
+
+        public async Task<int> HandlePasswordValuesReEncryption(string oldKey = null)
+        {
+            
+            return await Task.Run(async () =>
+            {
+                int varReencryptedCount = 0;
+                varReencryptedCount += await ReEncryptBFAndACtivityVariable(oldKey);
+                varReencryptedCount += await ReEncryptGlobalVariables(oldKey);
+                varReencryptedCount += await ReEncryptEnvironmentPasswordValues(oldKey);
+                varReencryptedCount += await ReEncryptRunsetOperationsPassowrdValues(oldKey);
+                varReencryptedCount += await ReEncryptSharedRepositoryPasswordValues(oldKey);
+                return varReencryptedCount;
+            });
+        }
+
+        private async Task<int> ReEncryptBFAndACtivityVariable(string oldKey = null)
+        {
+            ShowStatusMessage("Re-Rencrypting Business flow and activity Password variables Values with new Key...");
+            return await Task.Run(() =>
+            {
+                int varReencryptedCount = 0;
+                List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
+                // For BF and Activity
+                Parallel.ForEach(Bfs, Bf =>
+               {
+                   try
+                   {
+                       // Get all variables from BF
+                       List<GingerCore.Variables.VariableBase> variables = Bf.GetBFandActivitiesVariabeles(false).Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                       variables.ForEach(v =>
+                       {
+                           try
+                           {
+                               ((GingerCore.Variables.VariablePasswordString)v).Password =
+                               EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);
+
+                               varReencryptedCount++;
+                           }
+                           catch (Exception ex)
+                           {
+                               Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password variable of {0} for {1}", Bf.Name, v.Name), ex);
+                           }
+                       });
+
+                       if (variables.Any())
+                       {
+                           WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(Bf);
+                       }
+
+                   }
+                   catch (Exception ex)
+                   {
+                       Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password variable of {0}.", Bf.Name), ex);
+                   }
+               });
+                return varReencryptedCount;
+            });
+
+        }
+
+        private async Task<int> ReEncryptGlobalVariables(string oldKey = null)
+        {
+
+            ShowStatusMessage("Re-Rencrypting Global Password variables Values with new Key...");
+            return await Task.Run(() =>
+            {
+                // For Global Variables
+                bool isSaveRequired = false;
+                int varReencryptedCount = 0;
+                foreach (GingerCore.Variables.VariableBase v in WorkSpace.Instance.Solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString))
+                {
+                    try
+                    {
+                        ((GingerCore.Variables.VariablePasswordString)v).Password =
+                            EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);
+                        isSaveRequired = true;
+
+                        varReencryptedCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password Global variable {1}", v.Name), ex);
+                    }
+                }
+                if (isSaveRequired)
+                {
+                    WorkSpace.Instance.Solution.SaveSolution(false);
+                }
+                return varReencryptedCount;
+            });
+        }
+
+        private async Task<int> ReEncryptEnvironmentPasswordValues(string oldKey = null)
+        {
+            ShowStatusMessage("Re-Rencrypting Environment paramters and DB Password Values with new Key...");
+            return await Task.Run(() =>
+            {
+                bool isSaveRequired = false;
+                int varReencryptedCount = 0;
+
+                //For project environment variable
+                List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
+                projEnvironments.ForEach(pe =>
+                {
+                    try
+                    {
+                        isSaveRequired = false;
+                        foreach (EnvApplication ea in pe.Applications)
+                        {
+                            foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
+                            {
+                                gp.Value = EncryptionHandler.ReEncryptString(gp.Value, oldKey);
+                                isSaveRequired = true;
+                                varReencryptedCount++;
+                            }
+                            foreach (Database db in ea.Dbs)
+                            {
+                                if (!string.IsNullOrEmpty(db.Pass))
+                                {
+                                    db.Pass = EncryptionHandler.ReEncryptString(db.Pass, oldKey);
+                                    isSaveRequired = true;
+                                    varReencryptedCount++;
+                                }
+                            }
+                        }
+                        if (isSaveRequired)
+                        {
+                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(pe);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "ReEncryptVariable- Failed to Reencrypt password ProjEnvironment variable for " + pe.Name, ex);
+                    }
+                });
+
+                return varReencryptedCount;
+            });
+        }
+
+        private async Task<int> ReEncryptSharedRepositoryPasswordValues(string oldKey = null)
+        {
+            ShowStatusMessage("Re-Rencrypting Shared Repository Password variables Values with new Key...");
+            return await Task.Run(() =>
+            {
+                int varReencryptedCount = 0;
+                //For Shared Variables
+                List<GingerCore.Variables.VariableBase> sharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Variables.VariableBase>().Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                foreach (var sharedVar in sharedRepoVarsList)
+                {
+                    try
+                    {
+                        ((GingerCore.Variables.VariablePasswordString)sharedVar).Password =
+                        EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)sharedVar).Password, oldKey);
+
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(sharedVar);
+
+                        varReencryptedCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt shared password variable of {0}.", sharedVar.Name), ex);
+                    }
+                }
+
+                //For Shared Activites
+                List<Activity> sharedActivityList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().ToList();
+                foreach (var sharedAct in sharedActivityList)
+                {
+                    try
+                    {
+                        List<GingerCore.Variables.VariableBase> variables = sharedAct.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                        variables.ForEach(v =>
+                        {
+                            try
+                            {
+                                ((GingerCore.Variables.VariablePasswordString)v).Password =
+                                EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);
+                                varReencryptedCount++;
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password variable of shared activity {0} for {1}", sharedAct.ActivityName, v.Name), ex);
+                            }
+                        });
+
+                        if (variables.Any())
+                        {
+                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(sharedAct);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to update shared activity {0}.", sharedAct.ActivityName), ex);
+                    }
+                }
+
+                return varReencryptedCount;
+            });
+        }
+
+        private async Task<int> ReEncryptRunsetOperationsPassowrdValues(string oldKey = null)
+        {
+            ShowStatusMessage("Re-Rencrypting Runset Operations SMTP Password Values with new Key...");
+            return await Task.Run(() =>
+            {
+                bool isSaveRequired = false;
+                int varReencryptedCount = 0;
+                //Email Passwords
+                var runSetConfigs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                
+                foreach (var rsc in runSetConfigs)
+                {
+                    try
+                    {
+                        isSaveRequired = false;
+                        foreach (var ra in rsc.RunSetActions)
+                        {
+                            if (ra is RunSetActionHTMLReportSendEmail && ((RunSetActionHTMLReportSendEmail)ra).Email != null
+                            && !string.IsNullOrEmpty(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass))
+                            {
+                                ((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass =
+                                EncryptionHandler.ReEncryptString(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass, oldKey);
+                                isSaveRequired = true;
+                                varReencryptedCount++;
+                            }
+                            else if (ra is RunSetActionSendFreeEmail && ((RunSetActionSendFreeEmail)ra).Email != null
+                            && !string.IsNullOrEmpty(((RunSetActionSendFreeEmail)ra).Email.SMTPPass))
+                            {
+                                ((RunSetActionSendFreeEmail)ra).Email.SMTPPass =
+                                EncryptionHandler.ReEncryptString(((RunSetActionSendFreeEmail)ra).Email.SMTPPass, oldKey);
+                                isSaveRequired = true;
+                                varReencryptedCount++;
+                            }
+                            else if (ra is RunSetActionSendSMS && ((RunSetActionSendSMS)ra).SMSEmail != null
+                            && !string.IsNullOrEmpty(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass))
+                            {
+                                ((RunSetActionSendSMS)ra).SMSEmail.SMTPPass =
+                                EncryptionHandler.ReEncryptString(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass, oldKey);
+                                isSaveRequired = true;
+                                varReencryptedCount++;
+                            }
+                        }
+                        if (isSaveRequired)
+                        {
+                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(rsc);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Rencrypting Email SMTP password of " + rsc.Name, ex);
+                    }
+                }
+                return varReencryptedCount;
+            });
+
         }
     }
 }

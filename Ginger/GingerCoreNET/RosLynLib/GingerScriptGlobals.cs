@@ -59,9 +59,9 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
 
 
 
-        public async void OpenSolution(string solutionFolder)
+        public void OpenSolution(string solutionFolder)
         {
-            await WorkSpace.Instance.OpenSolution(solutionFolder);
+            WorkSpace.Instance.OpenSolution(solutionFolder);
         }
 
         public async void OpenRunSet(string runSetName, string envName)

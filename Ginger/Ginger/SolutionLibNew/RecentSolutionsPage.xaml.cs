@@ -44,19 +44,19 @@ namespace GingerWPF.SolutionLib
             //recentSolutionsListBox.ItemsSource = WorkSpace.Instance.UserProfile.RecentSolutionsObjects;                       
         }
 
-        private async void OpenSolutionbutton_Click(object sender, RoutedEventArgs e)
+        private void OpenSolutionbutton_Click(object sender, RoutedEventArgs e)
         {
             string s = Ginger.General.OpenSelectFolderDialog("Select Solution Folder");
             if (!string.IsNullOrEmpty(s))
             {
-                await WorkSpace.Instance.OpenSolution(s);
+                WorkSpace.Instance.OpenSolution(s);
             }
         }
 
-        private async void recentSolutionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void recentSolutionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {            
             string folder = ((Solution)recentSolutionsListBox.SelectedItem).Folder;
-            await WorkSpace.Instance.OpenSolution(folder);
+            WorkSpace.Instance.OpenSolution(folder);
         }
 
         private void NewSolutionbutton_Click(object sender, RoutedEventArgs e)

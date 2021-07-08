@@ -341,13 +341,13 @@ namespace Ginger
         }
 
 
-        internal async void AutoLoadLastSolution()
+        internal void AutoLoadLastSolution()
         {
             try
             {
                 if (WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects.Count > 0)
                 {
-                    await WorkSpace.Instance.OpenSolution(WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects[0].Folder);
+                    WorkSpace.Instance.OpenSolution(WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects[0].Folder);
                     xSolutionTabsListView.SelectedItem = null;
                     xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                 }
@@ -482,7 +482,7 @@ namespace Ginger
         }
 
 
-        private async void xOpenSolutionMenuItem_Click(object sender, RoutedEventArgs e)
+        private void xOpenSolutionMenuItem_Click(object sender, RoutedEventArgs e)
         {
             string solutionFolder = General.OpenSelectFolderDialog("Select Ginger Solution Folder");
             if (solutionFolder != null)
@@ -490,7 +490,7 @@ namespace Ginger
                 string solutionFileName = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");
                 if (System.IO.File.Exists(PathHelper.GetLongPath(solutionFileName)))
                 {
-                    await WorkSpace.Instance.OpenSolution(Path.GetDirectoryName(PathHelper.GetLongPath(solutionFolder)));
+                    WorkSpace.Instance.OpenSolution(Path.GetDirectoryName(PathHelper.GetLongPath(solutionFolder)));
                 }
                 else
                 {
@@ -833,13 +833,13 @@ namespace Ginger
             Process.Start("mailto:GingerCoreTeam@int.amdocs.com");
         }
 
-        private async void RecentSolutionSelection_Click(object sender, RoutedEventArgs e)
+        private void RecentSolutionSelection_Click(object sender, RoutedEventArgs e)
         {
             Solution selectedSol = (Solution)((MenuItem)sender).Tag;
 
             if (selectedSol != null && Directory.Exists(selectedSol.Folder))
             {
-                await WorkSpace.Instance.OpenSolution(selectedSol.Folder);
+                WorkSpace.Instance.OpenSolution(selectedSol.Folder);
             }
             else
                 Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Selected Solution was not found");
