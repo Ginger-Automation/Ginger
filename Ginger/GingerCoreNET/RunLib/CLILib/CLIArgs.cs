@@ -119,17 +119,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
-            try
-            {
-                if (!string.IsNullOrEmpty(cliHelper.ExecutionId))
-                {
-                    runsetExecutor.RunSetConfig.ExecutionID = Guid.Parse(cliHelper.ExecutionId);
-                }
-            }
-            catch (Exception ex)
-            {
-                new Exception("Invalid Exectuion id provided in arguments.", ex.InnerException);
-            }
+
         }
 
         public async Task Execute(RunsetExecutor runsetExecutor)

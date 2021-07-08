@@ -407,7 +407,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
 
             WorkSpace.Instance.RunningInExecutionMode = true;
-            if (!CLILoadAndPrepare())
+            if (!await CLILoadAndPrepare())
             {
                 Reporter.ToLog(eLogLevel.WARN, "Issue occured while doing CLI Load and Prepare so aborting execution");
                 Environment.ExitCode = 1;
