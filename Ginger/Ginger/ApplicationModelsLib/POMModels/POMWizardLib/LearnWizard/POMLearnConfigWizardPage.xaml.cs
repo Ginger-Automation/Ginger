@@ -70,7 +70,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
                     SetElementLocatorsSettingsGridView();
                     UpdateConfigsBasedOnAgentStatus();
-                    ShowSpecficFrameLearnConfigPanel();
+                    PlatformSpecificUIManipulations();
                     ShowsCustomRelativePathTemplateConfig();
                     break;
                 case EventType.LeavingForNextPage:
@@ -106,7 +106,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
-        private void ShowSpecficFrameLearnConfigPanel()
+        private void PlatformSpecificUIManipulations()
         {
             if(mAppPlatform.Equals(ePlatformType.Java))
             {
@@ -152,7 +152,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAgentControlUC.PropertyChanged -= XAgentControlUC_PropertyChanged;
             xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
 
-            ShowSpecficFrameLearnConfigPanel();
+            PlatformSpecificUIManipulations();
 
             ShowsCustomRelativePathTemplateConfig();
         }
