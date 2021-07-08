@@ -28,6 +28,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using static GingerCoreNET.SourceControl.SourceControlBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -45,6 +46,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourceControlURL;
         public string SourcecontrolUser;
         public string sourceControlPass;
+        public string EncryptionKey;
         public eSourceControlType sourceControlType;
         public bool sourceControlPassEncrypted;
         public eAppReporterLoggingLevel AppLoggingLevel;
@@ -332,6 +334,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             sourceControlPass = value;
         }
 
+        internal void SetEncryptionKey(string value)
+        {
+            EncryptionKey = value;
+        }
+
         internal void PasswordEncrypted(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
@@ -340,7 +347,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 try
                 {
-                    pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass);
+                    pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass, EncryptionKey);
                 }
                 catch(Exception ex)
                 {
@@ -387,7 +394,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     value = "http://" + value;
                 }
-            }           
+            }        
 
             WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = value;
         }
@@ -443,7 +450,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                return WorkSpace.Instance.OpenSolution(Solution);
+                return WorkSpace.Instance.OpenSolution(Solution, EncryptionKey);
             }
             catch (Exception ex)
             {

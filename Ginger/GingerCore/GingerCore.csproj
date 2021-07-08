@@ -797,6 +797,9 @@
     <PackageReference Include="CouchbaseNetClient">
       <Version>2.7.11</Version>
     </PackageReference>
+    <PackageReference Include="CredentialManagement">
+      <Version>1.0.2</Version>
+    </PackageReference>
     <PackageReference Include="DocumentFormat.OpenXml">
       <Version>2.9.1</Version>
     </PackageReference>

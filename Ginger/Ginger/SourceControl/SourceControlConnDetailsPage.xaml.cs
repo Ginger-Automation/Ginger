@@ -27,6 +27,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using amdocs.ginger.GingerCoreNET;
+using System.Threading.Tasks;
 
 namespace Ginger.SourceControl
 {
@@ -101,10 +102,10 @@ namespace Ginger.SourceControl
             }
         }
 
-        private void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
+        private  void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-             WorkSpace.Instance.Solution.SourceControl.SourceControlPass = ((PasswordBox)sender).Password;
-             WorkSpace.Instance.UserProfile.SaveUserProfile();//todo: check if needed
+            WorkSpace.Instance.Solution.SourceControl.SourceControlPass = ((PasswordBox)sender).Password;
+            WorkSpace.Instance.UserProfile.SaveUserProfile();//todo: check if needed
             SourceControlIntegration.Init( WorkSpace.Instance.Solution.SourceControl);
         }
 

@@ -78,6 +78,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('q', "executionId", Required = false, HelpText = "Execution Id")]
         public string RunSetExecutionId { get; set; }
 
+        [Option('k', "encryptionKey", Required = false, HelpText = "Encryption key password vairables")]
+        public string EncryptionKey { get; set; }
     }
 
 }

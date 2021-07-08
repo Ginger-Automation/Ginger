@@ -25,7 +25,7 @@ namespace GingerCore.Variables
     public class VariablePasswordString : VariableBase 
     {
         public VariablePasswordString()
-        {
+        {            
         }
 
         public override string VariableUIType
