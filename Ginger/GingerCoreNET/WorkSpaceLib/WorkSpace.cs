@@ -474,7 +474,7 @@ namespace amdocs.ginger.GingerCoreNET
         {
             return await Task.Run(() =>
             {
-               // WorkSpace.Instance.ReencryptingVariables = true;
+                // WorkSpace.Instance.ReencryptingVariables = true;
                 int varReencryptedCount = 0;
                 List<BusinessFlow> Bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
                 // For BF and Activity
@@ -534,10 +534,10 @@ namespace amdocs.ginger.GingerCoreNET
                 }
 
                 //For project environment variable
-                try
+                List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
+                projEnvironments.ForEach(pe =>
                 {
-                    List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
-                    projEnvironments.ForEach(pe =>
+                    try
                     {
                         res = false;
                         foreach (EnvApplication ea in pe.Applications)
@@ -559,35 +559,35 @@ namespace amdocs.ginger.GingerCoreNET
                         {
                             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(pe);
                         }
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "ReEncryptVariable- Failed to Reencrypt password ProjEnvironment variable.", ex);
-                }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "ReEncryptVariable- Failed to Reencrypt password ProjEnvironment variable for " + pe.Name, ex);
+                    }
+                });
 
                 //For Shared Variables
                 List<GingerCore.Variables.VariableBase> sharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Variables.VariableBase>().Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
-                Parallel.ForEach(sharedRepoVarsList, sharedVar =>
+                foreach (var sharedVar in sharedRepoVarsList)
                 {
                     try
                     {
                         ((GingerCore.Variables.VariablePasswordString)sharedVar).Password =
                         EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)sharedVar).Password, oldKey);
 
-                        varReencryptedCount++;
-
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(sharedVar);
+
+                        varReencryptedCount++;
                     }
                     catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt shared password variable of {0}.", sharedVar.Name), ex);
                     }
-                });
+                }
 
                 //For Shared Activites
                 List<Activity> sharedActivityList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().ToList();
-                Parallel.ForEach(sharedActivityList, sharedAct =>
+                foreach (var sharedAct in sharedActivityList)
                 {
                     try
                     {
@@ -615,7 +615,7 @@ namespace amdocs.ginger.GingerCoreNET
                     {
                         Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to update shared activity {0}.", sharedAct.ActivityName), ex);
                     }
-                });
+                }
 
                 //Email Passwords
                 var runSetConfigs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
@@ -642,7 +642,7 @@ namespace amdocs.ginger.GingerCoreNET
                                 EncryptionHandler.ReEncryptString(((RunSetActionSendFreeEmail)ra).Email.SMTPPass, oldKey);
                                 res = true;
                                 varReencryptedCount++;
-                            } 
+                            }
                             else if (ra is RunSetActionSendSMS && ((RunSetActionSendSMS)ra).SMSEmail != null
                             && !string.IsNullOrEmpty(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass))
                             {
