@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <GingerRepositoryItem><Header ItemGuid="717f75a9-0a26-427c-91bc-e26709efe86c" ItemType="Solution" CreatedBy="JGHODKE" Created="202105060451" GingerVersion="3.7.0.0" Version="4" LastUpdateBy="JGHODKE" LastUpdate="202105060902" />
-<Solution Guid="717f75a9-0a26-427c-91bc-e26709efe86c" Name="OutputVariableOldSolution" ParentGuid="00000000-0000-0000-0000-000000000000">
+<Solution  EncryptedValidationString="VUmheVjtatgVR0oSpuArDg==" Guid="717f75a9-0a26-427c-91bc-e26709efe86c" Name="OutputVariableOldSolution" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ApplicationPlatforms>
 <ApplicationPlatform AppName="MyWindowsApp" Guid="1bcd3f3e-554c-4429-9532-aafe06420186" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Windows" />
 </ApplicationPlatforms>
