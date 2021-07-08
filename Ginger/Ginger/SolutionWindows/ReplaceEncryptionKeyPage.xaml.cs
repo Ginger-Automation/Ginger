@@ -254,13 +254,16 @@ namespace Ginger.SolutionWindows
                         {
                             foreach (Database db in ea.Dbs)
                             {
-                                vp = new GingerCore.Variables.VariablePasswordString();
-                                vp.Name = db.Name;
-                                vp.Password = "";
-                                vp.ParentType = "Database Password";
-                                vp.ParentName = ea.Name;
-                                vp.Guid = db.Guid;
-                                variables.Add(vp);
+                                if (!string.IsNullOrEmpty(db.Pass))
+                                {
+                                    vp = new GingerCore.Variables.VariablePasswordString();
+                                    vp.Name = db.Name;
+                                    vp.Password = "";
+                                    vp.ParentType = "Database Password";
+                                    vp.ParentName = ea.Name;
+                                    vp.Guid = db.Guid;
+                                    variables.Add(vp);
+                                }
                             }
                             foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
                             {
@@ -448,8 +451,11 @@ namespace Ginger.SolutionWindows
 
                                 foreach (Database db in ea.Dbs)
                                 {
-                                    db.Pass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList).Where(f => f.Guid.Equals(db.Guid)).FirstOrDefault().Password;
-                                    res1 = true;
+                                    if (!string.IsNullOrEmpty(db.Pass))
+                                    {
+                                        db.Pass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)variablesGrid.DataSourceList).Where(f => f.Guid.Equals(db.Guid)).FirstOrDefault().Password;
+                                        res1 = true;
+                                    }
                                 }
                             }
 

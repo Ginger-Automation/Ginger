@@ -550,9 +550,12 @@ namespace amdocs.ginger.GingerCoreNET
                             }
                             foreach (Database db in ea.Dbs)
                             {
-                                db.Pass = EncryptionHandler.ReEncryptString(db.Pass, oldKey);
-                                res = true;
-                                varReencryptedCount++;
+                                if (!string.IsNullOrEmpty(db.Pass))
+                                {
+                                    db.Pass = EncryptionHandler.ReEncryptString(db.Pass, oldKey);
+                                    res = true;
+                                    varReencryptedCount++;
+                                }
                             }
                         }
                         if (res)
