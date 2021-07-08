@@ -156,19 +156,32 @@ namespace GingerCore.Drivers
         {
             DriverStatusChanged,
             ActionPerformed,
+            HighlightElement
         }
 
-        public void OnDriverMessage(eDriverMessageType DriverMessageType)
+        public void OnDriverMessage(eDriverMessageType DriverMessageType, object CustomSenderObj = null)
         {
-            DriverMessageEventHandler handler = DriverMessageEvent;
-            if (handler != null)
+            if (DriverMessageEvent != null)
             {
-                handler(this, new DriverMessageEventArgs(DriverMessageType));
+                DriverMessageEvent(CustomSenderObj ?? this, new DriverMessageEventArgs(DriverMessageType));
             }
         }
 
         public delegate void DriverMessageEventHandler(object sender, DriverMessageEventArgs e);
         public event DriverMessageEventHandler DriverMessageEvent;
+
+        public event SpyingElementEventHandler SpyingElementEvent;
+        public delegate object SpyingElementEventHandler();
+
+        public object OnSpyingElementEvent()
+        {
+            if (SpyingElementEvent != null)
+            {
+                return SpyingElementEvent();
+            }
+            else
+                return null;
+        }
 
         public virtual void ActionCompleted(Act act)
         {

@@ -3260,7 +3260,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        private IWebElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
+        public IWebElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
         {
             IWebElement elem = null;
             locator.StatusError = "";
@@ -3852,7 +3852,7 @@ namespace GingerCore.Drivers
                             {
                                 xpath= string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()=\'svg\']");
                             }
-                            
+
                             IWebElement el = Driver.FindElement(By.XPath(xpath));
                             if (el == null)
                             {

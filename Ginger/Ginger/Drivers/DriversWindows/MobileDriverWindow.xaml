@@ -92,8 +92,9 @@
                            MouseMove="xDeviceScreenshotImage_MouseMove" 
                            MouseLeftButtonUp="xDeviceScreenshotImage_MouseLeftButtonUp" 
                            MouseWheel="xDeviceScreenshotImage_MouseWheel"
-                           SizeChanged="xDeviceScreenshotImage_SizeChanged"                           >
+                           SizeChanged="xDeviceScreenshotImage_SizeChanged">
                     </Image>
+                    <Border x:Name="xHighlighterBorder" BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" BorderThickness="3" Visibility="Collapsed" Margin="3" Panel.ZIndex="1" />
                     <UserControls:ucButton x:Name="xSwipeUp" Panel.ZIndex="10" Canvas.Top="1"  ButtonType="ImageButton"  ButtonFontImageSize="30" ButtonImageType="AngleArrowUp" Click="xSwipeUp_Click" ToolTip="Swipe Up" Margin="0,0,0,0" ButtonImageForground="{StaticResource  $HighlightColor_Purple}" Visibility="Collapsed"/>
                     <UserControls:ucButton x:Name="xSwipeLeft" Panel.ZIndex="10"  Canvas.Left="1"  ButtonType="ImageButton"  ButtonFontImageSize="30" ButtonImageType="AngleArrowLeft" Click="xSwipeLeft_Click" ToolTip="Swipe Left" Margin="0,0,0,0" ButtonImageForground="{StaticResource  $HighlightColor_Purple}" Visibility="Collapsed"/>
                     <UserControls:ucButton x:Name="xSwipeRight" Panel.ZIndex="10"  Canvas.Right="1" ButtonType="ImageButton"  ButtonFontImageSize="30" ButtonImageType="AngleArrowRight" Click="xSwipeRight_Click" ToolTip="Swipe Right" Margin="0,0,0,0" ButtonImageForground="{StaticResource  $HighlightColor_Purple}" Visibility="Collapsed"/>
