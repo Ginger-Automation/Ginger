@@ -27,6 +27,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 
 using Newtonsoft.Json;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.NoSqlBase
 {
@@ -84,9 +85,8 @@ namespace GingerCore.NoSqlBase
                         }
                         else
                         {
-                            bool res = false;
-                            String deCryptValue = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res, false);
-                            if (res == true)
+                            String deCryptValue = EncryptionHandler.DecryptwithKey(Db.PassCalculated.ToString());
+                            if (!string.IsNullOrEmpty(deCryptValue))
                             {
                                 mongoCredential = MongoCredential.CreateCredential(HostPortDB[HostPortDB.Length-1], Db.UserCalculated, deCryptValue);
                             }

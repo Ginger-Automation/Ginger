@@ -386,6 +386,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
                     ElementType = eElementType.Label,
+                    IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.GetValue,
                                                                ActUIElement.eElementAction.GetText,

@@ -186,13 +186,25 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    await IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true, SpecificFramePath);
+                    await IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList());
                 }
             }
             else
             {
-                await IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true, SpecificFramePath);
+               await IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList());
             }
+        }
+
+        private List<string> GetRelativeXpathTemplateList()
+        {
+            var customRelXpathTemplateList = new List<string>();
+
+            foreach (var item in POM.RelativeXpathTemplateList)
+            {
+                customRelXpathTemplateList.Add(item.Value);
+            }
+
+            return customRelXpathTemplateList;
         }
 
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

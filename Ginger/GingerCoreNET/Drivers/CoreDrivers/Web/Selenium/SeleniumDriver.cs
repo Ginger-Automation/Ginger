@@ -3776,7 +3776,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null,List<string> relativeXpathTemplateList=null)
         {
             return await Task.Run(() =>
             {
@@ -3790,7 +3790,7 @@ namespace GingerCore.Drivers
                     List<ElementInfo> list = new List<ElementInfo>();
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList));
+                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList));
                     allReadElem.Clear();
                     CurrentFrame = "";
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -3800,12 +3800,13 @@ namespace GingerCore.Drivers
                 finally
                 {
                     mIsDriverBusy = false;
+                    Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
                 }
             });
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,List<string> relativeXpathTemplateList = null)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -3885,6 +3886,14 @@ namespace GingerCore.Drivers
 
                             GetRelativeXpathElementLocators(foundElemntInfo);
 
+                            if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
+                            {
+                                foreach (var template in relativeXpathTemplateList)
+                                {
+                                    CreateXpathFromUserTemplate(template,foundElemntInfo);
+                                }
+                            }
+
                             foundElemntInfo.IsAutoLearned = true;
                             foundElementsList.Add(foundElemntInfo);
 
@@ -3904,7 +3913,7 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, relativeXpathTemplateList);
                             Driver.SwitchTo().ParentFrame();
                         }
                     }
@@ -3916,6 +3925,45 @@ namespace GingerCore.Drivers
             }
 
             return foundElementsList;
+        }
+
+        Regex AttRegex = new Regex("@[a-zA-Z]*",RegexOptions.Compiled);
+        private void CreateXpathFromUserTemplate(string xPathTemplate,HTMLElementInfo hTMLElement)
+        {
+            try
+            {
+                var relXpath = string.Empty;
+
+                var attributeCount = 0;
+
+                var attList = AttRegex.Matches(xPathTemplate);
+                var strList = new List<string>();
+                foreach (var item in attList)
+                {
+                    strList.Add(item.ToString().Remove(0, 1));
+                }
+
+                foreach (var item in hTMLElement.HTMLElementObject.Attributes)
+                {
+                    if (strList.Contains(item.Name))
+                    {
+                        relXpath = xPathTemplate.Replace(item.Name + "=\'\'", item.Name + "=\'" + item.Value + "\'");
+
+                        xPathTemplate = relXpath;
+                        attributeCount++;
+                    }
+                }
+
+                if (relXpath != string.Empty && attributeCount == attList.Count && CheckElementLocateStatus(xPathTemplate))
+                {
+                    var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpath, IsAutoLearned = true };
+                    hTMLElement.Locators.Add(elementLocator);
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during pom learining", ex);
+            }
         }
 
         private void GetRelativeXpathElementLocators(HTMLElementInfo foundElemntInfo)
@@ -3965,12 +4013,23 @@ namespace GingerCore.Drivers
 
         private bool CheckElementLocateStatus(string relXPath)
         {
-            IWebElement webElement = Driver.FindElement(By.XPath(relXPath));
-            if (webElement != null)
+            try
             {
-                return true;
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 3);
+                IWebElement webElement = Driver.FindElement(By.XPath(relXPath));
+                if (webElement != null)
+                {
+                    return true;
+                }
             }
-
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured when creating relative xapth with attributes values", ex);
+            }
+            finally
+            {
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+            }
             return false;
         }
 
@@ -4325,18 +4384,25 @@ namespace GingerCore.Drivers
 
         List<ElementInfo> IWindowExplorer.GetElementChildren(ElementInfo ElementInfo)
         {
-            allReadElem.Clear();
-            allReadElem.Add(ElementInfo);
-            List<ElementInfo> list = new List<ElementInfo>();
-            ReadOnlyCollection<IWebElement> el;
-            Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
-            Driver.SwitchTo().DefaultContent();
-            SwitchFrame(ElementInfo.Path, ElementInfo.XPath);
-            string elementPath = GeneratePath(ElementInfo.XPath);
-            el = Driver.FindElements(By.XPath(elementPath));
-            Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
-            list = GetElementsFromIWebElementList(el, ElementInfo.Path, ElementInfo.XPath);
-            return list;
+            try
+            {
+                allReadElem.Clear();
+                allReadElem.Add(ElementInfo);
+                List<ElementInfo> list = new List<ElementInfo>();
+                ReadOnlyCollection<IWebElement> el;
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+                Driver.SwitchTo().DefaultContent();
+                SwitchFrame(ElementInfo.Path, ElementInfo.XPath);
+                string elementPath = GeneratePath(ElementInfo.XPath);
+                el = Driver.FindElements(By.XPath(elementPath));
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
+                list = GetElementsFromIWebElementList(el, ElementInfo.Path, ElementInfo.XPath);
+                return list;
+            }
+            finally
+            {
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+            }
         }
 
         private string GeneratePath(string xpath)
@@ -5161,7 +5227,7 @@ namespace GingerCore.Drivers
             }
             finally
             {
-                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
             }
             return null;
         }
@@ -7643,16 +7709,23 @@ namespace GingerCore.Drivers
 
         List<ElementInfo> IXPath.GetElementChildren(ElementInfo ElementInfo)
         {
-            List<ElementInfo> list = new List<ElementInfo>();
-            ReadOnlyCollection<IWebElement> el;
-            Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
-            SwitchFrame(ElementInfo.Path, ElementInfo.XPath);
-            string elementPath = GeneratePath(ElementInfo.XPath);
-            el = Driver.FindElements(By.XPath(elementPath));
-            Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
-            list = GetElementsFromIWebElementList(el, ElementInfo.Path, ElementInfo.XPath);
-            Driver.SwitchTo().DefaultContent();
-            return list;
+            try
+            {
+                List<ElementInfo> list = new List<ElementInfo>();
+                ReadOnlyCollection<IWebElement> el;
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+                SwitchFrame(ElementInfo.Path, ElementInfo.XPath);
+                string elementPath = GeneratePath(ElementInfo.XPath);
+                el = Driver.FindElements(By.XPath(elementPath));
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
+                list = GetElementsFromIWebElementList(el, ElementInfo.Path, ElementInfo.XPath);
+                Driver.SwitchTo().DefaultContent();
+                return list;
+            }
+            finally
+            {
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+            }
         }
 
         ElementInfo IXPath.FindFirst(ElementInfo ElementInfo, List<XpathPropertyCondition> conditions)

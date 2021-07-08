@@ -65,7 +65,7 @@ namespace GingerCore.ALM
         }
         public JiraCore()
         {
-            string settingsPath = DefaultAlmConfig.ALMConfigPackageFolderPath;
+            string settingsPath = DefaultAlmConfig.ALMConfigPackageFolderPathCalculated;
             jiraRepObj = new JiraRepository.JiraRepository(settingsPath, (TestingALMType)Enum.Parse(typeof(TestingALMType), ALMCore.DefaultAlmConfig.JiraTestingALM.ToString()));
             exportMananger = new JIRA.Bll.JiraExportManager(jiraRepObj);
             jiraConnectObj = new JiraConnectManager(jiraRepObj);
@@ -241,39 +241,10 @@ namespace GingerCore.ALM
         {
             jiraImportObj.UpdateBussinessFlow(ref businessFlow);
         }
-        public bool ValidateConfigurationFile(string PackageFileName)
+        
+        public void CreateJiraRepository()
         {
-            bool containJiraSettingsFile = false;
-
-           
-            using (FileStream configPackageZipFile = new FileStream(PackageFileName, FileMode.Open))
-            {
-                using (ZipArchive zipArchive = new ZipArchive(configPackageZipFile))
-                {
-                    foreach (ZipArchiveEntry entry in zipArchive.Entries)
-                        if (entry.FullName == @"JiraSettings/JiraSettings.json")
-                        {
-                            containJiraSettingsFile = true;
-                            break;
-                        }
-                }
-            }
-            return containJiraSettingsFile;
-        }
-        public bool IsConfigPackageExists()
-        {
-            string CurrJiraConfigPath = Path.Combine(ALMCore.SolutionFolder, "Configurations", "JiraConfigurationsPackage");
-            if (Directory.Exists(Path.Combine(CurrJiraConfigPath, "JiraSettings")))
-            {
-                ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath = CurrJiraConfigPath;
-                jiraConnectObj.CreateJiraRepository();
-                return true;
-            }
-            else
-            {
-                Reporter.ToLog(eLogLevel.WARN, "Jira Configuration package not exist in solution, Jira Settings not exist at: " + Path.Combine(CurrJiraConfigPath, "JiraSettings"));
-            }
-            return false;
+            jiraConnectObj.CreateJiraRepository();
         }
     }
 }

@@ -115,6 +115,8 @@ namespace GingerWPF.BusinessFlowsLib
                     //GC.Collect();
                 }
                 xMainFrame.SetContent(mActionsListView);
+                mActionsListView.ScrollToViewCurrentItem();
+
                 if (ShiftToActionsListEvent != null)
                 {
                     ShiftToActionsListEvent.Invoke(this, null);

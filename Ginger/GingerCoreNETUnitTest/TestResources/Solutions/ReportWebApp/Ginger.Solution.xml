@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <GingerRepositoryItem><Header ItemGuid="2c7de24a-6b9b-4a47-b790-e54eaca05711" ItemType="Solution" CreatedBy="LIRANMES" Created="201901161049" GingerVersion="3.3.0.0" Version="25" LastUpdateBy="liranmes" LastUpdate="201906111122" />
-<Solution ALMDomain="DE" ALMProject="Amdocs Digital – DE R&amp;D" ALMProjectKey="DE" ALMServerURL="https://jirapbguat" AlmType="Jira" ConfigPackageFolderPath="C:\GINGER\JIRA CON\Configurations\JiraConfigurationsPackage" Guid="2c7de24a-6b9b-4a47-b790-e54eaca05711" Name="test" ParentGuid="00000000-0000-0000-0000-000000000000">
+<Solution  EncryptedValidationString="VUmheVjtatgVR0oSpuArDg==" ALMDomain="DE" ALMProject="Amdocs Digital – DE R&amp;D" ALMProjectKey="DE" ALMServerURL="https://jirapbguat" AlmType="Jira" ConfigPackageFolderPath="C:\GINGER\JIRA CON\Configurations\JiraConfigurationsPackage" Guid="2c7de24a-6b9b-4a47-b790-e54eaca05711" Name="test" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ApplicationPlatforms>
 <ApplicationPlatform AppName="MyWebApp" CoreGUID="00000000-0000-0000-0000-000000000000" Guid="f2460cff-6aa0-41f7-ba1b-6395eceace1d" GUID="00000000-0000-0000-0000-000000000000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" />
 </ApplicationPlatforms>
