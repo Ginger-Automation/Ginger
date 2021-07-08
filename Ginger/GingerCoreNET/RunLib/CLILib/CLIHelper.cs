@@ -174,6 +174,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 SelectEnv();
                 mRunSetConfig.RunWithAnalyzer = RunAnalyzer;
                 HandleAutoRunWindow();
+
+                if (!string.IsNullOrEmpty(ExecutionId))
+                {
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID = Guid.Parse(ExecutionId);
+                }
                 return true;
             }
             catch (Exception ex)

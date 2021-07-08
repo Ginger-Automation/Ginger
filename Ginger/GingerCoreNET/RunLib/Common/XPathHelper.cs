@@ -500,7 +500,10 @@ namespace GingerCore.Drivers.Common
                     {
                         if (!propNames.Contains(prop.Name) && !prop.Name.ToLower().Equals("value") && !prop.Name.ToLower().Equals("id") && !prop.Name.ToLower().Equals("name"))
                         {
-                            elementAttributes.Append(string.Concat("@", prop.Name, "=", "\'", prop.Value, "\'", " ", "and", " "));
+                            if (!prop.Value.Contains(";"))
+                            {
+                                elementAttributes.Append(string.Concat("@", prop.Name, "=", "\'", prop.Value, "\'", " ", "and", " "));
+                            }
                         }
                     }
 
@@ -538,11 +541,7 @@ namespace GingerCore.Drivers.Common
             {
                 tagStartWithName = tagName;
             }
-            else if (mDriver.GetElementParentNode(elementInfo) != null)
-            {
-                tagStartWithName = string.Concat(tagName, "//", "*");
-            }
-
+            
             var innerText = mDriver.GetInnerText(elementInfo);
             if (isExactMatch)
             {

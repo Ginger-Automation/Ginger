@@ -520,6 +520,9 @@
     <Compile Include="SolutionWindows\ReplaceEncryptionKeyPage.xaml.cs">
       <DependentUpon>ReplaceEncryptionKeyPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml.cs">
+      <DependentUpon>CustomRelativeXpathTemplateUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\LiveSpyHandler.xaml.cs">
       <DependentUpon>LiveSpyHandler.xaml</DependentUpon>
     </Compile>
@@ -538,6 +541,7 @@
     <Compile Include="UserControlsLib\ucShowItemID.xaml.cs">
       <DependentUpon>ucShowItemID.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\ValidateCustomRelativeXpath.cs" />
     <Compile Include="Variables\ValidationRule\NumberValidationRule.cs" />
     <Compile Include="Variables\ValidationRule\DateTimeFormatValidationRule.cs" />
     <Compile Include="Variables\VariableEditPages\VariableDateTimePage.xaml.cs">
@@ -1999,9 +2003,7 @@
     <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
-    <None Include="ALMRESTConfiguration\appsettings_QTest.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="ALMRESTConfiguration\appsettings_QTest.json" />
     <None Include="Ginger.ruleset" />
     <EmbeddedResource Include="Resources\LiteDB.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -2949,6 +2951,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SolutionWindows\ReplaceEncryptionKeyPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

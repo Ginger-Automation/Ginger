@@ -154,7 +154,7 @@ namespace GingerCoreNET.ALMLib
                 if (mALMProjectKey != value)
                 {
                     mALMProjectKey = value;
-                    OnPropertyChanged(nameof(mALMProjectKey));
+                    OnPropertyChanged(nameof(ALMProjectKey));
                 }
             }
         }
@@ -169,8 +169,16 @@ namespace GingerCoreNET.ALMLib
                 if (mALMConfigPackageFolderPath != value)
                 {
                     mALMConfigPackageFolderPath = value;
-                    OnPropertyChanged(nameof(mALMConfigPackageFolderPath));
+                    OnPropertyChanged(nameof(ALMConfigPackageFolderPath));
                 }
+            }
+        }
+
+        public string ALMConfigPackageFolderPathCalculated
+        {
+            get
+            {
+                return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mALMConfigPackageFolderPath);
             }
         }
 
