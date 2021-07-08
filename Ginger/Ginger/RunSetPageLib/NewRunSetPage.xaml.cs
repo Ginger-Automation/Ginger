@@ -386,6 +386,7 @@ namespace Ginger.Run
                     xStopRunsetBtn.Visibility = Visibility.Collapsed;
                     xContinueRunsetBtn.Visibility = Visibility.Visible;
                     xResetRunsetBtn.Visibility = Visibility.Visible;
+                    xRunsetSaveBtn.IsEnabled = true;
                 }
 
                 
@@ -1416,7 +1417,9 @@ namespace Ginger.Run
         private async void xRunRunsetBtn_Click(object sender, RoutedEventArgs e)
         {           
             try
-            {                         
+            {
+                xRunsetSaveBtn.IsEnabled = false;
+
                 UpdateRunButtonIcon(true);                
 
                 ResetALMDefectsSuggestions();
@@ -1520,6 +1523,11 @@ namespace Ginger.Run
                 }
             }
 
+            UpdateRunsetStats();        
+        }
+
+        private void UpdateRunsetStats()
+        {
             //update RunnersPages stats
             List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
             foreach (FlowElement f in fe)
@@ -1528,9 +1536,9 @@ namespace Ginger.Run
                 ((RunnerPage)f.GetCustomeShape().Content).xruntime.Content = "00:00:00";
                 ((RunnerPage)f.GetCustomeShape().Content).Runner.RunnerExecutionWatch.runWatch.Reset();
             }
-            xRuntimeLbl.Content = "00:00:00";         
+            xRuntimeLbl.Content = "00:00:00";
         }
-        
+
         private void xStopRunsetBtn_Click(object sender, RoutedEventArgs e)
         {            
             if (RunSetConfig.GingerRunners.Where(x => x.IsRunning == true).FirstOrDefault() == null)
@@ -1539,7 +1547,8 @@ namespace Ginger.Run
                 return;
             }
 
-            WorkSpace.Instance.RunsetExecutor.StopRun();//stops only running runners            
+            WorkSpace.Instance.RunsetExecutor.StopRun();//stops only running runners  
+            xRunsetSaveBtn.IsEnabled = true;
         }
 
 
@@ -1777,10 +1786,33 @@ namespace Ginger.Run
             ALMDefectsBorder.BorderBrush = null;
         }
         private void xRunsetSaveBtn_Click(object sender, RoutedEventArgs e)
-        {            
-            SaveRunSetConfig();           
+        {
+
+            if (mRunSetConfig.GingerRunners.Any(x => x.Status == eRunStatus.Stopped) && Reporter.ToUser(eUserMsgKey.SaveRunsetChangesWarn) == eUserMsgSelection.Yes)
+            {
+                ResetALMDefectsSuggestions();
+
+                foreach (GingerRunner runner in mRunSetConfig.GingerRunners)
+                {
+                    if (runner.IsRunning == false)
+                    {
+                        runner.ResetRunnerExecutionDetails();
+                        runner.ClearAndResetVirtualAgents();
+                    }
+                }
+
+                UpdateRunsetStats();
+
+                SaveRunSetConfig();
+            }
+            else if (!mRunSetConfig.GingerRunners.Any(x => x.Status == eRunStatus.Stopped))
+            {
+                SaveRunSetConfig();
+            }
+                      
         }
-        
+
+       
         private void xRunnersExecutionConfigBtn_Click(object sender, RoutedEventArgs e)
         {
             if (CheckIfExecutionIsInProgress()) return;

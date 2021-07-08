@@ -639,6 +639,9 @@ namespace Ginger.Run
                         }
                         Status = eRunStatus.Completed;
                     }
+
+                    ClearAndResetVirtualAgents();
+
                     PostScopeVariableHandling(BusinessFlow.SolutionVariables);
                     IsRunning = false;
                     RunnerExecutionWatch.StopRunWatch();
@@ -655,6 +658,40 @@ namespace Ginger.Run
                 else
                 {
                     Status = RunsetStatus;
+                }
+            }
+        }
+
+        public void ClearAndResetVirtualAgents()
+        {
+            var appAgents = ApplicationAgents.Where(x => x.Agent != null && ((Agent)x.Agent).IsVirtual).ToList();
+
+            if (appAgents.Count > 0)
+            {
+                foreach (var appAgent in appAgents)
+                {
+
+                    var virtualAgent = (Agent)appAgent.Agent;
+
+                    var realAgents = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Where(x => x.Guid.ToString() == virtualAgent.ParentGuid.ToString()).ToList();
+                    foreach (var applicationAgent in ApplicationAgents)
+                    {
+                        var agent = (Agent)applicationAgent.Agent;
+
+                        if (agent.IsVirtual && agent.Guid == ((Agent)virtualAgent).Guid)
+                        {
+                            foreach (var realAgent in realAgents)
+                            {
+                                if (realAgent.Guid == agent.ParentGuid)
+                                {
+                                    applicationAgent.Agent = realAgent;
+                                    //removing virtual agent from ActiveAgentList
+                                    var runsetVirtualAgent = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Where(x => x.Guid == agent.Guid).FirstOrDefault();
+                                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Remove(runsetVirtualAgent);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
