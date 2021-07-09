@@ -62,5 +62,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void SolutionClosed()
         {
         }
+
+        public bool OpenEncryptionKeyHandler(Solution solution)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
