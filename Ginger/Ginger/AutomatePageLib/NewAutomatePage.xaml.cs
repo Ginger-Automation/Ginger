@@ -1646,6 +1646,14 @@ namespace GingerWPF.BusinessFlowsLib
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_EnvironmentSelectionHelp", xEnvironmentComboBox, "Environments should be used for storing environment level parameters, DB connection details and more, go to “Resources-> Environments” to configure all environments you need and select here which environment data to use in execution time");
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_AddActionsBtnHelp", xAddActionsBtn, "Click here to view all options to add automation Actions into your flow");
         }
+
+        private void xSelfHealingConfigBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (CheckIfExecutionIsInProgress()) return;
+
+            GingerSelfHealingConfiguration selfHealingConfiguration = new GingerSelfHealingConfiguration();
+            selfHealingConfiguration.ShowAsWindow();
+        }
     }
 
     public class ActiveImageTypeConverter : IValueConverter

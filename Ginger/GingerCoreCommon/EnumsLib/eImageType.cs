@@ -336,7 +336,8 @@ namespace Amdocs.Ginger.Common.Enums
         CLI,
         LinkSquare,
         DatePicker,
-        TreeView
+        TreeView,
+        SelfHealing
         #endregion
     }
 }
