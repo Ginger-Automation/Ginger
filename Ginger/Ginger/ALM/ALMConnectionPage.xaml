@@ -54,11 +54,12 @@
                         </DockPanel>
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <Label Style="{StaticResource @InputFieldLabelStyle}">Server URL:</Label>
-                                <TextBlock x:Name="DownloadPackageLink" FontSize="10" Foreground="Gray" Margin="0,7,0,0" Visibility="Collapsed">
-                                <Hyperlink NavigateUri="http://ginger/" RequestNavigate="HandleLinkClick">Download</Hyperlink>
+                                <Label x:Name="ConfigPackageLabel" Style="{StaticResource @InputFieldLabelStyle}">Configuration Package:</Label>
+                                <TextBlock x:Name="DownloadPackageLink" FontSize="10" Foreground="Gray" Margin="0,7,0,0" Visibility="Visible">
+                                    <Hyperlink NavigateUri="http://ginger/" RequestNavigate="HandleLinkClick">Download</Hyperlink>
                                 </TextBlock>
-                                <Label x:Name="ExampleURLHint" HorizontalAlignment="Left" FontSize="10" Foreground="Gray">Example: http://server:8080/almbin</Label>
+                                <Label x:Name="PackageHint" Visibility="Collapsed" Foreground="Gray"></Label>
+
                             </StackPanel>
 
                             <Grid>
@@ -66,12 +67,19 @@
                                     <ColumnDefinition Width="3*"/>
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox x:Name="ServerURLTextBox" Style="{StaticResource @TextBoxStyle}" TextChanged="ServerURLTextBox_TextChanged" MouseEnter="ShowToolTip" Height="25" VerticalAlignment="Top" />
+                                <TextBox x:Name="ConfigPackageTextBox" Style="{StaticResource @TextBoxStyle}" Height="25" VerticalAlignment="Top" />
                                 <Button x:Name="RQMLoadConfigPackageButton" Click="LoadRQMConfigPackageButton_Click" Content="Load" Style="{StaticResource @WindowButtonStyle}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Visibility="Visible"></Button>
                             </Grid>
 
                         </StackPanel>
                         <StackPanel x:Name="UserCredentialPanel">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Style="{StaticResource @InputFieldLabelStyle}">Server URL:</Label>
+                                    <Label x:Name="ExampleURLHint" HorizontalAlignment="Left" FontSize="10" Foreground="Gray">Example: http://server:8080/almbin</Label>
+                                </StackPanel>
+                                <TextBox x:Name="ServerURLTextBox" TextChanged="ServerURLTextBox_TextChanged" MouseEnter="ShowToolTip" Style="{StaticResource @TextBoxStyle}" Height="25"></TextBox>
+                            </StackPanel>
                             <StackPanel>
                                 <Label Style="{StaticResource @InputFieldLabelStyle}">User Name:</Label>
                                 <TextBox x:Name="UserNameTextBox" TextChanged="UserNameTextBox_TextChanged" Style="{StaticResource @TextBoxStyle}" Height="25"></TextBox>

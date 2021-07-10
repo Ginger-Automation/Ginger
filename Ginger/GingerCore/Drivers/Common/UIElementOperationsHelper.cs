@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions.Common;
 using GingerCore.Actions.UIAutomation;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,7 @@ namespace GingerCore.Drivers.Common
     {
 
         private WinAPIAutomation winAPI = new WinAPIAutomation();
-
+        public bool taskFinished;
         public ActionResult ToggleElement(AutomationElement automationElement, eElementType elementType)
         {
             ActionResult actionResult = new ActionResult();           
@@ -243,7 +244,23 @@ namespace GingerCore.Drivers.Common
             }
             return actionResult;
         }
+        public ActionResult CollapseElement(AutomationElement automationElement)
+        {
+            ActionResult actionResult = new ActionResult();
+            object collapsePattern;
+            automationElement.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out collapsePattern);
 
+            if (collapsePattern != null)
+            {
+                ((ExpandCollapsePattern)collapsePattern).Collapse();
+                actionResult.executionInfo = "Successfully collapsed the element";
+            }
+            else
+            {
+                actionResult.errorMessage = "Failed to collapse the element";
+            }
+            return actionResult;
+        }
         internal ActionResult ScrollToView(AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
@@ -523,6 +540,7 @@ namespace GingerCore.Drivers.Common
         public ActionResult GetValue(AutomationElement automationElement, eElementType elementType)
         {
             ActionResult actionResult = new ActionResult();
+            object valuePattern;
             try
             {
                 //if(elementType==eElementType.CheckBox)
@@ -540,7 +558,7 @@ namespace GingerCore.Drivers.Common
                     {
                         actionResult = GetPropertyValue(automationElement, LegacyIAccessiblePatternIdentifiers.ValueProperty);
                     }
-                //}                          
+                //}      
             }
             catch (Exception ex)
             {
@@ -560,7 +578,21 @@ namespace GingerCore.Drivers.Common
                 automationElement.TryGetCurrentPattern(TextPattern.Pattern, out textPattern);
                 if (textPattern != null)
                 {
-                    actionResult.outputValue = ((TextPattern)textPattern).DocumentRange.GetText(-1);                    
+                    actionResult.outputValue = ((TextPattern)textPattern).DocumentRange.GetText(-1);
+                    return actionResult;
+                }
+
+                automationElement.TryGetCurrentPattern(ValuePattern.Pattern, out textPattern);
+                if (textPattern != null)
+                {
+                    var valuePattern = (ValuePattern)textPattern;
+                    actionResult.outputValue = valuePattern.Current.Value;
+                    return actionResult;
+                }
+
+                if (string.IsNullOrEmpty(actionResult.outputValue))
+                {
+                    actionResult.outputValue = automationElement.Current.Name;
                 }
             }
             catch (Exception ex)
@@ -569,6 +601,79 @@ namespace GingerCore.Drivers.Common
                 actionResult.errorMessage = "Failed to Get the text";
             }
             return actionResult;
+        }
+        public ActionResult GetSelectedValue(AutomationElement automationElement)
+        {
+            ActionResult actionResult = new ActionResult();
+            string ListItems = null;
+            taskFinished = false;
+            try
+            {
+                bool isMultiSelect = (bool)automationElement.GetCurrentPropertyValue(SelectionPatternIdentifiers.CanSelectMultipleProperty);
+                if (isMultiSelect)
+                {
+                    ListItems = GetSelectedItems(automationElement);
+                }
+                else
+                {
+                    object vp;
+                    automationElement.TryGetCurrentPattern(ValuePattern.Pattern, out vp);
+                    if (vp != null)
+                    {
+                        actionResult = GetValue(automationElement, eElementType.Unknown);
+                    }
+                    else
+                    {
+                        AutomationElement elementNode = TreeWalker.RawViewWalker.GetFirstChild(automationElement);
+                        string isItemSelected;
+                        while (elementNode != null && !taskFinished)
+                        {
+                            isItemSelected = (elementNode.GetCurrentPropertyValue(SelectionItemPatternIdentifiers.IsSelectedProperty)).ToString();
+                            if (isItemSelected == "True")
+                            {
+                                if (ListItems == null && isItemSelected == "True")
+                                {
+                                    ListItems = elementNode.Current.Name;
+                                }
+                                else if (isItemSelected == "True")
+                                {
+                                    ListItems += "," + elementNode.Current.Name;
+                                }
+                            }
+                            elementNode = TreeWalker.RawViewWalker.GetNextSibling(elementNode);
+                        }
+                        actionResult.executionInfo = "No Item selected";
+                    }
+                }
+                actionResult.outputValue = ListItems;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in Get selected value", ex);
+                actionResult.errorMessage = "Failed to Get selected value";
+            }
+            return actionResult;
+        }
+
+        private string GetSelectedItems(AutomationElement element)
+        {
+            AutomationElement elementNode = TreeWalker.RawViewWalker.GetFirstChild(element);
+            String ListItems = null;
+            do
+            {
+                string isItemSelected = (elementNode.GetCurrentPropertyValue(SelectionItemPatternIdentifiers.IsSelectedProperty)).ToString();
+                if (ListItems == null && isItemSelected == "True")
+                {
+                    ListItems = elementNode.Current.Name;
+                }
+                else if (isItemSelected == "True")
+                {
+                    ListItems += "," + elementNode.Current.Name;
+                }
+
+                elementNode = TreeWalker.RawViewWalker.GetNextSibling(elementNode);
+            } while (elementNode != null && !taskFinished);
+            return ListItems;
         }
 
         public ActionResult CloseWindow(AutomationElement window)
@@ -598,6 +703,148 @@ namespace GingerCore.Drivers.Common
             
         }
 
+        public ActionResult GetTitle(AutomationElement window)
+        {
+            ActionResult actionResult = new ActionResult();
+            try
+            {
+                actionResult.outputValue = window.Current.Name;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception in Get Title", ex);
+                actionResult.errorMessage = "Failed to Get the Title";
+            }
+            return actionResult;
 
+        }
+
+        public ActionResult SetWindowState(AutomationElement window, WindowVisualState windowVisualState)
+        {
+            ActionResult actionResult = new ActionResult();
+            Object windowPattern;
+
+            try
+            {
+                window.TryGetCurrentPattern(WindowPattern.Pattern, out windowPattern);
+                if (windowPattern != null)
+                {
+                    ((WindowPattern)windowPattern).SetWindowVisualState(windowVisualState);
+                    actionResult.executionInfo = "Window is " + windowVisualState;
+                }
+                else
+                {
+                    actionResult.errorMessage = "Unable to "+ windowVisualState + " the window";
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "SetWindowState", ex);
+                actionResult.errorMessage = "Unable to " + windowVisualState + " the window";
+            }
+            return actionResult;
+
+        }
+        
+        public bool PerformClick(AutomationElement automationElement, ActUIElement.eElementAction clickType)
+        {
+            ActionResult actionResult = new ActionResult();
+            bool result = false;
+            switch (clickType)
+            {
+                case ActUIElement.eElementAction.Click:
+                    actionResult = ClickElement(automationElement);
+                    break;
+
+                case ActUIElement.eElementAction.AsyncClick:
+                    actionResult = AsyncClickElement(automationElement);
+                    break;
+
+                case ActUIElement.eElementAction.MouseClick:
+                    actionResult = MouseClickElement(automationElement);
+                    break;
+            }
+            if (string.IsNullOrEmpty(actionResult.errorMessage))
+            {
+                result = true;
+            }
+            return result;
+        }
+
+        public bool LocateAndValidateElement(AutomationElement elementToValidate, string elementType, ActUIElement.eElementAction actionType, string validationValue = "")
+        {
+            ActionResult actionResult = new ActionResult();
+            bool result = false;
+
+            switch (actionType)
+            {
+                case ActUIElement.eElementAction.IsEnabled:
+                    result = elementToValidate.Current.IsEnabled;
+                    break;
+
+                case ActUIElement.eElementAction.Exist:
+                    if (elementToValidate != null)
+                    {
+                        result = true;
+                    }
+                    break;
+
+                case ActUIElement.eElementAction.NotExist:
+                    if (elementToValidate == null)
+                    {
+                        result = true;
+                    }
+                    break;
+                case ActUIElement.eElementAction.GetValue:
+                    if (elementToValidate == null)
+                    {
+                        result = false;
+                    }
+                    actionResult = GetValue(elementToValidate, eElementType.Unknown);
+                    if (!string.IsNullOrEmpty(actionResult.errorMessage) || string.IsNullOrEmpty(actionResult.outputValue))
+                    {
+                        actionResult = GetText(elementToValidate);
+                    }
+                    if (actionResult.outputValue == validationValue)
+                    {
+                        result = true;
+                    }
+                    break;
+            }
+
+            return result;
+        }
+
+        public ActionResult ClickElementByOthertypes(ActUIElement.eElementAction executedClick, List<ActUIElement.eElementAction> clicks, AutomationElement automationElement, AutomationElement elementToValidate, string validationElementType, ActUIElement.eElementAction validationType)
+        {
+            ActUIElement.eElementAction currentClick;
+            //string result = "";
+            ActionResult actionResult = new ActionResult();
+
+            bool isClicked = false;
+            bool isValidated = false;
+
+            for (int i = 0; i < clicks.Count; i++)
+            {
+                currentClick = clicks[i];
+                if (currentClick != executedClick)
+                {
+                    isClicked = PerformClick(automationElement, currentClick);
+                    if (isClicked)
+                    {
+                        isValidated = LocateAndValidateElement(elementToValidate, validationElementType, validationType);
+                        if (isValidated)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (isValidated)
+            {
+               actionResult.executionInfo = "Successfully clicked and validated";
+            }
+            return actionResult;
+        }
     }
 }

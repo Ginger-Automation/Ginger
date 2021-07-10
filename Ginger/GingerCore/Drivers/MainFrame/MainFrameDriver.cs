@@ -707,30 +707,33 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public async Task<System.Collections.Generic.List<ElementInfo>> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        public async Task<System.Collections.Generic.List<ElementInfo>> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null)
         {
-            List<ElementInfo> Eil = new System.Collections.Generic.List<ElementInfo>();
-
-            foreach (XMLScreenField xf in MFE.GetScreenAsXML().Fields)
+            return await Task.Run(() =>
             {
-                ElementInfo EI = new ElementInfo();
+                List<ElementInfo> Eil = new System.Collections.Generic.List<ElementInfo>();
 
-                EI.ElementTitle = xf.Text;
-                if (xf.Attributes.FieldType == "Hidden")
+                foreach (XMLScreenField xf in MFE.GetScreenAsXML().Fields)
                 {
-                    EI.ElementType = "Password";
-                }
-                if (xf.Attributes.Protected)
-                {
-                    if (xf.Attributes.FieldType == "High")
+                    ElementInfo EI = new ElementInfo();
+
+                    EI.ElementTitle = xf.Text;
+                    if (xf.Attributes.FieldType == "Hidden")
                     {
-                        EI.ElementType = "High";
+                        EI.ElementType = "Password";
                     }
+                    if (xf.Attributes.Protected)
+                    {
+                        if (xf.Attributes.FieldType == "High")
+                        {
+                            EI.ElementType = "High";
+                        }
+                    }
+                    Eil.Add(EI);
                 }
-                Eil.Add(EI);
-            }
 
-            return Eil;
+                return Eil;
+            });
         }
 
         public System.Collections.Generic.List<ElementInfo> GetElementChildren(ElementInfo ElementInfo)

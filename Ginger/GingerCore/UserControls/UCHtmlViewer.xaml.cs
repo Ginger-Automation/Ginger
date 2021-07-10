@@ -53,9 +53,10 @@ namespace GingerCore.UserControls
 
         public void ClearTreeItems()
         {
-            htmlTree.Items.Clear();
             htmlTree.ItemsSource = null;
         }
+
+        public List<string> ElementsToSkip = new List<string>() { "script", "noscript", "head" };
 
         private async void BindHTMLDocument()
         {
@@ -65,11 +66,11 @@ namespace GingerCore.UserControls
                 return;
             }
 
-            IEnumerable<HtmlNode> htmlElements = _htmldocument.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#"));
+            IEnumerable<HtmlNode> htmlElements = _htmldocument.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#") && x.NodeType == HtmlNodeType.Element && !ElementsToSkip.Contains(x.Name));
 
             if (htmlElements.Count() != 0)
             {
-                TreeViewItem TVRoot = new TreeViewItem();
+                TreeViewItem TVRoot = new TreeViewItem() { IsExpanded = true };
                 //TVRoot.Tag = _htmldocument.DocumentNode;
                 //TVRoot.Name = "Document";
                 //TVRoot.Header = "<" + _htmldocument.DocumentNode.Name + ">";
@@ -89,12 +90,13 @@ namespace GingerCore.UserControls
 
                 htmlTree.Items.Add(TVRoot);
                 htmlTree.Visibility = System.Windows.Visibility.Visible;
-            }
+                //}
 
-            //Binding binding = new Binding();
-            //binding.Source = htmlElements;
-            //binding.XPath = "child::node()";
-            //xmlTree.SetBinding(TreeView.ItemsSourceProperty, binding);
+                //Binding binding = new Binding();
+                //binding.Source = _htmldocument.DocumentNode;    // htmlElements;
+                ////binding.XPath = "child::node()";
+                //htmlTree.SetBinding(TreeView.ItemsSourceProperty, binding);
+            }
         }
 
         public async Task BindTree(HtmlNode htmlN, TreeViewItem treeN)
@@ -102,11 +104,8 @@ namespace GingerCore.UserControls
             StringBuilder result = new StringBuilder();
             switch (htmlN.NodeType)
             {
-                case HtmlNodeType.Comment:
-                    result.Append(htmlN.InnerText);
-                    break;
                 case HtmlNodeType.Document:
-                    result.Append("root");
+                    result.Append(htmlDocument.DocumentNode.Name);
                     break;
                 case HtmlNodeType.Element:
                     result.Append('<').Append(htmlN.Name).Append(' ');
@@ -132,9 +131,10 @@ namespace GingerCore.UserControls
 
             foreach (HtmlNode node in htmlN.ChildNodes)
             {
-                if (node.NodeType == HtmlNodeType.Element || node.InnerText.Trim().Length > 0)
+                if (!ElementsToSkip.Contains(node.Name) &&
+                    (node.NodeType == HtmlNodeType.Element || node.InnerText.Trim().Length > 0))
                 {
-                    childTN = new TreeViewItem();
+                    childTN = new TreeViewItem() { IsExpanded = false };
                     treeN.Items.Add(childTN);
                     await BindTree(node, childTN);
                 }

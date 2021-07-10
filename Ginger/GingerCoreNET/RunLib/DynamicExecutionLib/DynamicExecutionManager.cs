@@ -72,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
                 {
                     dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.SourceControlUser;
-                    dynamicExecution.SolutionDetails.SourceControlDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+                    dynamicExecution.SolutionDetails.SourceControlDetails.Password =  EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
                     dynamicExecution.SolutionDetails.SourceControlDetails.PasswordEncrypted = "Y";
                 }
                 else
@@ -480,12 +480,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             executionConfig.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
             executionConfig.VerboseLevel = GingerExecConfig.eVerboseLevel.normal;
+            executionConfig.EncryptionKey = solution.EncryptionKey;
 
             RunsetExecConfig runset = new RunsetExecConfig();
             runset.Exist = true;
             runset.Name = runsetExecutor.RunSetConfig.Name;
             runset.ID = runsetExecutor.RunSetConfig.Guid;
-            runset.Description = runsetExecutor.RunSetConfig.Description;
+            runset.Description = runsetExecutor.RunSetConfig.Description;            
 
             runset.EnvironmentName = runsetExecutor.RunsetExecutionEnvironment.Name;
             runset.EnvironmentID = runsetExecutor.RunsetExecutionEnvironment.Guid;
@@ -738,6 +739,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 //## Creating new Runset
                 runSetConfig = new RunSetConfig();
                 runSetConfig.Name = dynamicRunsetConfigs.Name;
+                runSetConfig.AddCategories();
             }
 
             if (gingerExecConfig.ExecutionID != null)

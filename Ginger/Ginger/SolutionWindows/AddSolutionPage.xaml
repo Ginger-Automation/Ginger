@@ -2,9 +2,9 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
-      Height="220" Width="500" MinHeight="220"
+      Height="270" Width="500" MinHeight="270"
 	Title="Add Solution">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
@@ -34,7 +34,7 @@
                 <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Main Application Platform:" />
                 <ComboBox x:Name="MainPlatformComboBox" Style="{StaticResource @InputComboBoxStyle}" Width="200" HorizontalAlignment="Left" />
             </StackPanel>
-                     
+            <usercontrols1:UCEncryptionKey x:Name="UCEncryptionKey"></usercontrols1:UCEncryptionKey>
         </StackPanel>
         
     </Grid>
