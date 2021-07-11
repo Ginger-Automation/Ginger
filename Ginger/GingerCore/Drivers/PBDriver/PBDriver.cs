@@ -44,11 +44,11 @@ namespace GingerCore.Drivers.PBDriver
     {
         Dictionary<AutomationElement, AutomationElement[,]> gridDictionary;
 
-        int mActionTimeout = 60;
+        int mActionTimeout = 150;
 
         [UserConfigured]
-        [UserConfiguredDefault("60")]  // Local host 
-        [UserConfiguredDescription("Action Timeout - default is 60 seconds")]
+        [UserConfiguredDefault("150")]  // Local host 
+        [UserConfiguredDescription("Action Timeout - default is 150 seconds")]
         public override int ActionTimeout
         {
             get
@@ -58,7 +58,23 @@ namespace GingerCore.Drivers.PBDriver
             set
             { mActionTimeout = value; }
         }
-        
+
+        int mImplicitWait = 30;
+
+        [UserConfigured]
+        [UserConfiguredDefault("30")]
+        [UserConfiguredDescription("Amount of time the driver should wait when searching for an element if it is not immediately present")]
+        public int ImplicitWait
+        {
+            get
+            {
+                return mImplicitWait;
+            }
+            set
+            {
+                mImplicitWait = value;
+            }
+        }
         //Check why it is needed?
         public PBDriver()
         {
@@ -80,10 +96,11 @@ namespace GingerCore.Drivers.PBDriver
                     mUIAutomationHelper = new UIAComWrapperHelper();
                     ((UIAComWrapperHelper)mUIAutomationHelper).WindowExplorer = this;
                     ((UIAComWrapperHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
-                    ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = UIAComWrapperHelper.ePlatform.PowerBuilder;
+                    ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = ePlatformType.PowerBuilder;
                     break;
                                    
             }
+            mUIAutomationHelper.ImplicitWait = mImplicitWait;
         }
 
         public override void UpdateContext(Context context)
@@ -977,7 +994,7 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.GetListOfDriverAppWindows();
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null)
         {
             return await mUIAutomationHelper.GetVisibleControls();
         }

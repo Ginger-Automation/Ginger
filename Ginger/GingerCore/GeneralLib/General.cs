@@ -16,8 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger;
+using GingerCore.ALM;
 using GingerCore.DataSource;
 using GingerCore.GeneralFunctions;
 using GingerCore.GeneralLib;
@@ -27,6 +29,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Security;
@@ -44,7 +47,7 @@ namespace GingerCore
     public class General
     {
         public static void LoadGenericWindow(ref GenericWindow genWindow, System.Windows.Window owner, eWindowShowStyle windowStyle, string windowTitle, Page windowPage,
-                                            ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset=false)
+                                            ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset=false, UserControl loaderElement = null)
         {
             genWindow = null;
             eWindowShowStyle winStyle;
@@ -60,7 +63,7 @@ namespace GingerCore
                 {
                     winStyle = windowStyle;
                 }
-                genWindow = new GenericWindow(owner, winStyle, windowTitle, windowPage, windowBtnsList, showClosebtn, closeBtnText, closeEventHandler);
+                genWindow = new GenericWindow(owner, winStyle, windowTitle, windowPage, windowBtnsList, showClosebtn, closeBtnText, closeEventHandler, loaderElement);
                 genWindow.Title = windowPage.Title;
                 if (startupLocationWithOffset)
                 {
@@ -928,6 +931,106 @@ namespace GingerCore
             }
             return dataString;
         }
+
+        public static bool LoadALMSettings(string fileName, GingerCoreNET.ALMLib.ALMIntegration.eALMType eALMType)
+        {
+            if (!ValidateConfigurationFile(fileName, eALMType))
+            {
+                return false;
+            }
+            {
+                string folderPath = Path.Combine(WorkSpace.Instance.Solution.Folder, "Configurations");
+                DirectoryInfo di = Directory.CreateDirectory(folderPath);
+                string configPackageFolder = string.Empty;
+                switch(eALMType)
+                {
+                    case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
+                        configPackageFolder = "JiraConfigurationsPackage";
+                        break;
+                    case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest:
+                        configPackageFolder = "QTestConfigurationsPackage";
+                        break;
+                    default:
+                        configPackageFolder = "JiraConfigurationsPackage";
+                        break;
+                }
+                folderPath = Path.Combine(folderPath, configPackageFolder);
+                if (Directory.Exists(folderPath))
+                {
+                    Amdocs.Ginger.Common.GeneralLib.General.ClearDirectoryContent(folderPath);
+                }
+                ZipFile.ExtractToDirectory(fileName, folderPath);
+
+                ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath = folderPath;
+                ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath);
+
+                if (!IsConfigPackageExists(folderPath, eALMType))
+                {
+                    return false;
+                }
+            }
+            return true; 
+        }
+        static bool ValidateConfigurationFile(string PackageFileName, GingerCoreNET.ALMLib.ALMIntegration.eALMType eALMType)
+        {
+            bool containSettingsFile = false;
+            string configPackageFile = string.Empty;
+            switch (eALMType)
+            {
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
+                    configPackageFile = @"JiraSettings/JiraSettings.json";
+                    break;
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest:
+                    configPackageFile = @"QTestSettings/QTestSettings.json";
+                    break;
+                default:
+                    configPackageFile = @"JiraSettings/JiraSettings.json";
+                    break;
+            }
+
+            using (FileStream configPackageZipFile = new FileStream(PackageFileName, FileMode.Open))
+            {
+                using (ZipArchive zipArchive = new ZipArchive(configPackageZipFile))
+                {
+                    foreach (ZipArchiveEntry entry in zipArchive.Entries)
+                    {
+                        if (entry.FullName == configPackageFile)
+                        {
+                            containSettingsFile = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            return containSettingsFile;
+        }
+
+        public static bool IsConfigPackageExists(string PackagePath, GingerCoreNET.ALMLib.ALMIntegration.eALMType eALMType)
+        {
+            string settingsFolder = string.Empty;
+            switch (eALMType)
+            {
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
+                    settingsFolder = "JiraSettings";
+                    break;
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest:
+                    settingsFolder = "QTestSettings";
+                    break;
+                default:
+                    settingsFolder = "JiraSettings";
+                    break;
+            }
+            if (Directory.Exists(Path.Combine(PackagePath, settingsFolder)))
+            {
+                return true;
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Configuration package not exist in solution, Settings not exist at: " + Path.Combine(PackagePath, settingsFolder));
+            }
+            return false;
+        }
+
     }
 }
 

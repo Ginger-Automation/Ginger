@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
@@ -67,16 +68,23 @@ namespace Ginger.BusinessFlowPages
         {
             if (xRegularType.IsChecked == true)
             {
-                if (mWizard.ActivityToAdd == null || (mWizard.ActivityToAdd is ErrorHandler))
+                if (mWizard.ActivityToAdd == null || (mWizard.ActivityToAdd is ErrorHandler) || (mWizard.ActivityToAdd is CleanUpActivity))
                 {
                     mWizard.ActivityToAdd = new Activity() { ActivityName = "New " + GingerDicser.GetTermResValue(eTermResKey.Activity), TargetApplication=SetTargetApp(), Active = true };
                 }                
             }
             else if (xErrorHandlerType.IsChecked == true)
             {
-                if (mWizard.ActivityToAdd == null || (mWizard.ActivityToAdd is ErrorHandler) == false)
+                if (mWizard.ActivityToAdd == null || (mWizard.ActivityToAdd is ErrorHandler)==false)
                 {
-                    mWizard.ActivityToAdd = new ErrorHandler() { ActivityName = "New Error Handler" , TargetApplication = SetTargetApp()};
+                    mWizard.ActivityToAdd = new ErrorHandler() { ActivityName = "New Error Handler" , TargetApplication = SetTargetApp(), Active = true };
+                }
+            }
+            else if (xCleanActivityType.IsChecked == true)
+            {
+                if (mWizard.ActivityToAdd == null || (mWizard.ActivityToAdd is CleanUpActivity)==false)
+                {
+                    mWizard.ActivityToAdd = new CleanUpActivity() { ActivityName = "New Clean Up "+ GingerDicser.GetTermResValue(eTermResKey.Activity), TargetApplication = SetTargetApp(), Active=true};
                 }
             }
         }

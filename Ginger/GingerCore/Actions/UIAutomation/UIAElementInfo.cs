@@ -26,6 +26,17 @@ namespace GingerCore.Actions.UIAutomation
         //TOOD: if needed do lazy loading and read it from th obj above
         public double XCordinate;
         public double YCordinate;
+        public object BoundingRectangle { get; set; }
+        public string LocalizedControlType { get; set; }
+        public string AutomationId { get; set; }
+        public string ClassName { get; set; }
+        public string ToggleState { get; set; }
+        public string Text { get; set; }
+        public bool IsKeyboardFocusable { get; set; } = false;
+        public bool IsEnabled { get; set; } = false;
+        public bool IsPassword { get; set; } = false;
+        public bool IsOffscreen { get; set; } = false;
+        public bool IsSelected { get; set; } = false;
 
         public override string GetAbsoluteXpath()
         {

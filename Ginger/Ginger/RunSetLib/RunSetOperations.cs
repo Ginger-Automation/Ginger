@@ -66,6 +66,7 @@ namespace Amdocs.Ginger
             RunSetConfig runSetConfig = new RunSetConfig();
             runSetConfig.Name = runSetName;
             runSetConfig.GingerRunners.Add(new GingerRunner() { Name = "Runner 1" });
+            runSetConfig.AddCategories();
 
             if (runSetsFolder == null)
             {

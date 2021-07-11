@@ -18,9 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.SolutionCategories;
 using Ginger.SolutionGeneral;
+using Ginger.UserControlsLib;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Ginger.SolutionWindows
 {
@@ -30,29 +35,37 @@ namespace Ginger.SolutionWindows
     public partial class SolutionPage : Page
     {
         GenericWindow _pageGenericWin;
-        Solution mSolution;        
-
+        Solution mSolution;
+        bool IsValidEncryptionKeyAdded = false;
+        bool IsEncrytedStrAvailableOnSol = false;
         public SolutionPage()
         {
             InitializeComponent();
-            
-             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+
+            WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+            UCEncryptionKey.UpdateKey.PreviewMouseDown += ReplaceKeyBtn_Click;
+
             Init();
         }
 
         private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(WorkSpace.Solution))
+            if (e.PropertyName == nameof(WorkSpace.Solution))
             {
                 Init();
             }
         }
 
-        private void Init()
+
+        private void Init(Solution solution = null)
         {
-            if ( WorkSpace.Instance.Solution != null)
+            if (WorkSpace.Instance.Solution != null)
             {
-                mSolution =  WorkSpace.Instance.Solution;
+                mSolution = WorkSpace.Instance.Solution;
+            }
+            else if (solution != null)
+            {
+                mSolution = solution;
             }
             else
             {
@@ -66,16 +79,31 @@ namespace Ginger.SolutionWindows
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Name));
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Folder));
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AccountTextBox, TextBox.TextProperty, mSolution, nameof(Solution.Account));
+                UCEncryptionKey.EncryptionKeyPasswordBox.Password = mSolution.EncryptionKey;
             }
             else
             {
                 xLoadSolutionlbl.Visibility = Visibility.Visible;
                 xSolutionDetailsStack.Visibility = Visibility.Collapsed;
+                xCategoriesExpander.Visibility = Visibility.Collapsed;
             }
         }
-                
+     
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
+            xCategoriesExpander.Visibility = Visibility.Visible;
+            xCategoriesFrame.Content = new SolutionCategoriesPage(eSolutionCategoriesPageMode.OptionalValuesDefinition);
+
+            SolutionFolderTextBox.IsReadOnly = false;
+            SolutionNameTextBox.IsReadOnly = false;
+            AccountTextBox.IsReadOnly = false;
+            UCEncryptionKey.EncryptionKeyTextBox.IsReadOnly = true;
+            UCEncryptionKey.EncryptionKeyPasswordBox.IsEnabled = false;
+            UCEncryptionKey.ValidFlag.Visibility = Visibility.Collapsed;
+            UCEncryptionKey.InvalidFlag.Visibility = Visibility.Collapsed;
+            UCEncryptionKey.EncryptionKeyPasswordBox.Password = mSolution.EncryptionKey;
+            UCEncryptionKey.CopyToClipboard.Visibility = Visibility.Visible;
+            UCEncryptionKey.UpdateKey.Visibility = Visibility.Visible;
             mSolution.SaveBackup();
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
@@ -87,6 +115,13 @@ namespace Ginger.SolutionWindows
             undoBtn.Content = "Undo & Close";
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
             winButtons.Add(undoBtn);
+            //Button replaceKeyBtn = new Button();
+            //replaceKeyBtn.Content = "Update Key";
+            //replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
+            //winButtons.Add(replaceKeyBtn);
+
+            this.Height = 600;
+            this.Width = 800;
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons, startupLocationWithOffset: startupLocationWithOffset);
         }
@@ -100,6 +135,105 @@ namespace Ginger.SolutionWindows
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
             mSolution.SaveSolution(true, Solution.eSolutionItemToSave.GeneralDetails);
+        }
+
+        public bool ShowAsWindow(Solution solution, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
+        {
+
+            Init(solution);
+            UCEncryptionKey.mSolution = solution;
+            IsEncrytedStrAvailableOnSol = !string.IsNullOrEmpty(mSolution.EncryptedValidationString);
+
+            SolutionFolderTextBox.IsReadOnly = true;
+            SolutionNameTextBox.IsReadOnly = true;
+            AccountTextBox.IsReadOnly = true;
+            UCEncryptionKey.EncryptionKeyTextBox.IsReadOnly = false;
+            UCEncryptionKey.EncryptionKeyPasswordBox.IsEnabled = true;
+            UCEncryptionKey.ValidFlag.Visibility = Visibility.Collapsed;
+            UCEncryptionKey.InvalidFlag.Visibility = Visibility.Visible;
+            //UCEncryptionKey.Validate.Visibility = Visibility.Visible;
+            UCEncryptionKey.UpdateKey.Visibility = Visibility.Visible;
+            //xInvalidKeyLabel.Visibility = Visibility.Visible;
+
+            xCategoriesExpander.Visibility = Visibility.Collapsed;
+
+            UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
+
+            ObservableList<Button> winButtons = new ObservableList<Button>();
+            Button uSaveKeyBtn = new Button();
+            uSaveKeyBtn.Content = "Ok";
+            uSaveKeyBtn.Click += new RoutedEventHandler(SaveKeyBtn_Click);
+            winButtons.Add(uSaveKeyBtn);
+            //Button replaceKeyBtn = new Button();
+            //replaceKeyBtn.Content = "Update Key";
+            //replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
+            //winButtons.Add(replaceKeyBtn);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons, true, "Cancel", CloseBtn_Click);
+            return IsValidEncryptionKeyAdded;
+        }
+
+        private void ValidateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsEncrytedStrAvailableOnSol)
+            {
+                UCEncryptionKey.ValidateKey();               
+            }
+            else
+            {
+                UCEncryptionKey.CheckKeyCombination();
+            }
+        }
+
+        private async void EncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
+        {
+            //this inner method checks if user is still typing
+            async Task<bool> UserKeepsTyping()
+            {
+                string txt = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
+                await Task.Delay(2000);
+                return txt != UCEncryptionKey.EncryptionKeyPasswordBox.Password;
+            }
+            if (await UserKeepsTyping()) { return; }
+
+            if (IsEncrytedStrAvailableOnSol)
+            {
+                UCEncryptionKey.ValidateKey();
+            }
+            else
+            {
+                UCEncryptionKey.CheckKeyCombination();
+            }
+        }
+
+        private void ReplaceKeyBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ReplaceEncryptionKeyPage replaceEncryptionKeyPage = new ReplaceEncryptionKeyPage();
+            _pageGenericWin.Close();
+            IsValidEncryptionKeyAdded = replaceEncryptionKeyPage.ShowAsWindow(mSolution);
+        }
+
+        private void CloseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            IsValidEncryptionKeyAdded = false;
+        }
+
+        private void SaveKeyBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsEncrytedStrAvailableOnSol && UCEncryptionKey.CheckKeyCombination())
+            {
+                mSolution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
+                mSolution.NeedVariablesReEncryption = true;
+                mSolution.SaveEncryptionKey();
+                mSolution.SaveSolution(false);
+                IsValidEncryptionKeyAdded = true;
+                _pageGenericWin.Close();
+            }
+            else if (IsEncrytedStrAvailableOnSol && UCEncryptionKey.ValidateKey())
+            {
+                mSolution.SaveEncryptionKey();
+                IsValidEncryptionKeyAdded = true;
+                _pageGenericWin.Close();
+            }
         }
     }
 }

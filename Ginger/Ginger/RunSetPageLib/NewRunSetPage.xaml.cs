@@ -31,6 +31,7 @@ using Ginger.Functionalities;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
 using Ginger.Reports;
 using Ginger.RunSetLib.CreateCLIWizardLib;
+using Ginger.SolutionCategories;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControlsLib.VisualFlow;
 using GingerCore;
@@ -226,7 +227,7 @@ namespace Ginger.Run
                 xRunnersCanvasControls.IsEnabled = false;
                 xRunnersExecutionControls.IsEnabled = false;
                 xBusinessFlowsListOperationsPnl.IsEnabled = false;
-                LoadRunSetConfig(runSetConfig, false, true);
+                LoadRunSetConfig(runSetConfig, false, true);                
                 return;
             }
 
@@ -579,6 +580,8 @@ namespace Ginger.Run
             BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
             BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.ToolTipProperty, mRunSetConfig, nameof(RunSetConfig.Name));
             UpdateDescription();
+            xRunDescritpion.Init(mContext, mRunSetConfig, nameof(RunSetConfig.RunDescription));
+            xCategoriesFrame.Content = new SolutionCategoriesPage(eSolutionCategoriesPageMode.ValuesSelection, mRunSetConfig.CategoriesDefinitions);
             mRunSetConfig.PropertyChanged += RunSetConfig_PropertyChanged;
             mRunSetConfig.Tags.CollectionChanged += RunSetTags_CollectionChanged;
         }

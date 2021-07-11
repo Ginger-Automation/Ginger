@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -128,6 +129,7 @@ namespace GingerCore
             if (T == typeof(ActivitiesGroup)) { return "ActivitiesGroup"; }
             if (T == typeof(Activity)) { return "Activity"; }
             if (T == typeof(ErrorHandler)) { return "Activity"; }
+            if (T == typeof(CleanUpActivity)) { return "Activity"; }
             if (typeof(Act).IsAssignableFrom(T)) { return "Action"; }
             if (typeof(VariableBase).IsAssignableFrom(T)) { return "Variable"; }
             if (typeof(DataSourceBase).IsAssignableFrom(T)) return "DataSource";

@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GingerCoreNET.Application_Models
@@ -59,7 +58,6 @@ namespace GingerCoreNET.Application_Models
         }
 
         public string SpecificFramePath { get; set; }
-
         public PomDeltaUtils(ApplicationPOMModel pom, Agent agent)
         {
             POM = pom;            
@@ -68,7 +66,7 @@ namespace GingerCoreNET.Application_Models
             POMLatestElements.CollectionChanged += ElementsListCollectionChanged;
         }
 
-        public void LearnDelta()
+        public async Task LearnDelta()
         {
             try
             {
@@ -86,11 +84,11 @@ namespace GingerCoreNET.Application_Models
                     uIElementList.AddRange(PomLearnUtils.AutoMapBasicElementTypesList.ToList());
                     uIElementList.AddRange(PomLearnUtils.AutoMapAdvanceElementTypesList.ToList());
 
-                    mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true,SpecificFramePath);
+                    await mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true,SpecificFramePath, GetRelativeXpathTemplateList());
                 }
                 else
                 {
-                    mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true,SpecificFramePath);
+                   await mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true,SpecificFramePath, GetRelativeXpathTemplateList());
                 }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();
@@ -101,6 +99,17 @@ namespace GingerCoreNET.Application_Models
             }            
         }
 
+        private List<string> GetRelativeXpathTemplateList()
+        {
+            var customRelXpathTemplateList = new List<string>();
+
+            foreach (var item in POM.RelativeXpathTemplateList)
+            {
+                customRelXpathTemplateList.Add(item.Value);
+            }
+
+            return customRelXpathTemplateList;
+        }
         public void StopLearning()
         {            
             ((DriverBase)Agent.Driver).mStopProcess = true;
@@ -119,7 +128,10 @@ namespace GingerCoreNET.Application_Models
                 POMElementsCopy.Add(copiedElement);
             }
             //try to locate them and pull real IWebElement for them for later comparison
-            mIWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(POMElementsCopy);
+            Task.Run(() =>
+            {
+                mIWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(POMElementsCopy);
+            });
         }
 
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -207,7 +219,18 @@ namespace GingerCoreNET.Application_Models
                 DeltaElementLocator deltaLocator = new DeltaElementLocator();
                 latestLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
                 deltaLocator.ElementLocator = latestLocator;
-                ElementLocator matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy).FirstOrDefault();
+
+                ElementLocator matchingExistingLocator = null;
+
+                if (latestLocator.LocateBy == eLocateBy.ByRelXPath)
+                {
+                    matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy && x.LocateValue == latestLocator.LocateValue).FirstOrDefault();
+                }
+                else
+                {
+                    matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy).FirstOrDefault();
+                }
+
                 if (matchingExistingLocator != null)
                 {
                     latestLocator.Guid = matchingExistingLocator.Guid;

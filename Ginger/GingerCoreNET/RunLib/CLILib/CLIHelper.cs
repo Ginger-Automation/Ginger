@@ -28,6 +28,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using static GingerCoreNET.SourceControl.SourceControlBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -45,9 +46,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourceControlURL;
         public string SourcecontrolUser;
         public string sourceControlPass;
+        public string EncryptionKey;
         public eSourceControlType sourceControlType;
         public bool sourceControlPassEncrypted;
         public eAppReporterLoggingLevel AppLoggingLevel;
+        public string ExecutionId;
 
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
@@ -171,6 +174,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 SelectEnv();
                 mRunSetConfig.RunWithAnalyzer = RunAnalyzer;
                 HandleAutoRunWindow();
+
+                if (!string.IsNullOrEmpty(ExecutionId))
+                {
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID = Guid.Parse(ExecutionId);
+                }
                 return true;
             }
             catch (Exception ex)
@@ -326,6 +334,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             sourceControlPass = value;
         }
 
+        internal void SetEncryptionKey(string value)
+        {
+            EncryptionKey = value;
+        }
+
         internal void PasswordEncrypted(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
@@ -334,7 +347,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 try
                 {
-                    pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass);
+                    pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass, EncryptionKey);
                 }
                 catch(Exception ex)
                 {
@@ -354,7 +367,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SourceControlProxyPort(string value)
         {
-            if (value == "")
+            if (string.IsNullOrEmpty(value))
             {
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
             }
@@ -370,19 +383,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         internal void SourceControlProxyServer(string value)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyServer: '" + value + "'");
-            if (value == "")
+            if (string.IsNullOrEmpty(value))
             {
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
             }
             else
             {
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
-            }
-
-            if (value != "" && !value.ToUpper().StartsWith("HTTP://"))
-            {
-                value = "http://" + value;
-            }
+                if (!value.ToUpper().StartsWith("HTTP://"))
+                {
+                    value = "http://" + value;
+                }
+            }        
 
             WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = value;
         }
@@ -438,7 +450,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                return WorkSpace.Instance.OpenSolution(Solution);
+                return WorkSpace.Instance.OpenSolution(Solution, EncryptionKey);
             }
             catch (Exception ex)
             {
