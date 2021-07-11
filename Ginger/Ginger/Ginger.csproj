@@ -1977,6 +1977,9 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <Resource Include="Images\%40AddFile_16x16.png" />
     <Resource Include="Images\%40AddSendExecutionData_16x16.png" />
+    <Content Include="Help\Library\OfflineHelp.htm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="StaticDrivers\selenium-server-standalone.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -4611,7 +4614,6 @@
     <Folder Include="ALM\Octane\" />
     <Folder Include="AutomatePageLib\AddActionMenu\WindowExplorer\InternalBrowser\" />
     <Folder Include="Dictionaries\Languages\" />
-    <Folder Include="Help\Library\" />
     <Folder Include="Reports\HTMLReports\" />
     <Folder Include="Reports\SpecialReports\" />
     <Folder Include="Settings\TreeViewItems\" />

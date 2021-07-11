@@ -81,7 +81,7 @@ namespace Ginger.Help
         {
             try
             {
-                string helpLibIndex = System.IO.Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Help", "index.html");
+                string helpLibIndex = System.IO.Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Help", "Library", "index.html");
                 if (File.Exists(helpLibIndex))
                 {
                     //start local help lib
