@@ -69,7 +69,7 @@ namespace Ginger.Help
             obj.SetValue(HelpStringProperty, value);
         }
 
-        public static void ShowHelpLibrary(string searchText)
+        public static void ShowHelpLibrary(string searchText="")
         {
             if (!ShowOfflineHelpLibrary(searchText))
             {
@@ -77,7 +77,7 @@ namespace Ginger.Help
             }
         }
 
-        public static bool ShowOfflineHelpLibrary(string searchText, bool silent=true)
+        public static bool ShowOfflineHelpLibrary(string searchText="", bool silent=true)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace Ginger.Help
                 {
                     if (!silent)
                     {
-                        Reporter.ToLog(eLogLevel.WARN, "Offline help library was not found");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Offline help library was not found");
                     }
                     return false;
                 }
@@ -112,7 +112,7 @@ namespace Ginger.Help
             }
         }
 
-        public static void ShowOnlineHelpLibrary(string searchText)
+        public static void ShowOnlineHelpLibrary(string searchText="")
         {
             try
             {
