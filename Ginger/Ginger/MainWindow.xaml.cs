@@ -30,6 +30,7 @@ using Ginger.Drivers.DriversWindows;
 using Ginger.Functionalities;
 using Ginger.GeneralLib;
 using Ginger.GeneralWindows;
+using Ginger.Help;
 using Ginger.MenusLib;
 using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
@@ -642,9 +643,19 @@ namespace Ginger
             ResolveSourceControlConflicts(eResolveConflictsSide.Server);
         }
 
-        private void HelpButton_Click(object sender, RoutedEventArgs e)
+        private void xHelpOptionsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            General.ShowGingerHelpWindow();
+            //General.ShowGingerHelpWindow();
+            if (xHelpOptionsMenuItem.Tag == null)
+            {
+                xHelpOptionsMenuItem.Tag = "Expanded";//expanded
+            }
+            else
+            {
+                xHelpOptionsMenuItem.Tag = null;
+            }
+
+            SetHelpOptionsMenuItems();
         }
 
         private void btnUpgrade_Click(object sender, RoutedEventArgs e)
@@ -965,6 +976,28 @@ namespace Ginger
             SetSupportOptionsMenuItems();
         }
 
+        private void SetHelpOptionsMenuItems()
+        {
+            //delete all Help options Sub menu items
+            for (int i = 0; i < xExtraOperationsMainMenuItem.Items.Count; i++)
+            {
+                if ((string)((MenuItem)xExtraOperationsMainMenuItem.Items[i]).Tag == "Help")
+                {
+                    xExtraOperationsMainMenuItem.Items.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            if (xHelpOptionsMenuItem.Tag != null)
+            {
+                //Insert
+                int insertIndex = xExtraOperationsMainMenuItem.Items.IndexOf(xHelpOptionsMenuItem) + 1;
+
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Offline Help Library", "Help", xLoadOfflineHelpMenuItem_Click, insertIndex++, iconType: eImageType.File);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Online Help Library", "Help", xLoadOnlineHelpMenuItem_Click, insertIndex++, iconType: eImageType.Globe);
+            }
+        }
+
         private void SetSupportOptionsMenuItems()
         {
             //delete all Support options Sub menu items
@@ -982,10 +1015,11 @@ namespace Ginger
                 //Insert
                 int insertIndex = xExtraOperationsMainMenuItem.Items.IndexOf(xSupportOptionsMenuItem) + 1;
 
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Public Site", "Support", xLoadPublicSiteMenuItem_Click, insertIndex++, iconType: eImageType.Website);
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Support Site", "Support", xLoadSupportSiteMenuItem_Click, insertIndex++, iconType: eImageType.Website);
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Q&A Fourm Site", "Support", xLoadForumSiteMenuItem_Click, insertIndex++, iconType: eImageType.Forum);
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Raise Ticket to Core Team", "Support", xOpenTicketMenuItem_Click, insertIndex++, iconType: eImageType.Ticket);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Public Site", "Support", xLoadPublicSiteMenuItem_Click, insertIndex++, iconType: eImageType.Globe);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Public Support", "Support", xLoadPublicSupportSiteMenuItem_Click, insertIndex++, iconType: eImageType.Support);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Internal Support Site", "Support", xLoadSupportSiteMenuItem_Click, insertIndex++, iconType: eImageType.Website);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Internal Q&A Fourm Site", "Support", xLoadForumSiteMenuItem_Click, insertIndex++, iconType: eImageType.Forum);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Raise Internal Ticket", "Support", xOpenTicketMenuItem_Click, insertIndex++, iconType: eImageType.Ticket);
             }
         }
 
@@ -1020,8 +1054,8 @@ namespace Ginger
                 //Insert
                 int insertIndex = xExtraOperationsMainMenuItem.Items.IndexOf(xContactOptionsMenuItem) + 1;
 
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Contact Support Team", "Contact", xSupportTeamMenuItem_Click, insertIndex++, "AmdocsTestingGingerDVCISupport@int.amdocs.com", iconType: eImageType.Email);
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Contact Core Team", "Contact", xCoreTeamMenuItem_Click, insertIndex, "GingerCoreTeam@int.amdocs.com", iconType: eImageType.Email);
+                //AddSubMenuItem(xExtraOperationsMainMenuItem, "Contact Support Team", "Contact", xSupportTeamMenuItem_Click, insertIndex++, "AmdocsTestingGingerDVCISupport@int.amdocs.com", iconType: eImageType.Email);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Contact Ginger Core Team", "Contact", xCoreTeamMenuItem_Click, insertIndex, "GingerCoreTeam@int.amdocs.com", iconType: eImageType.Email);
             }
         }
 
@@ -1044,6 +1078,21 @@ namespace Ginger
         private void xLoadPublicSiteMenuItem_Click(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("https://ginger.amdocs.com/");
+        }
+
+        private void xLoadPublicSupportSiteMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/Ginger-Automation/Ginger/issues");
+        }
+
+        private void xLoadOfflineHelpMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            GingerHelpProvider.ShowOfflineHelpLibrary(silent:false);
+        }
+
+        private void xLoadOnlineHelpMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            GingerHelpProvider.ShowOnlineHelpLibrary();
         }
 
         internal void LoadingInfo(string text)
