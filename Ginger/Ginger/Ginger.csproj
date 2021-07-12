@@ -1478,12 +1478,6 @@
       <DependentUpon>ToolTipPopUpWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Help\GingerHelpProvider.cs" />
-    <Compile Include="Help\HelpWindow.xaml.cs">
-      <DependentUpon>HelpWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Help\TreeViewItems\HelpDocumentsFolderTreeItem.cs" />
-    <Compile Include="Help\TreeViewItems\VideoHelpFileTreeItem.cs" />
-    <Compile Include="Help\TreeViewItems\MHTHelpFileTreeItem.cs" />
     <Compile Include="Reports\Designer\HTMLReportTemplateDesignerPage .xaml.cs">
       <DependentUpon>HTMLReportTemplateDesignerPage .xaml</DependentUpon>
     </Compile>
@@ -1983,17 +1977,11 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <Resource Include="Images\%40AddFile_16x16.png" />
     <Resource Include="Images\%40AddSendExecutionData_16x16.png" />
+    <Content Include="Help\Library\OfflineHelp.htm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="StaticDrivers\selenium-server-standalone.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Help\Index.mht">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Help\SearchIndex.mht">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Help\Import_From_ASAP.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Agents\AddAgentWizardLib\AddAgentIntro.md" />
     <Resource Include="Actions\ActionConversion\ActionConversionIntro.md" />
@@ -4037,10 +4025,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Help\HelpWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Reports\Designer\HTMLReportTemplateDesignerPage .xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -4548,7 +4532,6 @@
     <Content Include="Documents\License.rtf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Help\Developer Guide to Create Ginger Help Items.docx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -4631,7 +4614,6 @@
     <Folder Include="ALM\Octane\" />
     <Folder Include="AutomatePageLib\AddActionMenu\WindowExplorer\InternalBrowser\" />
     <Folder Include="Dictionaries\Languages\" />
-    <Folder Include="Help\Library\" />
     <Folder Include="Reports\HTMLReports\" />
     <Folder Include="Reports\SpecialReports\" />
     <Folder Include="Settings\TreeViewItems\" />
