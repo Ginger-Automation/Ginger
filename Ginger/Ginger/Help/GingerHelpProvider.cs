@@ -89,7 +89,16 @@ namespace Ginger.Help
                     proc.StartInfo.FileName = helpLibIndex;
                     if (!string.IsNullOrEmpty(searchText))
                     {
-                        proc.StartInfo.Arguments = "?rhsearch=" + Uri.EscapeUriString(searchText); //TODO: not working, need to fix
+                        string htmWithSearch = System.IO.Path.GetTempPath() + "OfflineGingerHelpWithSearch.htm";
+                        if (File.Exists(htmWithSearch))
+                        {
+                            File.Delete(htmWithSearch);
+                        }
+                        using (StreamWriter sw = File.CreateText(htmWithSearch))
+                        {
+                            sw.WriteLine(string.Format("<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0; url='{0}'\" /></head></html>", helpLibIndex + "?rhsearch=" + Uri.EscapeUriString(searchText)));
+                        }
+                        proc.StartInfo.FileName = htmWithSearch;
                     }
                     proc.Start();
                 }
