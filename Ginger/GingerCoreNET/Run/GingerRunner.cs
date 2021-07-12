@@ -270,7 +270,13 @@ namespace Ginger.Run
 
         public ObservableList<ApplicationPlatform> SolutionApplications { get; set; }
 
-        private ExecutionLoggerConfiguration mSelectedExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
+        private ExecutionLoggerConfiguration mSelectedExecutionLoggerConfiguration
+        {
+            get
+            {
+               return WorkSpace.Instance.Solution.LoggerConfigurations;
+            }
+        }
 
         private string mName;
         [IsSerializedForLocalRepository]
@@ -399,7 +405,6 @@ namespace Ginger.Run
         public GingerRunner()
         {
             ExecutedFrom = eExecutedFrom.Run;
-            mSelectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
 
@@ -420,7 +425,7 @@ namespace Ginger.Run
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             ExecutedFrom = executedFrom;
-            mSelectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
+
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));

@@ -2965,7 +2965,7 @@ namespace Ginger.Reports.GingerExecutionReport
         {
             try
             {
-                if (logsFolder.StartsWith(@"~\"))
+                if (logsFolder != null && logsFolder.StartsWith(@"~\"))
                 {
                     logsFolder = Path.Combine(WorkSpace.Instance.Solution.Folder, logsFolder.Substring(2));
                 }
