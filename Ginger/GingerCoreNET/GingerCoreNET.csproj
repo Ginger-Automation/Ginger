@@ -199,7 +199,7 @@
   
     <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
   
-    <PackageReference Include="CredentialManagement" Version="1.0.2" />
+    <PackageReference Include="CredentialManagement.Standard" Version="1.0.4" />
   
     <PackageReference Include="EPPlus" Version="4.5.3.1" />
   
