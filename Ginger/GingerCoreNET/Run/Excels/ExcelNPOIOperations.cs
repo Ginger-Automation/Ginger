@@ -74,7 +74,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                                     dr[j] = cell.CellFormula;
                                     break;
                                 case CellType.Blank:
-                                    dr[j] = string.Empty;
+                                    dr[j] = null;
                                     break;
                                 default:
                                     dr[j] = cell.RichStringCellValue;
@@ -293,7 +293,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                                 dr[dtColCount] = cell.StringCellValue;
                                 break;
                             case CellType.Blank:
-                                dr[dtColCount] = string.Empty;
+                                dr[dtColCount] = null;
                                 break;
                             default:
                                 dr[dtColCount] = cell.RichStringCellValue;
