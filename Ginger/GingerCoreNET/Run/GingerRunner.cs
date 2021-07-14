@@ -668,30 +668,24 @@ namespace Ginger.Run
 
             if (appAgents.Count > 0)
             {
-                foreach (var appAgent in appAgents)
+                for (var i = 0; i < appAgents.Count;i++)
                 {
 
-                    var virtualAgent = (Agent)appAgent.Agent;
+                    var virtualAgent = (Agent)appAgents[i].Agent;
 
-                    var realAgents = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Where(x => x.Guid.ToString() == virtualAgent.ParentGuid.ToString()).ToList();
-                    foreach (var applicationAgent in ApplicationAgents)
+                    var realAgent = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Where(x => x.Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
+
+                    if (realAgent != null)
                     {
-                        var agent = (Agent)applicationAgent.Agent;
+                        appAgents[i].Agent = realAgent;
+                        var runsetVirtualAgent = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Where(x => x.Guid == virtualAgent.Guid).FirstOrDefault();
 
-                        if (agent.IsVirtual && agent.Guid == ((Agent)virtualAgent).Guid)
+                        if (runsetVirtualAgent != null)
                         {
-                            foreach (var realAgent in realAgents)
-                            {
-                                if (realAgent.Guid == agent.ParentGuid)
-                                {
-                                    applicationAgent.Agent = realAgent;
-                                    //removing virtual agent from ActiveAgentList
-                                    var runsetVirtualAgent = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Where(x => x.Guid == agent.Guid).FirstOrDefault();
-                                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Remove(runsetVirtualAgent);
-                                }
-                            }
+                            WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Remove(runsetVirtualAgent);
                         }
                     }
+
                 }
             }
         }

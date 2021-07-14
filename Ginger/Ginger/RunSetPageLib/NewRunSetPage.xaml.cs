@@ -1513,21 +1513,22 @@ namespace Ginger.Run
 
         private void xResetRunsetBtn_Click(object sender, RoutedEventArgs e)
         {            
+            CleanAndUpdateRunsetStats();        
+        }
+
+        private void CleanAndUpdateRunsetStats()
+        {
             ResetALMDefectsSuggestions();
-       
-            foreach (GingerRunner runner in mRunSetConfig.GingerRunners) //reset only none running Runners to avoid execution issues
+
+            foreach (GingerRunner runner in mRunSetConfig.GingerRunners)
             {
                 if (runner.IsRunning == false)
                 {
                     runner.ResetRunnerExecutionDetails();
+                    runner.ClearAndResetVirtualAgents();
                 }
             }
 
-            UpdateRunsetStats();        
-        }
-
-        private void UpdateRunsetStats()
-        {
             //update RunnersPages stats
             List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
             foreach (FlowElement f in fe)
@@ -1790,19 +1791,7 @@ namespace Ginger.Run
 
             if (mRunSetConfig.GingerRunners.Any(x => x.Status == eRunStatus.Stopped) && Reporter.ToUser(eUserMsgKey.SaveRunsetChangesWarn) == eUserMsgSelection.Yes)
             {
-                ResetALMDefectsSuggestions();
-
-                foreach (GingerRunner runner in mRunSetConfig.GingerRunners)
-                {
-                    if (runner.IsRunning == false)
-                    {
-                        runner.ResetRunnerExecutionDetails();
-                        runner.ClearAndResetVirtualAgents();
-                    }
-                }
-
-                UpdateRunsetStats();
-
+                CleanAndUpdateRunsetStats();
                 SaveRunSetConfig();
             }
             else if (!mRunSetConfig.GingerRunners.Any(x => x.Status == eRunStatus.Stopped))
