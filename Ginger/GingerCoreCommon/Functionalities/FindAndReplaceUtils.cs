@@ -210,8 +210,7 @@ namespace Amdocs.Ginger.Common.Functionalities
                 catch 
                 {
 
-                }
-                
+                }                
             }
         }
 
