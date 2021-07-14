@@ -541,9 +541,12 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     InitializeBrowser(new JavaElementInfo() { XPath = path.Value });
 
-                    if (!string.IsNullOrEmpty(currentPOMElementInfo.Path))
+                    //check iframe and switch
+                    var iframePath = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.ParentIFrame)).FirstOrDefault();
+
+                    if (iframePath != null && !string.IsNullOrEmpty(iframePath.Value))
                     {
-                        PayLoad PLSwitchFrame = new PayLoad("HTMLElementAction", "SwitchFrame", eLocateBy.ByXPath.ToString(), currentPOMElementInfo.Path, string.Empty);
+                        PayLoad PLSwitchFrame = new PayLoad("HTMLElementAction", "SwitchFrame", eLocateBy.ByXPath.ToString(), iframePath.Value, string.Empty);
                         PayLoad ResponseSwitchFrame = Send(PLSwitchFrame);
 
                         if(ResponseSwitchFrame.IsErrorPayLoad())
