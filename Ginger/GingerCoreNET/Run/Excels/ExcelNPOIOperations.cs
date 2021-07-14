@@ -74,7 +74,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                                     dr[j] = cell.CellFormula;
                                     break;
                                 case CellType.Blank:
-                                    dr[j] = string.Empty;
+                                    dr[j] = null;
                                     break;
                                 default:
                                     dr[j] = cell.RichStringCellValue;
@@ -105,7 +105,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     return null;
                 }
                 mExcelDataTable = ConvertSheetToDataTable(mSheet);
-                mExcelDataTable.DefaultView.RowFilter = filter.Replace("[","").Replace("]","");
+                mExcelDataTable.DefaultView.RowFilter = filter;
                 mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
                 return mFilteredDataTable;
             }
@@ -293,7 +293,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                                 dr[dtColCount] = cell.StringCellValue;
                                 break;
                             case CellType.Blank:
-                                dr[dtColCount] = string.Empty;
+                                dr[dtColCount] = null;
                                 break;
                             default:
                                 dr[dtColCount] = cell.RichStringCellValue;
@@ -328,7 +328,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             {
                 UpdateCellList.ForEach(x =>
                 mExcelDataTable.Select(filter).ToList().ForEach(dr =>
-                mSheet.GetRow(mExcelDataTable.Rows.IndexOf(dr) + 1).GetCell(mExcelDataTable.Columns[x.Item1].Ordinal).SetCellValue((string)x.Item2)));
+                mSheet.GetRow(mExcelDataTable.Rows.IndexOf(dr) + 1).GetCell(mExcelDataTable.Columns[x.Item1.Replace("[","").Replace("]","")].Ordinal).SetCellValue((string)x.Item2)));
                 using (FileStream fs = new FileStream(fileName, FileMode.Create))
                 {
                     mWorkbook.Write(fs);

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <GingerRepositoryItem><Header ItemGuid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" ItemType="Solution" CreatedBy="YARONWE" Created="201905220334" GingerVersion="3.6.0.0" Version="6" LastUpdateBy="MENIK" LastUpdate="202007271925" />
-<Solution Guid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" Name="Simple Basic" ParentGuid="00000000-0000-0000-0000-000000000000">
+<Solution  EncryptedValidationString="VUmheVjtatgVR0oSpuArDg==" Guid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" Name="Simple Basic" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ALMConfigs>
 <ALMConfig AlmType="QC" DefaultAlm="True" Guid="1a53b707-51bf-4c37-a5bf-b34c18ab8483" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </ALMConfigs>
