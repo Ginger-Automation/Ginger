@@ -75,6 +75,11 @@ namespace Ginger.Drivers.DriversWindows
             );
         }
 
+        private void UnHighlightElementEvent()
+        {
+            this.Dispatcher.Invoke(() => RemoveRectangle());
+        }
+
         private void DrawRectangle(System.Drawing.Point ElementStartPoint, System.Drawing.Point ElementMaxPoint, Amdocs.Ginger.Common.UIElement.ElementInfo elementInfo)
         {
             ((DriverBase)mDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height,
@@ -86,6 +91,13 @@ namespace Ginger.Drivers.DriversWindows
             xHighlighterBorder.Width = (ElementMaxPoint.X - ElementStartPoint.X);
             xHighlighterBorder.Height = (ElementMaxPoint.Y - ElementStartPoint.Y);
             xHighlighterBorder.Visibility = Visibility.Visible;
+        }
+
+        private void RemoveRectangle()
+        {
+            xHighlighterBorder.Width = 0;
+            xHighlighterBorder.Height = 0;
+            xHighlighterBorder.Visibility = Visibility.Collapsed;
         }
 
         #region Events
@@ -129,9 +141,12 @@ namespace Ginger.Drivers.DriversWindows
                         HighlightElementEvent(sender as Amdocs.Ginger.Common.UIElement.ElementInfo);
                     }
                     break;
+
+                case DriverBase.eDriverMessageType.UnHighlightElement:
+                    UnHighlightElementEvent();
+                    break;
             }
         }
-
 
         private void xDeviceScreenshotImage_SizeChanged(object sender, SizeChangedEventArgs e)
         {

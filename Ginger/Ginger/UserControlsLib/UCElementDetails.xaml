@@ -34,6 +34,13 @@
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
+
+            <DataTemplate x:Key="xCopyLocatorButtonTemplate">
+                <Button x:Name="xCopyLocatorButton" Click="xCopyLocatorButton_Click" ToolTip="Copy Element Locator" Style="{StaticResource @InputImageGridCellButtonStyle}">
+                    <UserControls:ImageMakerControl ImageType="Copy" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                </Button>
+            </DataTemplate>
+
         </Grid.Resources>
 
         <Grid.RowDefinitions>

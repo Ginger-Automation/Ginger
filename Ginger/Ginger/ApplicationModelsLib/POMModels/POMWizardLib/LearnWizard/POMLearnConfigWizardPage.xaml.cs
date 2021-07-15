@@ -96,14 +96,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void ShowsCustomRelativePathTemplateConfig()
         {
-            if (mAppPlatform.Equals(ePlatformType.Web))
-            {
-                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Collapsed;
-            }
         }
 
         private void PlatformSpecificUIManipulations()
@@ -119,11 +111,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             if(mAppPlatform == ePlatformType.Mobile)
             {
-                xAgentControlUC.xAgentConfigsExpander.Visibility = Visibility.Collapsed;
+                xAgentControlUC.xAgentConfigsExpanderRow.Height = new GridLength(0);
             }
             else
             {
-                xAgentControlUC.xAgentConfigsExpander.Visibility = Visibility.Visible;
+                xAgentControlUC.xAgentConfigsExpanderRow.Height = new GridLength(90);
+            }
+
+            if (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform == ePlatformType.Mobile)
+            {
+                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Collapsed;
             }
         }
 

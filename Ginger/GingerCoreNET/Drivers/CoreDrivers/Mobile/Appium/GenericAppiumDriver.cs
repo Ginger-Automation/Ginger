@@ -146,6 +146,7 @@ namespace Amdocs.Ginger.CoreNET
             set
             {
                 mSeleniumDriver = value;
+                mSeleniumDriver.StopProcess = StopProcess;
             }
         }
 
@@ -206,6 +207,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
+                mSeleniumDriver.StopProcess = StopProcess;
 
                 return true;
             }
@@ -801,6 +803,10 @@ namespace Amdocs.Ginger.CoreNET
                             Convert.ToInt32(act.X2.ValueForDriver), Convert.ToInt32(act.Y2.ValueForDriver));
                         break;
 
+                    case ActMobileDevice.eMobileDeviceAction.GetCurrentApplicationInfo:
+                        act.AddOrUpdateReturnParamActual("Current Application Identifiers", GetURL());
+                        break;
+
                     case ActMobileDevice.eMobileDeviceAction.OpenApp:
                         if (AppType == eAppType.NativeHybride)
                         {
@@ -1136,8 +1142,8 @@ namespace Amdocs.Ginger.CoreNET
             {
                 if (DevicePlatformType == eDevicePlatformType.Android)
                 {
-                    return string.Format("{0} | {1}", ((AndroidDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).CurrentPackage,
-                        ((AndroidDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).CurrentActivity);
+                    return string.Format("{0} | {1}", ((AndroidDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).CurrentPackage.Split('.').Last(),
+                        ((AndroidDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).CurrentActivity.Split('.').Last());
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
@@ -1151,6 +1157,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception exc)
             {
+                Reporter.ToLog(eLogLevel.DEBUG, "An error ocured while fetching the current App details", exc);
                 return "TBD";
             }
         }
@@ -1181,7 +1188,7 @@ namespace Amdocs.Ginger.CoreNET
 
             AppWindow AW = new AppWindow();
             AW.WindowType = AppWindow.eWindowType.Appium;
-            AW.Title = "Device";   // TODO: add device name and info
+            AW.Title = GetURL();   // TODO: add device name and info
 
             list.Add(AW);
             return list;
@@ -1220,11 +1227,6 @@ namespace Amdocs.Ginger.CoreNET
 
         ElementInfo IWindowExplorer.GetControlFromMousePosition()
         {
-            if(AppType == eAppType.Web)
-            {
-                return ((IWindowExplorer)mSeleniumDriver).GetControlFromMousePosition();
-            }
-
             Point mousePosCurrent = new Point(-1, -1);
             XmlNode foundNode = null;
             ElementInfo foundElement = null;
@@ -1234,17 +1236,24 @@ namespace Amdocs.Ginger.CoreNET
                 mousePosCurrent = (Point)mousePos;  // new Point((mousePos as Point).X, (mousePos as Point).Y);
             }
 
-            if (mousePosCurrent.X > -1 && mousePosCurrent.Y >-1)
+            if (mousePosCurrent.X > -1 && mousePosCurrent.Y > -1)
             {
-                foundNode = FindElementXmlNodeByXY(mousePosCurrent.X, mousePosCurrent.Y, false).Result;
-
-                if (foundNode != null)
+                if (AppType == eAppType.Web)
                 {
-                    foundElement = GetElementInfoforXmlNode(foundNode).Result;
+                    foundElement = ((IVisualTestingDriver)mSeleniumDriver).GetElementAtPoint(mousePosCurrent.X, mousePosCurrent.Y).Result;
+                }
+                else
+                {
+                    foundNode = FindElementXmlNodeByXY(mousePosCurrent.X, mousePosCurrent.Y, false).Result;
 
-                    if (foundElement != null)
+                    if (foundNode != null)
                     {
-                        OnDriverMessage(eDriverMessageType.HighlightElement, foundElement);
+                        foundElement = GetElementInfoforXmlNode(foundNode).Result;
+
+                        if (foundElement != null)
+                        {
+                            OnDriverMessage(eDriverMessageType.HighlightElement, foundElement);
+                        }
                     }
                 }
             }
@@ -1268,6 +1277,7 @@ namespace Amdocs.Ginger.CoreNET
             else
                 return null;
         }
+
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null)
         {
             if (AppType == eAppType.Web)
@@ -1284,6 +1294,11 @@ namespace Amdocs.Ginger.CoreNET
             XmlNodeList nodes = pageSourceXml.SelectNodes("//*");
             for (int i = 0; i < nodes.Count; i++)
             {
+                if (StopProcess)
+                {
+                    return foundElementsList.ToList();
+                }
+
                 //Show only clickable elements
                 if (nodes[i].Attributes != null)
                 {
@@ -1699,7 +1714,13 @@ namespace Amdocs.Ginger.CoreNET
 
         public void UnHighLightElements()
         {
-            Reporter.ToLog(eLogLevel.ERROR, "UnHighlight not yet implemented for Mobile");
+            if (AppType == eAppType.Web)
+            {
+                ((IWindowExplorer)mSeleniumDriver).UnHighLightElements();
+                return;
+            }
+
+            OnDriverMessage(eDriverMessageType.UnHighlightElement);
         }
 
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
@@ -1901,9 +1922,6 @@ namespace Amdocs.Ginger.CoreNET
             //try using online IWebElement Objects comparison
             //ElementInfo OriginalElementInfo = originalElements.Where(x => (x.ElementObject != null) && (latestElement.ElementObject != null) && (x.ElementObject.ToString() == latestElement.ElementObject.ToString())).FirstOrDefault();//comparing IWebElement ID's
 
-            //if (OriginalElementInfo == null)
-            //{
-            //try by type and Xpath comparison
             ElementInfo OriginalElementInfo = originalElements.Where(x => (x.ElementTypeEnum == latestElement.ElementTypeEnum)
                                                                     && (x.XPath == latestElement.XPath)
                                                                     && (x.Path == latestElement.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(latestElement.Path)))
@@ -1913,7 +1931,6 @@ namespace Amdocs.Ginger.CoreNET
                                                                             )
                                                                         )
                                                                   ).FirstOrDefault();
-            //}
 
             return OriginalElementInfo;
         }
@@ -2350,6 +2367,11 @@ namespace Amdocs.Ginger.CoreNET
             return true;
         }
 
+        public override double ScreenShotInitialZoom()
+        {
+            return 0.25;
+        }
+
         public bool IsRecordingSupported()
         {
             return false;
@@ -2362,7 +2384,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public bool IsLiveSpySupported()
         {
-            return false;
+            return true;
         }
 
         public bool IsWinowSelectionRequired()
@@ -2461,6 +2483,16 @@ namespace Amdocs.Ginger.CoreNET
             }
 
             return pageSourceXml;
+        }
+
+        public string GetCurrentPageSourceString()
+        {
+            if(AppType == eAppType.Web)
+            {
+                return ((IWindowExplorer)mSeleniumDriver).GetCurrentPageSourceString();
+            }
+
+            return Driver.PageSource;
         }
 
         public void OpenDeviceSettings()

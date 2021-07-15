@@ -55,7 +55,7 @@ namespace GingerCore.Drivers
         // Used for Driver with WPF window
         public IDispatcher Dispatcher { get; set; }
 
-        public bool mStopProcess { get; set; }
+        public bool StopProcess { get; set; }
 
         public bool PreviousRunStopped { get; set; }
         public bool IsDriverRunning { get; set; }
@@ -156,7 +156,8 @@ namespace GingerCore.Drivers
         {
             DriverStatusChanged,
             ActionPerformed,
-            HighlightElement
+            HighlightElement,
+            UnHighlightElement
         }
 
         public void OnDriverMessage(eDriverMessageType DriverMessageType, object CustomSenderObj = null)
@@ -260,6 +261,11 @@ namespace GingerCore.Drivers
         public virtual bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, Amdocs.Ginger.Common.UIElement.ElementInfo clickedElementInfo)
         {
             return false;
+        }
+
+        public virtual double ScreenShotInitialZoom()
+        {
+            return 0.5;
         }
     }
 }
