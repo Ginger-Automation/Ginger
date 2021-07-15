@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.UserControls;
@@ -45,23 +46,74 @@ namespace Ginger.Drivers.DriversWindows
             mAgent = agent;
 
             ((DriverBase)mDriver).DriverMessageEvent += MobileDriverWindow_DriverMessageEvent;
+            ((DriverBase)mDriver).SpyingElementEvent += CurrentMousePosToSpy;
+        }
+
+        private object CurrentMousePosToSpy()
+        {
+            Point mousePos = new Point(-1,-1);
+
+            Dispatcher.Invoke(() => mousePos = Mouse.GetPosition(xDeviceScreenshotImage));
+
+            System.Drawing.Point pointOnAppScreen = new System.Drawing.Point(-1, -1);
+
+            this.Dispatcher.Invoke(() =>
+                pointOnAppScreen = ((DriverBase)mDriver).GetPointOnAppWindow(new System.Drawing.Point((int)mousePos.X, (int)mousePos.Y), 
+                    xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height, xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight)
+            );
+
+            return pointOnAppScreen;
+        }
+
+        private void HighlightElementEvent(Amdocs.Ginger.Common.UIElement.ElementInfo elementInfo)
+        {
+            System.Drawing.Point ElementStartPoint = new System.Drawing.Point(elementInfo.X, elementInfo.Y);
+            System.Drawing.Point ElementMaxPoint = new System.Drawing.Point(elementInfo.X + elementInfo.Width, elementInfo.Y + elementInfo.Height);
+
+            this.Dispatcher.Invoke(() =>
+                    DrawRectangle(ElementStartPoint, ElementMaxPoint, elementInfo)
+            );
+        }
+
+        private void UnHighlightElementEvent()
+        {
+            this.Dispatcher.Invoke(() => RemoveRectangle());
+        }
+
+        private void DrawRectangle(System.Drawing.Point ElementStartPoint, System.Drawing.Point ElementMaxPoint, Amdocs.Ginger.Common.UIElement.ElementInfo elementInfo)
+        {
+            ((DriverBase)mDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height,
+                xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight, elementInfo);
+
+            xHighlighterBorder.SetValue(Canvas.LeftProperty, ElementStartPoint.X + ((xDeviceScreenshotCanvas.ActualWidth - xDeviceScreenshotImage.ActualWidth) / 2));
+            xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + ((xDeviceScreenshotCanvas.ActualHeight - xDeviceScreenshotImage.ActualHeight) / 2));
+            xHighlighterBorder.Margin = new Thickness(0);
+            xHighlighterBorder.Width = (ElementMaxPoint.X - ElementStartPoint.X);
+            xHighlighterBorder.Height = (ElementMaxPoint.Y - ElementStartPoint.Y);
+            xHighlighterBorder.Visibility = Visibility.Visible;
+        }
+
+        private void RemoveRectangle()
+        {
+            xHighlighterBorder.Width = 0;
+            xHighlighterBorder.Height = 0;
+            xHighlighterBorder.Visibility = Visibility.Collapsed;
         }
 
         #region Events
-        private void MobileDriverWindow_DriverMessageEvent(object sender, DriverMessageEventArgs e)
+        private async void MobileDriverWindow_DriverMessageEvent(object sender, DriverMessageEventArgs e)
         {
-
             switch (e.DriverMessageType)
             {
                 case DriverBase.eDriverMessageType.DriverStatusChanged:
                     if (mDriver.IsDeviceConnected)
                     {
-                        this.Dispatcher.Invoke(() =>
+                        await this.Dispatcher.InvokeAsync(async () =>
                         {
                             xMessagePnl.Visibility = Visibility.Collapsed;
                             xDeviceScreenshotCanvas.Visibility = Visibility.Visible;
                             xMessageLbl.Content = "Loading Device Screenshot...";
-                            RefreshDeviceScreenshotAsync();
+                            await RefreshDeviceScreenshotAsync();
                             SetOrientationButton();
                             DoContinualDeviceScreenshotRefresh();
                         });
@@ -78,12 +130,23 @@ namespace Ginger.Drivers.DriversWindows
                 case DriverBase.eDriverMessageType.ActionPerformed:
                     if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
                     {
-                        RefreshDeviceScreenshotAsync(100);
+                        await RefreshDeviceScreenshotAsync(100);
                     }
+                    break;
+
+                case DriverBase.eDriverMessageType.HighlightElement:
+
+                    if (sender is Amdocs.Ginger.Common.UIElement.ElementInfo)
+                    {
+                        HighlightElementEvent(sender as Amdocs.Ginger.Common.UIElement.ElementInfo);
+                    }
+                    break;
+
+                case DriverBase.eDriverMessageType.UnHighlightElement:
+                    UnHighlightElementEvent();
                     break;
             }
         }
-
 
         private void xDeviceScreenshotImage_SizeChanged(object sender, SizeChangedEventArgs e)
         {

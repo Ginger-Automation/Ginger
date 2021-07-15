@@ -132,7 +132,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         {
             if (mAgent != null && mAgent.Driver != null)
             {
-                mAgent.Driver.mStopProcess = true;
+                mAgent.Driver.StopProcess = true;
             }
         }
 
@@ -140,7 +140,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         {
             if (mAgent != null && mAgent.Driver != null)
             {
-                mAgent.Driver.mStopProcess = false;
+                mAgent.Driver.StopProcess = false;
             }
         }
 

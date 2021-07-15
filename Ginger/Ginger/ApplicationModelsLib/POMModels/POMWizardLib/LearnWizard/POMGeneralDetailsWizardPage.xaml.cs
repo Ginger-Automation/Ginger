@@ -99,6 +99,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public void ShowScreenShot()
         {
             mScreenshotPage = new ScreenShotViewPage(mWizard.mPomLearnUtils.POM.Name, mWizard.mPomLearnUtils.ScreenShot);
+            mScreenshotPage.xZoomSlider.Value = 0.5;
             xScreenShotFrame.Content = mScreenshotPage;
         }
 

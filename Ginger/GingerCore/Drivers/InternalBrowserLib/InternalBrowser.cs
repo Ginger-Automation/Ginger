@@ -1400,5 +1400,10 @@ namespace GingerCore.Drivers.InternalBrowserLib
         {
             return null;
         }
+
+        public string GetCurrentPageSourceString()
+        {
+            return null;
+        }
     }
 }

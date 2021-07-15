@@ -1077,9 +1077,7 @@ namespace Ginger.WindowExplorer
 
             /// UnComment later after complete Implementation of functionalities over all platforms.
             //if(IsWebMobJavaPlatform)
-            //    mWindowExplorerDriver.UnHighLightElements();
-
-            //Bitmap ScreenShotBitmap = ((UIAutomationDriverBase)mApplicationAgent.Agent.Driver).mUIAutomationHelper.GetAppWindowAsBitmap((AppWindow)xWindowSelection.WindowsComboBox.SelectedItem);  // GetScreenShot(new Tuple<int, int>(1000, 1000));   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
+            mWindowExplorerDriver.UnHighLightElements();
 
             try
             {
@@ -1088,16 +1086,9 @@ namespace Ginger.WindowExplorer
                 if (!mWindowExplorerDriver.SupportedViews().Contains(eTabView.Screenshot) || SwitchToCurrentWindow() == null)
                     return;
 
-                Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot();   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
+                Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot();
+                mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, (mWindowExplorerDriver as DriverBase).ScreenShotInitialZoom());
 
-                if (mWindowExplorerDriver is GenericAppiumDriver)   // && (mWindowExplorerDriver as GenericAppiumDriver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.NativeHybride)
-                {
-                    mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.25);
-                }
-                else
-                {
-                    mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.5);
-                }
                 mScreenShotViewPage.ImageMouseCursor = Cursors.Hand;
                 /// UnComment to allow Element detection on hover
                 //if (mPlatform.PlatformType() == ePlatformType.Web)
@@ -1541,6 +1532,11 @@ namespace Ginger.WindowExplorer
         {
             xStatusBarText.Visibility = Visibility.Collapsed;
             xStatusBarIcon.Visibility = Visibility.Collapsed;
+        }
+
+        private void xCopyPageSrc_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(mWindowExplorerDriver.GetCurrentPageSourceString());
         }
     }
 }

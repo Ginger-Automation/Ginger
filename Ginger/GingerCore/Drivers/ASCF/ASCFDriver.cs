@@ -1505,5 +1505,10 @@ namespace GingerCore.Drivers.ASCF
         {
             return null;
         }
+
+        public string GetCurrentPageSourceString()
+        {
+            return null;
+        }
     }
 }

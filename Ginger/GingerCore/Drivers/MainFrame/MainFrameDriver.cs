@@ -847,5 +847,10 @@ namespace GingerCore.Drivers.MainFrame
         {
             return null;
         }
+
+        public string GetCurrentPageSourceString()
+        {
+            return null;
+        }
     }
 }
