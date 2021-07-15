@@ -564,6 +564,7 @@ namespace Ginger
                             if (Reporter.ToUser(eUserMsgKey.POMElementNotExist, SelectedElement.ElementName, SelectedPOM.Name) == eUserMsgSelection.Yes)
                             {
                                 POMBasedAction = true;
+                                SelectedElement.IsAutoLearned = true;
                                 SelectedPOM.MappedUIElements.Add(SelectedElement);
 
                                 POMElement = SelectedElement;
