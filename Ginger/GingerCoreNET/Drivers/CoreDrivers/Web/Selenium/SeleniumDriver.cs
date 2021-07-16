@@ -5155,11 +5155,20 @@ namespace GingerCore.Drivers
                 try
                 {
                     ((IJavaScriptExecutor)Driver).ExecuteScript("GingerLibLiveSpy.StartEventListner()");
+                    CurrentPageURL = string.Empty;
                 }
                 catch
                 {
                     mListnerCanBeStarted = false;
                     Reporter.ToLog(eLogLevel.DEBUG, "Spy Listener cannot be started");
+                    
+                    var url = Driver.Title;
+                    if(CurrentPageURL != url)
+                    {
+                        CurrentPageURL = Driver.Title;
+                        Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Failed to start Live Spy Listner.Please click on the desired element to retrieve element details.");
+                    }
+                    ((IJavaScriptExecutor)Driver).ExecuteScript("return console.log('Failed to start Live Spy Listner.Please click on the desired element to retrieve element details.')");
                 }
             }
         }
