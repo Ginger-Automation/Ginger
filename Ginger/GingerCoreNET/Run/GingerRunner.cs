@@ -638,9 +638,8 @@ namespace Ginger.Run
                             ProjEnvironment.CloseEnvironment();
                         }
                         Status = eRunStatus.Completed;
+                        ClearAndResetVirtualAgents();
                     }
-
-                    ClearAndResetVirtualAgents();
 
                     PostScopeVariableHandling(BusinessFlow.SolutionVariables);
                     IsRunning = false;
