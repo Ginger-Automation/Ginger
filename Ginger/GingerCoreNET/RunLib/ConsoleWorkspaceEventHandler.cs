@@ -59,5 +59,11 @@ namespace Amdocs.Ginger
         {
             throw new NotImplementedException();
         }
+
+
+        public bool OpenEncryptionKeyHandler(Solution solution)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

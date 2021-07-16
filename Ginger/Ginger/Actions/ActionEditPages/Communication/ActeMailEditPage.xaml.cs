@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions.Communication;
@@ -148,11 +149,7 @@ namespace Ginger.Actions.Communication
             bool res = false;
             if (!EncryptionHandler.IsStringEncrypted(xSMTPPassTextBox.Text))
             {
-                xSMTPPassTextBox.Text = EncryptionHandler.EncryptString(xSMTPPassTextBox.Text, ref res);
-                if (res == false)
-                {
-                    xSMTPPassTextBox.Text = string.Empty;
-                }
+                xSMTPPassTextBox.Text = EncryptionHandler.EncryptwithKey(xSMTPPassTextBox.Text);                
             }
         }
 

@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="Ginger.UserControlsLib.UCEncryptionKey"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Ginger.UserControlsLib" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="455"/>
+            <ColumnDefinition Width="50*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Label x:Name="Label" Style="{StaticResource @InputFieldLabelStyle}" ToolTip="Key for Encrypting/Descrypting all solution passwords">Solution Passwords Encryption Key:</Label>
+            <usercontrols:ImageMakerControl x:Name="InvalidFlag" SetAsFontImageWithSize="18" ImageType="Failed" ToolTip="Invalid Key" Foreground="Red" Width="20" Height="20" Margin="0,-20,0,0" Visibility="Collapsed"/>
+            <usercontrols:ImageMakerControl x:Name="ValidFlag" SetAsFontImageWithSize="18" ImageType="Check" ToolTip="Valid Key" Foreground="Green" Width="20" Height="20" Margin="0,-20,0,0" Visibility="Collapsed"/>
+        </StackPanel>
+        <PasswordBox x:Name="EncryptionKeyPasswordBox" AutomationProperties.AutomationId="QA-EncryptionKeyPasswordBox" Style="{StaticResource @PasswordBoxStyle}" FontWeight="Bold" Width="450" HorizontalAlignment="Left" ToolTip="Encryption key must be 8-16 in length and should contain atleast 1 cap, 1 small, 1 digit and 1 special char." Margin="0,29,0,0"/>
+        <TextBox  Grid.Column="0" x:Name="EncryptionKeyTextBox" AutomationProperties.AutomationId="QA-EncryptionKeyTextBox" Style="{StaticResource @TextBoxStyle}" FontWeight="Bold" Width="450" Visibility="Hidden" HorizontalAlignment="Left" Margin="0,29,0,0"/>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,29,0,0">
+            <usercontrols:ImageMakerControl HorizontalAlignment="Left" SetAsFontImageWithSize="18" ImageType="Visible" ToolTip="Show Key" Width="20" Height="20" Foreground="{StaticResource $BackgroundColor_DarkBlue}" x:Name="ShowPassword" PreviewMouseDown="ShowPassword_PreviewMouseDown" PreviewMouseUp="ShowPassword_PreviewMouseUp" MouseLeave="ShowPassword_MouseLeave"/>
+            <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Copy" ToolTip="Copy To Clipboard" Width="20" Height="20"  Foreground="{StaticResource $BackgroundColor_DarkBlue}" x:Name="CopyToClipboard" PreviewMouseDown="CopyToClipboardKeyMouseDown" Margin="5,0,0,0" Visibility="Collapsed"/>
+            <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Edit" ToolTip="Update Key" Width="20" Height="20"  Foreground="{StaticResource $BackgroundColor_DarkBlue}" x:Name="UpdateKey" PreviewMouseDown="UpdateKeyMouseDown" Margin="5,0,0,0" Visibility="Hidden"/>
+            <!--<usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Check" ToolTip="Valid Key" Width="20" Height="20"  Foreground="{StaticResource $BackgroundColor_DarkBlue}" x:Name="Validate" PreviewMouseDown="ValidateKeyMouseDown" Margin="5,0,0,0" Visibility="Collapsed"/>-->            
+        </StackPanel>
+        
+    </Grid>
+</UserControl>

@@ -35,7 +35,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static Ginger.ExecuterService.Contracts.V1.ExecuterAgent.AgentApiRoutes;
 
 namespace Ginger.WindowExplorer
 {

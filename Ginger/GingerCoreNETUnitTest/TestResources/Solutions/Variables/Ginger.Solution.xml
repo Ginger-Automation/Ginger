@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <GingerRepositoryItem><Header ItemGuid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" ItemType="Solution" CreatedBy="RAVIKET" Created="201811021558" GingerVersion="3.0.0.0" Version="1" LastUpdateBy="RAVIKET" LastUpdate="201811021558" />
-<Solution AlmType="QC" Guid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" Name="Simple Basic" ParentGuid="00000000-0000-0000-0000-000000000000">
+<Solution  EncryptedValidationString="VUmheVjtatgVR0oSpuArDg==" AlmType="QC" Guid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" Name="Simple Basic" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ApplicationPlatforms>
 <ApplicationPlatform AppName="Amdo CSP" CoreGUID="00000000-0000-0000-0000-000000000000" Guid="67845df5-359a-4706-a1de-71d7db092e2c" GUID="00000000-0000-0000-0000-000000000000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" />
 </ApplicationPlatforms>

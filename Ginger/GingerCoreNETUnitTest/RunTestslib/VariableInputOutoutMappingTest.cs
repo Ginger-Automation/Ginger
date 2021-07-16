@@ -28,8 +28,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             mTestHelper.ClassInitialize(TestContext);
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "OutputVariableOldSolution"));
-          
-            WorkSpace.Instance.OpenSolution(path);
+
+            WorkSpace.Instance.OpenSolution(path, EncryptionHandler.GetDefaultKey());
 
         }
 
