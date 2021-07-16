@@ -148,7 +148,8 @@ namespace Amdocs.Ginger.Common
         MissingImplementationForPlatform,
         WarnAddSwingOrWidgetElement,
         AskToSelectValidItem,
-        InvalidEncryptionKey
+        InvalidEncryptionKey,
+        SaveRunsetChangesWarn
     }
 
     public static class UserMsgsPool
@@ -395,6 +396,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.SaveRunsetChanges, new UserMsg(eUserMsgType.QUESTION, "Save Changes", "There are unsaved changes in runset, Do you want to save it?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionEncryptionKeyUpgrade, new UserMsg(eUserMsgType.INFO, "Solution Passwords encryption key updated", "'{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ForgotKeySaveChanges, new UserMsg(eUserMsgType.QUESTION, "Confirm to set new key", "All password values in the solution will be cleared and need to be entered again. Are you Sure you want to set a new key ?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveRunsetChangesWarn, new UserMsg(eUserMsgType.WARN, "Save Changes", "Runset execution will be reset on clicking on Yes.", eUserMsgOption.YesNo, eUserMsgSelection.No));
+
             #endregion Solution Messages
 
             #region Activities
