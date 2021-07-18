@@ -20,13 +20,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
     {     
         public static AccountReportAction MapActionStartData(GingerCore.Actions.Act action, Context context)
         {
-            action.ExecutionId = Guid.NewGuid(); // check incase of retry / flow control 
-            
+            action.ExecutionId = Guid.NewGuid(); // check incase of retry / flow control             
 
             AccountReportAction accountReportAction = new AccountReportAction();     
-            if(context.Activity!=null)
+
+            if(context.BusinessFlow.CurrentActivity != null)
             {
-                accountReportAction.Seq = context.Activity.ExecutionLogActionCounter;
+                accountReportAction.Seq = context.BusinessFlow.CurrentActivity.ExecutionLogActionCounter;
                 action.ParentExecutionId = context.BusinessFlow.CurrentActivity.ExecutionId;
             }            
             else
@@ -65,14 +65,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportAction.OutputValues = action.ReturnValues.Select(a => a.Param + "_:_" + a.Actual + "_:_" + a.ExpectedCalculated + "_:_" + a.Status).ToList();
             accountReportAction.FlowControls = action.FlowControls.Select(a => a.Condition + "_:_" + a.ConditionCalculated + "_:_" + a.FlowControlAction + "_:_" + a.Status).ToList();            
             accountReportAction.Error = action.Error;
-            accountReportAction.ExInfo = action.ExInfo;            
-            foreach (string screenshot in action.ScreenShots)
-            {               
-                string newScreenshotPath = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString() + "/" + Path.GetFileName(screenshot);
-
-                newScreenShotsList.Add(newScreenshotPath);
+            accountReportAction.ExInfo = action.ExInfo;
+            //foreach (string screenshot in action.ScreenShots)
+            //{
+            //    //string newScreenshotPath = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString() + "/" + Path.GetFileName(screenshot);
+            //    //newScreenShotsList.Add(newScreenshotPath);
+            //}
+            //accountReportAction.ScreenShots = newScreenShotsList;
+            if (action.ScreenShots != null && action.ScreenShots.Count > 0)
+            {
+                accountReportAction.ScreenShots = action.ScreenShots.ToList();
             }
-            accountReportAction.ScreenShots = newScreenShotsList;
             return accountReportAction;
         }
         public static AccountReportActivity MapActivityStartData(Activity activity, Context context)
