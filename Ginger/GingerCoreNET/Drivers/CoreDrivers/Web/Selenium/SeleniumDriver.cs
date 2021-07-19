@@ -5155,11 +5155,20 @@ namespace GingerCore.Drivers
                 try
                 {
                     ((IJavaScriptExecutor)Driver).ExecuteScript("GingerLibLiveSpy.StartEventListner()");
+                    CurrentPageURL = string.Empty;
                 }
                 catch
                 {
                     mListnerCanBeStarted = false;
                     Reporter.ToLog(eLogLevel.DEBUG, "Spy Listener cannot be started");
+                    
+                    var url = Driver.Title;
+                    if(CurrentPageURL != url)
+                    {
+                        CurrentPageURL = Driver.Title;
+                        Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Failed to start Live Spy Listner.Please click on the desired element to retrieve element details.");
+                    }
+                    ((IJavaScriptExecutor)Driver).ExecuteScript("return console.log('Failed to start Live Spy Listner.Please click on the desired element to retrieve element details.')");
                 }
             }
         }
@@ -5399,9 +5408,16 @@ namespace GingerCore.Drivers
 
         public void InjectGingerLiveSpy()
         {
-            AddJavaScriptToPage(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLiveSpy));
-            ((IJavaScriptExecutor)Driver).ExecuteScript("define_GingerLibLiveSpy();", null);
-            string rc = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.AddScript(arguments[0]);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min));
+            try
+            {
+                AddJavaScriptToPage(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLiveSpy));
+                ((IJavaScriptExecutor)Driver).ExecuteScript("define_GingerLibLiveSpy();", null);
+                string rc = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.AddScript(arguments[0]);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min));
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during InjectGingerLiveSpy", ex);
+            }
         }
 
         public string XPoint;
