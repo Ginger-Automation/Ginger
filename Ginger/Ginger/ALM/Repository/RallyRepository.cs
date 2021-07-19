@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using static GingerCoreNET.ALMLib.ALMIntegration;
 
 namespace Ginger.ALM.Repository
 {
@@ -60,7 +61,7 @@ namespace Ginger.ALM.Repository
             return true;
         }
 
-        public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
+        public override bool ConnectALMServer(eALMConnectType userMsgStyle)
         {
             bool isConnectSucc = false;
             Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Rally server");
@@ -76,9 +77,9 @@ namespace Ginger.ALM.Repository
             if (!isConnectSucc)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Could not connect to Rally server");
-                if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
+                if (userMsgStyle == eALMConnectType.Manual)
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailure);
-                else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
+                else if (userMsgStyle == eALMConnectType.Auto)
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings);
             }
 
@@ -191,7 +192,7 @@ namespace Ginger.ALM.Repository
             Reporter.HideStatusMessage();
         }
 
-        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
+        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
             if (businessFlow == null) return false;
 
@@ -214,12 +215,12 @@ namespace Ginger.ALM.Repository
                     Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));                    
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                 }
-                if(almConectStyle != ALMIntegration.eALMConnectType.Auto && almConectStyle != ALMIntegration.eALMConnectType.Silence)
+                if(almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
             }
             else
             {
-                if(almConectStyle != ALMIntegration.eALMConnectType.Silence)
+                if(almConectStyle != eALMConnectType.Silence)
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
 

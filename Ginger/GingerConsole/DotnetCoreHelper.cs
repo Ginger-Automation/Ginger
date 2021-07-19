@@ -41,6 +41,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using static GingerCoreNET.ALMLib.ALMIntegration;
 
 namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 {
@@ -109,12 +110,16 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
         {
-            throw new NotImplementedException();
+            ALMCore aLMCore = (ALMCore)GetALMCore();
+            aLMCore.ConnectALMServer();
+            aLMCore.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, (eALMConnectType)silence);
         }
 
         public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string refe, PublishToALMConfig PublishToALMConfig)
         {
-            throw new NotImplementedException();
+            ALMCore aLMCore = (ALMCore)GetALMCore();
+            aLMCore.ConnectALMServer();
+            return aLMCore.ExportBusinessFlowsResultToALM(bfs, ref refe, PublishToALMConfig, eALMConnectType.Silence);
         }
 
         public Type GetDriverType(IAgent agent)
@@ -222,7 +227,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public string GetALMConfig()
         {
-            throw new NotImplementedException();
+            return WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType.ToString();
         }
 
         public DbConnection GetMSAccessConnection()
@@ -235,6 +240,40 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             return new WebserviceDriverConsoleReporter();
         }
 
-  
+        public ALMIntegration.eALMConnectType GetALMConnectType(ALMIntegration.eALMConnectType eALMConnectType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AutoALMProjectConnect(ALMIntegration.eALMConnectType almConnectStyle = ALMIntegration.eALMConnectType.Silence, bool showConnWin = true, bool asConnWin = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object GetALMCore()
+        {
+            ALMCore almCore = null;
+            string almtype = GetALMConfig();
+            Enum.TryParse(almtype, out ALMIntegration.eALMType AlmType);
+            GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = ALMCore.GetCurrentAlmConfig(AlmType);
+            ALMCore.DefaultAlmConfig = CurrentAlmConfigurations;
+
+            //Set ALMRepo
+            switch (AlmType)
+            {
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
+                    almCore = new JiraCore();
+                    break;
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane:
+                    almCore = new OctaneCore();;
+                    break;
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:
+                    almCore = new ZephyrEntCore();
+                    break;
+            }
+            almCore.GetCurrentAlmConfig();
+            ALMCore.SetALMCoreConfigurations(AlmType, almCore);
+            return almCore;
+        }
     }
 }

@@ -35,6 +35,7 @@ using System.Windows;
 using ZephyrEntSDK.Models;
 using ZephyrEntSDK.Models.Base;
 using static Ginger.ALM.ZephyrEnt.ZephyrEntPlanningExplorerPage;
+using static GingerCoreNET.ALMLib.ALMIntegration;
 
 namespace Ginger.ALM.Repository
 {
@@ -51,7 +52,7 @@ namespace Ginger.ALM.Repository
         {
             this.AlmCore = almCore;
         }
-        public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
+        public override bool ConnectALMServer(eALMConnectType userMsgStyle)
         {
             try
             {
@@ -68,11 +69,11 @@ namespace Ginger.ALM.Repository
             }
             catch (Exception e)
             {
-                if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
+                if (userMsgStyle == eALMConnectType.Manual)
                 {
                     Reporter.ToUser(eUserMsgKey.QcConnectFailure, e.Message); //TODO: Fix message
                 }
-                else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
+                else if (userMsgStyle == eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, e.Message);
                 }
@@ -136,7 +137,7 @@ namespace Ginger.ALM.Repository
             throw new NotImplementedException();
         }
 
-        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
+        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
             tcsRepositoryList = new List<TestCaseResource>();
             if (businessFlow == null)
@@ -272,7 +273,7 @@ namespace Ginger.ALM.Repository
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                     Reporter.HideStatusMessage();
                 }
-                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                 }
@@ -280,7 +281,7 @@ namespace Ginger.ALM.Repository
             }
             else
             {
-                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
                 }

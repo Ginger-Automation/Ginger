@@ -26,6 +26,8 @@ using GingerCore.ALM;
 using GingerCore.Environments;
 using GingerCoreNET.SourceControl;
 using System.Data.Common;
+using static GingerCoreNET.ALMLib.ALMIntegration;
+
 namespace Amdocs.Ginger.Common
 {
     public enum eExecutedFrom
@@ -90,5 +92,6 @@ namespace Amdocs.Ginger.Common
 
 
         DbConnection GetOracleConnection(string ConnectionString);
+        object GetALMCore();
     }
 }

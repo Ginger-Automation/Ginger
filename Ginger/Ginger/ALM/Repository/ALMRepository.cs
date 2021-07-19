@@ -25,6 +25,7 @@ using GingerCore.ALM.QC;
 using Amdocs.Ginger.Common.InterfacesLib;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using static GingerCoreNET.ALMLib.ALMIntegration;
 
 namespace Ginger.ALM.Repository
 {
@@ -33,10 +34,10 @@ namespace Ginger.ALM.Repository
         ALMItemsFieldsConfigurationPage mALMFieldsPage = null;
         ALMDefectsProfilesPage mALMDefectsProfilesPage = null;
 
-        public abstract bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle);
+        public abstract bool ConnectALMServer(eALMConnectType userMsgStyle);
         public abstract string SelectALMTestPlanPath();
         public abstract string SelectALMTestLabPath();
-        public abstract bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null);
+        public abstract bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null);
         public abstract void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups);
         public abstract bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null);
         public abstract void ImportALMTests(string importDestinationFolderPath);

@@ -26,7 +26,7 @@ using GingerCore.ALM;
 using GingerCore;
 using System.Threading.Tasks;
 using Ginger.Run.RunSetActions;
-
+using static GingerCoreNET.ALMLib.ALMIntegration;
 
 namespace Ginger.Run
 {
@@ -106,7 +106,7 @@ namespace Ginger.Run
             IsProcessing = true;
             mPublishToALMConfig.CalculateTCRunName(mVE);
             await Task.Run(() => {
-                 ALMIntegration.Instance.ExportBusinessFlowsResultToALM(mBfs, ref result, mPublishToALMConfig, ALMIntegration.eALMConnectType.Auto, true);
+                 ALMIntegration.Instance.ExportBusinessFlowsResultToALM(mBfs, ref result, mPublishToALMConfig, eALMConnectType.Auto, true);
                });
             IsProcessing = false;
             xExportToALMLoadingIcon.Visibility = Visibility.Collapsed;          

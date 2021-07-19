@@ -49,6 +49,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using static GingerCoreNET.ALMLib.ALMIntegration;
 
 namespace Ginger
 {
@@ -528,7 +529,7 @@ namespace Ginger
 
         private void ALMConfigButton_Click(object sender, RoutedEventArgs e)
         {
-            ALMConnectionPage almConnPage = new ALMConnectionPage(ALMIntegration.eALMConnectType.SettingsPage);
+            ALMConnectionPage almConnPage = new ALMConnectionPage(eALMConnectType.SettingsPage);
             almConnPage.ShowAsWindow();
         }
 

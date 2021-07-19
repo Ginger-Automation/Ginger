@@ -28,6 +28,8 @@ using System.Windows.Navigation;
 using Amdocs.Ginger.Common;
 using System.Windows.Data;
 using System.Linq;
+using static GingerCoreNET.ALMLib.ALMIntegration;
+using GingerCore.ALM;
 
 namespace Ginger.ALM
 {
@@ -41,7 +43,7 @@ namespace Ginger.ALM
         bool isServerDetailsCorrect;
         bool isProjectMappingCorrect;
         GenericWindow _pageGenericWin;
-        ALMIntegration.eALMConnectType almConectStyle;
+        eALMConnectType almConectStyle;
 
         private void Bind()
         {
@@ -60,7 +62,7 @@ namespace Ginger.ALM
             }
             PasswordTextBox.Password = CurrentAlmUserConfigurations.ALMPassword; //can't do regular binding with PasswordTextBox control for security reasons
         }
-        public ALMConnectionPage(ALMIntegration.eALMConnectType almConnectStyle, bool isConnWin = false)
+        public ALMConnectionPage(eALMConnectType almConnectStyle, bool isConnWin = false)
         {
             CurrentAlmConfigurations = ALMIntegration.Instance.GetDefaultAlmConfig();
             CurrentAlmUserConfigurations = ALMIntegration.Instance.GetCurrentAlmUserConfig(CurrentAlmConfigurations.AlmType);
@@ -80,7 +82,7 @@ namespace Ginger.ALM
                     CurrentAlmConfigurations.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
                 }
             }
-            if (almConnectStyle != ALMIntegration.eALMConnectType.Silence)
+            if (almConnectStyle != eALMConnectType.Silence)
             {
                 if (GetProjectsDetails())
                 {
@@ -255,13 +257,13 @@ namespace Ginger.ALM
 
         private void GetProjectsDetails_Clicked(object sender, RoutedEventArgs e)
         {
-            almConectStyle = ALMIntegration.eALMConnectType.Manual;
+            almConectStyle = eALMConnectType.Manual;
             GetProjectsDetails();
             isProjectMappingCorrect = false;
             SetControls();
         }
 
-        private void RefreshDomainList(ALMIntegration.eALMConnectType userMsgStyle)
+        private void RefreshDomainList(eALMConnectType userMsgStyle)
         {
             List<string> Domains = ALMIntegration.Instance.GetALMDomains(userMsgStyle);
 
@@ -388,7 +390,7 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             if (ALMIntegration.Instance.TestALMProjectConn(almConectStyle))
             {
-                if ((almConectStyle == ALMIntegration.eALMConnectType.Manual) || (almConectStyle == ALMIntegration.eALMConnectType.SettingsPage))
+                if ((almConectStyle == eALMConnectType.Manual) || (almConectStyle == eALMConnectType.SettingsPage))
                 {
                     SaveALMConfigs();
                 }
@@ -632,7 +634,7 @@ namespace Ginger.ALM
                
                 ALMIntegration.Instance.SetDefaultAlmConfig(almType);
                 ALMIntegration.Instance.UpdateALMType(almType);
-                CurrentAlmConfigurations = ALMIntegration.Instance.GetCurrentAlmConfig(almType);
+                CurrentAlmConfigurations = ALMCore.GetCurrentAlmConfig(almType);
                 CurrentAlmUserConfigurations = ALMIntegration.Instance.GetCurrentAlmUserConfig(almType);
 
 

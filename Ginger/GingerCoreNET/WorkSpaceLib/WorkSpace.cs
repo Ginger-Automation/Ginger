@@ -279,6 +279,14 @@ namespace amdocs.ginger.GingerCoreNET
 
             Reporter.ToLog(eLogLevel.INFO, "Loading User Profile");            
             UserProfile = UserProfile.LoadUserProfile();
+            if (UserProfile == null)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Configuring User Type= null");
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Configuring User Type= {UserProfile.ALMUserConfigs.Count}");
+            }
             
             Reporter.ToLog(eLogLevel.INFO, "Configuring User Type");
             UserProfile.LoadUserTypeHelper();            

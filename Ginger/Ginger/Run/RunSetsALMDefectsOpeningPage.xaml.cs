@@ -30,6 +30,7 @@ using System.Windows.Input;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM;
+using GingerCore.ALM;
 
 namespace Ginger.Run
 {
@@ -117,7 +118,7 @@ namespace Ginger.Run
         private void OpenDefectForSelectedSuggestions_Click(object sender, RoutedEventArgs e)
         {
             //if selected ALM is QC And UseRest=False return
-            GingerCoreNET.ALMLib.ALMConfig almConfig = ALMIntegration.Instance.GetCurrentAlmConfig(((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).AlmType);
+            GingerCoreNET.ALMLib.ALMConfig almConfig = ALMCore.GetCurrentAlmConfig(((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).AlmType);
             if (!almConfig.UseRest && almConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC)
             {
                 Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");

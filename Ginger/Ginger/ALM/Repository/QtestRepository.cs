@@ -38,13 +38,14 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.ALM.Qtest;
 using Ginger.ALM.Qtest.TreeViewItems;
+using static GingerCoreNET.ALMLib.ALMIntegration;
 
 namespace Ginger.ALM.Repository
 {
     class QtestRepository : ALMRepository
     {
         QtestTest matchingTC = null;
-        public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
+        public override bool ConnectALMServer(eALMConnectType userMsgStyle)
         {
             try
             {
@@ -61,11 +62,11 @@ namespace Ginger.ALM.Repository
             }
             catch (Exception e)
             {
-                if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
+                if (userMsgStyle == eALMConnectType.Manual)
                 {
                     Reporter.ToUser(eUserMsgKey.QcConnectFailure, e.Message);
                 }
-                else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
+                else if (userMsgStyle == eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, e.Message);
                 }
@@ -321,7 +322,7 @@ namespace Ginger.ALM.Repository
             return false;
         }
 
-        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Silence, string parentObjectId = null, string testCaseParentObjectId = null)
+        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Silence, string parentObjectId = null, string testCaseParentObjectId = null)
         {
             if (businessFlow == null)
             {
@@ -424,7 +425,7 @@ namespace Ginger.ALM.Repository
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                     Reporter.HideStatusMessage();
                 }
-                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                 }
@@ -432,7 +433,7 @@ namespace Ginger.ALM.Repository
             }
             else
             {
-                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
                 }

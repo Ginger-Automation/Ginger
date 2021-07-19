@@ -29,6 +29,7 @@ using Amdocs.Ginger.Common;
 using GingerCoreNET.ALMLib;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using GingerCore.ALM;
 
 namespace Ginger.ALM
 {
@@ -181,7 +182,7 @@ namespace Ginger.ALM
             }
             newALMDefectProfile.Name = "Some Name " + (newALMDefectProfile.ID + 1).ToString();
             newALMDefectProfile.Description = "Some Description " + (newALMDefectProfile.ID + 1).ToString();
-            ALMConfig AlmConfig = ALMIntegration.Instance.GetDefaultAlmConfig();
+            ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig();
             newALMDefectProfile.AlmType = AlmConfig.AlmType;
             mALMDefectProfiles.Add(newALMDefectProfile);
 
@@ -360,7 +361,7 @@ namespace Ginger.ALM
             }
             finally
             {
-                ALMIntegration.Instance.UpdateALMType(ALMIntegration.Instance.GetDefaultAlmConfig().AlmType);
+                ALMIntegration.Instance.UpdateALMType(ALMCore.GetDefaultAlmConfig().AlmType);
                 Mouse.OverrideCursor = null;
             }
             return mALMDefectProfileFields;

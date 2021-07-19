@@ -157,23 +157,26 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
                 List<BaseResponseItem> tcsData = zephyrEntRepository.GetTCsByTreeId(tsId);
                 var token = (JToken)tcsData[0].TryGetItem("results");
-                foreach (var test in token)
+                if (token != null)
                 {
-                    if (((JObject)test).ContainsKey("rts"))
+                    foreach (var test in token)
                     {
-                        statusesDic[Convert.ToInt32(test["rts"]["status"])] += 1;
+                        if (((JObject)test).ContainsKey("rts"))
+                        {
+                            statusesDic[Convert.ToInt32(test["rts"]["status"])] += 1;
+                        }
+                        else
+                        {
+                            statusesDic[0] += 1;
+                        }
                     }
-                    else
+                    foreach (var item in statusesDic)
                     {
-                        statusesDic[0] += 1;
-                    }
-                }
-                foreach (var item in statusesDic)
-                {
-                    if (item.Value > 0)
-                    {
-                        string statusName = ((StatuesName)item.Key).ToString();
-                        tcsSummary.Add(new [] { statusName, item.Value.ToString() });
+                        if (item.Value > 0)
+                        {
+                            string statusName = ((StatuesName)item.Key).ToString();
+                            tcsSummary.Add(new[] { statusName, item.Value.ToString() });
+                        }
                     }
                 }
                 return tcsSummary;

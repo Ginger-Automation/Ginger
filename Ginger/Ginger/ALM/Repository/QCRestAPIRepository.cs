@@ -38,13 +38,14 @@ using GingerCore.ALM;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using ALMRestClient;
+using static GingerCoreNET.ALMLib.ALMIntegration;
 
 namespace Ginger.ALM.Repository
 {
     class QCRestAPIRepository : ALMRepository
     {
         QCTestCase matchingTC = null;
-        public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
+        public override bool ConnectALMServer(eALMConnectType userMsgStyle)
         {
             try
             {
@@ -53,9 +54,9 @@ namespace Ginger.ALM.Repository
                     return true;
                 else
                 {
-                    if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
+                    if (userMsgStyle == eALMConnectType.Manual)
                         Reporter.ToUser(eUserMsgKey.QcConnectFailureRestAPI);
-                    else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
+                    else if (userMsgStyle == eALMConnectType.Auto)
                         Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings);
 
                     Reporter.ToLog(eLogLevel.ERROR, "Error connecting to QC server");
@@ -64,9 +65,9 @@ namespace Ginger.ALM.Repository
             }
             catch (Exception e)
             {
-                if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
+                if (userMsgStyle == eALMConnectType.Manual)
                     Reporter.ToUser(eUserMsgKey.QcConnectFailureRestAPI, e.Message);
-                else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
+                else if (userMsgStyle == eALMConnectType.Auto)
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, e.Message);
 
                 Reporter.ToLog(eLogLevel.ERROR, "Error connecting to QC server", e);
@@ -275,7 +276,7 @@ namespace Ginger.ALM.Repository
             throw new NotImplementedException();
         }
 
-        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
+        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
             if (businessFlow == null)
                 return false;
@@ -415,12 +416,12 @@ namespace Ginger.ALM.Repository
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);                    
                     Reporter.HideStatusMessage();
                 }
-                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto)
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                 return true;
             }
             else
-                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto)
                 Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
 
             return false;

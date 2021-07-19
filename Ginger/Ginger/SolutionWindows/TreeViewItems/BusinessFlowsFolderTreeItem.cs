@@ -41,6 +41,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static GingerCoreNET.ALMLib.ALMIntegration;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -326,7 +327,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     ALMIntegration.Instance.ExportBusinessFlowToALM(bfToExport[0], true);
                 else
                 {
-                    if (ALMIntegration.Instance.ExportAllBusinessFlowsToALM(bfToExport, true, ALMIntegration.eALMConnectType.Auto))
+                    if (ALMIntegration.Instance.ExportAllBusinessFlowsToALM(bfToExport, true, eALMConnectType.Auto))
                         Reporter.ToUser(eUserMsgKey.ExportAllItemsToALMSucceed);
                     else Reporter.ToUser(eUserMsgKey.ExportAllItemsToALMFailed);
                 }

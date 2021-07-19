@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using static GingerCoreNET.ALMLib.ALMIntegration;
 
 namespace Ginger.ALM.Repository
 {
@@ -44,12 +45,12 @@ namespace Ginger.ALM.Repository
         {
             octaneCore = (OctaneCore)almCore;
         }
-        public override bool ConnectALMServer(ALMIntegration.eALMConnectType almConnectType)
+        public override bool ConnectALMServer(eALMConnectType almConnectType)
         {
             try
             {
 
-                if (almConnectType == ALMIntegration.eALMConnectType.SettingsPage || almConnectType == ALMIntegration.eALMConnectType.Manual)
+                if (almConnectType == eALMConnectType.SettingsPage || almConnectType == eALMConnectType.Manual)
                 {
                     HandleSSO();
                 }
@@ -67,11 +68,11 @@ namespace Ginger.ALM.Repository
             }
             catch (Exception e)
             {
-                if (almConnectType == ALMIntegration.eALMConnectType.Manual)
+                if (almConnectType == eALMConnectType.Manual)
                 {
                     Reporter.ToUser(eUserMsgKey.QcConnectFailure, e.Message); //TODO: Fix message
                 }
-                else if (almConnectType == ALMIntegration.eALMConnectType.Auto)
+                else if (almConnectType == eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, e.Message);
                 }
@@ -144,7 +145,7 @@ namespace Ginger.ALM.Repository
             throw new NotImplementedException();
         }
 
-        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
+        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
             if (businessFlow == null)
             {
@@ -247,14 +248,14 @@ namespace Ginger.ALM.Repository
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                     Reporter.HideStatusMessage();
                 }
-                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                 }
                 return true;
             }
             else
-                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto)
             {
                 Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
