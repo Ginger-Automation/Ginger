@@ -508,7 +508,7 @@ namespace Ginger
                             if (pomDeltaUtils.DeltaViewElements[0].DeltaStatus == eDeltaStatus.Changed)
                             {
                                 //enter it to POM elements instead of existing one
-                                if (Reporter.ToUser(eUserMsgKey.UpdateExistingPOMElement, matchingOriginalElement.ElementName) == eUserMsgSelection.Yes)
+                                if (xAutoUpdatePOMElementChkBox.IsChecked == true || Reporter.ToUser(eUserMsgKey.UpdateExistingPOMElement, matchingOriginalElement.ElementName) == eUserMsgSelection.Yes)
                                 {
                                     /// Replace existing element with new one
                                     /// Element exists in Mapped Elements list
@@ -561,7 +561,7 @@ namespace Ginger
                         /// Element doesn't exist on POM, perform New Element related checks
                         else
                         {
-                            if (Reporter.ToUser(eUserMsgKey.POMElementNotExist, SelectedElement.ElementName, SelectedPOM.Name) == eUserMsgSelection.Yes)
+                            if (xAutoUpdatePOMElementChkBox.IsChecked == true || Reporter.ToUser(eUserMsgKey.POMElementNotExist, SelectedElement.ElementName, SelectedPOM.Name) == eUserMsgSelection.Yes)
                             {
                                 POMBasedAction = true;
                                 SelectedElement.IsAutoLearned = true;
@@ -723,6 +723,7 @@ namespace Ginger
                 }
                 else
                 {
+                    mSelectedPOM.AllowAutoSave = xAutoSavePOMChkBox.IsChecked.Value;
                     locateByPOMElementPage.xPomPathTextBox.Visibility = Visibility.Visible;
 
                     xPOMSelectionFrame.Visibility = Visibility.Visible;
@@ -865,6 +866,22 @@ namespace Ginger
             if (mSelectedLocator != null)
             {
                 Clipboard.SetText(mSelectedLocator.LocateValue);
+            }
+        }
+
+        private void xAutoSavePOMChkBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if(SelectedPOM != null)
+            {
+                SelectedPOM.AllowAutoSave = true;
+            }
+        }
+
+        private void xAutoSavePOMChkBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (SelectedPOM != null)
+            {
+                SelectedPOM.AllowAutoSave = false;
             }
         }
     }

@@ -109,8 +109,17 @@
                             <Frame x:Name="xPOMSelectionFrame" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         </DockPanel>
 
-                        <DockPanel x:Name="xAddRunOperationPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center" >
-                            <UserControls:ucButton x:Name="xRunActBtn" ButtonImageType="Run" ButtonText="Run" ButtonImageHeight="16" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" 
+                            <CheckBox x:Name="xAutoSavePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10" 
+                                      Style="{StaticResource $CeckBoxStyle}" Content="Auto Save POM" IsChecked="False"
+                                        Checked="xAutoSavePOMChkBox_Checked" Unchecked="xAutoSavePOMChkBox_Unchecked">
+                            </CheckBox>
+
+                            <CheckBox x:Name="xAutoUpdatePOMElementChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10"
+                                      Style="{StaticResource $CeckBoxStyle}" Content="Auto Update POM Element" IsChecked="False">
+                            </CheckBox>
+
+                            <DockPanel x:Name="xAddRunOperationPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center" >
+                                <UserControls:ucButton x:Name="xRunActBtn" ButtonImageType="Run" ButtonText="Run" ButtonImageHeight="16" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" 
                              ButtonImageForground="{StaticResource $SelectionColor_Pink}" DockPanel.Dock="Left" ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="0" Click="xRunActBtn_Click" />
 
                             <uclistview:UcItemExecutionStatus x:Name="xExecutionStatusIcon" StatusViewMode="Image" 
