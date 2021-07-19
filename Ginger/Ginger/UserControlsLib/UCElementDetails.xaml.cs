@@ -152,6 +152,7 @@ namespace Ginger
         }
 
         bool POMBasedAction = false;
+        bool POMElementsUpdated = false;
         ElementInfo POMElement = null;
 
         //Act mAct = null;
@@ -516,6 +517,7 @@ namespace Ginger
                                     {
                                         SelectedPOM.MappedUIElements.RemoveAt(originalItemIndex);
                                         SelectedPOM.MappedUIElements.Insert(originalItemIndex, pomDeltaUtils.DeltaViewElements[0].ElementInfo);
+                                        POMElementsUpdated = false;
                                     }
                                     /// Element exists in Un-Mapped Elements list
                                     /// We'll remove Element from Unmapped list and add it as new into Mapped Elements list
@@ -523,6 +525,7 @@ namespace Ginger
                                     {
                                         SelectedPOM.MappedUIElements.Add(pomDeltaUtils.DeltaViewElements[0].ElementInfo);
                                         SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
+                                        POMElementsUpdated = true;
                                     }
 
                                     POMElement = pomDeltaUtils.DeltaViewElements[0].ElementInfo;
@@ -535,11 +538,14 @@ namespace Ginger
                                         SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
 
                                         POMElement = pomDeltaUtils.DeltaViewElements[0].ElementInfo;
+                                        POMElementsUpdated = true;
                                     }
                                     else
                                     {
                                         POMElement = matchingOriginalElement;
+                                        POMElementsUpdated = false;
                                     }
+
                                 }
                             }
                             else
@@ -569,11 +575,13 @@ namespace Ginger
 
                                 POMElement = SelectedElement;
                                 POMElement.ParentGuid = SelectedPOM.Guid;
+                                POMElementsUpdated = true;
                             }
                             else
                             {
                                 POMElement = null;
                                 POMBasedAction = false;
+                                POMElementsUpdated = false;
                             }
                         }
                     }
@@ -723,7 +731,6 @@ namespace Ginger
                 }
                 else
                 {
-                    mSelectedPOM.AllowAutoSave = xAutoSavePOMChkBox.IsChecked.Value;
                     locateByPOMElementPage.xPomPathTextBox.Visibility = Visibility.Visible;
 
                     xPOMSelectionFrame.Visibility = Visibility.Visible;
@@ -731,6 +738,7 @@ namespace Ginger
                     SelectedElementChanged = true;
                     UpdateElementActionTab();
                 }
+                HandlePOMOperationsPanelVisibility(true);
             }
         }
 
@@ -779,12 +787,25 @@ namespace Ginger
         private void xIntegratePOMChkBox_Unchecked(object sender, RoutedEventArgs e)
         {
             xPOMSelectionFrame.Visibility = Visibility.Collapsed;
+            HandlePOMOperationsPanelVisibility(false);
 
             if (sender != null)
             {
                 SelectedElementChanged = true;
                 POMCheckBoxToggled = true;
                 RefreshElementAction();
+            }
+        }
+
+        public void HandlePOMOperationsPanelVisibility(bool MakeVisible)
+        {
+            if (SelectedPOM != null && MakeVisible)
+            {
+                xPOMOperationsPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xPOMOperationsPanel.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -847,6 +868,12 @@ namespace Ginger
             if (xActUIPageFrame.Content != null && xActUIPageFrame.Content is ControlActionsPage_New)
             {
                 (xActUIPageFrame.Content as ControlActionsPage_New).AddActionClicked(sender, e);
+
+                if (POMElementsUpdated && (xAutoSavePOMChkBox.IsChecked == true
+                    || Reporter.ToUser(eUserMsgKey.SavePOMChanges, SelectedPOM.Name) == eUserMsgSelection.Yes))
+                {
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(SelectedPOM);
+                }
             }
         }
 
@@ -866,22 +893,6 @@ namespace Ginger
             if (mSelectedLocator != null)
             {
                 Clipboard.SetText(mSelectedLocator.LocateValue);
-            }
-        }
-
-        private void xAutoSavePOMChkBox_Checked(object sender, RoutedEventArgs e)
-        {
-            if(SelectedPOM != null)
-            {
-                SelectedPOM.AllowAutoSave = true;
-            }
-        }
-
-        private void xAutoSavePOMChkBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            if (SelectedPOM != null)
-            {
-                SelectedPOM.AllowAutoSave = false;
             }
         }
     }

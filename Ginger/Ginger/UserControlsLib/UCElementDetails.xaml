@@ -85,7 +85,7 @@
                         <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                    <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" RowChangedEvent="xLocatorsGrid_RowChangedEvent"/>
+                <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" RowChangedEvent="xLocatorsGrid_RowChangedEvent"/>
             </TabItem>
             <TabItem x:Name="xAddActionTab">
                 <TabItem.Header>
@@ -109,17 +109,18 @@
                             <Frame x:Name="xPOMSelectionFrame" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         </DockPanel>
 
+                        <DockPanel x:Name="xPOMOperationsPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center">
                             <CheckBox x:Name="xAutoSavePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10" 
-                                      Style="{StaticResource $CeckBoxStyle}" Content="Auto Save POM" IsChecked="False"
-                                        Checked="xAutoSavePOMChkBox_Checked" Unchecked="xAutoSavePOMChkBox_Unchecked">
+                                      Style="{StaticResource $CeckBoxStyle}" Content="Auto Save POM" IsChecked="False">
                             </CheckBox>
 
                             <CheckBox x:Name="xAutoUpdatePOMElementChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10"
                                       Style="{StaticResource $CeckBoxStyle}" Content="Auto Update POM Element" IsChecked="False">
                             </CheckBox>
+                        </DockPanel>
 
-                            <DockPanel x:Name="xAddRunOperationPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center" >
-                                <UserControls:ucButton x:Name="xRunActBtn" ButtonImageType="Run" ButtonText="Run" ButtonImageHeight="16" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" 
+                        <DockPanel x:Name="xAddRunOperationPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center" >
+                            <UserControls:ucButton x:Name="xRunActBtn" ButtonImageType="Run" ButtonText="Run" ButtonImageHeight="16" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" 
                              ButtonImageForground="{StaticResource $SelectionColor_Pink}" DockPanel.Dock="Left" ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="0" Click="xRunActBtn_Click" />
 
                             <uclistview:UcItemExecutionStatus x:Name="xExecutionStatusIcon" StatusViewMode="Image" 

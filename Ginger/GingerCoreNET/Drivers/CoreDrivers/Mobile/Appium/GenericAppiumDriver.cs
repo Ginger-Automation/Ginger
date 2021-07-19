@@ -1157,8 +1157,8 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception exc)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "An error ocured while fetching the current App details", exc);
-                return "TBD";
+                Reporter.ToLog(eLogLevel.WARN, "An error ocured while fetching the current App details", exc);
+                return "Package | Activity";
             }
         }
 
