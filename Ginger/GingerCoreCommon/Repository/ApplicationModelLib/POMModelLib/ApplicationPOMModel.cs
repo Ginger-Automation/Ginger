@@ -147,6 +147,9 @@ namespace Amdocs.Ginger.Repository
                 mMappedElements = value;
             }
         }
+       
+        [IsSerializedForLocalRepository]
+        public ObservableList<CustomRelativeXpathTemplate> RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>();
 
         public ObservableList<ElementInfo> GetUnifiedElementsList()
         {

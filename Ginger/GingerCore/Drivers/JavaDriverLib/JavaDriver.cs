@@ -541,9 +541,12 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     InitializeBrowser(new JavaElementInfo() { XPath = path.Value });
 
-                    if (!string.IsNullOrEmpty(currentPOMElementInfo.Path))
+                    //check iframe and switch
+                    var iframePath = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.ParentIFrame)).FirstOrDefault();
+
+                    if (iframePath != null && !string.IsNullOrEmpty(iframePath.Value))
                     {
-                        PayLoad PLSwitchFrame = new PayLoad("HTMLElementAction", "SwitchFrame", eLocateBy.ByXPath.ToString(), currentPOMElementInfo.XPath, string.Empty);
+                        PayLoad PLSwitchFrame = new PayLoad("HTMLElementAction", "SwitchFrame", eLocateBy.ByXPath.ToString(), iframePath.Value, string.Empty);
                         PayLoad ResponseSwitchFrame = Send(PLSwitchFrame);
 
                         if(ResponseSwitchFrame.IsErrorPayLoad())
@@ -2054,7 +2057,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return true;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null,List<string> relativeXpathTemplateList = null)
         {
             return await Task.Run(() =>
             {

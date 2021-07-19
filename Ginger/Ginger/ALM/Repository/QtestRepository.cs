@@ -450,7 +450,20 @@ namespace Ginger.ALM.Repository
 
         public override bool LoadALMConfigurations()
         {
-            throw new NotImplementedException();
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
+            {
+                DefaultExt = "*.zip",
+                Filter = "zip Files (*.zip)|*.zip",
+                Title = "Select Jira Configuration Zip File"
+            }, false) is string fileName)
+            {
+                if (!GingerCore.General.LoadALMSettings(fileName, GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest))
+                {
+                    return false;
+                }
+                ALMIntegration.Instance.SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest);
+            }
+            return true;
         }
 
         public override eUserMsgKey GetDownloadPossibleValuesMessage()

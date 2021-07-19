@@ -50,12 +50,13 @@ namespace Ginger.SolutionGeneral
             Tags = new ObservableList<RepositoryItemTag>();
         }
 
-        public static Solution LoadSolution(string solutionFileName, bool startDirtyTracking= true)
+        public static Solution LoadSolution(string solutionFileName, bool startDirtyTracking = true, string encryptionKey = null)
         {
             string txt = File.ReadAllText(solutionFileName);
             Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
             solution.FilePath = solutionFileName;
             solution.Folder = Path.GetDirectoryName(solutionFileName);
+            solution.EncryptionKey = encryptionKey ?? GetEncryptionKey(solution.Guid.ToString());
             if (startDirtyTracking)
             {
                 solution.StartDirtyTracking();
@@ -63,7 +64,7 @@ namespace Ginger.SolutionGeneral
             return solution;
         }
 
-        public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, LoggerConfiguration, ReportConfiguration}
+        public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, LoggerConfiguration, ReportConfiguration }
         public void SaveSolution(bool showWarning = true, eSolutionItemToSave solutionItemToSave = eSolutionItemToSave.GeneralDetails)
         {
             bool doSave = false;
@@ -77,27 +78,27 @@ namespace Ginger.SolutionGeneral
                 Solution lastSavedSolution = LoadSolution(FilePath, false);
                 string extraChangedItems = "";
                 StringBuilder bldExtraChangedItems = new StringBuilder();
-                
+
                 if (solutionItemToSave != eSolutionItemToSave.GeneralDetails)
                 {
                     if (this.Name != lastSavedSolution.Name || this.Account != lastSavedSolution.Account)
                     {
                         bldExtraChangedItems.Append("Solution General Details, ");
-                    }                        
+                    }
                 }
                 if (solutionItemToSave != eSolutionItemToSave.ALMSettings)
                 {
                     if (!this.ALMConfigs.Equals(lastSavedSolution.ALMConfigs))
                     {
                         bldExtraChangedItems.Append("ALM Details, ");
-                    }                        
+                    }
                 }
                 if (solutionItemToSave != eSolutionItemToSave.SourceControlSettings)
                 {
                     if (this.SourceControl != lastSavedSolution.SourceControl)
                     {
                         bldExtraChangedItems.Append("Source Control Details, ");
-                    }                        
+                    }
                 }
                 if (solutionItemToSave != eSolutionItemToSave.LoggerConfiguration)
                 {
@@ -109,9 +110,9 @@ namespace Ginger.SolutionGeneral
                         }
                     }
                 }
-                if(solutionItemToSave != eSolutionItemToSave.ReportConfiguration )
+                if (solutionItemToSave != eSolutionItemToSave.ReportConfiguration)
                 {
-                    if (HTMLReportsConfigurationSetList!=null && lastSavedSolution.HTMLReportsConfigurationSetList.Count != 0)
+                    if (HTMLReportsConfigurationSetList != null && lastSavedSolution.HTMLReportsConfigurationSetList.Count != 0)
                     {
                         foreach (HTMLReportsConfiguration config in HTMLReportsConfigurationSetList)
                         {
@@ -123,7 +124,7 @@ namespace Ginger.SolutionGeneral
                             }
                         }
                     }
-                }     
+                }
 
                 if (solutionItemToSave != eSolutionItemToSave.GlobalVariabels)
                 {
@@ -176,7 +177,7 @@ namespace Ginger.SolutionGeneral
                                 bldExtraChangedItems.Append("Tags, ");
                                 break;
                             }
-                        }                        
+                        }
                     }
                 }
                 extraChangedItems = bldExtraChangedItems.ToString();
@@ -186,8 +187,8 @@ namespace Ginger.SolutionGeneral
                 }
                 else
                 {
-                    extraChangedItems= extraChangedItems.TrimEnd();
-                    extraChangedItems= extraChangedItems.TrimEnd(new char[] { ',' });                    
+                    extraChangedItems = extraChangedItems.TrimEnd();
+                    extraChangedItems = extraChangedItems.TrimEnd(new char[] { ',' });
                     if (Reporter.ToUser(eUserMsgKey.SolutionSaveWarning, extraChangedItems) == eUserMsgSelection.Yes)
                     {
                         doSave = true;
@@ -203,7 +204,7 @@ namespace Ginger.SolutionGeneral
                 Reporter.HideStatusMessage();
             }
         }
-                
+
         string mName;
         [IsSerializedForLocalRepository]
         public string Name
@@ -219,26 +220,115 @@ namespace Ginger.SolutionGeneral
             }
         }
 
-        public string Folder { get; set; }        
+        public string Folder { get; set; }
 
         [IsSerializedForLocalRepository]
         public ObservableList<RepositoryItemTag> Tags;
 
         private string mAccount;
 
+        /// <summary>
+        /// For encrypting password variables
+        /// </summary>
+        public string EncryptionKey { get; set; }
+
         [IsSerializedForLocalRepository]
-        public string Account {
+        public string EncryptedValidationString { get; set; }
+
+        public bool NeedVariablesReEncryption { get; set; } = false;
+
+        public bool ValidateKey(string encryptionKey = null)
+        {
+            try
+            {
+                bool isDecrypted = EncryptionHandler.DecryptwithKey(EncryptedValidationString, encryptionKey ?? EncryptionKey).Equals("valid");
+                if (isDecrypted)
+                {
+                    EncryptionKey = encryptionKey ?? (EncryptionKey ?? EncryptionHandler.GetDefaultKey());
+                }
+                return isDecrypted;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+            }
+            return false;
+        }
+
+        public bool AddValidationString()
+        {
+            try
+            {
+                EncryptedValidationString = EncryptionHandler.EncryptwithKey("valid");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+            }
+            return false;
+        }
+
+        public static string GetEncryptionKey(string guid)
+        {
+            try
+            {
+                return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+            }
+            return null;
+        }
+
+        public bool FetchEncryptionKey()
+        {
+            try
+            {
+                EncryptionKey = GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + Guid);
+                return string.IsNullOrEmpty(EncryptionKey);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+            }
+            return false;
+        }
+
+        public bool SaveEncryptionKey()
+        {
+            try
+            {
+                GingerCore.GeneralLib.WinCredentialUtil.SetCredentials("Ginger_Sol_" + Guid, mName, EncryptionKey);
+                EncryptionHandler.SetCustomKey(EncryptionKey);
+                AddValidationString();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+            }
+            return false;
+        }
+
+        [IsSerializedForLocalRepository]
+        public string Account
+        {
             get
             {
                 return mAccount;
             }
             set
             {
-                mAccount = value;                
-            } }
+                mAccount = value;
+            }
+        }
 
-        public ePlatformType MainPlatform {
-            get {
+        public ePlatformType MainPlatform
+        {
+            get
+            {
                 if (ApplicationPlatforms != null && ApplicationPlatforms.Count() > 0)
                 {
                     return ApplicationPlatforms[0].Platform;
@@ -259,7 +349,8 @@ namespace Ginger.SolutionGeneral
 
         public void SetReportsConfigurations()
         {
-            try {
+            try
+            {
                 if (this.LoggerConfigurations == null || LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder == null)
                 {
                     this.LoggerConfigurations = new ExecutionLoggerConfiguration();
@@ -288,9 +379,9 @@ namespace Ginger.SolutionGeneral
                 // !!!!!!!!!!!!! FIXME
                 // ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
                 // executionLogger.Configuration = executionLoggerConfiguration;
-              
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -316,7 +407,7 @@ namespace Ginger.SolutionGeneral
                     return null;
                 }
             }
-        }       
+        }
 
         public ObservableList<TargetBase> GetSolutionTargetApplications()
         {
@@ -350,8 +441,8 @@ namespace Ginger.SolutionGeneral
         {
             get
             {
-                string folderPath = Path.Combine(Folder , @"BusinessFlows\");
-                if(!Directory.Exists(folderPath))
+                string folderPath = Path.Combine(Folder, @"BusinessFlows\");
+                if (!Directory.Exists(folderPath))
                 {
                     Directory.CreateDirectory(folderPath);
                 }
@@ -391,8 +482,8 @@ namespace Ginger.SolutionGeneral
             string[] SolutionMainFolders = new string[] { "Agents", "ALMDefectProfiles", "Applications Models", "BusinessFlows", "Configurations", "DataSources", "Environments", "HTMLReportConfigurations", "PluginPackages", "Plugins", "RunSetConfigs", "SharedRepository" };
             Parallel.ForEach(SolutionMainFolders, folder =>
             {
-                    // Get each main folder sub folder all levels
-                    string MainFolderFullPath = Path.Combine(solutionFolder, folder);
+                // Get each main folder sub folder all levels
+                string MainFolderFullPath = Path.Combine(solutionFolder, folder);
 
                 if (Directory.Exists(MainFolderFullPath))
                 {
@@ -405,12 +496,12 @@ namespace Ginger.SolutionGeneral
         }
 
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)
-        {            
+        {
             //need to look for all .xmls and not only *Ginger.*.xml" for covering old xml's as well
             IEnumerable<string> files = Directory.EnumerateFiles(folder, "*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
             Parallel.ForEach(files, file =>
-            {               
-                    CB.Add(file);                
+            {
+                CB.Add(file);
             });
         }
 
@@ -491,13 +582,13 @@ namespace Ginger.SolutionGeneral
         //        va.ResetValue();
         //}
 
-        public void AddVariable(VariableBase v, int insertIndex=-1)
+        public void AddVariable(VariableBase v, int insertIndex = -1)
         {
             if (v != null)
             {
                 if (string.IsNullOrEmpty(v.Name)) v.Name = "NewVar";
                 SetUniqueVariableName(v);
-                if (insertIndex < 0|| insertIndex > Variables.Count - 1)
+                if (insertIndex < 0 || insertIndex > Variables.Count - 1)
                 {
                     Variables.Add(v);
                 }
@@ -536,7 +627,7 @@ namespace Ginger.SolutionGeneral
             }
         }
 
-        ObservableList<ExecutionLoggerConfiguration> ISolution.ExecutionLoggerConfigurationSetList { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }        
+        ObservableList<ExecutionLoggerConfiguration> ISolution.ExecutionLoggerConfigurationSetList { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ExternalItemFieldBase> ExternalItemsFields = new ObservableList<ExternalItemFieldBase>();

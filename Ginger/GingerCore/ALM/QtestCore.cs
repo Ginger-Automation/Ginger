@@ -59,7 +59,14 @@ namespace GingerCore.ALM
                 string granttype = "password";
                 string authorization = "Basic bWFoZXNoLmthbGUzQHQtbW9iaWxlLmNvbTo=";
                 QTestApiModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, authorization);
-                connObj.Configuration.MyAPIConfig = new QTestApiClient.QTestClientConfig();
+                if (General.IsConfigPackageExists(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest))
+                {
+                    connObj.Configuration.MyAPIConfig.LoadSettingsFromConfig(Path.Combine(DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, "QTestSettings", "QTestSettings.json"));
+                }
+                else 
+                {
+                    connObj.Configuration.MyAPIConfig = new QTestApiClient.QTestClientConfig();
+                }
                 connObj.Configuration.AccessToken = response.AccessToken;
                 connObj.Configuration.ApiKey.Add("Authorization", response.AccessToken);
                 connObj.Configuration.ApiKeyPrefix.Add("Authorization", response.TokenType);
