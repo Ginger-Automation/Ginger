@@ -250,6 +250,8 @@ namespace Ginger.Run
             }
         }
 
+       // public SelfHealingConfig SelfHealingConfiguration = new SelfHealingConfig();
+
         public ObservableList<Platform> Platforms = new ObservableList<Platform>();//TODO: delete me once projects moved to new Apps/Platform config, meanwhile enable to load old run set config, but ignore the value
 
         [IsSerializedForLocalRepository]

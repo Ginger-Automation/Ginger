@@ -2544,5 +2544,12 @@ namespace Ginger.Run
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
 
+        private void xSelfHealingConfigBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (CheckIfExecutionIsInProgress()) return;
+
+            GingerSelfHealingConfiguration selfHealingConfiguration = new GingerSelfHealingConfiguration(mRunSetConfig);
+            selfHealingConfiguration.ShowAsWindow();
+        }
     }
 }

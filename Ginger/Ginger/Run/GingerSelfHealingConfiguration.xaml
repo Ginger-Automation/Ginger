@@ -5,27 +5,21 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.Run"
       mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="400"
+      d:DesignHeight="350" d:DesignWidth="350"
       Title="Self Healing Configurations">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}" >
         <Grid.RowDefinitions>
-            <RowDefinition Height=".5*" />
-            <RowDefinition  />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="5 15 0 0">
-            <CheckBox Style="{StaticResource @CheckBoxStyle}"  x:Name="xEnableSelfHealingChkBox" Content="Enable Self Healing Mode" />
-            <StackPanel Margin="10 10 0 0" x:Name="xSelfHealingConfigPanel" Visibility="Visible">
-                <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xAutoUpdateChkBox" Margin="5" Content="Auto-update Application Model During Execution" />
+            <CheckBox Style="{StaticResource @CheckBoxStyle}"  x:Name="xEnableSelfHealingChkBox" Click="xEnableSelfHealingChkBox_Click" Content="Enable Self Healing Mode" />
+            <StackPanel Margin="10 10 0 0"  x:Name="xSelfHealingConfigPanel" Visibility="Collapsed">
+                <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xAutoUpdateModelChkBox" Margin="5" Content="Auto-update Application Model During Execution" />
                 <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xRePrioritizeChkBox" Margin="5" Content="Re-Prioritize Failed POM Locators" />
                 <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xAutoFixAnalyzerChkBox" Margin="5" Content="Auto Fix Analyzer Issues" />
-                <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xUseVirtualEnvChkBox"  Margin="5" Content="Use Virtual Enviroent On Failure" />
-
+                <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xUseVirtualEnvChkBox"  Margin="5" Visibility="Collapsed" Content="Use Virtual Enviroent On Failure" />
             </StackPanel>
-        </StackPanel>
-        <StackPanel Grid.Row="1" Margin="5 15 5 5">
-            <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xSaveSelfHealingChkBox" Content="Save Self Healing changes and check-in to source control" />
-
         </StackPanel>
     </Grid>
 </Page>

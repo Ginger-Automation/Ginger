@@ -855,7 +855,8 @@ namespace GingerWPF.BusinessFlowsLib
                     try
                     {
                         AnalyzerPage analyzerPage = new AnalyzerPage();
-                        analyzerPage.Init(WorkSpace.Instance.Solution, mBusinessFlow);
+
+                        analyzerPage.Init(WorkSpace.Instance.Solution, mBusinessFlow,WorkSpace.Instance.AutomateTabSelfHealingConfiguration.PrioritizePOMLocator);
                         await analyzerPage.AnalyzeWithoutUI();
                         Reporter.HideStatusMessage();
                         if (analyzerPage.TotalHighAndCriticalIssues > 0)
@@ -874,6 +875,11 @@ namespace GingerWPF.BusinessFlowsLib
                 //execute preparations               
                 mRunner.ResetRunnerExecutionDetails();
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
+
+                if (WorkSpace.Instance.AutomateTabSelfHealingConfiguration.EnableSelfHealing == true )
+                {
+                    WorkSpace.Instance.AutomateTabSelfHealingConfiguration.RunFromAutomateTab = true;
+                }
 
                 //execute                
                 await mRunner.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
@@ -903,6 +909,11 @@ namespace GingerWPF.BusinessFlowsLib
                 //mExecutionIsInProgress = false;
                 //SetUIElementsBehaverDuringExecution();
                 mRunner.ResetFailedToStartFlagForAgents();
+               
+                if (WorkSpace.Instance.AutomateTabSelfHealingConfiguration.EnableSelfHealing == true)
+                {
+                    WorkSpace.Instance.AutomateTabSelfHealingConfiguration.RunFromAutomateTab = false;
+                }
             }
         }
 

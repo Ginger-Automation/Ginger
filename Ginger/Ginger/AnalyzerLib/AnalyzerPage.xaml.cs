@@ -122,12 +122,14 @@ namespace Ginger.AnalyzerLib
             AnalyzerItemsGrid.Title = "'" + mSolution.Name + "' Solution Issues";
         }
 
-        public void Init(Solution Solution, BusinessFlow BusinessFlow)
+        public void Init(Solution Solution, BusinessFlow BusinessFlow,bool selfHealingAutoFixIssue=false)
         {
             mAnalyzedObject = AnalyzedObject.BusinessFlow;
             mSolution = Solution;
             businessFlow = BusinessFlow;
             AnalyzerItemsGrid.Title = "'" + BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Issues";
+
+            mAnalyzerUtils.SelfHealingAutoFixIssue = selfHealingAutoFixIssue;
         }
 
         internal void Init(Solution solution, Run.RunSetConfig RSC)
@@ -136,6 +138,9 @@ namespace Ginger.AnalyzerLib
             mSolution = solution;
             mAnalyzedObject = AnalyzedObject.RunSetConfig;
             AnalyzerItemsGrid.Title = "'" + RSC.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " Issues";
+
+            mAnalyzerUtils.SelfHealingAutoFixIssue = RSC.SelfHealingConfiguration.AutoFixAnalyzerIssue;
+
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
