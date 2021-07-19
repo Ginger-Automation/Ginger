@@ -494,7 +494,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void SolutionActivitiesLazyLoadTest_NotLoaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
@@ -512,7 +512,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void SolutionActivitiesLazyLoadTest_Loaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
@@ -532,7 +532,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void SolutionActionsLazyLoadTest_NotLoaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
@@ -553,7 +553,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void SolutionActionsLazyLoadTest_Loaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
@@ -576,7 +576,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void SolutionPomElementsLazyLoadTest_NotLoaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"),EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
@@ -595,7 +595,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void SolutionPomElementsLazyLoadTest_Loaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"),EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
@@ -618,7 +618,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void BFVariablesLazyLoadTest_NotLoaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
@@ -636,7 +636,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void BFVariablesLazyLoadTest_Loaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
@@ -656,7 +656,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void ActivityVariablesLazyLoadTest_NotLoaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
@@ -677,7 +677,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void ActivityVariablesLazyLoadTest_Loaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
@@ -700,7 +700,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void RunsetRunnersLazyLoadTest_NotLoaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
@@ -718,7 +718,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void RunsetRunnersLazyLoadTest_Loaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act

@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.Repository
         public const int cLearnScreenWidth= 1000;
         public const int cLearnScreenHeight = 1000;
 
-        public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web , ePlatformType.Java , ePlatformType.Windows};
+        public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web , ePlatformType.Java , ePlatformType.Windows, ePlatformType.Mobile };
 
         private string mPageURL = string.Empty;
 
@@ -147,6 +147,9 @@ namespace Amdocs.Ginger.Repository
                 mMappedElements = value;
             }
         }
+       
+        [IsSerializedForLocalRepository]
+        public ObservableList<CustomRelativeXpathTemplate> RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>();
 
         public ObservableList<ElementInfo> GetUnifiedElementsList()
         {

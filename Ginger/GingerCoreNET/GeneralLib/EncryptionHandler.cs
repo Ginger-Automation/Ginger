@@ -19,7 +19,6 @@ limitations under the License.
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using Amdocs.Ginger.Common;
@@ -30,16 +29,26 @@ namespace GingerCore
     public class EncryptionHandler
     {
         //Configuring the details to create the Encrypt key
-        private static string PASS_PHRASE =Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(0)));
+        private static string PASS_PHRASE = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(0)));
         private static string SALT_VALUE = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(1)));
         private static string INIT_VECTOR = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(2)));
         private static string HASH_ALGORITHM = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(3)));
         private static int PASSWORD_ITERATIONS = 3; // can be any number
         private static int KEY_SIZE = 128; // can be 192 or 256
-
+        private static string CUSTOM_KEY = string.Empty;
         private static readonly string ENCRYPTION_KEY = ExtraInfo.getInfo().ElementAt(4);
 
-        public static string EncryptString(string strToEncrypt, ref bool result)
+        public static string GetDefaultKey()
+        {
+            return PASS_PHRASE;
+        }
+
+        public static void SetCustomKey(string customKey)
+        {
+            CUSTOM_KEY = customKey;
+        }
+
+        private static string EncryptString(string strToEncrypt, ref bool result)
         {
             try
             {
@@ -48,9 +57,15 @@ namespace GingerCore
                 byte[] _saltValueBytes = Encoding.UTF8.GetBytes(SALT_VALUE);
 
                 // Create a password, from which the key will be derived
-                PasswordDeriveBytes _password =
-                    new PasswordDeriveBytes(PASS_PHRASE, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
-
+                PasswordDeriveBytes _password;
+                if (!string.IsNullOrEmpty(CUSTOM_KEY))
+                {
+                    _password = new PasswordDeriveBytes(CUSTOM_KEY, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
+                }
+                else
+                {
+                    _password = new PasswordDeriveBytes(PASS_PHRASE, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
+                }
                 // Use the password to generate pseudo-random bytes for the encryption key
                 byte[] _keyBytes = _password.GetBytes(KEY_SIZE / 8);
 
@@ -101,14 +116,15 @@ namespace GingerCore
                 }
             }
             catch (Exception ex)
-            {                
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Encrypt the value: '{0}'",strToEncrypt), ex);
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to Encrypt the value", ex);
+
                 result = false;
                 return string.Empty;
             }
         }
 
-        public static string DecryptString(string strToDecrypt, ref bool result, bool WriteErrorsToLog = true)
+        private static string DecryptString(string strToDecrypt, ref bool result, bool WriteErrorsToLog = true, string key = null)
         {
             try
             {
@@ -117,8 +133,19 @@ namespace GingerCore
                 byte[] _saltValueBytes = Encoding.UTF8.GetBytes(SALT_VALUE);
 
                 // Create a password, from which the key will be derived
-                PasswordDeriveBytes _password = new PasswordDeriveBytes(PASS_PHRASE, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
-
+                PasswordDeriveBytes _password;
+                if (!string.IsNullOrEmpty(key))
+                {
+                    _password = new PasswordDeriveBytes(key, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
+                }
+                else if (!string.IsNullOrEmpty(CUSTOM_KEY))
+                {
+                    _password = new PasswordDeriveBytes(CUSTOM_KEY, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
+                }
+                else
+                {
+                    _password = new PasswordDeriveBytes(PASS_PHRASE, _saltValueBytes, HASH_ALGORITHM, PASSWORD_ITERATIONS);
+                }
                 // Use the password to generate pseudo-random bytes for the encryption key
                 byte[] _keyBytes = _password.GetBytes(KEY_SIZE / 8);
 
@@ -164,11 +191,11 @@ namespace GingerCore
                 }
             }
             catch (Exception ex)
-            {             
-                if(WriteErrorsToLog)
+            {
+                if (WriteErrorsToLog)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Decrypt the value: '{0}'", strToDecrypt), ex);
-                }                
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to Decrypt the value: '{0}'", strToDecrypt), ex);
+                }
                 result = false;
                 return string.Empty;
             }
@@ -176,12 +203,12 @@ namespace GingerCore
 
         public static bool IsStringEncrypted(string strToCheck)
         {
-            bool checkValueDecrypt= false;
+            bool checkValueDecrypt = false;
             DecryptString(strToCheck, ref checkValueDecrypt, false);
             return checkValueDecrypt;
         }
 
-        public static RijndaelManaged GetRijndaelManaged(String secretKey)
+        private static RijndaelManaged GetRijndaelManaged(String secretKey)
         {
             var keyBytes = new byte[16];
             var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
@@ -197,13 +224,13 @@ namespace GingerCore
             };
         }
 
-        public static byte[] Encrypt(byte[] plainBytes, RijndaelManaged rijndaelManaged)
+        private static byte[] Encrypt(byte[] plainBytes, RijndaelManaged rijndaelManaged)
         {
             return rijndaelManaged.CreateEncryptor()
                 .TransformFinalBlock(plainBytes, 0, plainBytes.Length);
         }
 
-        public static byte[] Decrypt(byte[] encryptedData, RijndaelManaged rijndaelManaged)
+        private static byte[] Decrypt(byte[] encryptedData, RijndaelManaged rijndaelManaged)
         {
             return rijndaelManaged.CreateDecryptor()
                 .TransformFinalBlock(encryptedData, 0, encryptedData.Length);
@@ -215,18 +242,10 @@ namespace GingerCore
         /// <param name="plainText">Plain text to encrypt</param>
         /// <param name="key">Secret key</param>
         /// <returns>Base64 encoded string</returns>
-        public static String EncryptwithKey(String plainText, String key = "")
+        public static string EncryptwithKey(String plainText)
         {
-            if (string.IsNullOrEmpty(key))
-            {
-                key = ENCRYPTION_KEY;
-            }
-            if (plainText == null)
-            {
-                plainText = string.Empty;
-            }
-            var plainBytes = Encoding.UTF8.GetBytes(plainText);
-            return Convert.ToBase64String(Encrypt(plainBytes, GetRijndaelManaged(key)));
+            bool res = false;
+            return EncryptString(plainText, ref res);
         }
 
         /// <summary>
@@ -235,14 +254,55 @@ namespace GingerCore
         /// <param name="encryptedText">Base64 Encoded String</param>
         /// <param name="key">Secret Key</param>
         /// <returns>Decrypted String</returns>
-        public static string DecryptwithKey(string encryptedText, string key = "")
+        public static string DecryptwithKey(string encryptedText, string key = null)
         {
-            if (string.IsNullOrEmpty(key))
+            try
             {
-                key = ENCRYPTION_KEY;
+                if (String.IsNullOrEmpty(encryptedText))
+                {
+                    return string.Empty;
+                }
+                bool res = false;
+                string decryptVal = DecryptString(encryptedText, ref res, true, key);
+                if (res)
+                {
+                    return decryptVal;
+                }
+                var encryptedBytes = Convert.FromBase64String(encryptedText);
+
+                if (!string.IsNullOrEmpty(key))
+                {
+                    return Encoding.UTF8.GetString(Decrypt(encryptedBytes, GetRijndaelManaged(key)));
+                }
+                else
+                {
+                    return Encoding.UTF8.GetString(Decrypt(encryptedBytes, GetRijndaelManaged(ENCRYPTION_KEY)));
+                }
             }
-            var encryptedBytes = Convert.FromBase64String(encryptedText);
-            return Encoding.UTF8.GetString(Decrypt(encryptedBytes, GetRijndaelManaged(key)));
-        }        
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to Decrypt the value: '{0}'", encryptedText), ex);
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// ReEncryptString is to support existing solution vairables which were encrypted using default key.
+        /// </summary>
+        /// <param name="strToReEncrypt"></param>
+        /// <param name="oldKey"></param>
+        /// <returns></returns>
+        public static string ReEncryptString(string strToReEncrypt, string oldKey = null)
+        {
+            bool res = false;
+            if (!string.IsNullOrEmpty(oldKey))
+            {
+                return EncryptwithKey(EncryptionHandler.DecryptString(strToReEncrypt, ref res, false, oldKey));
+            }
+            else
+            {
+                return EncryptwithKey(EncryptionHandler.DecryptString(strToReEncrypt, ref res, false, PASS_PHRASE));
+            }
+        }
     }
 }

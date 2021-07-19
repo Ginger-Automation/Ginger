@@ -3260,7 +3260,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        private IWebElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
+        public IWebElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
         {
             IWebElement elem = null;
             locator.StatusError = "";
@@ -3776,7 +3776,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null,List<string> relativeXpathTemplateList=null)
         {
             return await Task.Run(() =>
             {
@@ -3790,7 +3790,7 @@ namespace GingerCore.Drivers
                     List<ElementInfo> list = new List<ElementInfo>();
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList));
+                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList));
                     allReadElem.Clear();
                     CurrentFrame = "";
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -3806,7 +3806,7 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,List<string> relativeXpathTemplateList = null)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -3822,7 +3822,7 @@ namespace GingerCore.Drivers
                 {
                     try
                     {
-                        if (mStopProcess)
+                        if (StopProcess)
                         {
                             return foundElementsList;
                         }
@@ -3853,7 +3853,7 @@ namespace GingerCore.Drivers
                             {
                                 xpath= string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()=\'svg\']");
                             }
-                            
+
                             IWebElement el = Driver.FindElement(By.XPath(xpath));
                             if (el == null)
                             {
@@ -3886,6 +3886,14 @@ namespace GingerCore.Drivers
 
                             GetRelativeXpathElementLocators(foundElemntInfo);
 
+                            if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
+                            {
+                                foreach (var template in relativeXpathTemplateList)
+                                {
+                                    CreateXpathFromUserTemplate(template,foundElemntInfo);
+                                }
+                            }
+
                             foundElemntInfo.IsAutoLearned = true;
                             foundElementsList.Add(foundElemntInfo);
 
@@ -3905,7 +3913,7 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList);
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, relativeXpathTemplateList);
                             Driver.SwitchTo().ParentFrame();
                         }
                     }
@@ -3917,6 +3925,45 @@ namespace GingerCore.Drivers
             }
 
             return foundElementsList;
+        }
+
+        Regex AttRegex = new Regex("@[a-zA-Z]*",RegexOptions.Compiled);
+        private void CreateXpathFromUserTemplate(string xPathTemplate,HTMLElementInfo hTMLElement)
+        {
+            try
+            {
+                var relXpath = string.Empty;
+
+                var attributeCount = 0;
+
+                var attList = AttRegex.Matches(xPathTemplate);
+                var strList = new List<string>();
+                foreach (var item in attList)
+                {
+                    strList.Add(item.ToString().Remove(0, 1));
+                }
+
+                foreach (var item in hTMLElement.HTMLElementObject.Attributes)
+                {
+                    if (strList.Contains(item.Name))
+                    {
+                        relXpath = xPathTemplate.Replace(item.Name + "=\'\'", item.Name + "=\'" + item.Value + "\'");
+
+                        xPathTemplate = relXpath;
+                        attributeCount++;
+                    }
+                }
+
+                if (relXpath != string.Empty && attributeCount == attList.Count && CheckElementLocateStatus(xPathTemplate))
+                {
+                    var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpath, IsAutoLearned = true };
+                    hTMLElement.Locators.Add(elementLocator);
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during pom learining", ex);
+            }
         }
 
         private void GetRelativeXpathElementLocators(HTMLElementInfo foundElemntInfo)
@@ -5108,11 +5155,20 @@ namespace GingerCore.Drivers
                 try
                 {
                     ((IJavaScriptExecutor)Driver).ExecuteScript("GingerLibLiveSpy.StartEventListner()");
+                    CurrentPageURL = string.Empty;
                 }
                 catch
                 {
                     mListnerCanBeStarted = false;
                     Reporter.ToLog(eLogLevel.DEBUG, "Spy Listener cannot be started");
+                    
+                    var url = Driver.Title;
+                    if(CurrentPageURL != url)
+                    {
+                        CurrentPageURL = Driver.Title;
+                        Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Failed to start Live Spy Listner.Please click on the desired element to retrieve element details.");
+                    }
+                    ((IJavaScriptExecutor)Driver).ExecuteScript("return console.log('Failed to start Live Spy Listner.Please click on the desired element to retrieve element details.')");
                 }
             }
         }
@@ -5352,9 +5408,16 @@ namespace GingerCore.Drivers
 
         public void InjectGingerLiveSpy()
         {
-            AddJavaScriptToPage(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLiveSpy));
-            ((IJavaScriptExecutor)Driver).ExecuteScript("define_GingerLibLiveSpy();", null);
-            string rc = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.AddScript(arguments[0]);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min));
+            try
+            {
+                AddJavaScriptToPage(JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLiveSpy));
+                ((IJavaScriptExecutor)Driver).ExecuteScript("define_GingerLibLiveSpy();", null);
+                string rc = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.AddScript(arguments[0]);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min));
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during InjectGingerLiveSpy", ex);
+            }
         }
 
         public string XPoint;
@@ -7293,6 +7356,11 @@ namespace GingerCore.Drivers
                     try
                     {
                         elemId = ele.GetProperty("id");
+                        if (SSPageDoc == null)
+                        {
+                            SSPageDoc = new HtmlDocument();
+                            SSPageDoc.LoadHtml(GetCurrentPageSourceString());
+                        }
                         elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id.Equals(elemId)).FirstOrDefault();
                     }
                     catch (Exception exc)
@@ -7308,7 +7376,7 @@ namespace GingerCore.Drivers
                     elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
                     elemInfo.ElementObject = ele;
                     elemInfo.Path = iframeXPath;
-                    elemInfo.XPath = string.IsNullOrEmpty(elemId) ? await GenerateXpathForIWebElementAsync(ele, string.Empty) : elemNode.XPath;
+                    elemInfo.XPath = string.IsNullOrEmpty(elemId) ? GenerateXpathForIWebElement(ele, string.Empty) : elemNode.XPath;
                     elemInfo.HTMLElementObject = elemNode;
 
                     ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
@@ -7318,8 +7386,6 @@ namespace GingerCore.Drivers
                 {
                     Driver.SwitchTo().DefaultContent();
 
-                    //elemInfo.X = ele.Coordinates.LocationInViewport.X;
-                    //elemInfo.Y = ele.Coordinates.LocationInViewport.Y;
                     break;
                 }
 
@@ -8155,6 +8221,11 @@ namespace GingerCore.Drivers
             }
 
             return SSPageDoc;
+        }
+
+        public string GetCurrentPageSourceString()
+        {
+            return Driver.PageSource;
         }
     }
 }

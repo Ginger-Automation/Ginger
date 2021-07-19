@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <GingerRepositoryItem><Header ItemGuid="b60421b8-ff24-4d65-8703-edbfbf25d4cd" ItemType="Solution" CreatedBy="aditijag" Created="201911290645" GingerVersion="3.5.0.0" Version="2" LastUpdateBy="aditijag" LastUpdate="201911290645" />
-<Solution AlmType="QC" Guid="b60421b8-ff24-4d65-8703-edbfbf25d4cd" Name="TestUndoBusinessFlow" ParentGuid="00000000-0000-0000-0000-000000000000">
+<Solution AlmType="QC"  EncryptedValidationString="VUmheVjtatgVR0oSpuArDg==" Guid="b60421b8-ff24-4d65-8703-edbfbf25d4cd" Name="TestUndoBusinessFlow" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ApplicationPlatforms>
 <ApplicationPlatform AppName="MyWebApp" CoreGUID="00000000-0000-0000-0000-000000000000" Guid="983b6772-eefb-4e0b-8514-43f7f28e5dcb" GUID="00000000-0000-0000-0000-000000000000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" />
 </ApplicationPlatforms>

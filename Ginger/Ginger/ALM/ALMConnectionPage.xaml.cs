@@ -45,6 +45,7 @@ namespace Ginger.ALM
 
         private void Bind()
         {
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConfigPackageTextBox, TextBox.TextProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMConfigPackageFolderPath));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ServerURLTextBox, TextBox.TextProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMServerURL));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RestAPICheckBox, CheckBox.IsCheckedProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.UseRest));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ZephyrEntTokenCheckBox, CheckBox.IsCheckedProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ZepherEntToken));
@@ -108,6 +109,7 @@ namespace Ginger.ALM
             }
 
             RQMLoadConfigPackageButton.IsEnabled = true;
+            ConfigPackageTextBox.IsEnabled = true;
             if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM)
             {
                 ServerURLTextBox.IsEnabled = false;
@@ -146,6 +148,7 @@ namespace Ginger.ALM
             if (isServerDetailsCorrect)
             {
                 RQMLoadConfigPackageButton.IsEnabled = false;
+                ConfigPackageTextBox.IsEnabled = false;
                 ServerURLTextBox.IsEnabled = false;
                 UserNameTextBox.IsEnabled = false;
                 PasswordTextBox.IsEnabled = false;
@@ -432,6 +435,8 @@ namespace Ginger.ALM
                 ServerURLTextBox.IsReadOnly = true;
             }
             RQMLoadConfigPackageButton.Visibility = Visibility.Hidden;
+            ConfigPackageLabel.Visibility = Visibility.Hidden;
+            ConfigPackageTextBox.Visibility = Visibility.Hidden;
             JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
             DownloadPackageLink.Visibility = Visibility.Collapsed;
             Grid.SetColumnSpan(ServerURLTextBox, 2);
@@ -468,7 +473,10 @@ namespace Ginger.ALM
                     QCRadioButton.FontWeight = FontWeights.ExtraBold;
                     QCRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
+                    ConfigPackageLabel.Visibility = Visibility.Collapsed;
+                    ConfigPackageTextBox.Visibility = Visibility.Collapsed;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    PackageHint.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:8080/almbin";
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
@@ -482,7 +490,10 @@ namespace Ginger.ALM
                     RQMRadioButton.FontWeight = FontWeights.ExtraBold;
                     RQMRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
+                    ConfigPackageLabel.Visibility = Visibility.Visible;
+                    ConfigPackageTextBox.Visibility = Visibility.Visible;
                     DownloadPackageLink.Visibility = Visibility.Visible;
+                    PackageHint.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 1);
                     SetLoadPackageButtonContent();
                     ServerURLTextBox.IsReadOnly = true;
@@ -496,7 +507,10 @@ namespace Ginger.ALM
                     RallyRadioButton.FontWeight = FontWeights.ExtraBold;
                     RallyRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
+                    ConfigPackageLabel.Visibility = Visibility.Collapsed;
+                    ConfigPackageTextBox.Visibility = Visibility.Collapsed;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    PackageHint.Visibility = Visibility.Collapsed;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:8080/almbin";                    
@@ -508,7 +522,10 @@ namespace Ginger.ALM
                     JiraRadioButton.FontWeight = FontWeights.ExtraBold;
                     JiraRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
+                    ConfigPackageLabel.Visibility = Visibility.Visible;
+                    ConfigPackageTextBox.Visibility = Visibility.Visible;
                     DownloadPackageLink.Visibility = Visibility.Visible;
+                    PackageHint.Visibility = Visibility.Visible;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     SetLoadPackageButtonContent();                 
@@ -519,10 +536,14 @@ namespace Ginger.ALM
                     xDefualtImageQTest.Visibility = Visibility.Visible;
                     qTestRadioButton.FontWeight = FontWeights.ExtraBold;
                     qTestRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-                    RQMLoadConfigPackageButton.Visibility = Visibility.Hidden;
+                    RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
+                    ConfigPackageLabel.Visibility = Visibility.Visible;
+                    ConfigPackageTextBox.Visibility = Visibility.Visible;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
-                    DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    DownloadPackageLink.Visibility = Visibility.Visible;
+                    PackageHint.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
+                    SetLoadPackageButtonContent();
                     ExampleURLHint.Content = "Example: https://qtest-url.com/ ";                    
                     ServerURLTextBox.Cursor = null;
                     RestAPICheckBox.IsChecked = true;
@@ -533,9 +554,12 @@ namespace Ginger.ALM
                     xDefualtImageOctane.Visibility = Visibility.Visible;
                     OctaneRadioButton.FontWeight = FontWeights.ExtraBold;
                     OctaneRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-                    RQMLoadConfigPackageButton.Visibility = Visibility.Hidden;
+                    RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
+                    ConfigPackageLabel.Visibility = Visibility.Collapsed;
+                    ConfigPackageTextBox.Visibility = Visibility.Collapsed;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    PackageHint.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:port ";
                     ServerURLTextBox.Cursor = null;
@@ -548,9 +572,12 @@ namespace Ginger.ALM
                     xDefualtImageZephyrEnt.Visibility = Visibility.Visible;
                     ZephyrEntRadioButton.FontWeight = FontWeights.ExtraBold;
                     ZephyrEntRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-                    RQMLoadConfigPackageButton.Visibility = Visibility.Hidden;
+                    RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
+                    ConfigPackageLabel.Visibility = Visibility.Collapsed;
+                    ConfigPackageTextBox.Visibility = Visibility.Collapsed;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    PackageHint.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:port ";
                     ServerURLTextBox.Cursor = null;
@@ -621,6 +648,7 @@ namespace Ginger.ALM
                         break;
                 }
                 //Clear bindings
+                BindingOperations.ClearAllBindings(ConfigPackageTextBox);
                 BindingOperations.ClearAllBindings(ServerURLTextBox);
                 BindingOperations.ClearAllBindings(RestAPICheckBox);
                 BindingOperations.ClearAllBindings(UserNameTextBox);
@@ -652,7 +680,7 @@ namespace Ginger.ALM
 
         private void SetLoadPackageButtonContent()
         {
-            if (string.IsNullOrEmpty(ServerURLTextBox.Text))
+            if (string.IsNullOrEmpty(ConfigPackageTextBox.Text))
             {
                 RQMLoadConfigPackageButton.Content = "Load";
             }
@@ -661,19 +689,18 @@ namespace Ginger.ALM
                 RQMLoadConfigPackageButton.Content = "Replace";
             }
 
-            if (!string.IsNullOrEmpty(ServerURLTextBox.Text))
+            if (!string.IsNullOrEmpty(ConfigPackageTextBox.Text))
             {
-                ExampleURLHint.Content = "and click Replace to change " + CurrentAlmConfigurations.AlmType + " Configuration Package";
+                PackageHint.Content = "Replace " + CurrentAlmConfigurations.AlmType + " Configuration Package";
             }
             else
             {
-                ExampleURLHint.Content = "and Load " + CurrentAlmConfigurations.AlmType + " Configuration Package";
+                PackageHint.Content = "Load " + CurrentAlmConfigurations.AlmType + " Configuration Package";
             }
         }
 
         private void ServerURLTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-
             if (ServerURLTextBox.Text.ToLower().Contains("qcbin"))
             {
                 //remove rest of URL

@@ -455,20 +455,11 @@ namespace Ginger.ALM.Repository
                 Title = "Select Jira Configuration Zip File"
             }, false) is string fileName)
             {
-                if (!((JiraCore)ALMIntegration.Instance.AlmCore).ValidateConfigurationFile(fileName))
+                if (!GingerCore.General.LoadALMSettings(fileName, GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira))
+                {
                     return false;
-
-                string folderPath = Path.Combine(WorkSpace.Instance.Solution.Folder, "Configurations");
-                DirectoryInfo di = Directory.CreateDirectory(folderPath);
-
-                folderPath = Path.Combine(folderPath, "JiraConfigurationsPackage");
-                if (Directory.Exists(folderPath))
-                    Amdocs.Ginger.Common.GeneralLib.General.ClearDirectoryContent(folderPath);
-
-                ZipFile.ExtractToDirectory(fileName, folderPath);
-                if (!((JiraCore)ALMIntegration.Instance.AlmCore).IsConfigPackageExists())
-                    return false;
-
+                }
+                ((JiraCore)ALMIntegration.Instance.AlmCore).CreateJiraRepository();
                 ALMIntegration.Instance.SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira);
             }
             return true; //Browse Dialog Canceled
