@@ -11,7 +11,7 @@
    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
-            <RowDefinition Height="90"/>
+            <RowDefinition Height="90" x:Name="xAgentConfigsExpanderRow"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">

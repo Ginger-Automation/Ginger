@@ -93,8 +93,12 @@
                             <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
                             <TextBlock x:Name="xPageSrcLoadingText" Text="Loading Page Source . . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </StackPanel>
-                        <usercontrols1:XMLViewer x:Name="xXMLPageSrcViewer" Visibility="Collapsed"/>
-                        <usercontrols1:UCHtmlViewer x:Name="xHTMLPageSrcViewer" Visibility="Collapsed"/>
+                        <StackPanel x:Name="xPageSrcSectionOperations" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <usercontrols:ucButton x:Name="xCopyPageSrc" ButtonImageType="Copy" ButtonText="Copy Page Source" ButtonType="RoundTextAndImageButton" 
+                                                   ButtonImageWidth="20" ButtonImageHeight="25" Click="xCopyPageSrc_Click"/>
+                            <usercontrols1:XMLViewer x:Name="xXMLPageSrcViewer" Visibility="Collapsed"/>
+                            <usercontrols1:UCHtmlViewer x:Name="xHTMLPageSrcViewer" Visibility="Collapsed"/>
+                        </StackPanel>
                     </Grid>
                 </TabItem>
 

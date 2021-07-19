@@ -1241,5 +1241,10 @@ namespace GingerCore.Drivers.PBDriver
         {
             return null;
         }
+
+        public string GetCurrentPageSourceString()
+        {
+            return null;
+        }
     }
 }
