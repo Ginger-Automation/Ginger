@@ -3260,7 +3260,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        private IWebElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
+        public IWebElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
         {
             IWebElement elem = null;
             locator.StatusError = "";
@@ -3822,7 +3822,7 @@ namespace GingerCore.Drivers
                 {
                     try
                     {
-                        if (mStopProcess)
+                        if (StopProcess)
                         {
                             return foundElementsList;
                         }
@@ -3853,7 +3853,7 @@ namespace GingerCore.Drivers
                             {
                                 xpath= string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()=\'svg\']");
                             }
-                            
+
                             IWebElement el = Driver.FindElement(By.XPath(xpath));
                             if (el == null)
                             {
@@ -7356,6 +7356,11 @@ namespace GingerCore.Drivers
                     try
                     {
                         elemId = ele.GetProperty("id");
+                        if (SSPageDoc == null)
+                        {
+                            SSPageDoc = new HtmlDocument();
+                            SSPageDoc.LoadHtml(GetCurrentPageSourceString());
+                        }
                         elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id.Equals(elemId)).FirstOrDefault();
                     }
                     catch (Exception exc)
@@ -7371,7 +7376,7 @@ namespace GingerCore.Drivers
                     elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
                     elemInfo.ElementObject = ele;
                     elemInfo.Path = iframeXPath;
-                    elemInfo.XPath = string.IsNullOrEmpty(elemId) ? await GenerateXpathForIWebElementAsync(ele, string.Empty) : elemNode.XPath;
+                    elemInfo.XPath = string.IsNullOrEmpty(elemId) ? GenerateXpathForIWebElement(ele, string.Empty) : elemNode.XPath;
                     elemInfo.HTMLElementObject = elemNode;
 
                     ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
@@ -7381,8 +7386,6 @@ namespace GingerCore.Drivers
                 {
                     Driver.SwitchTo().DefaultContent();
 
-                    //elemInfo.X = ele.Coordinates.LocationInViewport.X;
-                    //elemInfo.Y = ele.Coordinates.LocationInViewport.Y;
                     break;
                 }
 
@@ -8218,6 +8221,11 @@ namespace GingerCore.Drivers
             }
 
             return SSPageDoc;
+        }
+
+        public string GetCurrentPageSourceString()
+        {
+            return Driver.PageSource;
         }
     }
 }

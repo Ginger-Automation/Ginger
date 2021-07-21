@@ -141,7 +141,7 @@ namespace Amdocs.Ginger.Common
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, OperationNotSupported, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty,
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
-        POMElementNotExist, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped,
+        POMElementNotExist, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped, SavePOMChanges,
         AskIfToUndoChanges, AskIfToUndoItemChanges, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification,WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
         PluginDownloadInProgress, SaveRunsetChanges, LegacyActionsCleanup,
@@ -703,6 +703,8 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.POMElementNotExist, new UserMsg(eUserMsgType.QUESTION, "Element Not Found", "'{0}' does not exist in selected Page Object Model - '{1}'" + Environment.NewLine + "Do you want to add this Element to POM ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UpdateExistingPOMElement, new UserMsg(eUserMsgType.QUESTION, "Updated Element Found", "An updated version of Page Object Model Element '{0}' Found." + Environment.NewLine + "Do you want to update existing POM ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SavePOMChanges, new UserMsg(eUserMsgType.QUESTION, "Save POM Changes", "Selected POM '{0}' was updated." + Environment.NewLine + "Do you want to save changes ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.POMMoveElementFromUnmappedToMapped, new UserMsg(eUserMsgType.QUESTION, "POM Element Found in Unmapped Elements", "Selected Element '{0}' Found in Unmapped Elements list of Page Object Model '{1}'." + Environment.NewLine + "Do you want to update POM & move element into Mapped Elements list ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.Failedtosaveitems, new UserMsg(eUserMsgType.ERROR, "Failed to Save", "Failed to do Save All", eUserMsgOption.OK, eUserMsgSelection.None));

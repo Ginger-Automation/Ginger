@@ -2016,7 +2016,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 foreach (var htmlElement in hTMLControlsPayLoad)
                 {
-                    if (mStopProcess)
+                    if (StopProcess)
                     {
                         break;
                     }
@@ -2093,7 +2093,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     List<PayLoad> ControlsPL = Response.GetListPayLoad();
                     foreach (var pl in ControlsPL)
                     {
-                        if (mStopProcess)
+                        if (StopProcess)
                         {
                             break;
                         }
@@ -4011,6 +4011,11 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
 
         public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
+        }
+
+        public string GetCurrentPageSourceString()
         {
             return null;
         }
