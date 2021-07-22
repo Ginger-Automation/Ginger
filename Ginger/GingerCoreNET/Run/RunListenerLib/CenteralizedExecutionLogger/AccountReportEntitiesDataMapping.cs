@@ -21,7 +21,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         public static AccountReportAction MapActionStartData(GingerCore.Actions.Act action, Context context)
         {
             action.ExecutionId = Guid.NewGuid(); // check incase of retry / flow control             
-
+            
             AccountReportAction accountReportAction = new AccountReportAction();     
 
             if(context.BusinessFlow.CurrentActivity != null)
@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportAction.CurrentRetryIteration = action.RetryMechanismCount;            
             accountReportAction.Wait = Convert.ToInt32(action.Wait);
             accountReportAction.TimeOut = action.Timeout;
-                   
+            accountReportAction.RunStatus = "In Progress";      
 
             return accountReportAction;
         }
@@ -91,7 +91,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivity.RunDescription = GetCalculatedValue(context, activity.RunDescription);
             accountReportActivity.StartTimeStamp = activity.StartTimeStamp;            
             accountReportActivity.VariablesBeforeExec = activity.VariablesBeforeExec;
-            accountReportActivity.ActivityGroupName = activity.ActivitiesGroupID;           
+            accountReportActivity.ActivityGroupName = activity.ActivitiesGroupID;
+            accountReportActivity.RunStatus = "In Progress";
             return accountReportActivity;
         }
         public static AccountReportActivity MapActivityEndData(Activity activity, Context context)
@@ -130,7 +131,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivityGroup.Description = activitiesGroup.Description;
             accountReportActivityGroup.AutomationPrecentage = activitiesGroup.AutomationPrecentage;
             accountReportActivityGroup.StartTimeStamp = activitiesGroup.StartTimeStamp;           
-            accountReportActivityGroup.ExecutedActivitiesGUID = activitiesGroup.ExecutedActivities.Select(x => x.Key).ToList();           
+            accountReportActivityGroup.ExecutedActivitiesGUID = activitiesGroup.ExecutedActivities.Select(x => x.Key).ToList();
+            accountReportActivityGroup.RunStatus = "In Progress";
             return accountReportActivityGroup;
         }
 
@@ -166,7 +168,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportBusinessFlow.Environment = businessFlow.Environment;
             accountReportBusinessFlow.StartTimeStamp = businessFlow.StartTimeStamp;           
             accountReportBusinessFlow.VariablesBeforeExec = businessFlow.VariablesBeforeExec;            
-            accountReportBusinessFlow.SolutionVariablesBeforeExec = businessFlow.SolutionVariablesBeforeExec;            
+            accountReportBusinessFlow.SolutionVariablesBeforeExec = businessFlow.SolutionVariablesBeforeExec;
+            accountReportBusinessFlow.RunStatus = "In Progress";
             return accountReportBusinessFlow;
         }
 
@@ -237,7 +240,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             //accountReportRunner.Description = gingerRunner.Description;
             accountReportRunner.Environment = gingerRunner.ProjEnvironment.Name.ToString();
             accountReportRunner.StartTimeStamp = gingerRunner.StartTimeStamp;
-            accountReportRunner.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();                        
+            accountReportRunner.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
+            accountReportRunner.RunStatus = "In Progress";
             return accountReportRunner;
         }
 
@@ -286,6 +290,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunSet.UserCategory1 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory1).FirstOrDefault());
             accountReportRunSet.UserCategory2 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory2).FirstOrDefault());
             accountReportRunSet.UserCategory3 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory3).FirstOrDefault());
+            accountReportRunSet.RunStatus = "In Progress";
             return accountReportRunSet;
         }
 
