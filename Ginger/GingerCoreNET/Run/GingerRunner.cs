@@ -274,7 +274,7 @@ namespace Ginger.Run
         {
             get
             {
-                if (WorkSpace.Instance.Solution != null)
+                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null)
                 {
                     return WorkSpace.Instance.Solution.LoggerConfigurations;
                 }
