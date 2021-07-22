@@ -54,6 +54,7 @@ namespace GingerCore.UserControls
         public void ClearTreeItems()
         {
             htmlTree.ItemsSource = null;
+            htmlTree.Items.Clear();
         }
 
         public List<string> ElementsToSkip = new List<string>() { "script", "noscript", "head" };
