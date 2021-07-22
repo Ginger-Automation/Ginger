@@ -150,6 +150,32 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+        public override bool StopProcess
+        {
+            get
+            {
+                if (AppType == eAppType.Web)
+                {
+                    return mSeleniumDriver.StopProcess;
+                }
+                else
+                {
+                    return base.StopProcess;
+                }
+            }
+            set
+            {
+                if (AppType == eAppType.Web)
+                {
+                    mSeleniumDriver.StopProcess = value;
+                }
+                else
+                {
+                    base.StopProcess = value;
+                }
+            }
+        }
+
         public GenericAppiumDriver(BusinessFlow BF)
         {
             BusinessFlow = BF;
@@ -1300,14 +1326,14 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 //Show only clickable elements
-                if (nodes[i].Attributes != null)
-                {
-                    var cattr = nodes[i].Attributes["clickable"];
-                    if (cattr != null)
-                    {
-                        if (cattr.Value == "false") continue;
-                    }
-                }
+                //if (nodes[i].Attributes != null)
+                //{
+                //    var cattr = nodes[i].Attributes["clickable"];
+                //    if (cattr != null)
+                //    {
+                //        if (cattr.Value == "false") continue;
+                //    }
+                //}
                 ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
                 EI.IsAutoLearned = true;
 
@@ -1528,6 +1554,9 @@ namespace Amdocs.Ginger.CoreNET
             string Name = GetAttrValue(xmlNode, "content-desc");
             if (!string.IsNullOrEmpty(Name)) return Name;
 
+            Name = GetAttrValue(xmlNode, "text");
+            if (!string.IsNullOrEmpty(Name)) return Name;
+
             string resid = GetAttrValue(xmlNode, "resource-id");
             if (!string.IsNullOrEmpty(resid))
             {
@@ -1536,9 +1565,6 @@ namespace Amdocs.Ginger.CoreNET
                 Name = a[a.Length - 1];
                 return Name;
             }
-
-            Name = GetAttrValue(xmlNode, "text");
-            if (!string.IsNullOrEmpty(Name)) return Name;
 
             return xmlNode.Name;
         }
@@ -1563,11 +1589,21 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
+                    Active = true,
                     LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = residXpath,
                     IsAutoLearned = true,
+                    Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
+                });
+                list.Add(new ElementLocator()
+                {
+                    Active = false,
+                    LocateBy = eLocateBy.ByResourceID,
+                    LocateValue = resid,
+                    IsAutoLearned = true,
                     Help = "Use Resource id only when you don't want XPath with relative info, but the resource-id is unique"
                 });
+
             }
 
             //by Name
@@ -1576,6 +1612,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
+                    Active = true,
                     LocateBy = eLocateBy.ByName,
                     LocateValue = elemName,
                     IsAutoLearned = true,
@@ -1589,6 +1626,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
+                    Active = true,
                     LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = string.Format("//*[@content-desc='{0}']", contentdesc),
                     IsAutoLearned = true,
@@ -1603,6 +1641,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
+                    Active = true,
                     LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = string.Format("//{0}[@text='{1}']", eClass, eText),    // like: //android.widget.RadioButton[@text='Ginger']" 
                     IsAutoLearned = true,
@@ -1613,6 +1652,7 @@ namespace Amdocs.Ginger.CoreNET
             // Show XPath
             list.Add(new ElementLocator()
             {
+                Active = true,
                 LocateBy = eLocateBy.ByXPath,
                 LocateValue = ElementInfo.XPath,
                 IsAutoLearned = true,
