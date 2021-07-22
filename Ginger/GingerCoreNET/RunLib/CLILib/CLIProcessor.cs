@@ -363,7 +363,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             Reporter.ToLog(eLogLevel.INFO, "Loading Configurations...");
 
             mCLIHandler = new CLIArgs();
-            mCLIHelper.Solution = runOptions.Solution;
+            mCLIHelper.Solution = runOptions.Solution;            
             mCLIHelper.Runset = runOptions.Runset;
             mCLIHelper.Env = runOptions.Environment;
             mCLIHelper.RunAnalyzer = !runOptions.DoNotAnalyze;
@@ -523,7 +523,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.CloseSolution();
         }
 
-        private bool CLILoadAndPrepare(string runsetConfigs = "")
+        private bool CLILoadAndPrepare(string runsetConfigs="")
         {
             try
             {

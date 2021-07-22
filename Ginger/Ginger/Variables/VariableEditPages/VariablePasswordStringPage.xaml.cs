@@ -33,8 +33,7 @@ using System.Windows.Shapes;
 using GingerCore.Variables;
 using GingerCore.GeneralLib;
 using GingerCore;
-
-
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Variables
 {
@@ -45,7 +44,7 @@ namespace Ginger.Variables
     {
         VariablePasswordString mVar;
         public VariablePasswordStringPage(VariablePasswordString var)
-        {
+        { 
             InitializeComponent();
             mVar = var;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPasswordValue, TextBox.TextProperty, var, nameof(VariablePasswordString.Password));
@@ -55,14 +54,9 @@ namespace Ginger.Variables
 
         private void txtPasswordValue_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            bool res = false;
             if (!EncryptionHandler.IsStringEncrypted(txtPasswordValue.Text))
-            {
-                txtPasswordValue.Text = EncryptionHandler.EncryptString(txtPasswordValue.Text, ref res);
-                if (res == false)
-                {
-                    txtPasswordValue.Text = string.Empty;
-                }
+            {                
+                txtPasswordValue.Text = EncryptionHandler.EncryptwithKey(txtPasswordValue.Text);                
             }
         }
 

@@ -131,7 +131,7 @@ namespace Ginger.Actions
         private void ViewWhereButton_Click(object sender, RoutedEventArgs e)
         {
             if (!mAct.CheckMandatoryFieldsExists(new List<string>() { 
-                nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName),  nameof(mAct.CalculatedFilter)}))
+                nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName),  nameof(mAct.SelectRowsWhere)}))
             {
                 Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
                 return;

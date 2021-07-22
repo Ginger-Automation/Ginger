@@ -1693,5 +1693,10 @@ namespace GingerCore.Drivers.WindowsLib
         {
             return null;
         }
+
+        public string GetCurrentPageSourceString()
+        {
+            return null;
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <GingerRepositoryItem><Header ItemGuid="cb844434-7e14-480a-b310-300898c0a7ca" ItemType="Solution" CreatedBy="YARONWE" Created="201904012027" GingerVersion="3.6.0.0" Version="8" LastUpdateBy="MENIK" LastUpdate="202004262040" />
-<Solution AlmType="QC" Guid="cb844434-7e14-480a-b310-300898c0a7ca" Name="CLI" ParentGuid="00000000-0000-0000-0000-000000000000">
+<Solution  EncryptedValidationString="VUmheVjtatgVR0oSpuArDg==" AlmType="QC" Guid="cb844434-7e14-480a-b310-300898c0a7ca" Name="CLI" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ApplicationPlatforms>
 <ApplicationPlatform AppName="app1" CoreGUID="00000000-0000-0000-0000-000000000000" Guid="e514fcc7-9e32-40c4-badf-845930479277" GUID="00000000-0000-0000-0000-000000000000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" />
 <ApplicationPlatform AppName="WebServicesApp" CoreGUID="00000000-0000-0000-0000-000000000000" Description="WebServices Application" Guid="4e68c7f6-0380-4f2c-a570-1722961b516e" GUID="00000000-0000-0000-0000-000000000000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="WebServices" />

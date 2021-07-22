@@ -79,6 +79,8 @@ namespace Amdocs.Ginger.Common.UIElement
         ElementInfo LearnElementInfoDetails(ElementInfo EI);
         List<AppWindow> GetWindowAllFrames();
 
+        string GetCurrentPageSourceString();
+
         Task<object> GetPageSourceDocument(bool ReloadHtmlDoc);
     }
 }

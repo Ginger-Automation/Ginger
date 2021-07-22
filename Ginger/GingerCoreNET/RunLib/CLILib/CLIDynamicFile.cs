@@ -87,13 +87,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 //Dynamic JSON
                 GingerExecConfig exeConfiguration = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(content);
+                cliHelper.SetEncryptionKey(exeConfiguration.EncryptionKey);
                 if (exeConfiguration.SolutionScmDetails != null)
                 {
                     cliHelper.SetSourceControlType(exeConfiguration.SolutionScmDetails.SCMType.ToString());
                     cliHelper.SetSourceControlURL(exeConfiguration.SolutionScmDetails.SolutionRepositoryUrl);
                     cliHelper.SetSourceControlUser(exeConfiguration.SolutionScmDetails.User);
                     cliHelper.SetSourceControlPassword(exeConfiguration.SolutionScmDetails.Password);
+                    
                     cliHelper.PasswordEncrypted(exeConfiguration.SolutionScmDetails.PasswordEncrypted.ToString());
+                    
                     if (string.IsNullOrEmpty(exeConfiguration.SolutionScmDetails.ProxyServer) == false)
                     {
                         cliHelper.SourceControlProxyServer(exeConfiguration.SolutionScmDetails.ProxyServer);

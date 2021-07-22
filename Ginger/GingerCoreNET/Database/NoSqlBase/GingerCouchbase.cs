@@ -27,6 +27,8 @@ using Couchbase.Configuration.Client;
 using Couchbase.Authentication;
 using Couchbase.N1QL;
 using Couchbase.Configuration.Server.Serialization;
+using amdocs.ginger.GingerCoreNET;
+
 namespace GingerCore.NoSqlBase
 {
     public class GingerCouchbase : NoSqlBase
@@ -45,10 +47,9 @@ namespace GingerCore.NoSqlBase
                     ViewRequestTimeout = 45000,
                     Servers = new List<Uri> { new Uri(Db.TNSCalculated.ToString()) },                    
                 });
-                bool res = false;
                 //TODO: need to decrypt the password in the Database->PassCalculated
-                String deCryptValue = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res, false);
-                if (res == true)
+                String deCryptValue = EncryptionHandler.DecryptwithKey(Db.PassCalculated.ToString());
+                if (!string.IsNullOrEmpty(deCryptValue))
                 {
                     clusterCB.Authenticate(Db.UserCalculated.ToString(), deCryptValue);
                 }
@@ -67,10 +68,9 @@ namespace GingerCore.NoSqlBase
 
         public override bool MakeSureConnectionIsOpen()
         {
-            bool res = false;
             string password = string.Empty;
-            string pass = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res, false);
-            if (res)
+            string pass = EncryptionHandler.DecryptwithKey(Db.PassCalculated.ToString());
+            if (!string.IsNullOrEmpty(pass))
             {
                 password = pass;
             }

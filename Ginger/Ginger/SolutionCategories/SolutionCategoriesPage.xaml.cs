@@ -27,7 +27,10 @@ namespace Ginger.SolutionCategories
 
             mPageMode = mode;
             mCategoriesDefinitions = categoriesDefinitions;
-            mSolutionCategories = WorkSpace.Instance.Solution.SolutionCategories;
+            if (WorkSpace.Instance.Solution != null)
+            {
+                mSolutionCategories = WorkSpace.Instance.Solution.SolutionCategories;
+            }
             mReadOnly = readOnlyMode;
 
             InitGrid();

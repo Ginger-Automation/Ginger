@@ -25,7 +25,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Ginger
-{    
+{
     public enum eWindowShowStyle
     {
         Free,
@@ -54,7 +54,7 @@ namespace Ginger
         private bool OwnerWindowClosing = false;
 
         public GenericWindow(Window Owner, eWindowShowStyle windowStyle, string windowTitle,
-                                Page windowPage, ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null)
+                                Page windowPage, ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, UserControl loaderElement = null)
         {
             InitializeComponent();
             this.Owner = Owner;
@@ -86,7 +86,7 @@ namespace Ginger
                 {
                     double widthDelta = 20;
                     double heightDelta = 100;
-                    
+
                     //keep window min width & height
                     if (windowPage.MinWidth > 0)
                         mPageOriginalWidth = windowPage.MinWidth;
@@ -131,7 +131,7 @@ namespace Ginger
                             windowPage.Width = ((windowPage.Width / 1280) * screenWidth);//relative to screen size
                         if (windowPage.Width > screenWidth)
                             windowPage.Width = screenWidth - widthDelta - 100;
-                        
+
                         if (windowPage.Height > 0)
                             windowPage.Height = ((windowPage.Height / 1024) * screenHeight);//relative to screen size
                         if (windowPage.Height > screenHeight)
@@ -193,7 +193,7 @@ namespace Ginger
             {
                 CloseBtn.Content = closeBtnText;
                 UpperCloseBtn.ToolTip = closeBtnText;
-            }            
+            }
 
             if (windowBtnsList != null)
             {
@@ -208,7 +208,20 @@ namespace Ginger
                     DockPanel.SetDock(btn, Dock.Right);
                     BottomPanel.Children.Add(btn);
                 }
-            }            
+            }
+
+            if (loaderElement != null)
+            {
+                loaderElement.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+                Thickness margin = loaderElement.Margin;
+                if (margin.Left < 10)
+                    margin.Left = 10;
+                loaderElement.Margin = margin;
+                //loaderElement.Style = this.FindResource("$RoundTextButtonStyle_Generic") as Style;
+                DockPanel.SetDock(loaderElement, Dock.Left);
+                BottomPanel.Children.Add(loaderElement);
+
+            }
         }
 
         private void Owner_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -222,11 +235,11 @@ namespace Ginger
             parentWindow.IsEnabled = false;
             if (mCloseEventHandler != null)
             {
-                mCloseEventHandler.Invoke(this, new RoutedEventArgs());                
+                mCloseEventHandler.Invoke(this, new RoutedEventArgs());
             }
             else
                 this.Close();
-            parentWindow.IsEnabled = true;            
+            parentWindow.IsEnabled = true;
         }
 
         private void PinBtn_Click(object sender, RoutedEventArgs e)
@@ -241,21 +254,21 @@ namespace Ginger
 
         private void MaximizeBtn_Click(object sender, RoutedEventArgs e)
         {
-            this.WindowState = System.Windows.WindowState.Maximized;            
+            this.WindowState = System.Windows.WindowState.Maximized;
         }
 
         private void RestoreBtn_Click(object sender, RoutedEventArgs e)
         {
-            this.WindowState = System.Windows.WindowState.Normal; 
+            this.WindowState = System.Windows.WindowState.Normal;
         }
 
         private void MinimizeBtn_Click(object sender, RoutedEventArgs e)
         {
-            this.WindowState = System.Windows.WindowState.Minimized;            
+            this.WindowState = System.Windows.WindowState.Minimized;
         }
 
         private void Window_StateChanged(object sender, EventArgs e)
-        {            
+        {
             if (this.WindowState == System.Windows.WindowState.Maximized)
             {
                 MaximizeBtn.Visibility = System.Windows.Visibility.Collapsed;
@@ -281,15 +294,15 @@ namespace Ginger
             {
                 Page contentPage = (Page)PageFrame.Content;
 
-                if (this.ActualWidth- 20 > mPageOriginalWidth)
+                if (this.ActualWidth - 20 > mPageOriginalWidth)
                     contentPage.Width = this.ActualWidth - 20;
                 if (mPageOriginalWidth > 0 && this.ActualWidth < mPageOriginalWidth)
-                {                 
+                {
                     WindowScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
                 }
                 else
                 {
-                    WindowScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;                    
+                    WindowScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
                 }
 
                 if (this.ActualHeight - 100 > mPageOriginalHeight)
@@ -315,7 +328,7 @@ namespace Ginger
 
 
         public static void LoadGenericWindow(ref GenericWindow genWindow, System.Windows.Window owner, eWindowShowStyle windowStyle, string windowTitle, Page windowPage,
-                                        ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", 
+                                        ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close",
                                         RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset = false)
         {
             //GenericWindow win = null;
@@ -363,8 +376,8 @@ namespace Ginger
                     this.Owner.WindowState = WindowState.Normal;
                 }
                 this.Owner.Activate();
-                this.Owner.Topmost = true;  
-                this.Owner.Topmost = false; 
+                this.Owner.Topmost = true;
+                this.Owner.Topmost = false;
                 this.Owner.Focus();
             }
         }

@@ -30,6 +30,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Text.RegularExpressions;
 
 namespace Ginger.SolutionWindows
 {
@@ -47,7 +48,13 @@ namespace Ginger.SolutionWindows
             mSolution = s;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, s, nameof(Solution.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
+            UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
             GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform);
+        }        
+
+        private void EncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
+        {
+            UCEncryptionKey.CheckKeyCombination();
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
@@ -58,20 +65,29 @@ namespace Ginger.SolutionWindows
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 //check name and folder inputs exists
                 if (SolutionNameTextBox.Text.Trim() == string.Empty || SolutionFolderTextBox.Text.Trim() == string.Empty
-                        || ApplicationTextBox.Text.Trim() == string.Empty 
-                            || MainPlatformComboBox.SelectedItem == null || MainPlatformComboBox.SelectedItem.ToString() == "Null")
+                        || ApplicationTextBox.Text.Trim() == string.Empty
+                            || MainPlatformComboBox.SelectedItem == null || MainPlatformComboBox.SelectedItem.ToString() == "Null"
+                            || UCEncryptionKey.EncryptionKeyPasswordBox.Password.Trim() == string.Empty)
                 {
                     Mouse.OverrideCursor = null;
                     Reporter.ToUser(eUserMsgKey.MissingAddSolutionInputs);
                     return;
                 }
-                
+
+                Regex regex = new Regex(@"^.*(?=.{8,16})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!*@#$%^&+=]).*$");
+                if (!UCEncryptionKey.CheckKeyCombination())
+                {
+                    Mouse.OverrideCursor = null;
+                    UCEncryptionKey.EncryptionKeyPasswordBox.Password = "";
+                    return;
+                }
+
                 mSolution.ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
                 ApplicationPlatform MainApplicationPlatform = new ApplicationPlatform();
                 MainApplicationPlatform.AppName = ApplicationTextBox.Text;
                 MainApplicationPlatform.Platform = (ePlatformType)MainPlatformComboBox.SelectedValue;
                 mSolution.ApplicationPlatforms.Add(MainApplicationPlatform);
-
+                mSolution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
                 //TODO: check AppName and platform validity - not empty + app exist in list of apps
 
 
@@ -91,7 +107,8 @@ namespace Ginger.SolutionWindows
                 //check solution not already exist
                 if (System.IO.File.Exists(System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml")) == false)
                 {
-                    mSolution.FilePath = System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml");                    
+                    mSolution.FilePath = System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml");
+                    mSolution.SaveEncryptionKey();
                     mSolution.SaveSolution(false);
                 }
                 else
@@ -105,7 +122,7 @@ namespace Ginger.SolutionWindows
                 WorkSpace.Instance.OpenSolution(mSolution.Folder);
 
                 //Create default items                
-                AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);                
+                AddFirstAgentForSolutionForApplicationPlatfrom(MainApplicationPlatform);
                 App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
                 AddDefaultDataSource();
                 AddDeafultReportTemplate();
@@ -115,7 +132,6 @@ namespace Ginger.SolutionWindows
 
                 //Save again to keep all defualt configurations setup
                 mSolution.SaveSolution(false);
-
                 //show success message to user
                 Mouse.OverrideCursor = null;
                 Reporter.ToUser(eUserMsgKey.AddSolutionSucceed);
@@ -130,7 +146,7 @@ namespace Ginger.SolutionWindows
 
         private void AddDeafultReportTemplate()
         {
-            HTMLReportConfiguration r = new HTMLReportConfiguration("Default",true);
+            HTMLReportConfiguration r = new HTMLReportConfiguration("Default", true);
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(r);
         }
 
@@ -167,7 +183,7 @@ namespace Ginger.SolutionWindows
                 case ePlatformType.Java:
                     agent.DriverType = Agent.eDriverType.JavaDriver;
                     break;
-                default:                    
+                default:
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No default driver set for first agent");
                     break;
             }
@@ -216,7 +232,7 @@ namespace Ginger.SolutionWindows
 
             RepositoryFolder<DataSourceBase> dsTargetFolder1 = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
             dsTargetFolder1.AddRepositoryItem(lite);
-            
+
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -253,7 +269,7 @@ namespace Ginger.SolutionWindows
             AddApplicationPage AAP = new AddApplicationPage(mSolution);
             AAP.ShowAsWindow();
 
-            if (mSolution.ApplicationPlatforms.Count() >0 )
+            if (mSolution.ApplicationPlatforms.Count() > 0)
             {
                 ApplicationTextBox.Text = mSolution.ApplicationPlatforms[0].AppName;
                 MainPlatformComboBox.SelectedValue = mSolution.ApplicationPlatforms[0].Platform;
