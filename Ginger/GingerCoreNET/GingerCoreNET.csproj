@@ -209,7 +209,7 @@
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="1.2.0" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="1.0.8" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="1.2.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   
