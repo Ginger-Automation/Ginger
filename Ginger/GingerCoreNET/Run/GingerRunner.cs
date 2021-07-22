@@ -274,7 +274,14 @@ namespace Ginger.Run
         {
             get
             {
-               return WorkSpace.Instance.Solution.LoggerConfigurations;
+                if (WorkSpace.Instance.Solution != null)
+                {
+                    return WorkSpace.Instance.Solution.LoggerConfigurations;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -410,7 +417,7 @@ namespace Ginger.Run
 
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
 
-            if (mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
+            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
@@ -429,7 +436,7 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
-            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
+            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
