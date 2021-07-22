@@ -66,16 +66,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportAction.FlowControls = action.FlowControls.Select(a => a.Condition + "_:_" + a.ConditionCalculated + "_:_" + a.FlowControlAction + "_:_" + a.Status).ToList();            
             accountReportAction.Error = action.Error;
             accountReportAction.ExInfo = action.ExInfo;
-            //foreach (string screenshot in action.ScreenShots)
-            //{
-            //    //string newScreenshotPath = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString() + "/" + Path.GetFileName(screenshot);
-            //    //newScreenShotsList.Add(newScreenshotPath);
-            //}
-            //accountReportAction.ScreenShots = newScreenShotsList;
-            if (action.ScreenShots != null && action.ScreenShots.Count > 0)
+            foreach (string screenshot in action.ScreenShots)
             {
-                accountReportAction.ScreenShots = action.ScreenShots.ToList();
+                string newScreenshotPath = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString() + "/" + Path.GetFileName(screenshot);
+                newScreenShotsList.Add(newScreenshotPath);
             }
+            accountReportAction.ScreenShots = newScreenShotsList;
+            
             return accountReportAction;
         }
         public static AccountReportActivity MapActivityStartData(Activity activity, Context context)
