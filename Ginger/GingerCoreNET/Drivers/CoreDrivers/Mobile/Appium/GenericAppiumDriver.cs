@@ -400,7 +400,7 @@ namespace Amdocs.Ginger.CoreNET
                     MobileDeviceActionHandler((ActMobileDevice)act);
                     return;
                 }
-                 
+
                 //Web
                 if (AppType == eAppType.Web)//Keep here to make sure Web handling will be done by Selenium driver
                 {
@@ -1188,14 +1188,40 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+        public string GetCurrentActivityCompleteDetails()
+        {
+            try
+            {
+                if (DevicePlatformType == eDevicePlatformType.Android)
+                {
+                    return string.Format("{0} | {1}", ((AndroidDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).CurrentPackage,
+                        ((AndroidDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).CurrentActivity);
+                }
+                else if (DevicePlatformType == eDevicePlatformType.iOS)
+                {
+                    return string.Format("{0}", ((IOSDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                }
+                else
+                {
+                    return string.Format("{0} | {1}", Driver.Capabilities.GetCapability("appPackage").ToString(),
+                                                    Driver.Capabilities.GetCapability("appActivity").ToString());
+                }
+            }
+            catch (Exception exc)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "An error ocured while fetching the current App details", exc);
+                return "Package | Activity";
+            }
+        }
+
         public override string GetURL()
         {
-            if(AppType == eAppType.Web)
+            if (AppType == eAppType.Web)
             {
                 return mSeleniumDriver.GetURL();
             }
 
-            return GetCurrentActivityDetails();
+            return GetCurrentActivityCompleteDetails();
         }
 
         public override bool IsRunning()
@@ -1214,7 +1240,7 @@ namespace Amdocs.Ginger.CoreNET
 
             AppWindow AW = new AppWindow();
             AW.WindowType = AppWindow.eWindowType.Appium;
-            AW.Title = GetURL();   // TODO: add device name and info
+            AW.Title = (AppType == eAppType.Web) ? GetURL() : GetCurrentActivityDetails();   // TODO: add device name and info
 
             list.Add(AW);
             return list;
@@ -1227,7 +1253,7 @@ namespace Amdocs.Ginger.CoreNET
 
         async void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
-            if(AppType == eAppType.Web)
+            if (AppType == eAppType.Web)
             {
                 ((IWindowExplorer)mSeleniumDriver).HighLightElement(ElementInfo, locateElementByItLocators);
                 return;
@@ -1257,7 +1283,7 @@ namespace Amdocs.Ginger.CoreNET
             XmlNode foundNode = null;
             ElementInfo foundElement = null;
             var mousePos = OnSpyingElementEvent();
-            if(mousePos != null && mousePos is Point)
+            if (mousePos != null && mousePos is Point)
             {
                 mousePosCurrent = (Point)mousePos;  // new Point((mousePos as Point).X, (mousePos as Point).Y);
             }
@@ -1595,15 +1621,6 @@ namespace Amdocs.Ginger.CoreNET
                     IsAutoLearned = true,
                     Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
                 });
-                list.Add(new ElementLocator()
-                {
-                    Active = false,
-                    LocateBy = eLocateBy.ByResourceID,
-                    LocateValue = resid,
-                    IsAutoLearned = true,
-                    Help = "Use Resource id only when you don't want XPath with relative info, but the resource-id is unique"
-                });
-
             }
 
             //by Name
@@ -1831,7 +1848,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
         {
-            if(AppType == eAppType.Web)
+            if (AppType == eAppType.Web)
             {
                 ((IWindowExplorer)mSeleniumDriver).CollectOriginalElementsDataForDeltaCheck(originalList);
                 return;
@@ -1851,7 +1868,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     try
                     {
-                        if(LocateElementByLocators(EI.Locators) != null)
+                        if (LocateElementByLocators(EI.Locators) != null)
                         //if (e != null)
                         {
                             //EI.ElementObject = e;
@@ -1934,7 +1951,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
                 }
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 elem = null;
                 EL.StatusError = exc.Message;
@@ -1984,16 +2001,16 @@ namespace Amdocs.Ginger.CoreNET
             }
             set
             {
-                if(value != mSpying)
+                if (value != mSpying)
                 {
                     mSpying = value;
-                }    
+                }
             }
         }
 
         public void StartSpying()
         {
-            if(AppType == eAppType.Web)
+            if (AppType == eAppType.Web)
             {
                 ((IWindowExplorer)mSeleniumDriver).StartSpying();
                 return;
@@ -2088,7 +2105,7 @@ namespace Amdocs.Ginger.CoreNET
                 XmlNodeList ElmsNodes;
                 // Do once?
                 // if XMLSOurce changed we need to refresh
-                if(IsAsyncCall)
+                if (IsAsyncCall)
                     pageSourceString = await GetPageSource();
                 else
                     pageSourceString = Driver.PageSource;
@@ -2527,7 +2544,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public string GetCurrentPageSourceString()
         {
-            if(AppType == eAppType.Web)
+            if (AppType == eAppType.Web)
             {
                 return ((IWindowExplorer)mSeleniumDriver).GetCurrentPageSourceString();
             }

@@ -945,5 +945,12 @@ namespace GingerCore
                 return GingerDicser.GetTermResValue(eTermResKey.Activity);// "List of Actions";
             }
         }
+
+        /// <summary>
+        /// ID which been provided for each execution instance on the Activity
+        /// </summary>
+        public Guid ExecutionId { get; set; }
+
+        public Guid ParentExecutionId { get; set; }
     }
 }
