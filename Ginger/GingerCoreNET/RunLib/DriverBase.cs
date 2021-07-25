@@ -55,7 +55,7 @@ namespace GingerCore.Drivers
         // Used for Driver with WPF window
         public IDispatcher Dispatcher { get; set; }
 
-        public bool StopProcess { get; set; }
+        public virtual bool StopProcess { get; set; }
 
         public bool PreviousRunStopped { get; set; }
         public bool IsDriverRunning { get; set; }
