@@ -124,6 +124,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         }
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode= false)
         {
+            if (!action.Active)
+            {
+                return;
+            }
             AccountReportAction accountReportAction = AccountReportEntitiesDataMapping.MapActionEndData(action, mContext);
             AccountReportApiHandler.SendScreenShotsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, action.ScreenShots.ToList());
             //  accountReportAction.UpdateData = true;
