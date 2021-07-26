@@ -162,7 +162,7 @@ namespace Ginger.Run
 
         public override void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)
         {
-            activityGroup.StartTimeStamp = eventTime; // DateTime.Now.ToUniversalTime();
+            activityGroup.StartTimeStamp = DateTime.UtcNow; // DateTime.Now.ToUniversalTime();
 
             ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), string.Format("{0} (ID:{1}, ParentID:{2})", activityGroup.Name, activityGroup.Guid, activityGroup.ExecutionParentGuid), null);
         }

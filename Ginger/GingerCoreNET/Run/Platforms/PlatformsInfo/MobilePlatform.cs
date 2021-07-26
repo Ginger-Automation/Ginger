@@ -159,6 +159,11 @@ namespace GingerCore.Platforms.PlatformsInfo
             return false;
         }
 
+        public override string GetPageUrlRadioLabelText()
+        {
+            return "App";
+        }
+
         public override ObservableList<ElementLocator> GetLearningLocators()
         {
             ObservableList<ElementLocator> learningLocatorsList = base.GetLearningLocators();//taken from WebPlatform

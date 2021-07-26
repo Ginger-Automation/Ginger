@@ -115,7 +115,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         internal ActionReport GetActionReportData(Act action, Context context, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             ActionReport AR = new ActionReport(action, context);
-            AR.Seq = context.Activity.ExecutionLogActionCounter;
+            if (context.Activity != null)
+            {
+                AR.Seq = context.Activity.ExecutionLogActionCounter;
+            }
             if ((action.RunDescription != null) && (action.RunDescription != string.Empty))
             {
                 if (mVE == null)
