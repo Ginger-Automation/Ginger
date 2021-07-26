@@ -505,6 +505,16 @@
     </Compile>
     <Compile Include="GeneralWindows\HelpLayout\DrawArrow.cs" />
     <Compile Include="GeneralWindows\HelpLayout\HelpLayoutArgs.cs" />
+    <Compile Include="GlobalSolutionLib\ImportItemWizardLib\ImportItemWizard.cs" />
+    <Compile Include="GlobalSolutionLib\ImportItemWizardLib\SelectItemFromSolutionPage.xaml.cs">
+      <DependentUpon>SelectItemFromSolutionPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalSolutionLib\ImportItemWizardLib\ItemDependancyPage.xaml.cs">
+      <DependentUpon>ItemDependancyPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalSolutionLib\ImportItemWizardLib\SelectItemImportTypePage.xaml.cs">
+      <DependentUpon>SelectItemImportTypePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RunSetPageLib\RunsetRunnersConfigPage.xaml.cs">
       <DependentUpon>RunsetRunnersConfigPage.xaml</DependentUpon>
     </Compile>
@@ -1996,6 +2006,8 @@
     <EmbeddedResource Include="Resources\LiteDB.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <Resource Include="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro.md" />
+    <None Include="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro_Old.md" />
     <None Include="Resources\VBSTemplate.bmp" />
     <None Include="Resources\VBSTemplate.vbs" />
     <Resource Include="Images\%40A_16x16.png" />
@@ -2923,6 +2935,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Drivers\DriversWindows\MobileDriverWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GlobalSolutionLib\ImportItemWizardLib\SelectItemFromSolutionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GlobalSolutionLib\ImportItemWizardLib\ItemDependancyPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GlobalSolutionLib\ImportItemWizardLib\SelectItemImportTypePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

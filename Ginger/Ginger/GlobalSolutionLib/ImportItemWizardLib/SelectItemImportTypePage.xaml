@@ -1,0 +1,37 @@
+﻿<Page x:Class="Ginger.GlobalSolutionLib.ImportItemWizardLib.SelectItemImportTypePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.GlobalSolutionLib.ImportItemWizardLib" xmlns:Actions="clr-namespace:Ginger.Actions" xmlns:Ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="SelectItemImportTypePage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <Label Style="{StaticResource $LabelStyle}" >Select Global Solution Source Type:</Label>
+            <RadioButton x:Name="ImportFromLocalFolderTypeRadio" IsChecked="True" Style="{StaticResource $InputRadioButtonStyle}" Checked="ImportFromLocalFolderTypeRadio_Checked">Solution folder located on this machine</RadioButton>
+            <RadioButton x:Name="ImportFromSourceControlTypeRadio" Style="{StaticResource $InputRadioButtonStyle}" Checked="ImportFromSourceControlTypeRadio_Checked">Source Control</RadioButton>
+            
+        </StackPanel>
+        <StackPanel x:Name="ImportFromLocalFolderPanel" Visibility="Visible" Grid.Row="1">
+            <Label Style="{StaticResource $LabelStyle}">Select Solution folder:</Label>
+            <Actions:UCValueExpression x:Name="xGlobalSolutionFolderUC" VerticalAlignment="Center" ToolTip="Solutoin folder full path"/>
+        </StackPanel>
+        <StackPanel x:Name="ImportFromSourceControlPanel" Visibility="Collapsed" Grid.Row="1">
+            <Label Style="{StaticResource $LabelStyle}">Source Control Settings</Label>
+        </StackPanel>
+
+        <StackPanel Visibility="Visible" Grid.Row="2">
+            <Label Style="{StaticResource $LabelStyle}">Select Items To Import:</Label>
+            <Ginger:ucGrid x:Name="xItemsToImportGrid" AutomationProperties.AutomationId="ItemsToImport AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+
+        </StackPanel>
+    </Grid>
+</Page>
