@@ -447,7 +447,6 @@ namespace Ginger.ALM
             RestAPICheckBox.IsEnabled = false;
 
             TokenCheckBox.Visibility = Visibility.Collapsed;
-            TokenCheckBox.IsChecked = false;
             TokenCheckBox.IsEnabled = false;
 
             QCRadioButton.FontWeight = FontWeights.Regular;
@@ -585,7 +584,6 @@ namespace Ginger.ALM
                     RestAPICheckBox.IsChecked = true;
                     RestAPICheckBox.IsEnabled = false;
                     TokenCheckBox.Visibility = Visibility.Visible;
-                    TokenCheckBox.IsChecked = true;
                     TokenCheckBox.IsEnabled = true;
                     break;
 
@@ -773,7 +771,7 @@ namespace Ginger.ALM
             PasswordLabel.Content = "Token";
         }
 
-        private void ZephyrEntTokenCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void TokenCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             PasswordLabel.Content = "Password";
         }
