@@ -767,7 +767,7 @@ namespace Ginger.ALM
         {
             ExampleURLHint.Content = "Example: http://server:8080/almbin";
         }
-        private void ZephyrEntTokenCheckBox_Checked(object sender, RoutedEventArgs e)
+        private void TokenCheckBox_Checked(object sender, RoutedEventArgs e)
         {
 
             PasswordLabel.Content = "Token";
