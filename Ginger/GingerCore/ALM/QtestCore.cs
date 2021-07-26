@@ -62,7 +62,7 @@ namespace GingerCore.ALM
 
                 if (ALMCore.DefaultAlmConfig.ZepherEntToken)
                 {
-                    var oAuthTokenStatusVM = connObj.TokenStatus(tokenType + " " + accessToken);
+                    QTestApiModel.OAuthTokenStatusVM oAuthTokenStatusVM = connObj.TokenStatus(tokenType + " " + accessToken);
                     if (oAuthTokenStatusVM.ToString().ToLower().Contains("error"))
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to connect qTest Server" + System.Environment.NewLine + oAuthTokenStatusVM.ToString());
