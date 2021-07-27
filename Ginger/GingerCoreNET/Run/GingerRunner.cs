@@ -1207,6 +1207,7 @@ namespace Ginger.Run
 
         private void RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true, bool moveToNextAction=true)
         {
+            bool actionExecuted = false;
             try
             {
                 //Not suppose to happen but just in case        
@@ -1252,7 +1253,7 @@ namespace Ginger.Run
                 GiveUserFeedback();
 
                 NotifyActionStart(act);
-
+                actionExecuted = true;
                 string actionStartTimeStr = string.Empty;
                 while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                 {
@@ -1338,7 +1339,10 @@ namespace Ginger.Run
             }
             finally
             {
-                NotifyActionEnd(act);
+                if (actionExecuted)
+                {
+                    NotifyActionEnd(act);
+                }
                 CurrentBusinessFlow.PreviousAction = act;
             }
         }
