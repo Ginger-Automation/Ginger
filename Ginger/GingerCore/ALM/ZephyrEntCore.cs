@@ -81,7 +81,7 @@ namespace GingerCore.ALM
         public override bool ConnectALMServer()
         {
             LoginDTO loginDTO = null;
-            if (ALMCore.DefaultAlmConfig.ZepherEntToken)
+            if (ALMCore.DefaultAlmConfig.UseToken)
             {
                 loginDTO = new LoginDTO()
                 {

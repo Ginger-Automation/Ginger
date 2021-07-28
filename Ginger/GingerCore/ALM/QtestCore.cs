@@ -60,7 +60,7 @@ namespace GingerCore.ALM
                 string accessToken = ALMCore.DefaultAlmConfig.ALMPassword;
                 string tokenType = "bearer";
 
-                if (ALMCore.DefaultAlmConfig.ZepherEntToken)
+                if (ALMCore.DefaultAlmConfig.UseToken)
                 {
                     QTestApiModel.OAuthTokenStatusVM oAuthTokenStatusVM = connObj.TokenStatus(tokenType + " " + accessToken);
                     if (oAuthTokenStatusVM.ToString().ToLower().Contains("error"))
