@@ -68,7 +68,30 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegration.eALMType almType)
         {
-            throw new NotImplementedException();
+            //update alm type to open defect
+            ALMCore aLMCore = (ALMCore)GetALMCore();
+            aLMCore.ConnectALMServer();
+            Dictionary<Guid, string> defectsOpeningResults;
+            if ((defectsForOpening != null) && (defectsForOpening.Count > 0))
+            {
+                defectsOpeningResults = aLMCore.CreateNewALMDefects(defectsForOpening, defectsFields);
+            }
+            else
+                return;
+
+            if ((defectsOpeningResults != null) && (defectsOpeningResults.Count > 0))
+            {
+                foreach (KeyValuePair<Guid, string> defectOpeningResult in defectsOpeningResults)
+                {
+                    if ((defectOpeningResult.Value != null) && (defectOpeningResult.Value != "0"))
+                    {
+                        WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; });
+                    }
+                }
+            }
+
+            //Set back Default Alm
+            //ALMIntegration.Instance.UpdateALMType(ALMCore.GetDefaultAlmConfig().AlmType);
         }
 
         public object CreateNewReportTemplate()
@@ -250,7 +273,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             throw new NotImplementedException();
         }
 
-        public object GetALMCore()
+        private object GetALMCore()
         {
             ALMCore almCore = null;
             string almtype = GetALMConfig();
@@ -263,9 +286,6 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             {
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
                     almCore = new JiraCore();
-                    break;
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane:
-                    almCore = new OctaneCore();;
                     break;
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:
                     almCore = new ZephyrEntCore();

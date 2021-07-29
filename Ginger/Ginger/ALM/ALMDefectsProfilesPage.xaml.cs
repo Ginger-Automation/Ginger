@@ -30,6 +30,7 @@ using GingerCoreNET.ALMLib;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore.ALM;
+using ALM_Common.DataContracts;
 
 namespace Ginger.ALM
 {
@@ -353,7 +354,7 @@ namespace Ginger.ALM
             {
                 Mouse.OverrideCursor = Cursors.Wait;
                 ALMIntegration.Instance.UpdateALMType(AlmType);
-                mALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.DEFECT, null);
+                mALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ResourceType.DEFECT, null);
             }
             catch (Exception ex)
             {

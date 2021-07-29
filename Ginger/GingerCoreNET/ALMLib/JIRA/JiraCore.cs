@@ -16,16 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.DataContracts;
+using AlmDataContractsStd.Enums;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.JIRA;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using JiraRepositoryStandard;
-using JiraRepositoryStandard.BLL;
-using JiraRepositoryStandard.Data_Contracts;
+using JiraRepositoryStd;
+using JiraRepositoryStd.BLL;
+using JiraRepositoryStd.Data_Contracts;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,7 +41,7 @@ namespace GingerCore.ALM
         private JiraConnectManager jiraConnectObj;
         private JiraImportManager jiraImportObj;
         private JiraManagerZephyr jmz;
-        private JiraRepository jiraRepObj;
+        private JiraRepositoryStd.JiraRepositoryStd jiraRepObj;
         public static string ALMProjectGroupName { get; set; }
         public static string ALMProjectGuid { get; set; }
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
@@ -65,7 +65,7 @@ namespace GingerCore.ALM
         public JiraCore()
         {
             string settingsPath = DefaultAlmConfig.ALMConfigPackageFolderPathCalculated;
-            jiraRepObj = new JiraRepository(settingsPath, (TestingALMType)Enum.Parse(typeof(TestingALMType), ALMCore.DefaultAlmConfig.JiraTestingALM.ToString()));
+            jiraRepObj = new JiraRepositoryStd.JiraRepositoryStd(settingsPath, (TestingALMType)Enum.Parse(typeof(TestingALMType), ALMCore.DefaultAlmConfig.JiraTestingALM.ToString()));
             exportMananger = new JIRA.Bll.JiraExportManager(jiraRepObj);
             jiraConnectObj = new JiraConnectManager(jiraRepObj);
             jiraImportObj = new JiraImportManager(jiraRepObj);

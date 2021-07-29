@@ -17,7 +17,7 @@ limitations under the License.
 #endregion
 
 using GingerWPF.UserControlsLib.UCTreeView;
-using JiraRepositoryStandard.Data_Contracts;
+using JiraRepositoryStd.Data_Contracts;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;

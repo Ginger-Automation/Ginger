@@ -35,6 +35,8 @@ using amdocs.ginger.GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Reflection;
 using GingerCoreNET.ALMLib;
+using GingerCore.ALM.Helper;
+using ALM_Common.DataContracts;
 
 namespace GingerCore.ALM
 {
@@ -145,19 +147,20 @@ namespace GingerCore.ALM
 
         public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.Qtest;
 
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType)
         {
+            ResourceType resource =  ALMCommonMapper.GetGresourceType(resourceType);
             ConnectALMServer();
             fieldApi = new QTestApi.FieldApi(connObj.Configuration);
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
-            if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
+            if (resource == ResourceType.ALL)
             {
                 fields = GetALMItemFields();
             }
             else
             {
-                string fieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(resourceType);
+                string fieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(resource);
                 List<QTestApiModel.FieldResource> fieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), fieldInRestSyntax);
 
                 fields.Append(AddFieldsValues(fieldsCollection, resourceType.ToString()));
@@ -172,19 +175,19 @@ namespace GingerCore.ALM
             //QC   ->|testSet,     |testCase,   |designStep, |testInstance, |designStepParams, |run
             //QTest->|test-suites, |test-cases, |test-steps, |test-cycles,  |parameters,       |test-runs
 
-            string testSetfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_SET);
+            string testSetfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ResourceType.TEST_SET);
             List<QTestApiModel.FieldResource> testSetfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testSetfieldInRestSyntax);
 
-            string testCasefieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CASE);
+            string testCasefieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ResourceType.TEST_CASE);
             List<QTestApiModel.FieldResource> testCasefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testCasefieldInRestSyntax);
 
-            string designStepfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP);
+            string designStepfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ResourceType.DESIGN_STEP);
             List<QTestApiModel.FieldResource> designStepfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), designStepfieldInRestSyntax);
 
-            string testInstancefieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CYCLE);
+            string testInstancefieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ResourceType.TEST_CYCLE);
             List<QTestApiModel.FieldResource> testInstancefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testInstancefieldInRestSyntax);
 
-            string runfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_RUN);
+            string runfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ResourceType.TEST_RUN);
             List<QTestApiModel.FieldResource> runfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), runfieldInRestSyntax);
 
             fields.Append(AddFieldsValues(testSetfieldsCollection, testSetfieldInRestSyntax));

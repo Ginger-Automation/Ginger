@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.DataContracts;
+using AlmDataContractsStd.Enums;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
@@ -31,9 +31,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web;
-using ZephyrEntSDK.Models;
-using ZephyrEntSDK.Models.Base;
-using ZepyhrEntRepositoryStandard;
+using ZephyrEntStdSDK.Models;
+using ZephyrEntStdSDK.Models.Base;
+using Zepyhr_Ent_Repository_Std;
 
 namespace GingerCore.ALM.ZephyrEnt.Bll
 {
@@ -46,9 +46,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         Dictionary<int, int> statusesDic = new Dictionary<int, int>() 
         { {(int)StatuesName.NoRun, 0 }, {(int)StatuesName.PASS, 0 }, 
             {(int)StatuesName.FAIL, 0 }, {(int)StatuesName.WIP, 0 }, {(int)StatuesName.Blocked, 0 }};
-        private ZephyrEntRepository zephyrEntRepository;
+        private ZephyrEntRepositoryStd zephyrEntRepository;
 
-        public ZephyrEntImportManager(ZephyrEntRepository zephyrEntRepository)
+        public ZephyrEntImportManager(ZephyrEntRepositoryStd zephyrEntRepository)
         {
             this.zephyrEntRepository = zephyrEntRepository;
         }

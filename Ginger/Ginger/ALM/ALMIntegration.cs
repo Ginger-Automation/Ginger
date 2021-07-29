@@ -79,18 +79,13 @@ namespace Ginger.ALM
                     AlmCore = new QtestCore();
                     AlmRepo = new QtestRepository();
                     break;
-
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane:
-
                     if(!(AlmCore is OctaneCore && AlmRepo is OctaneRepository))
                     {
                         AlmCore = new OctaneCore();
                         AlmRepo = new OctaneRepository(AlmCore);
                     }
-                 
-                  
                     break;
-
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:
                     AlmCore = new ZephyrEntCore();
                     AlmRepo = new ZephyrEnt_Repository(AlmCore);
@@ -106,6 +101,10 @@ namespace Ginger.ALM
         }
         public GingerCoreNET.ALMLib.ALMConfig GetDefaultAlmConfig()
         {
+            if(AlmCore == null)
+            {
+                return new GingerCoreNET.ALMLib.ALMConfig();
+            }
             return AlmCore.GetCurrentAlmConfig();
         }
 
@@ -528,7 +527,7 @@ namespace Ginger.ALM
             ObservableList<ExternalItemFieldBase> latestALMFieldsREST = new ObservableList<ExternalItemFieldBase>();
             if (ALMIntegration.Instance.AutoALMProjectConnect())
             {
-                latestALMFieldsREST = AlmCore.GetALMItemFields(null ,online, resourceType);
+                latestALMFieldsREST = AlmCore.GetALMItemFields(null ,online, (AlmDataContractsStd.Enums.ResourceType)resourceType);
             }
             return latestALMFieldsREST;
         }

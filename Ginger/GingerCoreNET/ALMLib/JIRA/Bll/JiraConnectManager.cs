@@ -16,13 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.DataContracts;
-using ALM_Common.Data_Contracts;
+using AlmDataContractsStd.Abstraction;
+using AlmDataContractsStd.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ALM_Common.Abstractions;
-using JiraRepositoryStandard;
 
 namespace GingerCore.ALM.JIRA
 {
@@ -35,15 +33,15 @@ namespace GingerCore.ALM.JIRA
         bool connectedToProject;
         IProjectDefinitions connectedProjectDefenition;
         AlmDomainColl jiraDomainsProjectsDataList;
-        private JiraRepository jiraRepositoryObj;
+        private JiraRepositoryStd.JiraRepositoryStd jiraRepositoryObj;
 
-        public JiraConnectManager(JiraRepository jiraRep)
+        public JiraConnectManager(JiraRepositoryStd.JiraRepositoryStd jiraRep)
         {
             this.jiraRepositoryObj = jiraRep;
         }
         public void CreateJiraRepository()
         {
-            jiraRepositoryObj = new JiraRepository(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated);
+            jiraRepositoryObj = new JiraRepositoryStd.JiraRepositoryStd(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated);
         }
         public bool SetJiraProjectFullDetails()
         {

@@ -48,7 +48,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="DLLS\ALM_Common.dll" />
     <None Remove="DLLS\LibGit2Sharp.dll" />
     <None Remove="DLLS\OctaneSdkStandard.dll" />
     <None Remove="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
@@ -98,13 +97,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="DLLS\ALM_Common.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="DLLS\LibGit2Sharp.dll" />
-    <Content Include="DLLS\OctaneSdkStandard.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Reports\GingerExecutionReport\assets\css\bootstrap.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -280,29 +273,26 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="ALM_Common">
-      <HintPath>DLLS\ALM_Common.dll</HintPath>
+    <Reference Include="AlmDataContractsStd">
+      <HintPath>DLLS\AlmDataContractsStd.dll</HintPath>
+    </Reference>
+    <Reference Include="AlmRepositoryStd">
+      <HintPath>DLLS\AlmRepositoryStd.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
     </Reference>
-    <Reference Include="JiraRepositoryStandard">
-      <HintPath>DLLS\JiraRepositoryStandard.dll</HintPath>
+    <Reference Include="JiraRepositoryStd">
+      <HintPath>DLLS\JiraRepositoryStd.dll</HintPath>
     </Reference>
     <Reference Include="LibGit2Sharp">
       <HintPath>DLLS\LibGit2Sharp.dll</HintPath>
     </Reference>
-    <Reference Include="OctaneRepositoryStandard">
-      <HintPath>DLLS\OctaneRepositoryStandard.dll</HintPath>
+    <Reference Include="ZephyrEntStdSDK">
+      <HintPath>DLLS\ZephyrEntStdSDK.dll</HintPath>
     </Reference>
-    <Reference Include="OctaneSdkStandard">
-      <HintPath>DLLS\OctaneSdkStandard.dll</HintPath>
-    </Reference>
-    <Reference Include="ZephyrEntRepositoryStandard">
-      <HintPath>DLLS\ZephyrEntRepositoryStandard.dll</HintPath>
-    </Reference>
-    <Reference Include="ZephyrEntSDK">
-      <HintPath>DLLS\ZephyrEntSDK.dll</HintPath>
+    <Reference Include="Zepyhr_Ent_Repository_Std">
+      <HintPath>DLLS\Zepyhr_Ent_Repository_Std.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -355,10 +345,6 @@
   </ItemGroup>
 
   <ItemGroup>
-
-    <None Update="DLLS\ZephyrEntSDK.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
 
     <None Update="Images\%40amdocs_logo.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

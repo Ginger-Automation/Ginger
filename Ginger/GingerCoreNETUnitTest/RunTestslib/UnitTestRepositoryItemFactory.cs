@@ -171,10 +171,5 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             throw new NotImplementedException();
         }
-
-        public object GetALMCore()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

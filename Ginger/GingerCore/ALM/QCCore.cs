@@ -27,6 +27,7 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.ALMLib;
+using AlmDataContractsStd.Enums;
 
 namespace GingerCore.ALM
 {
@@ -89,7 +90,7 @@ namespace GingerCore.ALM
 
         public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.QC;
 
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType)
         {
             return UpdatedAlmFields(ImportFromQC.GetALMItemFields());
         }

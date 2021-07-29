@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.Data_Contracts;
-using ALM_Common.DataContracts;
+using AlmDataContractsStd.Contracts;
+using AlmDataContractsStd.Enums;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
@@ -31,14 +31,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using ZephyrEntSDK.Models;
-using ZephyrEntSDK.Models.Base;
+using ZephyrEntStdSDK.Models;
+using ZephyrEntStdSDK.Models.Base;
 
 namespace GingerCore.ALM
 {
     public class ZephyrEntCore : ALMCore
     {
-        protected ZepyhrEntRepositoryStandard.ZephyrEntRepository zephyrEntRepository;
+        protected Zepyhr_Ent_Repository_Std.ZephyrEntRepositoryStd zephyrEntRepository;
         private ZephyrEntExportManager zephyrEntExportManager;
         private ZephyrEntImportManager zephyrEntImportManager;
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
@@ -53,7 +53,7 @@ namespace GingerCore.ALM
 
         public ZephyrEntCore()
         {
-            zephyrEntRepository = new ZepyhrEntRepositoryStandard.ZephyrEntRepository(new LoginDTO()
+            zephyrEntRepository = new Zepyhr_Ent_Repository_Std.ZephyrEntRepositoryStd(new LoginDTO()
             {
                 User = ALMCore.DefaultAlmConfig.ALMUserName,
                 Password = ALMCore.DefaultAlmConfig.ALMPassword,

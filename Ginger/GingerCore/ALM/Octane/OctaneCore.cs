@@ -22,12 +22,13 @@ using Amdocs.Ginger.CoreNET.ALMLib.DataContract;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
+using GingerCore.ALM.Helper;
 using GingerCore.ALM.Octane;
 using GingerCore.ALM.QC;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using OctaneRepositoryStandard;
+using Octane_Repository;
 using OctaneSdkStandard.Connector;
 using OctaneSdkStandard.Connector.Credentials;
 using OctaneSdkStandard.Entities.Base;
@@ -746,8 +747,9 @@ namespace GingerCore.ALM
             return domains.DataResult.Select(f => f.DomainName).ToList();
         }
 
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType = AlmDataContractsStd.Enums.ResourceType.ALL)
         {
+            ResourceType resource = ALMCommonMapper.GetGresourceType(resourceType);
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
             string resourse = string.Empty;
             LoginDTO _loginDto = GetLoginDTO();
@@ -756,24 +758,24 @@ namespace GingerCore.ALM
                 return octaneRepository.GetListNodes(_loginDto);
             }).Result;
 
-            if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
+            if (resource == ResourceType.ALL)
             {
-                resourse = OctaneRepositoryStandard.BLL.Extensions.ConvertResourceType(ResourceType.TEST_CASE);
+                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_CASE);
                 ExtractFields(fields, resourse, "Test Case", _loginDto, listnodes);
 
-                resourse = OctaneRepositoryStandard.BLL.Extensions.ConvertResourceType(ResourceType.TEST_SET);
+                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_SET);
                 ExtractFields(fields, resourse, "Test Suite", _loginDto, listnodes);
 
-                resourse = OctaneRepositoryStandard.BLL.Extensions.ConvertResourceType(ResourceType.REQUIREMENT);
+                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.REQUIREMENT);
                 ExtractFields(fields, resourse, "Requirement", _loginDto, listnodes);
 
-                resourse = OctaneRepositoryStandard.BLL.Extensions.ConvertResourceType(ResourceType.TEST_RUN);
+                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_RUN);
                 ExtractFields(fields, resourse, "Run", _loginDto, listnodes);
             }
             else
             {
 
-                resourse = OctaneRepositoryStandard.BLL.Extensions.ConvertResourceType(resourceType);
+                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(resource);
 
                 ExtractFields(fields, resourse, resourse, _loginDto, listnodes);
             }

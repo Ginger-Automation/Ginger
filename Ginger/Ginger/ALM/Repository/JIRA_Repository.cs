@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.DataContracts;
+using AlmDataContractsStd.Enums;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
@@ -28,7 +28,7 @@ using GingerCore.ALM;
 using GingerCore.ALM.JIRA;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using JiraRepositoryStandard.Data_Contracts;
+using JiraRepositoryStd.Data_Contracts;
 using System;
 using System.Collections.Generic;
 using System.IO;

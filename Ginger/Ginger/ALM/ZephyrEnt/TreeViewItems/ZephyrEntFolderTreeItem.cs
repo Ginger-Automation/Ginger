@@ -24,7 +24,7 @@ using System.Windows.Controls;
 using Newtonsoft.Json.Linq;
 using GingerCore.ALM;
 using GingerCore.ALM.ZephyrEnt.Bll;
-using ZephyrEntSDK.Models.Base;
+using ZephyrEntStdSDK.Models.Base;
 
 namespace Ginger.ALM.ZephyrEnt.TreeViewItems
 {

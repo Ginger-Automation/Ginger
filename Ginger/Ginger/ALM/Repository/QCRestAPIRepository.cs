@@ -33,12 +33,12 @@ using Ginger.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore.ALM.QC;
 using GingerCore.ALM.QCRestAPI;
-using ALM_Common.DataContracts;
 using GingerCore.ALM;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using ALMRestClient;
 using static GingerCoreNET.ALMLib.ALMIntegration;
+using ALM_Common.DataContracts;
 
 namespace Ginger.ALM.Repository
 {

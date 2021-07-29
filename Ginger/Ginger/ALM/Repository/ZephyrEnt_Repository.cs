@@ -32,8 +32,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using ZephyrEntSDK.Models;
-using ZephyrEntSDK.Models.Base;
+using ZephyrEntStdSDK.Models;
+using ZephyrEntStdSDK.Models.Base;
 using static Ginger.ALM.ZephyrEnt.ZephyrEntPlanningExplorerPage;
 using static GingerCoreNET.ALMLib.ALMIntegration;
 

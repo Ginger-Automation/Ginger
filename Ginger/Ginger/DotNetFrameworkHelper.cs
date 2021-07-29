@@ -619,12 +619,6 @@ namespace Ginger
         {
             return new OracleConnection(ConnectionString);
         }
-
-        public object GetALMCore()
-        {
-
-            throw new NotImplementedException();
-        }
     }
 }
     

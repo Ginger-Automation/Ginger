@@ -32,6 +32,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -273,11 +274,18 @@ namespace Ginger.SolutionGeneral
         {
             try
             {
-                return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
+                }
+                else
+                {
+                    return null;
+                }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+                Reporter.ToLog(eLogLevel.WARN, "Failed to get Solution Encryption Key", ex);
             }
             return null;
         }

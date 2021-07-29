@@ -197,7 +197,7 @@ namespace GingerCore.ALM
             return true;//ExportToRally.Instance.ExportBusinessFlowToRally(businessFlow, ExternalItemsFields, ref result);
         }
 
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType)
         {
             return null;
         }

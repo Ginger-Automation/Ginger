@@ -21,11 +21,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO.Compression;
 using System.Linq;
+using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
+using GingerCore.ALM.Helper;
 using GingerCore.ALM.QCRestAPI;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -96,7 +98,8 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
-            ObservableList<ExternalItemFieldBase> runFields = GetALMItemFields(null, true, ALM_Common.DataContracts.ResourceType.TEST_RUN);
+            ResourceType resource = ALMCommonMapper.GetGresourceType(AlmDataContractsStd.Enums.ResourceType.TEST_RUN);
+            ObservableList<ExternalItemFieldBase> runFields = GetALMItemFields(null, true, resource);
             return ExportToQCRestAPI.ExportExceutionDetailsToALM(bizFlow, ref result, runFields, exectutedFromAutomateTab, publishToALMConfig);
         }
 
@@ -119,7 +122,7 @@ namespace GingerCore.ALM
 
         public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.QC;
 
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
+        public ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
             return UpdatedAlmFields(ImportFromQCRest.GetALMItemFields(resourceType));
         }
@@ -137,6 +140,11 @@ namespace GingerCore.ALM
         public QCTestCase GetQCTest(string testID)
         {
             return ImportFromQCRest.GetQCTest(testID);
+        }
+
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType = AlmDataContractsStd.Enums.ResourceType.ALL)
+        {
+            throw new NotImplementedException();
         }
     }
 }

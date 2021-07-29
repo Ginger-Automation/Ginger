@@ -23,7 +23,7 @@ using System;
 using System.Collections.Generic;
 using GingerCore.Activities;
 using TDAPIOLELib;
-using ALM_Common.DataContracts;
+using AlmDataContractsStd.Enums;
 using GingerCore.ALM.QC;
 using System.ComponentModel;
 using System.IO;
@@ -96,7 +96,7 @@ namespace GingerCore.ALM
             return ExportToRQM.Instance.ExportBusinessFlowToRQM(businessFlow, ExternalItemsFields, ref result);
         }
 
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType)
         {
             return UpdatedAlmFields(ImportFromRQM.GetALMItemFields(bw, online));
         }

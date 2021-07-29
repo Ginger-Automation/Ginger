@@ -67,8 +67,9 @@ namespace GingerCore.ALM
             }
             else
             {
-               ve.Value = "GingerRun_{VBS Eval=now()}";
-               VariableForTCRunNameCalculated = ve.ValueCalculated;
+                //ve.Value = "GingerRun_{VBS Eval=now()}";
+                ve.Value = "GingerRun_{CS Exp=DateTime.Now}";
+                VariableForTCRunNameCalculated = ve.ValueCalculated;
             }
         }
     }

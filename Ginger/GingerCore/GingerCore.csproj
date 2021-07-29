@@ -68,6 +68,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ACL_Data_Contract.dll</HintPath>
     </Reference>
+    <Reference Include="AlmDataContractsStd">
+      <HintPath>..\GingerCoreNET\DLLS\AlmDataContractsStd.dll</HintPath>
+    </Reference>
     <Reference Include="ALMRepository, Version=8.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ALMRepository.dll</HintPath>
@@ -76,8 +79,9 @@
       <HintPath>DLLs\ALMRestClient.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="ALM_Common">
-      <HintPath>..\GingerCoreNET\DLLS\ALM_Common.dll</HintPath>
+    <Reference Include="ALM_Common, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLs\ALM_Common.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -103,11 +107,12 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>D:\Sandesh workspace\Microsoft.Office.Interop.Outlook.dll</HintPath>
     </Reference>
-    <Reference Include="OctaneSdkStandard">
-      <HintPath>..\GingerCoreNET\DLLS\OctaneSdkStandard.dll</HintPath>
+    <Reference Include="OctaneSdkStandard, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLs\OctaneSdkStandard.dll</HintPath>
     </Reference>
     <Reference Include="Octane_Repository">
-      <HintPath>..\GingerCoreNET\DLLS\Octane_Repository.dll</HintPath>
+      <HintPath>DLLs\Octane_Repository.dll</HintPath>
     </Reference>
     <Reference Include="Open3270, Version=1.5.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -166,9 +171,8 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="ZephyrEntSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GingerCoreNET\DLLS\ZephyrEntSDK.dll</HintPath>
+    <Reference Include="ZephyrEntSDKStandard">
+      <HintPath>..\GingerCoreNET\DLLS\ZephyrEntSDKStandard.dll</HintPath>
     </Reference>
     <Reference Include="Zepyhr_Ent_Repository, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -321,6 +325,9 @@
     <Compile Include="Actions\XML\ActXMLTagValidation.cs" />
     <Compile Include="Actions\XML\ActXMLProcessing.cs" />
     <Compile Include="Actions\XML\XMLProcessor.cs" />
+    <Compile Include="ALM\Helper\ALMCommonMapper.cs" />
+    <Compile Include="ALM\Octane\OctaneCore.cs" />
+    <Compile Include="ALM\Octane\OctaneSettings.cs" />
     <Compile Include="ALM\QtestCore.cs" />
     <Compile Include="ALM\Qtest\ImportFromQtest.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
