@@ -353,7 +353,7 @@ namespace GingerCore.SourceControl
             try
             {
                 var co = new CloneOptions();
-                co.BranchName = SourceControlBranch;
+                co.BranchName = string.IsNullOrEmpty(SourceControlBranch)?"master":SourceControlBranch;
                 co.CredentialsProvider = GetSourceCredentialsHandler();
                 RepositoryRootFolder = LibGit2Sharp.Repository.Clone(URI, Path, co);
             }
@@ -821,9 +821,11 @@ namespace GingerCore.SourceControl
             var credentials = new UsernamePasswordCredentials()
             {
                 Username = SourceControlUser,
-                Password = SourceControlPass
+                Password = SourceControlPass,
+                
             };
             CredentialsHandler credentialHandler = (_url, _user, _cred) => credentials;
+
             return credentialHandler;
         }
         
