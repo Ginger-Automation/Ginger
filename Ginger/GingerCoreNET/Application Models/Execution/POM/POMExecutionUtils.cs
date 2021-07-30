@@ -161,16 +161,23 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
             var passedLocator = GetCurrentPOMElementInfo().Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed);
 
-            var pomLastUpdatedTimeSpan = (System.DateTime.Now - Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime)).TotalHours;
 
-            if (passedLocator == null || passedLocator.Count() > 0 || pomLastUpdatedTimeSpan < 5)
+            if (passedLocator == null || passedLocator.Count() == 0 )
             {
-                return null;
+                var pomLastUpdatedTimeSpan = (System.DateTime.Now - Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime)).TotalHours;
+
+                if (pomLastUpdatedTimeSpan < 5)
+                {
+                    return null;
+                }
             }
 
             var deltaElementInfos = GetUpdatedVirtulPOM(currentAgent);
 
-            UpdateElementSelfHealingDetails(deltaElementInfos.ToList());
+            if (deltaElementInfos.Count > 0)
+            {
+                UpdateElementSelfHealingDetails(deltaElementInfos.ToList());
+            }
 
             Guid currentPOMElementInfoGUID = new Guid(PomElementGUID[1]);
             var currentElementDelta = deltaElementInfos.Where(x => x.ElementInfo.Guid == currentPOMElementInfoGUID).FirstOrDefault();
@@ -210,10 +217,21 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         private ObservableList<DeltaElementInfo> GetUpdatedVirtulPOM(Common.InterfacesLib.IAgent currentAgent)
         {
+            var waitToCompleteLearnProcess = false;
             while (this.GetCurrentPOM().IsLearning)
             {
-
+                waitToCompleteLearnProcess = true;
             }
+
+            if (waitToCompleteLearnProcess)
+            {
+                var pomLastUpdatedTimeSpan = (DateTime.Now - Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime)).Minutes;
+                if (pomLastUpdatedTimeSpan < 5)
+                {
+                    return new ObservableList<DeltaElementInfo>();
+                }
+            }
+
             this.GetCurrentPOM().IsLearning = true;
             GingerCore.Agent agent = (GingerCore.Agent)currentAgent;
 
@@ -223,7 +241,9 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 //set element type
                 var elementList = this.GetCurrentPOM().MappedUIElements.Where(x => x.ElementTypeEnum != eElementType.Unknown).Select(y => y.ElementTypeEnum).Distinct().ToList();
                 pomDeltaUtils.PomLearnUtils.LearnOnlyMappedElements = true;
-                pomDeltaUtils.PomLearnUtils.SelectedElementTypesList = elementList;
+                pomDeltaUtils.SelectedElementTypesList = elementList;
+                pomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList = GingerCore.Platforms.PlatformsInfo.PlatformInfoBase.GetPlatformImpl(agent.Platform).GetLearningLocators();
+
 
                 Reporter.ToLog(eLogLevel.INFO, "POM update process started during self healing operation..");
                 this.GetCurrentPOM().StartDirtyTracking();
