@@ -495,6 +495,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             runset.RunInParallel = runsetExecutor.RunSetConfig.RunModeParallel;
             runset.StopRunnersOnFailure = runsetExecutor.RunSetConfig.StopRunnersOnFailure;
 
+            SelfHealingConfig selfHealingConfiguration = new SelfHealingConfig()
+            {
+                AutoFixAnalyzerIssue = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue,
+                PrioritizePOMLocator = runsetExecutor.RunSetConfig.SelfHealingConfiguration.PrioritizePOMLocator,
+                AutoUpdateApplicationModel = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel,
+                SaveChangesInSourceControl = runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl
+            };
+
+            runset.SelfHealingConfiguration = selfHealingConfiguration;
+
+
             if (runsetExecutor.RunSetConfig.GingerRunners.Count > 0)
             {
                 runset.Runners = new List<RunnerExecConfig>();
@@ -1230,6 +1241,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
             }
 
+            // add selfhealing configs
+            if (dynamicRunsetConfigs.SelfHealingConfiguration != null)
+            {
+                runSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue = dynamicRunsetConfigs.SelfHealingConfiguration.AutoFixAnalyzerIssue;
+                runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel = dynamicRunsetConfigs.SelfHealingConfiguration.AutoUpdateApplicationModel;
+                runSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl = dynamicRunsetConfigs.SelfHealingConfiguration.SaveChangesInSourceControl;
+                runSetConfig.SelfHealingConfiguration.PrioritizePOMLocator = dynamicRunsetConfigs.SelfHealingConfiguration.PrioritizePOMLocator;
+            }
             // Set config
             runsetExecutor.RunSetConfig = runSetConfig;
         }

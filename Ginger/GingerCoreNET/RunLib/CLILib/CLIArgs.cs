@@ -71,9 +71,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 options.SCMType = solution.SourceControl.GetSourceControlType;
             }
 
+            if (runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl)
+            {
+                options.SelfHealingCheckInConfigured = true;
+            }
+
             var args = CommandLine.Parser.Default.FormatCommandLine<RunOptions>(options);
             args = args.Replace(solution.EncryptionKey, "\"" + solution.EncryptionKey + "\"");
-            if (options.PasswordEncrypted)
+            if (options.PasswordEncrypted && options.Pass != null)
             {
                 args = args.Replace(options.Pass, "\"" + options.Pass + "\"");
             }

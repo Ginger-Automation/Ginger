@@ -273,6 +273,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             view.GridColsView.Add(new GridColView() { Field = "", Header = "Highlight", WidthWeight = 10, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
 
+            var listSelfHelaingInfo = GingerCore.General.GetEnumValuesForCombo(typeof(SelfHealingInfoEnum));
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.SelfHealingInfo), Header = "Self Healing Info.", WidthWeight = 15, CellValuesList= listSelfHelaingInfo,StyleType=GridColView.eGridColStyleType.ComboBox,ComboboxDisplayMemberField= ComboItem.Fields.text,ComboboxSelectedValueField=ComboItem.Fields.Value, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.LastUpdatedTime), Header = "Last Updated", WidthWeight = 10 });
+
             GridViewDef mRegularView = new GridViewDef(eGridView.RegularView.ToString());
             mRegularView.GridColsView = new ObservableList<GridColView>();
             mRegularView.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.StatusIcon), Visible = false });

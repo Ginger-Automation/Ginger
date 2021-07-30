@@ -379,6 +379,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.SourceControlProxyPort(runOptions.SourceControlProxyPort);
             mCLIHelper.ExecutionId = runOptions.RunSetExecutionId;
 
+            mCLIHelper.SelfHealingCheckInConfigured = runOptions.SelfHealingCheckInConfigured;
+
             if (!string.IsNullOrEmpty(runOptions.RunSetExecutionId) && !Guid.TryParse(runOptions.RunSetExecutionId, out Guid temp))
             { 
                     Reporter.ToLog(eLogLevel.WARN, "Invalid Execution Id provied in argument.");
@@ -511,6 +513,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Unexpected exception occurred during {0} execution, exit code 1", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
                 Environment.ExitCode = 1; //failure
+            }
+
+            //self healing changes check-in in source control
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl)
+            {
+                mCLIHelper.SaveAndCommitSelfHealingChanges();
             }
 
             Reporter.ToLog(eLogLevel.INFO, "Closing Solution and doing Cleanup...");

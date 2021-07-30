@@ -71,6 +71,10 @@ namespace Ginger.Run
             else
             {
                 xSelfHealingConfigPanel.Visibility = Visibility.Collapsed;
+                mRunSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue = false;
+                mRunSetConfig.SelfHealingConfiguration.PrioritizePOMLocator = false;
+                mRunSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel = false;
+                mRunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl = false;
             }
         }
     }

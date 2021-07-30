@@ -3175,7 +3175,7 @@ namespace GingerCore.Drivers
                         }
                         elem = LocateElementByLocators(currentPOMElementInfo.Locators);
 
-                        if (pomExcutionUtil.AutoUpdateCurrentPOM() != null)
+                        if (pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
                         {
                             elem = LocateElementByLocators(currentPOMElementInfo.Locators);
                         }

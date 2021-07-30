@@ -17,9 +17,11 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
+using System;
 using System.Windows.Controls;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
@@ -68,7 +70,21 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     BindingHandler.ObjFieldBinding(xGingerRunEXEWindowShow, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.ShowAutoRunWindow));
                     BindingHandler.ObjFieldBinding(xRunAnalyzerCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.RunAnalyzer));
                     xArtifactsPathTextBox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ArtifactsPath), isVENeeded: false, isBrowseNeeded: true, browserType: Activities.UCValueExpression.eBrowserType.Folder);
+                    SelfHealingAutoCheckInSetting();
                     break;
+            }
+        }
+
+        private void SelfHealingAutoCheckInSetting()
+        {
+            if (mAutoRunWizard.RunsetConfig.SelfHealingConfiguration.PrioritizePOMLocator || mAutoRunWizard.RunsetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel)
+            {
+                xSelfHealinAutoCheckInConfigCheckBox.Visibility = System.Windows.Visibility.Visible;
+                BindingHandler.ObjFieldBinding(xSelfHealinAutoCheckInConfigCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.RunsetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.SaveChangesInSourceControl));
+            }
+            else
+            {
+                xSelfHealinAutoCheckInConfigCheckBox.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
     }

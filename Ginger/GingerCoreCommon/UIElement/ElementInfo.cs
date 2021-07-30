@@ -67,6 +67,39 @@ namespace Amdocs.Ginger.Common.UIElement
             set { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); }
         }
 
+        private string mLastUpdatedTime;
+        [IsSerializedForLocalRepository]
+        public string LastUpdatedTime
+        { 
+            get 
+            {
+                return mLastUpdatedTime;
+            } 
+            set
+            {
+                DateTime result;
+                if(DateTime.TryParse(value, out result))
+                {
+                    mLastUpdatedTime = result.ToString("dd-MMM-yyyy HH:mm:ss");
+                }
+            } 
+        }
+
+        private SelfHealingInfoEnum mSelfHealingInfo;
+        [IsSerializedForLocalRepository]
+        public SelfHealingInfoEnum SelfHealingInfo 
+        { 
+            get
+            {
+                return mSelfHealingInfo;
+            }
+            set
+            {
+                mSelfHealingInfo = value;
+                OnPropertyChanged(nameof(SelfHealingInfo));
+            }
+        }
+
         public object ElementObject { get; set; }
 
         public Boolean IsExpandable { get; set; }
@@ -598,5 +631,13 @@ namespace Amdocs.Ginger.Common.UIElement
             Svg
     }
 
-    
+    public enum SelfHealingInfoEnum
+    {
+        [EnumValueDescription(" ")]
+        None,
+        [EnumValueDescription("Element not found during self healing operation")]
+        ElementDeleted,
+        [EnumValueDescription("Element updated during self healing operation")]
+        ElementModified
+    }
 }

@@ -876,11 +876,6 @@ namespace GingerWPF.BusinessFlowsLib
                 mRunner.ResetRunnerExecutionDetails();
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
 
-                if (WorkSpace.Instance.AutomateTabSelfHealingConfiguration.EnableSelfHealing == true )
-                {
-                    WorkSpace.Instance.AutomateTabSelfHealingConfiguration.RunFromAutomateTab = true;
-                }
-
                 //execute                
                 await mRunner.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
                 if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
@@ -910,10 +905,6 @@ namespace GingerWPF.BusinessFlowsLib
                 //SetUIElementsBehaverDuringExecution();
                 mRunner.ResetFailedToStartFlagForAgents();
                
-                if (WorkSpace.Instance.AutomateTabSelfHealingConfiguration.EnableSelfHealing == true)
-                {
-                    WorkSpace.Instance.AutomateTabSelfHealingConfiguration.RunFromAutomateTab = false;
-                }
             }
         }
 

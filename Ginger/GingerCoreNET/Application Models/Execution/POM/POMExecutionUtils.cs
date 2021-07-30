@@ -106,18 +106,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         public bool PriotizeLocatorPosition()
         {
-            //when executing from runset
-            var runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
-            if (runSetConfig != null && !runSetConfig.SelfHealingConfiguration.RunFromAutomateTab)
-            {
-                if (!runSetConfig.SelfHealingConfiguration.EnableSelfHealing || !runSetConfig.SelfHealingConfiguration.PrioritizePOMLocator)
-                {
-                    return false;
-                }
-            }
-            //when running from automate tab
-            var selfHealingConfigAutomateTab = WorkSpace.Instance.AutomateTabSelfHealingConfiguration;
-            if (!selfHealingConfigAutomateTab.EnableSelfHealing || (!selfHealingConfigAutomateTab.RunFromAutomateTab && !selfHealingConfigAutomateTab.PrioritizePOMLocator))
+            if (!IsSelfHealingConfigured())
             {
                 return false;
             }
@@ -140,45 +129,114 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             return locatorPriotize;
         }
 
-        internal ElementInfo AutoUpdateCurrentPOM()
+        private bool IsSelfHealingConfigured()
         {
-            var passedLocator = GetCurrentPOMElementInfo().Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed);
+            //when executing from runset
+            var runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
 
-            var pomLastUpdatedTimeSpan = (System.DateTime.Now -  GetCurrentPOM().RepositoryItemHeader.LastUpdate).TotalHours;
-            if (passedLocator == null || passedLocator.Count() > 0 || pomLastUpdatedTimeSpan < 5 )
+            if (runSetConfig != null)
+            {
+                if (!runSetConfig.SelfHealingConfiguration.EnableSelfHealing || !runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel)
+                {
+                    return false;
+                }
+                return true;
+            }
+            //when running from automate tab
+            var selfHealingConfigAutomateTab = WorkSpace.Instance.AutomateTabSelfHealingConfiguration;
+            if (!selfHealingConfigAutomateTab.EnableSelfHealing || !selfHealingConfigAutomateTab.AutoUpdateApplicationModel)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        internal ElementInfo AutoUpdateCurrentPOM(Common.InterfacesLib.IAgent currentAgent)
+        {
+            if (!IsSelfHealingConfigured())
             {
                 return null;
             }
-            
-            var deltaElementInfos = GetUpdatedVirtulPOM();
+
+            var passedLocator = GetCurrentPOMElementInfo().Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed);
+
+            var pomLastUpdatedTimeSpan = (System.DateTime.Now - Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime)).TotalHours;
+
+            if (passedLocator == null || passedLocator.Count() > 0 || pomLastUpdatedTimeSpan < 5)
+            {
+                return null;
+            }
+
+            var deltaElementInfos = GetUpdatedVirtulPOM(currentAgent);
+
+            UpdateElementSelfHealingDetails(deltaElementInfos.ToList());
+
             Guid currentPOMElementInfoGUID = new Guid(PomElementGUID[1]);
             var currentElementDelta = deltaElementInfos.Where(x => x.ElementInfo.Guid == currentPOMElementInfoGUID).FirstOrDefault();
-           
             if (currentElementDelta == null || currentElementDelta.DeltaStatus == eDeltaStatus.Deleted)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Element not found on page during self healing process..");
                 return null;
             }
             else
             {
-               return currentElementDelta.ElementInfo;
+                return currentElementDelta.ElementInfo;
             }
-
         }
 
-        private ObservableList<DeltaElementInfo> GetUpdatedVirtulPOM()
+        private void UpdateElementSelfHealingDetails(List<DeltaElementInfo> deltaElementInfos)
         {
-            var agent = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Agent>().Where(x => x.Guid == this.GetCurrentPOM().LastUsedAgent && x.Status == GingerCore.Agent.eStatus.Running).FirstOrDefault();
+            foreach (var elementInfo in GetCurrentPOM().MappedUIElements)
+            {
+                var deltaInfo = deltaElementInfos.Where(x => x.ElementInfo.Guid == elementInfo.Guid).FirstOrDefault();
+                if (deltaInfo != null)
+                {
+                    if (deltaInfo.DeltaStatus == eDeltaStatus.Changed)
+                    {
+                        elementInfo.Properties = deltaInfo.ElementInfo.Properties;
+                        elementInfo.Locators = deltaInfo.ElementInfo.Locators;
+                        elementInfo.LastUpdatedTime = DateTime.Now.ToString();
+                        elementInfo.SelfHealingInfo = SelfHealingInfoEnum.ElementModified;
+                    }
+                    else if (deltaInfo.DeltaStatus == eDeltaStatus.Deleted)
+                    {
+                        elementInfo.LastUpdatedTime = DateTime.Now.ToString();
+                        elementInfo.SelfHealingInfo = SelfHealingInfoEnum.ElementDeleted;
+                    }
+                }
+
+            }
+        }
+
+        private ObservableList<DeltaElementInfo> GetUpdatedVirtulPOM(Common.InterfacesLib.IAgent currentAgent)
+        {
+            while (this.GetCurrentPOM().IsLearning)
+            {
+
+            }
+            this.GetCurrentPOM().IsLearning = true;
+            GingerCore.Agent agent = (GingerCore.Agent)currentAgent;
+
             var pomDeltaUtils = new PomDeltaUtils(this.GetCurrentPOM(), agent);
+            try
+            {
+                //set element type
+                var elementList = this.GetCurrentPOM().MappedUIElements.Where(x => x.ElementTypeEnum != eElementType.Unknown).Select(y => y.ElementTypeEnum).Distinct().ToList();
+                pomDeltaUtils.PomLearnUtils.LearnOnlyMappedElements = true;
+                pomDeltaUtils.PomLearnUtils.SelectedElementTypesList = elementList;
 
-            //set element type
-            var elementList = this.GetCurrentPOM().MappedUIElements.Select(y => y.ElementTypeEnum).Distinct().ToList();
-            pomDeltaUtils.PomLearnUtils.LearnOnlyMappedElements = true;
-            pomDeltaUtils.PomLearnUtils.SelectedElementTypesList = elementList;
-
-            Reporter.ToLog(eLogLevel.INFO, "POM update process started during self healing operation..");
-            pomDeltaUtils.LearnDelta().Wait();
-            Reporter.ToLog(eLogLevel.INFO, "POM updated");
+                Reporter.ToLog(eLogLevel.INFO, "POM update process started during self healing operation..");
+                this.GetCurrentPOM().StartDirtyTracking();
+                pomDeltaUtils.LearnDelta().Wait();
+                Reporter.ToLog(eLogLevel.INFO, "POM updated");
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                this.GetCurrentPOM().IsLearning = false;
+            }
 
             return pomDeltaUtils.DeltaViewElements;
         }

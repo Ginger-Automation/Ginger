@@ -80,6 +80,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         [Option('k', "encryptionKey", Required = false, HelpText = "Encryption key password vairables")]
         public string EncryptionKey { get; set; }
+
+        [Option('s', "selfHealingCheckInConfigured", Required = false, HelpText = "SelfHealing setting for save and check-in changes.")]
+        public bool SelfHealingCheckInConfigured { get; set; }
     }
 
 }

@@ -35,7 +35,6 @@ namespace Amdocs.Ginger.Common.SelfHealingLib
 
         public bool SaveChangesInSourceControl { get; set; }
 
-        public bool RunFromAutomateTab { get; set; }
 
         //[IsSerializedForLocalRepository]
 
