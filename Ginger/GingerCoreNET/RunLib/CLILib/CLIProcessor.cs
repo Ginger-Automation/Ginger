@@ -522,7 +522,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
 
             //self healing changes check-in in source control
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl)
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl || mCLIHelper.SelfHealingCheckInConfigured)
             {
                 mCLIHelper.SaveAndCommitSelfHealingChanges();
             }
