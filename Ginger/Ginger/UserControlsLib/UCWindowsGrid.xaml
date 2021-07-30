@@ -13,7 +13,7 @@
             <ColumnDefinition Width="28"/>
             <ColumnDefinition Width="28"/>
         </Grid.ColumnDefinitions>
-        <Label Grid.Column="0" Content="Window:" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}"/>
+        <Label Grid.Column="0" x:Name="xSelectionDropDownTitle" Content="Window:" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}"/>
         
         <ComboBox Grid.Column="1" x:Name="WindowsComboBox" HorizontalAlignment="Stretch" SelectionChanged="WindowsComboBox_SelectionChanged" Style="{DynamicResource $FlatInputComboBoxStyle}" 
                                   VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>

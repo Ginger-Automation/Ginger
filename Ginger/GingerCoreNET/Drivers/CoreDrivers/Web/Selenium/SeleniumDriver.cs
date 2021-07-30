@@ -4755,7 +4755,8 @@ namespace GingerCore.Drivers
                     {
                         ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
                     }
-                    ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                    if(!string.IsNullOrEmpty(ElementInfo.XPath))
+                        ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
                 }
                 if ((IWebElement)ElementInfo.ElementObject == null)
                 {

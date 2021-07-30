@@ -89,7 +89,12 @@ namespace Ginger.Drivers.DriversWindows
             xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + ((xDeviceScreenshotCanvas.ActualHeight - xDeviceScreenshotImage.ActualHeight) / 2));
             xHighlighterBorder.Margin = new Thickness(0);
             xHighlighterBorder.Width = (ElementMaxPoint.X - ElementStartPoint.X);
-            xHighlighterBorder.Height = (ElementMaxPoint.Y - ElementStartPoint.Y);
+            int calcHeight = (ElementMaxPoint.Y - ElementStartPoint.Y);
+            if(calcHeight < 0)
+            {
+                calcHeight = 0 - calcHeight;
+            }
+            xHighlighterBorder.Height = calcHeight;
             xHighlighterBorder.Visibility = Visibility.Visible;
         }
 
