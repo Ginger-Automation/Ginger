@@ -199,14 +199,16 @@
   
     <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
   
-    <PackageReference Include="CredentialManagement" Version="1.0.2" />
+    <PackageReference Include="CredentialManagement.Standard" Version="1.0.4" />
   
     <PackageReference Include="EPPlus" Version="4.5.3.1" />
   
     <PackageReference Include="Eyes.Images" Version="2.16.0" />
   
     <PackageReference Include="Eyes.Sdk.Core" Version="2.34.1" />
-    <PackageReference Include="Ginger.AccountReport.Contracts" Version="1.0.0" />
+  
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="1.2.0" />
+  
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="1.2.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />

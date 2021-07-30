@@ -1,4 +1,4 @@
-﻿<Window x:Class="Ginger.MainWindow" x:Name="xMainWindow" h:GingerHelpProvider.HelpString="Main Window"
+﻿<Window x:Class="Ginger.MainWindow" x:Name="xMainWindow" h:GingerHelpProvider.HelpString=""
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:h="clr-namespace:Ginger.Help"
@@ -229,14 +229,14 @@
                             <MenuItem.Icon>
                                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="EllipsisH" Width="18" Height="18" Margin="0,0,0,0"/>
                             </MenuItem.Icon>
-                            <MenuItem  Header="Ginger Help Library" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="HelpButton_Click">
+                            <MenuItem x:Name="xHelpOptionsMenuItem" Header="Ginger Help Library" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True"  Click="xHelpOptionsMenuItem_Click">
                                 <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl ImageType="FileVideo" Width="16" SetAsFontImageWithSize="16"/>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Help" Margin="0,0,0,0"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem x:Name="xSupportOptionsMenuItem" Header="Support" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xSupportOptionsMenuItem_Click">
                                 <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Help" Margin="0,0,0,0"/>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Support" Margin="0,0,0,0"/>
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem x:Name="xContactOptionsMenuItem" Header="Contact" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xContactOptionsMenuItem_Click">

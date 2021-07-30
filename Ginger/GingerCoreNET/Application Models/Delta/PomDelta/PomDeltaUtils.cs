@@ -72,7 +72,7 @@ namespace GingerCoreNET.Application_Models
             {
                 IsLearning = true;
                 mIWindowExplorerDriver.UnHighLightElements();
-                ((DriverBase)Agent.Driver).mStopProcess = false;
+                ((DriverBase)Agent.Driver).StopProcess = false;
                 POMElementsCopy.Clear();
                 DeltaViewElements.Clear();
                 PomLearnUtils.PrepareLearningConfigurations();
@@ -112,7 +112,7 @@ namespace GingerCoreNET.Application_Models
         }
         public void StopLearning()
         {            
-            ((DriverBase)Agent.Driver).mStopProcess = true;
+            ((DriverBase)Agent.Driver).StopProcess = true;
             IsLearning = false;
         }
 

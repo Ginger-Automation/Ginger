@@ -26,6 +26,8 @@ using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
@@ -212,6 +214,11 @@ namespace Ginger.Run
             }
         }
 
+        // Only for Run time, no need to serialize        
+        public DateTime StartTimeStamp { get; set; }
+
+        public DateTime EndTimeStamp { get; set; }
+
         public double? Elapsed
         {
             get
@@ -264,6 +271,21 @@ namespace Ginger.Run
         public ObservableList<Agent> SolutionAgents { get; set; } = new ObservableList<Agent>();
 
         public ObservableList<ApplicationPlatform> SolutionApplications { get; set; }
+
+        private ExecutionLoggerConfiguration mSelectedExecutionLoggerConfiguration
+        {
+            get
+            {
+                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null)
+                {
+                    return WorkSpace.Instance.Solution.LoggerConfigurations;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
 
         private string mName;
         [IsSerializedForLocalRepository]
@@ -381,14 +403,26 @@ namespace Ginger.Run
 
         public bool IsUpdateBusinessFlowRunList;
 
+        /// <summary>
+        /// ID which been provided for each execution instance on the Activity
+        /// </summary>
+        public Guid ExecutionId { get; set; }
+
+        public Guid ParentExecutionId { get; set; }
+        public int ExecutionLogBusinessFlowsCounter { get; set; }
+
         public GingerRunner()
         {
             ExecutedFrom = eExecutedFrom.Run;
-
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
 
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
+
+            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
+            {
+                RunListeners.Add(new AccountReportExecutionLogger(mContext));
+            }
 
             if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
             {
@@ -404,7 +438,10 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
-
+            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
+            {
+                RunListeners.Add(new AccountReportExecutionLogger(mContext));
+            }
             if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
             {
                 RunListeners.Add(new TelemetryRunListener());
@@ -518,7 +555,7 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;
             try
             {
-
+                
                 if (Active == false || BusinessFlows.Count == 0)
                 {
                     runnerExecutionSkipped = true;
@@ -537,7 +574,7 @@ namespace Ginger.Run
                 Status = eRunStatus.Started;
                 IsRunning = true;
                 mStopRun = false;
-                SetupVirtualAgents();
+                SetupVirtualAgents();                
                 if (doContinueRun == false)
                 {
                     RunnerExecutionWatch.StartRunWatch();
@@ -573,7 +610,7 @@ namespace Ginger.Run
                 for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx))
                 {                    
                     BusinessFlow executedBusFlow = (BusinessFlow)BusinessFlows[bfIndx];
-                  
+                    ExecutionLogBusinessFlowsCounter = bfIndx;
                     //stop if needed before executing next BF
                     if (mStopRun)
                     {
@@ -640,7 +677,9 @@ namespace Ginger.Run
                             ProjEnvironment.CloseEnvironment();
                         }
                         Status = eRunStatus.Completed;
+                        ClearAndResetVirtualAgents();
                     }
+
                     PostScopeVariableHandling(BusinessFlow.SolutionVariables);
                     IsRunning = false;
                     RunnerExecutionWatch.StopRunWatch();
@@ -657,6 +696,34 @@ namespace Ginger.Run
                 else
                 {
                     Status = RunsetStatus;
+                }
+            }
+        }
+
+        public void ClearAndResetVirtualAgents()
+        {
+            var appAgents = ApplicationAgents.Where(x => x.Agent != null && ((Agent)x.Agent).IsVirtual).ToList();
+
+            if (appAgents.Count > 0)
+            {
+                for (var i = 0; i < appAgents.Count;i++)
+                {
+
+                    var virtualAgent = (Agent)appAgents[i].Agent;
+
+                    var realAgent = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Where(x => x.Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
+
+                    if (realAgent != null)
+                    {
+                        appAgents[i].Agent = realAgent;
+                        var runsetVirtualAgent = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Where(x => x.Guid == virtualAgent.Guid).FirstOrDefault();
+
+                        if (runsetVirtualAgent != null)
+                        {
+                            WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Remove(runsetVirtualAgent);
+                        }
+                    }
+
                 }
             }
         }
@@ -1142,6 +1209,7 @@ namespace Ginger.Run
 
         private void RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true, bool moveToNextAction=true)
         {
+            bool actionExecuted = false;
             try
             {
                 //Not suppose to happen but just in case        
@@ -1187,7 +1255,7 @@ namespace Ginger.Run
                 GiveUserFeedback();
 
                 NotifyActionStart(act);
-
+                actionExecuted = true;
                 string actionStartTimeStr = string.Empty;
                 while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                 {
@@ -1273,7 +1341,10 @@ namespace Ginger.Run
             }
             finally
             {
-                NotifyActionEnd(act);
+                if (actionExecuted)
+                {
+                    NotifyActionEnd(act);
+                }
                 CurrentBusinessFlow.PreviousAction = act;
             }
         }
@@ -3117,7 +3188,7 @@ namespace Ginger.Run
             }
 
             try
-            {
+            {                
                 activity.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
                 if (activity.Active != false)
                 {
@@ -3136,10 +3207,10 @@ namespace Ginger.Run
                     currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();                    
                     if (currentActivityGroup != null)
                     {
-                        currentActivityGroup.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
+                        currentActivityGroup.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;                        
                         switch (currentActivityGroup.ExecutionLoggerStatus)
                         {
-                            case executionLoggerStatus.NotStartedYet:
+                            case executionLoggerStatus.NotStartedYet:                                
                                 currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.StartedNotFinishedYet;
                                 NotifyActivityGroupStart(currentActivityGroup);
                                 break;
@@ -3149,7 +3220,7 @@ namespace Ginger.Run
                             case executionLoggerStatus.Finished:
                                 // do nothing
                                 break;
-                        }
+                        }                        
                     }
 
                     //add validation for Ginger runner tags
@@ -3589,7 +3660,7 @@ namespace Ginger.Run
             // !!!!!!!!!! remove SW
             Stopwatch st = new Stopwatch();
             try
-            {
+            {           
                 //set Runner details if running in stand alone mode (Automate tab)
                 if (standaloneExecution)
                 {
@@ -4378,6 +4449,15 @@ namespace Ginger.Run
             }
         }
 
+        public AccountReportExecutionLogger Centeralized_Logger
+        {
+            get
+            {
+                AccountReportExecutionLogger centeralized_Logger = (AccountReportExecutionLogger)(from x in mRunListeners where x.GetType() == typeof(AccountReportExecutionLogger) select x).SingleOrDefault();
+                return centeralized_Logger;
+            }
+        }
+
         public override string ItemName
         {
             get
@@ -4759,7 +4839,7 @@ namespace Ginger.Run
         private void NotifyActivityGroupStart(ActivitiesGroup activityGroup)
         {
             uint eventTime = RunListenerBase.GetEventTime();
-            activityGroup.StartTimeStamp = eventTime; 
+            activityGroup.StartTimeStamp = DateTime.UtcNow; 
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivityGroupStart(eventTime, activityGroup);
@@ -4769,7 +4849,7 @@ namespace Ginger.Run
         private void NotifyActivityGroupEnd(ActivitiesGroup activityGroup, bool offlineMode = false)
         {
             uint eventTime = RunListenerBase.GetEventTime();
-            activityGroup.EndTimeStamp = eventTime;
+            activityGroup.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 if(runnerListener.ToString().Contains("Ginger.Run.ExecutionLExecutionLoggerManagerogger"))

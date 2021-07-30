@@ -541,9 +541,12 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     InitializeBrowser(new JavaElementInfo() { XPath = path.Value });
 
-                    if (!string.IsNullOrEmpty(currentPOMElementInfo.Path))
+                    //check iframe and switch
+                    var iframePath = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.ParentIFrame)).FirstOrDefault();
+
+                    if (iframePath != null && !string.IsNullOrEmpty(iframePath.Value))
                     {
-                        PayLoad PLSwitchFrame = new PayLoad("HTMLElementAction", "SwitchFrame", eLocateBy.ByXPath.ToString(), currentPOMElementInfo.XPath, string.Empty);
+                        PayLoad PLSwitchFrame = new PayLoad("HTMLElementAction", "SwitchFrame", eLocateBy.ByXPath.ToString(), iframePath.Value, string.Empty);
                         PayLoad ResponseSwitchFrame = Send(PLSwitchFrame);
 
                         if(ResponseSwitchFrame.IsErrorPayLoad())
@@ -2013,7 +2016,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 foreach (var htmlElement in hTMLControlsPayLoad)
                 {
-                    if (mStopProcess)
+                    if (StopProcess)
                     {
                         break;
                     }
@@ -2090,7 +2093,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     List<PayLoad> ControlsPL = Response.GetListPayLoad();
                     foreach (var pl in ControlsPL)
                     {
-                        if (mStopProcess)
+                        if (StopProcess)
                         {
                             break;
                         }
@@ -4008,6 +4011,11 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
 
         public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
+        }
+
+        public string GetCurrentPageSourceString()
         {
             return null;
         }

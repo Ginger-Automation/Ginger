@@ -133,6 +133,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             mContextMenu = new ContextMenu();
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Add Page Objects Model", AddPOM, null, eImageType.Add);
+            TreeViewUtils.AddMenuItem(mContextMenu, "Add an Empty Page Objects Model", AddEmptyPOM, null, eImageType.ApplicationPOMModel);
             if (mPOMModelFolder.IsRootFolder)
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
             else
@@ -145,6 +146,13 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         {           
                 mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
                 WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder), 1000, 700, DoNotShowAsDialog: true);           
+        }
+
+        internal void AddEmptyPOM(object sender, RoutedEventArgs e)
+        {
+            ApplicationPOMModel emptyPOM = new ApplicationPOMModel() { Name = "NewPOM" };
+            var PomLearnUtils = new Amdocs.Ginger.CoreNET.Application_Models.PomLearnUtils(emptyPOM, pomModelsFolder: mPOMModelFolder);
+            PomLearnUtils.SaveLearnedPOM();
         }
     }
 }

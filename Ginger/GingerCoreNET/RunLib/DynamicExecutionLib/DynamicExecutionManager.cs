@@ -756,6 +756,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             if (gingerExecConfig.ExecutionID != null)
             {
                 runSetConfig.ExecutionID = (Guid)gingerExecConfig.ExecutionID;
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Using provided ExecutionID '{0}'.", runSetConfig.ExecutionID.ToString()));
             }
 
             if (!String.IsNullOrEmpty(gingerExecConfig.Runset.Description))

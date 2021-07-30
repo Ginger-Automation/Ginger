@@ -38,9 +38,9 @@ namespace Amdocs.Ginger.Repository
         public const int cLearnScreenWidth= 1000;
         public const int cLearnScreenHeight = 1000;
 
+        public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web , ePlatformType.Java , ePlatformType.Windows, ePlatformType.Mobile };
+        
         public bool IsLearning { get; set; }
-
-        public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web , ePlatformType.Java , ePlatformType.Windows};
 
         private string mPageURL = string.Empty;
 

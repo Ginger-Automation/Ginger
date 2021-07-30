@@ -865,6 +865,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.AngleArrowRight:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.AngleRight);
                     break;
+                case eImageType.Support:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Headphones);
+                    break;
                 #endregion
 
                 #region ElementType Images

@@ -70,7 +70,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
                     SetElementLocatorsSettingsGridView();
                     UpdateConfigsBasedOnAgentStatus();
-                    ShowSpecficFrameLearnConfigPanel();
+                    PlatformSpecificUIManipulations();
                     ShowsCustomRelativePathTemplateConfig();
                     break;
                 case EventType.LeavingForNextPage:
@@ -96,17 +96,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void ShowsCustomRelativePathTemplateConfig()
         {
-            if (mAppPlatform.Equals(ePlatformType.Web))
-            {
-                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Collapsed;
-            }
         }
 
-        private void ShowSpecficFrameLearnConfigPanel()
+        private void PlatformSpecificUIManipulations()
         {
             if(mAppPlatform.Equals(ePlatformType.Java))
             {
@@ -115,6 +107,24 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             else
             {
                 xSpecificFrameConfigPanel.Visibility = Visibility.Collapsed;
+            }
+
+            if(mAppPlatform == ePlatformType.Mobile)
+            {
+                xAgentControlUC.xAgentConfigsExpanderRow.Height = new GridLength(0);
+            }
+            else
+            {
+                xAgentControlUC.xAgentConfigsExpanderRow.Height = new GridLength(90);
+            }
+
+            if (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform == ePlatformType.Mobile)
+            {
+                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -143,7 +153,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAgentControlUC.PropertyChanged -= XAgentControlUC_PropertyChanged;
             xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
 
-            ShowSpecficFrameLearnConfigPanel();
+            PlatformSpecificUIManipulations();
 
             ShowsCustomRelativePathTemplateConfig();
         }

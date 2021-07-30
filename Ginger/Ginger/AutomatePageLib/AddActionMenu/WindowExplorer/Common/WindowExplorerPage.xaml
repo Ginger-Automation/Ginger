@@ -89,12 +89,19 @@
                     </TabItem.Header>
 
                     <Grid>
-                        <StackPanel x:Name="xLoadingPageSrcBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel x:Name="xLoadingPageSrcBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" Grid.Row="0" Grid.RowSpan="2">
                             <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
                             <TextBlock x:Name="xPageSrcLoadingText" Text="Loading Page Source . . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </StackPanel>
-                        <usercontrols1:XMLViewer x:Name="xXMLPageSrcViewer" Visibility="Collapsed"/>
-                        <usercontrols1:UCHtmlViewer x:Name="xHTMLPageSrcViewer" Visibility="Collapsed"/>
+                        <usercontrols:ucButton x:Name="xCopyPageSrc" Grid.Row="0" ToolTip="Copy Page Source" ButtonImageType="Copy" HorizontalAlignment="Right"
+                                   ButtonType="CircleImageButton" ButtonImageWidth="15" ButtonImageHeight="20" Click="xCopyPageSrc_Click"/>
+
+                        <usercontrols1:XMLViewer x:Name="xXMLPageSrcViewer" Visibility="Collapsed" Grid.Row="1"/>
+                        <usercontrols1:UCHtmlViewer x:Name="xHTMLPageSrcViewer" Visibility="Collapsed" Grid.Row="1"/>
                     </Grid>
                 </TabItem>
 

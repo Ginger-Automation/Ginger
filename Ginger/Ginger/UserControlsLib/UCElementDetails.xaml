@@ -34,6 +34,13 @@
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
+
+            <DataTemplate x:Key="xCopyLocatorButtonTemplate">
+                <Button x:Name="xCopyLocatorButton" Click="xCopyLocatorButton_Click" ToolTip="Copy Element Locator" Style="{StaticResource @InputImageGridCellButtonStyle}">
+                    <UserControls:ImageMakerControl ImageType="Copy" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                </Button>
+            </DataTemplate>
+
         </Grid.Resources>
 
         <Grid.RowDefinitions>
@@ -78,7 +85,7 @@
                         <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                    <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" RowChangedEvent="xLocatorsGrid_RowChangedEvent"/>
+                <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" RowChangedEvent="xLocatorsGrid_RowChangedEvent"/>
             </TabItem>
             <TabItem x:Name="xAddActionTab">
                 <TabItem.Header>
@@ -100,6 +107,16 @@
                                       Content="Integrate POM" IsChecked="{x:Null}" Checked="xIntegratePOMChkBox_Checked" Unchecked="xIntegratePOMChkBox_Unchecked" >
                             </CheckBox>
                             <Frame x:Name="xPOMSelectionFrame" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        </DockPanel>
+
+                        <DockPanel x:Name="xPOMOperationsPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center">
+                            <CheckBox x:Name="xAutoSavePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10" 
+                                      Style="{StaticResource $CeckBoxStyle}" Content="Auto Save POM" IsChecked="False">
+                            </CheckBox>
+
+                            <CheckBox x:Name="xAutoUpdatePOMElementChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10"
+                                      Style="{StaticResource $CeckBoxStyle}" Content="Auto Update POM Element" IsChecked="False">
+                            </CheckBox>
                         </DockPanel>
 
                         <DockPanel x:Name="xAddRunOperationPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center" >

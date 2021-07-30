@@ -38,11 +38,11 @@ namespace Ginger.SourceControl
         public static bool BusyInProcessWhileDownloading = false;
 
 
-        public static bool conflictFlag =false;
- 
+        public static bool conflictFlag = false;
 
 
-        public static bool AddFile( SourceControlBase SourceControl, string path)
+
+        public static bool AddFile(SourceControlBase SourceControl, string path)
         {
             string error = string.Empty;
 
@@ -93,7 +93,7 @@ namespace Ginger.SourceControl
         public static ObservableList<SourceControlFileInfo> GetPathFilesStatus(SourceControlBase SourceControl, string Path)
         {
             string error = string.Empty;
-            ObservableList<SourceControlFileInfo> OL =  SourceControl.GetPathFilesStatus(Path, ref error,  WorkSpace.Instance.Solution.ShowIndicationkForLockedItems);
+            ObservableList<SourceControlFileInfo> OL = SourceControl.GetPathFilesStatus(Path, ref error, WorkSpace.Instance.Solution.ShowIndicationkForLockedItems);
             if (error != string.Empty)
             {
                 Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
@@ -105,11 +105,11 @@ namespace Ginger.SourceControl
         {
             return SourceControl.GetSourceControlType.ToString();
         }
-        
+
         public static string GetRepositoryURL(SourceControlBase SourceControl)
         {
             string error = string.Empty;
-            return  WorkSpace.Instance.Solution.SourceControl.GetRepositoryURL(ref error);
+            return WorkSpace.Instance.Solution.SourceControl.GetRepositoryURL(ref error);
         }
 
 
@@ -152,7 +152,7 @@ namespace Ginger.SourceControl
             return true;
         }
 
-        
+
 
         public static bool GetLatest(string path, SourceControlBase SourceControl)
         {
@@ -161,8 +161,8 @@ namespace Ginger.SourceControl
             if (!SourceControl.GetLatest(path, ref error, ref conflictsPaths))
             {
 
-     
-                if (conflictsPaths.Count>0)
+
+                if (conflictsPaths.Count > 0)
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, error);
                     return false;
@@ -183,7 +183,7 @@ namespace Ginger.SourceControl
             bool IsConflictResolved = true;
             try
             {
-                if (path==null)
+                if (path == null)
                 {
                     return false;
                 }
@@ -205,12 +205,12 @@ namespace Ginger.SourceControl
                     repositoryFolderBase.ResumeFileWatcher();
                     repositoryFolderBase.ReloadUpdatedXML(path);
                 }
-                
+
                 return IsConflictResolved;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during resolving conflicts..",ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during resolving conflicts..", ex);
                 return false;
             }
 
@@ -291,7 +291,7 @@ namespace Ginger.SourceControl
         public static SourceControlItemInfoDetails GetInfo(SourceControlBase SourceControl, string path)
         {
             string error = string.Empty;
-            return SourceControl.GetInfo(path, ref  error);
+            return SourceControl.GetInfo(path, ref error);
         }
 
         public static SourceControlItemInfoDetails GetRepositoryInfo(SourceControlBase sourceControl)
@@ -304,7 +304,7 @@ namespace Ginger.SourceControl
 
 
 
-        public static SourceControlBase.eSourceControlType CheckForSolutionSourceControlType(string SolutionFolder, ref string ReposiytoryRootFolder )
+        public static SourceControlBase.eSourceControlType CheckForSolutionSourceControlType(string SolutionFolder, ref string ReposiytoryRootFolder)
         {
             string SourceControlRootFolder = SolutionFolder;
             while (SourceControlRootFolder != Path.GetPathRoot(SolutionFolder))
@@ -321,14 +321,14 @@ namespace Ginger.SourceControl
                 }
                 if (Directory.Exists(SourceControlRootFolder + Path.DirectorySeparatorChar + ".svn"))
                 {
-                    FileAttributes attributes = File.GetAttributes(SourceControlRootFolder+ Path.DirectorySeparatorChar + ".svn");
+                    FileAttributes attributes = File.GetAttributes(SourceControlRootFolder + Path.DirectorySeparatorChar + ".svn");
                     if ((attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                     {
                         ReposiytoryRootFolder = Path.GetFullPath(SourceControlRootFolder);
                         return SourceControlBase.eSourceControlType.SVN;
                     }
                 }
-                SourceControlRootFolder = System.IO.Directory.GetParent(SourceControlRootFolder).FullName ;
+                SourceControlRootFolder = System.IO.Directory.GetParent(SourceControlRootFolder).FullName;
             }
             return SourceControlBase.eSourceControlType.None;
         }
@@ -368,7 +368,7 @@ namespace Ginger.SourceControl
         }
 
 
-        public static bool DownloadSolution(string SolutionFolder, bool undoSolutionLocalChanges= false)
+        public static bool DownloadSolution(string SolutionFolder, bool undoSolutionLocalChanges = false)
         {
             try
             {
@@ -386,7 +386,7 @@ namespace Ginger.SourceControl
                     }
 
 
-                    
+
                 }
                 else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 {
@@ -399,7 +399,7 @@ namespace Ginger.SourceControl
                     {
                         mSourceControl = TargetFrameworkHelper.Helper.GetNewSVnRepo();
                     }
-                
+
                 }
                 else
                 {
@@ -462,22 +462,45 @@ namespace Ginger.SourceControl
                 if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 {
 
-                    if(WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase))
+                    if (WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase))
                     {
                         ProjectURI = sol.SourceControlLocation;
                     }
                     else
                     {
-                        if(WorkSpace.Instance.GingerCLIMode==Amdocs.Ginger.CoreNET.RunLib.CLILib.eGingerCLIMode.run)
+                        if (WorkSpace.Instance.UserProfile.SourceControlURL.ToUpper().Contains(sol.SourceControlLocation.ToUpper()))
                         {
                             ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
                         }
                         else
                         {
-                            ProjectURI= WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
+                            ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
+                            if (!ProjectURI.ToUpper().Contains("/SVN") && !ProjectURI.ToUpper().Contains("/SVN/"))
+                            {
+                                if (!ProjectURI.ToUpper().EndsWith("/"))
+                                {
+                                    ProjectURI += "/";
+                                }
+                                ProjectURI += "svn/";
+                            }
+                            if (!ProjectURI.ToUpper().EndsWith("/"))
+                            {
+                                ProjectURI += "/";
+                            }
+                            ProjectURI += sol.SourceControlLocation;
                         }
+
+
+                        //if(WorkSpace.Instance.GingerCLIMode==Amdocs.Ginger.CoreNET.RunLib.CLILib.eGingerCLIMode.run)
+                        //{
+                        //    ProjectURI = WorkSpace.Instance.UserProfile.SourceControlURL;
+                        //}
+                        //else
+                        //{
+                        //    ProjectURI= WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
+                        //}
                     }
-                   
+
                 }
                 else
                 {
@@ -489,7 +512,7 @@ namespace Ginger.SourceControl
                 {
                     return false;
                 }
-                
+
                 if (sol.ExistInLocaly == true)
                 {
                     mSourceControl.RepositoryRootFolder = sol.LocalFolder;
@@ -497,7 +520,7 @@ namespace Ginger.SourceControl
                     {
                         Reporter.ToLog(eLogLevel.INFO, "Reverting local Solution changes");
                         try
-                        {                            
+                        {
                             TargetFrameworkHelper.Helper.Revert(sol.LocalFolder, mSourceControl);
                         }
                         catch (Exception ex)
@@ -536,6 +559,6 @@ namespace Ginger.SourceControl
                 return null;
             }
         }
-        
+
     }
 }

@@ -377,15 +377,21 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.sourceControlPassEncrypted = runOptions.PasswordEncrypted;
             mCLIHelper.SourceControlProxyServer(runOptions.SourceControlProxyServer);
             mCLIHelper.SourceControlProxyPort(runOptions.SourceControlProxyPort);
-            mCLIHelper.ExecutionId = runOptions.RunSetExecutionId;
-
             mCLIHelper.SelfHealingCheckInConfigured = runOptions.SelfHealingCheckInConfigured;
 
-            if (!string.IsNullOrEmpty(runOptions.RunSetExecutionId) && !Guid.TryParse(runOptions.RunSetExecutionId, out Guid temp))
-            { 
-                    Reporter.ToLog(eLogLevel.WARN, "Invalid Execution Id provied in argument.");
+            if (!string.IsNullOrEmpty(runOptions.RunSetExecutionId))
+            {
+                if (!Guid.TryParse(runOptions.RunSetExecutionId, out Guid temp))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("The provided ExecutionID '{0}' is not valid.", runOptions.RunSetExecutionId));
                     Environment.ExitCode = 1;
-                    return Environment.ExitCode;               
+                    return Environment.ExitCode;
+                }
+                else
+                {
+                    mCLIHelper.ExecutionId = runOptions.RunSetExecutionId;
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("Using provided ExecutionID '{0}'.", mCLIHelper.ExecutionId.ToString()));
+                }
             }
 
             if (WorkSpace.Instance.UserProfile == null)

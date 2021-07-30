@@ -284,6 +284,7 @@ namespace Amdocs.Ginger.Common.Enums
         AngleArrowDown,
         AngleArrowLeft,
         AngleArrowRight,
+        Support,
         #endregion
 
         #region Source control Images     
