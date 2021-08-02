@@ -256,7 +256,7 @@ namespace GingerCore.ALM
                     }
                     catch (Exception ex)
                     {
-                        result = ex.Message.ToString();
+                        result = ex.Message;
                         BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
                         Reporter.ToLog(eLogLevel.ERROR, BizFlow.Name + " - Export results to ALM failed due to exception", ex);
                     }

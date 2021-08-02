@@ -41,7 +41,6 @@ namespace GingerCore.ALM
         private JiraConnectManager jiraConnectObj;
         private JiraImportManager jiraImportObj;
         private JiraManagerZephyr jmz;
-        private JiraRepositoryStd.JiraRepositoryStd jiraRepObj;
         public static string ALMProjectGroupName { get; set; }
         public static string ALMProjectGuid { get; set; }
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
@@ -65,7 +64,7 @@ namespace GingerCore.ALM
         public JiraCore()
         {
             string settingsPath = DefaultAlmConfig.ALMConfigPackageFolderPathCalculated;
-            jiraRepObj = new JiraRepositoryStd.JiraRepositoryStd(settingsPath, (TestingALMType)Enum.Parse(typeof(TestingALMType), ALMCore.DefaultAlmConfig.JiraTestingALM.ToString()));
+            JiraRepositoryStd.JiraRepositoryStd jiraRepObj = new JiraRepositoryStd.JiraRepositoryStd(settingsPath, (TestingALMType)Enum.Parse(typeof(TestingALMType), ALMCore.DefaultAlmConfig.JiraTestingALM.ToString()));
             exportMananger = new JIRA.Bll.JiraExportManager(jiraRepObj);
             jiraConnectObj = new JiraConnectManager(jiraRepObj);
             jiraImportObj = new JiraImportManager(jiraRepObj);
