@@ -79,7 +79,7 @@ namespace Ginger.Run.RunSetActions
             runSetActionAutomatedALMDefects.SelectedDefectsProfileID = ((ALMDefectProfile)CurrentProfilePickerCbx.SelectedItem).ID;
             //if selected ALM is QC And UseRest=False return
             GingerCoreNET.ALMLib.ALMConfig almConfig = ALMCore.GetCurrentAlmConfig(((ALMDefectProfile)CurrentProfilePickerCbx.SelectedItem).AlmType);
-            if (!almConfig.UseRest && almConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC)
+            if (!almConfig.UseRest && almConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.QC)
             {
                 Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
                 return;

@@ -59,7 +59,7 @@ namespace GingerCore.ALM
         public override ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
         public ProjectArea ProjectArea { get; private set; }
 
-        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.Octane;
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.Octane;
 
         List<Release> releases;
         public RestConnector mOctaneRestConnector;

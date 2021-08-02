@@ -30,7 +30,7 @@ using System.Reflection;
 using Amdocs.Ginger.Repository;
 using GingerCore.ALM.QC;
 using amdocs.ginger.GingerCoreNET;
-using static GingerCoreNET.ALMLib.ALMIntegration;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM
 {
@@ -43,13 +43,13 @@ namespace Ginger.ALM
         {
         }
 
-        public void UpdateALMType(GingerCoreNET.ALMLib.ALMIntegration.eALMType AlmType)
+        public void UpdateALMType(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType AlmType)
         {
             GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = ALMCore.GetCurrentAlmConfig(AlmType);
             ALMCore.DefaultAlmConfig = CurrentAlmConfigurations;
             switch (AlmType)
             {
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.QC:
                     if (!CurrentAlmConfigurations.UseRest)
                     {
                         AlmCore = new QCCore();
@@ -62,31 +62,31 @@ namespace Ginger.ALM
                     }
                     break;
 
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RQM:
                     AlmCore = new RQMCore();
                     AlmRepo = new RQMRepository();
                     break;
 
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RALLY:
                     AlmCore = new RallyCore();
                     AlmRepo = new RallyRepository();
                     break;
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
                     AlmCore = new JiraCore();
                     AlmRepo = new JIRA_Repository(AlmCore);
                     break;
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest:
                     AlmCore = new QtestCore();
                     AlmRepo = new QtestRepository();
                     break;
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Octane:
                     if(!(AlmCore is OctaneCore && AlmRepo is OctaneRepository))
                     {
                         AlmCore = new OctaneCore();
                         AlmRepo = new OctaneRepository(AlmCore);
                     }
                     break;
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.ZephyrEnterprise:
                     AlmCore = new ZephyrEntCore();
                     AlmRepo = new ZephyrEnt_Repository(AlmCore);
                     break;
@@ -95,7 +95,7 @@ namespace Ginger.ALM
             ALMCore.SetALMCoreConfigurations(AlmType, AlmCore);
         }
 
-        public void SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
+        public void SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType)
         {
             ALMCore.SetALMCoreConfigurations(almType, AlmCore);           
         }
@@ -108,7 +108,7 @@ namespace Ginger.ALM
             return AlmCore.GetCurrentAlmConfig();
         }
 
-            public bool SetDefaultAlmConfig(GingerCoreNET.ALMLib.ALMIntegration.eALMType AlmType)
+            public bool SetDefaultAlmConfig(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType AlmType)
         {
             //set default on the solution
             foreach (GingerCoreNET.ALMLib.ALMConfig alm in WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).ToList())
@@ -147,7 +147,7 @@ namespace Ginger.ALM
         //    return AlmConfig;
 
         //}
-        public GingerCoreNET.ALMLib.ALMUserConfig GetCurrentAlmUserConfig(GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
+        public GingerCoreNET.ALMLib.ALMUserConfig GetCurrentAlmUserConfig(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType)
         {
             GingerCoreNET.ALMLib.ALMUserConfig AlmUserConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == almType);
             if (AlmUserConfig == null)
@@ -715,7 +715,7 @@ namespace Ginger.ALM
         {
             return AlmRepo.GetTestPlanExplorer(path);
         }
-        public GingerCoreNET.ALMLib.ALMIntegration.eALMType GetALMType()
+        public GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType GetALMType()
         {
             return ALMCore.AlmConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType;
         }

@@ -49,7 +49,7 @@ namespace GingerCore.ALM
             set { ZephyrEntImportManager.ApplicationPlatforms = value; }
         }
 
-        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.ZephyrEnterprise;
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.ZephyrEnterprise;
 
         public ZephyrEntCore()
         {

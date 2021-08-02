@@ -37,7 +37,7 @@ using GingerCore.ALM;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using ALMRestClient;
-using static GingerCoreNET.ALMLib.ALMIntegration;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 using ALM_Common.DataContracts;
 
 namespace Ginger.ALM.Repository

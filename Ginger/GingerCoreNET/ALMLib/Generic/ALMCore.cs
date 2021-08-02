@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static GingerCoreNET.ALMLib.ALMIntegration;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace GingerCore.ALM
 {
@@ -112,8 +112,8 @@ namespace GingerCore.ALM
 
 
         public virtual void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword,
-                                                    string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType,
-                                                    string ALMConfigPackageFolderPath, bool ZephyrEntToken, GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType jiraTestingALM = GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.None)
+                                                    string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType,
+                                                    string ALMConfigPackageFolderPath, bool ZephyrEntToken, GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType jiraTestingALM = GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.None)
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.AlmConfigs.FirstOrDefault(x => x.AlmType == almType);
             if (AlmConfig == null)
@@ -200,7 +200,7 @@ namespace GingerCore.ALM
             this.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             this.ApplicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms;
         }
-        public abstract GingerCoreNET.ALMLib.ALMIntegration.eALMType ALMType
+        public abstract GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType ALMType
         {
             get;
         }
@@ -276,7 +276,7 @@ namespace GingerCore.ALM
                 }
             
         }
-        public static GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig(GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
+        public static GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType)
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.AlmType == almType);
             if (AlmConfig == null)
@@ -289,7 +289,7 @@ namespace GingerCore.ALM
             return AlmConfig;
 
         }
-        public static void SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegration.eALMType almType, ALMCore aLMCore)
+        public static void SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType, ALMCore aLMCore)
         {
             GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = GetCurrentAlmConfig(almType);
 

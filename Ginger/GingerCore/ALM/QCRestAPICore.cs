@@ -120,7 +120,7 @@ namespace GingerCore.ALM
             set { ImportFromQCRest.ApplicationPlatforms = value; }
         }
 
-        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.QC;
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.QC;
 
         public ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {

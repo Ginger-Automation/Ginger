@@ -26,7 +26,7 @@ using GingerCore.ALM;
 using GingerCore.Environments;
 using GingerCoreNET.SourceControl;
 using System.Data.Common;
-using static GingerCoreNET.ALMLib.ALMIntegration;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Amdocs.Ginger.Common
 {
@@ -67,7 +67,7 @@ namespace Amdocs.Ginger.Common
 
         string GetALMConfig();
 
-        void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType);
+        void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType);
 
         void HTMLReportAttachment(string report, ref string emailReadyHtml, ref string reportresultfolder, string runsetfolder, object Attachment, object conf);
 

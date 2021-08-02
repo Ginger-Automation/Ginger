@@ -124,11 +124,11 @@ namespace GingerCore.ALM
             set { ImportFromRQM.ApplicationPlatforms = value; }
         }
 
-        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.RQM;
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.RQM;
 
         public override void SetALMConfigurations(  string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword,
-                                                    string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType,
-                                                    string ALMConfigPackageFolderPath, bool ZephyrEntToken, GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType testingALMType = GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.None)
+                                                    string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType,
+                                                    string ALMConfigPackageFolderPath, bool ZephyrEntToken, GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType testingALMType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.None)
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.AlmType == almType);
             GingerCoreNET.ALMLib.ALMConfig AlmCoreConfig = AlmConfigs.FirstOrDefault(x => x.AlmType == almType);

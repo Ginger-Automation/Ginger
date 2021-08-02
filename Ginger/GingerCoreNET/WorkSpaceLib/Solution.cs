@@ -682,7 +682,7 @@ namespace Ginger.SolutionGeneral
                     }
                     if (name == "AlmType")
                     {
-                        AlmConfig.AlmType = (ALMIntegration.eALMType)Enum.Parse(typeof(ALMIntegration.eALMType), value);
+                        AlmConfig.AlmType = (ALMIntegrationEnums.eALMType)Enum.Parse(typeof(ALMIntegrationEnums.eALMType), value);
 
                         //Add the AlmType to user profile as well
                         ALMUserConfig AlmUserConfig = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault();

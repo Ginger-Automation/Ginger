@@ -736,7 +736,7 @@ namespace GingerCore.ALM.JIRA.Bll
             {
                 if (string.IsNullOrEmpty(activtiesGroup.ExternalID))
                 {
-                    if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr)
+                    if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Zephyr)
                     {
                         activtiesGroup.ExternalID = exportResponse.First().DataResult.id.ToString();
                         activtiesGroup.ExternalID2 = exportResponse.First().DataResult.key;
@@ -767,7 +767,7 @@ namespace GingerCore.ALM.JIRA.Bll
             JiraIssueExport jiraIssue = new JiraIssueExport();
             jiraIssue.ProjectKey = ALMCore.DefaultAlmConfig.ALMProjectName;
             jiraIssue.key = activtiesGroup.ExternalID;
-            if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr)
+            if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Zephyr)
             {
                 CreateTestCaseFields(activtiesGroup, issueFields, jiraIssue, ResourceType.TEST);
             }

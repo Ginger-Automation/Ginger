@@ -26,7 +26,7 @@ using GingerCore.ALM;
 using GingerCore;
 using System.Threading.Tasks;
 using Ginger.Run.RunSetActions;
-using static GingerCoreNET.ALMLib.ALMIntegration;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.Run
 {

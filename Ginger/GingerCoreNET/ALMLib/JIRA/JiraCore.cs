@@ -60,7 +60,7 @@ namespace GingerCore.ALM
             set { jiraImportObj.ApplicationPlatforms = value; }
         }
 
-        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.Jira;
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.Jira;
 
         public JiraCore()
         {
@@ -85,9 +85,9 @@ namespace GingerCore.ALM
         {
             switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
             {
-                case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Xray:
                     return exportMananger.CreateNewALMDefects(defectsForOpening, defectsFields);
-                case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Zephyr:
                     Dictionary<Guid, string> defectsOpeningResults = exportMananger.CreateNewALMDefects(defectsForOpening, defectsFields);
                     exportMananger.AssignDefectsToZephyrExecutions(defectsForOpening, defectsOpeningResults);
                     return defectsOpeningResults;
@@ -110,9 +110,9 @@ namespace GingerCore.ALM
         {
             switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
             {
-                case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Xray:
                     return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig, ref result);
-                case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Zephyr:
                     return exportMananger.ExportExecutionDetailsToJiraZephyr(bizFlow, publishToALMConfig, ref result);
                 default:
                     return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig, ref result);

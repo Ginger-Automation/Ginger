@@ -225,7 +225,7 @@ namespace GingerCore.ALM
             set { ImportFromRally.ApplicationPlatforms = value; }
         }
 
-        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.RALLY;
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.RALLY;
 
         public BusinessFlow ConvertRallyTestPlanToBF(RallyTestPlan testPlan)
         {

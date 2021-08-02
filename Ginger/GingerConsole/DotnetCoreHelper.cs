@@ -41,7 +41,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using static GingerCoreNET.ALMLib.ALMIntegration;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 {
@@ -66,7 +66,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             return new OracleConnection(ConnectionString);
         }
 
-        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegration.eALMType almType)
+        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegrationEnums.eALMType almType)
         {
             ALMCore aLMCore = null;
             eALMType defaultAlmType = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(typ => typ.DefaultAlm == true).AlmType;
@@ -111,10 +111,10 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             //Set ALMRepo
             switch (almType)
             {
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
                     almCore = new JiraCore();
                     break;
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.ZephyrEnterprise:
                     almCore = new ZephyrEntCore();
                     break;
             }
@@ -291,12 +291,12 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             return new WebserviceDriverConsoleReporter();
         }
 
-        public ALMIntegration.eALMConnectType GetALMConnectType(ALMIntegration.eALMConnectType eALMConnectType)
+        public ALMIntegrationEnums.eALMConnectType GetALMConnectType(ALMIntegrationEnums.eALMConnectType eALMConnectType)
         {
             throw new NotImplementedException();
         }
 
-        public bool AutoALMProjectConnect(ALMIntegration.eALMConnectType almConnectStyle = ALMIntegration.eALMConnectType.Silence, bool showConnWin = true, bool asConnWin = false)
+        public bool AutoALMProjectConnect(ALMIntegrationEnums.eALMConnectType almConnectStyle = ALMIntegrationEnums.eALMConnectType.Silence, bool showConnWin = true, bool asConnWin = false)
         {
             throw new NotImplementedException();
         }
@@ -305,17 +305,17 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             ALMCore almCore = null;
             string almtype = GetALMConfig();
-            Enum.TryParse(almtype, out ALMIntegration.eALMType AlmType);
+            Enum.TryParse(almtype, out ALMIntegrationEnums.eALMType AlmType);
             GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = ALMCore.GetCurrentAlmConfig(AlmType);
             ALMCore.DefaultAlmConfig = CurrentAlmConfigurations;
 
             //Set ALMRepo
             switch (AlmType)
             {
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
                     almCore = new JiraCore();
                     break;
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.ZephyrEnterprise:
                     almCore = new ZephyrEntCore();
                     break;
             }

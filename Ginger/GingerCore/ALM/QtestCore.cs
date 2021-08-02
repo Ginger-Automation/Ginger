@@ -61,7 +61,7 @@ namespace GingerCore.ALM
                 string granttype = "password";
                 string authorization = "Basic bWFoZXNoLmthbGUzQHQtbW9iaWxlLmNvbTo=";
                 QTestApiModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, authorization);
-                if (General.IsConfigPackageExists(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest))
+                if (General.IsConfigPackageExists(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest))
                 {
                     connObj.Configuration.MyAPIConfig.LoadSettingsFromConfig(Path.Combine(DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, "QTestSettings", "QTestSettings.json"));
                 }
@@ -145,7 +145,7 @@ namespace GingerCore.ALM
             set { ImportFromQtest.ApplicationPlatforms = value; }
         }
 
-        public override ALMIntegration.eALMType ALMType => ALMIntegration.eALMType.Qtest;
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.Qtest;
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType)
         {

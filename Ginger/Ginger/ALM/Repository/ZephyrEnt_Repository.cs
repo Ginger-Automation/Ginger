@@ -35,7 +35,7 @@ using System.Windows;
 using ZephyrEntStdSDK.Models;
 using ZephyrEntStdSDK.Models.Base;
 using static Ginger.ALM.ZephyrEnt.ZephyrEntPlanningExplorerPage;
-using static GingerCoreNET.ALMLib.ALMIntegration;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM.Repository
 {

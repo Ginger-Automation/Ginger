@@ -35,7 +35,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Windows;
-using static GingerCoreNET.ALMLib.ALMIntegration;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM.Repository
 {
@@ -287,7 +287,7 @@ namespace Ginger.ALM.Repository
                 if (!((RQMCore)ALMIntegration.Instance.AlmCore).IsConfigPackageExists())
                     return false;
 
-                ALMIntegration.Instance.SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM);
+                ALMIntegration.Instance.SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RQM);
             }
             return true; //Browse Dialog Canceled
         }

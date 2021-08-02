@@ -76,12 +76,12 @@ namespace Ginger.ALM
             _manualCheckedEvent = true;
         }
 
-        List<GingerCore.GeneralLib.ComboEnumItem> ALMTypes = GingerCore.General.GetEnumValuesForCombo(typeof(GingerCoreNET.ALMLib.ALMIntegration.eALMType));
+        List<GingerCore.GeneralLib.ComboEnumItem> ALMTypes = GingerCore.General.GetEnumValuesForCombo(typeof(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType));
 
         private void SetFieldsGrid()
         {
             //Remove Rally
-            var comboEnumItem = ALMTypes.Cast<GingerCore.GeneralLib.ComboEnumItem>().Where(x => x.text == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY.ToString()).FirstOrDefault();
+            var comboEnumItem = ALMTypes.Cast<GingerCore.GeneralLib.ComboEnumItem>().Where(x => x.text == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RALLY.ToString()).FirstOrDefault();
             ALMTypes.Remove(comboEnumItem);
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -348,7 +348,7 @@ namespace Ginger.ALM
             return newALMDefectProfile;
         }
 
-        ObservableList<ExternalItemFieldBase> FetchDefectFields(GingerCoreNET.ALMLib.ALMIntegration.eALMType AlmType)
+        ObservableList<ExternalItemFieldBase> FetchDefectFields(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType AlmType)
         {
             try
             {

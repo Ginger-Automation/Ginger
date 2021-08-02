@@ -66,7 +66,7 @@ using static GingerCore.Agent;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Data.Common;
 using Oracle.ManagedDataAccess.Client;
-using static GingerCoreNET.ALMLib.ALMIntegration;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger
 {
@@ -465,7 +465,7 @@ namespace Ginger
             return WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType.ToString();
         }
 
-        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
+        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType)
         {
             //update alm type to open defect
             ALMIntegration.Instance.UpdateALMType(almType);

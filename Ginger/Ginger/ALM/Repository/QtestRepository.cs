@@ -38,7 +38,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.ALM.Qtest;
 using Ginger.ALM.Qtest.TreeViewItems;
-using static GingerCoreNET.ALMLib.ALMIntegration;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM.Repository
 {
@@ -457,11 +457,11 @@ namespace Ginger.ALM.Repository
                 Title = "Select Jira Configuration Zip File"
             }, false) is string fileName)
             {
-                if (!GingerCore.General.LoadALMSettings(fileName, GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest))
+                if (!GingerCore.General.LoadALMSettings(fileName, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest))
                 {
                     return false;
                 }
-                ALMIntegration.Instance.SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest);
+                ALMIntegration.Instance.SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest);
             }
             return true;
         }
