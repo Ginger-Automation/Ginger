@@ -184,14 +184,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active == true);               
             }
-            accountReportBusinessFlow.ChildExecutableItemsCount = new List<AccountReport.Contracts.Helpers.DictObject>();
-            accountReportBusinessFlow.ChildExecutableItemsCount.Add(new AccountReport.Contracts.Helpers.DictObject
-            { Key = Actions, Value = ChildExecutableItemsCountAction });
-
-            accountReportBusinessFlow.ChildExecutableItemsCount = new List<AccountReport.Contracts.Helpers.DictObject>();
+            accountReportBusinessFlow.ChildExecutableItemsCount = new List<AccountReport.Contracts.Helpers.DictObject>();                      
             accountReportBusinessFlow.ChildExecutableItemsCount.Add(new AccountReport.Contracts.Helpers.DictObject
             { Key = Actvities, Value = businessFlow.Activities.Count(x => x.Active == true) });
 
+            accountReportBusinessFlow.ChildExecutableItemsCount.Add(new AccountReport.Contracts.Helpers.DictObject
+            { Key = Actions, Value = ChildExecutableItemsCountAction });
             return accountReportBusinessFlow;
         }
 
@@ -402,11 +400,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
                 foreach (Activity activity in businessFlow.Activities)
                 {
-                    ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active == true);
+                    ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active == true);
 
-                    ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + ChildExecutedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored); ;
+                    ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored); ;
 
-                    ChildPassedItemsCountAction = ChildPassedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed);
+                    ChildPassedItemsCountAction = activity.Acts.Count(x => x.Status == eRunStatus.Passed);
                 }
             }
             accountReportRunner.ChildExecutableItemsCount = new List<AccountReport.Contracts.Helpers.DictObject>();
@@ -454,9 +452,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
                     foreach (Activity activity in businessFlow.Activities)
                     {
-                        ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active == true);
+                        ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active == true);
 
-                        ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + ChildExecutedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored); ;
+                        ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored); ;
 
                         ChildPassedItemsCountAction = ChildPassedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed);
                     }
