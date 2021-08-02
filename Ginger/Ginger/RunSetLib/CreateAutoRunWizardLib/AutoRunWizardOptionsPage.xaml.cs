@@ -77,7 +77,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         private void SelfHealingAutoCheckInSetting()
         {
-            if (mAutoRunWizard.RunsetConfig.SelfHealingConfiguration.PrioritizePOMLocator || mAutoRunWizard.RunsetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel)
+            if (mAutoRunWizard.RunsetConfig.SelfHealingConfiguration.ReprioritizePOMLocators || mAutoRunWizard.RunsetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel)
             {
                 xSelfHealinAutoCheckInConfigCheckBox.Visibility = System.Windows.Visibility.Visible;
                 BindingHandler.ObjFieldBinding(xSelfHealinAutoCheckInConfigCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.RunsetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.SaveChangesInSourceControl));

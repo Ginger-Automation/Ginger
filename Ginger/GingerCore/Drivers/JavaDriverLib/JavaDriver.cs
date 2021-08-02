@@ -529,6 +529,11 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             }
 
+            if (response.IsErrorPayLoad())
+            {
+                pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent);
+            }
+
             return response;
         }
 

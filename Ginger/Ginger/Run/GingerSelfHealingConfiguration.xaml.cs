@@ -31,7 +31,7 @@ namespace Ginger.Run
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEnableSelfHealingChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.EnableSelfHealing));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoFixAnalyzerChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.AutoFixAnalyzerIssue));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRePrioritizeChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.PrioritizePOMLocator));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRePrioritizeChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.ReprioritizePOMLocators));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoUpdateModelChkBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.AutomateTabSelfHealingConfiguration, nameof(SelfHealingConfig.AutoUpdateApplicationModel));
 
             ShowHideConfigPanel();
@@ -44,7 +44,7 @@ namespace Ginger.Run
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEnableSelfHealingChkBox, CheckBox.IsCheckedProperty, mRunSetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.EnableSelfHealing));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoFixAnalyzerChkBox, CheckBox.IsCheckedProperty, mRunSetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.AutoFixAnalyzerIssue));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRePrioritizeChkBox, CheckBox.IsCheckedProperty, mRunSetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.PrioritizePOMLocator));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRePrioritizeChkBox, CheckBox.IsCheckedProperty, mRunSetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.ReprioritizePOMLocators));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoUpdateModelChkBox, CheckBox.IsCheckedProperty, mRunSetConfig.SelfHealingConfiguration, nameof(SelfHealingConfig.AutoUpdateApplicationModel));
 
             ShowHideConfigPanel();
@@ -75,7 +75,7 @@ namespace Ginger.Run
                 if (mRunSetConfig != null)
                 {
                     mRunSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue = false;
-                    mRunSetConfig.SelfHealingConfiguration.PrioritizePOMLocator = false;
+                    mRunSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators = false;
                     mRunSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel = false;
                     mRunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl = false;
                 }

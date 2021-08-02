@@ -152,7 +152,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             return true;
         }
 
-        internal ElementInfo AutoUpdateCurrentPOM(Common.InterfacesLib.IAgent currentAgent)
+        public ElementInfo AutoUpdateCurrentPOM(Common.InterfacesLib.IAgent currentAgent)
         {
             if (!IsSelfHealingConfigured())
             {

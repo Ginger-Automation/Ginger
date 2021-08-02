@@ -498,7 +498,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             SelfHealingConfig selfHealingConfiguration = new SelfHealingConfig()
             {
                 AutoFixAnalyzerIssue = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue,
-                PrioritizePOMLocator = runsetExecutor.RunSetConfig.SelfHealingConfiguration.PrioritizePOMLocator,
+                ReprioritizePOMLocators = runsetExecutor.RunSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators,
                 AutoUpdateApplicationModel = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel,
                 SaveChangesInSourceControl = runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl
             };
@@ -1248,7 +1248,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue = dynamicRunsetConfigs.SelfHealingConfiguration.AutoFixAnalyzerIssue;
                 runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel = dynamicRunsetConfigs.SelfHealingConfiguration.AutoUpdateApplicationModel;
                 runSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl = dynamicRunsetConfigs.SelfHealingConfiguration.SaveChangesInSourceControl;
-                runSetConfig.SelfHealingConfiguration.PrioritizePOMLocator = dynamicRunsetConfigs.SelfHealingConfiguration.PrioritizePOMLocator;
+                runSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators = dynamicRunsetConfigs.SelfHealingConfiguration.ReprioritizePOMLocators;
             }
             // Set config
             runsetExecutor.RunSetConfig = runSetConfig;
