@@ -27,7 +27,6 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
-using GingerCore.ALM.Helper;
 using GingerCore.ALM.QCRestAPI;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -98,7 +97,7 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
-            ResourceType resource = ALMCommonMapper.GetGresourceType(AlmDataContractsStd.Enums.ResourceType.TEST_RUN);
+            ResourceType resource = (ResourceType)AlmDataContractsStd.Enums.ResourceType.TEST_RUN;
             ObservableList<ExternalItemFieldBase> runFields = GetALMItemFields(null, true, resource);
             return ExportToQCRestAPI.ExportExceutionDetailsToALM(bizFlow, ref result, runFields, exectutedFromAutomateTab, publishToALMConfig);
         }

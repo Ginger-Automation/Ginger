@@ -16,13 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using GingerCore.ALM;
 using System.Linq;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
-using Ginger.ALM;
-using GingerCore.ALM;
 
 namespace Ginger.Run.RunSetActions
 {

@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.GeneralLib;
@@ -34,22 +33,21 @@ using GingerCore.Actions;
 using GingerCore.ALM;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
-using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.ASCF;
 using GingerCore.Drivers.ConsoleDriverLib;
 using GingerCore.Drivers.InternalBrowserLib;
 using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Drivers.MainFrame;
-using GingerCore.Drivers.Mobile.Perfecto;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Drivers.WindowsLib;
 using GingerCore.Environments;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
-using System.Data.OleDb;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -59,14 +57,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web.UI.DataVisualization.Charting;
 using System.Windows.Threading;
 using static GingerCore.Agent;
-using Outlook = Microsoft.Office.Interop.Outlook;
-using System.Data.Common;
-using Oracle.ManagedDataAccess.Client;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using Outlook = Microsoft.Office.Interop.Outlook;
 
 namespace Ginger
 {
@@ -85,12 +80,12 @@ namespace Ginger
 
         public IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow, object DSList)
         {
-            return new ValueExpression(mProjEnvironment, mBusinessFlow, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList);
+            return new ValueExpression(mProjEnvironment, mBusinessFlow, (ObservableList<DataSourceBase>)DSList);
         }
 
         public IValueExpression CreateValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true)
         {
-            return new ValueExpression(Env, BF, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList, bUpdate, UpdateValue, bDone);
+            return new ValueExpression(Env, BF, (ObservableList<DataSourceBase>)DSList, bUpdate, UpdateValue, bDone);
         }
 
         public IValueExpression CreateValueExpression(object obj, string attr)
@@ -453,13 +448,6 @@ namespace Ginger
             return new TextBoxFormatter(Textblock);
         }
 
-        //public string GenerateTemplate(string templatename, object o)
-        //{
-        //    ReportInfo reportInfo = (ReportInfo)o;
-        //    return ReportTemplate.GenerateReport(templatename, reportInfo);
-        //}
-
-
         public string GetALMConfig()
         {
             return WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType.ToString();
@@ -476,7 +464,9 @@ namespace Ginger
                 defectsOpeningResults = ALMIntegration.Instance.CreateNewALMDefects(defectsForOpening, defectsFields);
             }
             else
+            {
                 return;
+            }
 
             if ((defectsOpeningResults != null) && (defectsOpeningResults.Count > 0))
             {
@@ -537,26 +527,6 @@ namespace Ginger
             }
             return null;
         }
-
-        //public string GenerateReportForREportTemplate(string ReportTemplateName, object RIf, object RTs )
-        //{
-        //    ReportInfo RI = (ReportInfo)RIf;
-        //    ReportTemplate RT = (ReportTemplate)RTs;
-        //    ReportPage RP = new ReportPage(RI, RT.Xaml);
-        //    string FileName = Path.GetTempPath() + ReportTemplateName + ".rtf";
-
-        //    if (System.IO.File.Exists(FileName))
-        //        FileName = Path.GetTempPath() + " " + DateTime.Now.ToString("dMMMyyyy_HHmmss_fff") + "_" + ReportTemplateName + ".rtf";
-
-        //    GC.Collect();
-        //    RP.SaveReport(FileName);
-
-        //    string PDFFileName = FileName.Replace(".rtf", ".pdf");
-
-        //    RTFtoPDF.Convert(FileName, PDFFileName);
-
-        //    return PDFFileName;
-        //}
 
         public void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder)
         {

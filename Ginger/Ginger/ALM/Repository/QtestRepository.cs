@@ -16,28 +16,24 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.ALM.QC;
-using Ginger.ALM.QC.TreeViewItems;
-using GingerCore;
-using GingerCore.ALM;
-using GingerCore.Activities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using GingerCore.ALM.QC;
-using Ginger.ALM.Qtest;
-using System.Windows;
-using System.IO;
-using GingerCore.Platforms;
-using Ginger.Repository;
-using TDAPIOLELib;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore.ALM.Qtest;
+using Ginger.ALM.QC;
+using Ginger.ALM.QC.TreeViewItems;
+using Ginger.ALM.Qtest;
 using Ginger.ALM.Qtest.TreeViewItems;
+using GingerCore;
+using GingerCore.Activities;
+using GingerCore.ALM;
+using GingerCore.ALM.QC;
+using GingerCore.ALM.Qtest;
+using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM.Repository
@@ -267,7 +263,7 @@ namespace Ginger.ALM.Repository
 
 
         #region Export To QC
-        public override void ExportBfActivitiesGroupsToALM(GingerCore.BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
+        public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
             bool askToSaveBF = false;
             foreach (ActivitiesGroup group in grdActivitiesGroups)
@@ -280,7 +276,7 @@ namespace Ginger.ALM.Repository
 
             if (askToSaveBF)
             {
-                if (Reporter.ToUser(eUserMsgKey.AskIfToSaveBFAfterExport, businessFlow.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                if (Reporter.ToUser(eUserMsgKey.AskIfToSaveBFAfterExport, businessFlow.Name) == eUserMsgSelection.Yes)
                 {
                     Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name,
                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
@@ -337,7 +333,7 @@ namespace Ginger.ALM.Repository
 
             QtestTestSuite matchingTS = null;
 
-            Amdocs.Ginger.Common.eUserMsgSelection userSelec = Amdocs.Ginger.Common.eUserMsgSelection.None;
+            eUserMsgSelection userSelec = eUserMsgSelection.None;
             //check if the businessFlow already mapped to QC Test Set
             if (!String.IsNullOrEmpty(businessFlow.ExternalID))
             {
@@ -346,11 +342,11 @@ namespace Ginger.ALM.Repository
                 {
                     //ask user if want to continue
                     userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
-                    if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
+                    if (userSelec == eUserMsgSelection.Cancel)
                     {
                         return false;
                     }
-                    else if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    else if (userSelec == eUserMsgSelection.No)
                     {
                         matchingTS = null;
                     }
@@ -368,11 +364,15 @@ namespace Ginger.ALM.Repository
                     if (matchingTC != null)
                     {
                         //ask user if want to continue
-                        Amdocs.Ginger.Common.eUserMsgSelection userSelect = Reporter.ToUser(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, ag.Name, matchingTC.TestName);
-                        if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
-                        { return false; }
-                        else if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.No)
-                        { matchingTC = null; }
+                        eUserMsgSelection userSelect = Reporter.ToUser(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, ag.Name, matchingTC.TestName);
+                        if (userSelect == eUserMsgSelection.Cancel)
+                        { 
+                            return false; 
+                        }
+                        else if (userSelect == eUserMsgSelection.No)
+                        { 
+                            matchingTC = null; 
+                        }
                         else
                         {
                             parentObjectId = matchingTC.TestID;
@@ -396,7 +396,7 @@ namespace Ginger.ALM.Repository
 
             if (matchingTS == null && string.IsNullOrEmpty(parentObjectId))
             {
-                if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                if (userSelec == eUserMsgSelection.No)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportQCNewTestSetSelectDiffFolder);
                 }

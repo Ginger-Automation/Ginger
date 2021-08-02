@@ -19,13 +19,12 @@ limitations under the License.
 //# Status=Cleaned; Comment=Cleaned on 05/11/18
 using Amdocs.Ginger.Common;
 using Ginger.ALM;
+using Ginger.Run.RunSetActions;
+using GingerCore;
+using GingerCore.ALM;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System;
-using GingerCore.ALM;
-using GingerCore;
-using System.Threading.Tasks;
-using Ginger.Run.RunSetActions;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.Run
@@ -45,7 +44,7 @@ namespace Ginger.Run
             InitializeComponent();
             if (runSetActionPublishToQC.VariableForTCRunName == null)
             {
-                runSetActionPublishToQC.VariableForTCRunName = "GingerRun_{VBS Eval=now()}";
+                runSetActionPublishToQC.VariableForTCRunName = "GingerRun_{CS Exp=DateTime.Now}";
             }
 
             VariableForTCRunName.Init(null, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.VariableForTCRunName);
@@ -61,7 +60,7 @@ namespace Ginger.Run
 
             if (VariableForTCRunName == null)
             {
-                VariableForTCRunName.Content = "GingerRun_{VBS Eval=now()}";
+                VariableForTCRunName.Content = "GingerRun_{CS Exp=DateTime.Now}";
             }
             VariableForTCRunName.Init(null, mPublishToALMConfig, nameof(PublishToALMConfig.VariableForTCRunName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, mPublishToALMConfig, nameof(PublishToALMConfig.VariableForTCRunName));
@@ -76,7 +75,9 @@ namespace Ginger.Run
             get
             {
                 if (mInstance == null)
+                {
                     mInstance = new ExportResultsToALMConfigPage();
+                }
                 return mInstance;
             }
         }

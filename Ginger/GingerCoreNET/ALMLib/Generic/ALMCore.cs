@@ -216,14 +216,6 @@ namespace GingerCore.ALM
             Reporter.ToLog(eLogLevel.DEBUG, $"ALMDomain= {DefaultAlmConfig.ALMDomain}");
             Reporter.ToLog(eLogLevel.DEBUG, $"ALMProjectName= {DefaultAlmConfig.ALMProjectName}");
             Reporter.ToLog(eLogLevel.DEBUG, $"ALMPassword= {DefaultAlmConfig.ALMPassword}");
-
-            //if (ALMConnected == false)
-            //{
-            //    ConnectALMServer();
-            //}
-
-            //if (TargetFrameworkHelper.Helper.AutoALMProjectConnect(TargetFrameworkHelper.Helper.GetALMConnectType, false))
-            //{
             try
             {
                     foreach (BusinessFlow BizFlow in BusinessFlows) //Here going for each businessFlow
@@ -285,11 +277,9 @@ namespace GingerCore.ALM
                 AlmConfig.AlmType = almType;
                 WorkSpace.Instance.Solution.ALMConfigs.Add(AlmConfig);
             }
-
             return AlmConfig;
-
         }
-        public static void SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType, ALMCore aLMCore)
+        public static void SetALMCoreConfigurations(eALMType almType, ALMCore aLMCore)
         {
             GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = GetCurrentAlmConfig(almType);
 

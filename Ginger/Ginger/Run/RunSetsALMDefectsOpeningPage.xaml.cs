@@ -16,21 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.Environments;
-using Ginger.Reports;
+using Amdocs.Ginger.Repository;
+using Ginger.ALM;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.ALM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
-using Ginger.ALM;
-using GingerCore.ALM;
 
 namespace Ginger.Run
 {
@@ -148,10 +146,7 @@ namespace Ginger.Run
                             currentALMDefectFieldsValues.Add("Summary", defectSuggestion.Summary);
                             currentALMDefectFieldsValues.Add("description", defectSuggestion.ErrorDetails != null ? defectSuggestion.ErrorDetails : "There is no error description");
                         }
-
                         currentALMDefectFieldsValues.Add("screenshots", String.Join(",", defectSuggestion.ScreenshotFileNames));
-
-
                         currentALMDefectFieldsValues.Add("ActivityGroupExternalID", defectSuggestion.ActivityGroupExternalID);
                         currentALMDefectFieldsValues.Add("ActivityExternalID", defectSuggestion.ActivityExternalID);
                         currentALMDefectFieldsValues.Add("BFExternalID1", defectSuggestion.BFExternalID.Item1);

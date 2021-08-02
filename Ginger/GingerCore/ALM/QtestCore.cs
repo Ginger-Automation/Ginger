@@ -35,7 +35,6 @@ using amdocs.ginger.GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Reflection;
 using GingerCoreNET.ALMLib;
-using GingerCore.ALM.Helper;
 using ALM_Common.DataContracts;
 
 namespace GingerCore.ALM
@@ -149,7 +148,7 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType)
         {
-            ResourceType resource =  ALMCommonMapper.GetGresourceType(resourceType);
+            ResourceType resource = (ResourceType)resourceType;
             ConnectALMServer();
             fieldApi = new QTestApi.FieldApi(connObj.Configuration);
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();

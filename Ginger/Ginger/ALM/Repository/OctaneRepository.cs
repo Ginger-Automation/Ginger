@@ -160,7 +160,7 @@ namespace Ginger.ALM.Repository
 
             ALMTestSetData matchingTS = null;
 
-            Amdocs.Ginger.Common.eUserMsgSelection userSelec;
+            eUserMsgSelection userSelec;
             //TO DO MaheshK : check if the businessFlow already mapped to Octane Test Suite
             if (!String.IsNullOrEmpty(businessFlow.ExternalID))
             {
@@ -169,11 +169,11 @@ namespace Ginger.ALM.Repository
                 {
                     //ask user if want to continute
                     userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
-                    if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
+                    if (userSelec == eUserMsgSelection.Cancel)
                     {
                         return false;
                     }
-                    else if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    else if (userSelec == eUserMsgSelection.No)
                     {
                         matchingTS = null;                 
                     }
@@ -312,8 +312,8 @@ namespace Ginger.ALM.Repository
                     //check if some of the Test Set was already imported                
                     if (testSetItem.AlreadyImported)
                     {
-                        Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testSetItem.TestSetName);
-                        if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                        eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testSetItem.TestSetName);
+                        if (userSelection == eUserMsgSelection.Yes)
                         {
                             //Delete the mapped BF
                             File.Delete(testSetItem.MappedBusinessFlow.FileName);

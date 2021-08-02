@@ -72,12 +72,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             eALMType defaultAlmType = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(typ => typ.DefaultAlm == true).AlmType;
             if (almType != WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(typ => typ.DefaultAlm == true).AlmType)
             {
-                aLMCore = (ALMCore)UpdateALMType(almType);
-            }
-            else
-            {
-                //update alm type to open defect
-                aLMCore = (ALMCore)GetALMCore();
+                aLMCore = UpdateALMType(almType);
             }
             aLMCore.ConnectALMServer();
             Dictionary<Guid, string> defectsOpeningResults;
@@ -86,8 +81,9 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                 defectsOpeningResults = aLMCore.CreateNewALMDefects(defectsForOpening, defectsFields);
             }
             else
+            {
                 return;
-
+            }
             if ((defectsOpeningResults != null) && (defectsOpeningResults.Count > 0))
             {
                 foreach (KeyValuePair<Guid, string> defectOpeningResult in defectsOpeningResults)
@@ -101,26 +97,6 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
             //Set back Default Alm
             UpdateALMType(defaultAlmType);
-        }
-        private ALMCore UpdateALMType(eALMType almType)
-        {
-            ALMCore almCore = null;
-            GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = ALMCore.GetCurrentAlmConfig(almType);
-            ALMCore.DefaultAlmConfig = CurrentAlmConfigurations;
-
-            //Set ALMRepo
-            switch (almType)
-            {
-                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
-                    almCore = new JiraCore();
-                    break;
-                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.ZephyrEnterprise:
-                    almCore = new ZephyrEntCore();
-                    break;
-            }
-            //almCore.GetCurrentAlmConfig();
-            //ALMCore.SetALMCoreConfigurations(defaultAlmType, null);
-            return almCore;
         }
         public object CreateNewReportTemplate()
         {
@@ -303,14 +279,21 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         private ALMCore GetALMCore()
         {
-            ALMCore almCore = null;
             string almtype = GetALMConfig();
             Enum.TryParse(almtype, out ALMIntegrationEnums.eALMType AlmType);
-            GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = ALMCore.GetCurrentAlmConfig(AlmType);
-            ALMCore.DefaultAlmConfig = CurrentAlmConfigurations;
+            ALMCore almCore = UpdateALMType(AlmType);
+            almCore.GetCurrentAlmConfig();
+            ALMCore.SetALMCoreConfigurations(AlmType, almCore);
+            return almCore;
+        }
 
+        private ALMCore UpdateALMType(eALMType almType)
+        {
+            ALMCore almCore = null;
+            ALMConfig CurrentAlmConfigurations = ALMCore.GetCurrentAlmConfig(almType);
+            ALMCore.DefaultAlmConfig = CurrentAlmConfigurations;
             //Set ALMRepo
-            switch (AlmType)
+            switch (almType)
             {
                 case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
                     almCore = new JiraCore();
@@ -319,8 +302,6 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                     almCore = new ZephyrEntCore();
                     break;
             }
-            almCore.GetCurrentAlmConfig();
-            ALMCore.SetALMCoreConfigurations(AlmType, almCore);
             return almCore;
         }
     }

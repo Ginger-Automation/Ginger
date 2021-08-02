@@ -22,7 +22,6 @@ using Amdocs.Ginger.CoreNET.ALMLib.DataContract;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
-using GingerCore.ALM.Helper;
 using GingerCore.ALM.Octane;
 using GingerCore.ALM.QC;
 using GingerCore.Variables;
@@ -749,7 +748,7 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType = AlmDataContractsStd.Enums.ResourceType.ALL)
         {
-            ResourceType resource = ALMCommonMapper.GetGresourceType(resourceType);
+            ResourceType resource = (ResourceType)resourceType;
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
             string resourse = string.Empty;
             LoginDTO _loginDto = GetLoginDTO();

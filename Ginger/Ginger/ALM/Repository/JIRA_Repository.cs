@@ -32,7 +32,6 @@ using JiraRepositoryStd.Data_Contracts;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
@@ -142,10 +141,10 @@ namespace Ginger.ALM.Repository
                     bool exportRes = false;
                     switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
                     {
-                        case GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Xray:
+                        case eTestingALMType.Xray:
                             exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
                             break;
-                        case GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Zephyr:
+                        case eTestingALMType.Zephyr:
                             JiraZephyrTreeItem zephyrExportPath = SelectZephyrExportPath();
                             if (zephyrExportPath == null)
                             {
@@ -233,12 +232,12 @@ namespace Ginger.ALM.Repository
 
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Xray)
+            if (ALMCore.DefaultAlmConfig.JiraTestingALM == eTestingALMType.Xray)
             {
                 JIRA.JiraImportReviewPage win = new JIRA.JiraImportReviewPage(importDestinationPath:importDestinationFolderPath);
                 win.ShowAsWindow();
             }
-            if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Zephyr)
+            if (ALMCore.DefaultAlmConfig.JiraTestingALM == eTestingALMType.Zephyr)
             {
                 JIRA.JiraZephyrCyclesExplorerPage win = new JIRA.JiraZephyrCyclesExplorerPage(importDestinationFolderPath);
                 win.ShowAsWindow();
@@ -453,12 +452,12 @@ namespace Ginger.ALM.Repository
                 Title = "Select Jira Configuration Zip File"
             }, false) is string fileName)
             {
-                if (!GingerCore.General.LoadALMSettings(fileName, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira))
+                if (!GingerCore.General.LoadALMSettings(fileName, eALMType.Jira))
                 {
                     return false;
                 }
                 ((JiraCore)ALMIntegration.Instance.AlmCore).CreateJiraRepository();
-                ALMIntegration.Instance.SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira);
+                ALMIntegration.Instance.SetALMCoreConfigurations(eALMType.Jira);
             }
             return true; //Browse Dialog Canceled
         }
