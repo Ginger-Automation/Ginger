@@ -68,8 +68,17 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegration.eALMType almType)
         {
-            //update alm type to open defect
-            ALMCore aLMCore = (ALMCore)GetALMCore();
+            ALMCore aLMCore = null;
+            eALMType defaultAlmType = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(typ => typ.DefaultAlm == true).AlmType;
+            if (almType != WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(typ => typ.DefaultAlm == true).AlmType)
+            {
+                aLMCore = (ALMCore)UpdateALMType(almType);
+            }
+            else
+            {
+                //update alm type to open defect
+                aLMCore = (ALMCore)GetALMCore();
+            }
             aLMCore.ConnectALMServer();
             Dictionary<Guid, string> defectsOpeningResults;
             if ((defectsForOpening != null) && (defectsForOpening.Count > 0))
@@ -91,9 +100,28 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             }
 
             //Set back Default Alm
-            //ALMIntegration.Instance.UpdateALMType(ALMCore.GetDefaultAlmConfig().AlmType);
+            UpdateALMType(defaultAlmType);
         }
+        private ALMCore UpdateALMType(eALMType almType)
+        {
+            ALMCore almCore = null;
+            GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = ALMCore.GetCurrentAlmConfig(almType);
+            ALMCore.DefaultAlmConfig = CurrentAlmConfigurations;
 
+            //Set ALMRepo
+            switch (almType)
+            {
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
+                    almCore = new JiraCore();
+                    break;
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:
+                    almCore = new ZephyrEntCore();
+                    break;
+            }
+            //almCore.GetCurrentAlmConfig();
+            //ALMCore.SetALMCoreConfigurations(defaultAlmType, null);
+            return almCore;
+        }
         public object CreateNewReportTemplate()
         {
             throw new NotImplementedException();
@@ -273,7 +301,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             throw new NotImplementedException();
         }
 
-        private object GetALMCore()
+        private ALMCore GetALMCore()
         {
             ALMCore almCore = null;
             string almtype = GetALMConfig();
