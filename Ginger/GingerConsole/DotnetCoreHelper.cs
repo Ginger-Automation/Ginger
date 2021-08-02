@@ -72,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             eALMType defaultAlmType = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(typ => typ.DefaultAlm).AlmType;
             if (almType != defaultAlmType)
             {
-                aLMCore = UpdateALMType(almType);
+                aLMCore = (ALMCore)UpdateALMType(almType);
             }
             aLMCore.ConnectALMServer();
             Dictionary<Guid, string> defectsOpeningResults;
@@ -281,13 +281,13 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             string almtype = GetALMConfig();
             Enum.TryParse(almtype, out ALMIntegrationEnums.eALMType AlmType);
-            ALMCore almCore = UpdateALMType(AlmType);
+            ALMCore almCore = (ALMCore)UpdateALMType(AlmType);
             almCore.GetCurrentAlmConfig();
             ALMCore.SetALMCoreConfigurations(AlmType, almCore);
             return almCore;
         }
 
-        private ALMCore UpdateALMType(eALMType almType)
+        private object UpdateALMType(eALMType almType)
         {
             ALMCore almCore = null;
             ALMConfig CurrentAlmConfigurations = ALMCore.GetCurrentAlmConfig(almType);
