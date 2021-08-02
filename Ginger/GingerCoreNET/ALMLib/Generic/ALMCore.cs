@@ -218,54 +218,56 @@ namespace GingerCore.ALM
             Reporter.ToLog(eLogLevel.DEBUG, $"ALMPassword= {DefaultAlmConfig.ALMPassword}");
             try
             {
-                    foreach (BusinessFlow BizFlow in BusinessFlows) //Here going for each businessFlow
+                foreach (BusinessFlow BizFlow in BusinessFlows) //Here going for each businessFlow
+                {
+                    try
                     {
-                        try
+                        if (BizFlow.ExternalID != "0" && !String.IsNullOrEmpty(BizFlow.ExternalID))
                         {
-                            if (BizFlow.ExternalID != "0" && !String.IsNullOrEmpty(BizFlow.ExternalID))
-                            {
-                                Reporter.ToLog(eLogLevel.DEBUG, "Executing RunSet Action Publish to ALM for " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + BizFlow.Name);
-                                Reporter.ToStatus(eStatusMsgKey.ExportExecutionDetails, null, BizFlow.Name, "ALM");
+                            Reporter.ToLog(eLogLevel.DEBUG, "Executing RunSet Action Publish to ALM for " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + BizFlow.Name);
+                            Reporter.ToStatus(eStatusMsgKey.ExportExecutionDetails, null, BizFlow.Name, "ALM");
 
-                                if (publishToALMConfig.ToAttachActivitiesGroupReport)
-                                {
-                                    Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateActivitiesGroupReportsOfBusinessFlow(null, BizFlow);//need to find a way to specify the releveant environment 
-                                }
+                            if (publishToALMConfig.ToAttachActivitiesGroupReport)
+                            {
+                                Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateActivitiesGroupReportsOfBusinessFlow(null, BizFlow);//need to find a way to specify the releveant environment 
+                            }
                             Reporter.ToLog(eLogLevel.DEBUG, "GET - ExportExecutionDetailsToALM");
-                                isExportSucc = ExportExecutionDetailsToALM(BizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig);
-                                if (isExportSucc)
-                                {
-                                    BizFlow.PublishStatus = BusinessFlow.ePublishStatus.Published;
-                                }
-                                else
-                                {
-                                    if ((result == null) || (result == string.Empty))
-                                        result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - " + BizFlow.Name + " - Error when uploading to ALM." + Environment.NewLine;
-                                    BizFlow.PublishStatus = BusinessFlow.ePublishStatus.PublishFailed;
-                                }
-                                Reporter.HideStatusMessage();
+                            isExportSucc = ExportExecutionDetailsToALM(BizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig);
+                            if (isExportSucc)
+                            {
+                                BizFlow.PublishStatus = BusinessFlow.ePublishStatus.Published;
                             }
                             else
                             {
-                                BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
-                                result += GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - " + BizFlow.Name + " - doesn't have ExternalID, cannot execute publish to ALM RunSet Action" + Environment.NewLine;
-                                Reporter.ToLog(eLogLevel.WARN, BizFlow.Name + " - doesn't have ExternalID, cannot execute publish to ALM RunSet Action");
+                                if ((result == null) || (result == string.Empty))
+                                {
+                                    result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - " + BizFlow.Name + " - Error when uploading to ALM." + Environment.NewLine;
+                                }
+                                BizFlow.PublishStatus = BusinessFlow.ePublishStatus.PublishFailed;
                             }
+                            Reporter.HideStatusMessage();
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            result = ex.Message.ToString();
                             BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
-                            Reporter.ToLog(eLogLevel.ERROR, BizFlow.Name + " - Export results to ALM failed due to exception", ex);
+                            result += GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - " + BizFlow.Name + " - doesn't have ExternalID, cannot execute publish to ALM RunSet Action" + Environment.NewLine;
+                            Reporter.ToLog(eLogLevel.WARN, BizFlow.Name + " - doesn't have ExternalID, cannot execute publish to ALM RunSet Action");
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        result = ex.Message.ToString();
+                        BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
+                        Reporter.ToLog(eLogLevel.ERROR, BizFlow.Name + " - Export results to ALM failed due to exception", ex);
+                    }
+                }
 
-                    return isExportSucc;
-                }
-                finally
-                {
-                    DisconnectALMServer();
-                }
+                return isExportSucc;
+            }
+            finally
+            {
+                DisconnectALMServer();
+            }
             
         }
         public static GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType)

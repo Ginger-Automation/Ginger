@@ -63,9 +63,13 @@ namespace Ginger.ALM.Repository
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Could not connect to Jira server");
                 if (userMsgStyle == eALMConnectType.Manual)
+                {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailure);
+                }
                 else if (userMsgStyle == eALMConnectType.Auto)
+                {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings);
+                }
             }
 
             return isConnectSucc;
@@ -178,12 +182,15 @@ namespace Ginger.ALM.Repository
                             Reporter.HideStatusMessage();
                         }
                         if (almConectStyle != eALMConnectType.Auto)
+                        {
                             Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
+                        }
                         return true;
                     }
-                    else
-                if (almConectStyle != eALMConnectType.Auto)
+                    else if (almConectStyle != eALMConnectType.Auto)
+                    {
                         Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, responseStr);
+                    }
                 }
                 Reporter.HideStatusMessage();
             }

@@ -432,12 +432,10 @@ namespace Ginger.ALM.Repository
                 }
                 return true;
             }
-            else
+            else if (almConectStyle != eALMConnectType.Auto)
             { 
-                if (almConectStyle != eALMConnectType.Auto)
                 Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
-
             return false;
         }
         #endregion Export To QC

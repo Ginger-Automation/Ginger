@@ -69,8 +69,8 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegrationEnums.eALMType almType)
         {
             ALMCore aLMCore = null;
-            eALMType defaultAlmType = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(typ => typ.DefaultAlm == true).AlmType;
-            if (almType != WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(typ => typ.DefaultAlm == true).AlmType)
+            eALMType defaultAlmType = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(typ => typ.DefaultAlm).AlmType;
+            if (almType != defaultAlmType)
             {
                 aLMCore = UpdateALMType(almType);
             }
@@ -137,14 +137,14 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
         {
-            ALMCore aLMCore = (ALMCore)GetALMCore();
+            ALMCore aLMCore = GetALMCore();
             aLMCore.ConnectALMServer();
             aLMCore.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, (eALMConnectType)silence);
         }
 
         public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string refe, PublishToALMConfig PublishToALMConfig)
         {
-            ALMCore aLMCore = (ALMCore)GetALMCore();
+            ALMCore aLMCore = GetALMCore();
             aLMCore.ConnectALMServer();
             return aLMCore.ExportBusinessFlowsResultToALM(bfs, ref refe, PublishToALMConfig, eALMConnectType.Silence);
         }
@@ -295,11 +295,14 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             //Set ALMRepo
             switch (almType)
             {
-                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
+                case eALMType.Jira:
                     almCore = new JiraCore();
                     break;
-                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.ZephyrEnterprise:
+                case eALMType.ZephyrEnterprise:
                     almCore = new ZephyrEntCore();
+                    break;
+                default:
+                    Reporter.ToLog(eLogLevel.ERROR, $"Invalid ALM Type - {almType}");
                     break;
             }
             return almCore;

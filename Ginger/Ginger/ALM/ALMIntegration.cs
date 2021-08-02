@@ -282,7 +282,7 @@ namespace Ginger.ALM
             ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (AutoALMProjectConnect(almConnectionType, false))
             {
-                return AlmCore.ExportBusinessFlowsResultToALM(BusinessFlows, ref result, publishToALMConfig, almConnectionType, exectutedFromAutomateTab = false);
+                return AlmCore.ExportBusinessFlowsResultToALM(BusinessFlows, ref result, publishToALMConfig, almConnectionType, exectutedFromAutomateTab);
             }
             else
             {

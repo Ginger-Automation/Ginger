@@ -85,7 +85,7 @@ namespace Ginger
 
         public IValueExpression CreateValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true)
         {
-            return new ValueExpression(Env, BF, (ObservableList<DataSourceBase>)DSList, bUpdate, UpdateValue, bDone);
+            return new ValueExpression(Env, BF, DSList, bUpdate, UpdateValue, bDone);
         }
 
         public IValueExpression CreateValueExpression(object obj, string attr)

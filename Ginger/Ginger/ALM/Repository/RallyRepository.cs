@@ -227,7 +227,7 @@ namespace Ginger.ALM.Repository
             {
                 if (performSaveAfterExport)
                 {
-                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));                    
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                 }
                 if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
@@ -235,10 +235,9 @@ namespace Ginger.ALM.Repository
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                 }
             }
-            else
+            else if (almConectStyle != eALMConnectType.Silence)
             {
-                if(almConectStyle != eALMConnectType.Silence)
-                    Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
+                Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
 
             Reporter.HideStatusMessage();
