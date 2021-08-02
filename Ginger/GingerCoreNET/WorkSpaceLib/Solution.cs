@@ -274,14 +274,7 @@ namespace Ginger.SolutionGeneral
         {
             try
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
-                }
-                else
-                {
-                    return null;
-                }
+                return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
             }
             catch (Exception ex)
             {
