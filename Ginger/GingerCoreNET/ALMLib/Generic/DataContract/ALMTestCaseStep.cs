@@ -126,7 +126,9 @@ namespace Amdocs.Ginger.CoreNET.ALMLib.DataContract
             foreach (var step in steps)
             {
                 if (step.HasElements)
+                {
                     this.Add(new ALMTestCaseStep().ParseXML(step));
+                }
             }
 
             return this;

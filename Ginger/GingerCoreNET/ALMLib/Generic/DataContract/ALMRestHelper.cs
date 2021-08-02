@@ -27,7 +27,9 @@ namespace Amdocs.Ginger.CoreNET.ALMLib.DataContract
         {
             var fieldsElements = fields.Elements("Fields").Elements();
             if (fields.Elements("Fields").Elements().Count() == 0)
+            {
                 fieldsElements = fields.Elements();
+            }
             return fieldsElements;
         }
     }

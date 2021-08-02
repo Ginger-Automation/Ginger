@@ -85,7 +85,9 @@ namespace Amdocs.Ginger.CoreNET.ALMLib.DataContract
             foreach (var testSet in testSets)
             {
                 if (testSet.HasElements)
+                {
                     this.Add(new ALMTestSetData().ParseXML(testSet));
+                }
             }
 
             return this;
