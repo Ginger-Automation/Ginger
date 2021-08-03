@@ -193,6 +193,11 @@ namespace Ginger.Reports
                 Name = value;
             }
         }
+
+        public override string GetItemType()
+        {
+            return nameof(HTMLReportConfiguration);
+        }
         public HTMLReportConfiguration()
         {
 

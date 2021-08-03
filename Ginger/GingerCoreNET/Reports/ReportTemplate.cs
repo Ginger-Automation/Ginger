@@ -213,5 +213,11 @@ namespace Ginger.Reports
                 this.Name = value;
             }
         }
+
+        public override string GetItemType()
+        {
+            return nameof(ReportTemplate);
+        }
+
     }
 }

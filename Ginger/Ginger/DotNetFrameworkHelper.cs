@@ -66,13 +66,14 @@ using static GingerCore.Agent;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Data.Common;
 using Oracle.ManagedDataAccess.Client;
+using Ginger.Repository;
 
 namespace Ginger
 {
     public class DotNetFrameworkHelper : ITargetFrameworkHelper
     {
         Outlook.MailItem mOutlookMail;
-        
+
         public DotNetFrameworkHelper()
         {
         }
@@ -89,7 +90,7 @@ namespace Ginger
 
         public IValueExpression CreateValueExpression(ProjEnvironment Env, BusinessFlow BF, ObservableList<DataSourceBase> DSList = null, bool bUpdate = false, string UpdateValue = "", bool bDone = true)
         {
-            return new ValueExpression(Env, BF, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList, bUpdate, UpdateValue, bDone);            
+            return new ValueExpression(Env, BF, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList, bUpdate, UpdateValue, bDone);
         }
 
         public IValueExpression CreateValueExpression(object obj, string attr)
@@ -112,8 +113,8 @@ namespace Ginger
                 case Agent.eDriverType.SeleniumRemoteWebDriver:
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.RemoteWebDriver);
                 case Agent.eDriverType.SeleniumEdge:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Edge);               
-                    
+                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Edge);
+
                 case Agent.eDriverType.Appium:
                     return new GenericAppiumDriver(zAgent.BusinessFlow);
 
@@ -134,8 +135,8 @@ namespace Ginger
                 case eDriverType.JavaDriver:
                     return new JavaDriver(zAgent.BusinessFlow);
                 case eDriverType.MainFrame3270:
-                    return new MainFrameDriver(zAgent.BusinessFlow);  
-                    
+                    return new MainFrameDriver(zAgent.BusinessFlow);
+
                 default:
                     {
                         throw new Exception("Matching Driver was not found.");
@@ -150,54 +151,54 @@ namespace Ginger
             switch (zAgent.DriverType)
             {
                 case Agent.eDriverType.InternalBrowser:
-                    return(typeof(InternalBrowser));                    
-                case Agent.eDriverType.SeleniumFireFox:                 
-                case Agent.eDriverType.SeleniumChrome:            
-                case Agent.eDriverType.SeleniumIE:               
-                case Agent.eDriverType.SeleniumRemoteWebDriver:         
+                    return (typeof(InternalBrowser));
+                case Agent.eDriverType.SeleniumFireFox:
+                case Agent.eDriverType.SeleniumChrome:
+                case Agent.eDriverType.SeleniumIE:
+                case Agent.eDriverType.SeleniumRemoteWebDriver:
                 case Agent.eDriverType.SeleniumEdge:
-                    return (typeof(SeleniumDriver));                                     
+                    return (typeof(SeleniumDriver));
                 case Agent.eDriverType.ASCF:
-                    return (typeof(ASCFDriver));                    
+                    return (typeof(ASCFDriver));
                 case Agent.eDriverType.DOSConsole:
-                    return (typeof(DOSConsoleDriver));                    
+                    return (typeof(DOSConsoleDriver));
                 case Agent.eDriverType.UnixShell:
-                    return (typeof(UnixShellDriver));                                      
+                    return (typeof(UnixShellDriver));
                 case Agent.eDriverType.PowerBuilder:
-                    return (typeof(PBDriver));                    
+                    return (typeof(PBDriver));
                 case Agent.eDriverType.WindowsAutomation:
-                    return (typeof(WindowsDriver));                    
+                    return (typeof(WindowsDriver));
                 case Agent.eDriverType.WebServices:
-                    return (typeof(WebServicesDriver));                    
+                    return (typeof(WebServicesDriver));
                 case Agent.eDriverType.JavaDriver:
-                    return (typeof(JavaDriver));                    
+                    return (typeof(JavaDriver));
                 case Agent.eDriverType.MainFrame3270:
-                    return (typeof(MainFrameDriver));     
-                    
+                    return (typeof(MainFrameDriver));
+
                 //case Agent.eDriverType.AndroidADB:
                 //    return (typeof(AndroidADBDriver));                    
-              
+
                 case Agent.eDriverType.Appium:
                     return (typeof(GenericAppiumDriver));
 
                 default:
                     throw new Exception("GetDriverType: Unknown Driver type " + zAgent.DriverType);
-                    
+
             }
         }
-        
+
         AutoRunWindow mAutoRunWindow;
         public void ShowAutoRunWindow()
-        {            
+        {
             // Run the AutoRunWindow on its own thread 
             Thread mGingerThread = new Thread(() =>
             {
                 mAutoRunWindow = new AutoRunWindow();
                 mAutoRunWindow.Show();
 
-                GingerCore.General.DoEvents();                
+                GingerCore.General.DoEvents();
                 SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
-                Dispatcher.Run();                                
+                Dispatcher.Run();
             });
 
             // Makes the thread support message pumping 
@@ -216,7 +217,7 @@ namespace Ginger
                 mAutoRunWindow.Dispatcher.Invoke(() =>
                 {
                     Thread.Sleep(100);  // run something on main window so we know it is active and pumping messages
-            });
+                });
             }
         }
 
@@ -227,7 +228,7 @@ namespace Ginger
             {
                 Thread.Sleep(500);
             }
-            
+
         }
 
         bool ITargetFrameworkHelper.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)
@@ -431,14 +432,14 @@ namespace Ginger
             System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
             if (!Directory.Exists(tempFolder))
             {
-                Directory.CreateDirectory(tempFolder); 
+                Directory.CreateDirectory(tempFolder);
             }
             CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
             Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
         }
 
         public Dictionary<string, string> TakeDesktopScreenShot(bool captureAllScreens = false)
-        {            
+        {
             return GingerCore.General.TakeDesktopScreenShot(true);
         }
 
@@ -458,7 +459,7 @@ namespace Ginger
         //    return ReportTemplate.GenerateReport(templatename, reportInfo);
         //}
 
-       
+
         public string GetALMConfig()
         {
             return WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType.ToString();
@@ -566,7 +567,7 @@ namespace Ginger
 
             Ginger.Run.RunSetActions.RunSetActionScript actionScript = new RunSetActionScript();
             actionScript.VerifySolutionFloder(SolutionFolder, FileName);
-            
+
             act.ScriptName = FileName;
             act.ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS;
             act.Execute();
@@ -577,10 +578,10 @@ namespace Ginger
         {
             return ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALMIntegration.eALMConnectType.Auto, false);
         }
-        
 
-        
-       
+
+
+
 
         public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
         {
@@ -591,7 +592,7 @@ namespace Ginger
 
         public bool GetLatest(string path, SourceControlBase SourceControl)
         {
-           return SourceControlUI.GetLatest(path, SourceControl);
+            return SourceControlUI.GetLatest(path, SourceControl);
         }
 
         public bool Revert(string path, SourceControlBase SourceControl)
@@ -618,6 +619,10 @@ namespace Ginger
         {
             return new OracleConnection(ConnectionString);
         }
+        public bool IsSharedRepositoryItem(RepositoryItemBase repositoryItem)
+        {
+            return SharedRepositoryOperations.IsSharedRepositoryItem(repositoryItem);
+        }
     }
-    
+
 }

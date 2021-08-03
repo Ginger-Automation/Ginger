@@ -21,6 +21,7 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
 using Ginger.BusinessFlowWindows;
+using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
@@ -713,10 +714,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void AddToSRHandler(object sender, RoutedEventArgs e)
         {
-            SetItem(sender);
-            List<RepositoryItemBase> list = new List<RepositoryItemBase>();
-            list.Add(mActivity);
-            (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
+            SetItem(sender);       
+            WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mActivity));
         }
 
         private void ResetHandler(object sender, RoutedEventArgs e)
@@ -890,8 +889,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 list.Add(activityIdnt.IdentifiedActivity);
             }
-
-            (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
+       
+            WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, list));        
         }
 
         private void SetPublishGroupHandler(object sender, RoutedEventArgs e)

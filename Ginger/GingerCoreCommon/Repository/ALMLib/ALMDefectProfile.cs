@@ -81,6 +81,11 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public override string GetItemType()
+        {
+            return nameof(ALMDefectProfile);
+        }
+
         public override void PostDeserialization()
         {
             if (this.AlmType == 0)

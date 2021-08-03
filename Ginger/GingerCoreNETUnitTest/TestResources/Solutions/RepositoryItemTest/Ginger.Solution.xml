@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="00bb0c91-8286-44b0-a29f-b08468f9263d" ItemType="Solution" CreatedBy="JGHODKE" Created="202107290909" GingerVersion="3.9.0.0" Version="2" LastUpdateBy="JGHODKE" LastUpdate="202107290909" />
+<Solution EncryptedValidationString="VUmheVjtatgVR0oSpuArDg==" Guid="00bb0c91-8286-44b0-a29f-b08468f9263d" Name="RepositoryItemTest" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ApplicationPlatforms>
+<ApplicationPlatform AppName="MyWindowsApp" Guid="d8b0e0d1-5659-48e3-bf1d-810f385bf8a5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Windows" />
+</ApplicationPlatforms>
+
+<ExecutionLoggerConfigurationSetList>
+<ExecutionLoggerConfiguration DataPublishingPhase="PostExecution" DeleteLocalDataOnPublish="No" ExecutionLoggerConfigurationExecResultsFolder="~\ExecutionResults" ExecutionLoggerConfigurationIsEnabled="True" ExecutionLoggerConfigurationMaximalFolderSize="250" Guid="81cc78ba-ca08-48f2-a483-08192f824b46" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" PublishLogToCentralDB="No" SelectedDataRepositoryMethod="LiteDB" Seq="0" />
+</ExecutionLoggerConfigurationSetList>
+
+<HTMLReportsConfigurationSetList>
+<HTMLReportsConfiguration Guid="517a1c62-d681-4f20-bf9e-33e7a8197619" HTMLReportConfigurationMaximalFolderSize="0" HTMLReportsFolder="~\HTMLReports" HTMLReportTemplatesSeq="1" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" Seq="0" />
+</HTMLReportsConfigurationSetList>
+</Solution></GingerRepositoryItem>
