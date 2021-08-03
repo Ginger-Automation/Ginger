@@ -125,6 +125,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             DriverConfigParam appActivity = new DriverConfigParam() { Parameter = "appActivity", Description = "Activity name for the Android activity you want to launch from your package", Value = "com.android.settings.Settings" };
             DriverConfigParam bundleId = new DriverConfigParam() { Parameter = "bundleId", Description = "Bundle ID of the app under test", Value = "com.apple.Preferences" };
             DriverConfigParam browserName = new DriverConfigParam() { Parameter = "browserName", Description = "Name of mobile web browser to automate" };
+            DriverConfigParam defualtURL = new DriverConfigParam() { Parameter = "defaultURL", Description = "Ginger Capability | Default URL to load on browser connection", Value= "https://ginger.amdocs.com/" };
             if (mAppType.Value == eAppType.NativeHybride.ToString())
             {
                 if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
@@ -149,6 +150,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                     DeleteCapabilityIfExist(appActivity.Parameter);
                 }
                 DeleteCapabilityIfExist(browserName.Parameter);
+                DeleteCapabilityIfExist(defualtURL.Parameter);
             }
             else
             {
@@ -159,8 +161,9 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 else
                 {
                     browserName.Value = "Safari";
-                }                
+                }
                 AddOrUpdateCapability(browserName);
+                AddOrUpdateCapability(defualtURL);
                 DeleteCapabilityIfExist(bundleId.Parameter);
                 DeleteCapabilityIfExist(appPackage.Parameter);
                 DeleteCapabilityIfExist(appActivity.Parameter);
