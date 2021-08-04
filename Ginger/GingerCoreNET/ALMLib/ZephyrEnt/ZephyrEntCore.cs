@@ -16,13 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.Data_Contracts;
-using ALM_Common.DataContracts;
+using AlmDataContractsStd.Contracts;
+using AlmDataContractsStd.Enums;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.QC;
 using GingerCore.ALM.ZephyrEnt.Bll;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json.Linq;
 using System;
@@ -30,14 +31,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using ZephyrEntSDK.Models;
-using ZephyrEntSDK.Models.Base;
+using ZephyrEntStdSDK.Models;
+using ZephyrEntStdSDK.Models.Base;
 
 namespace GingerCore.ALM
 {
     public class ZephyrEntCore : ALMCore
     {
-        protected Zepyhr_Ent_Repository.ZephyrEntRepository zephyrEntRepository;
+        protected Zepyhr_Ent_Repository_Std.ZephyrEntRepositoryStd zephyrEntRepository;
         private ZephyrEntExportManager zephyrEntExportManager;
         private ZephyrEntImportManager zephyrEntImportManager;
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
@@ -47,9 +48,12 @@ namespace GingerCore.ALM
             get { return ZephyrEntImportManager.ApplicationPlatforms; }
             set { ZephyrEntImportManager.ApplicationPlatforms = value; }
         }
+
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.ZephyrEnterprise;
+
         public ZephyrEntCore()
         {
-            zephyrEntRepository = new Zepyhr_Ent_Repository.ZephyrEntRepository(new LoginDTO()
+            zephyrEntRepository = new Zepyhr_Ent_Repository_Std.ZephyrEntRepositoryStd(new LoginDTO()
             {
                 User = ALMCore.DefaultAlmConfig.ALMUserName,
                 Password = ALMCore.DefaultAlmConfig.ALMPassword,
@@ -246,7 +250,7 @@ namespace GingerCore.ALM
             return zephyrEntRepository.GetTCsByTreeId(treeId);
         }
 
-        public QC.QCTestSet ImportTestSetData(QC.QCTestSet testSet)
+        public QC.ALMTestSet ImportTestSetData(QC.ALMTestSet testSet)
         {
             List<BaseResponseItem> selectedTcs = GetZephyrEntTcsByTreeId(Convert.ToInt32(testSet.TestSetID));
             var token = (JToken)selectedTcs[0].TryGetItem("results");
@@ -256,12 +260,12 @@ namespace GingerCore.ALM
             }
             return testSet;
         }
-        public QC.QCTSTest ImportTSTest(JToken testInstance)
+        public QC.ALMTSTest ImportTSTest(JToken testInstance)
         {
-            QC.QCTSTest newTSTest = new QC.QCTSTest();
+            QC.ALMTSTest newTSTest = new QC.ALMTSTest();
             if (newTSTest.Runs == null)
             {
-                newTSTest.Runs = new List<QCTSTestRun>();
+                newTSTest.Runs = new List<ALMTSTestRun>();
             }
 
             int versionId = Convert.ToInt32(testInstance["tcrVersionNumber"]);
@@ -282,7 +286,7 @@ namespace GingerCore.ALM
                 foreach (var testcaseStep in testStepsToken)
                 {
 
-                    QC.QCTSTestStep newtsStep = new QC.QCTSTestStep();
+                    QC.ALMTSTestStep newtsStep = new QC.ALMTSTestStep();
                     newtsStep.StepID = testcaseStep["id"].ToString();
                     newtsStep.StepName = testcaseStep["step"].ToString();
                     newtsStep.Description = testcaseStep["data"].ToString();
@@ -303,7 +307,7 @@ namespace GingerCore.ALM
             return zephyrEntExportManager.CreateNewTestCycle();
         }
 
-        public BusinessFlow ConvertQCTestSetToBF(QC.QCTestSet tS)
+        public BusinessFlow ConvertQCTestSetToBF(QC.ALMTestSet tS)
         {
             return zephyrEntImportManager.ConvertQCTestSetToBF(tS);
         }

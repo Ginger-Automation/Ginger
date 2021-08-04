@@ -16,40 +16,36 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.Abstractions;
-using ALM_Common.DataContracts;
+using AlmDataContractsStd.Contracts;
+using AlmDataContractsStd.Enums;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
-using GingerCore.External;
 using GingerCore.Variables;
-using Newtonsoft.Json;
-using ALM_Common.Data_Contracts;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using JiraRepositoryStd;
+using JiraRepositoryStd.Data_Contracts;
+using JiraRepositoryStd.Settings;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web;
-using JiraRepository;
-using JiraRepository.Data_Contracts;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM.JIRA
 {
     public class JiraImportManager
     {
-        private JiraRepository.JiraRepository jiraRepObj;
+        private JiraRepositoryStd.JiraRepositoryStd jiraRepObj;
 
-        public JiraImportManager(JiraRepository.JiraRepository jiraRepObj)
+        public JiraImportManager(JiraRepositoryStd.JiraRepositoryStd jiraRepObj)
         {
             this.jiraRepObj = jiraRepObj;
         }
 
-        public JiraRepository.JiraRepository JiraRepObj()
+        public JiraRepositoryStd.JiraRepositoryStd JiraRepObj()
         {
             return this.jiraRepObj;
         }
@@ -63,23 +59,23 @@ namespace GingerCore.ALM.JIRA
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
             try
             {
-                JiraRepository.JiraRepository jiraRep = new JiraRepository.JiraRepository();
+                JiraRepositoryStd.JiraRepositoryStd jiraRep = new JiraRepositoryStd.JiraRepositoryStd();
                 LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
                 if (resourceType == ResourceType.DEFECT)
                 {
-                    AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testDefectFieldsList;
-                    testDefectFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectKey, ALM_Common.DataContracts.ResourceType.DEFECT);
+                    AlmResponseWithData<JiraFieldColl> testDefectFieldsList;
+                    testDefectFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectKey, ResourceType.DEFECT);
                     fields.Append(SetALMItemsFields(testDefectFieldsList, ResourceType.DEFECT));
                 }
                 else
                 {
-                    AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList;
-                    AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testSetFieldsList;
-                    AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testExecutionFieldsList;
+                    AlmResponseWithData<JiraFieldColl> testCaseFieldsList;
+                    AlmResponseWithData<JiraFieldColl> testSetFieldsList;
+                    AlmResponseWithData<JiraFieldColl> testExecutionFieldsList;
 
-                    testSetFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectKey, ALM_Common.DataContracts.ResourceType.TEST_SET);
-                    testCaseFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectKey, ALM_Common.DataContracts.ResourceType.TEST_CASE);
-                    testExecutionFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectKey, ALM_Common.DataContracts.ResourceType.TEST_CASE_EXECUTION_RECORDS);
+                    testSetFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectKey, ResourceType.TEST_SET);
+                    testCaseFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectKey, ResourceType.TEST_CASE);
+                    testExecutionFieldsList = jiraRep.GetIssueFields(loginData.User, loginData.Password, loginData.Server, ALMCore.DefaultAlmConfig.ALMProjectKey, ResourceType.TEST_CASE_EXECUTION_RECORDS);
 
                     fields.Append(SetALMItemsFields(testSetFieldsList, ResourceType.TEST_SET));
                     fields.Append(SetALMItemsFields(testCaseFieldsList, ResourceType.TEST_CASE));
@@ -91,7 +87,7 @@ namespace GingerCore.ALM.JIRA
             return fields;
         }
 
-        private ObservableList<ExternalItemFieldBase> SetALMItemsFields(AlmResponseWithData<JiraRepository.Data_Contracts.JiraFieldColl> testCaseFieldsList, ResourceType fieldResourceType)
+        private ObservableList<ExternalItemFieldBase> SetALMItemsFields(AlmResponseWithData<JiraFieldColl> testCaseFieldsList, ResourceType fieldResourceType)
         {
             ObservableList<ExternalItemFieldBase> resourceFields = new ObservableList<ExternalItemFieldBase>();
             string fieldResourceTypeToString = fieldResourceType.ToString();
@@ -684,7 +680,7 @@ namespace GingerCore.ALM.JIRA
             JiraTestSet issue = new JiraTestSet();
             filterData.Add(new WhereData() { Name = "id", Values = new List<string>() { currentTS.Key }, Operator = WhereOperator.And });
             AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepObj.GetJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_SET, filterData);
-            List<FieldSchema> templates = JiraRepository.Settings.ExportSettings.Instance.GetSchemaByProject(ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_SET);
+            List<FieldSchema> templates = ExportSettings.Instance.GetSchemaByProject(ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_SET);
             foreach (var item in getTestsSet.DataResult)
             {
                 issue.ID = item.id.ToString();
@@ -742,7 +738,7 @@ namespace GingerCore.ALM.JIRA
                 filterData.Add(new WhereData() { Name = "id", Values = new List<string>() { test.TestID }, Operator = WhereOperator.And });
                 AlmResponseWithData<List<JiraIssue>> getTest = jiraRepObj.GetJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_CASE, filterData);
                 ObservableList<JiraTest> jiratests = new ObservableList<JiraTest>();
-                List<FieldSchema> templates = JiraRepository.Settings.ExportSettings.Instance.GetSchemaByProject(ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_CASE);
+                List<FieldSchema> templates = ExportSettings.Instance.GetSchemaByProject(ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_CASE);
                 foreach (var item in getTest.DataResult)
                 {
                     test.TestID = item.id.ToString();
@@ -818,7 +814,7 @@ namespace GingerCore.ALM.JIRA
             AlmResponseWithData<List<JiraIssue>> getTestsSet = jiraRepObj.GetJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_SET, filterData);
 
             ObservableList<JiraTestSet> jiratestset = new ObservableList<JiraTestSet>();
-            List<FieldSchema> templates = JiraRepository.Settings.ExportSettings.Instance.GetSchemaByProject(ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_SET);
+            List<FieldSchema> templates = ExportSettings.Instance.GetSchemaByProject(ALMCore.DefaultAlmConfig.ALMProjectName, ResourceType.TEST_SET);
             foreach (var item in getTestsSet.DataResult)
             {
                 JiraTestSet issue = new JiraTestSet();

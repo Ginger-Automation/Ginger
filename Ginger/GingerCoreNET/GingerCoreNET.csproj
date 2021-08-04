@@ -49,6 +49,7 @@
 
   <ItemGroup>
     <None Remove="DLLS\LibGit2Sharp.dll" />
+    <None Remove="DLLS\OctaneSdkStandard.dll" />
     <None Remove="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
     <None Remove="log4netLib\log4net.config" />
     <None Remove="Reports\Ginger-Web-Client\main.83a800d55fc7d8ada5fd.js" />
@@ -274,11 +275,26 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="AlmDataContractsStd">
+      <HintPath>DLLS\AlmDataContractsStd.dll</HintPath>
+    </Reference>
+    <Reference Include="AlmRepositoryStd">
+      <HintPath>DLLS\AlmRepositoryStd.dll</HintPath>
+    </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
     </Reference>
+    <Reference Include="JiraRepositoryStd">
+      <HintPath>DLLS\JiraRepositoryStd.dll</HintPath>
+    </Reference>
     <Reference Include="LibGit2Sharp">
       <HintPath>DLLS\LibGit2Sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ZephyrEntStdSDK">
+      <HintPath>DLLS\ZephyrEntStdSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Zepyhr_Ent_Repository_Std">
+      <HintPath>DLLS\Zepyhr_Ent_Repository_Std.dll</HintPath>
     </Reference>
   </ItemGroup>
 

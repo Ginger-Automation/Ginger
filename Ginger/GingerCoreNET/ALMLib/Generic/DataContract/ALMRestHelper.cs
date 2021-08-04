@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -15,15 +15,22 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 
-
-namespace GingerCore.ALM.QC
+namespace Amdocs.Ginger.CoreNET.ALMLib.DataContract
 {
-    public class QCTSTestStep
+    public static class ALMRestHelper
     {
-        public string StepID { get; set; }
-        public string StepName { get; set; }
-        public string Description { get; set; }
-        public string Expected { get; set; }
+        public static IEnumerable<XElement> GetFieldsElements(XElement fields)
+        {
+            var fieldsElements = fields.Elements("Fields").Elements();
+            if (fields.Elements("Fields").Elements().Count() == 0)
+            {
+                fieldsElements = fields.Elements();
+            }
+            return fieldsElements;
+        }
     }
 }

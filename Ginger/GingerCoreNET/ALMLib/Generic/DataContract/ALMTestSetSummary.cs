@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 namespace GingerCore.ALM.QC
 {
-    public partial class QCTestSetSummary
+    public partial class ALMTestSetSummary
     {
         public string TestSetName { get; set; }
         public dynamic TestSetID { get; set; }

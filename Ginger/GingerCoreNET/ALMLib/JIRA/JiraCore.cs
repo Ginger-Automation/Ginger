@@ -16,26 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using AlmDataContractsStd.Enums;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using GingerCore.Activities;
 using GingerCore.ALM.JIRA;
-using Ginger;
+using GingerCoreNET.ALMLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using JiraRepositoryStd;
+using JiraRepositoryStd.BLL;
+using JiraRepositoryStd.Data_Contracts;
 using System;
 using System.Collections.Generic;
-using GingerCore.Activities;
-using ALM_Common.DataContracts;
 using System.ComponentModel;
 using System.IO;
-using System.Xml;
 using System.IO.Compression;
-using Newtonsoft.Json;
-using GingerCore.External;
-using Amdocs.Ginger.Repository;
-using GingerCore.ALM.JIRA.Bll;
-using JiraRepository.BLL;
-using JiraRepository.Data_Contracts;
-using amdocs.ginger.GingerCoreNET;
 using System.Linq;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM
 {
@@ -45,7 +41,6 @@ namespace GingerCore.ALM
         private JiraConnectManager jiraConnectObj;
         private JiraImportManager jiraImportObj;
         private JiraManagerZephyr jmz;
-        private JiraRepository.JiraRepository jiraRepObj;
         public static string ALMProjectGroupName { get; set; }
         public static string ALMProjectGuid { get; set; }
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
@@ -63,10 +58,13 @@ namespace GingerCore.ALM
             get { return jiraImportObj.ApplicationPlatforms; }
             set { jiraImportObj.ApplicationPlatforms = value; }
         }
+
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.Jira;
+
         public JiraCore()
         {
             string settingsPath = DefaultAlmConfig.ALMConfigPackageFolderPathCalculated;
-            jiraRepObj = new JiraRepository.JiraRepository(settingsPath, (TestingALMType)Enum.Parse(typeof(TestingALMType), ALMCore.DefaultAlmConfig.JiraTestingALM.ToString()));
+            JiraRepositoryStd.JiraRepositoryStd jiraRepObj = new JiraRepositoryStd.JiraRepositoryStd(settingsPath, (TestingALMType)Enum.Parse(typeof(TestingALMType), ALMCore.DefaultAlmConfig.JiraTestingALM.ToString()));
             exportMananger = new JIRA.Bll.JiraExportManager(jiraRepObj);
             jiraConnectObj = new JiraConnectManager(jiraRepObj);
             jiraImportObj = new JiraImportManager(jiraRepObj);
@@ -86,9 +84,9 @@ namespace GingerCore.ALM
         {
             switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
             {
-                case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Xray:
                     return exportMananger.CreateNewALMDefects(defectsForOpening, defectsFields);
-                case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Zephyr:
                     Dictionary<Guid, string> defectsOpeningResults = exportMananger.CreateNewALMDefects(defectsForOpening, defectsFields);
                     exportMananger.AssignDefectsToZephyrExecutions(defectsForOpening, defectsOpeningResults);
                     return defectsOpeningResults;
@@ -111,9 +109,9 @@ namespace GingerCore.ALM
         {
             switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
             {
-                case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Xray:
                     return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig, ref result);
-                case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.Zephyr:
                     return exportMananger.ExportExecutionDetailsToJiraZephyr(bizFlow, publishToALMConfig, ref result);
                 default:
                     return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig, ref result);

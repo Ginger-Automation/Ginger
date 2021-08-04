@@ -16,17 +16,21 @@ limitations under the License.
 */
 #endregion
 
-
+using System.Collections.Generic;
 namespace GingerCore.ALM.QC
 {
-    public class QCTSTestParameter
+    public class ALMTestSet
     {
-        //parameter Name
-        public string Name { get; set; }
-        //Actual Value or check Default value if Actual is null
-        public string Value { get; set; }
+        public ALMTestSet()
+        {
+            this.Tests = new List<ALMTSTest>();
+        }
 
-        //TODO not sure if this is needed yet will determine during testing. 
-        public string Type { get; set; }
+        public string TestSetName { get; set; }
+        public string TestSetPath { get; set; }
+        public string TestSetID { get; set; }
+        public string TestSetVersion { get; set; }
+        public string TestSetProject { get; set; }
+        public List<ALMTSTest> Tests { get; set; }
     }
 }

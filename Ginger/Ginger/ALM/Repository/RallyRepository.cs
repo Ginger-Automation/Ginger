@@ -18,13 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.ALM.Rally;
-using Ginger.Repository;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
-using GingerCore.ALM.QC;
 using GingerCore.ALM.Rally;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -32,7 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM.Repository
 {
@@ -51,8 +48,9 @@ namespace Ginger.ALM.Repository
         public override bool ShowImportReviewPage(string importDestinationFolderPath, object selectedTestPlan = null)
         {
             if (importDestinationFolderPath == "")
-                importDestinationFolderPath =  WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
-
+            {
+                importDestinationFolderPath = WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
+            }
             // get activities groups
             RallyImportReviewPage win = new RallyImportReviewPage(RallyConnect.Instance.GetRallyTestPlanFullData(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, (RallyTestPlan)selectedTestPlan), importDestinationFolderPath);
             win.ShowAsWindow();
@@ -60,7 +58,7 @@ namespace Ginger.ALM.Repository
             return true;
         }
 
-        public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
+        public override bool ConnectALMServer(eALMConnectType userMsgStyle)
         {
             bool isConnectSucc = false;
             Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Rally server");
@@ -76,10 +74,14 @@ namespace Ginger.ALM.Repository
             if (!isConnectSucc)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Could not connect to Rally server");
-                if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
+                if (userMsgStyle == eALMConnectType.Manual)
+                {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailure);
-                else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
+                }
+                else if (userMsgStyle == eALMConnectType.Auto)
+                {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings);
+                }
             }
 
             return isConnectSucc;
@@ -109,30 +111,40 @@ namespace Ginger.ALM.Repository
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testPlan.Name);
 
                         // convert test set into BF
-                        BusinessFlow tsBusFlow = ALMIntegration.Instance.AlmCore.ConvertRallyTestPlanToBF(testPlan);
+                        BusinessFlow tsBusFlow = ((RallyCore)ALMIntegration.Instance.AlmCore).ConvertRallyTestPlanToBF(testPlan);
 
                         if ( WorkSpace.Instance.Solution.MainApplication != null)
                         {
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
+                            {
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                                     if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                                     {
-                                        ApplicationPlatform appAgent =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                         if (appAgent != null)
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
                                     }
+                            }
                             //handle non mapped Activities
                             if (tsBusFlow.TargetApplications.Count == 0)
-                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.Instance.Solution.MainApplication });
+                            {
+                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
+                            }
                             foreach (Activity activ in tsBusFlow.Activities)
+                            {
                                 if (string.IsNullOrEmpty(activ.TargetApplication))
+                                {
                                     activ.TargetApplication = tsBusFlow.MainApplication;
+                                }
+                            }
                         }
                         else
                         {
                             foreach (Activity activ in tsBusFlow.Activities)
+                            {
                                 activ.TargetApplication = null; // no app configured on solution level
+                            }
                         }
 
                         //save bf
@@ -164,8 +176,10 @@ namespace Ginger.ALM.Repository
 
         public override void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
-            if (businessFlow == null) return;
-
+            if (businessFlow == null)
+            {
+                return;
+            }
             if (businessFlow.ActivitiesGroups.Count == 0)
             {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
@@ -191,10 +205,12 @@ namespace Ginger.ALM.Repository
             Reporter.HideStatusMessage();
         }
 
-        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
+        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
-            if (businessFlow == null) return false;
-
+            if (businessFlow == null)
+            {
+                return false;
+            }
             if (businessFlow.ActivitiesGroups.Count == 0)
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " do not include " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " which supposed to be mapped to ALM Test Cases, please add at least one " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " before doing export.");
@@ -211,16 +227,17 @@ namespace Ginger.ALM.Repository
             {
                 if (performSaveAfterExport)
                 {
-                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));                    
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                 }
-                if(almConectStyle != ALMIntegration.eALMConnectType.Auto && almConectStyle != ALMIntegration.eALMConnectType.Silence)
+                if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
+                {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
+                }
             }
-            else
+            else if (almConectStyle != eALMConnectType.Silence)
             {
-                if(almConectStyle != ALMIntegration.eALMConnectType.Silence)
-                    Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
+                Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
 
             Reporter.HideStatusMessage();

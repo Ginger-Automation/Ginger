@@ -19,7 +19,7 @@ limitations under the License.
 
 namespace GingerCoreNET.ALMLib
 {
-    public class ALMIntegration
+    public class ALMIntegrationEnums
     {
         //ERROR Commented not the location - each ALM need to say what type it is 
         public enum eALMType

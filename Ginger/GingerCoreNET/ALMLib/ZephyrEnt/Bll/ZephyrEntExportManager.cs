@@ -16,34 +16,29 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
 using GingerCore.Activities;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ZephyrEntSDK.Models;
-using ZephyrEntSDK.Models.Base;
-using Zepyhr_Ent_Repository;
+using ZephyrEntStdSDK.Models;
+using ZephyrEntStdSDK.Models.Base;
+using Zepyhr_Ent_Repository_Std;
 
 namespace GingerCore.ALM.ZephyrEnt.Bll
 {
     public class ZephyrEntExportManager
     {
         string currentExportName = String.Empty;
-        private ZephyrEntRepository zephyrEntRepository;
+        private ZephyrEntRepositoryStd zephyrEntRepository;
         private int projectId;
-        public ZephyrEntExportManager(ZephyrEntRepository zephyrEntRepository)
+        public ZephyrEntExportManager(ZephyrEntRepositoryStd zephyrEntRepository)
         {
             this.zephyrEntRepository = zephyrEntRepository;
             projectId = Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey);
