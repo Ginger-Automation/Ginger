@@ -26,7 +26,7 @@ using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
 
-namespace Amdocs.Ginger.GingerConsole
+namespace Amdocs.Ginger.GingerRuntime
 {
     // GingerConsole Workspace Event Handler
 

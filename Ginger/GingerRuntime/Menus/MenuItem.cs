@@ -19,7 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 
-namespace Amdocs.Ginger.GingerConsole
+namespace Amdocs.Ginger.GingerRuntime
 {
     public class MenuItem
     {

@@ -20,14 +20,14 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Reports.ReportHelper;
 using Amdocs.Ginger.CoreNET.RunLib;
-using Amdocs.Ginger.GingerConsole.ReporterLib;
+using Amdocs.Ginger.GingerRuntime.ReporterLib;
 using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace Amdocs.Ginger.GingerConsole
+namespace Amdocs.Ginger.GingerRuntime
 {
     public class Program
     {
@@ -57,7 +57,7 @@ namespace Amdocs.Ginger.GingerConsole
             };
 
             
-            Reporter.WorkSpaceReporter = new GingerConsoleWorkspaceReporter();
+            Reporter.WorkSpaceReporter = new GingerRuntimeWorkspaceReporter();
 
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
@@ -141,7 +141,7 @@ namespace Amdocs.Ginger.GingerConsole
             InitWorkSpace(false);
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console   
-            WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), new DotnetCoreHelper());
+            WorkSpace.Instance.InitWorkspace(new GingerRuntimeWorkspaceReporter(), new DotnetCoreHelper());
             CLIProcessor CLI = new CLIProcessor();
            await CLI.ExecuteArgs(args);            
         }

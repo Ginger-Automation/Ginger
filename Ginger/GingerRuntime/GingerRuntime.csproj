@@ -11,15 +11,15 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RuntimeFrameworkVersion>3.1.0</RuntimeFrameworkVersion>
-    <RootNamespace>Amdocs.Ginger.GingerConsole</RootNamespace>
+    <RootNamespace>Amdocs.Ginger.Runtime</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <CodeAnalysisRuleSet>GingerConsole.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>GingerRuntime.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <CodeAnalysisRuleSet>GingerConsole.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>GingerRuntime.ruleset</CodeAnalysisRuleSet>
     <WarningLevel>2</WarningLevel>
   </PropertyGroup>
 
