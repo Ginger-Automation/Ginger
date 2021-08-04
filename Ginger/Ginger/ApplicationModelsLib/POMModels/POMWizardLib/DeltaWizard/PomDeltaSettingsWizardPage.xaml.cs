@@ -62,10 +62,44 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     SetElementLocatorsSettingsData();                    
                     SetElementLocatorsSettingsGridView();
                     ShowSpecficFrameLearnConfigPanel();
+                    ShowsCustomRelativePathTemplateConfig();
 
                     xAvoidPropertiesAllRadioButton.IsChecked = true;
                     xKeepLocatorsOrderCheckBox.IsChecked = true;
                     break;
+                case EventType.LeavingForNextPage:
+                    UpdateCustomTemplateList();
+                    break;
+            }
+        }
+
+        private void UpdateCustomTemplateList()
+        {
+            if (mAppPlatform.Equals(ePlatformType.Web))
+            {
+                if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true)
+                {
+                    mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList = xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList;
+                }
+                else
+                {
+                    mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList.Clear();
+                }
+            }
+        }
+        private void ShowsCustomRelativePathTemplateConfig()
+        {
+            if (mAppPlatform.Equals(ePlatformType.Web))
+            {
+                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Visible;
+                if (mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList.Count > 0)
+                {
+                    xCustomRelativeXpathTemplateFrame.UpdateCustomRelPathGridList(mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList);
+                }
+            }
+            else
+            {
+                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Collapsed;
             }
         }
 

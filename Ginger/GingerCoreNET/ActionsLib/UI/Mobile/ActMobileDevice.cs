@@ -157,6 +157,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("Drag XY to XY")]
             DragXYXY,
 
+            [EnumValueDescription("Get Current Application Identifiers")]
+            GetCurrentApplicationInfo,
+
             [EnumValueDescription("Press Back Button")]
             PressBackButton,
             [EnumValueDescription("Press Home Button")]

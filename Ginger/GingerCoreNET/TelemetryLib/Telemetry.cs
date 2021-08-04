@@ -83,11 +83,11 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             WorkSpace.Instance.Telemetry = telemetry;
             InitClient();
             
-            // run it on task so startup is not impacted
-            Task.Factory.StartNew(() => {
-                Thread.Sleep(10000);  // Wait 10 seconds so main window and others can load
-                Telemetry.CheckVersionAndNews();
-            });
+            //// run it on task so startup is not impacted
+            //Task.Factory.StartNew(() => {
+            //    Thread.Sleep(10000);  // Wait 10 seconds so main window and others can load
+            //    Telemetry.CheckVersionAndNews();
+            //});
             
             StartProcessing();
             

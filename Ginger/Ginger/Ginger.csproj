@@ -99,16 +99,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="AlmDataContractsStd">
+      <HintPath>..\GingerCoreNET\DLLS\AlmDataContractsStd.dll</HintPath>
+    </Reference>
     <Reference Include="ALMRestClient">
       <HintPath>..\GingerCore\DLLs\ALMRestClient.dll</HintPath>
     </Reference>
-    <Reference Include="ALM_Common, Version=7.9.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="ALM_Common">
       <HintPath>..\GingerCore\DLLs\ALM_Common.dll</HintPath>
     </Reference>
     <Reference Include="Interop.TDAPIOLELib">
       <HintPath>..\GingerCore\DLLs\Interop.TDAPIOLELib.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="JiraRepositoryStd">
+      <HintPath>..\GingerCoreNET\DLLS\JiraRepositoryStd.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -147,10 +152,6 @@
     <Reference Include="System.Printing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
-    <Reference Include="JiraRepository, Version=8.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GingerCore\DLLs\JiraRepository.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.DataVisualization" />
     <Reference Include="System.Web.Services" />
@@ -169,9 +170,9 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="ZephyrEntSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ZephyrEntStdSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GingerCore\DLLs\ZephyrEntSDK.dll</HintPath>
+      <HintPath>..\GingerCoreNET\DLLS\ZephyrEntStdSDK.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -511,6 +512,18 @@
     <Compile Include="Run\RunSetActions\RunSetActionSendDataToExternalSourceEditPage.xaml.cs">
       <DependentUpon>RunSetActionSendDataToExternalSourceEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SolutionCategories\SolutionCategoriesPage.xaml.cs">
+      <DependentUpon>SolutionCategoriesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml.cs">
+      <DependentUpon>SolutionCategoryOptionalValuesEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionWindows\ReplaceEncryptionKeyPage.xaml.cs">
+      <DependentUpon>ReplaceEncryptionKeyPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml.cs">
+      <DependentUpon>CustomRelativeXpathTemplateUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\LiveSpyHandler.xaml.cs">
       <DependentUpon>LiveSpyHandler.xaml</DependentUpon>
     </Compile>
@@ -520,12 +533,16 @@
     <Compile Include="UserControlsLib\UCElementDetails.xaml.cs">
       <DependentUpon>UCElementDetails.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\UCEncryptionKey.xaml.cs">
+      <DependentUpon>UCEncryptionKey.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\UCExplorerWindowSelection.xaml.cs">
       <DependentUpon>UCExplorerWindowSelection.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\ucShowItemID.xaml.cs">
       <DependentUpon>ucShowItemID.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\ValidateCustomRelativeXpath.cs" />
     <Compile Include="Variables\ValidationRule\NumberValidationRule.cs" />
     <Compile Include="Variables\ValidationRule\DateTimeFormatValidationRule.cs" />
     <Compile Include="Variables\VariableEditPages\VariableDateTimePage.xaml.cs">
@@ -1462,12 +1479,6 @@
       <DependentUpon>ToolTipPopUpWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Help\GingerHelpProvider.cs" />
-    <Compile Include="Help\HelpWindow.xaml.cs">
-      <DependentUpon>HelpWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Help\TreeViewItems\HelpDocumentsFolderTreeItem.cs" />
-    <Compile Include="Help\TreeViewItems\VideoHelpFileTreeItem.cs" />
-    <Compile Include="Help\TreeViewItems\MHTHelpFileTreeItem.cs" />
     <Compile Include="Reports\Designer\HTMLReportTemplateDesignerPage .xaml.cs">
       <DependentUpon>HTMLReportTemplateDesignerPage .xaml</DependentUpon>
     </Compile>
@@ -1967,17 +1978,11 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <Resource Include="Images\%40AddFile_16x16.png" />
     <Resource Include="Images\%40AddSendExecutionData_16x16.png" />
+    <Content Include="Help\Library\OfflineHelp.htm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="StaticDrivers\selenium-server-standalone.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Help\Index.mht">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Help\SearchIndex.mht">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Help\Import_From_ASAP.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Agents\AddAgentWizardLib\AddAgentIntro.md" />
     <Resource Include="Actions\ActionConversion\ActionConversionIntro.md" />
@@ -1987,9 +1992,7 @@
     <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
-    <None Include="ALMRESTConfiguration\appsettings_QTest.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="ALMRESTConfiguration\appsettings_QTest.json" />
     <None Include="Ginger.ruleset" />
     <EmbeddedResource Include="Resources\LiteDB.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -2928,6 +2931,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="SolutionCategories\SolutionCategoriesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SolutionWindows\ReplaceEncryptionKeyPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControlsLib\LiveSpyHandler.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2941,6 +2960,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControlsLib\UCElementDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\UCEncryptionKey.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4003,10 +4026,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Help\HelpWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Reports\Designer\HTMLReportTemplateDesignerPage .xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -4514,7 +4533,6 @@
     <Content Include="Documents\License.rtf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Help\Developer Guide to Create Ginger Help Items.docx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -4597,7 +4615,6 @@
     <Folder Include="ALM\Octane\" />
     <Folder Include="AutomatePageLib\AddActionMenu\WindowExplorer\InternalBrowser\" />
     <Folder Include="Dictionaries\Languages\" />
-    <Folder Include="Help\Library\" />
     <Folder Include="Reports\HTMLReports\" />
     <Folder Include="Reports\SpecialReports\" />
     <Folder Include="Settings\TreeViewItems\" />
@@ -4719,12 +4736,6 @@
     </PackageReference>
     <PackageReference Include="Gherkin">
       <Version>4.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="Ginger.AccountReport.Contracts">
-      <Version>1.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="Ginger.ExecuterService.Contracts">
-      <Version>1.0.8</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
       <Version>1.11.21</Version>

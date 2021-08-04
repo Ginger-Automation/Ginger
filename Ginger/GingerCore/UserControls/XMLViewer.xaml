@@ -26,7 +26,7 @@
         </DataTemplate>
 
         <Style TargetType="{x:Type TreeViewItem}">
-            <Setter Property="IsExpanded" Value="True"/>
+            <Setter Property="IsExpanded" Value="False"/>
         </Style>
 
         <HierarchicalDataTemplate x:Key="treeViewTemplate" 

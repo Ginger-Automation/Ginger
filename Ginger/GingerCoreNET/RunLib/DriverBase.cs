@@ -23,6 +23,7 @@ using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 
@@ -54,7 +55,7 @@ namespace GingerCore.Drivers
         // Used for Driver with WPF window
         public IDispatcher Dispatcher { get; set; }
 
-        public bool mStopProcess { get; set; }
+        public virtual bool StopProcess { get; set; }
 
         public bool PreviousRunStopped { get; set; }
         public bool IsDriverRunning { get; set; }
@@ -155,19 +156,33 @@ namespace GingerCore.Drivers
         {
             DriverStatusChanged,
             ActionPerformed,
+            HighlightElement,
+            UnHighlightElement
         }
 
-        public void OnDriverMessage(eDriverMessageType DriverMessageType)
+        public void OnDriverMessage(eDriverMessageType DriverMessageType, object CustomSenderObj = null)
         {
-            DriverMessageEventHandler handler = DriverMessageEvent;
-            if (handler != null)
+            if (DriverMessageEvent != null)
             {
-                handler(this, new DriverMessageEventArgs(DriverMessageType));
+                DriverMessageEvent(CustomSenderObj ?? this, new DriverMessageEventArgs(DriverMessageType));
             }
         }
 
         public delegate void DriverMessageEventHandler(object sender, DriverMessageEventArgs e);
         public event DriverMessageEventHandler DriverMessageEvent;
+
+        public event SpyingElementEventHandler SpyingElementEvent;
+        public delegate object SpyingElementEventHandler();
+
+        public object OnSpyingElementEvent()
+        {
+            if (SpyingElementEvent != null)
+            {
+                return SpyingElementEvent();
+            }
+            else
+                return null;
+        }
 
         public virtual void ActionCompleted(Act act)
         {
@@ -227,6 +242,30 @@ namespace GingerCore.Drivers
         public virtual bool SerializationError(Agent agent, SerializationErrorType errorType, string name, string value)
         {
             return false;
+        }
+
+        public virtual Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
+        {
+            Point pointOnAppScreen = new Point();
+            double ratio_X, ratio_Y;
+
+            ratio_X = SrcWidth / ActWidth;
+            ratio_Y = SrcHeight / ActHeight;
+
+            pointOnAppScreen.X = (int)(clickedPoint.X * ratio_X);
+            pointOnAppScreen.Y = (int)(clickedPoint.Y * ratio_Y);
+
+            return pointOnAppScreen;
+        }
+
+        public virtual bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, Amdocs.Ginger.Common.UIElement.ElementInfo clickedElementInfo)
+        {
+            return false;
+        }
+
+        public virtual double ScreenShotInitialZoom()
+        {
+            return 0.5;
         }
     }
 }

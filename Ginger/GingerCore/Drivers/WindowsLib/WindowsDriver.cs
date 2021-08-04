@@ -46,8 +46,8 @@ namespace GingerCore.Drivers.WindowsLib
         int mActionTimeout = 10;
 
         [UserConfigured]
-        [UserConfiguredDefault("30")] 
-        [UserConfiguredDescription("Action Timeout - default is 30 seconds")]
+        [UserConfiguredDefault("150")] 
+        [UserConfiguredDescription("Action Timeout - default is 150 seconds")]
         public override int ActionTimeout
         {
             get
@@ -57,6 +57,24 @@ namespace GingerCore.Drivers.WindowsLib
             set
             { mActionTimeout = value; }
         }
+
+        int mImplicitWait = 30;
+
+        [UserConfigured]
+        [UserConfiguredDefault("30")]
+        [UserConfiguredDescription("Amount of time the driver should wait when searching for an element if it is not immediately present")]
+        public int ImplicitWait 
+        {
+            get
+            {
+                return mImplicitWait;
+            }
+            set
+            {
+                mImplicitWait = value;
+            }
+        }
+
 
         public WindowsDriver(BusinessFlow BF, eUIALibraryType type= eUIALibraryType.ComWrapper)
         {
@@ -73,13 +91,14 @@ namespace GingerCore.Drivers.WindowsLib
                     mUIAutomationHelper= new UIAComWrapperHelper();
                     ((UIAComWrapperHelper)mUIAutomationHelper).WindowExplorer = this;
                     ((UIAComWrapperHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
-                    ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = UIAComWrapperHelper.ePlatform.Windows;
+                    ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = ePlatformType.Windows;
 
                     mUIElementOperationsHelper = new UIElementOperationsHelper();
 
                     break;
 
             }
+            mUIAutomationHelper.ImplicitWait = mImplicitWait;
         }
 
         public override void UpdateContext(Context context)
@@ -350,7 +369,9 @@ namespace GingerCore.Drivers.WindowsLib
                     y = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
                     actionResult = mUIElementOperationsHelper.ClickElementUsingXY(automationElement, x, y);
                     break;
-
+                case ActUIElement.eElementAction.Collapse:
+                    actionResult = mUIElementOperationsHelper.CollapseElement(automationElement);
+                    break;
                 case ActUIElement.eElementAction.DoubleClickXY:
                     x = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.XCoordinate));
                     y = Int32.Parse(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.YCoordinate));
@@ -370,6 +391,24 @@ namespace GingerCore.Drivers.WindowsLib
 
                 case ActUIElement.eElementAction.GetText:
                     actionResult = mUIElementOperationsHelper.GetText(automationElement);
+                    isoutputvalue = true;
+                    break;
+
+                case ActUIElement.eElementAction.GetSelectedValue:
+                    actionResult = mUIElementOperationsHelper.GetSelectedValue(automationElement);
+                    isoutputvalue = true;
+                    break;
+
+                case ActUIElement.eElementAction.GetWindowTitle:
+                    object windowElement = mUIAutomationHelper.FindWindowByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
+                    if (windowElement != null)
+                    {
+                        actionResult = mUIElementOperationsHelper.GetTitle((AutomationElement)windowElement);
+                    }
+                    else 
+                    {
+                        actionResult = mUIElementOperationsHelper.GetTitle(automationElement);
+                    }
                     isoutputvalue = true;
                     break;
 
@@ -460,31 +499,15 @@ namespace GingerCore.Drivers.WindowsLib
                 //    mUIAutomationHelper.DragAndDrop(AE, actUIElement);
                 //    break;
 
-                //case ActUIElement.eElementAction.ClickAndValidate:
-                //    status = mUIAutomationHelper.ClickAndValidteHandler(AE, actUIElement);
-                //    if (!status.Contains("Clicked Successfully"))
-                //    {
-                //        actUIElement.Error += status;
-                //    }
-                //    else
-                //    {
-                //        actUIElement.ExInfo += status;
-                //    }
-                //    break;     
-
-
-                //case ActUIElement.eElementAction.Maximize:
-                //case ActUIElement.eElementAction.Minimize:
-                //    status = mUIAutomationHelper.SetElementVisualState(AE, actUIElement.ElementAction.ToString());
-                //    if (!status.Contains("State set successfully"))
-                //    {
-                //        act.Error = status;
-                //    }
-                //    else
-                //    {
-                //        act.ExInfo += status;
-                //    }
-                //    break;
+                case ActUIElement.eElementAction.ClickAndValidate:
+                    actionResult = ClickAndValidte(automationElement, actUIElement);
+                    break;
+                case ActUIElement.eElementAction.Maximize:
+                    actionResult = mUIElementOperationsHelper.SetWindowState(automationElement, WindowVisualState.Maximized);
+                    break;
+                case ActUIElement.eElementAction.Minimize:
+                    actionResult = mUIElementOperationsHelper.SetWindowState(automationElement, WindowVisualState.Minimized);
+                    break;
 
                 //case ActUIElement.eElementAction.ScrollDown:
                 //    mUIAutomationHelper.ScrollDown(AE);
@@ -512,7 +535,72 @@ namespace GingerCore.Drivers.WindowsLib
                 actUIElement.Error = actionResult.errorMessage;
             }
         }
+        public ActionResult ClickAndValidte(AutomationElement automationElement, ActUIElement act)
+        {
+            ActionResult actionResult = new ActionResult();
+            ActUIElement.eElementAction clickType;
+            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString(), out clickType) == false)
+            {
+                actionResult.errorMessage = "Unknown Click Type";
+                return actionResult;
+            }
 
+            ActUIElement.eElementAction validationType;
+            if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out validationType) == false)
+            {
+                actionResult.errorMessage = "Unknown Validation Type";
+                return actionResult;
+            }
+            string validationElementType = act.GetInputParamValue(ActUIElement.Fields.ValidationElement);
+
+            eLocateBy validationElementLocateby;
+            if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out validationElementLocateby) == false)
+            {
+                actionResult.errorMessage = "Unknown Validation Element Locate By";
+                return actionResult;
+            }
+
+            string validattionElementLocateValue = act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue);
+            bool LoopNextCheck = false;
+            if ((act.GetInputParamValue(ActUIElement.Fields.LoopThroughClicks).ToString()) == "True")
+            {
+                LoopNextCheck = true;
+            }
+
+            List<ActUIElement.eElementAction> clicks = PlatformInfoBase.GetPlatformImpl(mUIAutomationHelper.mPlatform).GetPlatformUIClickTypeList();
+            AutomationElement elementToValidate = (AutomationElement)mUIAutomationHelper.FindElementByLocator(validationElementLocateby, validattionElementLocateValue);
+
+            //perform click
+            bool isClicked = mUIElementOperationsHelper.PerformClick(automationElement, clickType);
+            if (isClicked)
+            {
+                //validate
+                bool isValidated = mUIElementOperationsHelper.LocateAndValidateElement(elementToValidate, validationElementType, validationType);
+                if (isValidated)
+                {
+                    actionResult.executionInfo = "Clicked Successfully And Validated Element.";
+                    return actionResult;
+                }
+                if ((!isValidated) && (LoopNextCheck))
+                {
+                    actionResult = mUIElementOperationsHelper.ClickElementByOthertypes(clickType, clicks, automationElement, elementToValidate, validationElementType, validationType);
+                }
+                else
+                {
+                    actionResult.executionInfo = "Validation Failed.";
+                }
+            }
+            else
+            {
+                if (LoopNextCheck)
+                {
+                    //click element by other types
+                    actionResult = mUIElementOperationsHelper.ClickElementByOthertypes(clickType, clicks, automationElement, elementToValidate, validationElementType, validationType);
+                }
+            }
+
+            return actionResult;
+        }
         private AutomationElement HandlePOMElememnt(ActUIElement act)
         {
             ObservableList<ElementLocator> locators = new ObservableList<ElementLocator>();
@@ -525,7 +613,7 @@ namespace GingerCore.Drivers.WindowsLib
                 currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
                 locators = currentPOMElementInfo.Locators;
             }
-            AutomationElement windowElement = LocateElementByLocators(locators);
+            AutomationElement windowElement = LocateElementByLocators(locators, true);
             if (windowElement != null)
             {
                 pomExcutionUtil.PriotizeLocatorPosition();
@@ -961,7 +1049,7 @@ namespace GingerCore.Drivers.WindowsLib
             return EI;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null)
         {
             return await Task.Run(async () =>
             {
@@ -1077,7 +1165,7 @@ namespace GingerCore.Drivers.WindowsLib
         {
             if (ElementInfo.ElementObject == null || locateElementByItLocators)
             {
-                AutomationElement windowElement = LocateElementByLocators(ElementInfo.Locators);
+                AutomationElement windowElement = LocateElementByLocators(ElementInfo.Locators, true);
                 if (windowElement != null)
                 {
                     ElementInfo.ElementObject = (object)windowElement;
@@ -1408,7 +1496,7 @@ namespace GingerCore.Drivers.WindowsLib
                 }
             }
 
-            return null;
+            return elem;
         }
 
         private AutomationElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
@@ -1449,6 +1537,7 @@ namespace GingerCore.Drivers.WindowsLib
         public override void ActionCompleted(Act act)
         {
             mUIAutomationHelper.taskFinished = true;
+            mUIElementOperationsHelper.taskFinished = true;
             if (!String.IsNullOrEmpty(act.Error) && act.Error.StartsWith("Time out !"))
             {
                 Thread.Sleep(1000);
@@ -1601,6 +1690,11 @@ namespace GingerCore.Drivers.WindowsLib
         }
 
         public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
+        }
+
+        public string GetCurrentPageSourceString()
         {
             return null;
         }

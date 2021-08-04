@@ -203,13 +203,13 @@ namespace Ginger.UserControlsLib
                     WindowsComboBox.DisplayMemberPath = "WinInfo";
 
                     //TODO: If no selection then select the first if only one window exist in list
-                    if (!(mWindowExplorerDriver is GenericAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
-                    {
+                    //if (!(mWindowExplorerDriver is GenericAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
+                    //{
                         if (WindowsComboBox.Items.Count == 1)
                         {
                             WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
                         }
-                    } 
+                    //} 
                 }
             }
             catch (Exception ex)

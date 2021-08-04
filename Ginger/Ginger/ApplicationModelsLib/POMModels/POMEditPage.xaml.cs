@@ -296,6 +296,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             switch(mAppPlatform)
             {
                 case ePlatformType.Web:
+                case ePlatformType.Mobile:
                      act = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = calculatedValue, ValueForDriver = calculatedValue, Active = true };
                     break;
                 case ePlatformType.Java:

@@ -99,9 +99,9 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
-        private ALMIntegration.eTestingALMType mJiraTestingALM = ALMIntegration.eTestingALMType.None;
+        private ALMIntegrationEnums.eTestingALMType mJiraTestingALM = ALMIntegrationEnums.eTestingALMType.None;
         [IsSerializedForLocalRepository]
-        public ALMIntegration.eTestingALMType JiraTestingALM
+        public ALMIntegrationEnums.eTestingALMType JiraTestingALM
         {
             get
             {
@@ -154,7 +154,7 @@ namespace GingerCoreNET.ALMLib
                 if (mALMProjectKey != value)
                 {
                     mALMProjectKey = value;
-                    OnPropertyChanged(nameof(mALMProjectKey));
+                    OnPropertyChanged(nameof(ALMProjectKey));
                 }
             }
         }
@@ -169,8 +169,16 @@ namespace GingerCoreNET.ALMLib
                 if (mALMConfigPackageFolderPath != value)
                 {
                     mALMConfigPackageFolderPath = value;
-                    OnPropertyChanged(nameof(mALMConfigPackageFolderPath));
+                    OnPropertyChanged(nameof(ALMConfigPackageFolderPath));
                 }
+            }
+        }
+
+        public string ALMConfigPackageFolderPathCalculated
+        {
+            get
+            {
+                return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mALMConfigPackageFolderPath);
             }
         }
 
@@ -189,9 +197,9 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
-        private ALMIntegration.eALMType mAlmType = ALMIntegration.eALMType.QC;
+        private ALMIntegrationEnums.eALMType mAlmType = ALMIntegrationEnums.eALMType.QC;
         [IsSerializedForLocalRepository]
-        public ALMIntegration.eALMType AlmType
+        public ALMIntegrationEnums.eALMType AlmType
         {
             get
             {

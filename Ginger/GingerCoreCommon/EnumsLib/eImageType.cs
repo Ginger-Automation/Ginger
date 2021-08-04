@@ -216,6 +216,7 @@ namespace Amdocs.Ginger.Common.Enums
         Pointer,
         Camera,
         Wrench,
+        Eraser,
         Power,
         ArrowDown,
         ArrowRight,
@@ -283,6 +284,7 @@ namespace Amdocs.Ginger.Common.Enums
         AngleArrowDown,
         AngleArrowLeft,
         AngleArrowRight,
+        Support,
         #endregion
 
         #region Source control Images     

@@ -139,14 +139,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void CreateNewElemetClicked(object sender, RoutedEventArgs e)
         {
-            mSpyElement.IsAutoLearned = false;
+            mSpyElement.IsAutoLearned = true;
             mPOM.MappedUIElements.Add(mSpyElement);
             mPOM.MappedUIElements.CurrentItem = mSpyElement;
             mappedUIElementsPage.MainElementsGrid.ScrollToViewCurrentItem();
             xCreateNewElement.Visibility = Visibility.Collapsed;
             xStatusLable.Content = "Element added to the list";
         }
-
 
         System.Windows.Threading.DispatcherTimer mDispatcherTimer = null;
 
