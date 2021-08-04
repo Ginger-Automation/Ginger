@@ -84,8 +84,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj" />
-    <ProjectReference Include="..\GingerConsole\GingerConsole.csproj" />
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
+    <ProjectReference Include="..\GingerRuntime\GingerRuntime.csproj" />
   </ItemGroup>
 
   <ItemGroup>
