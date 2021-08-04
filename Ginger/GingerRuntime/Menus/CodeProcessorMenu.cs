@@ -19,7 +19,7 @@ limitations under the License.
 using GingerCoreNET.RosLynLib;
 using System;
 
-namespace Amdocs.Ginger.GingerConsole
+namespace Amdocs.Ginger.GingerRuntime
 {
     public class CodeProcessorMenu
     {

@@ -24,7 +24,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Reflection;
 
-namespace Amdocs.Ginger.GingerConsole
+namespace Amdocs.Ginger.GingerRuntime
 {
     public class PluginMenu
     {
