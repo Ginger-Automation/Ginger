@@ -49,7 +49,7 @@ namespace GingerConsoleTest
 
 
             //Act
-            Amdocs.Ginger.GingerConsole.Program.Main(args);
+            Amdocs.Ginger.GingerRuntime.Program.Main(args);
 
             //Assert
             Assert.AreEqual(0, Environment.ExitCode, "Environment.ExitCode");
@@ -65,7 +65,7 @@ namespace GingerConsoleTest
 
 
             //Act
-            Amdocs.Ginger.GingerConsole.Program.Main(args);
+            Amdocs.Ginger.GingerRuntime.Program.Main(args);
 
             //Assert
             Assert.AreEqual(1, Environment.ExitCode, "Environment.ExitCode");
