@@ -151,7 +151,6 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "GET2 - ExportExecutionDetailsToALM");
             return zephyrEntExportManager.ExportExceutionDetailsToALM(bizFlow, ref result, null, exectutedFromAutomateTab, publishToALMConfig);
         }
 

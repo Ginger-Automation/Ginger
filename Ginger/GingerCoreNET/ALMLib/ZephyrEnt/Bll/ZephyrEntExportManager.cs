@@ -144,18 +144,13 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
             try
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "GET3 - ExportExecutionDetailsToALM");
                 List<Execution> executions = zephyrEntRepository.GetExecutionsByPhaseId(Convert.ToInt32(bizFlow.ExternalID));
-                Reporter.ToLog(eLogLevel.DEBUG, "GET4 - ExportExecutionDetailsToALM " + executions);
                 if (executions == null || executions.Count == 0)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "GET5 - ExportExecutionDetailsToALM " + bizFlow.ExternalID);
                     executions = zephyrEntRepository.GetModuleExecutionData(Convert.ToInt32(bizFlow.ExternalID));
-                    Reporter.ToLog(eLogLevel.DEBUG, "GET51 - ExportExecutionDetailsToALM " + executions.Count);
                 }
                 if (executions != null && executions.Count > 0)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "GET6 - ExportExecutionDetailsToALM " + executions);
                     long scheduleId = 0;
                     //get the Test set TC's
                     List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(bizFlow.ExternalID));

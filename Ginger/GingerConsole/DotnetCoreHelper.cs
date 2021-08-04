@@ -165,6 +165,9 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                 case Agent.eDriverType.Appium:
                     return (typeof(GenericAppiumDriver));
 
+                case Agent.eDriverType.WebServices:
+                    return (typeof(WebServicesDriver));
+
                 default:
                     throw new Exception("GetDriverType: Unknown Driver type " + zAgent.DriverType);
             }
@@ -265,16 +268,6 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         public IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow)
         {
             return new WebserviceDriverConsoleReporter();
-        }
-
-        public ALMIntegrationEnums.eALMConnectType GetALMConnectType(ALMIntegrationEnums.eALMConnectType eALMConnectType)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool AutoALMProjectConnect(ALMIntegrationEnums.eALMConnectType almConnectStyle = ALMIntegrationEnums.eALMConnectType.Silence, bool showConnWin = true, bool asConnWin = false)
-        {
-            throw new NotImplementedException();
         }
 
         private ALMCore GetALMCore()

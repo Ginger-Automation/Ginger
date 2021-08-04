@@ -47,11 +47,6 @@ namespace GingerCore.ALM
                 GingerCoreNET.ALMLib.ALMUserConfig AlmUserConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == AlmConfig.AlmType);
                 if (AlmUserConfig == null)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, $"AlmUserConfig == null");
-                }
-                Reporter.ToLog( eLogLevel.DEBUG, $"GetCurrentAlmConfig-ALMPassword= {AlmUserConfig.ALMPassword}");
-                if (AlmUserConfig == null)
-                {
                     AlmUserConfig = new GingerCoreNET.ALMLib.ALMUserConfig();
                     AlmUserConfig.AlmType = AlmConfig.AlmType;
                     WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
@@ -70,7 +65,6 @@ namespace GingerCore.ALM
                 }
                 AlmConfig.ALMUserName = AlmUserConfig.ALMUserName;
                 AlmConfig.ALMPassword = AlmUserConfig.ALMPassword;
-                Reporter.ToLog(eLogLevel.DEBUG, $"GetCurrentAlmConfig-AlmConfig.ALMPassword= {AlmConfig.ALMPassword}");
             }
             else
             {
@@ -211,11 +205,6 @@ namespace GingerCore.ALM
         {
             SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             bool isExportSucc = false;
-            Reporter.ToLog(eLogLevel.DEBUG, $"ALMProjectKey= {DefaultAlmConfig.ALMProjectKey}");
-            Reporter.ToLog(eLogLevel.DEBUG, $"ZepherEntToken= {DefaultAlmConfig.ZepherEntToken}");
-            Reporter.ToLog(eLogLevel.DEBUG, $"ALMDomain= {DefaultAlmConfig.ALMDomain}");
-            Reporter.ToLog(eLogLevel.DEBUG, $"ALMProjectName= {DefaultAlmConfig.ALMProjectName}");
-            Reporter.ToLog(eLogLevel.DEBUG, $"ALMPassword= {DefaultAlmConfig.ALMPassword}");
             try
             {
                 foreach (BusinessFlow BizFlow in BusinessFlows) //Here going for each businessFlow
@@ -231,7 +220,6 @@ namespace GingerCore.ALM
                             {
                                 Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateActivitiesGroupReportsOfBusinessFlow(null, BizFlow);//need to find a way to specify the releveant environment 
                             }
-                            Reporter.ToLog(eLogLevel.DEBUG, "GET - ExportExecutionDetailsToALM");
                             isExportSucc = ExportExecutionDetailsToALM(BizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig);
                             if (isExportSucc)
                             {
