@@ -20,7 +20,7 @@ using GingerCoreNET.RosLynLib;
 using Amdocs.Ginger.CoreNET.RosLynLib;
 using System;
 
-namespace Amdocs.Ginger.GingerConsole
+namespace Amdocs.Ginger.GingerRuntime
 {
     public class ScriptMenu
     {
