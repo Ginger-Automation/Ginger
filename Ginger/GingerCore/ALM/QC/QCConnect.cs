@@ -277,10 +277,10 @@ namespace GingerCore.ALM.QC
             }
 
             List TestsetList = TSetFact.NewList(tsFilter.Text);
-            List<QCTestSetSummary> testlabPathList = new List<QCTestSetSummary>();
+            List<ALMTestSetSummary> testlabPathList = new List<ALMTestSetSummary>();
             foreach (TestSet testset in TestsetList)
             {
-                QCTestSetSummary QCTestSetTreeItem = new QCTestSetSummary();
+                ALMTestSetSummary QCTestSetTreeItem = new ALMTestSetSummary();
                 QCTestSetTreeItem.TestSetID = testset.ID;
                 QCTestSetTreeItem.TestSetName = testset.Name;
                 testlabPathList.Add(QCTestSetTreeItem);

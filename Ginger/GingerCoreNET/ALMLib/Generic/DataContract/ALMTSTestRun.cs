@@ -16,25 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using System.Collections.Generic;
 
 namespace GingerCore.ALM.QC
 {
-    public class QCTSTest
+    public class ALMTSTestRun
     {
-        public QCTSTest()
-        {
-            this.Parameters = new List<QCTSTestParameter>();
-            this.Steps = new List<QCTSTestStep>();
-        }
-
-        public string TestName { get; set; }
-        public string TestID { get; set; }
-        public string LinkedTestID { get; set; }
-        public string Description { get; set; }
-        //Called Test Parameters
-        public List<QCTSTestParameter> Parameters { get; set; }
-        public List<QCTSTestStep> Steps { get; set; }
-        public List<QCTSTestRun> Runs { get; set; }
+        public string RunID { get; set; }
+        public string RunName { get; set; }
+        public string Status { get; set; }
+        public string ExecutionDate { get; set; }
+        public string ExecutionTime { get; set; }
+        public string Tester { get; set; }
     }
 }

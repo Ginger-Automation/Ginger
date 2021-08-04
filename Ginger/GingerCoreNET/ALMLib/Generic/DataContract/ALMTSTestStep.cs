@@ -19,13 +19,11 @@ limitations under the License.
 
 namespace GingerCore.ALM.QC
 {
-    public class QCTSTestRun
+    public class ALMTSTestStep
     {
-        public string RunID { get; set; }
-        public string RunName { get; set; }
-        public string Status { get; set; }
-        public string ExecutionDate { get; set; }
-        public string ExecutionTime { get; set; }
-        public string Tester { get; set; }
+        public string StepID { get; set; }
+        public string StepName { get; set; }
+        public string Description { get; set; }
+        public string Expected { get; set; }
     }
 }

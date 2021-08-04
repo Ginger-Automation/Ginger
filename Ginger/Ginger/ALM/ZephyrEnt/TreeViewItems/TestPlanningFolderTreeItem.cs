@@ -22,10 +22,8 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Controls;
-using ZephyrEntSDK.Models;
-using ZephyrEntSDK.Models.Base;
+using ZephyrEntStdSDK.Models.Base;
 
 namespace Ginger.ALM.ZephyrEnt.TreeViewItems
 {
