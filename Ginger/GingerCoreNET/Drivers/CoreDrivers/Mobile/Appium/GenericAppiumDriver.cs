@@ -150,6 +150,32 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+        public override bool StopProcess
+        {
+            get
+            {
+                if (AppType == eAppType.Web)
+                {
+                    return mSeleniumDriver.StopProcess;
+                }
+                else
+                {
+                    return base.StopProcess;
+                }
+            }
+            set
+            {
+                if (AppType == eAppType.Web)
+                {
+                    mSeleniumDriver.StopProcess = value;
+                }
+                else
+                {
+                    base.StopProcess = value;
+                }
+            }
+        }
+
         public GenericAppiumDriver(BusinessFlow BF)
         {
             BusinessFlow = BF;
@@ -374,7 +400,7 @@ namespace Amdocs.Ginger.CoreNET
                     MobileDeviceActionHandler((ActMobileDevice)act);
                     return;
                 }
-                 
+
                 //Web
                 if (AppType == eAppType.Web)//Keep here to make sure Web handling will be done by Selenium driver
                 {
@@ -1162,14 +1188,40 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+        public string GetCurrentActivityCompleteDetails()
+        {
+            try
+            {
+                if (DevicePlatformType == eDevicePlatformType.Android)
+                {
+                    return string.Format("{0} | {1}", ((AndroidDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).CurrentPackage,
+                        ((AndroidDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).CurrentActivity);
+                }
+                else if (DevicePlatformType == eDevicePlatformType.iOS)
+                {
+                    return string.Format("{0}", ((IOSDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                }
+                else
+                {
+                    return string.Format("{0} | {1}", Driver.Capabilities.GetCapability("appPackage").ToString(),
+                                                    Driver.Capabilities.GetCapability("appActivity").ToString());
+                }
+            }
+            catch (Exception exc)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "An error ocured while fetching the current App details", exc);
+                return "Package | Activity";
+            }
+        }
+
         public override string GetURL()
         {
-            if(AppType == eAppType.Web)
+            if (AppType == eAppType.Web)
             {
                 return mSeleniumDriver.GetURL();
             }
 
-            return GetCurrentActivityDetails();
+            return GetCurrentActivityCompleteDetails();
         }
 
         public override bool IsRunning()
@@ -1188,7 +1240,7 @@ namespace Amdocs.Ginger.CoreNET
 
             AppWindow AW = new AppWindow();
             AW.WindowType = AppWindow.eWindowType.Appium;
-            AW.Title = GetURL();   // TODO: add device name and info
+            AW.Title = (AppType == eAppType.Web) ? GetURL() : GetCurrentActivityDetails();   // TODO: add device name and info
 
             list.Add(AW);
             return list;
@@ -1201,7 +1253,7 @@ namespace Amdocs.Ginger.CoreNET
 
         async void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
-            if(AppType == eAppType.Web)
+            if (AppType == eAppType.Web)
             {
                 ((IWindowExplorer)mSeleniumDriver).HighLightElement(ElementInfo, locateElementByItLocators);
                 return;
@@ -1231,7 +1283,7 @@ namespace Amdocs.Ginger.CoreNET
             XmlNode foundNode = null;
             ElementInfo foundElement = null;
             var mousePos = OnSpyingElementEvent();
-            if(mousePos != null && mousePos is Point)
+            if (mousePos != null && mousePos is Point)
             {
                 mousePosCurrent = (Point)mousePos;  // new Point((mousePos as Point).X, (mousePos as Point).Y);
             }
@@ -1300,14 +1352,14 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 //Show only clickable elements
-                if (nodes[i].Attributes != null)
-                {
-                    var cattr = nodes[i].Attributes["clickable"];
-                    if (cattr != null)
-                    {
-                        if (cattr.Value == "false") continue;
-                    }
-                }
+                //if (nodes[i].Attributes != null)
+                //{
+                //    var cattr = nodes[i].Attributes["clickable"];
+                //    if (cattr != null)
+                //    {
+                //        if (cattr.Value == "false") continue;
+                //    }
+                //}
                 ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
                 EI.IsAutoLearned = true;
 
@@ -1528,6 +1580,9 @@ namespace Amdocs.Ginger.CoreNET
             string Name = GetAttrValue(xmlNode, "content-desc");
             if (!string.IsNullOrEmpty(Name)) return Name;
 
+            Name = GetAttrValue(xmlNode, "text");
+            if (!string.IsNullOrEmpty(Name)) return Name;
+
             string resid = GetAttrValue(xmlNode, "resource-id");
             if (!string.IsNullOrEmpty(resid))
             {
@@ -1536,9 +1591,6 @@ namespace Amdocs.Ginger.CoreNET
                 Name = a[a.Length - 1];
                 return Name;
             }
-
-            Name = GetAttrValue(xmlNode, "text");
-            if (!string.IsNullOrEmpty(Name)) return Name;
 
             return xmlNode.Name;
         }
@@ -1563,10 +1615,11 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
+                    Active = true,
                     LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = residXpath,
                     IsAutoLearned = true,
-                    Help = "Use Resource id only when you don't want XPath with relative info, but the resource-id is unique"
+                    Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
                 });
             }
 
@@ -1576,6 +1629,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
+                    Active = true,
                     LocateBy = eLocateBy.ByName,
                     LocateValue = elemName,
                     IsAutoLearned = true,
@@ -1589,6 +1643,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
+                    Active = true,
                     LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = string.Format("//*[@content-desc='{0}']", contentdesc),
                     IsAutoLearned = true,
@@ -1603,6 +1658,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 list.Add(new ElementLocator()
                 {
+                    Active = true,
                     LocateBy = eLocateBy.ByRelXPath,
                     LocateValue = string.Format("//{0}[@text='{1}']", eClass, eText),    // like: //android.widget.RadioButton[@text='Ginger']" 
                     IsAutoLearned = true,
@@ -1613,6 +1669,7 @@ namespace Amdocs.Ginger.CoreNET
             // Show XPath
             list.Add(new ElementLocator()
             {
+                Active = true,
                 LocateBy = eLocateBy.ByXPath,
                 LocateValue = ElementInfo.XPath,
                 IsAutoLearned = true,
@@ -1791,7 +1848,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
         {
-            if(AppType == eAppType.Web)
+            if (AppType == eAppType.Web)
             {
                 ((IWindowExplorer)mSeleniumDriver).CollectOriginalElementsDataForDeltaCheck(originalList);
                 return;
@@ -1811,7 +1868,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     try
                     {
-                        if(LocateElementByLocators(EI.Locators) != null)
+                        if (LocateElementByLocators(EI.Locators) != null)
                         //if (e != null)
                         {
                             //EI.ElementObject = e;
@@ -1894,7 +1951,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
                 }
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 elem = null;
                 EL.StatusError = exc.Message;
@@ -1944,16 +2001,16 @@ namespace Amdocs.Ginger.CoreNET
             }
             set
             {
-                if(value != mSpying)
+                if (value != mSpying)
                 {
                     mSpying = value;
-                }    
+                }
             }
         }
 
         public void StartSpying()
         {
-            if(AppType == eAppType.Web)
+            if (AppType == eAppType.Web)
             {
                 ((IWindowExplorer)mSeleniumDriver).StartSpying();
                 return;
@@ -2048,7 +2105,7 @@ namespace Amdocs.Ginger.CoreNET
                 XmlNodeList ElmsNodes;
                 // Do once?
                 // if XMLSOurce changed we need to refresh
-                if(IsAsyncCall)
+                if (IsAsyncCall)
                     pageSourceString = await GetPageSource();
                 else
                     pageSourceString = Driver.PageSource;
@@ -2487,7 +2544,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public string GetCurrentPageSourceString()
         {
-            if(AppType == eAppType.Web)
+            if (AppType == eAppType.Web)
             {
                 return ((IWindowExplorer)mSeleniumDriver).GetCurrentPageSourceString();
             }
