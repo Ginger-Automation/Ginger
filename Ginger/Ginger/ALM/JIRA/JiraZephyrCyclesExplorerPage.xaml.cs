@@ -16,20 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.ALM.JIRA.TreeViewItems;
 using Ginger.ALM.QC.TreeViewItems;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
+using GingerCore.ALM;
+using GingerWPF.UserControlsLib.UCTreeView;
+using JiraRepositoryStd.Data_Contracts;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using GingerCore.ALM;
-using Ginger.ALM.JIRA.TreeViewItems;
-using amdocs.ginger.GingerCoreNET;
-using JiraRepository.Data_Contracts;
-using GingerCore.ALM.JIRA;
 
 namespace Ginger.ALM.JIRA
 {

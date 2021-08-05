@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionAutoSaveAndRecover;
@@ -25,7 +26,7 @@ using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
 using GingerCoreNET.SourceControl;
-using System.Data.Common;
+
 namespace Amdocs.Ginger.Common
 {
     public enum eExecutedFrom
@@ -65,7 +66,7 @@ namespace Amdocs.Ginger.Common
 
         string GetALMConfig();
 
-        void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType);
+        void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType);
 
         void HTMLReportAttachment(string report, ref string emailReadyHtml, ref string reportresultfolder, string runsetfolder, object Attachment, object conf);
 

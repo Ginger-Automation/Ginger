@@ -99,9 +99,9 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
-        private ALMIntegration.eTestingALMType mJiraTestingALM = ALMIntegration.eTestingALMType.None;
+        private ALMIntegrationEnums.eTestingALMType mJiraTestingALM = ALMIntegrationEnums.eTestingALMType.None;
         [IsSerializedForLocalRepository]
-        public ALMIntegration.eTestingALMType JiraTestingALM
+        public ALMIntegrationEnums.eTestingALMType JiraTestingALM
         {
             get
             {
@@ -197,9 +197,9 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
-        private ALMIntegration.eALMType mAlmType = ALMIntegration.eALMType.QC;
+        private ALMIntegrationEnums.eALMType mAlmType = ALMIntegrationEnums.eALMType.QC;
         [IsSerializedForLocalRepository]
-        public ALMIntegration.eALMType AlmType
+        public ALMIntegrationEnums.eALMType AlmType
         {
             get
             {
