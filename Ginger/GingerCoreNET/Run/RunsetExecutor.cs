@@ -417,6 +417,7 @@ namespace Ginger.Run
                 //Process all pre execution Run Set Operations
                 if (doContinueRun == false)
                 {
+                    RunSetConfig.StartTimeStamp = DateTime.UtcNow;
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
                 }
@@ -551,6 +552,7 @@ namespace Ginger.Run
             }
             finally
             {
+                RunSetConfig.EndTimeStamp = DateTime.UtcNow;
                 mRunSetConfig.IsRunning = false;
             }
         }
