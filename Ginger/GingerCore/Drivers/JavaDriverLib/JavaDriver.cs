@@ -464,7 +464,21 @@ namespace GingerCore.Drivers.JavaDriverLib
                 IntializeIfWidgetsElement(currentPOMElementInfo);
                 locators = currentPOMElementInfo.Locators;
             }
+            PayLoad response = ExecutePOMAction(act, locators, pomExcutionUtil);
 
+            if (response.IsErrorPayLoad() && response.GetValueInt().Equals(Convert.ToInt32(PayLoad.ErrorCode.ElementNotFound)))
+            {
+                if (pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
+                {
+                    response = ExecutePOMAction(act, locators, pomExcutionUtil);
+                }
+            }
+
+            return response;
+        }
+
+        private PayLoad ExecutePOMAction(ActUIElement act, ObservableList<ElementLocator> locators, POMExecutionUtils pomExcutionUtil)
+        {
             PayLoad response = null;
 
             foreach (ElementLocator locator in locators)
@@ -519,19 +533,14 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     locateElement.LocateStatus = ElementLocator.eLocateStatus.Passed;
                     act.ExInfo += locateElement.LocateStatus;
-                    
-                    if(pomExcutionUtil.PriotizeLocatorPosition())
+
+                    if (pomExcutionUtil.PriotizeLocatorPosition())
                     {
                         act.ExInfo += "Locator prioritized during self healing operation";
                     }
                     break;
                 }
 
-            }
-
-            if (response.IsErrorPayLoad())
-            {
-                pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent);
             }
 
             return response;

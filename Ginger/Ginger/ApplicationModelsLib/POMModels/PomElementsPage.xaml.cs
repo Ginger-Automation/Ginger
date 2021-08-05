@@ -38,6 +38,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -261,20 +262,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 25, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), WidthWeight = 35, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), WidthWeight = 20, AllowSorting = true });
 
             List<ComboEnumItem> ElementTypeList = GetEnumValuesForCombo(typeof(eElementType));
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 15, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 10, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList });
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.OptionalValuesObjectsListAsString), Header = "Possible Values", WidthWeight = 40, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.OptionalValuesObjectsListAsString), Header = "Possible Values", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["OpenEditOptionalValuesPage"] });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = "", Header = "Highlight", WidthWeight = 10, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
+            view.GridColsView.Add(new GridColView() { Field = "", Header = "Highlight", WidthWeight = 8, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.StatusIcon), Header = "Status", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
 
-            var listSelfHelaingInfo = GingerCore.General.GetEnumValuesForCombo(typeof(SelfHealingInfoEnum));
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.SelfHealingInfo), Header = "Self Healing Info.", WidthWeight = 15, CellValuesList= listSelfHelaingInfo,StyleType=GridColView.eGridColStyleType.ComboBox,ComboboxDisplayMemberField= ComboItem.Fields.text,ComboboxSelectedValueField=ComboItem.Fields.Value, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.GetSelfHealingInfo),StyleType=GridColView.eGridColStyleType.Text, Header = "Self Healing Info.", WidthWeight = 22, ReadOnly = true, PropertyConverter = (new ColumnPropertyConverter(new SelfHealingInfoStatusConverter(), TextBlock.ForegroundProperty)) });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.LastUpdatedTime), Header = "Last Updated", WidthWeight = 10 });
 
             GridViewDef mRegularView = new GridViewDef(eGridView.RegularView.ToString());
@@ -855,6 +855,31 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedVerb, nameof(ControlProperty.Value), null);
                 VEEW.ShowAsWindow();
             }
+        }
+    }
+
+    internal class SelfHealingInfoStatusConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string status = value.ToString();
+
+            var enumItems = GingerCore.General.GetEnumValuesForCombo(typeof(SelfHealingInfoEnum));
+
+            foreach (var enumItem in enumItems)
+            {
+                if (enumItem.Value.Equals(SelfHealingInfoEnum.ElementDeleted) && status.Equals(enumItem.text))
+                {
+                    return System.Windows.Media.Brushes.Red;
+                }
+            }
+
+            return System.Drawing.Brushes.Gray;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return string.Empty;
         }
     }
 }

@@ -3180,6 +3180,11 @@ namespace GingerCore.Drivers
                             elem = LocateElementByLocators(currentPOMElementInfo.Locators);
                         }
 
+                        if (elem != null && currentPOMElementInfo.GetSelfHealingInfo == SelfHealingInfoEnum.ElementDeleted.ToString())
+                        {
+                            currentPOMElementInfo.SelfHealingInfo = SelfHealingInfoEnum.None;
+                        }
+
                         currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
                        
                         if(pomExcutionUtil.PriotizeLocatorPosition())
@@ -3187,8 +3192,6 @@ namespace GingerCore.Drivers
                             act.ExInfo += "Locator prioritized during self healing operation";
                         }
                     }
-
-                   
                 }
             }
             else
@@ -4035,7 +4038,7 @@ namespace GingerCore.Drivers
             }
             finally
             {
-                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
             }
             return false;
         }

@@ -195,23 +195,29 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
         {
             foreach (var elementInfo in GetCurrentPOM().MappedUIElements)
             {
-                var deltaInfo = deltaElementInfos.Where(x => x.ElementInfo.Guid == elementInfo.Guid).FirstOrDefault();
-                if (deltaInfo != null)
+                try
                 {
-                    if (deltaInfo.DeltaStatus == eDeltaStatus.Changed)
+                    var deltaInfo = deltaElementInfos.Where(x => x.ElementInfo.Guid == elementInfo.Guid).FirstOrDefault();
+                    if (deltaInfo != null)
                     {
-                        elementInfo.Properties = deltaInfo.ElementInfo.Properties;
-                        elementInfo.Locators = deltaInfo.ElementInfo.Locators;
-                        elementInfo.LastUpdatedTime = DateTime.Now.ToString();
-                        elementInfo.SelfHealingInfo = SelfHealingInfoEnum.ElementModified;
-                    }
-                    else if (deltaInfo.DeltaStatus == eDeltaStatus.Deleted)
-                    {
-                        elementInfo.LastUpdatedTime = DateTime.Now.ToString();
-                        elementInfo.SelfHealingInfo = SelfHealingInfoEnum.ElementDeleted;
+                        if (deltaInfo.DeltaStatus == eDeltaStatus.Changed)
+                        {
+                            elementInfo.Properties = deltaInfo.ElementInfo.Properties;
+                            elementInfo.Locators = deltaInfo.ElementInfo.Locators;
+                            elementInfo.LastUpdatedTime = DateTime.Now.ToString();
+                            elementInfo.SelfHealingInfo = SelfHealingInfoEnum.ElementModified;
+                        }
+                        else if (deltaInfo.DeltaStatus == eDeltaStatus.Deleted)
+                        {
+                            elementInfo.LastUpdatedTime = DateTime.Now.ToString();
+                            elementInfo.SelfHealingInfo = SelfHealingInfoEnum.ElementDeleted;
+                        }
                     }
                 }
-
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error occured during self healing POM update operation..", ex);
+                }
             }
         }
 
@@ -222,6 +228,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             {
                 waitToCompleteLearnProcess = true;
             }
+            this.GetCurrentPOM().IsLearning = true;
 
             if (waitToCompleteLearnProcess)
             {
@@ -232,10 +239,9 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 }
             }
 
-            this.GetCurrentPOM().IsLearning = true;
             GingerCore.Agent agent = (GingerCore.Agent)currentAgent;
-
             var pomDeltaUtils = new PomDeltaUtils(this.GetCurrentPOM(), agent);
+            
             try
             {
                 //set element type
@@ -247,6 +253,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
                 Reporter.ToLog(eLogLevel.INFO, "POM update process started during self healing operation..");
                 this.GetCurrentPOM().StartDirtyTracking();
+
                 pomDeltaUtils.LearnDelta().Wait();
                 Reporter.ToLog(eLogLevel.INFO, "POM updated");
             }

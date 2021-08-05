@@ -86,9 +86,21 @@ namespace Amdocs.Ginger.Common.UIElement
         }
 
         private SelfHealingInfoEnum mSelfHealingInfo;
+        public string GetSelfHealingInfo 
+        {
+            get
+            {
+                return Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(mSelfHealingInfo.GetType(), mSelfHealingInfo);
+            }
+            set
+            {
+                //do nothing
+            }
+        }
+
         [IsSerializedForLocalRepository]
-        public SelfHealingInfoEnum SelfHealingInfo 
-        { 
+        public SelfHealingInfoEnum SelfHealingInfo
+        {
             get
             {
                 return mSelfHealingInfo;
