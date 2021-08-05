@@ -66,7 +66,25 @@ namespace Ginger.UserControlsLib
         //ObservableList<DataSourceBase> mDSList = new ObservableList<DataSourceBase>();
         public static readonly DependencyProperty ContextProperty = DependencyProperty.Register("mContext", typeof(Context), typeof(UCWindowsGrid));
         public object SelectedWindow = null;
-        public PlatformInfoBase mPlatform;
+        PlatformInfoBase mPlatform;
+        public PlatformInfoBase Platform
+        {
+            get
+            {
+                return mPlatform;
+            }
+            set
+            {
+                if (mPlatform != value)
+                {
+                    mPlatform = value;
+                    if (mPlatform != null)
+                    {
+                        xSelectionDropDownTitle.Content = mPlatform.GetPageUrlRadioLabelText();
+                    }
+                }
+            }
+        }
 
         public Context mContext
         {

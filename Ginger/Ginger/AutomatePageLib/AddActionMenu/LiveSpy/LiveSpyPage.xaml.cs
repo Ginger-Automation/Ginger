@@ -126,7 +126,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     mWindowExplorerDriver = windowExplorerDriver;
                     xWindowSelectionUC.mWindowExplorerDriver = mWindowExplorerDriver;
-                    xWindowSelectionUC.mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
+                    xWindowSelectionUC.Platform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
                     xUCElementDetails.WindowExplorerDriver = windowExplorerDriver;
 
                     InitUCElementDetailsLocatorsGrid();
@@ -223,7 +223,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void SpyTimerHandler(object sender, EventArgs e)
         {
-            if (mWindowExplorerDriver != null)
+            if (mWindowExplorerDriver != null && mContext.Agent.Status == Agent.eStatus.Running)    //((GingerCore.Drivers.DriverBase)mWindowExplorerDriver).IsDriverRunning)
             {
                 ///?? why we have specific driver handleing?
                 //if (xWindowSelectionUC.mWindowExplorerDriver.GetType() == typeof(GingerCore.Drivers.SeleniumDriver) 
