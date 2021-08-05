@@ -509,6 +509,8 @@ namespace Ginger
                             /// Not Required but 
                             pomDeltaUtils.DeltaViewElements.Clear();
 
+                            CustomElementLocatorsCheck(matchingOriginalElement, SelectedElement);
+
                             /// To Do - POM Delta Run and if Updated Element is found then ask user if they would like to replace existing POM Element with New ?
                             pomDeltaUtils.SetMatchingElementDeltaDetails(matchingOriginalElement, SelectedElement);
 
@@ -541,6 +543,7 @@ namespace Ginger
                                     }
 
                                     POMElement = pomDeltaUtils.DeltaViewElements[0].ElementInfo;
+                                    POMElement.ParentGuid = SelectedPOM.Guid;
                                 }
                                 else
                                 {
@@ -611,6 +614,17 @@ namespace Ginger
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in ShowCurrentControlInfo", ex);
                 Reporter.ToUser(eUserMsgKey.ObjectLoad);
+            }
+        }
+
+        public void CustomElementLocatorsCheck(ElementInfo matchingOriginalElement, ElementInfo selectedElement)
+        {
+            if(matchingOriginalElement.Locators.Count != selectedElement.Locators.Count && matchingOriginalElement.Locators.Where(l => l.Help.Contains("Custom Locator")).Count() > 0)
+            {
+                foreach(ElementLocator customLocator in matchingOriginalElement.Locators.Where(l => l.Help.Contains("Custom Locator")))
+                {
+                    selectedElement.Locators.Add(customLocator);
+                }
             }
         }
 

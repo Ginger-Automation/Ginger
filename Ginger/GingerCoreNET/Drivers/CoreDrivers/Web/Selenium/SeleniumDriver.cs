@@ -3890,7 +3890,10 @@ namespace GingerCore.Drivers
                             {
                                 foreach (var template in relativeXpathTemplateList)
                                 {
-                                    CreateXpathFromUserTemplate(template,foundElemntInfo);
+                                    var elementLocator = GetUserDefinedCustomLocatorFromTemplates(template, eLocateBy.ByRelXPath, foundElemntInfo.Properties.ToList());
+                                    if(elementLocator != null && CheckElementLocateStatus(elementLocator.LocateValue))
+                                        foundElemntInfo.Locators.Add(elementLocator);
+                                    //CreateXpathFromUserTemplate(template,foundElemntInfo);
                                 }
                             }
 

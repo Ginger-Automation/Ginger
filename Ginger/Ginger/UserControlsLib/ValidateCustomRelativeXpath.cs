@@ -29,11 +29,17 @@ namespace Ginger.UserControlsLib.POMLearnig
         {
             var row = ((System.Windows.Data.BindingGroup)value).Items[0] as CustomRelativeXpathTemplate;
             Regex rexXpathReg = new Regex("\\/\\/(\\*|[a-zA-Z]*)\\[[^[(){}\\]]*\\]$", RegexOptions.Compiled);
+            Regex iOSPredStrRegex = new Regex(@"([a-zA-Z0-9= '\[\]\{\}]*)|\{([a-zA-Z0-9]*)\}");
 
             if (row.Value != null && rexXpathReg.IsMatch(row.Value))
             {
                 row.Status = CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed;
-                return ValidationResult.ValidResult;
+                return new ValidationResult(true, "Valid Relative XPath Format");
+            }
+            else if (row.Value != null && iOSPredStrRegex.IsMatch(row.Value))
+            {
+                row.Status = CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed;
+                return new ValidationResult(true, "Valid iOS Predicate String Format");
             }
             else
             {

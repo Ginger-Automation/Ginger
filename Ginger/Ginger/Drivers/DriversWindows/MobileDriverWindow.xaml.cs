@@ -51,14 +51,14 @@ namespace Ginger.Drivers.DriversWindows
 
         private object CurrentMousePosToSpy()
         {
-            Point mousePos = new Point(-1,-1);
+            Point mousePos = new Point(-1, -1);
 
             Dispatcher.Invoke(() => mousePos = Mouse.GetPosition(xDeviceScreenshotImage));
 
             System.Drawing.Point pointOnAppScreen = new System.Drawing.Point(-1, -1);
 
             this.Dispatcher.Invoke(() =>
-                pointOnAppScreen = ((DriverBase)mDriver).GetPointOnAppWindow(new System.Drawing.Point((int)mousePos.X, (int)mousePos.Y), 
+                pointOnAppScreen = ((DriverBase)mDriver).GetPointOnAppWindow(new System.Drawing.Point((int)mousePos.X, (int)mousePos.Y),
                     xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height, xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight)
             );
 
@@ -83,14 +83,14 @@ namespace Ginger.Drivers.DriversWindows
         private void DrawRectangle(System.Drawing.Point ElementStartPoint, System.Drawing.Point ElementMaxPoint, Amdocs.Ginger.Common.UIElement.ElementInfo elementInfo)
         {
             ((DriverBase)mDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height,
-                xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight, elementInfo);
+                xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight, elementInfo, false);
 
             xHighlighterBorder.SetValue(Canvas.LeftProperty, ElementStartPoint.X + ((xDeviceScreenshotCanvas.ActualWidth - xDeviceScreenshotImage.ActualWidth) / 2));
             xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + ((xDeviceScreenshotCanvas.ActualHeight - xDeviceScreenshotImage.ActualHeight) / 2));
             xHighlighterBorder.Margin = new Thickness(0);
             xHighlighterBorder.Width = (ElementMaxPoint.X - ElementStartPoint.X);
             int calcHeight = (ElementMaxPoint.Y - ElementStartPoint.Y);
-            if(calcHeight < 0)
+            if (calcHeight < 0)
             {
                 calcHeight = 0 - calcHeight;
             }
@@ -178,7 +178,7 @@ namespace Ginger.Drivers.DriversWindows
         {
             mClickStartTime = DateTime.Now;
             try
-            {                
+            {
                 mMouseStartPoint = e.GetPosition((System.Windows.Controls.Image)sender);
             }
             catch
@@ -721,7 +721,7 @@ namespace Ginger.Drivers.DriversWindows
 
                 xSwipeBtn.Visibility = Visibility.Visible;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to set the device orientation", ex);
             }
@@ -731,7 +731,7 @@ namespace Ginger.Drivers.DriversWindows
         {
             Task.Run(() =>
             {
-                while(mWindowIsOpen && mDriver != null && mDriver.IsDeviceConnected)
+                while (mWindowIsOpen && mDriver != null && mDriver.IsDeviceConnected)
                 {
                     if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.Live)
                     {
@@ -827,7 +827,7 @@ namespace Ginger.Drivers.DriversWindows
                                 xMessagePnl.Visibility = Visibility.Visible;
                                 xMessageImage.ImageType = eImageType.Image;
                                 xMessageImage.ImageForeground = new SolidColorBrush(Colors.OrangeRed);
-                                xMessageLbl.Content = "Failed to get device screenshot";                               
+                                xMessageLbl.Content = "Failed to get device screenshot";
                             });
 
                             if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.Live)
@@ -838,7 +838,7 @@ namespace Ginger.Drivers.DriversWindows
                                 });
                             }
                         }
-                      
+
                         return false;
                     }
                 });
@@ -856,7 +856,7 @@ namespace Ginger.Drivers.DriversWindows
                         xRefreshButton.ToolTip = "Refresh Device Screenshot";
                     });
                 }
-            }                
+            }
         }
 
         private System.Windows.Point GetPointOnMobile(System.Windows.Point pointOnImage)
@@ -867,7 +867,7 @@ namespace Ginger.Drivers.DriversWindows
                 double ratio_X = 1;
                 double ratio_Y = 1;
 
-                if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS && mDriver.GetAppType() == eAppType.NativeHybride)
+                if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS) // && mDriver.GetAppType() == eAppType.NativeHybride)
                 {
                     ratio_X = (xDeviceScreenshotImage.Source.Width / 2) / xDeviceScreenshotImage.ActualWidth;
                     ratio_Y = (xDeviceScreenshotImage.Source.Height / 2) / xDeviceScreenshotImage.ActualHeight;
@@ -878,18 +878,15 @@ namespace Ginger.Drivers.DriversWindows
                     ratio_Y = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.ActualHeight;
                 }
 
-                if (mDriver.GetAppType() == eAppType.Web)
+                if (mDriver.GetAppType() == eAppType.Web && mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
                 {
-                    if (mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
-                    {
-                        pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
-                        pointOnMobile.Y = (int)((pointOnImage.Y + xDeviceScreenshotImage.ActualHeight / 9) * ratio_Y);
-                    }
-                    else
-                    {
-                        pointOnMobile.X = (int)((pointOnImage.X * ratio_X) / 3);
-                        pointOnMobile.Y = (int)((pointOnImage.Y * ratio_Y) / 3);
-                    }
+                    pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
+                    pointOnMobile.Y = (int)((pointOnImage.Y + xDeviceScreenshotImage.ActualHeight / 9) * ratio_Y);
+                    //else
+                    //{
+                    //    pointOnMobile.X = (int)((pointOnImage.X * ratio_X) / 3);
+                    //    pointOnMobile.Y = (int)((pointOnImage.Y * ratio_Y) / 3);
+                    //}
                 }
                 else
                 {
