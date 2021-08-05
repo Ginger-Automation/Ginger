@@ -124,6 +124,8 @@ namespace Amdocs.Ginger.CoreNET
         public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
 
         bool mIsDeviceConnected = false;
+        string mDefaultURL = null;
+
         public bool IsDeviceConnected
         {
             get => mIsDeviceConnected;
@@ -235,6 +237,18 @@ namespace Amdocs.Ginger.CoreNET
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
                 mSeleniumDriver.StopProcess = StopProcess;
 
+                if (AppType == eAppType.Web && mDefaultURL != null)
+                {
+                    try
+                    {
+                        Driver.Navigate().GoToUrl(mDefaultURL);
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
+                    }
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -273,7 +287,7 @@ namespace Amdocs.Ginger.CoreNET
         private DriverOptions GetCapabilities()
         {
             //see http://appium.io/slate/en/master/?csharp#appium-server-capabilities for full list of capabilities values
-
+            mDefaultURL = null;
             DriverOptions driverOptions = new AppiumOptions();
 
             //User customized capabilities
@@ -281,6 +295,12 @@ namespace Amdocs.Ginger.CoreNET
             {
                 if (String.IsNullOrWhiteSpace(UserCapability.Parameter))
                 {
+                    continue;
+                }
+
+                if (UserCapability.Parameter.ToLower().Trim() == "defaulturl")
+                {
+                    mDefaultURL = UserCapability.Value;
                     continue;
                 }
 

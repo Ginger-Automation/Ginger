@@ -58,7 +58,7 @@ namespace Ginger.ALM.QC
         eViewType mViewType = eViewType.Coverage;
         ObservableList<QCTestSetTreeItem> mSelectQcTestSets;
 
-        ObservableList<QCTSTest> mQcTestCasesList = new ObservableList<QCTSTest>();
+        ObservableList<ALMTSTest> mQcTestCasesList = new ObservableList<ALMTSTest>();
         ObservableList<QCManagerReportTestCaseDetails> mTestCaseDetailsList = new ObservableList<QCManagerReportTestCaseDetails>();        
 
         eExecutionPeriod mExecutionPeriodSelectedFilter;
@@ -202,13 +202,13 @@ namespace Ginger.ALM.QC
             {
                 foreach (QCTestSetTreeItem testSetItem in mSelectQcTestSets)
                 {
-                    QCTestSet TS = new QCTestSet();
+                    ALMTestSet TS = new ALMTestSet();
                     TS.TestSetID = testSetItem.TestSetID;
                     TS.TestSetName = testSetItem.TestSetName;
                     TS.TestSetPath = testSetItem.Path;
                     TS = ImportFromQC.ImportTestSetData(TS);//get test cases
 
-                    foreach (QCTSTest tc in TS.Tests)
+                    foreach (ALMTSTest tc in TS.Tests)
                     {
                         mQcTestCasesList.Add(tc);
                         int automatedStepsCouter=0;
@@ -231,7 +231,7 @@ namespace Ginger.ALM.QC
                             testCaseDetails.ActivitiesGroupID = repoActivsGroup.Guid;
                             testCaseDetails.ActivitiesGroupName = repoActivsGroup.Name;
                             //check for automation percentage
-                            foreach (QCTSTestStep step in tc.Steps)
+                            foreach (ALMTSTestStep step in tc.Steps)
                             {
                                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                                 Activity repoStepActivity = activities.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
@@ -294,9 +294,9 @@ namespace Ginger.ALM.QC
             }
         }
 
-        private void CalculateTCExecutionDetails(QCTSTest tc, QCManagerReportTestCaseDetails testCaseDetails)
+        private void CalculateTCExecutionDetails(ALMTSTest tc, QCManagerReportTestCaseDetails testCaseDetails)
         {
-            List<QCTSTestRun> filteredRuns = FilterRuns(tc.Runs);
+            List<ALMTSTestRun> filteredRuns = FilterRuns(tc.Runs);
             if (filteredRuns != null && filteredRuns.Count > 0)
             {
                 testCaseDetails.NumberOfExecutions = filteredRuns.Where(x => x.RunName.ToUpper().Contains("GINGER") == true).Count();
@@ -329,10 +329,10 @@ namespace Ginger.ALM.QC
             }
         }
 
-        private List<QCTSTestRun> FilterRuns(List<QCTSTestRun> runs)
+        private List<ALMTSTestRun> FilterRuns(List<ALMTSTestRun> runs)
         {
             //filter by tester
-            List<QCTSTestRun> filteredRuns=null;
+            List<ALMTSTestRun> filteredRuns=null;
             if (mExecutionTesterSelectedFilter == "Any")
                 filteredRuns = runs;
             else

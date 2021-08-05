@@ -30,6 +30,7 @@ using System.Reflection;
 using Amdocs.Ginger.Repository;
 using GingerCore.ALM.QC;
 using amdocs.ginger.GingerCoreNET;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM
 {
@@ -42,13 +43,13 @@ namespace Ginger.ALM
         {
         }
 
-        public void UpdateALMType(GingerCoreNET.ALMLib.ALMIntegration.eALMType AlmType)
+        public void UpdateALMType(eALMType AlmType)
         {
-            GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = GetCurrentAlmConfig(AlmType);
+            GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = ALMCore.GetCurrentAlmConfig(AlmType);
             ALMCore.DefaultAlmConfig = CurrentAlmConfigurations;
             switch (AlmType)
             {
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC:
+                case eALMType.QC:
                     if (!CurrentAlmConfigurations.UseRest)
                     {
                         AlmCore = new QCCore();
@@ -61,77 +62,60 @@ namespace Ginger.ALM
                     }
                     break;
 
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM:
+                case eALMType.RQM:
                     AlmCore = new RQMCore();
                     AlmRepo = new RQMRepository();
                     break;
 
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY:
+                case eALMType.RALLY:
                     AlmCore = new RallyCore();
                     AlmRepo = new RallyRepository();
                     break;
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
+                case eALMType.Jira:
                     AlmCore = new JiraCore();
                     AlmRepo = new JIRA_Repository(AlmCore);
                     break;
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest:
+                case eALMType.Qtest:
                     AlmCore = new QtestCore();
                     AlmRepo = new QtestRepository();
                     break;
-
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane:
-
+                case eALMType.Octane:
                     if(!(AlmCore is OctaneCore && AlmRepo is OctaneRepository))
                     {
                         AlmCore = new OctaneCore();
                         AlmRepo = new OctaneRepository(AlmCore);
                     }
-                 
-                  
                     break;
-
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:
+                case eALMType.ZephyrEnterprise:
                     AlmCore = new ZephyrEntCore();
                     AlmRepo = new ZephyrEnt_Repository(AlmCore);
                     break;
             }
             AlmCore.GetCurrentAlmConfig();
-            SetALMCoreConfigurations(AlmType);
+            ALMCore.SetALMCoreConfigurations(AlmType, AlmCore);
         }
 
-        public void SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
+        public void SetALMCoreConfigurations(eALMType almType)
         {
-            GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = GetCurrentAlmConfig(almType);
-
-            ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
-            if (CurrentAlmConfigurations != null)
-            {
-                AlmCore.SetALMConfigurations(   CurrentAlmConfigurations.ALMServerURL, CurrentAlmConfigurations.UseRest, CurrentAlmConfigurations.ALMUserName,
-                                                CurrentAlmConfigurations.ALMPassword, CurrentAlmConfigurations.ALMDomain, CurrentAlmConfigurations.ALMProjectName,
-                                                CurrentAlmConfigurations.ALMProjectKey, CurrentAlmConfigurations.AlmType, CurrentAlmConfigurations.ALMConfigPackageFolderPath,
-                                                CurrentAlmConfigurations.UseToken, CurrentAlmConfigurations.JiraTestingALM);
-            }
+            ALMCore.SetALMCoreConfigurations(almType, AlmCore);           
         }
-
         public GingerCoreNET.ALMLib.ALMConfig GetDefaultAlmConfig()
         {
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
-            if (AlmConfig == null)
+            if(AlmCore == null)
             {
-                AlmConfig = new GingerCoreNET.ALMLib.ALMConfig();
-                AlmConfig.DefaultAlm = true;
-                WorkSpace.Instance.Solution.ALMConfigs.Add(AlmConfig);
+                return new GingerCoreNET.ALMLib.ALMConfig();
             }
-            return AlmConfig;
+            return AlmCore.GetCurrentAlmConfig();
         }
-        public bool SetDefaultAlmConfig(GingerCoreNET.ALMLib.ALMIntegration.eALMType AlmType)
+
+            public bool SetDefaultAlmConfig(eALMType AlmType)
         {
             //set default on the solution
             foreach (GingerCoreNET.ALMLib.ALMConfig alm in WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).ToList())
             {
                 alm.DefaultAlm = false;
             }
-            GingerCoreNET.ALMLib.ALMConfig almConfig = GetCurrentAlmConfig(AlmType);
+            GingerCoreNET.ALMLib.ALMConfig almConfig = ALMCore.GetCurrentAlmConfig(AlmType);
             almConfig.DefaultAlm = true;
 
             //set default on almcore
@@ -150,20 +134,7 @@ namespace Ginger.ALM
 
             return true;
         }
-        public GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig(GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
-        {
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.AlmType == almType);
-            if (AlmConfig == null)
-            {
-                AlmConfig = new GingerCoreNET.ALMLib.ALMConfig();
-                AlmConfig.AlmType = almType;
-                WorkSpace.Instance.Solution.ALMConfigs.Add(AlmConfig);
-            }
-
-            return AlmConfig;
-
-        }
-        public GingerCoreNET.ALMLib.ALMUserConfig GetCurrentAlmUserConfig(GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
+        public GingerCoreNET.ALMLib.ALMUserConfig GetCurrentAlmUserConfig(eALMType almType)
         {
             GingerCoreNET.ALMLib.ALMUserConfig AlmUserConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == almType);
             if (AlmUserConfig == null)
@@ -188,17 +159,9 @@ namespace Ginger.ALM
         }
         #endregion
 
-        public enum eALMConnectType
-        {
-            Silence,
-            Manual,
-            Auto,
-            SettingsPage
-        }
-
         public bool TestALMServerConn(eALMConnectType almConectStyle)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Mouse.OverrideCursor = Cursors.Wait;
 
             bool connResult = false;
             connResult = AlmRepo.ConnectALMServer(almConectStyle);
@@ -302,7 +265,7 @@ namespace Ginger.ALM
         
         public Dictionary<string, string> GetALMDomainProjects(string ALMDomain, eALMConnectType almConectStyle)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Mouse.OverrideCursor = Cursors.Wait;
             Dictionary<string, string> projectsList = new Dictionary<string, string>();
             if (AutoALMServerConnect(almConectStyle))
             {
@@ -317,59 +280,9 @@ namespace Ginger.ALM
         public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false)
         {
             ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-            bool isExportSucc = false;
             if (AutoALMProjectConnect(almConnectionType, false))
             {
-                try
-                {
-                    foreach (BusinessFlow BizFlow in BusinessFlows) //Here going for each businessFlow
-                    {
-                        try
-                        {
-                            if (BizFlow.ExternalID != "0" && !String.IsNullOrEmpty(BizFlow.ExternalID))
-                            {
-                                Reporter.ToLog(eLogLevel.DEBUG, "Executing RunSet Action Publish to ALM for " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + BizFlow.Name);
-                                Reporter.ToStatus(eStatusMsgKey.ExportExecutionDetails, null, BizFlow.Name, "ALM");
-
-                                if (publishToALMConfig.ToAttachActivitiesGroupReport)
-                                {
-                                    Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateActivitiesGroupReportsOfBusinessFlow(null, BizFlow);//need to find a way to specify the releveant environment 
-                                }
-                                                   
-                                isExportSucc = AlmCore.ExportExecutionDetailsToALM(BizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig);
-                                if (isExportSucc)
-                                {
-                                    BizFlow.PublishStatus = BusinessFlow.ePublishStatus.Published;
-                                }
-                                else
-                                {
-                                    if ((result == null) || (result == string.Empty))
-                                        result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - " + BizFlow.Name + " - Error when uploading to ALM." + Environment.NewLine;
-                                    BizFlow.PublishStatus = BusinessFlow.ePublishStatus.PublishFailed;
-                                }
-                                Reporter.HideStatusMessage();
-                            }
-                            else
-                            {
-                                BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
-                                result += GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " - " + BizFlow.Name + " - doesn't have ExternalID, cannot execute publish to ALM RunSet Action" + Environment.NewLine;
-                                Reporter.ToLog(eLogLevel.WARN, BizFlow.Name + " - doesn't have ExternalID, cannot execute publish to ALM RunSet Action");                               
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            result = ex.Message.ToString();
-                            BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
-                            Reporter.ToLog(eLogLevel.ERROR, BizFlow.Name + " - Export results to ALM failed due to exception", ex);
-                        }
-                    }
-
-                    return isExportSucc;
-                }
-                finally
-                {
-                    DisconnectALMServer();
-                }
+                return AlmCore.ExportBusinessFlowsResultToALM(BusinessFlows, ref result, publishToALMConfig, almConnectionType, exectutedFromAutomateTab);
             }
             else
             {
@@ -393,7 +306,7 @@ namespace Ginger.ALM
 
         public void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Mouse.OverrideCursor = Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, ("Update selected " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " of " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ":" + businessFlow.Name + " from ALM"));
 
             ALMIntegration._instance.AlmCore.InitCoreObjs();
@@ -408,7 +321,7 @@ namespace Ginger.ALM
 
         public void UpdateBusinessFlow(ref BusinessFlow businessFlow)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Mouse.OverrideCursor = Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, ("Update " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " from ALM"));
 
             ALMIntegration._instance.AlmCore.InitCoreObjs();
@@ -423,7 +336,7 @@ namespace Ginger.ALM
 
         public void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Mouse.OverrideCursor = Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, ("Exporting "+ GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " of " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
             ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (AutoALMProjectConnect(eALMConnectType.Auto))
@@ -436,7 +349,7 @@ namespace Ginger.ALM
 
         public bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, bool performSaveAfterExport = false)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Mouse.OverrideCursor = Cursors.Wait;
             ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
             bool isExportSucc = false;
@@ -453,7 +366,7 @@ namespace Ginger.ALM
         //Export Group of Business flows
         public bool ExportAllBusinessFlowsToALM(ObservableList<BusinessFlow> bfToExport, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Manual)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Mouse.OverrideCursor = Cursors.Wait;
             //Passing Solution Folder path to GingerCore
             ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
 
@@ -539,7 +452,7 @@ namespace Ginger.ALM
 
         public void RefreshAllGroupsFromALM(BusinessFlow businessFlow)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Mouse.OverrideCursor = Cursors.Wait;
             Reporter.ToLog(eLogLevel.DEBUG, "Refreshing All " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " From ALM");
             ALMIntegration.Instance.UpdateBusinessFlow(ref businessFlow);
             Mouse.OverrideCursor = null;
@@ -550,7 +463,7 @@ namespace Ginger.ALM
             ObservableList<ExternalItemFieldBase> latestALMFieldsREST = new ObservableList<ExternalItemFieldBase>();
             if (ALMIntegration.Instance.AutoALMProjectConnect())
             {
-                latestALMFieldsREST = AlmCore.GetALMItemFields(null ,online, resourceType);
+                latestALMFieldsREST = AlmCore.GetALMItemFields(null ,online, (AlmDataContractsStd.Enums.ResourceType)resourceType);
             }
             return latestALMFieldsREST;
         }
@@ -653,7 +566,7 @@ namespace Ginger.ALM
 
         public bool ImportSelectedTestSets(string importDestinationPath, IEnumerable<Object> selectedTests)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Mouse.OverrideCursor = Cursors.Wait;
             bool importResult = AlmRepo.ImportSelectedTests(importDestinationPath, selectedTests);
             Mouse.OverrideCursor = null;
             return importResult;
@@ -661,7 +574,7 @@ namespace Ginger.ALM
 
         public bool ImportZephyrObject(string importDestinationPath, IEnumerable<Object> selectedObject)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            Mouse.OverrideCursor = Cursors.Wait;
             bool importResult = ((JIRA_Repository)AlmRepo).ImportSelectedZephyrCyclesAndFolders(importDestinationPath, selectedObject);
             Mouse.OverrideCursor = null;
             return true;
@@ -671,7 +584,7 @@ namespace Ginger.ALM
         {
             if (AlmCore == null)//added because when running from CLI the AlmCore is Null on connection
             {
-                UpdateALMType(ALMIntegration.Instance.GetDefaultAlmConfig().AlmType);
+                UpdateALMType(ALMCore.GetDefaultAlmConfig().AlmType);
             }
 
             int retryConnect = 0;
@@ -701,7 +614,7 @@ namespace Ginger.ALM
 
         public void OpenALMItemsFieldsPage()
         {
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = GetDefaultAlmConfig();
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig();
             if (AlmRepo == null)
             {
                 UpdateALMType(AlmConfig.AlmType);
@@ -729,16 +642,16 @@ namespace Ginger.ALM
             return AlmRepo.GetTestSetExplorer(path);
         }
 
-        public QCTestSetSummary GetTSRunStatus(QCTestSetSummary tsItem)
+        public ALMTestSetSummary GetTSRunStatus(ALMTestSetSummary tsItem)
         {
-            return (QCTestSetSummary)AlmRepo.GetTSRunStatus(tsItem);
+            return (ALMTestSetSummary)AlmRepo.GetTSRunStatus(tsItem);
         }
 
         public List<string> GetTestPlanExplorer(string path)
         {
             return AlmRepo.GetTestPlanExplorer(path);
         }
-        public GingerCoreNET.ALMLib.ALMIntegration.eALMType GetALMType()
+        public eALMType GetALMType()
         {
             return ALMCore.AlmConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType;
         }

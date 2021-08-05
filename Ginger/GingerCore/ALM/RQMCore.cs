@@ -23,7 +23,7 @@ using System;
 using System.Collections.Generic;
 using GingerCore.Activities;
 using TDAPIOLELib;
-using ALM_Common.DataContracts;
+using AlmDataContractsStd.Enums;
 using GingerCore.ALM.QC;
 using System.ComponentModel;
 using System.IO;
@@ -35,6 +35,7 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
 using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNET.ALMLib;
 
 namespace GingerCore.ALM
 {
@@ -95,7 +96,7 @@ namespace GingerCore.ALM
             return ExportToRQM.Instance.ExportBusinessFlowToRQM(businessFlow, ExternalItemsFields, ref result);
         }
 
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType)
         {
             return UpdatedAlmFields(ImportFromRQM.GetALMItemFields(bw, online));
         }
@@ -123,9 +124,11 @@ namespace GingerCore.ALM
             set { ImportFromRQM.ApplicationPlatforms = value; }
         }
 
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.RQM;
+
         public override void SetALMConfigurations(  string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword,
-                                                    string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType,
-                                                    string ALMConfigPackageFolderPath, bool ZephyrEntToken, GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType testingALMType = GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.None)
+                                                    string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType,
+                                                    string ALMConfigPackageFolderPath, bool ZephyrEntToken, GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType testingALMType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.None)
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.AlmType == almType);
             GingerCoreNET.ALMLib.ALMConfig AlmCoreConfig = AlmConfigs.FirstOrDefault(x => x.AlmType == almType);
@@ -244,6 +247,10 @@ namespace GingerCore.ALM
         public void UpdateBusinessFlow(ref BusinessFlow busFlow, RQMTestPlan testPlan)
         {
             ImportFromRQM.UpdateBusinessFlow(ref busFlow, testPlan);
+        }
+        public BusinessFlow ConvertRQMTestPlanToBF(RQMTestPlan testPlan)
+        {
+            return ImportFromRQM.ConvertRQMTestPlanToBF(testPlan);
         }
     }
 }

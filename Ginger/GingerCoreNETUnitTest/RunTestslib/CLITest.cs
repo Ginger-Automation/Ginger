@@ -783,11 +783,11 @@ namespace WorkspaceHold
             CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
 
             ALMConfig octaneSolConfig= WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
-            ALMUserConfig octaneUsrConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.Where(x => x.AlmType == ALMIntegration.eALMType.Octane).FirstOrDefault();
-            ALMConfig qcSolConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == ALMIntegration.eALMType.QC).FirstOrDefault();
-            ALMUserConfig qcUsrConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.Where(x => x.AlmType == ALMIntegration.eALMType.QC).FirstOrDefault();
-            ALMConfig jiraSolConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == ALMIntegration.eALMType.Jira).FirstOrDefault();
-            ALMUserConfig jiraUsrConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.Where(x => x.AlmType == ALMIntegration.eALMType.Jira).FirstOrDefault();
+            ALMUserConfig octaneUsrConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.Where(x => x.AlmType == ALMIntegrationEnums.eALMType.Octane).FirstOrDefault();
+            ALMConfig qcSolConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == ALMIntegrationEnums.eALMType.QC).FirstOrDefault();
+            ALMUserConfig qcUsrConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.Where(x => x.AlmType == ALMIntegrationEnums.eALMType.QC).FirstOrDefault();
+            ALMConfig jiraSolConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == ALMIntegrationEnums.eALMType.Jira).FirstOrDefault();
+            ALMUserConfig jiraUsrConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.Where(x => x.AlmType == ALMIntegrationEnums.eALMType.Jira).FirstOrDefault();
 
             // Assert      
             //Validate Octane ALM details on Solution and User profile ALM details which been used for actual ALM connection
@@ -820,7 +820,7 @@ namespace WorkspaceHold
             Assert.AreEqual(jiraUsrConfig.ALMUserName, "CLIUser", "Validating correct ALMUserName");
             Assert.AreEqual(jiraSolConfig.ALMPassword, "53d7ccd462fbfbc43c6dc9f3f638747582df333b", "Validating correct ALMPassword");
             Assert.AreEqual(jiraUsrConfig.ALMPassword, "53d7ccd462fbfbc43c6dc9f3f638747582df333b", "Validating correct ALMPassword");
-            Assert.AreEqual(jiraSolConfig.JiraTestingALM, ALMIntegration.eTestingALMType.Xray, "Validating correct JiraTestingALM");
+            Assert.AreEqual(jiraSolConfig.JiraTestingALM, ALMIntegrationEnums.eTestingALMType.Xray, "Validating correct JiraTestingALM");
         }
 
         /// <summary>

@@ -76,7 +76,7 @@ namespace GingerCore.ALM.Qtest
                 connObj.Configuration.ApiKey.Add("Authorization", accessToken);
                 connObj.Configuration.ApiKeyPrefix.Add("Authorization", tokenType);
 
-                if (General.IsConfigPackageExists(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest))
+                if (GingerCore.General.IsConfigPackageExists(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest))
                 {
                     connObj.Configuration.MyAPIConfig.LoadSettingsFromConfig(Path.Combine(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, "QTestSettings", "QTestSettings.json"));
                 }
