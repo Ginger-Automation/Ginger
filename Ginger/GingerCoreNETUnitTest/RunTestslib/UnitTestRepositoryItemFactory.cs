@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Common;
 using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
+using Ginger.Repository;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
@@ -148,7 +149,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
-        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegration.eALMType almType)
+        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegrationEnums.eALMType almType)
         {
             throw new NotImplementedException();
         }
@@ -170,6 +171,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public DbConnection GetOracleConnection(string ConnectionString)
         {
             throw new NotImplementedException();
+        }
+
+        public bool IsSharedRepositoryItem(RepositoryItemBase item)
+        {
+            return SharedRepositoryOperations.IsSharedRepositoryItem(item);
         }
     }
 }

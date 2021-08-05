@@ -67,7 +67,7 @@ namespace GingerCore.ALM.QCRestAPI
             return testCasesSteps;
         }
 
-        public static QC.QCTestSet ImportTestSetData(QC.QCTestSet testSet)
+        public static QC.ALMTestSet ImportTestSetData(QC.ALMTestSet testSet)
         {
             QCTestInstanceColl testInstances = GetListTSTest(testSet);
 
@@ -79,9 +79,9 @@ namespace GingerCore.ALM.QCRestAPI
             return testSet;
         }
 
-        public static QC.QCTSTest ImportTSTest(QCTestInstance testInstance)
+        public static QC.ALMTSTest ImportTSTest(QCTestInstance testInstance)
         {
-            QC.QCTSTest newTSTest = new QC.QCTSTest();
+            QC.ALMTSTest newTSTest = new QC.ALMTSTest();
             QCTestCase testCase = QCRestAPIConnect.GetTestCases(new List<string>() { testInstance.TestId })[0];
             string linkedTest = CheckLinkedTSTestName(testCase);
 
@@ -109,7 +109,7 @@ namespace GingerCore.ALM.QCRestAPI
             QCTestCaseStepsColl TSTestSteps = GetListTSTestSteps(testCase);
             foreach (QCTestCaseStep testcaseStep in TSTestSteps)
             {
-                QC.QCTSTestStep newtsStep = new QC.QCTSTestStep();
+                QC.ALMTSTestStep newtsStep = new QC.ALMTSTestStep();
                 newtsStep.StepID = testcaseStep.Id.ToString();
                 newtsStep.StepName = testcaseStep.Name;
                 newtsStep.Description = testcaseStep.Description;
@@ -153,7 +153,7 @@ namespace GingerCore.ALM.QCRestAPI
 
                 foreach (QCRun run in TSTestRuns)
                 {
-                    QC.QCTSTestRun newtsRun = new QC.QCTSTestRun();
+                    QC.ALMTSTestRun newtsRun = new QC.ALMTSTestRun();
                     newtsRun.RunID = run.Id;
                     newtsRun.RunName = run.Name;
                     newtsRun.Status = run.Status;
@@ -166,7 +166,7 @@ namespace GingerCore.ALM.QCRestAPI
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
-                newTSTest.Runs = new List<QC.QCTSTestRun>();
+                newTSTest.Runs = new List<QC.ALMTSTestRun>();
             }
 
             return newTSTest;
@@ -184,7 +184,7 @@ namespace GingerCore.ALM.QCRestAPI
             return testCasesParams;
         }
 
-        public static BusinessFlow ConvertQCTestSetToBF(QC.QCTestSet testSet)
+        public static BusinessFlow ConvertQCTestSetToBF(QC.ALMTestSet testSet)
         {
             try
             {
@@ -200,7 +200,7 @@ namespace GingerCore.ALM.QCRestAPI
                 Dictionary<string, string> busVariables = new Dictionary<string, string>();//will store linked variables
 
                 //Create Activities Group + Activities for each TC
-                foreach (QC.QCTSTest tc in testSet.Tests)
+                foreach (QC.ALMTSTest tc in testSet.Tests)
                 {
                     //check if the TC is already exist in repository
                     ActivitiesGroup tcActivsGroup;
@@ -250,7 +250,7 @@ namespace GingerCore.ALM.QCRestAPI
                     }
 
                     //Add the TC steps as Activities if not already on the Activities group
-                    foreach (QC.QCTSTestStep step in tc.Steps)
+                    foreach (QC.ALMTSTestStep step in tc.Steps)
                     {
                         Activity stepActivity;
                         bool toAddStepActivity = false;
@@ -302,7 +302,7 @@ namespace GingerCore.ALM.QCRestAPI
                             //get the param value
                             string paramSelectedValue = string.Empty;
                             bool? isflowControlParam = null;
-                            QC.QCTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                            QC.ALMTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
 
                             //get the param value
                             if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
@@ -433,7 +433,7 @@ namespace GingerCore.ALM.QCRestAPI
                     try
                     {
                         int startGroupActsIndxInBf = busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
-                        foreach (QC.QCTSTestStep step in tc.Steps)
+                        foreach (QC.ALMTSTestStep step in tc.Steps)
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
                             ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
@@ -1090,12 +1090,12 @@ namespace GingerCore.ALM.QCRestAPI
             }
         }
 
-        private static QCTestInstanceColl GetListTSTest(QC.QCTestSet TS)
+        private static QCTestInstanceColl GetListTSTest(QC.ALMTestSet TS)
         {
             return QCRestAPIConnect.GetTestInstancesOfTestSet(TS.TestSetID);
         }
 
-        private static void FillRelevantDataForStepParams(QC.QCTSTest newTSTest, QCTestCaseStep tSLinkedTestCaseStep)
+        private static void FillRelevantDataForStepParams(QC.ALMTSTest newTSTest, QCTestCaseStep tSLinkedTestCaseStep)
         {
             string description = StripHTML(tSLinkedTestCaseStep.Description).Replace("\n", "");
             MatchCollection mc = Regex.Matches(description, "\\w*\\s*=\\s*\\w*");
@@ -1105,7 +1105,7 @@ namespace GingerCore.ALM.QCRestAPI
                 string[] currentParam = m.ToString().Split('=');
                 string paramName = currentParam[0].Trim(' ');
                 string paramValue = currentParam[1].Trim(' ');
-                QC.QCTSTestParameter newtsVar = new QC.QCTSTestParameter();
+                QC.ALMTSTestParameter newtsVar = new QC.ALMTSTestParameter();
                 if (paramName != null) { newtsVar.Name = paramName; }
                 if (paramValue != null) { newtsVar.Value = paramValue; }
                 //if (TestParam.LinkedParams.Type(i) != null) { newtsVar.Type = TestParam.LinkedParams.Type(i).ToString(); }

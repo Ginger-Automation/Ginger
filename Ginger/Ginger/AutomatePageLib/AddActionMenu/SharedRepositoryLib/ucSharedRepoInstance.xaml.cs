@@ -20,10 +20,12 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.Repository;
+using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Variables;
+using GingerWPF.WizardLib;
 using System;
 using System.IO;
 using System.Windows;
@@ -73,7 +75,7 @@ namespace Ginger
             mLinkedRepoItem = SharedRepositoryOperations.GetMatchingRepoItem(mItem, null, ref mLinkIsByExternalID, ref mLinkIsByParentID);
             if (mLinkedRepoItem == null)
             {
-                LinkStatusImage.Source = General.GetResourceImage("@StarGray_24x24.png");
+                LinkStatusImage.Source = General.GetResourceImage("@StarGray_24x24.png");//TODO: Use image maker
                 LinkStatusImage.ToolTip = "The item is not linked to Shared Repository."+ Environment.NewLine +"Click to add it to Shared Repository.";
                 UpdateRepoBtn.ToolTip = "Upload to Shared Repository";
             }
@@ -139,15 +141,21 @@ namespace Ginger
                 }
             }
             else
-            {                
-                (new Repository.SharedRepositoryOperations()).AddItemToRepository(mContext, mItem);
+            {               
+                if (mItem!=null)
+                {
+                    WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mItem)); 
+                }
                 SetRepoLinkStatus();            
             }
         }
 
         private void UpdateRepoBtn_Click(object sender, RoutedEventArgs e)
         {
-            (new Repository.SharedRepositoryOperations()).AddItemToRepository(mContext, mItem);
+            if (mItem != null)
+            {
+                WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mItem));
+            }
             SetRepoLinkStatus();
         }
     }

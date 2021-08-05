@@ -20,9 +20,11 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages;
+using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControls;
 using GingerCore;
 using GingerWPF.DragDropLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -218,8 +220,8 @@ namespace Ginger.Repository
             Activity dragedItem = (Activity)((DragInfo)sender).Data;
             if (dragedItem != null)
             {
-                ////check if the Activity is part of a group which not exist in ActivitiesGroups repository                
-                (new SharedRepositoryOperations()).AddItemToRepository(mContext, dragedItem);
+                ////check if the Activity is part of a group which not exist in ActivitiesGroups repository
+                WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, dragedItem));
 
                 //refresh and select the item
                 try

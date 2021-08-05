@@ -52,11 +52,11 @@ jobs:
     displayName: 'Testing GingerAutoPilotTest'
 
 # ------------------------------------------------------------------------------------------------------
-# Publish GingerConsole
+# Publish GingerRuntime
 # ------------------------------------------------------------------------------------------------------
 
-  - script: dotnet publish  Ginger/GingerConsole -c Release
-    displayName: 'Publish GingerConsole'
+  - script: dotnet publish  Ginger/GingerRuntime -c Release
+    displayName: 'Publish GingerRuntime'
     
 # ------------------------------------------------------------------------------------------------------
 # Publish Test Results

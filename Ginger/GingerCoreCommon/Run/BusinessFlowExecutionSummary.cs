@@ -121,5 +121,10 @@ namespace Ginger.Run
                 return;
             }
         }
+
+        public override string GetItemType()
+        {
+            return nameof(BusinessFlowExecutionSummary);
+        }
     }
 }

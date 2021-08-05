@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GingerConsole\GingerConsole.csproj" />
+    <ProjectReference Include="..\GingerRuntime\GingerRuntime.csproj" />
   </ItemGroup>
 
   <ItemGroup>

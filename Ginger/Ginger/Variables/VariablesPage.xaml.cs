@@ -20,12 +20,14 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
+using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Variables;
 using GingerWPF.DragDropLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -301,8 +303,17 @@ namespace Ginger.Variables
         }
 
         private void AddToRepository(object sender, RoutedEventArgs e)
-        {          
-          (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, grdVariables.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList());         
+        {            
+            List<RepositoryItemBase> list = grdVariables.Grid.SelectedItems.Cast<RepositoryItemBase>().ToList();
+
+            if (list != null && list.Count > 0)
+            {
+                WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, list));
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
 
         private void RefreshGrid(object sender, RoutedEventArgs e)

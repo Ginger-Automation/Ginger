@@ -417,6 +417,7 @@ namespace Ginger.Run
                 //Process all pre execution Run Set Operations
                 if (doContinueRun == false)
                 {
+                    RunSetConfig.StartTimeStamp = DateTime.UtcNow;
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
                 }
@@ -523,6 +524,7 @@ namespace Ginger.Run
                 Task.WaitAll(runnersTasks.ToArray());
                 mStopwatch.Stop();
                 RunSetConfig.Elapsed = mStopwatch.ElapsedMilliseconds;
+                RunSetConfig.EndTimeStamp = DateTime.UtcNow;
                 //Do post execution items
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 //ExecutionLoggerManager.RunSetEnd();
@@ -550,7 +552,7 @@ namespace Ginger.Run
                
             }
             finally
-            {
+            {                
                 mRunSetConfig.IsRunning = false;
             }
         }

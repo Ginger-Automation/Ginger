@@ -36,7 +36,7 @@ using HtmlAgilityPack;
 using InputSimulatorStandard;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Edge;
+using Microsoft.Edge.SeleniumTools;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Remote;
@@ -483,11 +483,11 @@ namespace GingerCore.Drivers
 
                     #region EDGE
                     case eBrowserType.Edge:
-
-                        EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();
-                        EDService.HideCommandPromptWindow = HideConsoleWindow;
                         EdgeOptions EDOpts = new EdgeOptions();
+                        EDOpts.UseChromium = true;
                         EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                        EdgeDriverService EDService = EdgeDriverService.CreateDefaultServiceFromOptions(EDOpts);
+                        EDService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
 
                         break;

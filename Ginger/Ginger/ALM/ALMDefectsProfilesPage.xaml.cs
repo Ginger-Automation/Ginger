@@ -16,19 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using ALM_Common.DataContracts;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using GingerCore.ALM;
+using GingerCoreNET.ALMLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using GingerCore;
-using Ginger.UserControls;
-using System.ComponentModel;
-using Amdocs.Ginger.Common;
-using GingerCoreNET.ALMLib;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger.ALM
 {
@@ -48,8 +48,6 @@ namespace Ginger.ALM
         }
 
         GenericWindow genWin = null;
-
-        BackgroundWorker fieldsWorker = new BackgroundWorker();
 
         public static string LoadFieldsState = "aa";
 
@@ -74,12 +72,12 @@ namespace Ginger.ALM
             _manualCheckedEvent = true;
         }
 
-        List<GingerCore.GeneralLib.ComboEnumItem> ALMTypes = GingerCore.General.GetEnumValuesForCombo(typeof(GingerCoreNET.ALMLib.ALMIntegration.eALMType));
+        List<GingerCore.GeneralLib.ComboEnumItem> ALMTypes = GingerCore.General.GetEnumValuesForCombo(typeof(ALMIntegrationEnums.eALMType));
 
         private void SetFieldsGrid()
         {
             //Remove Rally
-            var comboEnumItem = ALMTypes.Cast<GingerCore.GeneralLib.ComboEnumItem>().Where(x => x.text == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY.ToString()).FirstOrDefault();
+            var comboEnumItem = ALMTypes.Cast<GingerCore.GeneralLib.ComboEnumItem>().Where(x => x.text == ALMIntegrationEnums.eALMType.RALLY.ToString()).FirstOrDefault();
             ALMTypes.Remove(comboEnumItem);
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -90,13 +88,13 @@ namespace Ginger.ALM
             view.GridColsView.Add(new GridColView() { Field = nameof(OptionalValue.IsDefault), WidthWeight = 10, Header = "Default", StyleType = GridColView.eGridColStyleType.Template, HorizontalAlignment = HorizontalAlignment.Center, CellTemplate = (DataTemplate)this.grdDefectsProfile.Resources["DefaultValueTemplate"] });
 
             grdDefectsProfiles.SetAllColumnsDefaultView(view);
-            grdDefectsProfiles.btnEdit.Visibility = System.Windows.Visibility.Visible;
+            grdDefectsProfiles.btnEdit.Visibility = Visibility.Visible;
             grdDefectsProfiles.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditDefectsProfile));
-            grdDefectsProfiles.btnAdd.Visibility = System.Windows.Visibility.Visible;
+            grdDefectsProfiles.btnAdd.Visibility = Visibility.Visible;
             grdDefectsProfiles.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddDefectsProfile));
             //grdDefectsProfiles.btnDelete.Visibility = System.Windows.Visibility.Visible;                                     //
             //grdDefectsProfiles.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteDefectsProfile));        // to fix - should use non-generic handler !!!
-            grdDefectsProfiles.btnRefresh.Visibility = System.Windows.Visibility.Visible;
+            grdDefectsProfiles.btnRefresh.Visibility = Visibility.Visible;
             grdDefectsProfiles.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshgrdDefectsProfilesHandler));
 
             grdDefectsProfiles.SetAllColumnsDefaultView(view);
@@ -112,12 +110,12 @@ namespace Ginger.ALM
             view.GridColsView.Add(new GridColView() { Field = nameof(ExternalItemFieldBase.Mandatory), Header = "Field Is Mandatory", WidthWeight = 15, ReadOnly = true, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ExternalItemFieldBase.SelectedValue), Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ExternalItemFieldBase.Fields.PossibleValues, ExternalItemFieldBase.Fields.SelectedValue, true), WidthWeight = 20 });
 
-            grdDefectsFields.btnRefresh.Visibility = System.Windows.Visibility.Visible;
+            grdDefectsFields.btnRefresh.Visibility = Visibility.Visible;
             grdDefectsFields.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshgrdDefectsFieldsHandler));
             ToolTipService.SetToolTip(grdDefectsFields.btnRefresh, new ToolTip { Content = "Refresh fields [Keep existing fields] of selected Defect profile", Style = FindResource("ToolTipStyle") as Style });
             ToolTipService.SetShowDuration(grdDefectsFields.btnRefresh, 15000);
 
-            grdDefectsFields.btnAdd.Visibility = System.Windows.Visibility.Visible;
+            grdDefectsFields.btnAdd.Visibility = Visibility.Visible;
             ToolTipService.SetToolTip(grdDefectsFields.btnAdd, new ToolTip { Content = "Fetch latest fields [Overwrite existing fields] of selected Defect profile", Style = FindResource("ToolTipStyle") as Style });
             ToolTipService.SetShowDuration(grdDefectsFields.btnAdd, 15000);
             grdDefectsFields.SetBtnImage(grdDefectsFields.btnAdd, "@GetLatest2_32x32.png");
@@ -159,9 +157,13 @@ namespace Ginger.ALM
             foreach (ALMDefectProfile aLMDefectProfile in mALMDefectProfiles)
             {
                 if (aLMDefectProfile.Guid != (Guid)((RadioButton)sender).Tag)
+                {
                     aLMDefectProfile.IsDefault = false;
+                }
                 else
+                {
                     aLMDefectProfile.IsDefault = true;
+                }
             }
         }
 
@@ -181,7 +183,7 @@ namespace Ginger.ALM
             }
             newALMDefectProfile.Name = "Some Name " + (newALMDefectProfile.ID + 1).ToString();
             newALMDefectProfile.Description = "Some Description " + (newALMDefectProfile.ID + 1).ToString();
-            ALMConfig AlmConfig = ALMIntegration.Instance.GetDefaultAlmConfig();
+            ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig();
             newALMDefectProfile.AlmType = AlmConfig.AlmType;
             mALMDefectProfiles.Add(newALMDefectProfile);
 
@@ -346,13 +348,13 @@ namespace Ginger.ALM
             return newALMDefectProfile;
         }
 
-        ObservableList<ExternalItemFieldBase> FetchDefectFields(GingerCoreNET.ALMLib.ALMIntegration.eALMType AlmType)
+        ObservableList<ExternalItemFieldBase> FetchDefectFields(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType AlmType)
         {
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
                 ALMIntegration.Instance.UpdateALMType(AlmType);
-                mALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.DEFECT, null);
+                mALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ResourceType.DEFECT, null);
             }
             catch (Exception ex)
             {
@@ -360,7 +362,7 @@ namespace Ginger.ALM
             }
             finally
             {
-                ALMIntegration.Instance.UpdateALMType(ALMIntegration.Instance.GetDefaultAlmConfig().AlmType);
+                ALMIntegration.Instance.UpdateALMType(ALMCore.GetDefaultAlmConfig().AlmType);
                 Mouse.OverrideCursor = null;
             }
             return mALMDefectProfileFields;
