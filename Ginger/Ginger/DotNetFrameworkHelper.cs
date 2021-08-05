@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.GeneralLib;
 using Ginger.Reports;
+using Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionAutoSaveAndRecover;
