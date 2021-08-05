@@ -99,16 +99,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="AlmDataContractsStd">
+      <HintPath>..\GingerCoreNET\DLLS\AlmDataContractsStd.dll</HintPath>
+    </Reference>
     <Reference Include="ALMRestClient">
       <HintPath>..\GingerCore\DLLs\ALMRestClient.dll</HintPath>
     </Reference>
-    <Reference Include="ALM_Common, Version=7.9.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="ALM_Common">
       <HintPath>..\GingerCore\DLLs\ALM_Common.dll</HintPath>
     </Reference>
     <Reference Include="Interop.TDAPIOLELib">
       <HintPath>..\GingerCore\DLLs\Interop.TDAPIOLELib.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="JiraRepositoryStd">
+      <HintPath>..\GingerCoreNET\DLLS\JiraRepositoryStd.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -147,10 +152,6 @@
     <Reference Include="System.Printing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
-    <Reference Include="JiraRepository, Version=8.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GingerCore\DLLs\JiraRepository.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.DataVisualization" />
     <Reference Include="System.Web.Services" />
@@ -169,9 +170,9 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="ZephyrEntSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ZephyrEntStdSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GingerCore\DLLs\ZephyrEntSDK.dll</HintPath>
+      <HintPath>..\GingerCoreNET\DLLS\ZephyrEntStdSDK.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -960,7 +961,6 @@
     <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml.cs">
       <DependentUpon>UploadItemsSelectionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ItemValidationBase.cs" />
     <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsValidationPage.xaml.cs">
       <DependentUpon>UploadItemsValidationPage.xaml</DependentUpon>
     </Compile>
@@ -968,11 +968,6 @@
     <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadStatusPage.xaml.cs">
       <DependentUpon>UploadStatusPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActionValidation.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActivityValidation.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActivitiesGroupValidation.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\VariableValidation.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositoryOperations.cs" />
     <Compile Include="Run\FailedActionsScreenshotsPage.xaml.cs">
       <DependentUpon>FailedActionsScreenshotsPage.xaml</DependentUpon>
     </Compile>

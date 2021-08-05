@@ -130,9 +130,9 @@ namespace Ginger.Reports
         }
 
         public enum eExecutionStatisticsCountBy
-        {
-            Actions,
-            Activities
+        {            
+            Actions = 1,
+            Activities =2
         }
 
         [IsSerializedForLocalRepository]
@@ -192,6 +192,11 @@ namespace Ginger.Reports
             {
                 Name = value;
             }
+        }
+
+        public override string GetItemType()
+        {
+            return nameof(HTMLReportConfiguration);
         }
         public HTMLReportConfiguration()
         {

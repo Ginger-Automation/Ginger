@@ -21,9 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Amdocs.Ginger.GingerConsole.ReporterLib
+namespace Amdocs.Ginger.GingerRuntime.ReporterLib
 {
-    public class GingerConsoleWorkspaceReporter : WorkSpaceReporterBase
+    public class GingerRuntimeWorkspaceReporter : WorkSpaceReporterBase
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 

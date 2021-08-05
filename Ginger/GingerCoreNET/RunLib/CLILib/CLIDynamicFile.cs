@@ -214,8 +214,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             foreach (AlmDetails almDetails in gingerExecConfig.AlmsDetails)
             {
-                ALMIntegration.eALMType almTypeToConfigure;
-                if (Enum.TryParse<ALMIntegration.eALMType>(almDetails.ALMType, out almTypeToConfigure))
+                ALMIntegrationEnums.eALMType almTypeToConfigure;
+                if (Enum.TryParse<ALMIntegrationEnums.eALMType>(almDetails.ALMType, out almTypeToConfigure))
                 {
                     try
                     {
@@ -235,7 +235,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         }
                         if (almDetails.ALMSubType != null)
                         {
-                            solutionAlmConfig.JiraTestingALM = (ALMIntegration.eTestingALMType)Enum.Parse(typeof(ALMIntegration.eTestingALMType), almDetails.ALMSubType);
+                            solutionAlmConfig.JiraTestingALM = (ALMIntegrationEnums.eTestingALMType)Enum.Parse(typeof(ALMIntegrationEnums.eTestingALMType), almDetails.ALMSubType);
                         }
                         if (almDetails.ServerURL != null)
                         {

@@ -76,9 +76,9 @@ namespace GingerCoreNET.ALMLib
         {
             get; set;
         }
-        private ALMIntegration.eALMType mAlmType = ALMIntegration.eALMType.QC;
+        private ALMIntegrationEnums.eALMType mAlmType = ALMIntegrationEnums.eALMType.QC;
         [IsSerializedForLocalRepository]
-        public ALMIntegration.eALMType AlmType
+        public ALMIntegrationEnums.eALMType AlmType
         {
             get
             {

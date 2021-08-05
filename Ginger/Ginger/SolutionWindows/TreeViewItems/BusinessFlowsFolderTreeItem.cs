@@ -41,6 +41,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -139,9 +140,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
             else if (mViewMode == eBusinessFlowsTreeViewMode.ReadWrite)
             {
                 if (mBusFlowsFolder.IsRootFolder)
+                {
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false, allowDeleteAllItems: true);
+                }
                 else
+                {
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRefresh: false);
+                }
 
                 MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion", eImageType.Convert);
                 TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions Conversion", ActionsConversionHandler, null, eImageType.Convert);
@@ -154,9 +159,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 TreeViewUtils.AddSubMenuItem(importMenu, "Import ALM Test Set", ALMTSImport, null, "@ALM_16x16.png");
                 TreeViewUtils.AddSubMenuItem(importMenu, "Import ALM Test Set By ID", ALMTSImportById, null, "@ALM_16x16.png");
                 TreeViewUtils.AddSubMenuItem(importMenu, "Import Gherkin Feature File", ImportGherkinFeature, null, "@FeatureFile_16X16.png");
-                //TreeViewUtils.AddSubMenuItem(importMenu, "Import Selenium Script", ImportSeleniumScript, null, eImageType.ImportFile);
-                //TreeViewUtils.AddSubMenuItem(importMenu, "Import QTP Script", ImportAQTPScript, null, eImageType.ImportFile);
-                //TreeViewUtils.AddSubMenuItem(importMenu, "Import ASAP Script", ImportASAPScript, null, eImageType.ImportFile);
                 MenuItem exportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
                 TreeViewUtils.AddSubMenuItem(exportMenu, "Export All to ALM", ExportAllToALM, null, "@ALM_16x16.png");
             }
@@ -183,10 +185,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void LegacyActionsRemoveHandler(object sender, System.Windows.RoutedEventArgs e)
+        private async void LegacyActionsRemoveHandler(object sender, RoutedEventArgs e)
         {
             ObservableList<BusinessFlowToConvert> lstBFToConvert = new ObservableList<BusinessFlowToConvert>();
-            var items = ((Amdocs.Ginger.Repository.RepositoryFolder<GingerCore.BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
+            var items = ((RepositoryFolder<BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
             foreach (var bf in items)
             {
                 BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
@@ -255,11 +257,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     //customize the imported BF
                     importedBF.Guid = Guid.NewGuid();
                     for (int i = 0; i < importedBF.TargetApplications.Count; i++)
-                        if ( WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == importedBF.TargetApplications[i].Name).FirstOrDefault() == null)
+                    {
+                        if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == importedBF.TargetApplications[i].Name).FirstOrDefault() == null)
                         {
                             importedBF.TargetApplications.RemoveAt(i);//No such Application so Delete it
                             i--;
-                        }                    
+                        }
+                    }
                     if (importedBF.TargetApplications.Count == 0)
                     {
                         TargetApplication ta = new TargetApplication();
@@ -323,12 +327,19 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (bfToExport.Count > 0)
             {
                 if (bfToExport.Count == 1)
+                {
                     ALMIntegration.Instance.ExportBusinessFlowToALM(bfToExport[0], true);
+                }
                 else
                 {
-                    if (ALMIntegration.Instance.ExportAllBusinessFlowsToALM(bfToExport, true, ALMIntegration.eALMConnectType.Auto))
+                    if (ALMIntegration.Instance.ExportAllBusinessFlowsToALM(bfToExport, true, eALMConnectType.Auto))
+                    {
                         Reporter.ToUser(eUserMsgKey.ExportAllItemsToALMSucceed);
-                    else Reporter.ToUser(eUserMsgKey.ExportAllItemsToALMFailed);
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.ExportAllItemsToALMFailed);
+                    }
                 }
             }
         }

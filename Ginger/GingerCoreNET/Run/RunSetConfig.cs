@@ -281,6 +281,11 @@ namespace Ginger.Run
             }
         }
 
+        public override string GetItemType()
+        {
+            return nameof(RunSetConfig);
+        }
+
         public override eImageType ItemImageType
         {
             get

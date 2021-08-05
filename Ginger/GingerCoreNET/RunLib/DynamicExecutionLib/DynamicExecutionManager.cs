@@ -428,7 +428,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         ALMUserConfig userProfileAlmConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == solutionAlmConfig.AlmType);
                         AlmDetails almDetails = new AlmDetails();
                         almDetails.ALMType = solutionAlmConfig.AlmType.ToString();
-                        if (solutionAlmConfig.JiraTestingALM != ALMIntegration.eTestingALMType.None)
+                        if (solutionAlmConfig.JiraTestingALM != ALMIntegrationEnums.eTestingALMType.None)
                         {
                             almDetails.ALMSubType = solutionAlmConfig.JiraTestingALM.ToString();
                         }
