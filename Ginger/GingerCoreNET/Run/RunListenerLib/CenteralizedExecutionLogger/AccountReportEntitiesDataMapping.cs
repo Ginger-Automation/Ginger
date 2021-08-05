@@ -20,7 +20,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
     {     
              //select template 
         static HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => x.IsDefault ).FirstOrDefault();
-        static string _Status = "In Progress";
+        static string _InProgressStatus = "In Progress";
            
         public static AccountReportAction MapActionStartData(GingerCore.Actions.Act action, Context context)
         {
@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportAction.CurrentRetryIteration = action.RetryMechanismCount;            
             accountReportAction.Wait = Convert.ToInt32(action.Wait);
             accountReportAction.TimeOut = action.Timeout;
-            accountReportAction.RunStatus = _Status;      
+            accountReportAction.RunStatus = _InProgressStatus;      
 
             return accountReportAction;
         }
@@ -97,7 +97,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivity.VariablesBeforeExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
             accountReportActivity.ActivityGroupName = activity.ActivitiesGroupID;
             accountReportActivity.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active == true);
-            accountReportActivity.RunStatus = _Status;
+            accountReportActivity.RunStatus = _InProgressStatus;
             return accountReportActivity;
         }
         public static AccountReportActivity MapActivityEndData(Activity activity, Context context)
@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivity.RunStatus = activity.Status.ToString();
             accountReportActivity.VariablesAfterExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();  
             
-            accountReportActivity.ChildExecutedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored);
+            accountReportActivity.ChildExecutedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Stopped || x.Status == eRunStatus.Completed);
             accountReportActivity.ChildPassedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed);
             accountReportActivity.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active == true);
 
@@ -138,7 +138,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivityGroup.AutomationPrecentage = activitiesGroup.AutomationPrecentage;
             accountReportActivityGroup.StartTimeStamp = activitiesGroup.StartTimeStamp;           
             accountReportActivityGroup.ExecutedActivitiesGUID = activitiesGroup.ExecutedActivities.Select(x => x.Key).ToList();
-            accountReportActivityGroup.RunStatus = _Status;
+            accountReportActivityGroup.RunStatus = _InProgressStatus;
             return accountReportActivityGroup;
         }
 
@@ -175,7 +175,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportBusinessFlow.StartTimeStamp = businessFlow.StartTimeStamp;
             accountReportBusinessFlow.VariablesBeforeExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
             accountReportBusinessFlow.SolutionVariablesBeforeExec = businessFlow.GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();            
-            accountReportBusinessFlow.RunStatus = _Status;
+            accountReportBusinessFlow.RunStatus = _InProgressStatus;
 
             int ChildExecutableItemsCountAction = 0;
             string Actions = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString();
@@ -214,7 +214,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             foreach (Activity activity in businessFlow.Activities)
             {
                 ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active == true);
-                ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored);
+                ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Stopped || x.Status == eRunStatus.Completed);
                 ChildPassedItemsCountAction = ChildPassedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed);
             }
             string Actvities = HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString();
@@ -226,7 +226,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             accountReportBusinessFlow.ChildExecutedItemsCount = new List<AccountReport.Contracts.Helpers.DictObject>();
             accountReportBusinessFlow.ChildExecutedItemsCount.Add(new AccountReport.Contracts.Helpers.DictObject
-            { Key = Actvities, Value = businessFlow.Activities.Where(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored).Count() });
+            { Key = Actvities, Value = businessFlow.Activities.Where(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored || ac.Status == eRunStatus.Stopped || ac.Status == eRunStatus.Completed).Count()});
 
             accountReportBusinessFlow.ChildPassedItemsCount = new List<AccountReport.Contracts.Helpers.DictObject>();
             accountReportBusinessFlow.ChildPassedItemsCount.Add(new AccountReport.Contracts.Helpers.DictObject
@@ -265,7 +265,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunner.StartTimeStamp = gingerRunner.StartTimeStamp;
             accountReportRunner.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
             SetRunnerChildCounts(gingerRunner, accountReportRunner);
-            accountReportRunner.RunStatus = _Status;
+            accountReportRunner.RunStatus = _InProgressStatus;
             return accountReportRunner;
         }
 
@@ -314,7 +314,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunSet.UserCategory1 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory1).FirstOrDefault());
             accountReportRunSet.UserCategory2 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory2).FirstOrDefault());
             accountReportRunSet.UserCategory3 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory3).FirstOrDefault());
-            accountReportRunSet.RunStatus = _Status;
+            accountReportRunSet.RunStatus = _InProgressStatus;
             SetRunSetChildCounts(runSetConfig, accountReportRunSet);
             return accountReportRunSet;
         }
@@ -394,7 +394,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 
                 ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + businessFlow.Activities.Count(x => x.Active == true);
                 
-                ChildExecutedItemsCountActivity =  ChildExecutedItemsCountActivity + businessFlow.Activities.Where(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored).Count();
+                ChildExecutedItemsCountActivity =  ChildExecutedItemsCountActivity + businessFlow.Activities.Where(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored || ac.Status == eRunStatus.Stopped || ac.Status == eRunStatus.Completed).Count();
                
                 ChildPassedItemsCountActivity = ChildPassedItemsCountActivity + businessFlow.Activities.Where(ac => ac.Status == eRunStatus.Passed).Count();
 
@@ -402,7 +402,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 {
                     ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active == true);
 
-                    ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored); ;
+                    ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Stopped || x.Status == eRunStatus.Completed); 
 
                     ChildPassedItemsCountAction = activity.Acts.Count(x => x.Status == eRunStatus.Passed);
                 }
@@ -446,7 +446,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 {                    
                     ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + businessFlow.Activities.Count(x => x.Active == true);
 
-                    ChildExecutedItemsCountActivity = ChildExecutedItemsCountActivity + businessFlow.Activities.Where(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored).Count();
+                    ChildExecutedItemsCountActivity = ChildExecutedItemsCountActivity + businessFlow.Activities.Where(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored || ac.Status == eRunStatus.Stopped || ac.Status == eRunStatus.Completed).Count();
 
                     ChildPassedItemsCountActivity = ChildPassedItemsCountActivity + businessFlow.Activities.Where(ac => ac.Status == eRunStatus.Passed).Count();
 
@@ -454,7 +454,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     {
                         ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active == true);
 
-                        ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored); ;
+                        ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Stopped || x.Status == eRunStatus.Completed); 
 
                         ChildPassedItemsCountAction = ChildPassedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed);
                     }
