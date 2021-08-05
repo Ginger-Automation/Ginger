@@ -1164,7 +1164,12 @@ namespace GingerCore
                 this.Name = value;
             }
         }
-        
+
+        public override string GetItemType()
+        {
+            return nameof(Agent);
+        }
+
         public DriverConfigParam GetOrCreateParam(string parameter, string defaultValue = null)
         {
             DriverConfigParam configParam = DriverConfiguration.Where(x => x.Parameter == parameter).FirstOrDefault();

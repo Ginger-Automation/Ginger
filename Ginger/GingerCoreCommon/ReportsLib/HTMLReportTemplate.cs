@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -150,6 +150,11 @@ namespace Ginger.Reports
             }
         }
 
-        
+        public override string GetItemType()
+        {
+            return nameof(HTMLReportTemplate);
+        }
+
+
     }
 }

@@ -20,12 +20,14 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
+using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -680,10 +682,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void AddToSRHandler(object sender, RoutedEventArgs e)
         {
-            SetItem(sender);
-            List<RepositoryItemBase> list = new List<RepositoryItemBase>();
-            list.Add(mAction);
-            (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
+            SetItem(sender);          
+            WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mAction));
         }
 
 
@@ -695,7 +695,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 list.Add(act);
             }
-            (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
+            WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, list));
         }
 
         private void CopyAllListHandler(object sender, RoutedEventArgs e)

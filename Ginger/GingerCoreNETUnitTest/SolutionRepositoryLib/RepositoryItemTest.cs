@@ -17,10 +17,15 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using GingerCore;
+using GingerCore.Activities;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.IO;
+using System.Linq;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.SolutionRepositoryLib
@@ -28,12 +33,17 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
     [Level1]
     [TestClass]
     public class RepositoryItemTest
-    {                
+    {
+        static TestHelper mTestHelper = new TestHelper();
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
             WorkspaceHelper.CreateWorkspace2();
+            mTestHelper.ClassInitialize(TC);
+
+            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "RepositoryItemTest"));
+            WorkSpace.Instance.OpenSolution(path, EncryptionHandler.GetDefaultKey());
         }
 
         [ClassCleanup]
@@ -52,6 +62,73 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         public void TestCleanUp()
         {
             
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void BusinessFlowWithOrginalSRItemsCreateCopyTest()
+        {
+            //Arrange
+            ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            BusinessFlow originalFlow = businessFlows.Where(x => x.Name == "Flow 1").FirstOrDefault();
+
+            //Act
+            BusinessFlow businessFlowCopy = (BusinessFlow)originalFlow.CreateCopy(true);
+
+            //Assert
+            Assert.AreEqual(originalFlow.ActivitiesGroups[0].Guid, businessFlowCopy.ActivitiesGroups[0].ParentGuid);
+            Assert.AreEqual(originalFlow.Activities[0].Guid, businessFlowCopy.Activities[0].ParentGuid);
+            Assert.AreEqual(originalFlow.Activities[0].Variables[0].Guid, businessFlowCopy.Activities[0].Variables[0].ParentGuid);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void BusinessFlowWithSRItemsInstanceCreateCopyTest()
+        {
+            //Arrange
+            ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            BusinessFlow originalFlow = businessFlows.Where(x => x.Name == "Flow 2").FirstOrDefault();
+
+            //Act
+            BusinessFlow businessFlowCopy = (BusinessFlow)originalFlow.CreateCopy(true);
+
+            //Assert
+            Assert.AreEqual(originalFlow.ActivitiesGroups[0].ParentGuid, businessFlowCopy.ActivitiesGroups[0].ParentGuid);
+            Assert.AreEqual(originalFlow.Activities[0].ParentGuid, businessFlowCopy.Activities[0].ParentGuid);
+            Assert.AreEqual(originalFlow.Activities[0].Variables[0].ParentGuid, businessFlowCopy.Activities[0].Variables[0].ParentGuid);
+        }
+
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ActivityWithOrginalSRItemsCreateCopyTest()
+        {
+            //Arrange
+            ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            Activity originalActivity = businessFlows.Where(x => x.Name == "Flow 1").FirstOrDefault().Activities[0];
+
+            //Act
+            Activity duplicatedActivity = (Activity)originalActivity.CreateCopy(true);
+
+            //Assert
+            Assert.AreEqual(Guid.Empty, duplicatedActivity.ParentGuid);            
+            Assert.AreEqual(originalActivity.Variables[0].Guid, duplicatedActivity.Variables[0].ParentGuid);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ActivityWithSRItemsInstanceCreateCopyTest()
+        {
+            //Arrange
+            ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            Activity originalActivity = businessFlows.Where(x => x.Name == "Flow 2").FirstOrDefault().Activities[0];
+
+            //Act
+            Activity duplicatedActivity = (Activity)originalActivity.CreateCopy(true);
+
+            //Assert
+            Assert.AreEqual(Guid.Empty, duplicatedActivity.ParentGuid);
+            Assert.AreEqual(originalActivity.Variables[0].ParentGuid, duplicatedActivity.Variables[0].ParentGuid);
         }
 
 
