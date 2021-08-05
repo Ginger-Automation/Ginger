@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.GlobalSolutionLib.ImportItemWizardLib" xmlns:Actions="clr-namespace:Ginger.Actions" xmlns:Ginger="clr-namespace:Ginger"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
+      d:DesignHeight="300" d:DesignWidth="800"
       Title="SelectItemImportTypePage">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
@@ -13,6 +13,7 @@
             <RowDefinition Height="70"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
         <StackPanel>
             <Label Style="{StaticResource $LabelStyle}" >Select Global Solution Source Type:</Label>
@@ -28,9 +29,9 @@
             <Label Style="{StaticResource $LabelStyle}">Source Control Settings</Label>
         </StackPanel>
 
-        <StackPanel Visibility="Visible" Grid.Row="2">
-            <Label Style="{StaticResource $LabelStyle}">Select Items To Import:</Label>
-            <Ginger:ucGrid x:Name="xItemsToImportGrid" AutomationProperties.AutomationId="ItemsToImport AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+        <StackPanel Grid.Row="2">
+            <Label Style="{StaticResource $LabelStyle}">Select Item Types To Import:</Label>
+            <Ginger:ucGrid x:Name="xItemTypesToImportGrid" AutomationProperties.AutomationId="ItemTypesToImport AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
 
         </StackPanel>
     </Grid>

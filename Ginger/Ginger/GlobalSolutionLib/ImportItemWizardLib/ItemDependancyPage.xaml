@@ -5,14 +5,16 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.GlobalSolutionLib.ImportItemWizardLib" xmlns:Actions="clr-namespace:Ginger.Actions" xmlns:Ginger="clr-namespace:Ginger"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
+      d:DesignHeight="300" d:DesignWidth="800"
       Title="SelectItemImportTypePage">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="300*"/>
+        </Grid.RowDefinitions>
         <StackPanel>
             <Label Style="{StaticResource $LabelStyle}">Dependant Items List To Import:</Label>
-            <Ginger:ucGrid x:Name="xDependantItemsToImportGrid" AutomationProperties.AutomationId="DependantItemsToImport AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+            <Ginger:ucGrid x:Name="xDependantItemsToImportGrid" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
 
         </StackPanel>
     </Grid>

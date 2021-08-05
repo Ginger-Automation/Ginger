@@ -45,7 +45,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
         override public string NodePath()
         {
-            return Path;
+            return null;
         }
         override public Type NodeObjectType()
         {

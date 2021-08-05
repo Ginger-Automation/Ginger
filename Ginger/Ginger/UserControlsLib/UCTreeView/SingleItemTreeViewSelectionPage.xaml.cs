@@ -161,9 +161,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             if (itvItem != null &&  mItemSelectionType != eItemSelectionType.Folder)
             {
-                //if (mItemSelectionType != eItemSelectionType.MultiStayOpenOnDoubleClick || mItemSelectionType != eItemSelectionType.Multi)
-                if (mSelectedItems == null)
-                    mSelectedItems = new List<object>();
+                mSelectedItems = new List<object>();
                 if (itvItem.IsExpandable())
                 {
                     if (mShowAlerts && mItemSelectionType == eItemSelectionType.Single)
@@ -179,10 +177,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 }
                 else
                 {
-                    if (!mSelectedItems.Contains(itvItem))
-                    {
-                        mSelectedItems.Add(itvItem.NodeObject());
-                    }
+                    mSelectedItems.Add(itvItem.NodeObject());
                 }
             }
 
@@ -228,19 +223,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         }
         private void Tree_ItemSelected(object sender, EventArgs e)
         {
-            //if (mItemSelectionType != eItemSelectionType.MultiStayOpenOnDoubleClick || mItemSelectionType != eItemSelectionType.Multi)
-            if (mSelectedItems == null)
-            {
-                mSelectedItems = new List<object>();
-            }
+            mSelectedItems = new List<object>();
             ITreeViewItem itvItem = xTreeView.Tree.CurrentSelectedTreeViewItem;            
             if(mItemSelectionType == eItemSelectionType.Folder)
             { 
                 mSelectedItems.Add(itvItem);
             }
             else
-            { 
-                //mSelectedItems.Add(itvItem.NodeObject());
+            {
                 mSelectedItems.Add(itvItem);
             }
 

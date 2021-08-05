@@ -1,7 +1,10 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GlobalSolutionLib;
 using Ginger.Actions;
 using Ginger.SolutionWindows.TreeViewItems;
+using Ginger.UserControls;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
@@ -28,8 +31,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
     public partial class SelectItemFromSolutionPage : Page, IWizardPage
     {
         ImportItemWizard wiz;
-        SingleItemTreeViewSelectionPage mTargetFolderSelectionPage;
-
         public SelectItemFromSolutionPage()
         {
             InitializeComponent();
@@ -43,21 +44,92 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     wiz = (ImportItemWizard)WizardEventArgs.Wizard;
                     break;
                 case EventType.Active:
-                    //create RepoItemTreeView
-                    DocumentsFolderTreeItem documentsFolderRoot = new DocumentsFolderTreeItem();
-                    documentsFolderRoot.Path = wiz.SolutionFolder;// Path.Combine(wiz.SolutionFolder, "Documents");
-                    documentsFolderRoot.Folder = wiz.SolutionFolder;
-                    mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage("Solution", eImageType.File, documentsFolderRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true);
-                    //mTargetFolderSelectionPage.xTreeView.xTreeViewTree.ValidationRules.Add(UCTreeView.eUcTreeValidationRules.NoItemSelected);
-                    mTargetFolderSelectionPage.OnSelect += MTargetFolderSelectionPage_OnSelectItem;
-                    TargetPath.Content = mTargetFolderSelectionPage;
+                    SetItemsListToImportGridView();
+                    wiz.ItemsListToImport = GetItemsListToImport();
+                    xItemsToImportGrid.DataSourceList = wiz.ItemsListToImport;
+
+                    List<GlobalSolution.eImportItemType> testItemTypesList = Enum.GetValues(typeof(GlobalSolution.eImportItemType)).Cast<GlobalSolution.eImportItemType>().ToList();
+                    //GingerCore.General.FillComboFromList(ItemTypeListComboBox, testItemTypesList);
+
+                    GingerCore.General.FillComboFromList(ItemTypeListComboBox, wiz.ItemTypesList);
+                    ItemTypeListComboBox.Items.Insert(0, "All");
+                    ItemTypeListComboBox.SelectedIndex = 0;
+
                     break;
             }
             
         }
-        private void MTargetFolderSelectionPage_OnSelectItem(object sender, SelectionTreeEventArgs e)
+
+        private void SetItemsListToImportGridView()
         {
-            wiz.SelectedItems = e.SelectedItems;
+            //Set the Data Grid columns            
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.Selected), Header = "Select", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemType), Header = "Item Type", WidthWeight = 50, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemName), Header = "Item Name", WidthWeight = 50, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemExtraInfo), Header = "Item Full Path", WidthWeight = 150, ReadOnly = true });
+
+            xItemsToImportGrid.SetAllColumnsDefaultView(view);
+            xItemsToImportGrid.InitViewItems();
+
+            xItemsToImportGrid.SetBtnImage(xItemsToImportGrid.btnMarkAll, "@CheckAllColumn_16x16.png");
+            xItemsToImportGrid.btnMarkAll.Visibility = Visibility.Visible;
+            xItemsToImportGrid.MarkUnMarkAllActive += MarkUnMarkAllItems;
+        }
+
+        public ObservableList<GlobalSolutionItem> GetItemsListToImport()
+        {
+            ObservableList<GlobalSolutionItem> ItemsListToImport = new ObservableList<GlobalSolutionItem>();
+
+            //foreach (string importItemType in wiz.ItemTypesList)
+            //foreach (GlobalSolution.ImportItemType ItemType in GlobalSolution.GetEnumValues<GlobalSolution.ImportItemType>())
+            foreach (GlobalSolutionItem item in wiz.ItemTypeListToImport.Where(x => x.Selected))
+            {
+                string[] filePaths = null;
+                if (item.ItemType == GlobalSolution.eImportItemType.Documents || item.ItemType == GlobalSolution.eImportItemType.DataSources)
+                {
+                    filePaths = Directory.GetFiles(Path.Combine(wiz.SolutionFolder, item.ItemType.ToString()), "*", SearchOption.AllDirectories);
+                }
+                else
+                {
+                    filePaths = Directory.GetFiles(Path.Combine(wiz.SolutionFolder, item.ItemType.ToString()), "*.xml", SearchOption.AllDirectories);
+                }
+                foreach (string file in filePaths)
+                {
+                    string itemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(file);
+                    ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, true, itemName, GlobalSolution.eItemDependancyType.Original));
+                }
+            }
+            return ItemsListToImport;
+        }
+
+        private void ItemTypeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            bool result = Enum.TryParse(ItemTypeListComboBox.SelectedValue.ToString(), out GlobalSolution.eImportItemType eImportItemType);
+            if (result)
+            {
+                xItemsToImportGrid.DataSourceList = FilterItemsListToImport(eImportItemType);
+            }
+            else
+            {
+                xItemsToImportGrid.DataSourceList = wiz.ItemsListToImport;
+            }
+        }
+
+        ObservableList<GlobalSolutionItem> FilterItemsListToImport(GlobalSolution.eImportItemType importItemType)
+        {
+            ObservableList<GlobalSolutionItem> ItemsListToImport = GingerCore.General.ConvertListToObservableList(wiz.ItemsListToImport.Where(x => x.ItemType == importItemType).ToList());
+            return ItemsListToImport;
+        }
+
+        private void MarkUnMarkAllItems(bool ActiveStatus)
+        {
+            foreach (GlobalSolutionItem item in xItemsToImportGrid.DataSourceList)
+            {
+                item.Selected = ActiveStatus;
+            }
         }
     }
 }

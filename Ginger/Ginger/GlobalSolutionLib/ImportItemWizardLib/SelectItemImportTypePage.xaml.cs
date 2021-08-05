@@ -42,7 +42,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
                     SetItemsListToImportGridView();
                     wiz.ItemTypeListToImport = GetItemTypeListToImport();
-                    xItemsToImportGrid.DataSourceList = wiz.ItemTypeListToImport;
+                    xItemTypesToImportGrid.DataSourceList = wiz.ItemTypeListToImport;
 
                     break;
                 case EventType.LeavingForNextPage:
@@ -62,7 +62,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             {
                 return;
             }
-            wiz.ImportFromType = GlobalSolution.ImportFromType.LocalFolder;
+            wiz.ImportFromType = GlobalSolution.eImportFromType.LocalFolder;
             ImportFromLocalFolderPanel.Visibility = Visibility.Visible;
             ImportFromSourceControlPanel.Visibility = Visibility.Hidden;
         }
@@ -73,7 +73,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             {
                 return;
             }
-            wiz.ImportFromType = GlobalSolution.ImportFromType.SourceControl;
+            wiz.ImportFromType = GlobalSolution.eImportFromType.SourceControl;
             ImportFromSourceControlPanel.Visibility = Visibility.Visible;
             ImportFromLocalFolderPanel.Visibility = Visibility.Hidden;
         }
@@ -88,19 +88,18 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemType), Header = "Item Type", WidthWeight = 100, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemExtraInfo), Header = "Item Extra Info", WidthWeight = 100, ReadOnly = true });
 
-            xItemsToImportGrid.SetAllColumnsDefaultView(view);
-            xItemsToImportGrid.InitViewItems();
-            xItemsToImportGrid.SetAllColumnsDefaultView(view);
-            xItemsToImportGrid.InitViewItems();
+            xItemTypesToImportGrid.SetAllColumnsDefaultView(view);
+            xItemTypesToImportGrid.InitViewItems();
+            
         }
 
         public ObservableList<GlobalSolutionItem> GetItemTypeListToImport()
         {
             ObservableList<GlobalSolutionItem> ItemTypeListToImport = new ObservableList<GlobalSolutionItem>();
-            foreach (GlobalSolution.ImportItemType ItemType in GlobalSolution.GetEnumValues<GlobalSolution.ImportItemType>())
+            foreach (GlobalSolution.eImportItemType ItemType in GlobalSolution.GetEnumValues<GlobalSolution.eImportItemType>())
             {
-                var description = ((EnumValueDescriptionAttribute[])typeof(GlobalSolution.ImportItemType).GetField(ItemType.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription;
-                ItemTypeListToImport.Add(new GlobalSolutionItem(ItemType, description, true,"",""));
+                var description = ((EnumValueDescriptionAttribute[])typeof(GlobalSolution.eImportItemType).GetField(ItemType.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription;
+                ItemTypeListToImport.Add(new GlobalSolutionItem(ItemType, description, true,"", GlobalSolution.eItemDependancyType.None));
             }
             return ItemTypeListToImport;
         }
