@@ -24,6 +24,7 @@ using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Reports.GingerExecutionReport;
+using Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionAutoSaveAndRecover;
 using Ginger.SourceControl;
@@ -41,6 +42,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 {
@@ -65,11 +67,38 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             return new OracleConnection(ConnectionString);
         }
 
-        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegration.eALMType almType)
+        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegrationEnums.eALMType almType)
         {
-            throw new NotImplementedException();
-        }
+            ALMCore aLMCore = null;
+            eALMType defaultAlmType = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(typ => typ.DefaultAlm).AlmType;
+            if (almType != defaultAlmType)
+            {
+                aLMCore = (ALMCore)UpdateALMType(almType);
+            }
+            aLMCore.ConnectALMServer();
+            Dictionary<Guid, string> defectsOpeningResults;
+            if ((defectsForOpening != null) && (defectsForOpening.Count > 0))
+            {
+                defectsOpeningResults = aLMCore.CreateNewALMDefects(defectsForOpening, defectsFields);
+            }
+            else
+            {
+                return;
+            }
+            if ((defectsOpeningResults != null) && (defectsOpeningResults.Count > 0))
+            {
+                foreach (KeyValuePair<Guid, string> defectOpeningResult in defectsOpeningResults)
+                {
+                    if ((defectOpeningResult.Value != null) && (defectOpeningResult.Value != "0"))
+                    {
+                        WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; });
+                    }
+                }
+            }
 
+            //Set back Default Alm
+            UpdateALMType(defaultAlmType);
+        }
         public object CreateNewReportTemplate()
         {
             throw new NotImplementedException();
@@ -109,12 +138,16 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
         {
-            throw new NotImplementedException();
+            ALMCore aLMCore = GetALMCore();
+            aLMCore.ConnectALMServer();
+            aLMCore.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, (eALMConnectType)silence);
         }
 
         public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string refe, PublishToALMConfig PublishToALMConfig)
         {
-            throw new NotImplementedException();
+            ALMCore aLMCore = GetALMCore();
+            aLMCore.ConnectALMServer();
+            return aLMCore.ExportBusinessFlowsResultToALM(bfs, ref refe, PublishToALMConfig, eALMConnectType.Silence);
         }
 
         public Type GetDriverType(IAgent agent)
@@ -132,6 +165,9 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
                 case Agent.eDriverType.Appium:
                     return (typeof(GenericAppiumDriver));
+
+                case Agent.eDriverType.WebServices:
+                    return (typeof(WebServicesDriver));
 
                 default:
                     throw new Exception("GetDriverType: Unknown Driver type " + zAgent.DriverType);
@@ -222,7 +258,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public string GetALMConfig()
         {
-            throw new NotImplementedException();
+            return WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType.ToString();
         }
 
         public DbConnection GetMSAccessConnection()
@@ -235,6 +271,40 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             return new WebserviceDriverConsoleReporter();
         }
 
-  
+        private ALMCore GetALMCore()
+        {
+            string almtype = GetALMConfig();
+            Enum.TryParse(almtype, out ALMIntegrationEnums.eALMType AlmType);
+            ALMCore almCore = (ALMCore)UpdateALMType(AlmType);
+            almCore.GetCurrentAlmConfig();
+            ALMCore.SetALMCoreConfigurations(AlmType, almCore);
+            return almCore;
+        }
+
+        private object UpdateALMType(eALMType almType)
+        {
+            ALMCore almCore = null;
+            ALMConfig CurrentAlmConfigurations = ALMCore.GetCurrentAlmConfig(almType);
+            ALMCore.DefaultAlmConfig = CurrentAlmConfigurations;
+            //Set ALMRepo
+            switch (almType)
+            {
+                case eALMType.Jira:
+                    almCore = new JiraCore();
+                    break;
+                case eALMType.ZephyrEnterprise:
+                    almCore = new ZephyrEntCore();
+                    break;
+                default:
+                    Reporter.ToLog(eLogLevel.ERROR, $"Invalid ALM Type - {almType}");
+                    break;
+            }
+            return almCore;
+        }
+        public bool IsSharedRepositoryItem(RepositoryItemBase repositoryItem)
+        {
+            return SharedRepositoryOperations.IsSharedRepositoryItem(repositoryItem);
+        }       
+
     }
 }

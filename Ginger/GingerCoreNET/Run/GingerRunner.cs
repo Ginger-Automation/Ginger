@@ -57,7 +57,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
-using static GingerCoreNET.ALMLib.ALMIntegration;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.Run
 {

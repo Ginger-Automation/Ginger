@@ -26,6 +26,8 @@ using TDAPIOLELib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNET.ALMLib;
+using AlmDataContractsStd.Enums;
 
 namespace GingerCore.ALM
 {
@@ -85,7 +87,10 @@ namespace GingerCore.ALM
             get { return ImportFromQC.ApplicationPlatforms; }
             set { ImportFromQC.ApplicationPlatforms = value; }
         }
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
+
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.QC;
+
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType)
         {
             return UpdatedAlmFields(ImportFromQC.GetALMItemFields());
         }
@@ -110,22 +115,22 @@ namespace GingerCore.ALM
             return ExportToQC.ExportBusinessFlowToQC(businessFlow, mappedTestSet, uploadPath, testSetFields, ref result);
         }
 
-        public QCTestSet ImportTestSetData(QCTestSet TS)
+        public ALMTestSet ImportTestSetData(ALMTestSet TS)
         {
             return ImportFromQC.ImportTestSetData(TS);
         }
 
-        public void UpdatedQCTestInBF(ref BusinessFlow businessFlow, List<QCTSTest> tcsList)
+        public void UpdatedQCTestInBF(ref BusinessFlow businessFlow, List<ALMTSTest> tcsList)
         {
             ImportFromQC.UpdatedQCTestInBF(ref businessFlow, tcsList);
         }
 
-        public void UpdateBusinessFlow(ref BusinessFlow businessFlow, List<QCTSTest> tcsList)
+        public void UpdateBusinessFlow(ref BusinessFlow businessFlow, List<ALMTSTest> tcsList)
         {
             ImportFromQC.UpdateBusinessFlow(ref businessFlow, tcsList);
         }
 
-        public BusinessFlow ConvertQCTestSetToBF(QCTestSet testSet)
+        public BusinessFlow ConvertQCTestSetToBF(ALMTestSet testSet)
         {
             return ImportFromQC.ConvertQCTestSetToBF(testSet);
         }
@@ -140,7 +145,7 @@ namespace GingerCore.ALM
             return ImportFromQC.GetQCTestSet(testSetID);
         }
 
-        public List<QCTSTest> GetTSQCTestsList(string testSetID, List<string> TCsIDs = null)
+        public List<ALMTSTest> GetTSQCTestsList(string testSetID, List<string> TCsIDs = null)
         {
             return ImportFromQC.GetTSQCTestsList(testSetID, TCsIDs);
         }

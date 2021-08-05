@@ -274,18 +274,11 @@ namespace Ginger.SolutionGeneral
         {
             try
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
-                }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Encryption key was not set.");
-                }
+                return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+                Reporter.ToLog(eLogLevel.WARN, "Failed to get Solution Encryption Key", ex);
             }
             return null;
         }
@@ -689,7 +682,7 @@ namespace Ginger.SolutionGeneral
                     }
                     if (name == "AlmType")
                     {
-                        AlmConfig.AlmType = (ALMIntegration.eALMType)Enum.Parse(typeof(ALMIntegration.eALMType), value);
+                        AlmConfig.AlmType = (ALMIntegrationEnums.eALMType)Enum.Parse(typeof(ALMIntegrationEnums.eALMType), value);
 
                         //Add the AlmType to user profile as well
                         ALMUserConfig AlmUserConfig = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault();

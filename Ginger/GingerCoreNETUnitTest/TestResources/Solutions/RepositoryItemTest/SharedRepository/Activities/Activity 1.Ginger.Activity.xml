@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="b39b2913-2057-42f3-ae78-28421472d041" ItemType="Activity" CreatedBy="JGHODKE" Created="202108031231" GingerVersion="3.9.0.0" Version="1" LastUpdateBy="JGHODKE" LastUpdate="202108031231" />
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="Activity 1" AutomationStatus="Automated" ErrorHandlerMappingType="AllAvailableHandlers" Guid="b39b2913-2057-42f3-ae78-28421472d041" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyWindowsApp">
+<Acts>
+<ActDummy Active="True" Description="Dummy Action" Guid="3b6bf88a-44e9-4262-ac7e-ec5c72800d50" MaxNumberOfRetries="2" ParentGuid="f5482971-2b0c-482c-99d7-379e44982948" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+</Acts>
+
+<Variables>
+<VariableString Guid="750528fb-82bc-47cb-826a-49cb1a3d5460" MappedOutputType="None" Name="myString" ParentGuid="b7dd54c9-d230-4743-986d-7630a2afbc12" SetAsInputValue="False" SetAsOutputValue="False" />
+</Variables>
+</Activity></GingerRepositoryItem>
