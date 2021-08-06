@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using GingerCore.ALM;
 using System.Linq;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
-using Ginger.ALM;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -77,8 +77,8 @@ namespace Ginger.Run.RunSetActions
         {
             runSetActionAutomatedALMDefects.SelectedDefectsProfileID = ((ALMDefectProfile)CurrentProfilePickerCbx.SelectedItem).ID;
             //if selected ALM is QC And UseRest=False return
-            GingerCoreNET.ALMLib.ALMConfig almConfig = ALMIntegration.Instance.GetCurrentAlmConfig(((ALMDefectProfile)CurrentProfilePickerCbx.SelectedItem).AlmType);
-            if (!almConfig.UseRest && almConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC)
+            GingerCoreNET.ALMLib.ALMConfig almConfig = ALMCore.GetCurrentAlmConfig(((ALMDefectProfile)CurrentProfilePickerCbx.SelectedItem).AlmType);
+            if (!almConfig.UseRest && almConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.QC)
             {
                 Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
                 return;

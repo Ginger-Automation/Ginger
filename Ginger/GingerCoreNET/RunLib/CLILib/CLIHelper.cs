@@ -356,10 +356,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
             }
 
-            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
-            {
-                pswd = "Test";
-            }
 
             WorkSpace.Instance.UserProfile.SourceControlPass = pswd;
             sourceControlPass = pswd;

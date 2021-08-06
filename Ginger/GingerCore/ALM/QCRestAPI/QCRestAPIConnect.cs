@@ -234,9 +234,9 @@ namespace GingerCore.ALM.QCRestAPI
         }
 
         // get test set explorer(tree view)
-        public static List<QCTestSetSummary> GetTestSetExplorer(string PathNode)
+        public static List<ALMTestSetSummary> GetTestSetExplorer(string PathNode)
         {
-            List<QCTestSetSummary> testlabPathList = new List<QCTestSetSummary>();
+            List<ALMTestSetSummary> testlabPathList = new List<ALMTestSetSummary>();
             string[] separatePath = PathNode.Split('\\');
             try
             {
@@ -254,7 +254,7 @@ namespace GingerCore.ALM.QCRestAPI
 
                 foreach (QCRestClient.QCTestSet testset in testSets)
                 {
-                    QCTestSetSummary QCTestSetTreeItem = new QCTestSetSummary();
+                    ALMTestSetSummary QCTestSetTreeItem = new ALMTestSetSummary();
                     QCTestSetTreeItem.TestSetID = testset.Id;
                     QCTestSetTreeItem.TestSetName = testset.Name;
                     testlabPathList.Add(QCTestSetTreeItem);

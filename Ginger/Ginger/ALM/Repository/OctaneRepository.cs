@@ -16,26 +16,23 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.DataContracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ALMLib.DataContract;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM.QC;
 using Ginger.ALM.QC.TreeViewItems;
-using Ginger.ALM.Repository;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using QCRestClient;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM.Repository
 {
@@ -43,17 +40,17 @@ namespace Ginger.ALM.Repository
     {
         OctaneCore octaneCore;
 
-        QCTestCase matchingTC = null;
+        ALMTestCase matchingTC = null;
         public OctaneRepository(ALMCore almCore)
         {
             octaneCore = (OctaneCore)almCore;
         }
-        public override bool ConnectALMServer(ALMIntegration.eALMConnectType almConnectType)
+        public override bool ConnectALMServer(eALMConnectType almConnectType)
         {
             try
             {
 
-                if (almConnectType == ALMIntegration.eALMConnectType.SettingsPage || almConnectType == ALMIntegration.eALMConnectType.Manual)
+                if (almConnectType == eALMConnectType.SettingsPage || almConnectType == eALMConnectType.Manual)
                 {
                     HandleSSO();
                 }
@@ -71,11 +68,11 @@ namespace Ginger.ALM.Repository
             }
             catch (Exception e)
             {
-                if (almConnectType == ALMIntegration.eALMConnectType.Manual)
+                if (almConnectType == eALMConnectType.Manual)
                 {
                     Reporter.ToUser(eUserMsgKey.QcConnectFailure, e.Message); //TODO: Fix message
                 }
-                else if (almConnectType == ALMIntegration.eALMConnectType.Auto)
+                else if (almConnectType == eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, e.Message);
                 }
@@ -148,7 +145,7 @@ namespace Ginger.ALM.Repository
             throw new NotImplementedException();
         }
 
-        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
+        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
             if (businessFlow == null)
             {
@@ -161,9 +158,9 @@ namespace Ginger.ALM.Repository
                 return false;
             }
 
-            QCTestSet matchingTS = null;
+            ALMTestSetData matchingTS = null;
 
-            Amdocs.Ginger.Common.eUserMsgSelection userSelec;
+            eUserMsgSelection userSelec;
             //TO DO MaheshK : check if the businessFlow already mapped to Octane Test Suite
             if (!String.IsNullOrEmpty(businessFlow.ExternalID))
             {
@@ -172,11 +169,11 @@ namespace Ginger.ALM.Repository
                 {
                     //ask user if want to continute
                     userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.Name);
-                    if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
+                    if (userSelec == eUserMsgSelection.Cancel)
                     {
                         return false;
                     }
-                    else if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    else if (userSelec == eUserMsgSelection.No)
                     {
                         matchingTS = null;                 
                     }
@@ -223,7 +220,7 @@ namespace Ginger.ALM.Repository
             }
             else
             {
-                matchingTC = new QCTestCase();
+                matchingTC = new ALMTestCase();
             } 
             //check if all of the business flow activities groups already exported to Octane and export the ones which not
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
@@ -251,14 +248,14 @@ namespace Ginger.ALM.Repository
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                     Reporter.HideStatusMessage();
                 }
-                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                 }
                 return true;
             }
             else
-                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto)
             {
                 Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }
@@ -315,8 +312,8 @@ namespace Ginger.ALM.Repository
                     //check if some of the Test Set was already imported                
                     if (testSetItem.AlreadyImported)
                     {
-                        Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testSetItem.TestSetName);
-                        if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                        eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testSetItem.TestSetName);
+                        if (userSelection == eUserMsgSelection.Yes)
                         {
                             //Delete the mapped BF
                             File.Delete(testSetItem.MappedBusinessFlow.FileName);
@@ -340,7 +337,7 @@ namespace Ginger.ALM.Repository
                     {
                         //import test set data
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.TestSetName);
-                        GingerCore.ALM.QC.QCTestSet TS = new GingerCore.ALM.QC.QCTestSet();
+                        GingerCore.ALM.QC.ALMTestSet TS = new GingerCore.ALM.QC.ALMTestSet();
                         TS.TestSetID = testSetItemtoImport.TestSetID;
                         TS.TestSetName = testSetItemtoImport.TestSetName;
                         TS.TestSetPath = testSetItemtoImport.Path;

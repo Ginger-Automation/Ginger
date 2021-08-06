@@ -16,13 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore;
+using JiraRepositoryStd.Data_Contracts;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using JiraRepository.Data_Contracts;
 
 namespace Ginger.ALM.JIRA.TreeViewItems
 {
