@@ -91,5 +91,7 @@ namespace Amdocs.Ginger.Common
 
 
         DbConnection GetOracleConnection(string ConnectionString);
+
+        bool IsSharedRepositoryItem(RepositoryItemBase item);
     }
 }

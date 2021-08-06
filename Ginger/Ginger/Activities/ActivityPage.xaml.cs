@@ -25,11 +25,13 @@ using Ginger;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
+using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -336,9 +338,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xUploadToShareRepoMenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            List<RepositoryItemBase> list = new List<RepositoryItemBase>();
-            list.Add(mActivity);
-            (new Ginger.Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
+            WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mActivity));
         }
 
         private void xRunBtn_Click(object sender, System.Windows.RoutedEventArgs e)

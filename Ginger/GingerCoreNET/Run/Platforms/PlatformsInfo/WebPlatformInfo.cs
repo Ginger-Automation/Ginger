@@ -231,6 +231,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.HyperLink:
                 case eElementType.Span:
                 case eElementType.Div:
+                case eElementType.Image:
                     //actConfig.Operation = ActUIElement.eElementAction.Click.ToString();
                     return ActUIElement.eElementAction.Click.ToString();
 
@@ -244,6 +245,10 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                 case eElementType.ComboBox:
                     return ActUIElement.eElementAction.SelectByText.ToString();
+
+                case eElementType.Label:
+                case eElementType.Text:
+                    return ActUIElement.eElementAction.GetValue.ToString();
 
                 default:
                     //actConfig.Operation = ActUIElement.eElementAction.NotExist.ToString();

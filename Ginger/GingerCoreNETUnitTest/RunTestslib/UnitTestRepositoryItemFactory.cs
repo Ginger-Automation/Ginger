@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Common;
 using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
+using Ginger.Repository;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
@@ -170,6 +171,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public DbConnection GetOracleConnection(string ConnectionString)
         {
             throw new NotImplementedException();
+        }
+
+        public bool IsSharedRepositoryItem(RepositoryItemBase item)
+        {
+            return SharedRepositoryOperations.IsSharedRepositoryItem(item);
         }
     }
 }

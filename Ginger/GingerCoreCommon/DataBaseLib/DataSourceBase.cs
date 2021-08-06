@@ -189,6 +189,11 @@ namespace GingerCore.DataSource
             }
         }
 
+        public override string GetItemType()
+        {
+            return "DataSource";
+        }
+
         public void UpdateDSNameChangeInItem(object item, string prevVarName, string newVarName, ref bool namechange)
         {
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
