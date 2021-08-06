@@ -150,9 +150,13 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         internal void AddEmptyPOM(object sender, RoutedEventArgs e)
         {
-            ApplicationPOMModel emptyPOM = new ApplicationPOMModel() { Name = "NewPOM" };
-            var PomLearnUtils = new Amdocs.Ginger.CoreNET.Application_Models.PomLearnUtils(emptyPOM, pomModelsFolder: mPOMModelFolder);
-            PomLearnUtils.SaveLearnedPOM();
+            string NewPOMName = string.Empty;
+            if (GingerCore.General.GetInputWithValidation("Add Page Object Model", "Page Object Model Name:", ref NewPOMName))
+            {
+                ApplicationPOMModel emptyPOM = new ApplicationPOMModel() { Name = NewPOMName };
+                var PomLearnUtils = new Amdocs.Ginger.CoreNET.Application_Models.PomLearnUtils(emptyPOM, pomModelsFolder: mPOMModelFolder);
+                PomLearnUtils.SaveLearnedPOM();
+            }
         }
     }
 }

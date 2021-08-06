@@ -487,7 +487,7 @@ namespace Amdocs.Ginger.Common.UIElement
                     return eImageType.Image;
                 case eElementType.Label:
                     return eImageType.Label;
-                case eElementType.List:                
+                case eElementType.List:
                     return eImageType.List;
                 case eElementType.ListItem:
                     return eImageType.List;
@@ -516,131 +516,135 @@ namespace Amdocs.Ginger.Common.UIElement
         }
     }
 
-        public enum eLocateBy
-        {
-            [EnumValueDescription("NA")]
-            NA,
-            [EnumValueDescription("")]
-            Unknown,
-            [EnumValueDescription("Page Objects Model Element")]
-            POMElement,
-            [EnumValueDescription("By ID")]
-            ByID,
-            [EnumValueDescription("By Name")]
-            ByName,
-            [EnumValueDescription("By CSS")]
-            ByCSS,
-            [EnumValueDescription("By XPath")]
-            ByXPath,
-            [EnumValueDescription("By Relative XPath")]
-            ByRelXPath,
-            [EnumValueDescription("By X,Y")]
-            ByXY,
-            [EnumValueDescription("By Container Name")]
-            ByContainerName,
-            [EnumValueDescription("By Href")]
-            ByHref,
-            [EnumValueDescription("By Link Text")]
-            ByLinkText,
-            [EnumValueDescription("By Value")]
-            ByValue,
-            [EnumValueDescription("By Index")]
-            ByIndex,
-            [EnumValueDescription("By Class name")]
-            ByClassName, //Android, UI Automation
-            [EnumValueDescription("By AutomationId")]
-            ByAutomationID,
-            [EnumValueDescription("By Localized Control Type")]
-            ByLocalizedControlType,
-            [EnumValueDescription("By Multiple Properties")]
-            ByMulitpleProperties,
-            [EnumValueDescription("By Bounding Rectangle")]
-            ByBoundingRectangle,
-            [EnumValueDescription("Is Enabled")]
-            IsEnabled,
-            [EnumValueDescription("Is Off Screen")]
-            IsOffscreen,
-            [EnumValueDescription("By Title")]
-            ByTitle,
-            [EnumValueDescription("By CaretPosition")]
-            ByCaretPosition,
-            [EnumValueDescription("By URL")]
-            ByUrl,
-            [EnumValueDescription("By ng-model")]
-            ByngModel,
-            [EnumValueDescription("By ng-Repeat")]
-            ByngRepeat,
-            [EnumValueDescription("By ng-Bind")]
-            ByngBind,
-            [EnumValueDescription("By ng-SelectedOption")]
-            ByngSelectedOption,
-            [EnumValueDescription("By Resource ID")]
-            ByResourceID,
-            [EnumValueDescription("By Content Description")]
-            ByContentDescription,
-            [EnumValueDescription("By Text")]
-            ByText,
-            [EnumValueDescription("By Elements Repository")]
-            ByElementsRepository,
-            [EnumValueDescription("By Model Name")]
-            ByModelName,
-            [EnumValueDescription("By CSS Selector")]
-            ByCSSSelector,
-        }
+    public enum eLocateBy
+    {
+        [EnumValueDescription("NA")]
+        NA,
+        [EnumValueDescription("")]
+        Unknown,
+        [EnumValueDescription("Page Objects Model Element")]
+        POMElement,
+        [EnumValueDescription("By ID")]
+        ByID,
+        [EnumValueDescription("By Name")]
+        ByName,
+        [EnumValueDescription("By CSS")]
+        ByCSS,
+        [EnumValueDescription("By XPath")]
+        ByXPath,
+        [EnumValueDescription("By Relative XPath")]
+        ByRelXPath,
+        [EnumValueDescription("By X,Y")]
+        ByXY,
+        [EnumValueDescription("By Container Name")]
+        ByContainerName,
+        [EnumValueDescription("By Href")]
+        ByHref,
+        [EnumValueDescription("By Link Text")]
+        ByLinkText,
+        [EnumValueDescription("By Value")]
+        ByValue,
+        [EnumValueDescription("By Index")]
+        ByIndex,
+        [EnumValueDescription("By Class name")]
+        ByClassName, //Android, UI Automation
+        [EnumValueDescription("By AutomationId")]
+        ByAutomationID,
+        [EnumValueDescription("By Localized Control Type")]
+        ByLocalizedControlType,
+        [EnumValueDescription("By Multiple Properties")]
+        ByMulitpleProperties,
+        [EnumValueDescription("By Bounding Rectangle")]
+        ByBoundingRectangle,
+        [EnumValueDescription("Is Enabled")]
+        IsEnabled,
+        [EnumValueDescription("Is Off Screen")]
+        IsOffscreen,
+        [EnumValueDescription("By Title")]
+        ByTitle,
+        [EnumValueDescription("By CaretPosition")]
+        ByCaretPosition,
+        [EnumValueDescription("By URL")]
+        ByUrl,
+        [EnumValueDescription("By ng-model")]
+        ByngModel,
+        [EnumValueDescription("By ng-Repeat")]
+        ByngRepeat,
+        [EnumValueDescription("By ng-Bind")]
+        ByngBind,
+        [EnumValueDescription("By ng-SelectedOption")]
+        ByngSelectedOption,
+        [EnumValueDescription("By Resource ID")]
+        ByResourceID,
+        [EnumValueDescription("By Content Description")]
+        ByContentDescription,
+        [EnumValueDescription("By Text")]
+        ByText,
+        [EnumValueDescription("By Elements Repository")]
+        ByElementsRepository,
+        [EnumValueDescription("By Model Name")]
+        ByModelName,
+        [EnumValueDescription("By CSS Selector")]
+        ByCSSSelector,
+        [EnumValueDescription("iOS Predicate String Strategy")]
+        iOSPredicateString,
+        [EnumValueDescription("iOS Class Chain Strategy")]
+        iOSClassChain,
+    }
 
-        public enum eElementType
-        {
-            [EnumValueDescription("")]
-            Unknown,
-            [EnumValueDescription("Text Box")]
-            TextBox,
-            Button,
-            Dialog,
-            [EnumValueDescription("Combo Box/Drop Down")]
-            ComboBox,     // HTML Input Select
-            [EnumValueDescription("Combo Box Item/Drop Down Option")]
-            ComboBoxOption,    // HTML Input Select
-            List,
-            ListItem,
-            [EnumValueDescription("Table Item")]
-            TableItem,
-            [EnumValueDescription("Radio Button")]
-            RadioButton,
-            Table,
-            CheckBox,
-            Image,
-            Label,
-            [EnumValueDescription("Menu Item")]
-            MenuItem,
-            [EnumValueDescription("Menu Bar")]
-            MenuBar,
-            [EnumValueDescription("Tree View")]
-            TreeView,
-            [EnumValueDescription("Tree Item")]
-            TreeItem,
-            Window,
-            HyperLink,
-            [EnumValueDescription("Scroll Bar")]
-            ScrollBar,
-            Iframe,
-            Canvas,
-            Text,
-            Tab,
-            [EnumValueDescription("Tab Item")]
-            TabItem,
-            [EnumValueDescription("Editor Pane")]
-            EditorPane,
-            [EnumValueDescription("Editor Table")]
-            EditorTable,
-            //HTML Elements
-            Div,
-            Span,
-            Form,
-            Browser,
-            [EnumValueDescription("Date Picker")]
-            DatePicker,
-            Document,
-            Svg
+    public enum eElementType
+    {
+        [EnumValueDescription("")]
+        Unknown,
+        [EnumValueDescription("Text Box")]
+        TextBox,
+        Button,
+        Dialog,
+        [EnumValueDescription("Combo Box/Drop Down")]
+        ComboBox,     // HTML Input Select
+        [EnumValueDescription("Combo Box Item/Drop Down Option")]
+        ComboBoxOption,    // HTML Input Select
+        List,
+        ListItem,
+        [EnumValueDescription("Table Item")]
+        TableItem,
+        [EnumValueDescription("Radio Button")]
+        RadioButton,
+        Table,
+        CheckBox,
+        Image,
+        Label,
+        [EnumValueDescription("Menu Item")]
+        MenuItem,
+        [EnumValueDescription("Menu Bar")]
+        MenuBar,
+        [EnumValueDescription("Tree View")]
+        TreeView,
+        [EnumValueDescription("Tree Item")]
+        TreeItem,
+        Window,
+        HyperLink,
+        [EnumValueDescription("Scroll Bar")]
+        ScrollBar,
+        Iframe,
+        Canvas,
+        Text,
+        Tab,
+        [EnumValueDescription("Tab Item")]
+        TabItem,
+        [EnumValueDescription("Editor Pane")]
+        EditorPane,
+        [EnumValueDescription("Editor Table")]
+        EditorTable,
+        //HTML Elements
+        Div,
+        Span,
+        Form,
+        Browser,
+        [EnumValueDescription("Date Picker")]
+        DatePicker,
+        Document,
+        Svg
     }
 
     public enum SelfHealingInfoEnum

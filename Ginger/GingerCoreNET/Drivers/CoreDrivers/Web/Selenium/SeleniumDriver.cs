@@ -3900,7 +3900,10 @@ namespace GingerCore.Drivers
                             {
                                 foreach (var template in relativeXpathTemplateList)
                                 {
-                                    CreateXpathFromUserTemplate(template,foundElemntInfo);
+                                    var elementLocator = GetUserDefinedCustomLocatorFromTemplates(template, eLocateBy.ByRelXPath, foundElemntInfo.Properties.ToList());
+                                    if(elementLocator != null && CheckElementLocateStatus(elementLocator.LocateValue))
+                                        foundElemntInfo.Locators.Add(elementLocator);
+                                    //CreateXpathFromUserTemplate(template,foundElemntInfo);
                                 }
                             }
 
@@ -4765,7 +4768,8 @@ namespace GingerCore.Drivers
                     {
                         ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
                     }
-                    ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                    if(!string.IsNullOrEmpty(ElementInfo.XPath))
+                        ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
                 }
                 if ((IWebElement)ElementInfo.ElementObject == null)
                 {
