@@ -1858,6 +1858,18 @@ namespace Ginger.Run
             UpdateActionStatus(action, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running, st);
             GiveUserFeedback();
 
+           
+            if (action.Context == null)
+            {
+                var mContext = new Context() { ExecutedFrom = this.ExecutedFrom};
+                action.Context = mContext;
+            }
+            else
+            {
+                var mContext = Context.GetAsContext(action.Context);
+                mContext.ExecutedFrom = this.ExecutedFrom;
+            }
+            
         }
 
         public void PrepActionValueExpression(Act act, BusinessFlow businessflow = null)

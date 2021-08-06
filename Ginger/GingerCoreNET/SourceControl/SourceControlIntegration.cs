@@ -227,6 +227,10 @@ namespace Ginger.SourceControl
             var paths = new List<string>();
             foreach (var item in sourceControlFileInfos)
             {
+                if (item.Path.Contains("DOCUMENTS") || item.Path.Contains("EXECUTIONRESULTS"))
+                {
+                    continue;
+                }
                 if (item.Status == SourceControlFileInfo.eRepositoryItemStatus.Modified)
                 {
                     paths.Add(item.Path);

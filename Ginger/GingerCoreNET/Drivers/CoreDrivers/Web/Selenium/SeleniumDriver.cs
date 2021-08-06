@@ -3175,12 +3175,12 @@ namespace GingerCore.Drivers
                         }
                         elem = LocateElementByLocators(currentPOMElementInfo.Locators);
 
-                        if (pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
+                        if (elem == null && pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
                         {
                             elem = LocateElementByLocators(currentPOMElementInfo.Locators);
                         }
 
-                        if (elem != null && currentPOMElementInfo.GetSelfHealingInfo == SelfHealingInfoEnum.ElementDeleted.ToString())
+                        if (elem != null && currentPOMElementInfo.SelfHealingInfo == SelfHealingInfoEnum.ElementDeleted)
                         {
                             currentPOMElementInfo.SelfHealingInfo = SelfHealingInfoEnum.None;
                         }

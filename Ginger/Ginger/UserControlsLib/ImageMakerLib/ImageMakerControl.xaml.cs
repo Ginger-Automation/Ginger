@@ -545,7 +545,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.WindowRestore);
                     break;
                 case eImageType.SelfHealing:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Cogs);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Magic);
                     break;
                 #endregion
 

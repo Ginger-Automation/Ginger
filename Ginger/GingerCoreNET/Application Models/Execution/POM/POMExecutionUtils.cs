@@ -35,9 +35,13 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
     public class POMExecutionUtils
     {
         ActUIElement mAct = null;
+        eExecutedFrom ExecutedFrom;
         public POMExecutionUtils(Act act)
         {
             mAct = (ActUIElement)act;
+
+            var context = Context.GetAsContext(mAct.Context);
+            ExecutedFrom = context.ExecutedFrom;
         }
 
         public POMExecutionUtils()
@@ -131,17 +135,21 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         private bool IsSelfHealingConfigured()
         {
-            //when executing from runset
-            var runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
-
-            if (runSetConfig != null)
+            if (ExecutedFrom == eExecutedFrom.Run)
             {
-                if (!runSetConfig.SelfHealingConfiguration.EnableSelfHealing || !runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel)
+                //when executing from runset
+                var runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
+
+                if (runSetConfig != null)
                 {
-                    return false;
+                    if (!runSetConfig.SelfHealingConfiguration.EnableSelfHealing || !runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel)
+                    {
+                        return false;
+                    }
+                    return true;
                 }
-                return true;
             }
+            
             //when running from automate tab
             var selfHealingConfigAutomateTab = WorkSpace.Instance.AutomateTabSelfHealingConfiguration;
             if (!selfHealingConfigAutomateTab.EnableSelfHealing || !selfHealingConfigAutomateTab.AutoUpdateApplicationModel)
@@ -249,7 +257,8 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 pomDeltaUtils.PomLearnUtils.LearnOnlyMappedElements = true;
                 pomDeltaUtils.SelectedElementTypesList = elementList;
                 pomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList = GingerCore.Platforms.PlatformsInfo.PlatformInfoBase.GetPlatformImpl(agent.Platform).GetLearningLocators();
-
+                pomDeltaUtils.KeepOriginalLocatorsOrderAndActivation = true;
+                pomDeltaUtils.PropertiesChangesToAvoid = DeltaControlProperty.ePropertiesChangesToAvoid.All;
 
                 Reporter.ToLog(eLogLevel.INFO, "POM update process started during self healing operation..");
                 this.GetCurrentPOM().StartDirtyTracking();
