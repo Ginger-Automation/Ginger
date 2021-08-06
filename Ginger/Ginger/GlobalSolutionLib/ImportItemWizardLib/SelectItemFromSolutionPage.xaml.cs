@@ -2,6 +2,7 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
+using Amdocs.Ginger.CoreNET.GlobalSolutionLib;
 using Ginger.Actions;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControls;
@@ -95,9 +96,9 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 }
                 foreach (string file in filePaths)
                 {
-                    //string itemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(file);
-                    //ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, true, itemName, false));
-                    ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, true, "", false));
+                    string itemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(file);
+                    ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, true, itemName, false));
+                    //ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, true, "", false));
                 }
             }
             return ItemsListToImport;

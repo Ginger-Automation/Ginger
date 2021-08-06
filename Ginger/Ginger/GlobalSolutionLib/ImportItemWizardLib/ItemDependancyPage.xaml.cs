@@ -1,6 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
+using Amdocs.Ginger.CoreNET.GlobalSolutionLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.UserControls;
@@ -64,7 +65,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemName), Header = "Item Name", WidthWeight = 50, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.IsDependant), Header = "Is Dependant", WidthWeight = 50, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemExtraInfo), Header = "Item Full Path", WidthWeight = 150, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemImportSetting), Header = "Import Setting", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GlobalSolution.GetEnumValues<GlobalSolution.eImportSetting>() });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.Comments), Header = "Comments", WidthWeight = 120, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemImportSetting), Header = "Import Setting", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GlobalSolution.GetEnumValues<GlobalSolution.eImportSetting>() });
 
             xDependantItemsToImportGrid.SetAllColumnsDefaultView(view);
             xDependantItemsToImportGrid.InitViewItems();
@@ -171,32 +173,33 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     skipAdd = true;
                 }
             }
-            //Check if GUID is already exist
-            NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
-            try
-            {
-                RepositoryItemBase repositoryItem = newRepositorySerializer.DeserializeFromFile(itemToAdd.ItemExtraInfo);
-                itemToAdd.ItemName = repositoryItem.ItemName;
-                itemToAdd.ItemGUID = repositoryItem.Guid;
-            }
-            catch (Exception ex)
-            {
-                itemToAdd.ItemName = System.IO.Path.GetFileNameWithoutExtension(itemToAdd.ItemExtraInfo);
-            }
 
+            itemToAdd.ItemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(itemToAdd.ItemExtraInfo);
+
+            //Check if GUID is already exist
+            bool isDuplicateGUID = GlobalSolutionUtils.Instance.CheckForItemWithDuplicateGUID(itemToAdd);
+            if (isDuplicateGUID)
+            {
+                itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.ReplaceExsiting;
+                itemToAdd.Comments = "Item already exist with same GUID.";
+            }
 
             //check if file already exist
             string targetFile = System.IO.Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, itemToAdd.ItemType.ToString(), System.IO.Path.GetFileName(itemToAdd.ItemExtraInfo));
             if (File.Exists(targetFile))
             {
                 itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.ReplaceExsiting;
+                itemToAdd.Comments = "Item already exist with same fileName.";
+
             }
 
-            
+
             if (!skipAdd)
             {
                 SelectedItemsListToImport.Add(itemToAdd);
             }
         }
+
+
     }
 }

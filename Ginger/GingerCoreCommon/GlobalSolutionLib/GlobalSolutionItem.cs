@@ -23,6 +23,7 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
         public bool IsDependant { get; set; }
         public string ItemName { get; set; }
         public string ItemExtraInfo { get; set; }
+        public string Comments { get; set; }
 
         public Guid ItemGUID { get; set; }
        
