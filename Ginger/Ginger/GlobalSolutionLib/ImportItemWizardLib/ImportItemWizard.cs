@@ -49,7 +49,20 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 {
                     foreach (GlobalSolutionItem item in SelectedItemTypeListToImport.Where(x => x.Selected).ToList())
                     {
-                        string sourceFile = item.ItemExtraInfo; ;
+                        string sourceFile = item.ItemExtraInfo;
+
+                        //Get subdirectory path
+                        string path = Path.GetDirectoryName(item.ItemExtraInfo);
+                        //while (path != SolutionFolder)
+                        //{
+                        //    string lastFolderName = Path.GetFileName(path);
+                        //    path = path.Remove(path.LastIndexOf(lastFolderName),lastFolderName.Length);
+                        //    path = Path.GetDirectoryName(path);
+                        //}
+
+                        string folderPath = path.Replace(SolutionFolder,"");
+
+                        //string targetFile = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, folderPath, Path.GetFileName(item.ItemExtraInfo));
                         string targetFile = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, item.ItemType.ToString(), Path.GetFileName(item.ItemExtraInfo));
 
                         switch (item.ItemType)
@@ -89,14 +102,22 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 case GlobalSolution.eImportSetting.ReplaceExsiting:
                     if (File.Exists(targetFile))
                     {
-                        string bkpDateTime = System.Text.RegularExpressions.Regex.Replace(DateTime.Now.ToString(), @"[^0-9a-zA-Z]+", "");
-                        //keep the backup 
-                        File.Copy(targetFile, targetFile + "." +bkpDateTime + ".bak");
-                        File.Delete(targetFile);
+                        try
+                        {
+                            RepositoryItemBase repositoryItem = newRepositorySerializer.DeserializeFromFile(targetFile);
+                            repositoryItem.ContainingFolder = Path.GetDirectoryName(targetFile);
+                            repositoryItem.FilePath = targetFile;
+                            repositoryItem.FileName = targetFile;//Needed inside MoveSharedRepositoryItemToPrevVersion
+                            WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(repositoryItem);
+                        }
+                        catch (Exception ex)
+                        {
+                            string bkpDateTime = System.Text.RegularExpressions.Regex.Replace(DateTime.Now.ToString(), @"[^0-9a-zA-Z]+", "");
+                            //keep the backup 
+                            File.Copy(targetFile, targetFile + "." + bkpDateTime + ".bak");
+                            File.Delete(targetFile);
+                        }
 
-                        //File.WriteAllText(targetFile, File.ReadAllText(sourceFile));
-                        File.Copy(sourceFile, targetFile);
-                        return;
                     }
                     
                     break;
@@ -116,10 +137,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             }
             else
             {
-                if (!File.Exists(targetFile))
-                {
-                    File.Copy(sourceFile, targetFile);
-                }
+                File.Copy(sourceFile, targetFile);
             }
 
 

@@ -43,12 +43,12 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
             [EnumValueDescription("DataSources")]
             DataSources
         }
-        public enum eItemDependancyType
-        {
-            Original,
-            Dependant,
-            None
-        }
+        //public enum eItemDependancyType
+        //{
+        //    Original,
+        //    Dependant,
+        //    None
+        //}
         public static IEnumerable<T> GetEnumValues<T>()
         {
             return Enum.GetValues(typeof(T)).Cast<T>();

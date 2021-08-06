@@ -48,9 +48,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     wiz.ItemsListToImport = GetItemsListToImport();
                     xItemsToImportGrid.DataSourceList = wiz.ItemsListToImport;
 
-                    List<GlobalSolution.eImportItemType> testItemTypesList = Enum.GetValues(typeof(GlobalSolution.eImportItemType)).Cast<GlobalSolution.eImportItemType>().ToList();
-                    //GingerCore.General.FillComboFromList(ItemTypeListComboBox, testItemTypesList);
-
                     GingerCore.General.FillComboFromList(ItemTypeListComboBox, wiz.ItemTypesList);
                     ItemTypeListComboBox.Items.Insert(0, "All");
                     ItemTypeListComboBox.SelectedIndex = 0;
@@ -98,8 +95,9 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 }
                 foreach (string file in filePaths)
                 {
-                    string itemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(file);
-                    ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, true, itemName, GlobalSolution.eItemDependancyType.Original));
+                    //string itemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(file);
+                    //ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, true, itemName, false));
+                    ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, true, "", false));
                 }
             }
             return ItemsListToImport;
@@ -107,6 +105,11 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
         private void ItemTypeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ItemTypeListComboBox.SelectedValue == null)
+            {
+                xItemsToImportGrid.DataSourceList = wiz.ItemsListToImport;
+                return;
+            }
             bool result = Enum.TryParse(ItemTypeListComboBox.SelectedValue.ToString(), out GlobalSolution.eImportItemType eImportItemType);
             if (result)
             {

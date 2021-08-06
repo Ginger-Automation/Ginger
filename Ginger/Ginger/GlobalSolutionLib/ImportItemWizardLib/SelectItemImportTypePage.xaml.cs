@@ -99,7 +99,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             foreach (GlobalSolution.eImportItemType ItemType in GlobalSolution.GetEnumValues<GlobalSolution.eImportItemType>())
             {
                 var description = ((EnumValueDescriptionAttribute[])typeof(GlobalSolution.eImportItemType).GetField(ItemType.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription;
-                ItemTypeListToImport.Add(new GlobalSolutionItem(ItemType, description, true,"", GlobalSolution.eItemDependancyType.None));
+                ItemTypeListToImport.Add(new GlobalSolutionItem(ItemType, description, true, "", false));
             }
             return ItemTypeListToImport;
         }
