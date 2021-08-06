@@ -466,9 +466,10 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             PayLoad response = ExecutePOMAction(act, locators, pomExcutionUtil);
 
-            if (response.IsErrorPayLoad() && response.GetValueInt().Equals(Convert.ToInt32(PayLoad.ErrorCode.ElementNotFound)))
+            var passStatus = locators.Any(x => x.Active && x.LocateStatus == ElementLocator.eLocateStatus.Passed);
+            if (response.IsErrorPayLoad() && !passStatus)
             {
-                if (pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
+                if (pomExcutionUtil.AutoUpdateCurrentPOM((Agent)(this.BusinessFlow.CurrentActivity.CurrentAgent)) != null)
                 {
                     response = ExecutePOMAction(act, locators, pomExcutionUtil);
                 }
