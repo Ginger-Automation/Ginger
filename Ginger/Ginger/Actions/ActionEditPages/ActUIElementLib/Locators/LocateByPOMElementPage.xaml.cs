@@ -232,10 +232,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void HideElementSelection()
         {
+            xSpaceCol.Width = new GridLength(0);
             xPOMElementsLbl.Visibility = Visibility.Collapsed;
+            xElementLblCol.Width = new GridLength(0);
+            xPOMElementTextBox.Visibility = Visibility.Collapsed;
+            xElementTxtBoxCol.Width = new GridLength(0);
             ArrowDownButton.Visibility = Visibility.Collapsed;
             HighlightButton.Visibility = Visibility.Collapsed;
-            xPOMElementTextBox.Visibility = Visibility.Collapsed;
+            xElementControlsCol.Width = new GridLength(0);
             xPOMTitleLbl.Visibility = Visibility.Collapsed;
             xPOMGrid.ColumnDefinitions[0].Width = new GridLength(0);
         }
@@ -244,10 +248,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             if (!mOnlyPOMRequest)
             {
+                xSpaceCol.Width = new GridLength(10);
                 xPOMElementsLbl.Visibility = Visibility.Visible;
+                xElementLblCol.Width = new GridLength(50);
+                xPOMElementTextBox.Visibility = Visibility.Visible;
+                xElementTxtBoxCol.Width = new GridLength(100,GridUnitType.Star);
                 ArrowDownButton.Visibility = Visibility.Visible;
                 HighlightButton.Visibility = Visibility.Visible;
-                xPOMElementTextBox.Visibility = Visibility.Collapsed;
+                xElementControlsCol.Width = new GridLength(45);
                 xPOMTitleLbl.Visibility = Visibility.Visible;
                 xPOMElementsGrid.Visibility = Visibility.Visible;
                 xSelectElement.Visibility = Visibility.Visible;
