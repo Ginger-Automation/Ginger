@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerAutoPilot", "GingerAu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerAutoPilotTest", "GingerAutoPilotTest\GingerAutoPilotTest.csproj", "{D29BF6B9-4C63-4201-BAC0-8C6D61654FAA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerConsole", "GingerConsole\GingerConsole.csproj", "{EE1E3ADA-F5C6-4EEE-A962-F1E47B38F656}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerCore", "GingerCore\GingerCore.csproj", "{B86281C6-F6FF-4439-94C9-C8EF99BEF58F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerPlugIns", "GingerPlugIns\GingerPlugIns.csproj", "{D5329D81-7FF0-4AF1-B186-A2FD65EF0583}"
@@ -70,6 +68,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerLinuxOsSupport", "GingerLinuxOsSupport\GingerLinuxOsSupport.csproj", "{488BFB56-6092-4FFD-BB91-B14F1760B837}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerWin64OsSupport", "GingerWin64OsSupport\GingerWin64OsSupport.csproj", "{76149BD0-05B7-4190-A2C2-5EF0284D5587}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerRuntime", "GingerRuntime\GingerRuntime.csproj", "{6BCC0C44-483A-47FB-BA58-0BEAB2C3C4E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -126,12 +126,6 @@ Global
 		{D29BF6B9-4C63-4201-BAC0-8C6D61654FAA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D29BF6B9-4C63-4201-BAC0-8C6D61654FAA}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D29BF6B9-4C63-4201-BAC0-8C6D61654FAA}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
-		{EE1E3ADA-F5C6-4EEE-A962-F1E47B38F656}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EE1E3ADA-F5C6-4EEE-A962-F1E47B38F656}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EE1E3ADA-F5C6-4EEE-A962-F1E47B38F656}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EE1E3ADA-F5C6-4EEE-A962-F1E47B38F656}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EE1E3ADA-F5C6-4EEE-A962-F1E47B38F656}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EE1E3ADA-F5C6-4EEE-A962-F1E47B38F656}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 		{B86281C6-F6FF-4439-94C9-C8EF99BEF58F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B86281C6-F6FF-4439-94C9-C8EF99BEF58F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B86281C6-F6FF-4439-94C9-C8EF99BEF58F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -240,6 +234,12 @@ Global
 		{76149BD0-05B7-4190-A2C2-5EF0284D5587}.Release|Any CPU.Build.0 = Release|Any CPU
 		{76149BD0-05B7-4190-A2C2-5EF0284D5587}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{76149BD0-05B7-4190-A2C2-5EF0284D5587}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
+		{6BCC0C44-483A-47FB-BA58-0BEAB2C3C4E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BCC0C44-483A-47FB-BA58-0BEAB2C3C4E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BCC0C44-483A-47FB-BA58-0BEAB2C3C4E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BCC0C44-483A-47FB-BA58-0BEAB2C3C4E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BCC0C44-483A-47FB-BA58-0BEAB2C3C4E6}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BCC0C44-483A-47FB-BA58-0BEAB2C3C4E6}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -29,11 +29,11 @@ namespace Amdocs.Ginger.Repository
         object DeserializeFromFileObj(Type type, string fileName);
 
         void SaveToFile(RepositoryItemBase ri, string FileName);
-        string FileExt(Type T);
+        string FileExt(RepositoryItemBase repositoryItemBase);
 
         string SerializeToString(RepositoryItemBase RI);
 
         object DeserializeFromText(Type t, string s, string filePath="");
-        string GetShortType(Type t);
+      
     }
 }

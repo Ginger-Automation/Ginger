@@ -27,7 +27,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using GingerCore.ALM;
 using amdocs.ginger.GingerCoreNET;
-using ZephyrEntSDK.Models.Base;
+using ZephyrEntStdSDK.Models.Base;
 using Ginger.ALM.ZephyrEnt.TreeViewItems;
 using Newtonsoft.Json.Linq;
 using GingerCore.ALM.ZephyrEnt.Bll;

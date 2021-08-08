@@ -21,12 +21,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO.Compression;
 using System.Linq;
+using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.QCRestAPI;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using QCRestClient;
 
@@ -63,12 +65,12 @@ namespace GingerCore.ALM
             return QCRestAPIConnect.GetQCDomainProjects(ALMCore.DefaultAlmConfig.ALMDomain);
         }
 
-        public QC.QCTestSet ImportTestSetData(QC.QCTestSet testSet)
+        public QC.ALMTestSet ImportTestSetData(QC.ALMTestSet testSet)
         {
             return ImportFromQCRest.ImportTestSetData(testSet);
         }
 
-        public BusinessFlow ConvertQCTestSetToBF(QC.QCTestSet testSet)
+        public BusinessFlow ConvertQCTestSetToBF(QC.ALMTestSet testSet)
         {
             return ImportFromQCRest.ConvertQCTestSetToBF(testSet);
         }
@@ -95,7 +97,8 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
-            ObservableList<ExternalItemFieldBase> runFields = GetALMItemFields(null, true, ALM_Common.DataContracts.ResourceType.TEST_RUN);
+            ResourceType resource = (ResourceType)AlmDataContractsStd.Enums.ResourceType.TEST_RUN;
+            ObservableList<ExternalItemFieldBase> runFields = GetALMItemFields(null, true, resource);
             return ExportToQCRestAPI.ExportExceutionDetailsToALM(bizFlow, ref result, runFields, exectutedFromAutomateTab, publishToALMConfig);
         }
 
@@ -115,7 +118,10 @@ namespace GingerCore.ALM
             get { return ImportFromQCRest.ApplicationPlatforms; }
             set { ImportFromQCRest.ApplicationPlatforms = value; }
         }
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
+
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.QC;
+
+        public ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
             return UpdatedAlmFields(ImportFromQCRest.GetALMItemFields(resourceType));
         }
@@ -133,6 +139,11 @@ namespace GingerCore.ALM
         public QCTestCase GetQCTest(string testID)
         {
             return ImportFromQCRest.GetQCTest(testID);
+        }
+
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType = AlmDataContractsStd.Enums.ResourceType.ALL)
+        {
+            throw new NotImplementedException();
         }
     }
 }

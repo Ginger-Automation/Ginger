@@ -34,6 +34,8 @@ using System.Web;
 using amdocs.ginger.GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Reflection;
+using GingerCoreNET.ALMLib;
+using ALM_Common.DataContracts;
 
 namespace GingerCore.ALM
 {
@@ -57,19 +59,36 @@ namespace GingerCore.ALM
                 connObj = new QTestApi.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
                 string granttype = "password";
                 string authorization = "Basic bWFoZXNoLmthbGUzQHQtbW9iaWxlLmNvbTo=";
-                QTestApiModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, authorization);
-                if (General.IsConfigPackageExists(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest))
+                string accessToken = ALMCore.DefaultAlmConfig.ALMPassword;
+                string tokenType = "bearer";
+
+                if (ALMCore.DefaultAlmConfig.UseToken)
                 {
-                    connObj.Configuration.MyAPIConfig.LoadSettingsFromConfig(Path.Combine(DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, "QTestSettings", "QTestSettings.json"));
+                    QTestApiModel.OAuthTokenStatusVM oAuthTokenStatusVM = connObj.TokenStatus(tokenType + " " + accessToken);
+                    if (oAuthTokenStatusVM.ToString().ToLower().Contains("error"))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to connect qTest Server" + System.Environment.NewLine + oAuthTokenStatusVM.ToString());
+                        return false;
+                    }
+                }
+                else
+                {
+                    QTestApiModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, authorization);
+                    accessToken = response.AccessToken;
+                    tokenType = response.TokenType;
+                }
+                connObj.Configuration.AccessToken = accessToken;
+                connObj.Configuration.ApiKey.Add("Authorization", accessToken);
+                connObj.Configuration.ApiKeyPrefix.Add("Authorization", tokenType);
+
+                if (General.IsConfigPackageExists(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest))
+                {
+                    connObj.Configuration.MyAPIConfig.LoadSettingsFromConfig(Path.Combine(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, "QTestSettings", "QTestSettings.json"));
                 }
                 else 
                 {
                     connObj.Configuration.MyAPIConfig = new QTestApiClient.QTestClientConfig();
                 }
-                connObj.Configuration.AccessToken = response.AccessToken;
-                connObj.Configuration.ApiKey.Add("Authorization", response.AccessToken);
-                connObj.Configuration.ApiKeyPrefix.Add("Authorization", response.TokenType);
-                System.Diagnostics.Trace.WriteLine("Authentication Successful");
                 return true;
             }           
             catch (Exception ex)
@@ -141,19 +160,23 @@ namespace GingerCore.ALM
             get { return ImportFromQtest.ApplicationPlatforms; }
             set { ImportFromQtest.ApplicationPlatforms = value; }
         }
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
+
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.Qtest;
+
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType)
         {
+            ResourceType resource = (ResourceType)resourceType;
             ConnectALMServer();
             fieldApi = new QTestApi.FieldApi(connObj.Configuration);
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
-            if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
+            if (resource == ResourceType.ALL)
             {
                 fields = GetALMItemFields();
             }
             else
             {
-                string fieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(resourceType);
+                string fieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(resource);
                 List<QTestApiModel.FieldResource> fieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), fieldInRestSyntax);
 
                 fields.Append(AddFieldsValues(fieldsCollection, resourceType.ToString()));
@@ -168,19 +191,19 @@ namespace GingerCore.ALM
             //QC   ->|testSet,     |testCase,   |designStep, |testInstance, |designStepParams, |run
             //QTest->|test-suites, |test-cases, |test-steps, |test-cycles,  |parameters,       |test-runs
 
-            string testSetfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_SET);
+            string testSetfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ResourceType.TEST_SET);
             List<QTestApiModel.FieldResource> testSetfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testSetfieldInRestSyntax);
 
-            string testCasefieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CASE);
+            string testCasefieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ResourceType.TEST_CASE);
             List<QTestApiModel.FieldResource> testCasefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testCasefieldInRestSyntax);
 
-            string designStepfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP);
+            string designStepfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ResourceType.DESIGN_STEP);
             List<QTestApiModel.FieldResource> designStepfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), designStepfieldInRestSyntax);
 
-            string testInstancefieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CYCLE);
+            string testInstancefieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ResourceType.TEST_CYCLE);
             List<QTestApiModel.FieldResource> testInstancefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testInstancefieldInRestSyntax);
 
-            string runfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_RUN);
+            string runfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ResourceType.TEST_RUN);
             List<QTestApiModel.FieldResource> runfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), runfieldInRestSyntax);
 
             fields.Append(AddFieldsValues(testSetfieldsCollection, testSetfieldInRestSyntax));

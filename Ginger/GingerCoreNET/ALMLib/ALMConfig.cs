@@ -69,17 +69,17 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
-        private bool mZepherEntToken;
+        private bool mUseToken;
         [IsSerializedForLocalRepository]
-        public bool ZepherEntToken
+        public bool UseToken
         {
-            get { return mZepherEntToken; }
+            get { return mUseToken; }
             set
             {
-                if (mZepherEntToken != value)
+                if (mUseToken != value)
                 {
-                    mZepherEntToken = value;
-                    OnPropertyChanged(nameof(ZepherEntToken));
+                    mUseToken = value;
+                    OnPropertyChanged(nameof(UseToken));
                 }
             }
         }
@@ -99,9 +99,9 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
-        private ALMIntegration.eTestingALMType mJiraTestingALM = ALMIntegration.eTestingALMType.None;
+        private ALMIntegrationEnums.eTestingALMType mJiraTestingALM = ALMIntegrationEnums.eTestingALMType.None;
         [IsSerializedForLocalRepository]
-        public ALMIntegration.eTestingALMType JiraTestingALM
+        public ALMIntegrationEnums.eTestingALMType JiraTestingALM
         {
             get
             {
@@ -197,9 +197,9 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
-        private ALMIntegration.eALMType mAlmType = ALMIntegration.eALMType.QC;
+        private ALMIntegrationEnums.eALMType mAlmType = ALMIntegrationEnums.eALMType.QC;
         [IsSerializedForLocalRepository]
-        public ALMIntegration.eALMType AlmType
+        public ALMIntegrationEnums.eALMType AlmType
         {
             get
             {
@@ -212,6 +212,21 @@ namespace GingerCoreNET.ALMLib
         }
 
         public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType == SerializationErrorType.PropertyNotFound)
+            {
+                if (name == "ZepherEntToken")
+                {
+                    bool.TryParse(value, out bool res);
+                    this.UseToken = res;
+                    return true;
+                }
+            }
+            return false;
+
+        }
     }
 }
 
