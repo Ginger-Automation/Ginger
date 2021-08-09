@@ -998,6 +998,11 @@ namespace Ginger.Drivers.DriversWindows
             try
             {
                 mDriver.PerformScreenSwipe(swipeSide, impact);
+
+                if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
+                {
+                    RefreshDeviceScreenshotAsync();
+                }
             }
             catch (Exception ex)
             {
