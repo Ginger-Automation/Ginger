@@ -54,19 +54,36 @@ namespace GingerCore.ALM.Qtest
                 connObj = new QTestApi.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
                 string granttype = "password";
                 string authorization = "Basic bWFoZXNoLmthbGUzQHQtbW9iaWxlLmNvbTo=";
-                QTestApiModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, authorization);
-                if (GingerCore.General.IsConfigPackageExists(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated,GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest))
+                string accessToken = ALMCore.DefaultAlmConfig.ALMPassword;
+                string tokenType = "bearer";
+
+                if (ALMCore.DefaultAlmConfig.UseToken)
                 {
-                    connObj.Configuration.MyAPIConfig.LoadSettingsFromConfig(Path.Combine(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, "QTestSettings", "QTestSetting.json"));
+                    QTestApiModel.OAuthTokenStatusVM oAuthTokenStatusVM = connObj.TokenStatus(tokenType + " " + accessToken);
+                    if (oAuthTokenStatusVM.ToString().ToLower().Contains("error"))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to connect qTest Server" + System.Environment.NewLine + oAuthTokenStatusVM.ToString());
+                        return false;
+                    }
                 }
-                else 
+                else
+                {
+                    QTestApiModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, authorization);
+                    accessToken = response.AccessToken;
+                    tokenType = response.TokenType;
+                }
+                connObj.Configuration.AccessToken = accessToken;
+                connObj.Configuration.ApiKey.Add("Authorization", accessToken);
+                connObj.Configuration.ApiKeyPrefix.Add("Authorization", tokenType);
+
+                if (GingerCore.General.IsConfigPackageExists(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest))
+                {
+                    connObj.Configuration.MyAPIConfig.LoadSettingsFromConfig(Path.Combine(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, "QTestSettings", "QTestSettings.json"));
+                }
+                else
                 {
                     connObj.Configuration.MyAPIConfig = new QTestApiClient.QTestClientConfig();
                 }
-                connObj.Configuration.AccessToken = response.AccessToken;
-                connObj.Configuration.ApiKey.Add("Authorization", response.AccessToken);
-                connObj.Configuration.ApiKeyPrefix.Add("Authorization", response.TokenType);
-                System.Diagnostics.Trace.WriteLine("Authentication Successful");
                 return true;
             }
             catch (Exception ex)

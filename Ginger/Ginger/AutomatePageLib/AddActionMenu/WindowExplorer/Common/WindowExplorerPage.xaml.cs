@@ -1172,7 +1172,7 @@ namespace Ginger.WindowExplorer
                 //}
 
                 LastSearchFinished = false;
-
+                mScreenShotViewPage.ImageMouseCursor = Cursors.Wait;
                 try
                 {
                     if (LoadPageSourceDoc)
@@ -1198,6 +1198,7 @@ namespace Ginger.WindowExplorer
                 finally
                 {
                     LastSearchFinished = true;
+                    mScreenShotViewPage.ImageMouseCursor = Cursors.Hand;
                 }
             }
         }
