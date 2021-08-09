@@ -474,6 +474,10 @@ namespace GingerCore.Drivers.JavaDriverLib
                     response = ExecutePOMAction(act, locators, pomExcutionUtil);
                 }
             }
+            if (passStatus && currentPOMElementInfo.SelfHealingInfo == SelfHealingInfoEnum.ElementDeleted)
+            {
+                currentPOMElementInfo.SelfHealingInfo = SelfHealingInfoEnum.None;
+            }
 
             return response;
         }

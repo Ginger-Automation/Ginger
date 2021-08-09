@@ -622,6 +622,10 @@ namespace GingerCore.Drivers.WindowsLib
                     windowElement = LocateElementByLocators(currentPOMElementInfo.Locators,true);
                 }
             }
+            if (windowElement != null && currentPOMElementInfo.SelfHealingInfo == SelfHealingInfoEnum.ElementDeleted)
+            {
+                currentPOMElementInfo.SelfHealingInfo = SelfHealingInfoEnum.None;
+            }
             if (windowElement != null)
             {
                 pomExcutionUtil.PriotizeLocatorPosition();
