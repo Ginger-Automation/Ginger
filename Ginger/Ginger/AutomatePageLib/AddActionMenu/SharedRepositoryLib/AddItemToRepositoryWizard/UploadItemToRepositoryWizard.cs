@@ -35,6 +35,11 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
     {
         public override string Title { get { return "Add Items to Shared Repository"; } }
         public Context Context;
+        /// <summary>
+        /// Constructor For Uploading List of Repository items
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="items"></param>
         public UploadItemToRepositoryWizard(Context context, IEnumerable<object> items)
         {
             UploadItemSelection.mSelectedItems.Clear();
@@ -43,6 +48,23 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             {
                 UploadItemSelection.mSelectedItems.Add(CreateUploadItem((RepositoryItemBase)i));
             }
+            InitializeWizardPages();
+        }
+        /// <summary>
+        /// Constructor For Uploading Single Repository Item
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="item"></param>
+        public UploadItemToRepositoryWizard(Context context, RepositoryItemBase item)
+        {
+            UploadItemSelection.mSelectedItems.Clear();
+            Context = context;
+            UploadItemSelection.mSelectedItems.Add(CreateUploadItem((RepositoryItemBase)item));
+            InitializeWizardPages();
+        }
+
+        private void InitializeWizardPages()
+        {
             AddPage(Name: "Items Selection", Title: "Item/s Selection", SubTitle: "Selected items to be added to Shared Repository", Page: new UploadItemsSelectionPage(UploadItemSelection.mSelectedItems));
             AddPage(Name: "Items Validation", Title: "Item/s Validation", SubTitle: "Validate the items to be added to Shared Repository", Page: new UploadItemsValidationPage());
             AddPage(Name: "Items Status", Title: "Item/s Status", SubTitle: "Upload Item Status", Page: new UploadStatusPage());

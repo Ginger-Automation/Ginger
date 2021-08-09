@@ -36,7 +36,7 @@ using HtmlAgilityPack;
 using InputSimulatorStandard;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Edge;
+using Microsoft.Edge.SeleniumTools;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Remote;
@@ -483,11 +483,11 @@ namespace GingerCore.Drivers
 
                     #region EDGE
                     case eBrowserType.Edge:
-
-                        EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();
-                        EDService.HideCommandPromptWindow = HideConsoleWindow;
                         EdgeOptions EDOpts = new EdgeOptions();
+                        EDOpts.UseChromium = true;
                         EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                        EdgeDriverService EDService = EdgeDriverService.CreateDefaultServiceFromOptions(EDOpts);
+                        EDService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
 
                         break;
@@ -3174,6 +3174,17 @@ namespace GingerCore.Drivers
                             SwitchFrame(currentPOMElementInfo);
                         }
                         elem = LocateElementByLocators(currentPOMElementInfo.Locators);
+
+                        if (elem == null && pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
+                        {
+                            elem = LocateElementByLocators(currentPOMElementInfo.Locators);
+                        }
+
+                        if (elem != null && currentPOMElementInfo.SelfHealingInfo == SelfHealingInfoEnum.ElementDeleted)
+                        {
+                            currentPOMElementInfo.SelfHealingInfo = SelfHealingInfoEnum.None;
+                        }
+
                         currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
                        
                         if(pomExcutionUtil.PriotizeLocatorPosition())
@@ -3181,7 +3192,6 @@ namespace GingerCore.Drivers
                             act.ExInfo += "Locator prioritized during self healing operation";
                         }
                     }
-
                 }
             }
             else
@@ -3890,7 +3900,10 @@ namespace GingerCore.Drivers
                             {
                                 foreach (var template in relativeXpathTemplateList)
                                 {
-                                    CreateXpathFromUserTemplate(template,foundElemntInfo);
+                                    var elementLocator = GetUserDefinedCustomLocatorFromTemplates(template, eLocateBy.ByRelXPath, foundElemntInfo.Properties.ToList());
+                                    if(elementLocator != null && CheckElementLocateStatus(elementLocator.LocateValue))
+                                        foundElemntInfo.Locators.Add(elementLocator);
+                                    //CreateXpathFromUserTemplate(template,foundElemntInfo);
                                 }
                             }
 
@@ -4028,7 +4041,7 @@ namespace GingerCore.Drivers
             }
             finally
             {
-                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
             }
             return false;
         }
@@ -4755,7 +4768,8 @@ namespace GingerCore.Drivers
                     {
                         ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
                     }
-                    ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                    if(!string.IsNullOrEmpty(ElementInfo.XPath))
+                        ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
                 }
                 if ((IWebElement)ElementInfo.ElementObject == null)
                 {

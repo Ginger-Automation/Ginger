@@ -1172,7 +1172,7 @@ namespace Ginger.WindowExplorer
                 //}
 
                 LastSearchFinished = false;
-
+                mScreenShotViewPage.ImageMouseCursor = Cursors.Wait;
                 try
                 {
                     if (LoadPageSourceDoc)
@@ -1198,6 +1198,7 @@ namespace Ginger.WindowExplorer
                 finally
                 {
                     LastSearchFinished = true;
+                    mScreenShotViewPage.ImageMouseCursor = Cursors.Hand;
                 }
             }
         }
@@ -1257,7 +1258,7 @@ namespace Ginger.WindowExplorer
                 double rectangleHeight = clickedElementInfo.Height;
 
                 if(((DriverBase)mWindowExplorerDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, mScreenShotViewPage.xMainImage.Source.Width, mScreenShotViewPage.xMainImage.Source.Height,
-                    mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight, clickedElementInfo))
+                    mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight, clickedElementInfo, true))
                 {
                     /// Driver/Platform specific calculations
                     rectangleWidth = ElementMaxPoint.X - ElementStartPoint.X;

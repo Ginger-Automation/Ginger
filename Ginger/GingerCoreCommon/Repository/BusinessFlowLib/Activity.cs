@@ -952,5 +952,16 @@ namespace GingerCore
         public Guid ExecutionId { get; set; }
 
         public Guid ParentExecutionId { get; set; }
+
+
+        public override void PrepareItemToBeCopied()
+        {
+            this.IsSharedRepositoryInstance= TargetFrameworkHelper.Helper.IsSharedRepositoryItem(this);
+        }
+
+        public override string GetItemType()
+        {
+            return nameof(Activity);
+        }
     }
 }

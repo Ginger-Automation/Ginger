@@ -28,6 +28,7 @@ using GingerCore.ALM.Rally;
 using Amdocs.Ginger.Repository;
 using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNET.ALMLib;
 
 namespace GingerCore.ALM
 {
@@ -196,7 +197,7 @@ namespace GingerCore.ALM
             return true;//ExportToRally.Instance.ExportBusinessFlowToRally(businessFlow, ExternalItemsFields, ref result);
         }
 
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType)
         {
             return null;
         }
@@ -222,6 +223,13 @@ namespace GingerCore.ALM
         {
             get { return ImportFromRally.ApplicationPlatforms; }
             set { ImportFromRally.ApplicationPlatforms = value; }
+        }
+
+        public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.RALLY;
+
+        public BusinessFlow ConvertRallyTestPlanToBF(RallyTestPlan testPlan)
+        {
+            return ImportFromRally.ConvertRallyTestPlanToBF(testPlan);
         }
     }
 }

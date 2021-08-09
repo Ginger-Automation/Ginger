@@ -135,7 +135,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     mDriver = mContext.Agent.Driver as IWindowExplorer;
 
                     xWindowSelectionUC.mWindowExplorerDriver = mDriver;
-                    xWindowSelectionUC.mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
+                    xWindowSelectionUC.Platform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
                     if (mDriver == null)
                     {
                         xWindowSelectionUC.WindowsComboBox.ItemsSource = null;

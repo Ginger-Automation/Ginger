@@ -1457,10 +1457,10 @@ namespace Amdocs.Ginger.Repository
             throw new NotImplementedException();
         }
 
-        public string FileExt(Type T)
+        public string FileExt(RepositoryItemBase repositoryItemBase)
         {
 
-            return "Ginger." + T.Name;
+            return "Ginger." + repositoryItemBase.GetItemType();
         }
 
         public object DeserializeFromText(Type t, string s, string filePath= "")
@@ -1468,10 +1468,10 @@ namespace Amdocs.Ginger.Repository
             return DeserializeFromText(s, filePath: filePath);
         }
 
-        public string GetShortType(Type t)
-        {
-            return t.Name;
-        }
+        //public string GetShortType(Type t)
+        //{
+        //    return t.Name;
+        //}
 
 
         // We have Repository item but we want to reload from disk

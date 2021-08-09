@@ -35,14 +35,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         #region RunSet
         public void RunSetStart(RunSetConfig runsetConfig)
         {
-            Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Publishing Execution data to central DB");
-            runsetConfig.StartTimeStamp = DateTime.Now.ToUniversalTime();
+            Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Publishing Execution data to central DB");       
             AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetStartData(runsetConfig, mContext);
             AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);            
         }
         public void RunSetEnd(RunSetConfig runsetConfig)
-        {
-            runsetConfig.EndTimeStamp = DateTime.Now.ToUniversalTime();
+        {           
             AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runsetConfig, mContext);            
             //accountReportRunSet.UpdateData = true;
             AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
@@ -53,15 +51,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         #region Runner
         public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
-        {
-            gingerRunner.StartTimeStamp = DateTime.Now.ToUniversalTime();
+        {           
             AccountReportRunner accountReportRunner = AccountReportEntitiesDataMapping.MapRunnerStartData(gingerRunner, mContext);            
             AccountReportApiHandler.SendRunnerExecutionDataToCentralDBAsync(accountReportRunner);
         }
 
         public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
-        {
-            gingerRunner.EndTimeStamp = DateTime.Now.ToUniversalTime();
+        {         
             AccountReportRunner accountReportRunner = AccountReportEntitiesDataMapping.MapRunnerEndData(gingerRunner, mContext);          
             //gingerRunner.Elapsed = gingerRunner.RunnerExecutionWatch.runWatch.ElapsedMilliseconds;
             //accountReportRunner.UpdateData = true;
@@ -124,6 +120,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         }
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode= false)
         {
+            if (!action.Active)
+            {
+                return;
+            }
             AccountReportAction accountReportAction = AccountReportEntitiesDataMapping.MapActionEndData(action, mContext);
             AccountReportApiHandler.SendScreenShotsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, action.ScreenShots.ToList());
             //  accountReportAction.UpdateData = true;

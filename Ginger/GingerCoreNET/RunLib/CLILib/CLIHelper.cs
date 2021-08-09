@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.AnalyzerLib;
 using Ginger.Run;
 using Ginger.SourceControl;
@@ -28,7 +29,6 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using static GingerCoreNET.SourceControl.SourceControlBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -51,6 +51,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public bool sourceControlPassEncrypted;
         public eAppReporterLoggingLevel AppLoggingLevel;
         public string ExecutionId;
+
+        public bool SelfHealingCheckInConfigured;
 
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
@@ -174,6 +176,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 SelectEnv();
                 mRunSetConfig.RunWithAnalyzer = RunAnalyzer;
                 HandleAutoRunWindow();
+
+                mRunSetConfig.SelfHealingConfiguration = mRunsetExecutor.RunSetConfig.SelfHealingConfiguration;
 
                 if (!string.IsNullOrEmpty(ExecutionId))
                 {
@@ -356,10 +360,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
             }
 
-            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && pswd == "")
-            {
-                pswd = "Test";
-            }
 
             WorkSpace.Instance.UserProfile.SourceControlPass = pswd;
             sourceControlPass = pswd;
@@ -480,6 +480,36 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
+
+        internal void SaveAndCommitSelfHealingChanges()
+        {
+            WorkSpace.Instance.Solution.SaveSolution();
+
+            //TODO: We don't have save all option yet. iterating each item then save it. So, need to add save all option on solution level
+            var POMs =WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+
+            foreach(ApplicationPOMModel pom in POMs)
+            {
+                if(pom.DirtyStatus == Common.Enums.eDirtyStatus.Modified)
+                {
+                   WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(pom);
+                }
+            }
+
+            var BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            foreach (var bf in BFs)
+            {
+                if (bf.DirtyStatus == Common.Enums.eDirtyStatus.Modified)
+                {
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf);
+                }
+            }
+
+            if (!SourceControlIntegration.CommitSelfHealingChanges(Solution))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Check-in self healing changes in source control");
             }
         }
     }

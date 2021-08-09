@@ -90,7 +90,7 @@
                             </StackPanel>
                         </StackPanel>
                         <CheckBox x:Name="RestAPICheckBox" IsChecked="True" Content="Use Rest API" Checked="RestAPICheckBox_Checked" Unchecked="RestAPICheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="RestApi should be Checked for QC12 and above"/>
-                        <CheckBox x:Name="ZephyrEntTokenCheckBox" IsChecked="True" Content="Connect With Token" Visibility="Collapsed"  Checked="ZephyrEntTokenCheckBox_Checked" Unchecked="ZephyrEntTokenCheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="Select connect with token or password "/>
+                        <CheckBox x:Name="TokenCheckBox" IsChecked="True" Content="Connect With Token" Visibility="Collapsed"  Checked="TokenCheckBox_Checked" Unchecked="TokenCheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="Select connect with token or password "/>
                         <Button x:Name="LoginServerButton" Click="GetProjectsDetails_Clicked"  Style="{StaticResource @WindowButtonStyle}" Margin="0,10,0,10" HorizontalAlignment="Center">Get Projects Details</Button>
                     </StackPanel>
 
