@@ -58,6 +58,8 @@ namespace GingerCoreNET.Application_Models
         }
 
         public string SpecificFramePath { get; set; }
+        public List<eElementType> SelectedElementTypesList { get;  set; }
+
         public PomDeltaUtils(ApplicationPOMModel pom, Agent agent)
         {
             POM = pom;            
@@ -80,11 +82,9 @@ namespace GingerCoreNET.Application_Models
                 PrepareCurrentPOMElementsData();
                 if (PomLearnUtils.LearnOnlyMappedElements)
                 {
-                    var uIElementList = new List<UIElementFilter>();
-                    uIElementList.AddRange(PomLearnUtils.AutoMapBasicElementTypesList.ToList());
-                    uIElementList.AddRange(PomLearnUtils.AutoMapAdvanceElementTypesList.ToList());
+                    List<eElementType> selectedElementList = GetSelectedElementList();
 
-                    await mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true,SpecificFramePath, GetRelativeXpathTemplateList());
+                    await mIWindowExplorerDriver.GetVisibleControls(selectedElementList, POMLatestElements, true, SpecificFramePath, GetRelativeXpathTemplateList());
                 }
                 else
                 {
@@ -97,6 +97,22 @@ namespace GingerCoreNET.Application_Models
             {
                 IsLearning = false;
             }            
+        }
+
+        private List<eElementType> GetSelectedElementList()
+        {
+            var uIElementList = new List<UIElementFilter>();
+            uIElementList.AddRange(PomLearnUtils.AutoMapBasicElementTypesList.ToList());
+            uIElementList.AddRange(PomLearnUtils.AutoMapAdvanceElementTypesList.ToList());
+
+            var selectedElementList = uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList();
+            
+            if (selectedElementList.Count == 0)
+            {
+                selectedElementList = SelectedElementTypesList;
+            }
+
+            return selectedElementList;
         }
 
         private List<string> GetRelativeXpathTemplateList()

@@ -855,7 +855,8 @@ namespace GingerWPF.BusinessFlowsLib
                     try
                     {
                         AnalyzerPage analyzerPage = new AnalyzerPage();
-                        analyzerPage.Init(WorkSpace.Instance.Solution, mBusinessFlow);
+
+                        analyzerPage.Init(WorkSpace.Instance.Solution, mBusinessFlow,WorkSpace.Instance.AutomateTabSelfHealingConfiguration.ReprioritizePOMLocators);
                         await analyzerPage.AnalyzeWithoutUI();
                         Reporter.HideStatusMessage();
                         if (analyzerPage.TotalHighAndCriticalIssues > 0)
@@ -903,6 +904,7 @@ namespace GingerWPF.BusinessFlowsLib
                 //mExecutionIsInProgress = false;
                 //SetUIElementsBehaverDuringExecution();
                 mRunner.ResetFailedToStartFlagForAgents();
+               
             }
         }
 
@@ -1645,6 +1647,14 @@ namespace GingerWPF.BusinessFlowsLib
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_AppsAgentsMappingHelp", xAppsAgentsMappingFrame, "Here you should match between the Application and the Agent which will be used for communicating and automating it");
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_EnvironmentSelectionHelp", xEnvironmentComboBox, "Environments should be used for storing environment level parameters, DB connection details and more, go to “Resources-> Environments” to configure all environments you need and select here which environment data to use in execution time");
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_AddActionsBtnHelp", xAddActionsBtn, "Click here to view all options to add automation Actions into your flow");
+        }
+
+        private void xSelfHealingConfigBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (CheckIfExecutionIsInProgress()) return;
+
+            GingerSelfHealingConfiguration selfHealingConfiguration = new GingerSelfHealingConfiguration();
+            selfHealingConfiguration.ShowAsWindow();
         }
     }
 

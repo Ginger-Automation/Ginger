@@ -377,6 +377,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.sourceControlPassEncrypted = runOptions.PasswordEncrypted;
             mCLIHelper.SourceControlProxyServer(runOptions.SourceControlProxyServer);
             mCLIHelper.SourceControlProxyPort(runOptions.SourceControlProxyPort);
+            mCLIHelper.SelfHealingCheckInConfigured = runOptions.SelfHealingCheckInConfigured;
+
             if (!string.IsNullOrEmpty(runOptions.RunSetExecutionId))
             {
                 if (!Guid.TryParse(runOptions.RunSetExecutionId, out Guid temp))
@@ -517,6 +519,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Unexpected exception occurred during {0} execution, exit code 1", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
                 Environment.ExitCode = 1; //failure
+            }
+
+            //self healing changes check-in in source control
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl || mCLIHelper.SelfHealingCheckInConfigured)
+            {
+                mCLIHelper.SaveAndCommitSelfHealingChanges();
             }
 
             Reporter.ToLog(eLogLevel.INFO, "Closing Solution and doing Cleanup...");
