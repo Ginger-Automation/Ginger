@@ -4209,6 +4209,7 @@ namespace Ginger.Run
                 }
             }
             LastFailedBusinessFlow = null;
+            ExecutionLoggerManager.mExecutionLogger.ResetLastRunSetDetails();
         }
 
        

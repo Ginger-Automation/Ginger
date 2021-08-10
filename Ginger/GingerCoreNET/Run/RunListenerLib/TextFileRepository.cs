@@ -263,5 +263,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             throw new NotImplementedException();
         }
+        internal override void ResetLastRunSetDetails()
+        {
+            return;
+        }
     }
 }

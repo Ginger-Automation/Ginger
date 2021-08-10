@@ -872,5 +872,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             return fieldToReturn;
         }
+
+        /// <summary>
+        /// Clear last run details if we are not continue from last run
+        /// </summary>
+        internal override void ResetLastRunSetDetails()
+        {
+            lastBfStatus = eRunStatus.Pending;
+            liteDbBFList.Clear();
+        }
     }
 }
