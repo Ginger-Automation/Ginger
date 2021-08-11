@@ -684,9 +684,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void DisableDetailsExpander()
         {
-            xDetailsExpanderLabel.Content = "Element Details";
-            xDetailsExpander.IsEnabled = false;
-            xDetailsExpander.IsExpanded = false;
+            this.Dispatcher.Invoke(() =>
+            {
+                xDetailsExpanderLabel.Content = "Element Details";
+                xDetailsExpander.IsEnabled = false;
+                xDetailsExpander.IsExpanded = false;
+            });
         }
 
         private void HighlightElementClicked(object sender, RoutedEventArgs e)

@@ -1279,6 +1279,15 @@ namespace Amdocs.Ginger.CoreNET
                 return;
             }
 
+            if (ElementInfo.X == 0 && ElementInfo.Properties.Where(p => p.Name == "x").FirstOrDefault() != null)
+            {
+                ElementInfo.X = Convert.ToInt32(ElementInfo.Properties.Where(p => p.Name == "x").FirstOrDefault().Value);
+            }
+            if (ElementInfo.Y == 0 && ElementInfo.Properties.Where(p => p.Name == "y").FirstOrDefault() != null)
+            {
+                ElementInfo.Y = Convert.ToInt32(ElementInfo.Properties.Where(p => p.Name == "y").FirstOrDefault().Value);
+            }
+
             if (ElementInfo.ElementObject == null)
             {
                 ElementInfo.ElementObject = await FindElementXmlNodeByXY(ElementInfo.X, ElementInfo.Y);
@@ -1354,6 +1363,8 @@ namespace Amdocs.Ginger.CoreNET
         {
             if (AppType == eAppType.Web)
             {
+                mSeleniumDriver.ExtraLocatorsRequired = !(relativeXpathTemplateList == null || relativeXpathTemplateList.Count == 0);
+
                 return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(filteredElementType, foundElementsList, isPOMLearn, specificFramePath));
             }
 
@@ -1680,29 +1691,34 @@ namespace Amdocs.Ginger.CoreNET
         {
             ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
 
-            if (DevicePlatformType == eDevicePlatformType.iOS)
-            {
-                string selector = string.Format("type == '{0}' AND value BEGINSWITH[c] '{1}' AND visible == {2}",
-                    ElementInfo.ElementType, GetAttrValue(ElementInfo.ElementObject as XmlNode, "value"), GetAttrValue(ElementInfo.ElementObject as XmlNode, "visible") == "true" ? 1 : 0);
+            //if (DevicePlatformType == eDevicePlatformType.iOS)
+            //{
+            //    string selector = string.Format("type == '{0}' AND value BEGINSWITH[c] '{1}' AND visible == {2}",
+            //        ElementInfo.ElementType, GetAttrValue(ElementInfo.ElementObject as XmlNode, "value"), GetAttrValue(ElementInfo.ElementObject as XmlNode, "visible") == "true" ? 1 : 0);
+            //    ElementLocator iOSPredStrLoc = new ElementLocator()
+            //    {
+            //        Active = true,
+            //        LocateBy = eLocateBy.iOSPredicateString,
+            //        LocateValue = selector,
+            //        IsAutoLearned = true,
+            //        Help = "Highly Recommended as Predicate Matching is built into XCUITest, it has the potential to be much faster than Appium's XPath strategy"
+            //    };
 
-                list.Add(new ElementLocator()
-                {
-                    Active = true,
-                    LocateBy = eLocateBy.iOSPredicateString,
-                    LocateValue = selector,
-                    IsAutoLearned = true,
-                    Help = "Highly Recommended as Predicate Matching is built into XCUITest, it has the potential to be much faster than Appium's XPath strategy"
-                });
+            //    if(LocateElementByLocator(iOSPredStrLoc) != null)
+            //        list.Add(iOSPredStrLoc);
 
-                list.Add(new ElementLocator()
-                {
-                    Active = true,
-                    LocateBy = eLocateBy.iOSClassChain,
-                    LocateValue = string.Format("**/{0}/{1}", ElementInfo.XPath.Split('/')[ElementInfo.XPath.Split('/').Length - 2], ElementInfo.XPath.Split('/').Last()),
-                    IsAutoLearned = true,
-                    Help = "Highly Recommended as Class Chain strategy is built into XCUITest, it has the potential to be much faster than Appium's XPath strategy"
-                });
-            }
+            //    ElementLocator iOSClassChainLoc = new ElementLocator()
+            //    {
+            //        Active = true,
+            //        LocateBy = eLocateBy.iOSClassChain,
+            //        LocateValue = string.Format("**/{0}/{1}", ElementInfo.XPath.Split('/')[ElementInfo.XPath.Split('/').Length - 2], ElementInfo.XPath.Split('/').Last()),
+            //        IsAutoLearned = true,
+            //        Help = "Highly Recommended as Class Chain strategy is built into XCUITest, it has the potential to be much faster than Appium's XPath strategy"
+            //    };
+
+            //    if (LocateElementByLocator(iOSClassChainLoc) != null)
+            //        list.Add(iOSPredStrLoc);
+            //}
 
             //Only by Resource ID
             string resid = GetAttrValue(ElementInfo.ElementObject as XmlNode, "resource-id");
@@ -1790,15 +1806,6 @@ namespace Amdocs.Ginger.CoreNET
                 Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
             });
 
-            list.Add(new ElementLocator()
-            {
-                Active = true,
-                LocateBy = eLocateBy.ByXPath,
-                LocateValue = string.Format("//{0}/{1}", ElementInfo.XPath.Split('/')[ElementInfo.XPath.Split('/').Length - 2], ElementInfo.XPath.Split('/').Last()),
-                IsAutoLearned = true,
-                Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
-            });
-
             return list;
         }
 
@@ -1828,6 +1835,11 @@ namespace Amdocs.Ginger.CoreNET
                 CP.Name = attrs[i].Name;
                 CP.Value = attrs[i].Value;
                 list.Add(CP);
+
+                if(CP.Name == "x")
+                    ElementInfo.X = Convert.ToInt32(CP.Value);
+                else if(CP.Name == "y")
+                    ElementInfo.Y = Convert.ToInt32(CP.Value);
             }
 
             return list;
