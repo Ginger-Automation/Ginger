@@ -968,7 +968,6 @@
     <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml.cs">
       <DependentUpon>UploadItemsSelectionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ItemValidationBase.cs" />
     <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsValidationPage.xaml.cs">
       <DependentUpon>UploadItemsValidationPage.xaml</DependentUpon>
     </Compile>
@@ -976,11 +975,6 @@
     <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadStatusPage.xaml.cs">
       <DependentUpon>UploadStatusPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActionValidation.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActivityValidation.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActivitiesGroupValidation.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\VariableValidation.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositoryOperations.cs" />
     <Compile Include="Run\FailedActionsScreenshotsPage.xaml.cs">
       <DependentUpon>FailedActionsScreenshotsPage.xaml</DependentUpon>
     </Compile>

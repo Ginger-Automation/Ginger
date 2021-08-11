@@ -4691,6 +4691,7 @@ namespace Ginger.Run
         void NotifyRunnerRunstart()
         {
             uint evetTime = RunListenerBase.GetEventTime();
+            this.StartTimeStamp = DateTime.UtcNow;
             Parallel.ForEach(mRunListeners, runnerListener =>
             {
                 {
@@ -4709,6 +4710,7 @@ namespace Ginger.Run
         void NotifyRunnerRunEnd(string ExecutionLogFolder= null)
         { 
             uint evetTime = RunListenerBase.GetEventTime();
+            this.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.RunnerRunEnd(evetTime, this, ExecutionLogFolder);

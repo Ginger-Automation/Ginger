@@ -24,6 +24,7 @@ using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Reports.GingerExecutionReport;
+using Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionAutoSaveAndRecover;
 using Ginger.SourceControl;
@@ -300,5 +301,10 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             }
             return almCore;
         }
+        public bool IsSharedRepositoryItem(RepositoryItemBase repositoryItem)
+        {
+            return SharedRepositoryOperations.IsSharedRepositoryItem(repositoryItem);
+        }       
+
     }
 }

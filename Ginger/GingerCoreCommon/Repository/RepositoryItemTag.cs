@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -41,6 +41,10 @@ namespace Amdocs.Ginger.Repository
 
 
         public override string ItemName { get { return Name; } set { Name = value; } }
-        
+
+        public override string GetItemType()
+        {
+            return nameof(RepositoryItemTag);
+        }
     }
 }

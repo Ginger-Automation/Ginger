@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.GeneralLib;
 using Ginger.Reports;
+using Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionAutoSaveAndRecover;
@@ -588,6 +589,10 @@ namespace Ginger
         public DbConnection GetOracleConnection(string ConnectionString)
         {
             return new OracleConnection(ConnectionString);
+        }
+        public bool IsSharedRepositoryItem(RepositoryItemBase repositoryItem)
+        {
+            return SharedRepositoryOperations.IsSharedRepositoryItem(repositoryItem);
         }
     }
 }

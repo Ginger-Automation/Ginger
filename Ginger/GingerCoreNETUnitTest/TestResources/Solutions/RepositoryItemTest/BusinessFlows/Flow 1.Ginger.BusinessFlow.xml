@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="6b3b8851-83a6-4dc3-b28d-6314fec2847a" ItemType="BusinessFlow" CreatedBy="JGHODKE" Created="202107290909" GingerVersion="3.9.0.0" Version="17" LastUpdateBy="JGHODKE" LastUpdate="202108031012" />
+<BusinessFlow Guid="6b3b8851-83a6-4dc3-b28d-6314fec2847a" Name="Flow 1" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="b39b2913-2057-42f3-ae78-28421472d041" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyWindowsApp">
+<Acts>
+<ActDummy Active="True" Description="Dummy Action" Guid="f5482971-2b0c-482c-99d7-379e44982948" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+</Acts>
+
+<Variables>
+<VariableString Guid="b7dd54c9-d230-4743-986d-7630a2afbc12" MappedOutputType="None" Name="myString" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsInputValue="False" SetAsOutputValue="False" />
+</Variables>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="123d761b-ab2d-4508-a64e-d032ad454e3e" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="b39b2913-2057-42f3-ae78-28421472d041" ActivityName="Activity 1" Guid="28bdb006-4354-45bc-ab77-b392f8d25f6c" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="MyWindowsApp" Guid="e349453d-8d29-4e63-80b9-39ba11dedf88" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>
