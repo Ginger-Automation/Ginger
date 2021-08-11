@@ -470,5 +470,15 @@ namespace GingerCore.Activities
             return ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity).FirstOrDefault();
         }
 
+        public override void PrepareItemToBeCopied()
+        {
+            this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper.IsSharedRepositoryItem(this);
+        }
+
+        public override string GetItemType()
+        {
+            return nameof(ActivitiesGroup);
+        }
+
     }
 }

@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -25,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace GingerCore.Drivers
@@ -258,7 +260,7 @@ namespace GingerCore.Drivers
             return pointOnAppScreen;
         }
 
-        public virtual bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, Amdocs.Ginger.Common.UIElement.ElementInfo clickedElementInfo)
+        public virtual bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, Amdocs.Ginger.Common.UIElement.ElementInfo clickedElementInfo, bool AutoCorrectRectPropRequired)
         {
             return false;
         }
@@ -266,6 +268,83 @@ namespace GingerCore.Drivers
         public virtual double ScreenShotInitialZoom()
         {
             return 0.5;
+        }
+
+        Regex AttRegexWeb = new Regex("@[a-zA-Z]*", RegexOptions.Compiled);
+        Regex AttRegexMobile = new Regex("{[a-zA-Z]*}", RegexOptions.Compiled);
+        public ElementLocator GetUserDefinedCustomLocatorFromTemplates(string locatorTemplate, eLocateBy locateBy, List<ControlProperty> elementProperties)
+        {
+            try
+            {
+                var locateValue = string.Empty;
+
+                var attributeCount = 0;
+                List<string> strList = new List<string>();
+
+                MatchCollection attList;
+                if (locateBy == eLocateBy.iOSPredicateString)
+                {
+                    attList = AttRegexMobile.Matches(locatorTemplate);
+
+                    foreach (var item in attList)
+                    {
+                        strList.Add(item.ToString());
+                    }
+
+                    foreach (var item in elementProperties)
+                    {
+                        if (strList.Contains("{" + item.Name + "}"))
+                        {
+                            if (item.Value == "true")
+                            {
+                                item.Value = "1";
+                            }
+                            else if(item.Value == "false")
+                            {
+                                item.Value = "0";
+                            }
+
+                            locateValue = locatorTemplate.Replace("{" + item.Name + "}", item.Value);
+
+                            locatorTemplate = locateValue;
+                            attributeCount++;
+                        }
+                    }
+                }
+                else
+                {
+                    attList = AttRegexWeb.Matches(locatorTemplate);
+
+                    foreach (var item in attList)
+                    {
+                        strList.Add(item.ToString().Remove(0, 1));
+                    }
+
+                    foreach (var item in elementProperties)
+                    {
+                        if (strList.Contains(item.Name))
+                        {
+                            locateValue = locatorTemplate.Replace(item.Name + "=\'\'", item.Name + "=\'" + item.Value + "\'");
+
+                            locatorTemplate = locateValue;
+                            attributeCount++;
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(locateValue) && attributeCount == attList.Count) // && CheckElementLocateStatus(xPathTemplate))
+                {
+                    var elementLocator = new ElementLocator() { LocateBy = locateBy, LocateValue = locateValue, IsAutoLearned = true, Help = "Custom Locator evaluated from user template" };
+                    return elementLocator;
+                }
+                else
+                    return null;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during POM learining while learning Custom Locators", ex);
+                return null;
+            }
         }
     }
 }

@@ -57,7 +57,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
-using static GingerCoreNET.ALMLib.ALMIntegration;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.Run
 {
@@ -256,6 +256,8 @@ namespace Ginger.Run
                 OnPropertyChanged(nameof(GingerRunner.RunOption));
             }
         }
+
+       // public SelfHealingConfig SelfHealingConfiguration = new SelfHealingConfig();
 
         public ObservableList<Platform> Platforms = new ObservableList<Platform>();//TODO: delete me once projects moved to new Apps/Platform config, meanwhile enable to load old run set config, but ignore the value
 
@@ -1207,6 +1209,7 @@ namespace Ginger.Run
 
         private void RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true, bool moveToNextAction=true)
         {
+            bool actionExecuted = false;
             try
             {
                 //Not suppose to happen but just in case        
@@ -1252,7 +1255,7 @@ namespace Ginger.Run
                 GiveUserFeedback();
 
                 NotifyActionStart(act);
-
+                actionExecuted = true;
                 string actionStartTimeStr = string.Empty;
                 while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                 {
@@ -1338,7 +1341,10 @@ namespace Ginger.Run
             }
             finally
             {
-                NotifyActionEnd(act);
+                if (actionExecuted)
+                {
+                    NotifyActionEnd(act);
+                }
                 CurrentBusinessFlow.PreviousAction = act;
             }
         }
@@ -1852,6 +1858,18 @@ namespace Ginger.Run
             UpdateActionStatus(action, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running, st);
             GiveUserFeedback();
 
+           
+            if (action.Context == null)
+            {
+                var mContext = new Context() { ExecutedFrom = this.ExecutedFrom};
+                action.Context = mContext;
+            }
+            else
+            {
+                var mContext = Context.GetAsContext(action.Context);
+                mContext.ExecutedFrom = this.ExecutedFrom;
+            }
+            
         }
 
         public void PrepActionValueExpression(Act act, BusinessFlow businessflow = null)
@@ -4688,6 +4706,7 @@ namespace Ginger.Run
         void NotifyRunnerRunstart()
         {
             uint evetTime = RunListenerBase.GetEventTime();
+            this.StartTimeStamp = DateTime.UtcNow;
             Parallel.ForEach(mRunListeners, runnerListener =>
             {
                 {
@@ -4706,6 +4725,7 @@ namespace Ginger.Run
         void NotifyRunnerRunEnd(string ExecutionLogFolder= null)
         { 
             uint evetTime = RunListenerBase.GetEventTime();
+            this.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.RunnerRunEnd(evetTime, this, ExecutionLogFolder);

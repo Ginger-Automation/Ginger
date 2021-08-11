@@ -84,7 +84,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                         if (item.Selected)
                         {
                             issuesCount = ItemValidationBase.mIssuesList.Count;
-                            ItemValidationBase.Validate(item);
+                            SharedRepositoryOperations.Validate(item);
                         }
                     }
 

@@ -932,7 +932,7 @@ namespace GingerCore
             return dataString;
         }
 
-        public static bool LoadALMSettings(string fileName, GingerCoreNET.ALMLib.ALMIntegration.eALMType eALMType)
+        public static bool LoadALMSettings(string fileName, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType eALMType)
         {
             if (!ValidateConfigurationFile(fileName, eALMType))
             {
@@ -944,10 +944,10 @@ namespace GingerCore
                 string configPackageFolder = string.Empty;
                 switch(eALMType)
                 {
-                    case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
+                    case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
                         configPackageFolder = "JiraConfigurationsPackage";
                         break;
-                    case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest:
+                    case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest:
                         configPackageFolder = "QTestConfigurationsPackage";
                         break;
                     default:
@@ -971,16 +971,16 @@ namespace GingerCore
             }
             return true; 
         }
-        static bool ValidateConfigurationFile(string PackageFileName, GingerCoreNET.ALMLib.ALMIntegration.eALMType eALMType)
+        static bool ValidateConfigurationFile(string PackageFileName, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType eALMType)
         {
             bool containSettingsFile = false;
             string configPackageFile = string.Empty;
             switch (eALMType)
             {
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
                     configPackageFile = @"JiraSettings/JiraSettings.json";
                     break;
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest:
                     configPackageFile = @"QTestSettings/QTestSettings.json";
                     break;
                 default:
@@ -1005,15 +1005,15 @@ namespace GingerCore
             return containSettingsFile;
         }
 
-        public static bool IsConfigPackageExists(string PackagePath, GingerCoreNET.ALMLib.ALMIntegration.eALMType eALMType)
+        public static bool IsConfigPackageExists(string PackagePath, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType eALMType)
         {
             string settingsFolder = string.Empty;
             switch (eALMType)
             {
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
                     settingsFolder = "JiraSettings";
                     break;
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest:
+                case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest:
                     settingsFolder = "QTestSettings";
                     break;
                 default:

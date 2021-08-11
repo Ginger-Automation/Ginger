@@ -21,10 +21,12 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Activities;
 using Ginger.BusinessFlowPages;
+using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Activities;
 using GingerWPF.DragDropLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -192,7 +194,7 @@ namespace Ginger.Repository
                     {
                         list.Add(activityIdnt.IdentifiedActivity);
                     }
-                    (new SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
+                    WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, list));                  
 
                     //refresh and select the item
                     ActivitiesGroup dragedItemInGrid = ((IEnumerable<ActivitiesGroup>)xActivitiesGroupsRepositoryGrid.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();

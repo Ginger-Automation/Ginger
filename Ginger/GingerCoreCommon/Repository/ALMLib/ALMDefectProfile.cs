@@ -49,7 +49,7 @@ namespace Amdocs.Ginger.Repository
         public string Description { get; set; }
 
         [IsSerializedForLocalRepository]
-        public ALMIntegration.eALMType AlmType { get; set; }
+        public ALMIntegrationEnums.eALMType AlmType { get; set; }
 
 
         [IsSerializedForLocalRepository]
@@ -81,12 +81,17 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public override string GetItemType()
+        {
+            return nameof(ALMDefectProfile);
+        }
+
         public override void PostDeserialization()
         {
             if (this.AlmType == 0)
             {
                 string almType = TargetFrameworkHelper.Helper.GetALMConfig();
-                Enum.TryParse(almType, out ALMIntegration.eALMType AlmType);
+                Enum.TryParse(almType, out ALMIntegrationEnums.eALMType AlmType);
                 this.AlmType = AlmType;
             }
         }

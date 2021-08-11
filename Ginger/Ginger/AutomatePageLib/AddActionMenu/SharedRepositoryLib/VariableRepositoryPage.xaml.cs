@@ -30,6 +30,8 @@ using System.Windows;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using GingerWPF.WizardLib;
+using Ginger.Repository.AddItemToRepositoryWizard;
 
 namespace Ginger.Repository
 {
@@ -167,8 +169,8 @@ namespace Ginger.Repository
         {
             VariableBase dragedItem = (VariableBase)((DragInfo)sender).Data;
             if (dragedItem != null)
-            {
-                (new SharedRepositoryOperations()).AddItemToRepository(mContext, dragedItem);
+            {              
+                WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, dragedItem));
 
                 //refresh and select the item
                 try

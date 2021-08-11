@@ -16,27 +16,24 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using ALM_Common.DataContracts;
+using AlmDataContractsStd.Enums;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.ALM.JIRA;
+using Ginger.ALM.JIRA.TreeViewItems;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.ALM.JIRA;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using JiraRepositoryStd.Data_Contracts;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using Ginger.ALM.JIRA.TreeViewItems;
-using JiraRepository.Data_Contracts;
-using Ginger.ALM.JIRA;
+using System.Linq;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM.Repository
 {
@@ -49,7 +46,7 @@ namespace Ginger.ALM.Repository
         {
             this.AlmCore = almCore;
         }
-        public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
+        public override bool ConnectALMServer(eALMConnectType userMsgStyle)
         {
             bool isConnectSucc = false;
             Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Jira server");
@@ -65,10 +62,14 @@ namespace Ginger.ALM.Repository
             if (!isConnectSucc)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Could not connect to Jira server");
-                if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
+                if (userMsgStyle == eALMConnectType.Manual)
+                {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailure);
-                else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
+                }
+                else if (userMsgStyle == eALMConnectType.Auto)
+                {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings);
+                }
             }
 
             return isConnectSucc;
@@ -121,7 +122,7 @@ namespace Ginger.ALM.Repository
                 }
         }
 
-        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
+        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
             bool result = false;
             string responseStr = string.Empty;
@@ -144,10 +145,10 @@ namespace Ginger.ALM.Repository
                     bool exportRes = false;
                     switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
                     {
-                        case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray:
+                        case eTestingALMType.Xray:
                             exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
                             break;
-                        case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr:
+                        case eTestingALMType.Zephyr:
                             JiraZephyrTreeItem zephyrExportPath = SelectZephyrExportPath();
                             if (zephyrExportPath == null)
                             {
@@ -180,13 +181,16 @@ namespace Ginger.ALM.Repository
                             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                             Reporter.HideStatusMessage();
                         }
-                        if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                        if (almConectStyle != eALMConnectType.Auto)
+                        {
                             Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
+                        }
                         return true;
                     }
-                    else
-                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                    else if (almConectStyle != eALMConnectType.Auto)
+                    {
                         Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, responseStr);
+                    }
                 }
                 Reporter.HideStatusMessage();
             }
@@ -235,12 +239,12 @@ namespace Ginger.ALM.Repository
 
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray)
+            if (ALMCore.DefaultAlmConfig.JiraTestingALM == eTestingALMType.Xray)
             {
                 JIRA.JiraImportReviewPage win = new JIRA.JiraImportReviewPage(importDestinationPath:importDestinationFolderPath);
                 win.ShowAsWindow();
             }
-            if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr)
+            if (ALMCore.DefaultAlmConfig.JiraTestingALM == eTestingALMType.Zephyr)
             {
                 JIRA.JiraZephyrCyclesExplorerPage win = new JIRA.JiraZephyrCyclesExplorerPage(importDestinationFolderPath);
                 win.ShowAsWindow();
@@ -455,12 +459,12 @@ namespace Ginger.ALM.Repository
                 Title = "Select Jira Configuration Zip File"
             }, false) is string fileName)
             {
-                if (!GingerCore.General.LoadALMSettings(fileName, GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira))
+                if (!GingerCore.General.LoadALMSettings(fileName, eALMType.Jira))
                 {
                     return false;
                 }
                 ((JiraCore)ALMIntegration.Instance.AlmCore).CreateJiraRepository();
-                ALMIntegration.Instance.SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira);
+                ALMIntegration.Instance.SetALMCoreConfigurations(eALMType.Jira);
             }
             return true; //Browse Dialog Canceled
         }

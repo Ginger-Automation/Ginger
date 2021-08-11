@@ -124,6 +124,8 @@ namespace Amdocs.Ginger.CoreNET
         public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
 
         bool mIsDeviceConnected = false;
+        string mDefaultURL = null;
+
         public bool IsDeviceConnected
         {
             get => mIsDeviceConnected;
@@ -235,6 +237,18 @@ namespace Amdocs.Ginger.CoreNET
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
                 mSeleniumDriver.StopProcess = StopProcess;
 
+                if (AppType == eAppType.Web && mDefaultURL != null)
+                {
+                    try
+                    {
+                        Driver.Navigate().GoToUrl(mDefaultURL);
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
+                    }
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -273,7 +287,7 @@ namespace Amdocs.Ginger.CoreNET
         private DriverOptions GetCapabilities()
         {
             //see http://appium.io/slate/en/master/?csharp#appium-server-capabilities for full list of capabilities values
-
+            mDefaultURL = null;
             DriverOptions driverOptions = new AppiumOptions();
 
             //User customized capabilities
@@ -281,6 +295,12 @@ namespace Amdocs.Ginger.CoreNET
             {
                 if (String.IsNullOrWhiteSpace(UserCapability.Parameter))
                 {
+                    continue;
+                }
+
+                if (UserCapability.Parameter.ToLower().Trim() == "defaulturl")
+                {
+                    mDefaultURL = UserCapability.Value;
                     continue;
                 }
 
@@ -1363,6 +1383,23 @@ namespace Amdocs.Ginger.CoreNET
                 ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
                 EI.IsAutoLearned = true;
 
+                if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
+                {
+                    foreach (var template in relativeXpathTemplateList)
+                    {
+                        eLocateBy CustomLocLocateBy = eLocateBy.ByRelXPath;
+
+                        if (template.Contains('{'))
+                            CustomLocLocateBy = eLocateBy.iOSPredicateString;
+
+                        var customLocator = GetUserDefinedCustomLocatorFromTemplates(template, CustomLocLocateBy, EI.Properties.ToList());
+
+                        if(customLocator != null)
+                            EI.Locators.Add(customLocator);
+                        //CreateXpathFromUserTemplate(template, foundElemntInfo);
+                    }
+                }
+
                 if (filteredElementType == null ||
                     (filteredElementType != null && filteredElementType.Contains(EI.ElementTypeEnum)))
                     foundElementsList.Add(EI);
@@ -1374,15 +1411,22 @@ namespace Amdocs.Ginger.CoreNET
         private async Task<ElementInfo> GetElementInfoforXmlNode(XmlNode xmlNode)
         {
             ElementInfo EI = new ElementInfo();
-            EI.ElementTitle = GetNameFor(xmlNode);
             Tuple<string, eElementType> Elementype = GetElementTypeEnum(xmlNode);
             EI.ElementType = Elementype.Item1;           //GetAttrValue(xmlNode, "class");
             EI.ElementTypeEnum = Elementype.Item2;
+            EI.ElementTitle = string.Format("{0}-{1}", Elementype.Item2, GetNameFor(xmlNode));
             EI.Value = GetAttrValue(xmlNode, "text");
+
             if (string.IsNullOrEmpty(EI.Value))
             {
                 EI.Value = GetAttrValue(xmlNode, "content-desc");
             }
+
+            if (string.IsNullOrEmpty(EI.Value))
+            {
+                EI.Value = GetAttrValue(xmlNode, "value");
+            }
+
             EI.ElementObject = xmlNode;
             EI.XPath = await GetNodeXPath(xmlNode);
             EI.WindowExplorer = this;
@@ -1471,6 +1515,7 @@ namespace Amdocs.Ginger.CoreNET
 
                 case "android.widget.view":
                 case "android.widget.textview":
+                case "xcuielementtypestatictext":
                     return eElementType.Label;
 
                 case "android.widget.image":
@@ -1556,7 +1601,10 @@ namespace Amdocs.Ginger.CoreNET
             }
 
             // the path to a node is the path to its parent, plus "/node()[n]", where n is its position among its siblings.
-            return String.Format("{0}/{1}[{2}]", await GetXPathToNode(node.ParentNode), node.Name, indexInParent);          //Testing Async
+            if (node.Name.ToLower() == "appiumaut")
+                return string.Format("//");
+            else
+                return String.Format("{0}/{1}[{2}]", await GetXPathToNode(node.ParentNode), node.Name, indexInParent);          //Testing Async
         }
 
         List<ElementInfo> IWindowExplorer.GetElementChildren(ElementInfo ElementInfo)
@@ -1577,20 +1625,44 @@ namespace Amdocs.Ginger.CoreNET
 
         private string GetNameFor(XmlNode xmlNode)
         {
-            string Name = GetAttrValue(xmlNode, "content-desc");
-            if (!string.IsNullOrEmpty(Name)) return Name;
-
-            Name = GetAttrValue(xmlNode, "text");
-            if (!string.IsNullOrEmpty(Name)) return Name;
-
-            string resid = GetAttrValue(xmlNode, "resource-id");
-            if (!string.IsNullOrEmpty(resid))
+            string Name;
+            if (DevicePlatformType == eDevicePlatformType.Android)
             {
-                // if we have resource id then get just the id out of it
-                string[] a = resid.Split('/');
-                Name = a[a.Length - 1];
-                return Name;
+                Name = GetAttrValue(xmlNode, "content-desc");
+
+                if (string.IsNullOrEmpty(Name))
+                {
+                    Name = GetAttrValue(xmlNode, "text");
+                }
+
+                if (string.IsNullOrEmpty(Name))
+                {
+                    string resid = GetAttrValue(xmlNode, "resource-id");
+                    if (!string.IsNullOrEmpty(resid))
+                    {
+                        // if we have resource id then get just the id out of it
+                        string[] a = resid.Split('/');
+                        Name = a[a.Length - 1];
+                    }
+                }
             }
+            else
+            {
+                Name = GetAttrValue(xmlNode, "name");
+
+                if (string.IsNullOrEmpty(Name))
+                {
+                    Name = GetAttrValue(xmlNode, "label");
+                }
+
+                if (string.IsNullOrEmpty(Name))
+                {
+                    Name = GetAttrValue(xmlNode, "value");
+                }
+            }
+
+            if (!string.IsNullOrEmpty(Name))
+                return Name;
 
             return xmlNode.Name;
         }
@@ -1608,6 +1680,30 @@ namespace Amdocs.Ginger.CoreNET
         {
             ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
 
+            if (DevicePlatformType == eDevicePlatformType.iOS)
+            {
+                string selector = string.Format("type == '{0}' AND value BEGINSWITH[c] '{1}' AND visible == {2}",
+                    ElementInfo.ElementType, GetAttrValue(ElementInfo.ElementObject as XmlNode, "value"), GetAttrValue(ElementInfo.ElementObject as XmlNode, "visible") == "true" ? 1 : 0);
+
+                list.Add(new ElementLocator()
+                {
+                    Active = true,
+                    LocateBy = eLocateBy.iOSPredicateString,
+                    LocateValue = selector,
+                    IsAutoLearned = true,
+                    Help = "Highly Recommended as Predicate Matching is built into XCUITest, it has the potential to be much faster than Appium's XPath strategy"
+                });
+
+                list.Add(new ElementLocator()
+                {
+                    Active = true,
+                    LocateBy = eLocateBy.iOSClassChain,
+                    LocateValue = string.Format("**/{0}/{1}", ElementInfo.XPath.Split('/')[ElementInfo.XPath.Split('/').Length - 2], ElementInfo.XPath.Split('/').Last()),
+                    IsAutoLearned = true,
+                    Help = "Highly Recommended as Class Chain strategy is built into XCUITest, it has the potential to be much faster than Appium's XPath strategy"
+                });
+            }
+
             //Only by Resource ID
             string resid = GetAttrValue(ElementInfo.ElementObject as XmlNode, "resource-id");
             string residXpath = string.Format("//*[@resource-id='{0}']", resid);
@@ -1620,6 +1716,15 @@ namespace Amdocs.Ginger.CoreNET
                     LocateValue = residXpath,
                     IsAutoLearned = true,
                     Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
+                });
+
+                list.Add(new ElementLocator()
+                {
+                    Active = true,
+                    LocateBy = eLocateBy.ByResourceID,
+                    LocateValue = resid,
+                    IsAutoLearned = true,
+                    Help = "Highly Recommended for Resource-Ids being unique"
                 });
             }
 
@@ -1634,6 +1739,15 @@ namespace Amdocs.Ginger.CoreNET
                     LocateValue = elemName,
                     IsAutoLearned = true,
                     Help = "Use Name only when you don't want XPath with relative info, but the resource-id is unique"
+                });
+
+                list.Add(new ElementLocator()
+                {
+                    Active = true,
+                    LocateBy = eLocateBy.ByRelXPath,
+                    LocateValue = string.Format("//{0}[@name=\"{1}\"]", ElementInfo.ElementType, elemName),
+                    IsAutoLearned = true,
+                    Help = "Highly Recommended locator for XCUITest Driver, long path with relative information is sensitive to screen changes"
                 });
             }
 
@@ -1676,6 +1790,15 @@ namespace Amdocs.Ginger.CoreNET
                 Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
             });
 
+            list.Add(new ElementLocator()
+            {
+                Active = true,
+                LocateBy = eLocateBy.ByXPath,
+                LocateValue = string.Format("//{0}/{1}", ElementInfo.XPath.Split('/')[ElementInfo.XPath.Split('/').Length - 2], ElementInfo.XPath.Split('/').Last()),
+                IsAutoLearned = true,
+                Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
+            });
+
             return list;
         }
 
@@ -1709,7 +1832,6 @@ namespace Amdocs.Ginger.CoreNET
 
             return list;
         }
-
 
         public event RecordingEventHandler RecordingEvent;
 
@@ -1939,6 +2061,14 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     case eLocateBy.ByResourceID:
                         elem = Driver.FindElementById(EL.LocateValue);
+                        break;
+
+                    case eLocateBy.iOSPredicateString:
+                        elem = Driver.FindElement(MobileBy.IosNSPredicate(EL.LocateValue));
+                        break;
+
+                    case eLocateBy.iOSClassChain:
+                        elem = Driver.FindElement(MobileBy.IosClassChain(EL.LocateValue));
                         break;
 
                     case eLocateBy.ByRelXPath:
@@ -2303,13 +2433,13 @@ namespace Amdocs.Ginger.CoreNET
 
                     if (AppType == eAppType.Web)
                     {
-                        ratio_X = (SrcWidth / 2) / ActWidth;
-                        ratio_Y = (SrcHeight / 2) / ActHeight;
+                        ratio_X = (SrcWidth / 3) / ActWidth;
+                        ratio_Y = (SrcHeight / 3) / ActHeight;
                     }
                     else
                     {
-                        ratio_X = SrcWidth / ActWidth;
-                        ratio_Y = SrcHeight / ActHeight;
+                        ratio_X = (SrcWidth / 2) / ActWidth;
+                        ratio_Y = (SrcHeight / 2) / ActHeight;
                     }
 
                     break;
@@ -2321,9 +2451,10 @@ namespace Amdocs.Ginger.CoreNET
             return pointOnAppScreen;
         }
 
-        public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo)
+        public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo, bool AutoCorrectRectPropRequired)
         {
             double ratio_X, ratio_Y;
+            int AutoCorrectRectProp = 1;
 
             XmlNode rectangleXmlNode = clickedElementInfo.ElementObject as XmlNode;
             switch (DevicePlatformType)
@@ -2365,57 +2496,34 @@ namespace Amdocs.Ginger.CoreNET
                 case eDevicePlatformType.iOS:
                     if (AppType == eAppType.Web)
                     {
-                        ratio_X = SrcWidth / ActWidth;
-                        ratio_Y = SrcHeight / ActHeight;
+                        //ratio_X = SrcWidth / ActWidth;
+                        //ratio_Y = SrcHeight / ActHeight;
+                        ratio_X = (SrcWidth / 2) / ActWidth;
+                        ratio_Y = (SrcHeight / 3) / ActHeight;
 
-                        ElementStartPoints.X = (int)(ElementStartPoints.X * ratio_X);
-                        ElementStartPoints.Y = (int)(ElementStartPoints.Y * ratio_Y);
-                        ElementMaxPoints.X = (int)(ElementMaxPoints.X * ratio_X);
-                        ElementMaxPoints.Y = (int)(ElementMaxPoints.Y * ratio_Y);
+                        ElementStartPoints.X = (int)(ElementStartPoints.X / ratio_X);
+                        ElementStartPoints.Y = (int)(ElementStartPoints.Y / ratio_Y);
+                        ElementMaxPoints.X = (int)(ElementMaxPoints.X / ratio_X);
+                        ElementMaxPoints.Y = (int)(ElementMaxPoints.Y / ratio_Y);
                     }
                     else
                     {
-                        ratio_X = (SrcWidth / 3) / ActWidth;
-                        ratio_Y = (SrcHeight / 3) / ActHeight;
+                        ratio_X = (SrcWidth / 2) / ActWidth;
+                        ratio_Y = (SrcHeight / 2) / ActHeight;
 
                         string x = rectangleXmlNode.Attributes["x"].Value;
                         string y = rectangleXmlNode.Attributes["y"].Value;
                         string hgt = rectangleXmlNode.Attributes["height"].Value;
                         string wdth = rectangleXmlNode.Attributes["width"].Value;
 
-                        ElementStartPoints.X = (int)(Convert.ToInt32(x) * ratio_X);
-                        ElementStartPoints.Y = (int)(Convert.ToInt32(y) * ratio_Y);
-                        ElementMaxPoints.X = ElementStartPoints.X + Convert.ToInt32(wdth);
-                        ElementMaxPoints.Y = ElementStartPoints.X + Convert.ToInt32(hgt);
+                        ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
+                        ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
 
-                        //ElementStartPoints.X = Convert.ToInt32(x);
-                        //ElementStartPoints.Y = Convert.ToInt32(y);
-                        //ElementMaxPoints.X = ElementStartPoints.X + Convert.ToInt32(wdth);
-                        //ElementMaxPoints.Y = ElementStartPoints.X + Convert.ToInt32(hgt);
+                        if(AutoCorrectRectPropRequired)
+                            AutoCorrectRectProp = 2;
 
-                        //ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
-                        //ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
-                        //ElementMaxPoints.X = (int)((ElementStartPoints.X + Convert.ToInt32(wdth)) / ratio_X);
-                        //ElementMaxPoints.Y = (int)((ElementStartPoints.X + Convert.ToInt32(hgt)) / ratio_Y);
-
-                        //string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
-
-                        //bounds = bounds.Replace("[", ",");
-                        //bounds = bounds.Replace("]", ",");
-                        //string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                        //if (boundsXY.Count() == 4)
-                        //{
-                        //    ElementStartPoints.X = (int)(Convert.ToInt64(boundsXY[0]) / ratio_X);
-                        //    ElementStartPoints.Y = (int)(Convert.ToInt64(boundsXY[1]) / ratio_Y);
-                        //    ElementMaxPoints.X = (int)(Convert.ToInt64(boundsXY[2]) / ratio_X);
-                        //    ElementMaxPoints.Y = (int)(Convert.ToInt64(boundsXY[3]) / ratio_Y);
-                        //}
-
-                        //element_Start_X = (Convert.ToInt64(rectangleXmlNode.Attributes["x"].Value)) / ratio_X;
-                        //element_Start_Y = (Convert.ToInt64(rectangleXmlNode.Attributes["y"].Value)) / ratio_Y;
-
-                        //element_Max_X = element_Start_X + (Convert.ToInt64(rectangleXmlNode.Attributes["width"].Value) / ratio_X);
-                        //element_Max_Y = element_Start_Y + (Convert.ToInt64(rectangleXmlNode.Attributes["height"].Value) / ratio_Y);
+                        ElementMaxPoints.X = ElementStartPoints.X + (Convert.ToInt32(wdth) * AutoCorrectRectProp);
+                        ElementMaxPoints.Y = ElementStartPoints.Y + (Convert.ToInt32(hgt) * AutoCorrectRectProp);
                     }
 
                     break;

@@ -1708,5 +1708,10 @@ namespace GingerCore
             AttachActivitiesGroupsAndActivities();
         }
 
+        public override string GetItemType()
+        {
+            return nameof(BusinessFlow);
+        }
+
     }
 }

@@ -38,6 +38,8 @@ namespace Ginger.AnalyzerLib
         private readonly object mUsedVariableLock = new object();
         private readonly object mMissingVariableIssueLock = new object();
 
+        public bool SelfHealingAutoFixIssue { get; set; }
+
         public void RunSolutionAnalyzer(Solution solution, ObservableList<AnalyzerItemBase> issuesList)
         {
             foreach (AnalyzerItemBase issue in AnalyzeSolution.Analyze(solution))
@@ -332,6 +334,11 @@ namespace Ginger.AnalyzerLib
         {
             lock (mAddIssuesLock)
             {
+                if (issue.CanAutoFix == AnalyzerItemBase.eCanFix.Yes && issue.FixItHandler != null && SelfHealingAutoFixIssue)
+                {
+                    issue.FixItHandler.Invoke(issue, null);
+                    return;
+                }
                 issuesList.Add(issue);
             }
         }

@@ -1822,5 +1822,15 @@ namespace GingerCore.Actions
         {
             // Base - do nothing
         }
+
+        public override void PrepareItemToBeCopied()
+        {
+            this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper.IsSharedRepositoryItem(this);
+        }
+
+        public override string GetItemType()
+        {
+            return "Action";
+        }
     }
 }
