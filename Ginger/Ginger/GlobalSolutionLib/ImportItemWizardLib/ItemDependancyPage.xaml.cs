@@ -181,16 +181,21 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             if (isDuplicateGUID)
             {
                 itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.ReplaceExsiting;
-                itemToAdd.Comments = "Item already exist with same GUID.";
+                //itemToAdd.Comments = "Item already exist with same GUID.";
             }
 
             //check if file already exist
             string targetFile = System.IO.Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, itemToAdd.ItemType.ToString(), System.IO.Path.GetFileName(itemToAdd.ItemExtraInfo));
-            if (File.Exists(targetFile))
+            if (File.Exists(targetFile) && isDuplicateGUID)
             {
                 itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.ReplaceExsiting;
-                itemToAdd.Comments = "Item already exist with same fileName.";
+                //itemToAdd.Comments = "Item already exist with same GUID and fileName.";
 
+            }
+            else if (File.Exists(targetFile))
+            {
+                itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.CreateNew;
+                itemToAdd.Comments = "Item with same name exist so item will be imported with name "+itemToAdd.ItemName+"_Copy.";
             }
 
 

@@ -33,6 +33,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             
             AddPage(Name: "Select Item Source Type", Title: "Select Item Source Type", SubTitle: "Choose ...", Page: new SelectItemImportTypePage());
 
+            AddPage(Name: "Select Item Type To Import", Title: "Select Item Type To Import", SubTitle: "Choose ...", Page: new SelectItemTypesToImportPage());
+
             AddPage(Name: "Select Solution Item", Title: "Select Solution Item", SubTitle: "Select Solution Item...", Page: new SelectItemFromSolutionPage());
 
             AddPage(Name: "Item Dependancy Mapping", Title: "Item Dependancy Mapping", SubTitle: "Item Dependancy Mapping...", Page: new ItemDependancyPage());
