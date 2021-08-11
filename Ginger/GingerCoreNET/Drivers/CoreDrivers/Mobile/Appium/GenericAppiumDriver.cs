@@ -415,6 +415,12 @@ namespace Amdocs.Ginger.CoreNET
                     return;
                 }
 
+                if(actionType == typeof(ActGotoURL))
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Navigating to Native Application not supported");
+                    return;
+                }
+
                 if (actionType == typeof(ActMobileDevice))
                 {
                     MobileDeviceActionHandler((ActMobileDevice)act);
@@ -1391,6 +1397,12 @@ namespace Amdocs.Ginger.CoreNET
                 //        if (cattr.Value == "false") continue;
                 //    }
                 //}
+
+                if(nodes[i].Attributes != null && nodes[i].Attributes.Count == 0)
+                {
+                    continue;
+                }
+
                 ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
                 EI.IsAutoLearned = true;
 
@@ -1425,7 +1437,8 @@ namespace Amdocs.Ginger.CoreNET
             Tuple<string, eElementType> Elementype = GetElementTypeEnum(xmlNode);
             EI.ElementType = Elementype.Item1;           //GetAttrValue(xmlNode, "class");
             EI.ElementTypeEnum = Elementype.Item2;
-            EI.ElementTitle = string.Format("{0}-{1}", Elementype.Item2, GetNameFor(xmlNode));
+            EI.ElementTitle = GetNameFor(xmlNode);
+            //EI.ElementTitle = string.Format("{0}-{1}", Elementype.Item2, GetNameFor(xmlNode));
             EI.Value = GetAttrValue(xmlNode, "text");
 
             if (string.IsNullOrEmpty(EI.Value))
@@ -2523,10 +2536,10 @@ namespace Amdocs.Ginger.CoreNET
                         ratio_X = (SrcWidth / 2) / ActWidth;
                         ratio_Y = (SrcHeight / 2) / ActHeight;
 
-                        string x = rectangleXmlNode.Attributes["x"].Value;
-                        string y = rectangleXmlNode.Attributes["y"].Value;
-                        string hgt = rectangleXmlNode.Attributes["height"].Value;
-                        string wdth = rectangleXmlNode.Attributes["width"].Value;
+                        string x = GetAttrValue(rectangleXmlNode, "x");
+                        string y = GetAttrValue(rectangleXmlNode, "y");
+                        string hgt = GetAttrValue(rectangleXmlNode, "height");
+                        string wdth = GetAttrValue(rectangleXmlNode, "width");
 
                         ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
                         ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
