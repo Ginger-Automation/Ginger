@@ -415,12 +415,6 @@ namespace Amdocs.Ginger.CoreNET
                     return;
                 }
 
-                if(actionType == typeof(ActGotoURL))
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Navigating to Native Application not supported");
-                    return;
-                }
-
                 if (actionType == typeof(ActMobileDevice))
                 {
                     MobileDeviceActionHandler((ActMobileDevice)act);
@@ -1374,61 +1368,70 @@ namespace Amdocs.Ginger.CoreNET
                 return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(filteredElementType, foundElementsList, isPOMLearn, specificFramePath));
             }
 
-            if (foundElementsList == null)
-                foundElementsList = new ObservableList<ElementInfo>();
-
-            await GetPageSourceDocument(true);
-
-            //Get all elements but only clickable elements= user can interact with them
-            XmlNodeList nodes = pageSourceXml.SelectNodes("//*");
-            for (int i = 0; i < nodes.Count; i++)
+            try
             {
-                if (StopProcess)
+                mIsDriverBusy = true;
+
+                if (foundElementsList == null)
+                    foundElementsList = new ObservableList<ElementInfo>();
+
+                await GetPageSourceDocument(true);
+
+                //Get all elements but only clickable elements= user can interact with them
+                XmlNodeList nodes = pageSourceXml.SelectNodes("//*");
+                for (int i = 0; i < nodes.Count; i++)
                 {
-                    return foundElementsList.ToList();
-                }
-
-                //Show only clickable elements
-                //if (nodes[i].Attributes != null)
-                //{
-                //    var cattr = nodes[i].Attributes["clickable"];
-                //    if (cattr != null)
-                //    {
-                //        if (cattr.Value == "false") continue;
-                //    }
-                //}
-
-                if(nodes[i].Attributes != null && nodes[i].Attributes.Count == 0)
-                {
-                    continue;
-                }
-
-                ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
-                EI.IsAutoLearned = true;
-
-                if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
-                {
-                    foreach (var template in relativeXpathTemplateList)
+                    if (StopProcess)
                     {
-                        eLocateBy CustomLocLocateBy = eLocateBy.ByRelXPath;
-
-                        if (template.Contains('{'))
-                            CustomLocLocateBy = eLocateBy.iOSPredicateString;
-
-                        var customLocator = GetUserDefinedCustomLocatorFromTemplates(template, CustomLocLocateBy, EI.Properties.ToList());
-
-                        if(customLocator != null)
-                            EI.Locators.Add(customLocator);
-                        //CreateXpathFromUserTemplate(template, foundElemntInfo);
+                        return foundElementsList.ToList();
                     }
+
+                    //Show only clickable elements
+                    //if (nodes[i].Attributes != null)
+                    //{
+                    //    var cattr = nodes[i].Attributes["clickable"];
+                    //    if (cattr != null)
+                    //    {
+                    //        if (cattr.Value == "false") continue;
+                    //    }
+                    //}
+
+                    if (nodes[i].Attributes != null && nodes[i].Attributes.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
+                    EI.IsAutoLearned = true;
+
+                    if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
+                    {
+                        foreach (var template in relativeXpathTemplateList)
+                        {
+                            eLocateBy CustomLocLocateBy = eLocateBy.ByRelXPath;
+
+                            if (template.Contains('{'))
+                                CustomLocLocateBy = eLocateBy.iOSPredicateString;
+
+                            var customLocator = GetUserDefinedCustomLocatorFromTemplates(template, CustomLocLocateBy, EI.Properties.ToList());
+
+                            if (customLocator != null)
+                                EI.Locators.Add(customLocator);
+                            //CreateXpathFromUserTemplate(template, foundElemntInfo);
+                        }
+                    }
+
+                    if (filteredElementType == null ||
+                        (filteredElementType != null && filteredElementType.Contains(EI.ElementTypeEnum)))
+                        foundElementsList.Add(EI);
                 }
 
-                if (filteredElementType == null ||
-                    (filteredElementType != null && filteredElementType.Contains(EI.ElementTypeEnum)))
-                    foundElementsList.Add(EI);
+                return foundElementsList.ToList();
             }
-
-            return foundElementsList.ToList();
+            finally
+            {
+                mIsDriverBusy = false;
+            }
         }
 
         private async Task<ElementInfo> GetElementInfoforXmlNode(XmlNode xmlNode)
