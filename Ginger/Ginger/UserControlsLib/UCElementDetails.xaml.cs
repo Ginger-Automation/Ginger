@@ -783,6 +783,9 @@ namespace Ginger
             {
                 ShowPOMSelection();
             }
+
+            HandlePOMOperationsPanelVisibility(true);
+
             SelectedElementChanged = true;
             POMCheckBoxToggled = POMCheckBoxToggled == null ? false : true;
             RefreshElementAction();
