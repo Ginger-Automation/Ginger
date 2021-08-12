@@ -5139,13 +5139,23 @@ namespace GingerCore.Drivers
                         break;
 
                     case eLocateBy.ByRelXPath:
-                        elemLocator.LocateValue = ((HTMLElementInfo)ElementInfo).RelXpath;
-                        elemLocator.IsAutoLearned = true;
+                        string relXPath = ((HTMLElementInfo)ElementInfo).RelXpath;
+
+                        if (!string.IsNullOrWhiteSpace(relXPath))
+                        {
+                            elemLocator.LocateValue = relXPath;
+                            elemLocator.IsAutoLearned = true;
+                        }
+
                         break;
 
                     case eLocateBy.ByXPath:
-                        elemLocator.LocateValue = ElementInfo.XPath;
-                        elemLocator.IsAutoLearned = true;
+                        if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
+                        {
+                            elemLocator.LocateValue = ElementInfo.XPath;
+                            elemLocator.IsAutoLearned = true;
+                        }
+
                         break;
                 }
             }
