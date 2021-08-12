@@ -309,6 +309,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (act != null)
             {
                 mAgent.Driver.RunAction(act);
+
+                if(act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.Error.Contains("not support"))
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Navigating to Native Application not supported");
+                }
             }
         }
 
