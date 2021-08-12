@@ -3786,6 +3786,12 @@ namespace GingerCore.Drivers
             return null;
         }
 
+        /// <summary>
+        /// For Mobile Web Elements Learning process is too slow due to increased Driver usage
+        /// Hence, we'll learn extra lcoators only in cases where Custom Relative XPath is checked by user for Mobile Platform
+        /// Else, it'll be skipped - Checking the performance
+        /// </summary>
+        public bool ExtraLocatorsRequired = true;
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null,List<string> relativeXpathTemplateList=null)
         {
             return await Task.Run(() =>
@@ -3894,16 +3900,16 @@ namespace GingerCore.Drivers
                             foundElemntInfo.HTMLElementObject = htmlElemNode;
                             ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
 
-                            GetRelativeXpathElementLocators(foundElemntInfo);
-
-                            if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
+                            if (ExtraLocatorsRequired)
                             {
-                                foreach (var template in relativeXpathTemplateList)
+                                GetRelativeXpathElementLocators(foundElemntInfo);
+
+                                if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
                                 {
-                                    var elementLocator = GetUserDefinedCustomLocatorFromTemplates(template, eLocateBy.ByRelXPath, foundElemntInfo.Properties.ToList());
-                                    if(elementLocator != null && CheckElementLocateStatus(elementLocator.LocateValue))
-                                        foundElemntInfo.Locators.Add(elementLocator);
-                                    //CreateXpathFromUserTemplate(template,foundElemntInfo);
+                                    foreach (var template in relativeXpathTemplateList)
+                                    {
+                                        CreateXpathFromUserTemplate(template, foundElemntInfo);
+                                    }
                                 }
                             }
 
@@ -5133,13 +5139,23 @@ namespace GingerCore.Drivers
                         break;
 
                     case eLocateBy.ByRelXPath:
-                        elemLocator.LocateValue = ((HTMLElementInfo)ElementInfo).RelXpath;
-                        elemLocator.IsAutoLearned = true;
+                        string relXPath = ((HTMLElementInfo)ElementInfo).RelXpath;
+
+                        if (!string.IsNullOrWhiteSpace(relXPath))
+                        {
+                            elemLocator.LocateValue = relXPath;
+                            elemLocator.IsAutoLearned = true;
+                        }
+
                         break;
 
                     case eLocateBy.ByXPath:
-                        elemLocator.LocateValue = ElementInfo.XPath;
-                        elemLocator.IsAutoLearned = true;
+                        if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
+                        {
+                            elemLocator.LocateValue = ElementInfo.XPath;
+                            elemLocator.IsAutoLearned = true;
+                        }
+
                         break;
                 }
             }
