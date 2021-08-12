@@ -1705,6 +1705,11 @@ namespace Amdocs.Ginger.CoreNET
 
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
         {
+            if(AppType == eAppType.Web)
+            {
+                return ((IWindowExplorer)mSeleniumDriver).GetElementLocators(ElementInfo);
+            }
+
             ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
 
             //if (DevicePlatformType == eDevicePlatformType.iOS)
@@ -1835,6 +1840,11 @@ namespace Amdocs.Ginger.CoreNET
 
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)
         {
+            if (AppType == eAppType.Web)
+            {
+                return ((IWindowExplorer)mSeleniumDriver).GetElementProperties(ElementInfo);
+            }
+
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
 
             XmlNode node = ElementInfo.ElementObject as XmlNode;
