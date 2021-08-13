@@ -1279,6 +1279,15 @@ namespace Amdocs.Ginger.CoreNET
                 return;
             }
 
+            if (ElementInfo.X == 0 && ElementInfo.Properties.Where(p => p.Name == "x").FirstOrDefault() != null)
+            {
+                ElementInfo.X = Convert.ToInt32(ElementInfo.Properties.Where(p => p.Name == "x").FirstOrDefault().Value);
+            }
+            if (ElementInfo.Y == 0 && ElementInfo.Properties.Where(p => p.Name == "y").FirstOrDefault() != null)
+            {
+                ElementInfo.Y = Convert.ToInt32(ElementInfo.Properties.Where(p => p.Name == "y").FirstOrDefault().Value);
+            }
+
             if (ElementInfo.ElementObject == null)
             {
                 ElementInfo.ElementObject = await FindElementXmlNodeByXY(ElementInfo.X, ElementInfo.Y);
@@ -1354,58 +1363,75 @@ namespace Amdocs.Ginger.CoreNET
         {
             if (AppType == eAppType.Web)
             {
+                mSeleniumDriver.ExtraLocatorsRequired = !(relativeXpathTemplateList == null || relativeXpathTemplateList.Count == 0);
+
                 return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(filteredElementType, foundElementsList, isPOMLearn, specificFramePath));
             }
 
-            if (foundElementsList == null)
-                foundElementsList = new ObservableList<ElementInfo>();
-
-            await GetPageSourceDocument(true);
-
-            //Get all elements but only clickable elements= user can interact with them
-            XmlNodeList nodes = pageSourceXml.SelectNodes("//*");
-            for (int i = 0; i < nodes.Count; i++)
+            try
             {
-                if (StopProcess)
-                {
-                    return foundElementsList.ToList();
-                }
+                mIsDriverBusy = true;
 
-                //Show only clickable elements
-                //if (nodes[i].Attributes != null)
-                //{
-                //    var cattr = nodes[i].Attributes["clickable"];
-                //    if (cattr != null)
-                //    {
-                //        if (cattr.Value == "false") continue;
-                //    }
-                //}
-                ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
-                EI.IsAutoLearned = true;
+                if (foundElementsList == null)
+                    foundElementsList = new ObservableList<ElementInfo>();
 
-                if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
+                await GetPageSourceDocument(true);
+
+                //Get all elements but only clickable elements= user can interact with them
+                XmlNodeList nodes = pageSourceXml.SelectNodes("//*");
+                for (int i = 0; i < nodes.Count; i++)
                 {
-                    foreach (var template in relativeXpathTemplateList)
+                    if (StopProcess)
                     {
-                        eLocateBy CustomLocLocateBy = eLocateBy.ByRelXPath;
-
-                        if (template.Contains('{'))
-                            CustomLocLocateBy = eLocateBy.iOSPredicateString;
-
-                        var customLocator = GetUserDefinedCustomLocatorFromTemplates(template, CustomLocLocateBy, EI.Properties.ToList());
-
-                        if(customLocator != null)
-                            EI.Locators.Add(customLocator);
-                        //CreateXpathFromUserTemplate(template, foundElemntInfo);
+                        return foundElementsList.ToList();
                     }
+
+                    //Show only clickable elements
+                    //if (nodes[i].Attributes != null)
+                    //{
+                    //    var cattr = nodes[i].Attributes["clickable"];
+                    //    if (cattr != null)
+                    //    {
+                    //        if (cattr.Value == "false") continue;
+                    //    }
+                    //}
+
+                    if (nodes[i].Attributes != null && nodes[i].Attributes.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
+                    EI.IsAutoLearned = true;
+
+                    if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
+                    {
+                        foreach (var template in relativeXpathTemplateList)
+                        {
+                            eLocateBy CustomLocLocateBy = eLocateBy.ByRelXPath;
+
+                            if (template.Contains('{'))
+                                CustomLocLocateBy = eLocateBy.iOSPredicateString;
+
+                            var customLocator = GetUserDefinedCustomLocatorFromTemplates(template, CustomLocLocateBy, EI.Properties.ToList());
+
+                            if (customLocator != null)
+                                EI.Locators.Add(customLocator);
+                            //CreateXpathFromUserTemplate(template, foundElemntInfo);
+                        }
+                    }
+
+                    if (filteredElementType == null ||
+                        (filteredElementType != null && filteredElementType.Contains(EI.ElementTypeEnum)))
+                        foundElementsList.Add(EI);
                 }
 
-                if (filteredElementType == null ||
-                    (filteredElementType != null && filteredElementType.Contains(EI.ElementTypeEnum)))
-                    foundElementsList.Add(EI);
+                return foundElementsList.ToList();
             }
-
-            return foundElementsList.ToList();
+            finally
+            {
+                mIsDriverBusy = false;
+            }
         }
 
         private async Task<ElementInfo> GetElementInfoforXmlNode(XmlNode xmlNode)
@@ -1414,7 +1440,8 @@ namespace Amdocs.Ginger.CoreNET
             Tuple<string, eElementType> Elementype = GetElementTypeEnum(xmlNode);
             EI.ElementType = Elementype.Item1;           //GetAttrValue(xmlNode, "class");
             EI.ElementTypeEnum = Elementype.Item2;
-            EI.ElementTitle = string.Format("{0}-{1}", Elementype.Item2, GetNameFor(xmlNode));
+            EI.ElementTitle = GetNameFor(xmlNode);
+            //EI.ElementTitle = string.Format("{0}-{1}", Elementype.Item2, GetNameFor(xmlNode));
             EI.Value = GetAttrValue(xmlNode, "text");
 
             if (string.IsNullOrEmpty(EI.Value))
@@ -1678,31 +1705,41 @@ namespace Amdocs.Ginger.CoreNET
 
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
         {
+            if(AppType == eAppType.Web)
+            {
+                return ((IWindowExplorer)mSeleniumDriver).GetElementLocators(ElementInfo);
+            }
+
             ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
 
-            if (DevicePlatformType == eDevicePlatformType.iOS)
-            {
-                string selector = string.Format("type == '{0}' AND value BEGINSWITH[c] '{1}' AND visible == {2}",
-                    ElementInfo.ElementType, GetAttrValue(ElementInfo.ElementObject as XmlNode, "value"), GetAttrValue(ElementInfo.ElementObject as XmlNode, "visible") == "true" ? 1 : 0);
+            //if (DevicePlatformType == eDevicePlatformType.iOS)
+            //{
+            //    string selector = string.Format("type == '{0}' AND value BEGINSWITH[c] '{1}' AND visible == {2}",
+            //        ElementInfo.ElementType, GetAttrValue(ElementInfo.ElementObject as XmlNode, "value"), GetAttrValue(ElementInfo.ElementObject as XmlNode, "visible") == "true" ? 1 : 0);
+            //    ElementLocator iOSPredStrLoc = new ElementLocator()
+            //    {
+            //        Active = true,
+            //        LocateBy = eLocateBy.iOSPredicateString,
+            //        LocateValue = selector,
+            //        IsAutoLearned = true,
+            //        Help = "Highly Recommended as Predicate Matching is built into XCUITest, it has the potential to be much faster than Appium's XPath strategy"
+            //    };
 
-                list.Add(new ElementLocator()
-                {
-                    Active = true,
-                    LocateBy = eLocateBy.iOSPredicateString,
-                    LocateValue = selector,
-                    IsAutoLearned = true,
-                    Help = "Highly Recommended as Predicate Matching is built into XCUITest, it has the potential to be much faster than Appium's XPath strategy"
-                });
+            //    if(LocateElementByLocator(iOSPredStrLoc) != null)
+            //        list.Add(iOSPredStrLoc);
 
-                list.Add(new ElementLocator()
-                {
-                    Active = true,
-                    LocateBy = eLocateBy.iOSClassChain,
-                    LocateValue = string.Format("**/{0}/{1}", ElementInfo.XPath.Split('/')[ElementInfo.XPath.Split('/').Length - 2], ElementInfo.XPath.Split('/').Last()),
-                    IsAutoLearned = true,
-                    Help = "Highly Recommended as Class Chain strategy is built into XCUITest, it has the potential to be much faster than Appium's XPath strategy"
-                });
-            }
+            //    ElementLocator iOSClassChainLoc = new ElementLocator()
+            //    {
+            //        Active = true,
+            //        LocateBy = eLocateBy.iOSClassChain,
+            //        LocateValue = string.Format("**/{0}/{1}", ElementInfo.XPath.Split('/')[ElementInfo.XPath.Split('/').Length - 2], ElementInfo.XPath.Split('/').Last()),
+            //        IsAutoLearned = true,
+            //        Help = "Highly Recommended as Class Chain strategy is built into XCUITest, it has the potential to be much faster than Appium's XPath strategy"
+            //    };
+
+            //    if (LocateElementByLocator(iOSClassChainLoc) != null)
+            //        list.Add(iOSPredStrLoc);
+            //}
 
             //Only by Resource ID
             string resid = GetAttrValue(ElementInfo.ElementObject as XmlNode, "resource-id");
@@ -1790,15 +1827,6 @@ namespace Amdocs.Ginger.CoreNET
                 Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
             });
 
-            list.Add(new ElementLocator()
-            {
-                Active = true,
-                LocateBy = eLocateBy.ByXPath,
-                LocateValue = string.Format("//{0}/{1}", ElementInfo.XPath.Split('/')[ElementInfo.XPath.Split('/').Length - 2], ElementInfo.XPath.Split('/').Last()),
-                IsAutoLearned = true,
-                Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
-            });
-
             return list;
         }
 
@@ -1812,6 +1840,11 @@ namespace Amdocs.Ginger.CoreNET
 
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)
         {
+            if (AppType == eAppType.Web)
+            {
+                return ((IWindowExplorer)mSeleniumDriver).GetElementProperties(ElementInfo);
+            }
+
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
 
             XmlNode node = ElementInfo.ElementObject as XmlNode;
@@ -1828,6 +1861,11 @@ namespace Amdocs.Ginger.CoreNET
                 CP.Name = attrs[i].Name;
                 CP.Value = attrs[i].Value;
                 list.Add(CP);
+
+                if(CP.Name == "x")
+                    ElementInfo.X = Convert.ToInt32(CP.Value);
+                else if(CP.Name == "y")
+                    ElementInfo.Y = Convert.ToInt32(CP.Value);
             }
 
             return list;
@@ -2511,10 +2549,10 @@ namespace Amdocs.Ginger.CoreNET
                         ratio_X = (SrcWidth / 2) / ActWidth;
                         ratio_Y = (SrcHeight / 2) / ActHeight;
 
-                        string x = rectangleXmlNode.Attributes["x"].Value;
-                        string y = rectangleXmlNode.Attributes["y"].Value;
-                        string hgt = rectangleXmlNode.Attributes["height"].Value;
-                        string wdth = rectangleXmlNode.Attributes["width"].Value;
+                        string x = GetAttrValue(rectangleXmlNode, "x");
+                        string y = GetAttrValue(rectangleXmlNode, "y");
+                        string hgt = GetAttrValue(rectangleXmlNode, "height");
+                        string wdth = GetAttrValue(rectangleXmlNode, "width");
 
                         ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
                         ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
