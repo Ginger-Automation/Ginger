@@ -31,6 +31,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.ALM.QC;
 using amdocs.ginger.GingerCoreNET;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using GingerCoreNET.ALMLib;
 
 namespace Ginger.ALM
 {
@@ -99,34 +100,41 @@ namespace Ginger.ALM
         {
             ALMCore.SetALMCoreConfigurations(almType, AlmCore);           
         }
-        public GingerCoreNET.ALMLib.ALMConfig GetDefaultAlmConfig()
+        public ALMConfig GetDefaultAlmConfig()
         {
-            if(AlmCore == null)
+            if (AlmCore == null)
             {
-                return new GingerCoreNET.ALMLib.ALMConfig();
+                if (WorkSpace.Instance.Solution.ALMConfigs != null && WorkSpace.Instance.Solution.ALMConfigs.Count > 0)
+                {
+                    return WorkSpace.Instance.Solution.ALMConfigs.Where(alm => alm.DefaultAlm).FirstOrDefault();
+                }
+                else
+                {
+                    return new ALMConfig();
+                }
             }
             return AlmCore.GetCurrentAlmConfig();
         }
 
-            public bool SetDefaultAlmConfig(eALMType AlmType)
+        public bool SetDefaultAlmConfig(eALMType AlmType)
         {
             //set default on the solution
-            foreach (GingerCoreNET.ALMLib.ALMConfig alm in WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).ToList())
+            foreach (ALMConfig alm in WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).ToList())
             {
                 alm.DefaultAlm = false;
             }
-            GingerCoreNET.ALMLib.ALMConfig almConfig = ALMCore.GetCurrentAlmConfig(AlmType);
+            ALMConfig almConfig = ALMCore.GetCurrentAlmConfig(AlmType);
             almConfig.DefaultAlm = true;
 
             //set default on almcore
-            foreach (GingerCoreNET.ALMLib.ALMConfig alm in ALMCore.AlmConfigs.Where(x => x.DefaultAlm).ToList())
+            foreach (ALMConfig alm in ALMCore.AlmConfigs.Where(x => x.DefaultAlm).ToList())
             {
                 alm.DefaultAlm = false;
             }
-            GingerCoreNET.ALMLib.ALMConfig DefaultAlm = ALMCore.AlmConfigs.FirstOrDefault(x => x.AlmType == AlmType);
+            ALMConfig DefaultAlm = ALMCore.AlmConfigs.FirstOrDefault(x => x.AlmType == AlmType);
             if (DefaultAlm == null)
             {
-                DefaultAlm = new GingerCoreNET.ALMLib.ALMConfig();
+                DefaultAlm = new ALMConfig();
                 DefaultAlm.AlmType = AlmType;
                 ALMCore.AlmConfigs.Add(DefaultAlm);
             }
@@ -134,12 +142,12 @@ namespace Ginger.ALM
 
             return true;
         }
-        public GingerCoreNET.ALMLib.ALMUserConfig GetCurrentAlmUserConfig(eALMType almType)
+        public ALMUserConfig GetCurrentAlmUserConfig(eALMType almType)
         {
-            GingerCoreNET.ALMLib.ALMUserConfig AlmUserConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == almType);
+            ALMUserConfig AlmUserConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == almType);
             if (AlmUserConfig == null)
             {
-                AlmUserConfig = new GingerCoreNET.ALMLib.ALMUserConfig();
+                AlmUserConfig = new ALMUserConfig();
                 AlmUserConfig.AlmType = almType;
                 WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
             }
@@ -577,7 +585,7 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = Cursors.Wait;
             bool importResult = ((JIRA_Repository)AlmRepo).ImportSelectedZephyrCyclesAndFolders(importDestinationPath, selectedObject);
             Mouse.OverrideCursor = null;
-            return true;
+            return importResult;
         }
 
         public bool AutoALMProjectConnect(eALMConnectType almConnectStyle = eALMConnectType.Silence, bool showConnWin = true, bool asConnWin = false)
