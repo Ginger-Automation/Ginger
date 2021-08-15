@@ -61,7 +61,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override bool CreateConfigFile(ref string error)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public override bool DeleteFile(string Path, ref string error)
@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override void Disconnect()
         {
-            throw new NotImplementedException();
+    ;
         }
 
         public override List<string> GetBranches()
@@ -137,7 +137,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override void Init()
         {
-            throw new NotImplementedException();
+        
         }
 
         public override bool Lock(string path, string lockComment, ref string error)
@@ -152,7 +152,8 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override bool Revert(string path, ref string error)
         {
-            throw new NotImplementedException();
+            RunSVNCommand(new object[] { "revert", "-R", "." }, path);
+            return true;
         }
 
         public override bool TestConnection(ref string error)
