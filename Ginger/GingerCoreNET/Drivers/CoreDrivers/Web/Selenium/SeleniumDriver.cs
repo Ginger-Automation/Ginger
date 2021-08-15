@@ -34,9 +34,9 @@ using GingerCore.Drivers.Selenium.SeleniumBMP;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using HtmlAgilityPack;
 using InputSimulatorStandard;
+using Microsoft.Edge.SeleniumTools;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using Microsoft.Edge.SeleniumTools;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Remote;
@@ -56,8 +56,6 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Xml;
 
 namespace GingerCore.Drivers
 {
@@ -397,9 +395,11 @@ namespace GingerCore.Drivers
                         System.Environment.SetEnvironmentVariable("webdriver.gecko.driver", geckoDriverExePath2, EnvironmentVariableTarget.Process);
 
                         FirefoxOptions FirefoxOption = new FirefoxOptions();
+                        FirefoxOption.AcceptInsecureCertificates = true;
+
                         if (HeadlessBrowserMode == true)
                             FirefoxOption.AddArgument("--headless");
-
+                        
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                         {
                             FirefoxProfile ffProfile2 = new FirefoxProfile();
@@ -608,11 +608,11 @@ namespace GingerCore.Drivers
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Mac");
+                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Linux");
+                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             }
             else
             {
