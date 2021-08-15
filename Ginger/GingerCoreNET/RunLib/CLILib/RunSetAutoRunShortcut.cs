@@ -117,14 +117,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             get
             {
-                if (ExecutorType == eExecutorType.GingerExe)
-                {
-                    return Path.Combine(ExecuterFolderPath, "Ginger.exe");
-                }
-                else
-                {
-                    return Path.Combine(ExecuterFolderPath, "GingerConsole.dll");
-                }
+                return Path.Combine(ExecuterFolderPath, "Ginger.exe");
             }
         }
 
@@ -134,13 +127,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 string args = mAutoRunConfiguration.ConfigArgs;
                 string prefix = "";
-                if (ExecutorType == eExecutorType.GingerConsole)
+                string command;
+                if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("GINGER_HOME")))
                 {
-                    //TODO: After moving to .net core 3 with self contain exe like remove the dotnet prefix
-                    prefix = "dotnet ";
-                }                
-                string command = prefix + "\"" + ExecuterFullPath + "\" " + args;
-                return command;
+                    command = "ginger " + args;
+                }
+                else
+                {
+                    command = "\"" + ExecuterFullPath + "\" " + args;
+                }
+                    return command;
                 
             }
         }
