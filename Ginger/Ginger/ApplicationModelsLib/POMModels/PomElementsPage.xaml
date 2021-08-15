@@ -60,13 +60,14 @@
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
+         
         </Grid.Resources>
 
         <Grid.RowDefinitions>
             <RowDefinition x:Name="Row1" Height="70*" MinHeight="35"/>
             <RowDefinition  x:Name="Row2" Height="35" MinHeight="35"/>
         </Grid.RowDefinitions>
-               
+
         <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="0" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Visible"/>
         <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows"  Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
 
@@ -78,6 +79,6 @@
                 <Ginger:UCElementDetails x:Name="xElementDetails" ShowActionTab="False" />
             </Expander.Content>
         </Expander>
-        
+
     </Grid>
 </Page>

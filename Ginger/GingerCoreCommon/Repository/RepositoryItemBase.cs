@@ -112,7 +112,7 @@ namespace Amdocs.Ginger.Repository
             {
                 // We can override if we want different extension for example un sub class 
                 // like APIModel - SOAP/REST we want both file name to be with same extension - ApplicationAPIModel
-                return RepositorySerializer.FileExt(this.GetType());
+                return RepositorySerializer.FileExt(this);
             }
         }
 
@@ -171,6 +171,15 @@ namespace Amdocs.Ginger.Repository
                 }
             }
             return ShortName;
+        }
+
+        /// <summary>
+        /// Returns the type of Repository item. Respective Repository item should override this method
+        /// </summary>
+        /// <returns></returns>
+        public virtual string GetItemType()
+        {
+            throw new Exception("Unknown Type for GetItemType " + this.GetType().Name);
         }
 
         static NewRepositorySerializer mRepositorySerializer = new NewRepositorySerializer();
@@ -674,9 +683,9 @@ namespace Amdocs.Ginger.Repository
         {
             Type objType = repoItemToCopy.GetType();
             var targetObj = Activator.CreateInstance(objType) as RepositoryItemBase;
-
+                        
             var objMembers = repoItemToCopy.GetType().GetMembers().Where(x => (x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field));
-
+            
             repoItemToCopy.PrepareItemToBeCopied();
             //targetObj.PreDeserialization();
             Parallel.ForEach(objMembers, mi =>
@@ -737,20 +746,27 @@ namespace Amdocs.Ginger.Repository
 
         private void CopyRIList(IObservableList sourceList, IObservableList targetList, List<GuidMapper> guidMappingList, bool setNewGUID)
         {
-            foreach (object item in sourceList)
+            for (int i = 0; i < sourceList.Count; i++)
             {
+                object item = sourceList[i];
                 if (item is RepositoryItemBase)
                 {
-                    
+
                     RepositoryItemBase RI = CopyRIObject(item as RepositoryItemBase, guidMappingList, setNewGUID);
-                    if(setNewGUID)
+                    if (setNewGUID)
                     {
                         GuidMapper mapping = new GuidMapper();
                         mapping.Original = RI.Guid;
                         RI.Guid = Guid.NewGuid();
                         mapping.newGuid = RI.Guid;
                         guidMappingList.Add(mapping);
-                    }                    
+
+                        if ((item as RepositoryItemBase).IsSharedRepositoryInstance && (item as RepositoryItemBase).ParentGuid == Guid.Empty)
+                        {
+                            RI.ParentGuid = mapping.Original;
+                        }
+
+                    }
                     targetList.Add(RI);
                 }
                 else
@@ -776,7 +792,7 @@ namespace Amdocs.Ginger.Repository
                     {
                         duplicatedItem.ParentGuid = Guid.Empty;   // TODO: why we don't keep parent GUID?
                         duplicatedItem.ExternalID = string.Empty;
-                        duplicatedItem.Guid = Guid.NewGuid();
+                        duplicatedItem.Guid = Guid.NewGuid();                        
                         duplicatedItem = duplicatedItem.ReplaceOldGuidUsages(guidMappingList);
                     }
                     duplicatedItem.UpdateCopiedItem();
@@ -804,16 +820,13 @@ namespace Amdocs.Ginger.Repository
             foreach (GuidMapper mapper in list)
             {
                 s = s.Replace(mapper.Original.ToString(), mapper.newGuid.ToString());
+                s = s.Replace("ParentGuid=" + "\"" + mapper.newGuid.ToString() + "\"", "ParentGuid=" + "\"" + mapper.Original.ToString() + "\"");
             }
 
             return (RepositoryItemBase)RepositorySerializer.DeserializeFromText(this.GetType(), s, filePath: string.Empty);
         }
 
 
-        public string FileExt(Type T)
-        {
-            return RepositorySerializer.GetShortType(T);
-        }
 
         private RepositoryItemKey mRepositoryItemKey;
 
@@ -1340,7 +1353,7 @@ namespace Amdocs.Ginger.Repository
         /// Overrid this method if you need to modify some object member before it been copied
         /// </summary>
         public virtual void PrepareItemToBeCopied()
-        {
+        {            
         }
 
         /// <summary>

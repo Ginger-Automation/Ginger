@@ -3174,6 +3174,17 @@ namespace GingerCore.Drivers
                             SwitchFrame(currentPOMElementInfo);
                         }
                         elem = LocateElementByLocators(currentPOMElementInfo.Locators);
+
+                        if (elem == null && pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
+                        {
+                            elem = LocateElementByLocators(currentPOMElementInfo.Locators);
+                        }
+
+                        if (elem != null && currentPOMElementInfo.SelfHealingInfo == SelfHealingInfoEnum.ElementDeleted)
+                        {
+                            currentPOMElementInfo.SelfHealingInfo = SelfHealingInfoEnum.None;
+                        }
+
                         currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
                        
                         if(pomExcutionUtil.PriotizeLocatorPosition())
@@ -3181,7 +3192,6 @@ namespace GingerCore.Drivers
                             act.ExInfo += "Locator prioritized during self healing operation";
                         }
                     }
-
                 }
             }
             else
@@ -3776,6 +3786,12 @@ namespace GingerCore.Drivers
             return null;
         }
 
+        /// <summary>
+        /// For Mobile Web Elements Learning process is too slow due to increased Driver usage
+        /// Hence, we'll learn extra lcoators only in cases where Custom Relative XPath is checked by user for Mobile Platform
+        /// Else, it'll be skipped - Checking the performance
+        /// </summary>
+        public bool ExtraLocatorsRequired = true;
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null,List<string> relativeXpathTemplateList=null)
         {
             return await Task.Run(() =>
@@ -3884,13 +3900,16 @@ namespace GingerCore.Drivers
                             foundElemntInfo.HTMLElementObject = htmlElemNode;
                             ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
 
-                            GetRelativeXpathElementLocators(foundElemntInfo);
-
-                            if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
+                            if (ExtraLocatorsRequired)
                             {
-                                foreach (var template in relativeXpathTemplateList)
+                                GetRelativeXpathElementLocators(foundElemntInfo);
+
+                                if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
                                 {
-                                    CreateXpathFromUserTemplate(template,foundElemntInfo);
+                                    foreach (var template in relativeXpathTemplateList)
+                                    {
+                                        CreateXpathFromUserTemplate(template, foundElemntInfo);
+                                    }
                                 }
                             }
 
@@ -4028,7 +4047,7 @@ namespace GingerCore.Drivers
             }
             finally
             {
-                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
             }
             return false;
         }
@@ -4755,7 +4774,8 @@ namespace GingerCore.Drivers
                     {
                         ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
                     }
-                    ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                    if(!string.IsNullOrEmpty(ElementInfo.XPath))
+                        ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
                 }
                 if ((IWebElement)ElementInfo.ElementObject == null)
                 {
@@ -5119,13 +5139,23 @@ namespace GingerCore.Drivers
                         break;
 
                     case eLocateBy.ByRelXPath:
-                        elemLocator.LocateValue = ((HTMLElementInfo)ElementInfo).RelXpath;
-                        elemLocator.IsAutoLearned = true;
+                        string relXPath = ((HTMLElementInfo)ElementInfo).RelXpath;
+
+                        if (!string.IsNullOrWhiteSpace(relXPath))
+                        {
+                            elemLocator.LocateValue = relXPath;
+                            elemLocator.IsAutoLearned = true;
+                        }
+
                         break;
 
                     case eLocateBy.ByXPath:
-                        elemLocator.LocateValue = ElementInfo.XPath;
-                        elemLocator.IsAutoLearned = true;
+                        if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
+                        {
+                            elemLocator.LocateValue = ElementInfo.XPath;
+                            elemLocator.IsAutoLearned = true;
+                        }
+
                         break;
                 }
             }

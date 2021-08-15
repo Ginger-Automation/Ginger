@@ -21,10 +21,12 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages;
+using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerWPF.DragDropLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,9 +91,8 @@ namespace Ginger.Repository
         {
             Act dragedItem = (Act)((DragInfo)sender).Data;
             if (dragedItem != null)
-            {
-                // App.LocalRepository.AddItemToRepositoryWithPreChecks(dragedItem, null);
-                (new SharedRepositoryOperations()).AddItemToRepository(mContext, dragedItem);
+            {                
+                WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, dragedItem));
                 //refresh and select the item
                 try
                {

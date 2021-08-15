@@ -48,6 +48,7 @@ using System.Threading.Tasks;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run.RunSetActions;
+using Amdocs.Ginger.Common.SelfHealingLib;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -206,6 +207,10 @@ namespace amdocs.ginger.GingerCoreNET
         /// </summary>    
         public RunsetExecutor RunsetExecutor = new RunsetExecutor();
 
+        /// <summary>
+        /// Self Healing Configuration for automate tab execution
+        /// </summary>
+        public SelfHealingConfig AutomateTabSelfHealingConfiguration = new SelfHealingConfig();
 
         private Solution mSolution;
         public Solution Solution

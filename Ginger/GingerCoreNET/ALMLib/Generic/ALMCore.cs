@@ -40,7 +40,7 @@ namespace GingerCore.ALM
         public GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig()
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = null;
-            AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == ALMType).FirstOrDefault();
+            AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
 
             if (AlmConfig != null)
             {
@@ -107,7 +107,7 @@ namespace GingerCore.ALM
 
         public virtual void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword,
                                                     string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType,
-                                                    string ALMConfigPackageFolderPath, bool ZephyrEntToken, GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType jiraTestingALM = GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.None)
+                                                    string ALMConfigPackageFolderPath, bool UseToken, GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType jiraTestingALM = GingerCoreNET.ALMLib.ALMIntegrationEnums.eTestingALMType.None)
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.AlmConfigs.FirstOrDefault(x => x.AlmType == almType);
             if (AlmConfig == null)
@@ -140,7 +140,7 @@ namespace GingerCore.ALM
             AlmConfig.UseRest = UseRest;
             AlmConfig.ALMUserName = CurrentAlmUserConfigurations.ALMUserName;
             AlmConfig.ALMPassword = CurrentAlmUserConfigurations.ALMPassword;
-            AlmConfig.ZepherEntToken = ZephyrEntToken;
+            AlmConfig.UseToken = UseToken;
             AlmConfig.ALMDomain = ALMDomain;
             AlmConfig.ALMProjectName = ALMProject;
             AlmConfig.ALMProjectKey = ALMProjectKey;
@@ -279,7 +279,7 @@ namespace GingerCore.ALM
                 aLMCore.SetALMConfigurations(CurrentAlmConfigurations.ALMServerURL, CurrentAlmConfigurations.UseRest, CurrentAlmConfigurations.ALMUserName,
                                                 CurrentAlmConfigurations.ALMPassword, CurrentAlmConfigurations.ALMDomain, CurrentAlmConfigurations.ALMProjectName,
                                                 CurrentAlmConfigurations.ALMProjectKey, CurrentAlmConfigurations.AlmType, CurrentAlmConfigurations.ALMConfigPackageFolderPath,
-                                                CurrentAlmConfigurations.ZepherEntToken, CurrentAlmConfigurations.JiraTestingALM);
+                                                CurrentAlmConfigurations.UseToken, CurrentAlmConfigurations.JiraTestingALM);
             }
         }
 

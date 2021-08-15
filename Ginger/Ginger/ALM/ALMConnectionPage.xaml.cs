@@ -48,7 +48,7 @@ namespace Ginger.ALM
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConfigPackageTextBox, TextBox.TextProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMConfigPackageFolderPath));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ServerURLTextBox, TextBox.TextProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMServerURL));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RestAPICheckBox, CheckBox.IsCheckedProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.UseRest));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ZephyrEntTokenCheckBox, CheckBox.IsCheckedProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ZepherEntToken));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TokenCheckBox, CheckBox.IsCheckedProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.UseToken));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UserNameTextBox, TextBox.TextProperty, CurrentAlmUserConfigurations, nameof(CurrentAlmUserConfigurations.ALMUserName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DomainComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMDomain));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProjectComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMProjectKey));
@@ -122,7 +122,7 @@ namespace Ginger.ALM
             UserNameTextBox.IsEnabled = true;
             PasswordTextBox.IsEnabled = true;
             RestAPICheckBox.IsEnabled = true;
-            ZephyrEntTokenCheckBox.IsEnabled = true;
+            TokenCheckBox.IsEnabled = true;
             if (isConnWin)
             {
                 LoginServerButton.Content = "Connect ALM Server";
@@ -139,7 +139,6 @@ namespace Ginger.ALM
             {
                 ALMDomainSelectionPanel.Visibility = Visibility.Collapsed;
                 RestAPICheckBox.IsEnabled = false;
-                ZephyrEntTokenCheckBox.IsEnabled = false;
             }
             else
             {
@@ -153,7 +152,7 @@ namespace Ginger.ALM
                 UserNameTextBox.IsEnabled = false;
                 PasswordTextBox.IsEnabled = false;
                 RestAPICheckBox.IsEnabled = false;
-                ZephyrEntTokenCheckBox.IsEnabled = false;
+                TokenCheckBox.IsEnabled = false;
                 LoginServerButton.Content = "Change Server Details";
             }
 
@@ -447,9 +446,8 @@ namespace Ginger.ALM
             RestAPICheckBox.IsChecked = true;
             RestAPICheckBox.IsEnabled = false;
 
-            ZephyrEntTokenCheckBox.Visibility = Visibility.Collapsed;
-            ZephyrEntTokenCheckBox.IsChecked = false;
-            ZephyrEntTokenCheckBox.IsEnabled = false;
+            TokenCheckBox.Visibility = Visibility.Collapsed;
+            TokenCheckBox.IsEnabled = false;
 
             QCRadioButton.FontWeight = FontWeights.Regular;
             QCRadioButton.Foreground = Brushes.Black;
@@ -548,6 +546,8 @@ namespace Ginger.ALM
                     ServerURLTextBox.Cursor = null;
                     RestAPICheckBox.IsChecked = true;
                     RestAPICheckBox.IsEnabled = false;
+                    TokenCheckBox.Visibility = Visibility.Visible;
+                    TokenCheckBox.IsEnabled = true;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Octane:
@@ -583,9 +583,8 @@ namespace Ginger.ALM
                     ServerURLTextBox.Cursor = null;
                     RestAPICheckBox.IsChecked = true;
                     RestAPICheckBox.IsEnabled = false;
-                    ZephyrEntTokenCheckBox.Visibility = Visibility.Visible;
-                    ZephyrEntTokenCheckBox.IsChecked = true;
-                    ZephyrEntTokenCheckBox.IsEnabled = true;
+                    TokenCheckBox.Visibility = Visibility.Visible;
+                    TokenCheckBox.IsEnabled = true;
                     break;
 
                 default:
@@ -652,7 +651,7 @@ namespace Ginger.ALM
                 BindingOperations.ClearAllBindings(ServerURLTextBox);
                 BindingOperations.ClearAllBindings(RestAPICheckBox);
                 BindingOperations.ClearAllBindings(UserNameTextBox);
-                BindingOperations.ClearAllBindings(ZephyrEntTokenCheckBox);
+                BindingOperations.ClearAllBindings(TokenCheckBox);
                 BindingOperations.ClearAllBindings(PasswordTextBox);
                 BindingOperations.ClearAllBindings(DomainComboBox);
                 BindingOperations.ClearAllBindings(ProjectComboBox);
@@ -766,13 +765,13 @@ namespace Ginger.ALM
         {
             ExampleURLHint.Content = "Example: http://server:8080/almbin";
         }
-        private void ZephyrEntTokenCheckBox_Checked(object sender, RoutedEventArgs e)
+        private void TokenCheckBox_Checked(object sender, RoutedEventArgs e)
         {
 
             PasswordLabel.Content = "Token";
         }
 
-        private void ZephyrEntTokenCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void TokenCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             PasswordLabel.Content = "Password";
         }

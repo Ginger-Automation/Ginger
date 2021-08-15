@@ -220,7 +220,7 @@ namespace Ginger.WindowExplorer
                 xmlNode = (sender as TreeView).SelectedItem as XmlNode;
             }
 
-            if (xmlNode != null)
+            if (xmlNode != null && xmlNode.Attributes.Count > 0)
             {
                 ElementInfo elemInfo = mWindowExplorerDriver.LearnElementInfoDetails(new ElementInfo() { ElementObject = xmlNode });
 
@@ -229,6 +229,11 @@ namespace Ginger.WindowExplorer
                     mCurrentControlTreeViewItem = GetTreeViewItemForElementInfo(elemInfo);
                     ShowCurrentControlInfo();
                 }
+            }
+            else
+            {
+                xUCElementDetails.SelectedElement = null;
+                mCurrentControlTreeViewItem = null;
             }
         }
 
@@ -468,6 +473,8 @@ namespace Ginger.WindowExplorer
         private async Task RefreshPageSrcContent()
         {
             xLoadingPageSrcBanner.Visibility = Visibility.Visible;
+            xXMLPageSrcViewer.Visibility = Visibility.Collapsed;
+            xHTMLPageSrcViewer.Visibility = Visibility.Collapsed;
 
             try
             {
@@ -1172,7 +1179,7 @@ namespace Ginger.WindowExplorer
                 //}
 
                 LastSearchFinished = false;
-
+                mScreenShotViewPage.ImageMouseCursor = Cursors.Wait;
                 try
                 {
                     if (LoadPageSourceDoc)
@@ -1198,6 +1205,7 @@ namespace Ginger.WindowExplorer
                 finally
                 {
                     LastSearchFinished = true;
+                    mScreenShotViewPage.ImageMouseCursor = Cursors.Hand;
                 }
             }
         }
@@ -1257,7 +1265,7 @@ namespace Ginger.WindowExplorer
                 double rectangleHeight = clickedElementInfo.Height;
 
                 if(((DriverBase)mWindowExplorerDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, mScreenShotViewPage.xMainImage.Source.Width, mScreenShotViewPage.xMainImage.Source.Height,
-                    mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight, clickedElementInfo))
+                    mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight, clickedElementInfo, true))
                 {
                     /// Driver/Platform specific calculations
                     rectangleWidth = ElementMaxPoint.X - ElementStartPoint.X;

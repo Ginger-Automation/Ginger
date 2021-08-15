@@ -102,22 +102,20 @@
 
                 <DockPanel LastChildFill="True" Background="{StaticResource $BackgroundColor_LightGray}">
                     <StackPanel x:Name="xPOMCheckStackPanel" Orientation="Vertical" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0">
-                        <DockPanel HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center">
                             <CheckBox x:Name="xIntegratePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10" Style="{StaticResource $CeckBoxStyle}" 
                                       Content="Integrate POM" IsChecked="{x:Null}" Checked="xIntegratePOMChkBox_Checked" Unchecked="xIntegratePOMChkBox_Unchecked" >
                             </CheckBox>
-                            <Frame x:Name="xPOMSelectionFrame" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        </DockPanel>
-
-                        <DockPanel x:Name="xPOMOperationsPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center">
-                            <CheckBox x:Name="xAutoSavePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10" 
-                                      Style="{StaticResource $CeckBoxStyle}" Content="Auto Save POM" IsChecked="False">
-                            </CheckBox>
-
-                            <CheckBox x:Name="xAutoUpdatePOMElementChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10"
-                                      Style="{StaticResource $CeckBoxStyle}" Content="Auto Update POM Element" IsChecked="False">
-                            </CheckBox>
-                        </DockPanel>
+                            <Frame x:Name="xPOMSelectionFrame" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,5,0,0"/>
+                            <StackPanel Orientation="Horizontal" x:Name="xPOMOperationsPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center">
+                                <CheckBox x:Name="xAutoSavePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" 
+                                      Style="{StaticResource $CeckBoxStyle}" Content="Auto Save" IsChecked="False">
+                                </CheckBox>
+                                <CheckBox x:Name="xAutoUpdatePOMElementChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" 
+                                      Style="{StaticResource $CeckBoxStyle}" Content="Auto Update" IsChecked="False">
+                                </CheckBox>
+                            </StackPanel>
+                        </StackPanel>
 
                         <DockPanel x:Name="xAddRunOperationPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center" >
                             <UserControls:ucButton x:Name="xRunActBtn" ButtonImageType="Run" ButtonText="Run" ButtonImageHeight="16" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" 

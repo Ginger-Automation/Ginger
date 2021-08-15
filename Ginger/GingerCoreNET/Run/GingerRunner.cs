@@ -257,6 +257,8 @@ namespace Ginger.Run
             }
         }
 
+       // public SelfHealingConfig SelfHealingConfiguration = new SelfHealingConfig();
+
         public ObservableList<Platform> Platforms = new ObservableList<Platform>();//TODO: delete me once projects moved to new Apps/Platform config, meanwhile enable to load old run set config, but ignore the value
 
         [IsSerializedForLocalRepository]
@@ -1856,6 +1858,18 @@ namespace Ginger.Run
             UpdateActionStatus(action, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running, st);
             GiveUserFeedback();
 
+           
+            if (action.Context == null)
+            {
+                var mContext = new Context() { ExecutedFrom = this.ExecutedFrom};
+                action.Context = mContext;
+            }
+            else
+            {
+                var mContext = Context.GetAsContext(action.Context);
+                mContext.ExecutedFrom = this.ExecutedFrom;
+            }
+            
         }
 
         public void PrepActionValueExpression(Act act, BusinessFlow businessflow = null)
@@ -4213,6 +4227,7 @@ namespace Ginger.Run
                 }
             }
             LastFailedBusinessFlow = null;
+            ExecutionLoggerManager.mExecutionLogger.ResetLastRunSetDetails();
         }
 
        
@@ -4691,6 +4706,7 @@ namespace Ginger.Run
         void NotifyRunnerRunstart()
         {
             uint evetTime = RunListenerBase.GetEventTime();
+            this.StartTimeStamp = DateTime.UtcNow;
             Parallel.ForEach(mRunListeners, runnerListener =>
             {
                 {
@@ -4709,6 +4725,7 @@ namespace Ginger.Run
         void NotifyRunnerRunEnd(string ExecutionLogFolder= null)
         { 
             uint evetTime = RunListenerBase.GetEventTime();
+            this.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.RunnerRunEnd(evetTime, this, ExecutionLogFolder);

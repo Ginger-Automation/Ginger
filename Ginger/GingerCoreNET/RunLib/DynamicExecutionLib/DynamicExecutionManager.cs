@@ -495,6 +495,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             runset.RunInParallel = runsetExecutor.RunSetConfig.RunModeParallel;
             runset.StopRunnersOnFailure = runsetExecutor.RunSetConfig.StopRunnersOnFailure;
 
+            SelfHealingConfig selfHealingConfiguration = new SelfHealingConfig()
+            {
+                AutoFixAnalyzerIssue = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue,
+                ReprioritizePOMLocators = runsetExecutor.RunSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators,
+                AutoUpdateApplicationModel = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel,
+                SaveChangesInSourceControl = runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl
+            };
+
+            runset.SelfHealingConfiguration = selfHealingConfiguration;
+
+
             if (runsetExecutor.RunSetConfig.GingerRunners.Count > 0)
             {
                 runset.Runners = new List<RunnerExecConfig>();
@@ -1231,6 +1242,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
             }
 
+            // add selfhealing configs
+            if (dynamicRunsetConfigs.SelfHealingConfiguration != null)
+            {
+                runSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue = dynamicRunsetConfigs.SelfHealingConfiguration.AutoFixAnalyzerIssue;
+                runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel = dynamicRunsetConfigs.SelfHealingConfiguration.AutoUpdateApplicationModel;
+                runSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl = dynamicRunsetConfigs.SelfHealingConfiguration.SaveChangesInSourceControl;
+                runSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators = dynamicRunsetConfigs.SelfHealingConfiguration.ReprioritizePOMLocators;
+            }
             // Set config
             runsetExecutor.RunSetConfig = runSetConfig;
         }

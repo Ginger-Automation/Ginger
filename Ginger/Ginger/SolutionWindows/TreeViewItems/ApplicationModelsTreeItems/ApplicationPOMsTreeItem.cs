@@ -15,17 +15,20 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
 using Ginger.SourceControl;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -132,8 +135,9 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Add Page Objects Model", AddPOM, null, eImageType.Add);
-            TreeViewUtils.AddMenuItem(mContextMenu, "Add an Empty Page Objects Model", AddEmptyPOM, null, eImageType.ApplicationPOMModel);
+            MenuItem addMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Add Page Objects Model (POM)", eImageType.Add);
+            TreeViewUtils.AddSubMenuItem(addMenu, "Learn POM from live page", AddPOM, null, eImageType.Screen);
+            TreeViewUtils.AddSubMenuItem(addMenu, "Empty POM", AddEmptyPOM, null, eImageType.ApplicationPOMModel);
             if (mPOMModelFolder.IsRootFolder)
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
             else
@@ -150,9 +154,18 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         internal void AddEmptyPOM(object sender, RoutedEventArgs e)
         {
-            ApplicationPOMModel emptyPOM = new ApplicationPOMModel() { Name = "NewPOM" };
-            var PomLearnUtils = new Amdocs.Ginger.CoreNET.Application_Models.PomLearnUtils(emptyPOM, pomModelsFolder: mPOMModelFolder);
-            PomLearnUtils.SaveLearnedPOM();
+            string NewPOMName = string.Empty;
+            if (GingerCore.General.GetInputWithValidation("Add Page Object Model", "Page Object Model Name:", ref NewPOMName))
+            {
+                ApplicationPOMModel emptyPOM = new ApplicationPOMModel() { Name = NewPOMName };
+                ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
+                if (TargetApplications != null && TargetApplications.Count > 0)
+                {
+                    emptyPOM.TargetApplicationKey = TargetApplications[0].Key;
+                }
+                var PomLearnUtils = new Amdocs.Ginger.CoreNET.Application_Models.PomLearnUtils(emptyPOM, pomModelsFolder: mPOMModelFolder);
+                PomLearnUtils.SaveLearnedPOM();
+            }
         }
     }
 }

@@ -38,24 +38,24 @@ namespace Ginger.Repository
 {
     public class SharedRepositoryOperations
     {        
-        public void AddItemsToRepository(Context context, List<RepositoryItemBase> listSelectedRepoItems)
-        {
-            if (listSelectedRepoItems != null && listSelectedRepoItems.Count>0)
-            {
-                WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(context, listSelectedRepoItems));
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
-            }
-        }
+        //public void AddItemsToRepository(Context context, List<RepositoryItemBase> listSelectedRepoItems)
+        //{
+        //    if (listSelectedRepoItems != null && listSelectedRepoItems.Count>0)
+        //    {
+        //        WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(context, listSelectedRepoItems));
+        //    }
+        //    else
+        //    {
+        //        Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+        //    }
+        //}
 
-        public void AddItemToRepository(Context context, RepositoryItemBase item)
-        {
-            List<RepositoryItemBase> itemList = new List<RepositoryItemBase>();
-            itemList.Add(item);
-            AddItemsToRepository(context, itemList);
-        }
+        //public void AddItemToRepository(Context context, RepositoryItemBase item)
+        //{
+        //    List<RepositoryItemBase> itemList = new List<RepositoryItemBase>();
+        //    itemList.Add(item);
+        //    AddItemsToRepository(context, itemList);
+        //}
 
         public Boolean UploadItemToRepository(Context context, UploadItemSelection itemToUpload)
         {
@@ -212,6 +212,10 @@ namespace Ginger.Repository
                     if (GetMatchingRepoItem(item, existingRepoItems, ref linkIsByExternalID, ref linkIsByParentID) != null)
                     {
                         item.IsSharedRepositoryInstance = true;
+                        //if(linkIsByExternalID==false && linkIsByParentID==false)
+                        //{
+                        //    item.ParentGuid = item.Guid;
+                        //}
                     }                        
                     else
                     {
@@ -222,6 +226,21 @@ namespace Ginger.Repository
             }
         }
 
+        public static bool IsSharedRepositoryItem(RepositoryItemBase repositoryItem)
+        {
+            bool linkIsByExternalID = false;
+            bool linkIsByParentID = false;
+
+            var item = GetMatchingRepoItem(repositoryItem, null, ref linkIsByExternalID, ref linkIsByParentID);
+            if(item==null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
 
         
         public static RepositoryItemBase GetMatchingRepoItem(RepositoryItemBase item, IEnumerable<object> existingRepoItems, ref bool linkIsByExternalID, ref bool linkIsByParentID)
@@ -295,6 +314,105 @@ namespace Ginger.Repository
 
             //return true;
         }
-        
+
+        public static void Validate(UploadItemSelection selectedItem)
+        {
+            bool isDuplicateFound = CheckForItemWithDuplicateName(selectedItem);
+            if (isDuplicateFound)
+            {
+                ItemValidationBase VA = ItemValidationBase.CreateNewIssue((RepositoryItemBase)selectedItem.UsageItem);
+                VA.IssueDescription = "Item with same name already exists";
+                VA.mIssueType = ItemValidationBase.eIssueType.DuplicateName;
+                VA.ItemNewName = GetUniqueItemName(selectedItem);
+                VA.IssueResolution = "Item will be uploaded with new name: " + VA.ItemNewName;
+                VA.Selected = true;
+                ItemValidationBase.mIssuesList.Add(VA);
+            }
+            switch (selectedItem.UsageItem.GetType().Name)
+            {
+                case "Activity":
+                    ValidateActivity.Validate((Activity)selectedItem.UsageItem);
+                    break;
+            }
+        }
+
+        public static bool CheckForItemWithDuplicateName(UploadItemSelection selectedItem)
+        {
+            List<RepositoryItemBase> existingRepoItems = new List<RepositoryItemBase>();
+            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+            ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+            ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            if (selectedItem.UsageItem is ActivitiesGroup)
+            {
+                existingRepoItems = activitiesGroup.Cast<RepositoryItemBase>().ToList();
+            }
+            else if (selectedItem.UsageItem is Activity)
+            {
+                existingRepoItems = activities.Cast<RepositoryItemBase>().ToList();
+            }
+            else if (selectedItem.UsageItem is Act)
+            {
+                existingRepoItems = SharedActions.Cast<RepositoryItemBase>().ToList();
+            }
+            else if (selectedItem.UsageItem is VariableBase)
+            {
+                existingRepoItems = variables.Cast<RepositoryItemBase>().ToList();
+            }
+
+            if (selectedItem.ItemUploadType == UploadItemSelection.eItemUploadType.Overwrite)
+            {
+                existingRepoItems.Remove(selectedItem.ExistingItem);
+            }
+
+            foreach (object o in existingRepoItems)
+            {
+                if (((RepositoryItemBase)o).GetNameForFileName() == selectedItem.ItemName)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static string GetUniqueItemName(UploadItemSelection duplicateItem)
+        {
+            List<string> existingRepoItems = new List<string>();
+            ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<Act> actions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+            ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+
+            ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            if (duplicateItem.UsageItem is ActivitiesGroup)
+            {
+                existingRepoItems = activitiesGroup.Select(x => x.ItemName).ToList();
+            }
+            else if (duplicateItem.UsageItem is Activity)
+            {
+                existingRepoItems = activities.Select(x => x.ItemName).ToList();
+            }
+            else if (duplicateItem.UsageItem is Act)
+            {
+                existingRepoItems = actions.Select(x => x.ItemName).ToList();
+            }
+            else if (duplicateItem.UsageItem is VariableBase)
+            {
+                existingRepoItems = variables.Select(x => x.ItemName).ToList();
+            }
+
+            string newItemName = duplicateItem.ItemName;
+
+            while (true)
+            {
+                newItemName += "_copy";
+
+                if (!existingRepoItems.Contains(newItemName))
+                {
+                    return newItemName;
+                }
+            }
+            //TODO - find better way to get unique name
+        }
+
     }
 }

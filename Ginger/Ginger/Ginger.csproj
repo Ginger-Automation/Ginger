@@ -509,6 +509,9 @@
     <Compile Include="RunSetPageLib\RunsetRunnersConfigPage.xaml.cs">
       <DependentUpon>RunsetRunnersConfigPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Run\GingerSelfHealingConfiguration.xaml.cs">
+      <DependentUpon>GingerSelfHealingConfiguration.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Run\RunSetActions\RunSetActionSendDataToExternalSourceEditPage.xaml.cs">
       <DependentUpon>RunSetActionSendDataToExternalSourceEditPage.xaml</DependentUpon>
     </Compile>
@@ -958,7 +961,6 @@
     <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml.cs">
       <DependentUpon>UploadItemsSelectionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ItemValidationBase.cs" />
     <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsValidationPage.xaml.cs">
       <DependentUpon>UploadItemsValidationPage.xaml</DependentUpon>
     </Compile>
@@ -966,11 +968,6 @@
     <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadStatusPage.xaml.cs">
       <DependentUpon>UploadStatusPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActionValidation.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActivityValidation.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActivitiesGroupValidation.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\VariableValidation.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositoryOperations.cs" />
     <Compile Include="Run\FailedActionsScreenshotsPage.xaml.cs">
       <DependentUpon>FailedActionsScreenshotsPage.xaml</DependentUpon>
     </Compile>
@@ -2930,6 +2927,10 @@
     <Page Include="RunSetPageLib\RunsetRunnersConfigPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Run\GingerSelfHealingConfiguration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SolutionCategories\SolutionCategoriesPage.xaml">
       <SubType>Designer</SubType>

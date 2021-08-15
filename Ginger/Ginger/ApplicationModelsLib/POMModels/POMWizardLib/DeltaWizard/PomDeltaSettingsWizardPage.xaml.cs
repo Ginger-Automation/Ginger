@@ -75,7 +75,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void UpdateCustomTemplateList()
         {
-            if (mAppPlatform.Equals(ePlatformType.Web))
+            if (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform.Equals(ePlatformType.Mobile))
             {
                 if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true)
                 {
@@ -89,7 +89,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         }
         private void ShowsCustomRelativePathTemplateConfig()
         {
-            if (mAppPlatform.Equals(ePlatformType.Web))
+            if (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform.Equals(ePlatformType.Mobile))
             {
                 xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Visible;
                 if (mWizard.mPomDeltaUtils.POM.RelativeXpathTemplateList.Count > 0)

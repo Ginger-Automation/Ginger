@@ -71,7 +71,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     SetElementLocatorsSettingsGridView();
                     UpdateConfigsBasedOnAgentStatus();
                     PlatformSpecificUIManipulations();
-                    ShowsCustomRelativePathTemplateConfig();
                     break;
                 case EventType.LeavingForNextPage:
                     UpdateCustomTemplateList();
@@ -81,21 +80,15 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void UpdateCustomTemplateList()
         {
-            if (mAppPlatform.Equals(ePlatformType.Web))
+            if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true
+                && (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform.Equals(ePlatformType.Mobile)))
             {
-                if (xCustomRelativeXpathTemplateFrame.xCustomRelativeXpathCofigChkBox.IsChecked == true)
-                {
-                    mWizard.mPomLearnUtils.POM.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate> (xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
-                }
-                else
-                {
-                    mWizard.mPomLearnUtils.POM.RelativeXpathTemplateList.Clear();
-                }
+                mWizard.mPomLearnUtils.POM.RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>(xCustomRelativeXpathTemplateFrame.RelativeXpathTemplateList.Where(x => x.Status == CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed));
             }
-        }
-
-        private void ShowsCustomRelativePathTemplateConfig()
-        {
+            else
+            {
+                mWizard.mPomLearnUtils.POM.RelativeXpathTemplateList.Clear();
+            }
         }
 
         private void PlatformSpecificUIManipulations()
@@ -109,22 +102,16 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 xSpecificFrameConfigPanel.Visibility = Visibility.Collapsed;
             }
 
-            if(mAppPlatform == ePlatformType.Mobile)
+            xCustomRelativeXpathTemplateFrame.Visibility = (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform.Equals(ePlatformType.Mobile)) ? Visibility.Visible : Visibility.Collapsed;
+
+            if (mAppPlatform == ePlatformType.Mobile)
             {
                 xAgentControlUC.xAgentConfigsExpanderRow.Height = new GridLength(0);
+                xCustomRelativeXpathTemplateFrame.UpdateDefaultTemplate();
             }
             else
             {
                 xAgentControlUC.xAgentConfigsExpanderRow.Height = new GridLength(90);
-            }
-
-            if (mAppPlatform.Equals(ePlatformType.Web) || mAppPlatform == ePlatformType.Mobile)
-            {
-                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xCustomRelativeXpathTemplateFrame.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -154,8 +141,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
 
             PlatformSpecificUIManipulations();
-
-            ShowsCustomRelativePathTemplateConfig();
         }
 
         private void AddValidations()
