@@ -4590,6 +4590,10 @@
       <Project>{80a06c2b-7da2-4f78-bf2a-5c0234f2349e}</Project>
       <Name>GingerUtils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GingerWin64OsSupport\GingerWin64OsSupport.csproj">
+      <Project>{76149bd0-05b7-4190-a2c2-5ef0284d5587}</Project>
+      <Name>GingerWin64OsSupport</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.1">
