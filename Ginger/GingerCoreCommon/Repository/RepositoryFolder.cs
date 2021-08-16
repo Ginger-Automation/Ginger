@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -288,7 +289,15 @@ namespace Amdocs.Ginger.Repository
                 }   
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("RepositoryFolder/LoadFolderFiles- Failed to load the Repository Item XML which in file: '{0}'.", FileName), ex);
+                    string error = string.Format("RepositoryFolder/LoadFolderFiles- Failed to load the Repository Item XML which in file: '{0}'.", FileName);
+                    if (Assembly.GetEntryAssembly().GetName().ToString().Contains("GingerRuntime") && ex.Message.Contains("Unable to create object for the class type"))
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, error, ex);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, error, ex);
+                    }
                 }
             });
 
