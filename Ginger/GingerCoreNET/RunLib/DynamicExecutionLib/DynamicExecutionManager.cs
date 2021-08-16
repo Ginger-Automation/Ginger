@@ -535,6 +535,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
                 foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
                 {
+                    if (applicationAgent.Agent == null)
+                    {
+                        continue;//probably target app without platform or no such Agent
+                    }
                     runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID});
                 }
 

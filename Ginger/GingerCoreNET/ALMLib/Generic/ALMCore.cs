@@ -40,7 +40,7 @@ namespace GingerCore.ALM
         public GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig()
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = null;
-            AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == ALMType).FirstOrDefault();
+            AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
 
             if (AlmConfig != null)
             {

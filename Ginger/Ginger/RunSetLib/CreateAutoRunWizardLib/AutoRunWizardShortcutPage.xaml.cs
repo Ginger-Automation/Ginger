@@ -47,11 +47,10 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     mAutoRunWizard = (AutoRunWizard)WizardEventArgs.Wizard;
                     mAutoRunWizard.AutoRunShortcut.CreateShortcut = true;
                     mAutoRunWizard.AutoRunShortcut.ShortcutFileName = WorkSpace.Instance.Solution.Name + "-" + mAutoRunWizard.RunsetConfig.Name + " Execution";
-                    xExecuterPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunShortcut, nameof(RunSetAutoRunShortcut.ExecuterFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);
                     xShortcutPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunShortcut, nameof(RunSetAutoRunShortcut.ShortcutFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);
                     BindingHandler.ObjFieldBinding(xShortcutDescriptionTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunShortcut, nameof(RunSetAutoRunShortcut.ShortcutFileName));                                       
-                    xGingerEXERadioButton.IsChecked = true;
                     xDesktopRadioButton.IsChecked = true;
+                    mAutoRunWizard.CliHelper.ShowAutoRunWindow = false;
                     break;
 
                 case EventType.Active:
@@ -75,23 +74,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 mAutoRunWizard.AutoRunShortcut.CreateShortcut = false;
                 xShortCutCreationConfigsPnl.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void XGingerEXERadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            if (mAutoRunWizard != null)
-            {
-                mAutoRunWizard.AutoRunShortcut.ExecutorType = RunSetAutoRunShortcut.eExecutorType.GingerExe;
-            }
-        }
-
-        private void XGingerConsoleRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            if (mAutoRunWizard != null)
-            {
-                mAutoRunWizard.AutoRunShortcut.ExecutorType = RunSetAutoRunShortcut.eExecutorType.GingerConsole;
-                mAutoRunWizard.CliHelper.ShowAutoRunWindow = false;
             }
         }
 
