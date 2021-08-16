@@ -9,7 +9,11 @@
       Title="CreateCLIContentPage">
 
     <DockPanel Background="{StaticResource $BackgroundColor_LightGray}" Margin="10">
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" >
+
+        <Label DockPanel.Dock="Top" Margin="-5,0,0,0" HorizontalAlignment="Left" Style="{StaticResource $LabelStyle}">CLI execution command:</Label>
+        <TextBox x:Name="xShortcutContentTextBox" DockPanel.Dock="Top" TextWrapping="Wrap" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">Shortcut Preview</TextBox>
+
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,20,0,0">
             <Label Content="Create Auto Run Shortcut:" DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}"/>
             <RadioButton x:Name="xCreateShortCutRadioBtn" Content="Yes" Style="{StaticResource $InputRadioButtonStyle}" VerticalAlignment="Center" Margin="5,0,10,0" Checked="XCreateShortCutRadioBtn_Checked" IsChecked="True"/>
             <RadioButton x:Name="xDoNotCreateShortCutRadioBtn" Content="No" Style="{StaticResource $InputRadioButtonStyle}" VerticalAlignment="Center" Checked="XDoNotCreateShortCutRadioBtn_Checked"/>
@@ -17,14 +21,7 @@
 
         <DockPanel x:Name="xShortCutCreationConfigsPnl" DockPanel.Dock="Top">
             <Label Content="Auto Run Shortcut Configurations:" DockPanel.Dock="Top" Style="{StaticResource $SectionHeaderLabelStyle}" Margin="-5,5,0,0"/>
-            <StackPanel Orientation="Vertical" DockPanel.Dock="Top" >
-                <Label Content="Ginger Executer:" Style="{StaticResource $LabelStyle}"/>
-                <RadioButton x:Name="xGingerEXERadioButton" Content="Ginger.exe (Windows only)" Style="{StaticResource $InputRadioButtonStyle}" VerticalAlignment="Center" Margin="5" Checked="XGingerEXERadioButton_Checked"/>
-                <RadioButton x:Name="xGingerConsoleRadioButton" Content="GingerConsole.dll (Windows/Linux/Mac in case Solution is compatible)" Style="{StaticResource $InputRadioButtonStyle}" VerticalAlignment="Center" Margin="5" Checked="XGingerConsoleRadioButton_Checked"/>
-            </StackPanel>
-
-            <Label DockPanel.Dock="Top" Margin="-5,10,0,0" Content="Executer Path:" Style="{StaticResource $LabelStyle}"/>
-            <Actions:UCValueExpression x:Name="xExecuterPathTextbox" DockPanel.Dock="Top"/>
+           
 
             <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="-5,10,0,0">Shortcut Name:</Label>
             <TextBox x:Name="xShortcutDescriptionTextBox" DockPanel.Dock="Top" Margin="0" Style="{StaticResource $TextBoxStyle}" Height="25"></TextBox>
@@ -35,8 +32,7 @@
                 <Actions:UCValueExpression x:Name="xShortcutPathTextbox" Margin="25,0,0,0" />
             </StackPanel>
 
-            <Label DockPanel.Dock="Top" Margin="-5,10,0,0" HorizontalAlignment="Left" Style="{StaticResource $LabelStyle}">Shortcut Content Preview:</Label>
-            <TextBox x:Name="xShortcutContentTextBox" DockPanel.Dock="Top" TextWrapping="Wrap" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">Shortcut Preview</TextBox>
+           
         </DockPanel>
     </DockPanel>
 </Page>
