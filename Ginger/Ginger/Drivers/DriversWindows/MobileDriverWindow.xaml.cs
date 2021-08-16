@@ -544,6 +544,12 @@ namespace Ginger.Drivers.DriversWindows
                     Task.Run(() =>
                     {
                         string key = e.Key.ToString();
+
+                        if(key.Contains("NumPad"))
+                        {
+                            key = key.Replace("NumPad", "");
+                        }
+
                         if (e.Key == Key.Back)
                         {
                             mDriver.PerformSendKey("\b");
@@ -552,7 +558,7 @@ namespace Ginger.Drivers.DriversWindows
                         {
                             mDriver.PerformSendKey(key.TrimStart('D'));
                         }
-                        else
+                        else if(!(key.Contains("Ctrl") || key.Contains("Shift")))
                         {
                             mDriver.PerformSendKey(key);
                         }

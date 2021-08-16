@@ -1629,7 +1629,7 @@ namespace Amdocs.Ginger.CoreNET
 
             // the path to a node is the path to its parent, plus "/node()[n]", where n is its position among its siblings.
             if (node.Name.ToLower() == "appiumaut")
-                return string.Format("//");
+                return string.Format("/");
             else
                 return String.Format("{0}/{1}[{2}]", await GetXPathToNode(node.ParentNode), node.Name, indexInParent);          //Testing Async
         }
