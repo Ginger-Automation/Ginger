@@ -2699,7 +2699,7 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 CleanDirectory(gingerExecutionReport.HTMLReportMainFolder);
             }
-            string Folder = WorkSpace.Instance.Solution.Folder.ToString() + "\\HTMLReports\\";
+            string Folder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder.ToString(), @"HTMLReports"); 
 
             if (currentConf.LimitReportFolderSize)
             {
@@ -2824,7 +2824,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
             if (hTMLReportsConfiguration.LimitReportFolderSize)
             {
-                 string Folder = WorkSpace.Instance.Solution.Folder.ToString() + "\\HTMLReports\\";
+                 string Folder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder.ToString(), "HTMLReports");
                 DeleteFolderContentBySizeLimit DeleteFolderContentBySizeLimit = new DeleteFolderContentBySizeLimit(Folder, maxFolderSize);
             }
 
@@ -2992,7 +2992,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"HTMLReports");
                     System.IO.Directory.CreateDirectory(logsFolder);
-                    WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationHTMLReportsFolder = @"~\HTMLReports\";
+                    WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationHTMLReportsFolder = @"~/HTMLReports/";
                 }
             }
 

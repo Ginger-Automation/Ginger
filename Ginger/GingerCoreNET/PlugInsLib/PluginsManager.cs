@@ -332,7 +332,7 @@ namespace Amdocs.Ginger.Repository
                         Reporter.ToLog(eLogLevel.INFO, "Private plugin folder no need to download");
                         continue;   // this is private plugin located on the developer machine will not be able to download from online
                     }
-                    
+
                     if (OnlinePlugins == null)
                     {
                         Reporter.ToLog(eLogLevel.INFO, "Getting online plugins index");
@@ -359,8 +359,12 @@ namespace Amdocs.Ginger.Repository
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Plugin version not found cannot install!");
                     }
-                                            
+
                 }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while downloading/updating the Ginger Plugins packages", ex);
             }
             finally
             {
