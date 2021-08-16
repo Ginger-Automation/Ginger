@@ -1811,9 +1811,26 @@ namespace GingerCore.Actions
         /// </summary>
         public object Context { get; set; }
 
+        /// <summary>
+        /// ID which been provided for each execution instance on the Action
+        /// </summary>
+        public Guid ExecutionId { get; set; }
+
+        public Guid ParentExecutionId { get; set; }
+
         public virtual void DoNewActionSetup()
         {
             // Base - do nothing
+        }
+
+        public override void PrepareItemToBeCopied()
+        {
+            this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper.IsSharedRepositoryItem(this);
+        }
+
+        public override string GetItemType()
+        {
+            return "Action";
         }
     }
 }

@@ -464,7 +464,26 @@ namespace GingerCore.Drivers.JavaDriverLib
                 IntializeIfWidgetsElement(currentPOMElementInfo);
                 locators = currentPOMElementInfo.Locators;
             }
+            PayLoad response = ExecutePOMAction(act, locators, pomExcutionUtil);
 
+            var passStatus = locators.Any(x => x.Active && x.LocateStatus == ElementLocator.eLocateStatus.Passed);
+            if (response.IsErrorPayLoad() && !passStatus)
+            {
+                if (pomExcutionUtil.AutoUpdateCurrentPOM((Agent)(this.BusinessFlow.CurrentActivity.CurrentAgent)) != null)
+                {
+                    response = ExecutePOMAction(act, locators, pomExcutionUtil);
+                }
+            }
+            if (passStatus && currentPOMElementInfo.SelfHealingInfo == SelfHealingInfoEnum.ElementDeleted)
+            {
+                currentPOMElementInfo.SelfHealingInfo = SelfHealingInfoEnum.None;
+            }
+
+            return response;
+        }
+
+        private PayLoad ExecutePOMAction(ActUIElement act, ObservableList<ElementLocator> locators, POMExecutionUtils pomExcutionUtil)
+        {
             PayLoad response = null;
 
             foreach (ElementLocator locator in locators)
@@ -519,7 +538,11 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     locateElement.LocateStatus = ElementLocator.eLocateStatus.Passed;
                     act.ExInfo += locateElement.LocateStatus;
-                    pomExcutionUtil.PriotizeLocatorPosition();
+
+                    if (pomExcutionUtil.PriotizeLocatorPosition())
+                    {
+                        act.ExInfo += "Locator prioritized during self healing operation";
+                    }
                     break;
                 }
 
@@ -537,9 +560,12 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     InitializeBrowser(new JavaElementInfo() { XPath = path.Value });
 
-                    if (!string.IsNullOrEmpty(currentPOMElementInfo.Path))
+                    //check iframe and switch
+                    var iframePath = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.ParentIFrame)).FirstOrDefault();
+
+                    if (iframePath != null && !string.IsNullOrEmpty(iframePath.Value))
                     {
-                        PayLoad PLSwitchFrame = new PayLoad("HTMLElementAction", "SwitchFrame", eLocateBy.ByXPath.ToString(), currentPOMElementInfo.XPath, string.Empty);
+                        PayLoad PLSwitchFrame = new PayLoad("HTMLElementAction", "SwitchFrame", eLocateBy.ByXPath.ToString(), iframePath.Value, string.Empty);
                         PayLoad ResponseSwitchFrame = Send(PLSwitchFrame);
 
                         if(ResponseSwitchFrame.IsErrorPayLoad())
@@ -2009,7 +2035,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 foreach (var htmlElement in hTMLControlsPayLoad)
                 {
-                    if (mStopProcess)
+                    if (StopProcess)
                     {
                         break;
                     }
@@ -2050,105 +2076,109 @@ namespace GingerCore.Drivers.JavaDriverLib
             return true;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null,List<string> relativeXpathTemplateList = null)
         {
+            return await Task.Run(() =>
+            {
 
-            List<ElementInfo> list = new List<ElementInfo>();
+                List<ElementInfo> list = new List<ElementInfo>();
 
-            PayLoad Request;
-            PayLoad Response;
-            //Get Current window, Specific Frame controls
-            if (!string.IsNullOrEmpty(specificFramePath))
-            {
-                Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
-                Request.AddEnumValue(WindowExplorerOperationType.GetFrameControls);
-                Request.AddValue(specificFramePath);
-                Request.ClosePackage();
-            }
-            //Get Current window all Controls
-            else
-            {
-                Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
-                Request.AddEnumValue(WindowExplorerOperationType.GetCurrentWindowVisibleControls);
-                Request.ClosePackage();
-            }
-            Response = Send(Request);
-
-            if (Response.IsErrorPayLoad())
-            {
-                string ErrMsg = Response.GetErrorValue();
-                throw new Exception(ErrMsg);
-            }
-            else
-            {
-                List<PayLoad> ControlsPL = Response.GetListPayLoad();
-                foreach (var pl in ControlsPL)
+                PayLoad Request;
+                PayLoad Response;
+                //Get Current window, Specific Frame controls
+                if (!string.IsNullOrEmpty(specificFramePath))
                 {
-                    if (mStopProcess)
-                    {
-                        break;
-                    }
-                    JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
+                    Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+                    Request.AddEnumValue(WindowExplorerOperationType.GetFrameControls);
+                    Request.AddValue(specificFramePath);
+                    Request.ClosePackage();
+                }
+                //Get Current window all Controls
+                else
+                {
+                    Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+                    Request.AddEnumValue(WindowExplorerOperationType.GetCurrentWindowVisibleControls);
+                    Request.ClosePackage();
+                }
+                Response = Send(Request);
 
-                    if (isPOMLearn)
+                if (Response.IsErrorPayLoad())
+                {
+                    string ErrMsg = Response.GetErrorValue();
+                    throw new Exception(ErrMsg);
+                }
+                else
+                {
+                    List<PayLoad> ControlsPL = Response.GetListPayLoad();
+                    foreach (var pl in ControlsPL)
                     {
-                        if (ci.ElementType.Contains("browser") && ci.ElementTypeEnum.Equals(eElementType.Browser))
+                        if (StopProcess)
                         {
-                            GetWidgetsElementList(filteredElementType, foundElementsList, ci.XPath);
+                            break;
+                        }
+                        JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
+
+                        if (isPOMLearn)
+                        {
+                            if (ci.ElementType.Contains("browser") && ci.ElementTypeEnum.Equals(eElementType.Browser))
+                            {
+                                GetWidgetsElementList(filteredElementType, foundElementsList, ci.XPath);
+                            }
+                            else
+                            {
+                                ((IWindowExplorer)this).LearnElementInfoDetails(ci);
+                                // set the Flag in case you wish to learn the element or not
+                                bool learnElement = true;
+                                if (filteredElementType != null)
+                                {
+                                    if (!filteredElementType.Contains(ci.ElementTypeEnum))
+                                        learnElement = false;
+                                }
+                                if (learnElement)
+                                {
+                                    ci.IsAutoLearned = true;
+                                    foundElementsList.Add(ci);
+                                }
+                            }
                         }
                         else
                         {
-                            ((IWindowExplorer)this).LearnElementInfoDetails(ci);
-                            // set the Flag in case you wish to learn the element or not
-                            bool learnElement = true;
-                            if (filteredElementType != null)
+                            list.Add(ci);
+                            List<ElementInfo> HTMLControlsPL = new List<ElementInfo>();
+                            if (ci.ElementTypeEnum == eElementType.Browser)
                             {
-                                if (!filteredElementType.Contains(ci.ElementTypeEnum))
-                                    learnElement = false;
-                            }
-                            if (learnElement)
-                            {
-                                ci.IsAutoLearned = true;
-                                foundElementsList.Add(ci);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        list.Add(ci);
-                        List<ElementInfo> HTMLControlsPL = new List<ElementInfo>();
-                        if (ci.ElementTypeEnum == eElementType.Browser)
-                        {
-                            PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
-                            String flag = PL.GetValueString();
+                                PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
+                                String flag = PL.GetValueString();
 
-                            if (flag.Contains("True"))
-                            {
-                                InitializeBrowser(ci);
+                                if (flag.Contains("True"))
+                                {
+                                    InitializeBrowser(ci);
 
+                                    HTMLControlsPL = GetBrowserVisibleControls();
+                                    if (HTMLControlsPL != null)
+                                        list.AddRange(HTMLControlsPL);
+                                }
+                            }
+                            //TODO: J.G. use elementTypeEnum instead of contains
+                            else if (ci.ElementType != null && ci.ElementType.Contains("JEditor"))
+                            {
+                                InitializeJEditorPane(ci);
                                 HTMLControlsPL = GetBrowserVisibleControls();
                                 if (HTMLControlsPL != null)
                                     list.AddRange(HTMLControlsPL);
                             }
                         }
-                        //TODO: J.G. use elementTypeEnum instead of contains
-                        else if (ci.ElementType != null && ci.ElementType.Contains("JEditor"))
-                        {
-                            InitializeJEditorPane(ci);
-                            HTMLControlsPL = GetBrowserVisibleControls();
-                            if (HTMLControlsPL != null)
-                                list.AddRange(HTMLControlsPL);
-                        }
+
                     }
-
                 }
-            }
 
-            if (isPOMLearn)
-            {
-                list = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
-            }
-            return list;
+                if (isPOMLearn)
+                {
+                    list = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
+                }
+                return list;
+
+            });
 
         }
 
@@ -4000,6 +4030,11 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
 
         public Task<object> GetPageSourceDocument(bool ReloadHtmlDoc)
+        {
+            return null;
+        }
+
+        public string GetCurrentPageSourceString()
         {
             return null;
         }

@@ -32,9 +32,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using ZephyrEntSDK.Models;
-using ZephyrEntSDK.Models.Base;
+using ZephyrEntStdSDK.Models;
+using ZephyrEntStdSDK.Models.Base;
 using static Ginger.ALM.ZephyrEnt.ZephyrEntPlanningExplorerPage;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM.Repository
 {
@@ -51,7 +52,7 @@ namespace Ginger.ALM.Repository
         {
             this.AlmCore = almCore;
         }
-        public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
+        public override bool ConnectALMServer(eALMConnectType userMsgStyle)
         {
             try
             {
@@ -68,11 +69,11 @@ namespace Ginger.ALM.Repository
             }
             catch (Exception e)
             {
-                if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
+                if (userMsgStyle == eALMConnectType.Manual)
                 {
                     Reporter.ToUser(eUserMsgKey.QcConnectFailure, e.Message); //TODO: Fix message
                 }
-                else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
+                else if (userMsgStyle == eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, e.Message);
                 }
@@ -136,8 +137,9 @@ namespace Ginger.ALM.Repository
             throw new NotImplementedException();
         }
 
-        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
+        public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
+            tcsRepositoryList = new List<TestCaseResource>();
             if (businessFlow == null)
             {
                 return false;
@@ -271,7 +273,7 @@ namespace Ginger.ALM.Repository
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                     Reporter.HideStatusMessage();
                 }
-                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                 }
@@ -279,7 +281,7 @@ namespace Ginger.ALM.Repository
             }
             else
             {
-                if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
                 }
@@ -336,7 +338,7 @@ namespace Ginger.ALM.Repository
                 folderId = cyclePhase.id;
                 tcrCatalogTreeId = cyclePhase.tcrCatalogTreeId;
             }
-            else if (bfEntityType.Equals(EntityFolderType.Cycle.ToString()))
+            else if (bfEntityType.Equals(EntityFolderType.Cycle.ToString()) || bfEntityType.Equals(EntityFolderType.CyclePhase.ToString()))
             {
                 cycle = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntCycleById(Convert.ToInt32(testLabUploadPath));
                 cyclePhase = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).CreateNewTestCyclePhase(cycle, businessFlow.Name);
@@ -459,7 +461,7 @@ namespace Ginger.ALM.Repository
                     {
                         //import test set data
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.Name);
-                        GingerCore.ALM.QC.QCTestSet TS = new GingerCore.ALM.QC.QCTestSet();
+                        GingerCore.ALM.QC.ALMTestSet TS = new GingerCore.ALM.QC.ALMTestSet();
                         TS.TestSetID = testSetItemtoImport.Id;
                         TS.TestSetName = testSetItemtoImport.Name;
                         TS.TestSetPath = testSetItemtoImport.Path;

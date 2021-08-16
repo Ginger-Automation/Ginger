@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -117,56 +118,7 @@ namespace GingerCore
             }
         }
 
-        public static string GetShortType(Type T)
-        {
-            //Not so much nice clean OO design but due to static on derived limitation, meanwhile it is working solution 
-            // Put here only class which are saved as stand alone to file system
-            // TODO: add interface to classes which are saved as files which will force them to im
 
-            //TODO: more safe to use type of then Full Name - fix it!
-            if (T == typeof(BusinessFlow)) { return "BusinessFlow"; }
-            if (T == typeof(ActivitiesGroup)) { return "ActivitiesGroup"; }
-            if (T == typeof(Activity)) { return "Activity"; }
-            if (T == typeof(ErrorHandler)) { return "Activity"; }
-            if (typeof(Act).IsAssignableFrom(T)) { return "Action"; }
-            if (typeof(VariableBase).IsAssignableFrom(T)) { return "Variable"; }
-            if (typeof(DataSourceBase).IsAssignableFrom(T)) return "DataSource";
-            if (T.FullName == "GingerCore.Agent") return "Agent";
-            if (T.FullName == "GingerCore.Environments.ProjEnvironment") return "Environment";
-            if (T.FullName == "Ginger.Run.RunSetConfig") return "RunSetConfig";
-            if (T.FullName == "Ginger.Run.BusinessFlowExecutionSummary") return "BusinessFlowExecutionSummary";
-            if (T.FullName == "Ginger.Reports.ReportTemplate") return "ReportTemplate";
-            if (T.FullName == "Ginger.Reports.HTMLReportTemplate") return "HTMLReportTemplate";
-            if (T.FullName == "Ginger.Reports.HTMLReportConfiguration") return "HTMLReportConfiguration";
-
-            if (T.FullName == "Ginger.Reports.HTMLReportConfiguration") return "HTMLReportConfiguration";
-            if (T.FullName == "Ginger.TagsLib.RepositoryItemTag") return "RepsotirotyItemTag";
-
-            if (T == typeof(ApplicationDBTableModel)) return "ApplicationDBTableModel";
-            if (T == typeof(ApplicationDBModel)) return "ApplicationDBModel";
-            if (T == typeof(ApplicationPOMModel)) return "ApplicationPOM";
-
-            // Make sure we must impl or get exception
-            throw new Exception("Unknown Type for Short Type Name " + T.Name);
-        }
-
-        public new string ObjFileExt { get { return FileExt(this.GetType()); } }
-
-        public new static string FolderName(Type T)
-        {
-            string s = GetShortType(T) + "s";
-            if (s.EndsWith("ys"))
-            {
-                s = s.Replace("ys", "ies");
-            }
-
-            //Special handling for Shared Repository item to be in sub folder
-            if (s == "ActivitiesGroups" || s == "Activities" || s == "Actions" || s == "Variables" || s == "Validations")
-            {
-                s = @"SharedRepository\" + s;
-            }
-            return s;
-        }
 
         /// <summary>
         /// Been used for updating the Shared Repository item instance

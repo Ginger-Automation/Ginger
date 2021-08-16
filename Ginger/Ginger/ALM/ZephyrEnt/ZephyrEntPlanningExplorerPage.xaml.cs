@@ -27,7 +27,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using GingerCore.ALM;
 using amdocs.ginger.GingerCoreNET;
-using ZephyrEntSDK.Models.Base;
+using ZephyrEntStdSDK.Models.Base;
 using Ginger.ALM.ZephyrEnt.TreeViewItems;
 using Newtonsoft.Json.Linq;
 using GingerCore.ALM.ZephyrEnt.Bll;
@@ -308,6 +308,11 @@ namespace Ginger.ALM.ZephyrEnt
                     Mouse.OverrideCursor = Cursors.Wait;
                     GetFolderChildTestSets(mCurrentSelectedTreeItem);
                     Mouse.OverrideCursor = null;
+                }
+                if(CurrentSelectedTestSets.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please select Test Set or Folder contains Test Set");
+                    return;
                 }
                 CurrentSelectedTestSets.ToList().ForEach(ts =>
                 {

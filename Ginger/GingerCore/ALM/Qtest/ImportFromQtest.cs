@@ -206,7 +206,7 @@ namespace GingerCore.ALM.Qtest
                         else//Step not exist in Ginger repository so create new one
                         {
                             stepActivity = new Activity();
-                            stepActivity.ActivityName = step.Description;
+                            stepActivity.ActivityName = step.StepName;
                             stepActivity.ExternalID = step.StepID;
                             stepActivity.ExternalID2 = step.CalledTestCaseId;
                             stepActivity.Description = step.Description;

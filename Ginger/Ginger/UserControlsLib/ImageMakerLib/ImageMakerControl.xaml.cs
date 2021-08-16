@@ -544,6 +544,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.WindowRestore:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.WindowRestore);
                     break;
+                case eImageType.SelfHealing:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Magic);
+                    break;
                 #endregion
 
 
@@ -671,6 +674,11 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Fix:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Wrench);
                     break;
+
+                case eImageType.Eraser:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Eraser);
+                    break;
+
                 case eImageType.ArrowDown:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.AngleDown);
                     break;
@@ -844,6 +852,21 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.SignOut:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.SignOut);
+                    break;
+                case eImageType.AngleArrowUp:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleUp);
+                    break;
+                case eImageType.AngleArrowDown:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleDown);
+                    break;
+                case eImageType.AngleArrowLeft:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleLeft);
+                    break;
+                case eImageType.AngleArrowRight:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleRight);
+                    break;
+                case eImageType.Support:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Headphones);
                     break;
                 #endregion
 

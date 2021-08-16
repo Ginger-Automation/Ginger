@@ -138,7 +138,6 @@ namespace Ginger.SourceControl
         private void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             mSourceControl.SourceControlPass = ((PasswordBox)sender).Password;
-             WorkSpace.Instance.UserProfile.SaveUserProfile();//todo: check if needed
             SourceControlIntegration.Init(mSourceControl);
         }
 
@@ -183,6 +182,8 @@ namespace Ginger.SourceControl
                 ConnectionConfigurationsExpender.IsExpanded = false;
                 ConnectionDetailsExpender.IsExpanded = false;
 
+                //Changed to save password only after successful Connect and search repositories
+                WorkSpace.Instance.UserProfile.SaveUserProfile();
             }
             catch (Exception e)
             {

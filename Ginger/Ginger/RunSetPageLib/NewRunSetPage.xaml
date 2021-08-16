@@ -10,7 +10,7 @@
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
       xmlns:h="clr-namespace:Ginger.Help"
-      xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Run Set"
+      xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib" xmlns:Activities="clr-namespace:Ginger.Activities" h:GingerHelpProvider.HelpString="Run Set"
       d:DesignHeight="1000" d:DesignWidth="2000"
       Title="Runset"  Loaded="Page_loaded">
 
@@ -170,6 +170,8 @@
                                 <Label Content="Environment :" x:Name="xEnvironmentCombolbl" Foreground="{StaticResource $BackgroundColor_DarkBlue}" ></Label>
                                 <ComboBox x:Name="xRunsetEnvironmentCombo" ToolTip="Environment"  HorizontalAlignment="Left" ContextMenu="{x:Null}" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,5,5,3" SelectionChanged="XRunsetEnvironmentCombo_SelectionChanged"></ComboBox>
                                 <usercontrols:ucButton x:Name="xRunnersExecutionConfigBtn" ToolTip="Runners Execution Configurations" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Config" Click="xRunnersExecutionConfigBtn_Click"></usercontrols:ucButton>
+                                <usercontrols:ucButton x:Name="xSelfHealingConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="SelfHealing" Click="xSelfHealingConfigBtn_Click"  ToolTip="Self Healing Configurations"/>
+
                                 <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="12 0 12 0"/>
                                 <usercontrols:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Runner Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonFontImageSize="17" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"></usercontrols:ucButton>
                             </DockPanel>
@@ -363,9 +365,23 @@
                             <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
                         </StackPanel>
                         <TextBox x:Name="xRunSetNameTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" DockPanel.Dock="Top" Height="25" FontWeight="Bold"></TextBox>
+                        
                         <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="-5,5,0,0">Description:</Label>
                         <TextBox x:Name="xRunSetDescriptionTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" DockPanel.Dock="Top" Height="50"></TextBox>
-                        <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="-4,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" />
+
+                        <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="-2,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" />
+
+                        <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}" Margin="-5,0,0,0">Run Description:</Label>
+                        <Activities:UCValueExpression x:Name="xRunDescritpion" DockPanel.Dock="Top" HorizontalAlignment="Stretch" />
+
+                        <Expander x:Name="xCategoriesExpander" DockPanel.Dock="Top" ExpandDirection="Down"  IsExpanded="True" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,12,0,0">
+                        <Expander.Header>
+                            <Label Content="Categories" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                        </Expander.Header>
+                        <Expander.Content>
+                            <Frame x:Name="xCategoriesFrame"/>
+                        </Expander.Content>
+                        </Expander>
                         <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
                     </DockPanel>
                 </TabItem>

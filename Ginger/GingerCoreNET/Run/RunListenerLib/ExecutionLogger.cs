@@ -115,7 +115,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         internal ActionReport GetActionReportData(Act action, Context context, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             ActionReport AR = new ActionReport(action, context);
-            AR.Seq = context.Activity.ExecutionLogActionCounter;
+            if (context.Activity != null)
+            {
+                AR.Seq = context.Activity.ExecutionLogActionCounter;
+            }
             if ((action.RunDescription != null) && (action.RunDescription != string.Empty))
             {
                 if (mVE == null)
@@ -233,7 +236,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         internal abstract void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline);
         internal abstract void StartRunSet();
         internal abstract void EndRunSet();
-
+        internal abstract void ResetLastRunSetDetails();
         public abstract string SetExecutionLogFolder(string executionLogfolder, bool isCleanFile);
         public abstract string GetLogFolder(string folder);
 

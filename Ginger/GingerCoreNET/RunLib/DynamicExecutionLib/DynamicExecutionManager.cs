@@ -72,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
                 {
                     dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.SourceControlUser;
-                    dynamicExecution.SolutionDetails.SourceControlDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+                    dynamicExecution.SolutionDetails.SourceControlDetails.Password =  EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
                     dynamicExecution.SolutionDetails.SourceControlDetails.PasswordEncrypted = "Y";
                 }
                 else
@@ -428,7 +428,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         ALMUserConfig userProfileAlmConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == solutionAlmConfig.AlmType);
                         AlmDetails almDetails = new AlmDetails();
                         almDetails.ALMType = solutionAlmConfig.AlmType.ToString();
-                        if (solutionAlmConfig.JiraTestingALM != ALMIntegration.eTestingALMType.None)
+                        if (solutionAlmConfig.JiraTestingALM != ALMIntegrationEnums.eTestingALMType.None)
                         {
                             almDetails.ALMSubType = solutionAlmConfig.JiraTestingALM.ToString();
                         }
@@ -480,12 +480,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             executionConfig.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
             executionConfig.VerboseLevel = GingerExecConfig.eVerboseLevel.normal;
+            executionConfig.EncryptionKey = solution.EncryptionKey;
 
             RunsetExecConfig runset = new RunsetExecConfig();
             runset.Exist = true;
             runset.Name = runsetExecutor.RunSetConfig.Name;
             runset.ID = runsetExecutor.RunSetConfig.Guid;
-            runset.Description = runsetExecutor.RunSetConfig.Description;
+            runset.Description = runsetExecutor.RunSetConfig.Description;            
 
             runset.EnvironmentName = runsetExecutor.RunsetExecutionEnvironment.Name;
             runset.EnvironmentID = runsetExecutor.RunsetExecutionEnvironment.Guid;
@@ -493,6 +494,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             runset.RunAnalyzer = cliHelper.RunAnalyzer;
             runset.RunInParallel = runsetExecutor.RunSetConfig.RunModeParallel;
             runset.StopRunnersOnFailure = runsetExecutor.RunSetConfig.StopRunnersOnFailure;
+
+            SelfHealingConfig selfHealingConfiguration = new SelfHealingConfig()
+            {
+                AutoFixAnalyzerIssue = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue,
+                ReprioritizePOMLocators = runsetExecutor.RunSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators,
+                AutoUpdateApplicationModel = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel,
+                SaveChangesInSourceControl = runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl
+            };
+
+            runset.SelfHealingConfiguration = selfHealingConfiguration;
+
 
             if (runsetExecutor.RunSetConfig.GingerRunners.Count > 0)
             {
@@ -523,6 +535,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
                 foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
                 {
+                    if (applicationAgent.Agent == null)
+                    {
+                        continue;//probably target app without platform or no such Agent
+                    }
                     runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID});
                 }
 
@@ -738,11 +754,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 //## Creating new Runset
                 runSetConfig = new RunSetConfig();
                 runSetConfig.Name = dynamicRunsetConfigs.Name;
+                runSetConfig.AddCategories();
             }
 
             if (gingerExecConfig.ExecutionID != null)
             {
                 runSetConfig.ExecutionID = (Guid)gingerExecConfig.ExecutionID;
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Using provided ExecutionID '{0}'.", runSetConfig.ExecutionID.ToString()));
             }
 
             if (!String.IsNullOrEmpty(gingerExecConfig.Runset.Description))
@@ -1228,6 +1246,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
             }
 
+            // add selfhealing configs
+            if (dynamicRunsetConfigs.SelfHealingConfiguration != null)
+            {
+                runSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue = dynamicRunsetConfigs.SelfHealingConfiguration.AutoFixAnalyzerIssue;
+                runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel = dynamicRunsetConfigs.SelfHealingConfiguration.AutoUpdateApplicationModel;
+                runSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl = dynamicRunsetConfigs.SelfHealingConfiguration.SaveChangesInSourceControl;
+                runSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators = dynamicRunsetConfigs.SelfHealingConfiguration.ReprioritizePOMLocators;
+            }
             // Set config
             runsetExecutor.RunSetConfig = runSetConfig;
         }

@@ -57,7 +57,13 @@ namespace Ginger.Run
 
         private Stopwatch mStopwatch = new Stopwatch();
         public TimeSpan Elapsed { get { return mStopwatch.Elapsed; } }
-        private ExecutionLoggerConfiguration mSelectedExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
+        private ExecutionLoggerConfiguration mSelectedExecutionLoggerConfiguration
+        {
+            get
+            {
+                return WorkSpace.Instance.Solution.LoggerConfigurations;
+            }
+        }
         public bool mStopRun;
 
         private string _currentRunSetLogFolder = string.Empty;
@@ -340,8 +346,6 @@ namespace Ginger.Run
 
         public void SetRunnersExecutionLoggerConfigs()
         {
-            mSelectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
-
             if (mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 DateTime currentExecutionDateTime = DateTime.Now;
@@ -413,9 +417,15 @@ namespace Ginger.Run
                 //Process all pre execution Run Set Operations
                 if (doContinueRun == false)
                 {
+                    RunSetConfig.StartTimeStamp = DateTime.UtcNow;
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Running Pre-Execution {0} Operations", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
                 }
+
+                if(mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
+                {
+                    Runners[0].Centeralized_Logger.RunSetStart(RunSetConfig);                    
+                }                
 
                 //Start Run 
                 if (doContinueRun == false)
@@ -434,7 +444,7 @@ namespace Ginger.Run
                 if (RunSetConfig.RunModeParallel)
                 {
                     foreach (GingerRunner GR in Runners)
-                    {
+                    {                        
                         if (mStopRun)
                         {
                             return;
@@ -513,11 +523,16 @@ namespace Ginger.Run
 
                 Task.WaitAll(runnersTasks.ToArray());
                 mStopwatch.Stop();
-
+                RunSetConfig.Elapsed = mStopwatch.ElapsedMilliseconds;
+                RunSetConfig.EndTimeStamp = DateTime.UtcNow;
                 //Do post execution items
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 //ExecutionLoggerManager.RunSetEnd();
                 Runners[0].ExecutionLoggerManager.RunSetEnd();
+                if (mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
+                {
+                    Runners[0].Centeralized_Logger.RunSetEnd(RunSetConfig);
+                }
                 if (mStopRun == false)
                 {
                     // Process all post execution RunSet Operations
@@ -530,18 +545,20 @@ namespace Ginger.Run
                 CloseAllEnvironments();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
-                await  Runners[0].ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
+                if(mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.PostExecution)
+                {
+                    await Runners[0].ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
+                }                
                
             }
             finally
-            {
+            {                
                 mRunSetConfig.IsRunning = false;
             }
         }
         public void CreateGingerExecutionReportAutomaticly()
         {
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            mSelectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();            
             if ((mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled) && (Runners != null) && (Runners.Count > 0))
             {
                 if (mSelectedExecutionLoggerConfiguration.ExecutionLoggerHTMLReportsAutomaticProdIsEnabled)

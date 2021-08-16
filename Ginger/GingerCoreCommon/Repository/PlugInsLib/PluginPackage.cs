@@ -181,7 +181,12 @@ namespace Amdocs.Ginger.Repository
         List<PluginAssemblyInfo> mAssembliesInfo = new List<PluginAssemblyInfo>();
 
         public override string ItemName { get { return PluginId; } set {  } }
-        
+
+
+        public override string GetItemType()
+        {
+            return nameof(PluginPackage);
+        }
 
         public override string GetNameForFileName()
         {

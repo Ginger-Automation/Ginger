@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore.Actions;
@@ -934,10 +935,10 @@ namespace GingerCore.Repository
             return DeserializeFromFile(type, fileName);
         }
 
-        public string FileExt(Type T)
+        public string FileExt(RepositoryItemBase repositoryItemBase)
         {
             // making it old Ginger style so BF and env can load again... temp
-            return "Ginger." + GetShortType(T);
+            return "Ginger." + repositoryItemBase.GetItemType();
         }
 
         public object DeserializeFromText(Type t, string s, string filePath = "")
@@ -945,37 +946,6 @@ namespace GingerCore.Repository
             return DeserializeFromTextWithTargetObj(t, s);
         }
 
-        public string GetShortType(Type t)
-        {
-            //Not so much nice clean OO design but due to static on derived limitation, meanwhile it is working solution 
-            // Put here only class which are saved as stand alone to file system
-            // TODO: add interface to classes which are saved as files which will force them to im
-
-            //TODO: more safe to use type of then Full Name - fix it!
-            if (t == typeof(BusinessFlow)) { return "BusinessFlow"; }
-            if (t == typeof(ActivitiesGroup)) { return "ActivitiesGroup"; }
-            if (t == typeof(Activity)) { return "Activity"; }
-            if (t == typeof(ErrorHandler)) { return "Activity"; }
-            if (typeof(Act).IsAssignableFrom(t)) { return "Action"; }
-            if (typeof(VariableBase).IsAssignableFrom(t)) { return "Variable"; }
-            if (typeof(DataSourceBase).IsAssignableFrom(t)) return "DataSource";
-            if (t.FullName == "GingerCore.Agent") return "Agent";
-            if (t.FullName == "Ginger.Run.RunSetConfig") return "RunSetConfig";
-            if (t.FullName == "Ginger.Run.BusinessFlowExecutionSummary") return "BusinessFlowExecutionSummary";
-            if (t.FullName == "Ginger.Reports.ReportTemplate") return "ReportTemplate";
-            if (t.FullName == "Ginger.Reports.HTMLReportTemplate") return "HTMLReportTemplate";
-            if (t.FullName == "Ginger.Reports.HTMLReportConfiguration") return "HTMLReportConfiguration";
-            if (t.FullName == "Amdocs.Ginger.Repository.ALMDefectProfile") return "ALMDefectProfile";
-            if (t.FullName == "Ginger.Reports.HTMLReportConfiguration") return "HTMLReportConfiguration";
-            if (t.FullName == "Ginger.TagsLib.RepositoryItemTag") return "RepsotirotyItemTag";
-            if (t.Name == "PluginPackage") return "PluginPackage";
-
-
-
-
-            // Make sure we must impl or get exception
-            throw new Exception("Unknown Type for Short Type Name " + t.Name);
-        }
 
         public static object NewRepositorySerializer_NewRepositorySerializerEvent(NewRepositorySerializerEventArgs EventArgs)
         {

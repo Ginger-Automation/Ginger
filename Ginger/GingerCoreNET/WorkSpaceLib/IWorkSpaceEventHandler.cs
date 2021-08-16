@@ -38,5 +38,6 @@ namespace amdocs.ginger.GingerCoreNET
         void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles); // when openning solution we check if the solution is older or newer, and popup an upgrade question for ginger or for the solution
         void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list);
         void SetSolutionSourceControl(Solution solution, ref string RepositoryRootFolder);
+        bool OpenEncryptionKeyHandler(Solution solution);
     }
 }

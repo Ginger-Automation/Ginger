@@ -216,6 +216,7 @@ namespace Amdocs.Ginger.Common.Enums
         Pointer,
         Camera,
         Wrench,
+        Eraser,
         Power,
         ArrowDown,
         ArrowRight,
@@ -279,6 +280,11 @@ namespace Amdocs.Ginger.Common.Enums
         Android,
         AndroidOutline,
         AndroidWhite,
+        AngleArrowUp,
+        AngleArrowDown,
+        AngleArrowLeft,
+        AngleArrowRight,
+        Support,
         #endregion
 
         #region Source control Images     
@@ -331,7 +337,8 @@ namespace Amdocs.Ginger.Common.Enums
         CLI,
         LinkSquare,
         DatePicker,
-        TreeView
+        TreeView,
+        SelfHealing
         #endregion
     }
 }

@@ -25,6 +25,7 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -72,7 +73,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (FileType == eFileType.JSON)
             {
                 string json = DynamicExecutionManager.CreateDynamicRunSetJSON(solution, runsetExecutor, cliHelper);
-                return json;
+                dynamic parsedJson = JsonConvert.DeserializeObject(json);
+                return JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
             }
             else
             {
@@ -87,13 +89,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 //Dynamic JSON
                 GingerExecConfig exeConfiguration = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(content);
+                cliHelper.SetEncryptionKey(exeConfiguration.EncryptionKey);
                 if (exeConfiguration.SolutionScmDetails != null)
                 {
                     cliHelper.SetSourceControlType(exeConfiguration.SolutionScmDetails.SCMType.ToString());
                     cliHelper.SetSourceControlURL(exeConfiguration.SolutionScmDetails.SolutionRepositoryUrl);
                     cliHelper.SetSourceControlUser(exeConfiguration.SolutionScmDetails.User);
                     cliHelper.SetSourceControlPassword(exeConfiguration.SolutionScmDetails.Password);
+                    
                     cliHelper.PasswordEncrypted(exeConfiguration.SolutionScmDetails.PasswordEncrypted.ToString());
+                    
                     if (string.IsNullOrEmpty(exeConfiguration.SolutionScmDetails.ProxyServer) == false)
                     {
                         cliHelper.SourceControlProxyServer(exeConfiguration.SolutionScmDetails.ProxyServer);
@@ -211,8 +216,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             foreach (AlmDetails almDetails in gingerExecConfig.AlmsDetails)
             {
-                ALMIntegration.eALMType almTypeToConfigure;
-                if (Enum.TryParse<ALMIntegration.eALMType>(almDetails.ALMType, out almTypeToConfigure))
+                ALMIntegrationEnums.eALMType almTypeToConfigure;
+                if (Enum.TryParse<ALMIntegrationEnums.eALMType>(almDetails.ALMType, out almTypeToConfigure))
                 {
                     try
                     {
@@ -232,7 +237,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         }
                         if (almDetails.ALMSubType != null)
                         {
-                            solutionAlmConfig.JiraTestingALM = (ALMIntegration.eTestingALMType)Enum.Parse(typeof(ALMIntegration.eTestingALMType), almDetails.ALMSubType);
+                            solutionAlmConfig.JiraTestingALM = (ALMIntegrationEnums.eTestingALMType)Enum.Parse(typeof(ALMIntegrationEnums.eTestingALMType), almDetails.ALMSubType);
                         }
                         if (almDetails.ServerURL != null)
                         {

@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
@@ -32,7 +33,7 @@ namespace Ginger.Actions
     public partial class ActScriptEditPage : Page
     {
         public ActionEditPage actp;
-        private GingerCore.Actions.ActScript f;
+        private ActScript f;
 
         string SHFilesPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\Scripts\");
 
@@ -44,14 +45,14 @@ namespace Ginger.Actions
             GingerCore.General.FillComboFromEnumObj(ScriptActComboBox, Act.ScriptCommand);
             GingerCore.General.FillComboFromEnumObj(ScriptInterpreterComboBox, Act.ScriptInterpreterType);
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptInterpreterComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptInterpreterType);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptActComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptCommand);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptInterpreterComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActScript.ScriptInterpreterType));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptActComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActScript.ScriptCommand));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActScript.ScriptName));
 
             ScriptNameComboBox.SelectionChanged += ScriptNameComboBox_SelectionChanged;
 
             ScriptInterPreter.FileExtensions.Add(".exe");
-            ScriptInterPreter.Init(Act, ActScript.Fields.ScriptInterpreter, true);
+            ScriptInterPreter.Init(Act, nameof(ActScript.ScriptInterpreter), true);
             f.ScriptPath = SHFilesPath;
 
             var comboEnumItem = ScriptInterpreterComboBox.Items.Cast<GingerCore.GeneralLib.ComboEnumItem>().Where(x => x.text == ActScript.eScriptInterpreterType.JS.ToString()).FirstOrDefault();
@@ -86,7 +87,9 @@ namespace Ginger.Actions
             {
                 string ScriptFile = SHFilesPath + ScriptNameComboBox.SelectedItem;
                 if (!Directory.Exists(SHFilesPath))
+                {
                     Directory.CreateDirectory(SHFilesPath);
+                }
                 f.ReturnValues.Clear();
                 f.InputValues.Clear();
 
@@ -105,13 +108,13 @@ namespace Ginger.Actions
         {
             foreach (string line in script)
             {
-                if (line.StartsWith("'GINGER_Description") || line.StartsWith("//GINGER_Description") || line.StartsWith("#GINGER_Description") || line.StartsWith("REM GINGER_Description"))
+                if (line.Contains("GINGER_Description"))
                 {
-                    ScriptDescriptionContent.Content = line.Replace("'GINGER_Description", "").Replace("#GINGER_Description", "").Replace("//GINGER_Description", "").Replace("REM GINGER_Description", "");
+                    ScriptDescriptionContent.Content = replaceStartWithInput(line);
                 }
-                if (line.StartsWith("'GINGER_$") || line.StartsWith("//GINGER_$") || line.StartsWith("#GINGER_$") || line.StartsWith("REM GINGER_$"))
+                if(line.Contains("GINGER_$"))
                 {
-                    f.AddOrUpdateInputParamValue(line.Replace("'GINGER_$", "").Replace("#GINGER_$", "").Replace("//GINGER_$", "").Replace("REM GINGER_$", ""), "");
+                    f.AddOrUpdateInputParamValue(replaceStartWithInput(line), "");
                 }
             }
             if(String.IsNullOrEmpty(ScriptDescriptionContent.Content.ToString()))
@@ -123,7 +126,10 @@ namespace Ginger.Actions
                 ScriptDescriptionPanel.Visibility = Visibility.Visible;
             }
         }
-
+        private string replaceStartWithInput(string input)
+        {
+            return Regex.Replace(input, @"^(('|//|#|REM )(GINGER_Description|GINGER_\$))", "").Trim();
+        }
         private void ScriptInterpreterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ActScript.eScriptInterpreterType interpreterType;
@@ -140,24 +146,14 @@ namespace Ginger.Actions
             {
                 InterpreterPathPanel.Visibility = Visibility.Visible;
                 fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
-               .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd") || s.ToLower().EndsWith(".py") || s.ToLower().EndsWith(".ps1")).ToArray() ;
+               .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd") 
+               || s.ToLower().EndsWith(".py") || s.ToLower().EndsWith(".ps1") || s.ToLower().EndsWith(".sh")).ToArray() ;
             }
-            else if (interpreterType == ActScript.eScriptInterpreterType.BAT)
-            {
-                InterpreterPathPanel.Visibility = Visibility.Collapsed;              
-                fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".bat");
-            }
-            else if (interpreterType == ActScript.eScriptInterpreterType.VBS)
+            else
             {
                 InterpreterPathPanel.Visibility = Visibility.Collapsed;
-                fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".vbs");
+                fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, "." + interpreterType.ToString().ToLower());
             }
-            else if (interpreterType == ActScript.eScriptInterpreterType.JS)
-            {
-                InterpreterPathPanel.Visibility = Visibility.Collapsed;
-                fileEntries = GingerCore.General.ReturnFilesWithDesiredExtension(SHFilesPath, ".js");
-            }
-
             if (fileEntries != null)
             {
                 fileEntries = fileEntries.Select(q => q.Replace(SHFilesPath, "")).ToArray();
@@ -169,11 +165,7 @@ namespace Ginger.Actions
                 }
             }
         }
-
-      
     }
-
-
 }
 
 

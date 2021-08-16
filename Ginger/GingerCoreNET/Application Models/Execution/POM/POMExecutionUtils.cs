@@ -23,6 +23,7 @@ using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCoreNET.Application_Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,9 +35,13 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
     public class POMExecutionUtils
     {
         ActUIElement mAct = null;
+        eExecutedFrom ExecutedFrom;
         public POMExecutionUtils(Act act)
         {
             mAct = (ActUIElement)act;
+
+            var context = Context.GetAsContext(mAct.Context);
+            ExecutedFrom = context.ExecutedFrom;
         }
 
         public POMExecutionUtils()
@@ -103,13 +108,20 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             }
         }
 
-        public void PriotizeLocatorPosition()
+        public bool PriotizeLocatorPosition()
         {
+            if (!IsSelfHealingConfigured())
+            {
+                return false;
+            }
+
+            var locatorPriotize = false;
             try
             {
                 var locatorIndex = GetCurrentPOMElementInfo().Locators.ToList().FindIndex(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed);
                 if (locatorIndex > 0)
                 {
+                    locatorPriotize = true;
                     GetCurrentPOMElementInfo().Locators.Move(locatorIndex, 0);
                 }
             }
@@ -118,6 +130,151 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 Reporter.ToLog(eLogLevel.INFO, "Error occured during self healing locator position", ex);
             }
 
+            return locatorPriotize;
+        }
+
+        private bool IsSelfHealingConfigured()
+        {
+            if (ExecutedFrom == eExecutedFrom.Run)
+            {
+                //when executing from runset
+                var runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
+
+                if (runSetConfig != null)
+                {
+                    if (!runSetConfig.SelfHealingConfiguration.EnableSelfHealing || !runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel)
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+            }
+            
+            //when running from automate tab
+            var selfHealingConfigAutomateTab = WorkSpace.Instance.AutomateTabSelfHealingConfiguration;
+            if (!selfHealingConfigAutomateTab.EnableSelfHealing || !selfHealingConfigAutomateTab.AutoUpdateApplicationModel)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public ElementInfo AutoUpdateCurrentPOM(Common.InterfacesLib.IAgent currentAgent)
+        {
+            if (!IsSelfHealingConfigured())
+            {
+                return null;
+            }
+
+            var passedLocator = GetCurrentPOMElementInfo().Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed);
+
+
+            if (passedLocator == null || passedLocator.Count() == 0 )
+            {
+                var pomLastUpdatedTimeSpan = (System.DateTime.Now - Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime)).TotalHours;
+
+                if (pomLastUpdatedTimeSpan < 5)
+                {
+                    return null;
+                }
+            }
+
+            var deltaElementInfos = GetUpdatedVirtulPOM(currentAgent);
+
+            if (deltaElementInfos.Count > 0)
+            {
+                UpdateElementSelfHealingDetails(deltaElementInfos.ToList());
+            }
+
+            Guid currentPOMElementInfoGUID = new Guid(PomElementGUID[1]);
+            var currentElementDelta = deltaElementInfos.Where(x => x.ElementInfo.Guid == currentPOMElementInfoGUID).FirstOrDefault();
+            if (currentElementDelta == null || currentElementDelta.DeltaStatus == eDeltaStatus.Deleted)
+            {
+                return null;
+            }
+            else
+            {
+                return currentElementDelta.ElementInfo;
+            }
+        }
+
+        private void UpdateElementSelfHealingDetails(List<DeltaElementInfo> deltaElementInfos)
+        {
+            foreach (var elementInfo in GetCurrentPOM().MappedUIElements)
+            {
+                try
+                {
+                    var deltaInfo = deltaElementInfos.Where(x => x.ElementInfo.Guid == elementInfo.Guid).FirstOrDefault();
+                    if (deltaInfo != null)
+                    {
+                        if (deltaInfo.DeltaStatus == eDeltaStatus.Changed)
+                        {
+                            elementInfo.Properties = deltaInfo.ElementInfo.Properties;
+                            elementInfo.Locators = deltaInfo.ElementInfo.Locators;
+                            elementInfo.LastUpdatedTime = DateTime.Now.ToString();
+                            elementInfo.SelfHealingInfo = SelfHealingInfoEnum.ElementModified;
+                        }
+                        else if (deltaInfo.DeltaStatus == eDeltaStatus.Deleted)
+                        {
+                            elementInfo.LastUpdatedTime = DateTime.Now.ToString();
+                            elementInfo.SelfHealingInfo = SelfHealingInfoEnum.ElementDeleted;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error occured during self healing POM update operation..", ex);
+                }
+            }
+        }
+
+        private ObservableList<DeltaElementInfo> GetUpdatedVirtulPOM(Common.InterfacesLib.IAgent currentAgent)
+        {
+            var waitToCompleteLearnProcess = false;
+            while (this.GetCurrentPOM().IsLearning)
+            {
+                waitToCompleteLearnProcess = true;
+            }
+            this.GetCurrentPOM().IsLearning = true;
+
+            if (waitToCompleteLearnProcess)
+            {
+                var pomLastUpdatedTimeSpan = (DateTime.Now - Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime)).Minutes;
+                if (pomLastUpdatedTimeSpan < 5)
+                {
+                    return new ObservableList<DeltaElementInfo>();
+                }
+            }
+
+            GingerCore.Agent agent = (GingerCore.Agent)currentAgent;
+            var pomDeltaUtils = new PomDeltaUtils(this.GetCurrentPOM(), agent);
+            
+            try
+            {
+                //set element type
+                var elementList = this.GetCurrentPOM().MappedUIElements.Where(x => x.ElementTypeEnum != eElementType.Unknown).Select(y => y.ElementTypeEnum).Distinct().ToList();
+                pomDeltaUtils.PomLearnUtils.LearnOnlyMappedElements = true;
+                pomDeltaUtils.SelectedElementTypesList = elementList;
+                pomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList = GingerCore.Platforms.PlatformsInfo.PlatformInfoBase.GetPlatformImpl(agent.Platform).GetLearningLocators();
+                pomDeltaUtils.KeepOriginalLocatorsOrderAndActivation = true;
+                pomDeltaUtils.PropertiesChangesToAvoid = DeltaControlProperty.ePropertiesChangesToAvoid.All;
+
+                Reporter.ToLog(eLogLevel.INFO, "POM update process started during self healing operation..");
+                this.GetCurrentPOM().StartDirtyTracking();
+
+                pomDeltaUtils.LearnDelta().Wait();
+                Reporter.ToLog(eLogLevel.INFO, "POM updated");
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                this.GetCurrentPOM().IsLearning = false;
+            }
+
+            return pomDeltaUtils.DeltaViewElements;
         }
     }
 }

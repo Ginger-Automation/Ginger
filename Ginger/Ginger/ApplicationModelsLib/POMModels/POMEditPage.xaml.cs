@@ -296,15 +296,24 @@ namespace Ginger.ApplicationModelsLib.POMModels
             switch(mAppPlatform)
             {
                 case ePlatformType.Web:
+                case ePlatformType.Mobile:
                      act = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = calculatedValue, ValueForDriver = calculatedValue, Active = true };
                     break;
                 case ePlatformType.Java:
                      act = new ActSwitchWindow { LocateBy = eLocateBy.ByTitle, Value = calculatedValue, ValueForDriver = calculatedValue, Active = true };
                     break;
+                case ePlatformType.Windows:
+                    act = new ActSwitchWindow { LocateBy = eLocateBy.ByTitle, LocateValue = calculatedValue, LocateValueCalculated = calculatedValue, Active = true };
+                    break;
             }
             if (act != null)
             {
                 mAgent.Driver.RunAction(act);
+
+                if(act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.Error.Contains("not support"))
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Navigating to Native Application not supported");
+                }
             }
         }
 

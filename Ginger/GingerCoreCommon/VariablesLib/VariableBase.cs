@@ -654,5 +654,15 @@ namespace GingerCore.Variables
             SetAsInputValue = false;
             SetAsOutputValue = false;
         }
+
+        public override void PrepareItemToBeCopied()
+        {
+            this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper.IsSharedRepositoryItem(this);
+        }
+
+        public override string GetItemType()
+        {
+            return "Variable";
+        }
     }
 }

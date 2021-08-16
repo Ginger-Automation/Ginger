@@ -184,6 +184,20 @@ namespace Amdocs.Ginger.Common
             }
         }
 
+        private eExecutedFrom mExecutedFrom;
+        public eExecutedFrom ExecutedFrom
+        {
+            get
+            {
+                return mExecutedFrom;
+            }
+            set
+            {
+                mExecutedFrom = value;
+                OnPropertyChanged(nameof(ExecutedFrom));
+            }
+        }
+
         public static Context GetAsContext(object contextObj)
         {
             if (contextObj != null && contextObj is Context)
