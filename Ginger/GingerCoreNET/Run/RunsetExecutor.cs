@@ -38,7 +38,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
-
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 namespace Ginger.Run
 {
     public class RunsetExecutor : INotifyPropertyChanged
@@ -393,10 +393,23 @@ namespace Ginger.Run
 
                 //reset run       
                 if (doContinueRun == false)
-                {
+                {                    
                     if (WorkSpace.Instance.RunningInExecutionMode == false || RunSetConfig.ExecutionID == null)
                     {
                         RunSetConfig.ExecutionID = Guid.NewGuid();
+                    }
+                    else
+                    {
+                        if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+                        {
+                            AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+                            bool isExists = accountReportApiHandler.ExecutionIdValidation((Guid)RunSetConfig.ExecutionID);
+                            if(isExists)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Execution id validation failed due to duplication || Runset Name : {0}, Execution Id : {1}, Please provide unique execution id.", RunSetConfig.Name , RunSetConfig.ExecutionID));
+                                return;
+                            }
+                        }                        
                     }
                     RunSetConfig.LastRunsetLoggerFolder = "-1";   // !!!!!!!!!!!!!!!!!!
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
