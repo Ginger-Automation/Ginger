@@ -556,7 +556,7 @@ namespace Ginger.Run
             try
             {
                 
-                if (Active == false || BusinessFlows.Count == 0)
+                if (Active == false || BusinessFlows.Count == 0 || BusinessFlows.Where(x=>x.Active).FirstOrDefault() == null)
                 {
                     runnerExecutionSkipped = true;
                     return;
