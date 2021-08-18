@@ -7,7 +7,6 @@ using Ginger.Actions;
 using Ginger.UserControls;
 using GingerCore.DataSource;
 using GingerCore.Environments;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
@@ -17,13 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 {
@@ -89,12 +82,10 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     switch (item.ItemType)
                     {
                         case GlobalSolution.eImportItemType.Documents:
-                            //SelectedItemsListToImport.Add(item);
                             AddItemToList(item, ref SelectedItemsListToImport);
                             break;
 
                         case GlobalSolution.eImportItemType.Environments:
-                            //SelectedItemsListToImport.Add(item);
                             AddItemToList(item, ref SelectedItemsListToImport);
 
                             //find dependant item and add to list
@@ -120,7 +111,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                                 
                             }
 
-                            string[] filePaths = Directory.GetFiles(System.IO.Path.Combine(wiz.SolutionFolder, "DataSources"), "*", SearchOption.AllDirectories);
+                            string[] filePaths = Directory.GetFiles(System.IO.Path.Combine(wiz.SolutionFolder, "DataSources"), "*.xml", SearchOption.AllDirectories);
                             foreach (string file in filePaths)
                             {
                                 if (dsList.Contains(System.IO.Path.GetFileNameWithoutExtension(file).Replace(".Ginger.DataSource", "")))
@@ -128,8 +119,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                                     //check if datasource is already added to list
                                     if (SelectedItemsListToImport.Where(x => x.ItemExtraInfo == file).ToList().Count == 0)
                                     {
-                                        //string itemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(file);
-                                        //SelectedItemsListToImport.Add(new GlobalSolutionItem(GlobalSolution.eImportItemType.DataSources, file, true, itemName, GlobalSolution.eItemDependancyType.Dependant));
                                         GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.DataSources, file, true, "", true);
                                         AddItemToList(newItem, ref SelectedItemsListToImport);
                                     }
@@ -138,14 +127,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
                             break;
                         case GlobalSolution.eImportItemType.DataSources:
-                            //SelectedItemsListToImport.Add(item);
                             AddItemToList(item, ref SelectedItemsListToImport);
-
-                            //DataSourceBase dataSource = (DataSourceBase)newRepositorySerializer.DeserializeFromFile(item.ItemExtraInfo);
-                            //string sourceFile = dataSource.FilePath.Replace("~", wiz.SolutionFolder);
-                            //GlobalSolutionItem dsitem = new GlobalSolutionItem(GlobalSolution.eImportItemType.DataSources, sourceFile, true, System.IO.Path.GetFileName(sourceFile), true);
-                            //AddItemToList(dsitem, ref SelectedItemsListToImport);
-
                             break;
                     }
                     

@@ -86,7 +86,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             foreach (GlobalSolutionItem item in wiz.ItemTypeListToImport.Where(x => x.Selected))
             {
                 string[] filePaths = null;
-                //if (item.ItemType == GlobalSolution.eImportItemType.Documents || item.ItemType == GlobalSolution.eImportItemType.DataSources)
                 if (item.ItemType == GlobalSolution.eImportItemType.Documents)
                 {
                     filePaths = Directory.GetFiles(Path.Combine(wiz.SolutionFolder, item.ItemType.ToString()), "*", SearchOption.AllDirectories);

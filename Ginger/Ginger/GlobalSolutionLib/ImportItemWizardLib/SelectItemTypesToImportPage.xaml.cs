@@ -38,8 +38,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             {
                 case EventType.Init:
                     wiz = (ImportItemWizard)WizardEventArgs.Wizard;
-                    //xGlobalSolutionFolderUC.Init(null, wiz, nameof(ImportItemWizard.SolutionFolder), false, true, UCValueExpression.eBrowserType.Folder);
-
                     SetItemsListToImportGridView();
                     wiz.ItemTypeListToImport = GetItemTypeListToImport();
                     xItemTypesToImportGrid.DataSourceList = wiz.ItemTypeListToImport;
@@ -55,28 +53,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     break;
             }
         }
-
-        //private void ImportFromLocalFolderTypeRadio_Checked(object sender, RoutedEventArgs e)
-        //{
-        //    if (wiz == null)
-        //    {
-        //        return;
-        //    }
-        //    wiz.ImportFromType = GlobalSolution.eImportFromType.LocalFolder;
-        //    ImportFromLocalFolderPanel.Visibility = Visibility.Visible;
-        //    ImportFromSourceControlPanel.Visibility = Visibility.Hidden;
-        //}
-
-        //private void ImportFromSourceControlTypeRadio_Checked(object sender, RoutedEventArgs e)
-        //{
-        //    if (wiz == null)
-        //    {
-        //        return;
-        //    }
-        //    wiz.ImportFromType = GlobalSolution.eImportFromType.SourceControl;
-        //    ImportFromSourceControlPanel.Visibility = Visibility.Visible;
-        //    ImportFromLocalFolderPanel.Visibility = Visibility.Hidden;
-        //}
 
         private void SetItemsListToImportGridView()
         {

@@ -40,11 +40,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 case EventType.Init:
                     wiz = (ImportItemWizard)WizardEventArgs.Wizard;
                     xGlobalSolutionFolderUC.Init(null, wiz, nameof(ImportItemWizard.SolutionFolder), false, true, UCValueExpression.eBrowserType.Folder);
-
-                    //SetItemsListToImportGridView();
-                    //wiz.ItemTypeListToImport = GetItemTypeListToImport();
-                    //xItemTypesToImportGrid.DataSourceList = wiz.ItemTypeListToImport;
-
                     break;
                 case EventType.LeavingForNextPage:
                     if (string.IsNullOrEmpty(wiz.SolutionFolder))
@@ -84,31 +79,5 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             ImportFromSourceControlPanel.Visibility = Visibility.Visible;
             ImportFromLocalFolderPanel.Visibility = Visibility.Hidden;
         }
-
-        //private void SetItemsListToImportGridView()
-        //{
-        //    //Set the Data Grid columns            
-        //    GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-        //    view.GridColsView = new ObservableList<GridColView>();
-
-        //    view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.Selected), Header = "Select", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
-        //    view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemType), Header = "Item Type", WidthWeight = 100, ReadOnly = true });
-        //    view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemExtraInfo), Header = "Item Extra Info", WidthWeight = 100, ReadOnly = true });
-
-        //    xItemTypesToImportGrid.SetAllColumnsDefaultView(view);
-        //    xItemTypesToImportGrid.InitViewItems();
-            
-        //}
-
-        //public ObservableList<GlobalSolutionItem> GetItemTypeListToImport()
-        //{
-        //    ObservableList<GlobalSolutionItem> ItemTypeListToImport = new ObservableList<GlobalSolutionItem>();
-        //    foreach (GlobalSolution.eImportItemType ItemType in GlobalSolution.GetEnumValues<GlobalSolution.eImportItemType>())
-        //    {
-        //        var description = ((EnumValueDescriptionAttribute[])typeof(GlobalSolution.eImportItemType).GetField(ItemType.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription;
-        //        ItemTypeListToImport.Add(new GlobalSolutionItem(ItemType, description, true, "", false));
-        //    }
-        //    return ItemTypeListToImport;
-        //}
     }
 }
