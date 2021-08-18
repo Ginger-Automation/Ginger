@@ -403,11 +403,11 @@ namespace Ginger.Run
                         if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
                         {
                             AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
-                            bool isExists = accountReportApiHandler.ExecutionIdValidation((Guid)RunSetConfig.ExecutionID);
-                            if(isExists)
+                            bool isValidated = accountReportApiHandler.ExecutionIdValidation((Guid)RunSetConfig.ExecutionID);
+                            if(!isValidated)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Execution id validation failed due to duplication || Runset Name : {0}, Execution Id : {1}, Please provide unique execution id.", RunSetConfig.Name , RunSetConfig.ExecutionID));
-                                return;
+                                RunSetConfig.ExecutionID = Guid.NewGuid();
+                                Reporter.ToLog(eLogLevel.WARN, string.Format("Duplicate execution id used, creating new execution id : {0}", RunSetConfig.ExecutionID));                                
                             }
                         }                        
                     }

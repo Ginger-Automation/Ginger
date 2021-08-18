@@ -244,7 +244,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception while validating execution id " + message, ex);
             }
-            return false;
+            return true;
         }
 
         public async Task SendScreenShotsToCentralDBAsync(Guid executionId, List<string> filePaths)
