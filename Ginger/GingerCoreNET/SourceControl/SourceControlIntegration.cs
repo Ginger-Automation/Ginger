@@ -217,6 +217,36 @@ namespace Ginger.SourceControl
 
         }
 
+        public static bool CommitSelfHealingChanges(string solutionPath)
+        {
+            SourceControlBase mSourceControl = WorkSpace.Instance.SourceControl;
+
+            string error = string.Empty;
+            var sourceControlFileInfos = mSourceControl.GetPathFilesStatus(solutionPath, ref error);
+
+            var paths = new List<string>();
+            foreach (var item in sourceControlFileInfos)
+            {
+                if (item.Path.Contains("DOCUMENTS") || item.Path.Contains("EXECUTIONRESULTS"))
+                {
+                    continue;
+                }
+                if (item.Status == SourceControlFileInfo.eRepositoryItemStatus.Modified)
+                {
+                    paths.Add(item.Path);
+                }
+            }
+
+            if (paths.Count == 0)
+            {
+                return false;
+            }
+
+            List<string> conflictsPaths = new List<string>();
+            return mSourceControl.CommitChanges(paths, "check-in self healing changes.", ref error, ref conflictsPaths, false);
+
+        }
+
         public static void Lock(SourceControlBase SourceControl, string path, string lockComment)
         {
             string error = string.Empty;

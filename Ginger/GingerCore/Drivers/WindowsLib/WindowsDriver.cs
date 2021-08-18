@@ -614,6 +614,18 @@ namespace GingerCore.Drivers.WindowsLib
                 locators = currentPOMElementInfo.Locators;
             }
             AutomationElement windowElement = LocateElementByLocators(locators, true);
+
+            if (windowElement == null)
+            {
+                if (pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
+                {
+                    windowElement = LocateElementByLocators(currentPOMElementInfo.Locators,true);
+                }
+            }
+            if (windowElement != null && currentPOMElementInfo.SelfHealingInfo == SelfHealingInfoEnum.ElementDeleted)
+            {
+                currentPOMElementInfo.SelfHealingInfo = SelfHealingInfoEnum.None;
+            }
             if (windowElement != null)
             {
                 pomExcutionUtil.PriotizeLocatorPosition();

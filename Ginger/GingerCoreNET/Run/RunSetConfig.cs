@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
+using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
@@ -320,6 +321,9 @@ namespace Ginger.Run
 
         [IsSerializedForLocalRepository]
         public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = new ObservableList<SolutionCategoryDefinition>();
+
+        [IsSerializedForLocalRepository]
+        public SelfHealingConfig SelfHealingConfiguration = new SelfHealingConfig();
 
         public override void PostDeserialization()
         {

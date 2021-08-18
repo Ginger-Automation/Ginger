@@ -257,6 +257,8 @@ namespace Ginger.Run
             }
         }
 
+       // public SelfHealingConfig SelfHealingConfiguration = new SelfHealingConfig();
+
         public ObservableList<Platform> Platforms = new ObservableList<Platform>();//TODO: delete me once projects moved to new Apps/Platform config, meanwhile enable to load old run set config, but ignore the value
 
         [IsSerializedForLocalRepository]
@@ -1856,6 +1858,18 @@ namespace Ginger.Run
             UpdateActionStatus(action, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running, st);
             GiveUserFeedback();
 
+           
+            if (action.Context == null)
+            {
+                var mContext = new Context() { ExecutedFrom = this.ExecutedFrom};
+                action.Context = mContext;
+            }
+            else
+            {
+                var mContext = Context.GetAsContext(action.Context);
+                mContext.ExecutedFrom = this.ExecutedFrom;
+            }
+            
         }
 
         public void PrepActionValueExpression(Act act, BusinessFlow businessflow = null)

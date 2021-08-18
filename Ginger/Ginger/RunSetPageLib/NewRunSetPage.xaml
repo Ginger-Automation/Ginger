@@ -170,6 +170,8 @@
                                 <Label Content="Environment :" x:Name="xEnvironmentCombolbl" Foreground="{StaticResource $BackgroundColor_DarkBlue}" ></Label>
                                 <ComboBox x:Name="xRunsetEnvironmentCombo" ToolTip="Environment"  HorizontalAlignment="Left" ContextMenu="{x:Null}" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,5,5,3" SelectionChanged="XRunsetEnvironmentCombo_SelectionChanged"></ComboBox>
                                 <usercontrols:ucButton x:Name="xRunnersExecutionConfigBtn" ToolTip="Runners Execution Configurations" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Config" Click="xRunnersExecutionConfigBtn_Click"></usercontrols:ucButton>
+                                <usercontrols:ucButton x:Name="xSelfHealingConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="SelfHealing" Click="xSelfHealingConfigBtn_Click"  ToolTip="Self Healing Configurations"/>
+
                                 <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="12 0 12 0"/>
                                 <usercontrols:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Runner Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonFontImageSize="17" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"></usercontrols:ucButton>
                             </DockPanel>
