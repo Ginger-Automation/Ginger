@@ -109,84 +109,93 @@ namespace Ginger.AnalyzerLib
             List<string> usedVariablesInBF = new List<string>();
             List<string> usedVariablesInActivity = new List<string>();
             List<AnalyzerItemBase> missingVariableIssueList = new List<AnalyzerItemBase>();
-            ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(WorkSpace.Instance.Solution, businessFlow))
-            {
-                AddIssue(issuesList, issue);
-            }
 
-            Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
-            { 
-                if(activity.Active)
+            try
+            {
+                ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+                foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(WorkSpace.Instance.Solution, businessFlow))
                 {
-                    foreach (AnalyzerItemBase issue in AnalyzeActivity.Analyze(businessFlow, activity))
-                    {
-                        AddIssue(issuesList, issue);
-                    }
+                    AddIssue(issuesList, issue);
                 }
 
-                Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
-                 {
-
-                     Act action = (Act)iaction;
-                     if(action.Active)
-                     {
-                         foreach (AnalyzerItemBase issue in AnalyzeAction.Analyze(businessFlow, activity, action, DSList))
-                         {
-                             AddIssue(issuesList, issue);
-                             if (issue.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable)
-                             {
-                                 lock(mMissingVariableIssueLock)
-                                 {
-                                     missingVariableIssueList.Add(issue);
-                                 }
-                             }
-                               
-                         }
-
-                     }
-
-                     List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);                     
-                     MergeVariablesList(usedVariablesInActivity,tempList);
-                 });
-
-                 List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
-         
-                MergeVariablesList(usedVariablesInActivity, activityVarList);
-                ReportUnusedVariables(activity, usedVariablesInActivity, issuesList);              
-                MergeVariablesList(usedVariablesInBF, usedVariablesInActivity);
-             
-                 
-                 usedVariablesInActivity.Clear();
-            });
-
-            //Get all the missing variable issues Grouped by Variable name
-            lock (mMissingVariableIssueLock)
-            {
-                if(missingVariableIssueList.Count!=0)
+                Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
                 {
-                    var missingVariableIssuesGroupList = missingVariableIssueList.GroupBy(x => x.IssueReferenceObject);
-
-                    foreach (var variableIssueGroup in missingVariableIssuesGroupList)
+                    if (activity.Active)
                     {
-                        //If for specific variable, all the issues are for set variable action then we support Auto Fix
-                        var canAutoFix = variableIssueGroup.All(x => x is AnalyzeAction && ((AnalyzeAction)x).mAction.GetType() == typeof(ActSetVariableValue));
-
-                        if (canAutoFix)
+                        foreach (AnalyzerItemBase issue in AnalyzeActivity.Analyze(businessFlow, activity))
                         {
-                            foreach (AnalyzeAction issue in variableIssueGroup)
+                            AddIssue(issuesList, issue);
+                        }
+                    }
+
+                    Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
+                    {
+
+                        Act action = (Act)iaction;
+                        if (action.Active)
+                        {
+                            foreach (AnalyzerItemBase issue in AnalyzeAction.Analyze(businessFlow, activity, action, DSList))
                             {
-                                issue.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
-                                issue.FixItHandler += MarkSetVariableActionAsInactive;
+                                AddIssue(issuesList, issue);
+                                if (issue.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable)
+                                {
+                                    lock (mMissingVariableIssueLock)
+                                    {
+                                        missingVariableIssueList.Add(issue);
+                                    }
+                                }
+
                             }
+
                         }
 
-                    }
-                }
-           
-            }
+                        List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
+                        MergeVariablesList(usedVariablesInActivity, tempList);
+                    });
 
-            ReportUnusedVariables(businessFlow, usedVariablesInBF, issuesList);
+                    List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
+
+                    MergeVariablesList(usedVariablesInActivity, activityVarList);
+                    ReportUnusedVariables(activity, usedVariablesInActivity, issuesList);
+                    MergeVariablesList(usedVariablesInBF, usedVariablesInActivity);
+
+
+                    usedVariablesInActivity.Clear();
+                });
+
+                //Get all the missing variable issues Grouped by Variable name
+                lock (mMissingVariableIssueLock)
+                {
+                    if (missingVariableIssueList.Count != 0)
+                    {
+                        var missingVariableIssuesGroupList = missingVariableIssueList.GroupBy(x => x.IssueReferenceObject);
+
+                        foreach (var variableIssueGroup in missingVariableIssuesGroupList)
+                        {
+                            //If for specific variable, all the issues are for set variable action then we support Auto Fix
+                            var canAutoFix = variableIssueGroup.All(x => x is AnalyzeAction && ((AnalyzeAction)x).mAction.GetType() == typeof(ActSetVariableValue));
+
+                            if (canAutoFix)
+                            {
+                                foreach (AnalyzeAction issue in variableIssueGroup)
+                                {
+                                    issue.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
+                                    issue.FixItHandler += MarkSetVariableActionAsInactive;
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+
+                ReportUnusedVariables(businessFlow, usedVariablesInBF, issuesList);
+            }
+            catch (Exception ex) 
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during analying business flow..", ex);
+            }
+           
 
             return usedVariablesInBF;
         }

@@ -7047,11 +7047,17 @@ namespace GingerCore.Drivers
                     case ActUIElement.eElementAction.SetText:
                         try
                         {
-                            ClearText(e);
+                            if (e != null)
+                            {
+                                ClearText(e);
+                            }
                         }
                         finally
                         {
-                            e.SendKeys(act.ValueForDriver);
+                            if (e != null)
+                            {
+                                e.SendKeys(act.ValueForDriver);
+                            }
                         }
                         break;
                     case ActUIElement.eElementAction.AsyncClick:

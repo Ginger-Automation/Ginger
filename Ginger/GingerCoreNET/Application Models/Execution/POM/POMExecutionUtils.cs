@@ -110,7 +110,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         public bool PriotizeLocatorPosition()
         {
-            if (!IsSelfHealingConfigured())
+            if (!IsSelfHealingConfiguredForPriotizeLocatorPosition())
             {
                 return false;
             }
@@ -133,36 +133,71 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             return locatorPriotize;
         }
 
-        private bool IsSelfHealingConfigured()
+        private bool IsSelfHealingConfiguredForPriotizeLocatorPosition()
         {
             if (ExecutedFrom == eExecutedFrom.Run)
             {
                 //when executing from runset
                 var runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
 
-                if (runSetConfig != null)
+                if (runSetConfig != null && runSetConfig.SelfHealingConfiguration.EnableSelfHealing)
                 {
-                    if (!runSetConfig.SelfHealingConfiguration.EnableSelfHealing || !runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel)
+                    if (runSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators)
                     {
-                        return false;
+                        return true;
                     }
-                    return true;
                 }
             }
-            
-            //when running from automate tab
-            var selfHealingConfigAutomateTab = WorkSpace.Instance.AutomateTabSelfHealingConfiguration;
-            if (!selfHealingConfigAutomateTab.EnableSelfHealing || !selfHealingConfigAutomateTab.AutoUpdateApplicationModel)
+            else if (ExecutedFrom == eExecutedFrom.Automation)
             {
-                return false;
+                //when running from automate tab
+                var selfHealingConfigAutomateTab = WorkSpace.Instance.AutomateTabSelfHealingConfiguration;
+                if (selfHealingConfigAutomateTab.EnableSelfHealing)
+                {
+                    if (selfHealingConfigAutomateTab.ReprioritizePOMLocators)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool IsSelfHealingConfiguredForAutoUpdateCurrentPOM()
+        {
+            if (ExecutedFrom == eExecutedFrom.Run)
+            {
+                //when executing from runset
+                var runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
+
+                if (runSetConfig != null && runSetConfig.SelfHealingConfiguration.EnableSelfHealing)
+                {
+                    if (runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel)
+                    {
+                        return true;
+                    }
+                }
+            }
+            else if (ExecutedFrom == eExecutedFrom.Automation)
+            {
+                //when running from automate tab
+                var selfHealingConfigAutomateTab = WorkSpace.Instance.AutomateTabSelfHealingConfiguration;
+                if (selfHealingConfigAutomateTab.EnableSelfHealing)
+                {
+                    if (selfHealingConfigAutomateTab.AutoUpdateApplicationModel)
+                    {
+                        return true;
+                    }
+                }
             }
 
-            return true;
+
+            return false;
         }
 
         public ElementInfo AutoUpdateCurrentPOM(Common.InterfacesLib.IAgent currentAgent)
         {
-            if (!IsSelfHealingConfigured())
+            if (!IsSelfHealingConfiguredForAutoUpdateCurrentPOM())
             {
                 return null;
             }
@@ -170,13 +205,26 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             var passedLocator = GetCurrentPOMElementInfo().Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed);
 
 
-            if (passedLocator == null || passedLocator.Count() == 0 )
+            if (passedLocator == null || passedLocator.Count() == 0)
             {
-                var pomLastUpdatedTimeSpan = (System.DateTime.Now - Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime)).TotalHours;
-
-                if (pomLastUpdatedTimeSpan < 5)
+                if (ExecutedFrom == eExecutedFrom.Run)
                 {
-                    return null;
+                    var runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
+                    if (runSetConfig != null)
+                    {
+                        if ((Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime).ToUniversalTime() > runSetConfig.StartTimeStamp))
+                        {
+                            return null;
+                        }
+                    }
+                }
+                else
+                {
+                    var pomLastUpdatedTimeSpan = (System.DateTime.Now - Convert.ToDateTime(GetCurrentPOMElementInfo().LastUpdatedTime)).TotalHours;
+                    if (pomLastUpdatedTimeSpan < 5)
+                    {
+                        return null;
+                    }
                 }
             }
 
@@ -249,7 +297,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
             GingerCore.Agent agent = (GingerCore.Agent)currentAgent;
             var pomDeltaUtils = new PomDeltaUtils(this.GetCurrentPOM(), agent);
-            
+
             try
             {
                 //set element type
