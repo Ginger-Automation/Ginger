@@ -6,10 +6,12 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
+using Amdocs.Ginger.CoreNET.GlobalSolutionLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.WizardLib;
 using GingerCore;
+using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
@@ -26,7 +28,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
         public ObservableList<GlobalSolutionItem> ItemTypeListToImport = null;
         public ObservableList<GlobalSolutionItem> ItemsListToImport = null;
         public ObservableList<GlobalSolutionItem> SelectedItemTypeListToImport = null;
-
+        NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+        RepositoryItemBase repoItemToImport = null;
         public ImportItemWizard()
         {
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Global Solution Introduction", Page: new WizardIntroPage("/GlobalSolutionLib/ImportItemWizardLib/ImportItemIntro.md"));
@@ -49,41 +52,52 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             {
                 if (!string.IsNullOrEmpty(SolutionFolder))
                 {
-                    foreach (GlobalSolutionItem item in SelectedItemTypeListToImport.Where(x => x.Selected).ToList())
+                    foreach (GlobalSolutionItem itemToAdd in SelectedItemTypeListToImport.Where(x => x.Selected).ToList())
                     {
-                        string sourceFile = item.ItemExtraInfo;
-
+                        string sourceFile = itemToAdd.ItemExtraInfo;
+                        string targetFile = string.Empty;
                         //Get subdirectory path
-                        string path = Path.GetDirectoryName(item.ItemExtraInfo);
-                        //while (path != SolutionFolder)
-                        //{
-                        //    string lastFolderName = Path.GetFileName(path);
-                        //    path = path.Remove(path.LastIndexOf(lastFolderName),lastFolderName.Length);
-                        //    path = Path.GetDirectoryName(path);
-                        //}
+                        string path = Path.GetDirectoryName(itemToAdd.ItemExtraInfo);
+                        string folderPath = path.Replace(SolutionFolder + "\\", "");
 
-                        string folderPath = path.Replace(SolutionFolder,"");
+                        //if (string.IsNullOrEmpty(itemToAdd.Comments))
+                        if (string.IsNullOrEmpty(itemToAdd.ItemNewName))
+                        {
+                            targetFile = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, folderPath, Path.GetFileName(itemToAdd.ItemExtraInfo));
+                        }
+                        else
+                        {
+                            string newFileName = GlobalSolutionUtils.Instance.GetUniqFileName(sourceFile);
+                            targetFile = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, folderPath, newFileName);
+                        }
 
-                        //string targetFile = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, folderPath, Path.GetFileName(item.ItemExtraInfo));
-                        string targetFile = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, item.ItemType.ToString(), Path.GetFileName(item.ItemExtraInfo));
+                        //targetFile = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, folderPath, Path.GetFileName(item.ItemExtraInfo));
 
-                        switch (item.ItemType)
+                        switch (itemToAdd.ItemType)
                         {
                             case GlobalSolution.eImportItemType.Documents:
-                                AddItemToSolution(sourceFile, targetFile, false, item.ItemImportSetting);
+                                AddItemToSolution(sourceFile, targetFile, false, itemToAdd);
                                 break;
                             case GlobalSolution.eImportItemType.Environments:
-                                AddItemToSolution(sourceFile, targetFile, true, item.ItemImportSetting);
+                                AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
                                 break;
                             case GlobalSolution.eImportItemType.DataSources:
-                                if (Path.GetExtension(targetFile) != ".xml")
-                                {
-                                    AddItemToSolution(sourceFile, targetFile, false, item.ItemImportSetting);
-                                }
-                                else
-                                {
-                                    AddItemToSolution(sourceFile, targetFile, true, item.ItemImportSetting);
-                                }
+                                AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
+
+                                //DataSourceBase dataSource = (DataSourceBase)newRepositorySerializer.DeserializeFromFile(sourceFile);
+                                //sourceFile = dataSource.FilePath.Replace("~", SolutionFolder);
+                                //targetFile = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, folderPath, Path.GetFileName(sourceFile));
+                                //GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.DataSources, sourceFile, true, Path.GetFileName(sourceFile), true);
+                                //AddItemToSolution(sourceFile, targetFile, false, newItem);
+
+                                //if (Path.GetExtension(targetFile) != ".xml")
+                                //{
+                                //    AddItemToSolution(sourceFile, targetFile, false, itemToAdd);
+                                //}
+                                //else
+                                //{
+                                //    AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
+                                //}
                                 break;
                         }
 
@@ -92,50 +106,87 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 }
             }
         }
-        NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
-        RepositoryItemBase importedItem = null;
-        void AddItemToSolution(string sourceFile, string targetFile, bool saveAsRepo, GlobalSolution.eImportSetting eImportSetting)
+
+        void AddItemToSolution(string sourceFile, string targetFile, bool saveAsRepo, GlobalSolutionItem itemToImport)
         {
-            switch (eImportSetting)
+            switch (itemToImport.ItemImportSetting)
             {
-                case GlobalSolution.eImportSetting.CreateNew:
-                    //
-                    break;
                 case GlobalSolution.eImportSetting.ReplaceExsiting:
-                    if (File.Exists(targetFile))
+                    //if (File.Exists(targetFile))
                     {
-                        try
+                        if (GlobalSolutionUtils.Instance.IsGingerRepositoryItem(sourceFile))
                         {
-                            RepositoryItemBase repositoryItem = newRepositorySerializer.DeserializeFromFile(targetFile);
-                            repositoryItem.ContainingFolder = Path.GetDirectoryName(targetFile);
-                            repositoryItem.FilePath = targetFile;
-                            repositoryItem.FileName = targetFile;//Needed inside MoveSharedRepositoryItemToPrevVersion
-                            WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(repositoryItem);
+                            RepositoryItemBase repositoryItem = newRepositorySerializer.DeserializeFromFile(sourceFile);
+                            RepositoryItemBase repoItem = GlobalSolutionUtils.Instance.GetRepositoryItemByGUID(itemToImport, repositoryItem);
+                            if (repoItem != null)
+                            {
+                                //repositoryItem.ContainingFolder = Path.GetDirectoryName(targetFile);
+                                //repositoryItem.FilePath = targetFile;
+                                //repositoryItem.FileName = targetFile;//Needed inside MoveSharedRepositoryItemToPrevVersion
+                                WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(repoItem);
+                                if (itemToImport.ItemType == GlobalSolution.eImportItemType.DataSources)
+                                {
+                                    DataSourceBase dataSource = (DataSourceBase)repoItem;
+                                    string dsFile = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(dataSource.FilePath);
+                                    GlobalSolutionUtils.Instance.KeepBackupAndDeleteFile(dsFile);
+                                    //string directory = Path.GetDirectoryName(dsFile);
+                                    ////string ext = Path.GetExtension(dsFile);
+                                    //string fileName = Path.GetFileName(dsFile);
+                                    //string bkpDateTime = System.Text.RegularExpressions.Regex.Replace(DateTime.Now.ToString(), @"[^0-9a-zA-Z]+", "");
+                                    ////keep the backup to PrevVersion folder
+                                    //string bkpPath = Path.Combine(directory, "PrevVersions",fileName);
+                                    //File.Copy(dsFile, bkpPath + "." + bkpDateTime + ".bak");
+                                    //File.Delete(dsFile);
+
+                                    //File.Copy(dsFile, dsFile + "." + bkpDateTime + ".bak");
+                                    //File.Delete(dsFile);
+                                }
+                            }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            string bkpDateTime = System.Text.RegularExpressions.Regex.Replace(DateTime.Now.ToString(), @"[^0-9a-zA-Z]+", "");
-                            //keep the backup 
-                            File.Copy(targetFile, targetFile + "." + bkpDateTime + ".bak");
-                            File.Delete(targetFile);
+                            //string bkpDateTime = System.Text.RegularExpressions.Regex.Replace(DateTime.Now.ToString(), @"[^0-9a-zA-Z]+", "");
+                            ////keep the backup 
+                            //File.Copy(targetFile, targetFile + "." + bkpDateTime + ".bak");
+                            //File.Delete(targetFile);
+                            GlobalSolutionUtils.Instance.KeepBackupAndDeleteFile(targetFile);
                         }
 
                     }
-                    
-                    break;
-
-                case GlobalSolution.eImportSetting.KeepLocal:
-                    // Nothing to do 
-                    return;
                     break;
             }
 
             if (saveAsRepo)
             {
-                importedItem = newRepositorySerializer.DeserializeFromFile(sourceFile);
-                importedItem.ContainingFolder = Path.GetDirectoryName(targetFile);
-                importedItem.FilePath = targetFile;
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(importedItem);
+                repoItemToImport = newRepositorySerializer.DeserializeFromFile(sourceFile);
+                repoItemToImport.ContainingFolder = Path.GetDirectoryName(targetFile);
+                repoItemToImport.FilePath = targetFile;
+                if (!string.IsNullOrEmpty(itemToImport.ItemNewName))
+                {
+                    repoItemToImport.ItemName = itemToImport.ItemNewName;
+                }
+                if (itemToImport.ItemType == GlobalSolution.eImportItemType.DataSources)
+                {
+                    DataSourceBase dataSource = (DataSourceBase)repoItemToImport;
+                    sourceFile = dataSource.FilePath.Replace("~", SolutionFolder);
+                    string dsFile = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(dataSource.FilePath);
+                    string directory = Path.GetDirectoryName(dsFile);
+                    string ext = Path.GetExtension(dsFile);
+                    string fileName = Path.GetFileName(dsFile);
+
+                    string newFile = string.Empty;
+                    if (!string.IsNullOrEmpty(itemToImport.ItemNewName))
+                    {
+                        newFile = Path.Combine(directory, itemToImport.ItemNewName + ext);
+                    }
+                    else
+                    {
+                        newFile = Path.Combine(directory, fileName);
+                    }
+                    //
+                    File.Copy(sourceFile, newFile);
+                }
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(repoItemToImport);
             }
             else
             {

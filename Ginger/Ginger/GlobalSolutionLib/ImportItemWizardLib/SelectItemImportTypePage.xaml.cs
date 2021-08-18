@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
 using Ginger.Actions;
 using Ginger.UserControls;
@@ -49,6 +50,12 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     if (string.IsNullOrEmpty(wiz.SolutionFolder))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Please select Solution Folder."));
+                        WizardEventArgs.CancelEvent = true;
+                        return;
+                    }
+                    else if (wiz.SolutionFolder == WorkSpace.Instance.SolutionRepository.SolutionFolder)
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Please select different Solution Folder."));
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }

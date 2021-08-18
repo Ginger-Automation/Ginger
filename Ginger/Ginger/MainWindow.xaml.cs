@@ -76,6 +76,10 @@ namespace Ginger
             DriverWindowHandler.Init();
 
             GingerCore.General.DoEvents();
+            if (!WorkSpace.Instance.BetaFeatures.ShowGlobalCrossSolution)
+            {
+                xGlobalSolutionMenu.Visibility = Visibility.Hidden;
+            }
         }
 
         private void TelemetryEventHandler(object sender, Telemetry.TelemetryEventArgs e)
