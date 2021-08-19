@@ -51,8 +51,8 @@ namespace Ginger.Drivers.DriversWindows
                             }
                             catch (Exception ex)
                             {
-                                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Error occured while loading/showing Agent windows, error: '{0}'", ex.Message));
-                                Reporter.ToLog(eLogLevel.ERROR, "Error occured while loading/showing Agent windows", ex);
+                                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Error occurred while loading/showing Agent windows, error: '{0}'", ex.Message));
+                                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while loading/showing Agent windows", ex);
                             }
                         }
                     }));
