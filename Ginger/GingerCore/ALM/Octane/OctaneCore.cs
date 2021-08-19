@@ -277,7 +277,7 @@ namespace GingerCore.ALM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured during Octane server connection", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred during Octane server connection", ex);
                 mOctaneRestConnector = null;
                 return false;
             }

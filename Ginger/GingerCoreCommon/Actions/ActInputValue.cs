@@ -115,7 +115,7 @@ namespace Amdocs.Ginger.Repository
                         }
                         catch(Exception exc)
                         {
-                            Reporter.ToLog(eLogLevel.WARN, "An error occured while Deserializing JSON object", exc);
+                            Reporter.ToLog(eLogLevel.WARN, "An error occurred while Deserializing JSON object", exc);
                             dynList = JsonConvert.DeserializeObject(string.Format("{0}{1}{0}", "\"", mValue));
                         }
 
