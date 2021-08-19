@@ -12,7 +12,7 @@
             <RowDefinition Height="80*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
-        <CheckBox x:Name="xCustomRelativeXpathCofigChkBox" Click="xCustomRelativeXpathCofigChkBox_Click"  Content="Custom Relative Xpath Learing Configuration" IsChecked="False" />
+        <CheckBox x:Name="xCustomRelativeXpathCofigChkBox" Click="xCustomRelativeXpathCofigChkBox_Click"  Content="Custom Relative Xpath Learning Configuration" IsChecked="False" />
         </StackPanel>
         <StackPanel Grid.Row="1">
             <Ginger:ucGrid x:Name="xRelXpathSettingsGrid" Visibility="Collapsed" AutomationProperties.AutomationId="RelXpathSettings_AID" Title="Template:" ShowAdd="Visible" ShowDelete="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Collapsed"/>
