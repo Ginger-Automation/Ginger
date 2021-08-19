@@ -132,6 +132,10 @@ namespace Ginger.Actions
         }
         private void ScriptInterpreterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ScriptInterpreterComboBox.SelectedValue == null)
+            {
+                return;
+            }
             ActScript.eScriptInterpreterType interpreterType;
             Enum.TryParse(ScriptInterpreterComboBox.SelectedValue.ToString(), out interpreterType);
 
