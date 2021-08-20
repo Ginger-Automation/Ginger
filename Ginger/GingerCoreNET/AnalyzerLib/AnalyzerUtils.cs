@@ -55,7 +55,7 @@ namespace Ginger.AnalyzerLib
             Parallel.ForEach(BFs, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
             {
                 List<string> tempList = RunBusinessFlowAnalyzer(BF, issuesList);
-                MergeVariablesList(usedVariablesInSolution, tempList);   
+                MergeVariablesList(usedVariablesInSolution, tempList);
             });
             ReportUnusedVariables(solution, usedVariablesInSolution, issuesList);
         }
@@ -70,7 +70,7 @@ namespace Ginger.AnalyzerLib
             // Check all GRs BFS
             //foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
             Parallel.ForEach(mRunSetConfig.GingerRunners, new ParallelOptions { MaxDegreeOfParallelism = 5 }, GR =>
-            {            
+            {
                 foreach (AnalyzerItemBase issue in AnalyzeGingerRunner.Analyze(GR, WorkSpace.Instance.Solution.ApplicationPlatforms))
                 {
                     AddIssue(issuesList, issue);
@@ -102,7 +102,7 @@ namespace Ginger.AnalyzerLib
                     }
                 });
             });
-        }       
+        }
 
         public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList)
         {
@@ -110,93 +110,84 @@ namespace Ginger.AnalyzerLib
             List<string> usedVariablesInActivity = new List<string>();
             List<AnalyzerItemBase> missingVariableIssueList = new List<AnalyzerItemBase>();
 
-            try
+            ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(WorkSpace.Instance.Solution, businessFlow))
             {
-                ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-                foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(WorkSpace.Instance.Solution, businessFlow))
+                AddIssue(issuesList, issue);
+            }
+
+            Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
+            {
+                if (activity.Active)
                 {
-                    AddIssue(issuesList, issue);
+                    foreach (AnalyzerItemBase issue in AnalyzeActivity.Analyze(businessFlow, activity))
+                    {
+                        AddIssue(issuesList, issue);
+                    }
                 }
 
-                Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
+                Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
                 {
-                    if (activity.Active)
+
+                    Act action = (Act)iaction;
+                    if (action.Active)
                     {
-                        foreach (AnalyzerItemBase issue in AnalyzeActivity.Analyze(businessFlow, activity))
+                        foreach (AnalyzerItemBase issue in AnalyzeAction.Analyze(businessFlow, activity, action, DSList))
                         {
                             AddIssue(issuesList, issue);
-                        }
-                    }
-
-                    Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
-                    {
-
-                        Act action = (Act)iaction;
-                        if (action.Active)
-                        {
-                            foreach (AnalyzerItemBase issue in AnalyzeAction.Analyze(businessFlow, activity, action, DSList))
+                            if (issue.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable)
                             {
-                                AddIssue(issuesList, issue);
-                                if (issue.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable)
+                                lock (mMissingVariableIssueLock)
                                 {
-                                    lock (mMissingVariableIssueLock)
-                                    {
-                                        missingVariableIssueList.Add(issue);
-                                    }
+                                    missingVariableIssueList.Add(issue);
                                 }
-
                             }
 
                         }
 
-                        List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
-                        MergeVariablesList(usedVariablesInActivity, tempList);
-                    });
+                    }
 
-                    List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
-
-                    MergeVariablesList(usedVariablesInActivity, activityVarList);
-                    ReportUnusedVariables(activity, usedVariablesInActivity, issuesList);
-                    MergeVariablesList(usedVariablesInBF, usedVariablesInActivity);
-
-
-                    usedVariablesInActivity.Clear();
+                    List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
+                    MergeVariablesList(usedVariablesInActivity, tempList);
                 });
 
-                //Get all the missing variable issues Grouped by Variable name
-                lock (mMissingVariableIssueLock)
+                List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
+
+                MergeVariablesList(usedVariablesInActivity, activityVarList);
+                ReportUnusedVariables(activity, usedVariablesInActivity, issuesList);
+                MergeVariablesList(usedVariablesInBF, usedVariablesInActivity);
+
+
+                usedVariablesInActivity.Clear();
+            });
+
+            //Get all the missing variable issues Grouped by Variable name
+            lock (mMissingVariableIssueLock)
+            {
+                if (missingVariableIssueList.Count != 0)
                 {
-                    if (missingVariableIssueList.Count != 0)
+                    var missingVariableIssuesGroupList = missingVariableIssueList.GroupBy(x => x.IssueReferenceObject);
+
+                    foreach (var variableIssueGroup in missingVariableIssuesGroupList)
                     {
-                        var missingVariableIssuesGroupList = missingVariableIssueList.GroupBy(x => x.IssueReferenceObject);
+                        //If for specific variable, all the issues are for set variable action then we support Auto Fix
+                        var canAutoFix = variableIssueGroup.All(x => x is AnalyzeAction && ((AnalyzeAction)x).mAction.GetType() == typeof(ActSetVariableValue));
 
-                        foreach (var variableIssueGroup in missingVariableIssuesGroupList)
+                        if (canAutoFix)
                         {
-                            //If for specific variable, all the issues are for set variable action then we support Auto Fix
-                            var canAutoFix = variableIssueGroup.All(x => x is AnalyzeAction && ((AnalyzeAction)x).mAction.GetType() == typeof(ActSetVariableValue));
-
-                            if (canAutoFix)
+                            foreach (AnalyzeAction issue in variableIssueGroup)
                             {
-                                foreach (AnalyzeAction issue in variableIssueGroup)
-                                {
-                                    issue.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
-                                    issue.FixItHandler += MarkSetVariableActionAsInactive;
-                                }
+                                issue.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
+                                issue.FixItHandler += MarkSetVariableActionAsInactive;
                             }
-
                         }
-                    }
 
+                    }
                 }
 
-                ReportUnusedVariables(businessFlow, usedVariablesInBF, issuesList);
             }
-            catch (Exception ex) 
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during analying business flow..", ex);
-            }
-           
 
+            ReportUnusedVariables(businessFlow, usedVariablesInBF, issuesList);
             return usedVariablesInBF;
         }
 
@@ -343,11 +334,6 @@ namespace Ginger.AnalyzerLib
         {
             lock (mAddIssuesLock)
             {
-                if (issue.CanAutoFix == AnalyzerItemBase.eCanFix.Yes && issue.FixItHandler != null && SelfHealingAutoFixIssue)
-                {
-                    issue.FixItHandler.Invoke(issue, null);
-                    return;
-                }
                 issuesList.Add(issue);
             }
         }

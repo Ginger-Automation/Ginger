@@ -6754,6 +6754,7 @@ namespace GingerCore.Drivers
                     if (e == null)
                     {
                         act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                        return;
                     }
                 }
             }
@@ -7047,17 +7048,11 @@ namespace GingerCore.Drivers
                     case ActUIElement.eElementAction.SetText:
                         try
                         {
-                            if (e != null)
-                            {
-                                ClearText(e);
-                            }
+                            ClearText(e);
                         }
                         finally
                         {
-                            if (e != null)
-                            {
-                                e.SendKeys(act.ValueForDriver);
-                            }
+                            e.SendKeys(act.ValueForDriver);
                         }
                         break;
                     case ActUIElement.eElementAction.AsyncClick:
