@@ -186,7 +186,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             var currentItem = (DeltaElementInfo)xDeletedElementsMappingGrid.CurrentItem;
             var newAddedElement = mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Added) && x.ElementInfo.Guid.ToString().Equals(currentItem.MappedElementInfo)).FirstOrDefault();
 
-            new PomDeltaMappingElementsComparePage(currentItem,newAddedElement).ShowAsWindow("Element Details Comparsion");
+            new PomDeltaMappingElementsComparePage(currentItem,newAddedElement).ShowAsWindow("Element Details Comparison");
         }
     }
 
