@@ -496,8 +496,8 @@ namespace Ginger.Run
                     //
                     if (action.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                     {
-                        if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(z => z.FailedActionGuid == action.Guid).ToList().Count > 0)
-                            return;
+                        //if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(z => z.FailedActionGuid == action.Guid).ToList().Count > 0)
+                        //    return;
 
                         //
                         ActivitiesGroup currrentGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == mCurrentActivity.ActivitiesGroupID).FirstOrDefault();
@@ -550,11 +550,15 @@ namespace Ginger.Run
                         {
                             GingerData.GingerName = "";
                         }
-                        WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Add(new DefectSuggestion(action.Guid, this.GingerData.GingerName, mContext.BusinessFlow.Name, currrentGroupName,
-                                                                                            mContext.BusinessFlow.ExecutionLogActivityCounter, mCurrentActivity.ActivityName, mCurrentActivity.ExecutionLogActionCounter,
-                                                                                            action.Description, action.RetryMechanismCount, action.Error, action.ExInfo, screenShotsPathes,
-                                                                                            isScreenshotButtonEnabled, automatedOpeningFlag, description.ToString(),
-                                                                                            currrentGroup.ExternalID, mCurrentActivity.ExternalID, new Tuple<string, string>(mContext.BusinessFlow.ExternalID, mContext.BusinessFlow.ExternalID2)));
+
+                        if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(z => z.FailedActionGuid == action.Guid).ToList().Count == 0)
+                        {
+                            WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Add(new DefectSuggestion(action.Guid, this.GingerData.GingerName, mContext.BusinessFlow.Name, currrentGroupName,
+                                                                                           mContext.BusinessFlow.ExecutionLogActivityCounter, mCurrentActivity.ActivityName, mCurrentActivity.ExecutionLogActionCounter,
+                                                                                           action.Description, action.RetryMechanismCount, action.Error, action.ExInfo, screenShotsPathes,
+                                                                                           isScreenshotButtonEnabled, automatedOpeningFlag, description.ToString(),
+                                                                                           currrentGroup.ExternalID, mCurrentActivity.ExternalID, new Tuple<string, string>(mContext.BusinessFlow.ExternalID, mContext.BusinessFlow.ExternalID2)));
+                        }
                     }
                     //
                     // Defects Suggestion section - end

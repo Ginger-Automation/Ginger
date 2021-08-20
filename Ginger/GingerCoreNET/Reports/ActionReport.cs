@@ -43,6 +43,7 @@ namespace Ginger.Reports
             public static string StartTimeStamp = "StartTimeStamp";
             public static string EndTimeStamp = "EndTimeStamp";
             public static string ElapsedSecs = "ElapsedSecs";
+            public static string ConfiguredRetryCount = "configuredRetryCount";
             public static string CurrentRetryIteration = "CurrentRetryIteration";
             public static string Status = "Status";
             public static string Error = "Error";
@@ -126,6 +127,14 @@ namespace Ginger.Reports
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
         public float? ElapsedSecs { get { return elapsedSecs; } }
+
+        [JsonProperty]
+        [FieldParams]
+        [FieldParamsNameCaption("Total Retries Configured")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public int ConfiguredRetryCount { get { return mAction != null ? mAction.MaxNumberOfRetries : configuredRetryCount; } set { configuredRetryCount = value; } }
 
         [JsonProperty]
         [FieldParams]
@@ -354,6 +363,7 @@ namespace Ginger.Reports
         private string actionType = string.Empty;
         private DateTime startTimeStamp;
         private DateTime endTimeStamp;
+        private int configuredRetryCount = 0;
         private int currentRetryIteration = 0;
         private string status = string.Empty;
         private string exInfo = string.Empty;
