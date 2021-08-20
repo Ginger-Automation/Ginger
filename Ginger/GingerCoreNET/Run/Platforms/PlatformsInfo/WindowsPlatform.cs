@@ -673,6 +673,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             eElementType elementTypeEnum;
             switch(elementType)
             {
+                case "Button":
                 case "button":
                     elementTypeEnum = eElementType.Button;
                     break;
@@ -682,7 +683,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                     elementTypeEnum = eElementType.TextBox;
                     break;
 
+                case "Label":
                 case "label":
+                case "Text":
                 case "text":
                     elementTypeEnum = eElementType.Label;
                     break;
@@ -691,32 +694,42 @@ namespace GingerCore.Platforms.PlatformsInfo
                     elementTypeEnum = eElementType.ComboBox;
                     break;
 
+                case "Tab ":                
                 case "tab ":                
                     elementTypeEnum = eElementType.Tab;
                     break;
 
+                case "Tab Item":
                 case "tab item":
                 case "item":  //TODO: For  Grid rows control type is item.This will work, but can be enhanced to use Grid patterns
                     elementTypeEnum = eElementType.TabItem;
                     break;           
 
+                case "Checkbox":
+                case "Check box":
                 case "check box":
                     elementTypeEnum = eElementType.CheckBox;
                     break;
 
+                case "Radiobutton":
+                case "Radio button":
                 case "radio button":
                     elementTypeEnum = eElementType.RadioButton;
                     break;
 
+                case "List":
                 case "list":
+                case "List view":
                 case "list view":
                     elementTypeEnum = eElementType.List;
                     break;
 
+                case "List Item":
                 case "list item":
                     elementTypeEnum = eElementType.ListItem;
                     break;
 
+                case "Tree":
                 case "tree":
                 case "tree view":
                     elementTypeEnum = eElementType.TreeView;
@@ -727,6 +740,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     elementTypeEnum = eElementType.TreeItem;
                     break;
 
+                case "Pane":
                 case "pane":
                     // TODO: Remove Dependency on class name. Find a generic way
                     if (elementClass.Contains("SysDateTimePick32"))
@@ -744,10 +758,12 @@ namespace GingerCore.Platforms.PlatformsInfo
                     break;
 
 
+                case "Link":
                 case "link":
                     elementTypeEnum = eElementType.HyperLink;
                     break;
 
+                case "Document":
                 case "document":
                 case "":
                     elementTypeEnum = eElementType.Document;
@@ -763,12 +779,18 @@ namespace GingerCore.Platforms.PlatformsInfo
                     elementTypeEnum = eElementType.Window;
                     break;
 
+                case "Menu Item":
                 case "menu item":
                     elementTypeEnum = eElementType.MenuItem;
                     break;
 
                 case "menu bar":
                     elementTypeEnum = eElementType.MenuBar;
+                    break;
+                
+                case "Image":
+                case "image":
+                    elementTypeEnum = eElementType.Image;
                     break;
 
                 //case "scroll bar":
