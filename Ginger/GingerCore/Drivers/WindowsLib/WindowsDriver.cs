@@ -1110,37 +1110,37 @@ namespace GingerCore.Drivers.WindowsLib
             {
                 list.Add(new ControlProperty() { Name = ElementProperty.PlatformElementType, Value = ElementInfo.ElementType });
             }
-            if (!string.IsNullOrWhiteSpace(ElementInfo.ElementTypeEnum.ToString()))
+            if (!string.IsNullOrWhiteSpace(Convert.ToString(ElementInfo.ElementTypeEnum)))
             {
                 list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
             }
-            if (!string.IsNullOrWhiteSpace(uIAElement.BoundingRectangle.ToString()))
+            if (!string.IsNullOrWhiteSpace(Convert.ToString(uIAElement.BoundingRectangle)))
             {
                 list.Add(new ControlProperty() { Name = ElementProperty.BoundingRectangle, Value = uIAElement.BoundingRectangle.ToString() });
             }
-            if (!string.IsNullOrWhiteSpace(uIAElement.LocalizedControlType.ToString()))
+            if (!string.IsNullOrWhiteSpace(uIAElement.LocalizedControlType))
             {
-                list.Add(new ControlProperty() { Name = ElementProperty.LocalizedControlType, Value = uIAElement.LocalizedControlType.ToString() });
+                list.Add(new ControlProperty() { Name = ElementProperty.LocalizedControlType, Value = uIAElement.LocalizedControlType });
             }
-            if (!string.IsNullOrWhiteSpace(ElementInfo.ElementTitle.ToString()))
+            if (!string.IsNullOrWhiteSpace(ElementInfo.ElementTitle))
             {
-                list.Add(new ControlProperty() { Name = ElementProperty.Name, Value = ElementInfo.ElementTitle.ToString() });
+                list.Add(new ControlProperty() { Name = ElementProperty.Name, Value = ElementInfo.ElementTitle });
             }
-            if (!string.IsNullOrWhiteSpace(uIAElement.AutomationId.ToString()))
+            if (!string.IsNullOrWhiteSpace(uIAElement.AutomationId))
             {
-                list.Add(new ControlProperty() { Name = ElementProperty.AutomationId, Value = uIAElement.AutomationId.ToString() });
+                list.Add(new ControlProperty() { Name = ElementProperty.AutomationId, Value = uIAElement.AutomationId });
             }
-            if (!string.IsNullOrWhiteSpace(uIAElement.Text.ToString()))
+            if (!string.IsNullOrWhiteSpace(uIAElement.Text))
             {
-                list.Add(new ControlProperty() { Name = ElementProperty.Text, Value = uIAElement.Text.ToString() });
+                list.Add(new ControlProperty() { Name = ElementProperty.Text, Value = uIAElement.Text });
             }
-            if (!string.IsNullOrWhiteSpace(uIAElement.ClassName.ToString()))
+            if (!string.IsNullOrWhiteSpace(uIAElement.ClassName))
             {
-                list.Add(new ControlProperty() { Name = ElementProperty.ClassName, Value = uIAElement.ClassName.ToString() });
+                list.Add(new ControlProperty() { Name = ElementProperty.ClassName, Value = uIAElement.ClassName });
             }
-            if (!string.IsNullOrWhiteSpace(uIAElement.ToggleState.ToString()))
+            if (!string.IsNullOrWhiteSpace(uIAElement.ToggleState))
             {
-                list.Add(new ControlProperty() { Name = ElementProperty.ToggleState, Value = uIAElement.ToggleState.ToString() });
+                list.Add(new ControlProperty() { Name = ElementProperty.ToggleState, Value = uIAElement.ToggleState });
             }
             if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
             {
