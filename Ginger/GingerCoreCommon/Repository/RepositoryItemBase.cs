@@ -959,11 +959,11 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public void RefreshSourceControlStatus()
+        public async void RefreshSourceControlStatus()
         {
             if (SourceControl != null && mSourceControlStatus != eImageType.Null)
             {
-                mSourceControlStatus = SourceControl.GetFileStatusForRepositoryItemPath(mFilePath);
+                mSourceControlStatus = await SourceControl.GetFileStatusForRepositoryItemPath(mFilePath);
                 OnPropertyChanged(nameof(SourceControlStatus));
             }
         }
