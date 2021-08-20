@@ -355,15 +355,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.run;
             SetVerboseLevel(runOptions.VerboseLevel);
 
-            Reporter.ToLog(eLogLevel.INFO, string.Format("########################## Starting Automatic {0} Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            Reporter.ToLog(eLogLevel.INFO, string.Format("######## Starting Automatic {0} Execution Process ########", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             Reporter.ToLog(eLogLevel.INFO, string.Format("Parsing {0} execution arguments...", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            Reporter.ToLog(eLogLevel.INFO, $"Solution: {runOptions.Solution}");
-            Reporter.ToLog(eLogLevel.INFO, $"Runset: {runOptions.Runset}");
-            Reporter.ToLog(eLogLevel.INFO, $"Environment: {runOptions.Environment}");
+            Reporter.ToLog(eLogLevel.INFO, $"Solution: '{runOptions.Solution}'");
+            Reporter.ToLog(eLogLevel.INFO, $"Runset: '{runOptions.Runset}'");
+            Reporter.ToLog(eLogLevel.INFO, $"Environment: '{runOptions.Environment}'");
             Reporter.ToLog(eLogLevel.INFO, "Loading Configurations...");
 
             mCLIHandler = new CLIArgs();
-            mCLIHelper.Solution = runOptions.Solution;            
+            mCLIHelper.Solution = runOptions.Solution;
+            mCLIHelper.SetEncryptionKey(runOptions.EncryptionKey);
             mCLIHelper.Runset = runOptions.Runset;
             mCLIHelper.Env = runOptions.Environment;
             mCLIHelper.RunAnalyzer = !runOptions.DoNotAnalyze;

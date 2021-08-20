@@ -274,7 +274,14 @@ namespace Ginger.SolutionGeneral
         {
             try
             {
-                return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Encryption Key was not found in OS passwords store");
+                }
             }
             catch (Exception ex)
             {
