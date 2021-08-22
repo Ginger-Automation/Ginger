@@ -271,7 +271,7 @@ namespace amdocs.ginger.GingerCoreNET
                 BetaFeatures.DisplayStatus();
             }
 
-            Reporter.ToLog(eLogLevel.INFO, "######## Application version " + ApplicationInfo.ApplicationVersionWithInfo + " Started ! ########");
+            //Reporter.ToLog(eLogLevel.INFO, "######## Application version " + ApplicationInfo.ApplicationVersionWithInfo + " Started ! ########");
 
             Reporter.ToLog(eLogLevel.DEBUG, "Loading user messages pool");
             UserMsgsPool.LoadUserMsgsPool();

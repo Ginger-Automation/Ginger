@@ -139,18 +139,7 @@ namespace Amdocs.Ginger.CoreNET
 
         private AppiumDriver<AppiumWebElement> Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
-        public SeleniumDriver AppiumSeleniumDriver
-        {
-            get
-            {
-                return mSeleniumDriver;
-            }
-            set
-            {
-                mSeleniumDriver = value;
-                mSeleniumDriver.StopProcess = StopProcess;
-            }
-        }
+     
 
         public override bool StopProcess
         {
@@ -235,7 +224,8 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-                mSeleniumDriver.StopProcess = StopProcess;
+                mSeleniumDriver.StopProcess = this.StopProcess;
+                mSeleniumDriver.BusinessFlow = this.BusinessFlow;
 
                 if (AppType == eAppType.Web && mDefaultURL != null)
                 {
