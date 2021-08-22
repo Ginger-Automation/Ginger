@@ -226,7 +226,7 @@ namespace Amdocs.Ginger.Common
 
             catch(Exception ee)
             {
-                Reporter.ToLog(eLogLevel.WARN, "Failed to Prettify XML", ee);
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to Prettify XML", ee);
                 return xml;
             }
         }

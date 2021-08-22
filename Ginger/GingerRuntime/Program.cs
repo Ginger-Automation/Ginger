@@ -56,7 +56,6 @@ namespace Amdocs.Ginger.GingerRuntime
                 Keepalive = false;                      
             };
 
-            
             Reporter.WorkSpaceReporter = new GingerRuntimeWorkspaceReporter();
 
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
@@ -64,29 +63,37 @@ namespace Amdocs.Ginger.GingerRuntime
 
             // Init RepositorySerializer to use new Ginger classes
             NewRepositorySerializer RS = new NewRepositorySerializer();
+
             try
             {
                 if (args.Count() > 0)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "Processing command line arguments...");
-                    ProcessArgs(args);                    
-                    Reporter.ToLog(eLogLevel.INFO, "Processing command line arguments completed");
+                    if (args.Count() == 1 && args[0].ToLower().Trim() == "menu")
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("---------------------------------------------------");
+                        Console.WriteLine("-            Press CTRL+C to exit                 -");
+                        Console.WriteLine("---------------------------------------------------");
+
+                        InitWorkSpace(true);
+                        InitMenu();
+                        Keepalive = true;
+                        while (Keepalive)
+                        {
+                            MenuManager.eMenuReturnCode rc = mMenuManager.ShowMenu();
+                            if (rc == MenuManager.eMenuReturnCode.Quit) return;
+                        }
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, "Processing command line arguments...");
+                        ProcessArgs(args);
+                        Reporter.ToLog(eLogLevel.INFO, "Processing command line arguments completed");
+                    }
                 }
                 else
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("---------------------------------------------------");
-                    Console.WriteLine("-            Press CTRL+C to exit                 -");
-                    Console.WriteLine("---------------------------------------------------");
-
-                    InitWorkSpace(true);
-                    InitMenu();
-                    Keepalive = true;
-                    while (Keepalive)
-                    {
-                        MenuManager.eMenuReturnCode rc = mMenuManager.ShowMenu();
-                        if (rc == MenuManager.eMenuReturnCode.Quit) return; 
-                    }
+                    Console.WriteLine("Please provide arguments for starting execution or add 'menu' command for more options.");
                 }
             }
             catch (Exception ex)
@@ -94,7 +101,11 @@ namespace Amdocs.Ginger.GingerRuntime
                 Console.WriteLine("Exception: " + ex.Message);
                 Thread.Sleep(3000);
             }
-            WorkSpace.Instance.Close();
+
+            if (WorkSpace.Instance != null)
+            {
+                WorkSpace.Instance.Close();
+            }
         }
 
        
