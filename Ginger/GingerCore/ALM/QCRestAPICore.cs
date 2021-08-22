@@ -98,7 +98,7 @@ namespace GingerCore.ALM
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
             ResourceType resource = (ResourceType)AlmDataContractsStd.Enums.ResourceType.TEST_RUN;
-            ObservableList<ExternalItemFieldBase> runFields = GetALMItemFields(null, true, resource);
+            ObservableList<ExternalItemFieldBase> runFields = GetALMItemFields(null, true, (AlmDataContractsStd.Enums.ResourceType)resource);
             return ExportToQCRestAPI.ExportExceutionDetailsToALM(bizFlow, ref result, runFields, exectutedFromAutomateTab, publishToALMConfig);
         }
 
@@ -121,11 +121,6 @@ namespace GingerCore.ALM
 
         public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.QC;
 
-        public ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
-        {
-            return UpdatedAlmFields(ImportFromQCRest.GetALMItemFields(resourceType));
-        }
-
         public override bool IsServerConnected()
         {
             throw new NotImplementedException();
@@ -143,7 +138,7 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType = AlmDataContractsStd.Enums.ResourceType.ALL)
         {
-            throw new NotImplementedException();
+            return UpdatedAlmFields(ImportFromQCRest.GetALMItemFields((ResourceType)resourceType));
         }
     }
 }
