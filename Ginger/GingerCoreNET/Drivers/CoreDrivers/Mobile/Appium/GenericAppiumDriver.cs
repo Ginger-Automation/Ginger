@@ -60,7 +60,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -919,12 +918,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-                string filename = Path.GetTempFileName();
-                ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
-                Bitmap tmp = new System.Drawing.Bitmap(filename);
-                act.AddScreenShot(tmp);
-                return;
+                act.AddScreenShot(Driver.GetScreenshot().AsByteArray, "Device Screenshot");
             }
             catch (Exception ex)
             {
