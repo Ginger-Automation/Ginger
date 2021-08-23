@@ -444,10 +444,14 @@ namespace GingerCoreNET.Application_Models
                     DeltaElementInfo toRemoveAddedFoundItem = null;
                     foreach (var newElement in addedElements)
                     {
-                        var newElementLocdiff = newElement.Locators.ToDictionary(x => x.LocateBy, x => x.LocateValue);
-                        var oldElementLocdiff = deletedElement.Locators.ToDictionary(x => x.LocateBy, x => x.LocateValue);
+                        //var newElementLocdiff = newElement.Locators.ToDictionary(x => x.LocateBy, x => x.LocateValue);
+                        //var oldElementLocdiff = deletedElement.Locators.ToDictionary(x => x.LocateBy, x => x.LocateValue);
+                        
+                        //bool comparisonResult = newElement.Locators(deletedElement, (x, y) => new { x, y }).All(z => Compare(z.x, z.y));
 
-                        if (newElementLocdiff.Except(oldElementLocdiff).Count() == 0)
+                        bool comparisonResult = deletedElement.Locators.All(x => newElement.Locators.Any(y => Compare(x, y)));
+
+                        if (comparisonResult)
                         {
                             //check property and update
                             var newElementPropeties = newElement.Properties.ToDictionary(x => x.Name, x => x.Value);
@@ -511,6 +515,10 @@ namespace GingerCoreNET.Application_Models
 
         }
 
+        public static bool Compare(ElementLocator A, DeltaElementLocator B)
+        {
+            return A.LocateBy == B.LocateBy && A.LocateValue == B.LocateValue;
+        }
         private ObservableList<DeltaControlProperty> CovertToDeltaControlProperty(ObservableList<ControlProperty> properties)
         {
             ObservableList<DeltaControlProperty> deltaControlProperties = new ObservableList<DeltaControlProperty>();
