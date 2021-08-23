@@ -342,7 +342,11 @@ namespace GingerCore.Actions
             {
                 List<Tuple<string, object>> updateCellValuesList = new List<Tuple<string, object>>();
                 DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
-
+                if(excelDataTable == null)
+                {
+                    Error = "Table return no Rows with given filter";
+                    return;
+                }
                 string result = System.Text.RegularExpressions.Regex.Replace(CalculatedColMappingRules, @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
                 string[] varColMaps = result.Split(',');
                 // we expect only 1 record
