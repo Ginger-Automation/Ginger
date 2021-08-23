@@ -108,10 +108,10 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(Environment.NewLine);
             stringBuilder.Append("*******************************************************************************************************************").Append(Environment.NewLine);
-            stringBuilder.Append("Ginger  : ").Append(Assembly.GetEntryAssembly().Location).Append(Environment.NewLine);
-            stringBuilder.Append(ApplicationInfo.ApplicationName + " Started").Append(Environment.NewLine);
-            stringBuilder.Append("Version : " + ApplicationInfo.ApplicationVersion).Append(Environment.NewLine);
-            stringBuilder.Append("Log File: " + GingerLogFile).Append(Environment.NewLine);            
+            stringBuilder.Append(ApplicationInfo.ApplicationName).Append(Environment.NewLine);
+            stringBuilder.Append("Version: " + ApplicationInfo.ApplicationVersionWithInfo).Append(Environment.NewLine);
+            stringBuilder.Append("Executer Path: ").Append(Assembly.GetEntryAssembly().Location).Append(Environment.NewLine);
+            stringBuilder.Append("Log File Path: " + GingerLogFile).Append(Environment.NewLine);            
             stringBuilder.Append("*******************************************************************************************************************").Append(Environment.NewLine);
             stringBuilder.Append(Environment.NewLine);
 

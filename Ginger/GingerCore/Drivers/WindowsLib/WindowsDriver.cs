@@ -1110,15 +1110,38 @@ namespace GingerCore.Drivers.WindowsLib
             {
                 list.Add(new ControlProperty() { Name = ElementProperty.PlatformElementType, Value = ElementInfo.ElementType });
             }
-            list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.BoundingRectangle, Value = uIAElement.BoundingRectangle.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.LocalizedControlType, Value = uIAElement.LocalizedControlType.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.Name, Value = ElementInfo.ElementTitle.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.AutomationId, Value = uIAElement.AutomationId.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.Text, Value = uIAElement.Text.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.ClassName, Value = uIAElement.ClassName.ToString() });
-            list.Add(new ControlProperty() { Name = ElementProperty.ToggleState, Value = uIAElement.ToggleState.ToString() });
-
+            if (!string.IsNullOrWhiteSpace(Convert.ToString(ElementInfo.ElementTypeEnum)))
+            {
+                list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
+            }
+            if (!string.IsNullOrWhiteSpace(Convert.ToString(uIAElement.BoundingRectangle)))
+            {
+                list.Add(new ControlProperty() { Name = ElementProperty.BoundingRectangle, Value = uIAElement.BoundingRectangle.ToString() });
+            }
+            if (!string.IsNullOrWhiteSpace(uIAElement.LocalizedControlType))
+            {
+                list.Add(new ControlProperty() { Name = ElementProperty.LocalizedControlType, Value = uIAElement.LocalizedControlType });
+            }
+            if (!string.IsNullOrWhiteSpace(ElementInfo.ElementTitle))
+            {
+                list.Add(new ControlProperty() { Name = ElementProperty.Name, Value = ElementInfo.ElementTitle });
+            }
+            if (!string.IsNullOrWhiteSpace(uIAElement.AutomationId))
+            {
+                list.Add(new ControlProperty() { Name = ElementProperty.AutomationId, Value = uIAElement.AutomationId });
+            }
+            if (!string.IsNullOrWhiteSpace(uIAElement.Text))
+            {
+                list.Add(new ControlProperty() { Name = ElementProperty.Text, Value = uIAElement.Text });
+            }
+            if (!string.IsNullOrWhiteSpace(uIAElement.ClassName))
+            {
+                list.Add(new ControlProperty() { Name = ElementProperty.ClassName, Value = uIAElement.ClassName });
+            }
+            if (!string.IsNullOrWhiteSpace(uIAElement.ToggleState))
+            {
+                list.Add(new ControlProperty() { Name = ElementProperty.ToggleState, Value = uIAElement.ToggleState });
+            }
             if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
             {
                 list.Add(new ControlProperty() { Name = ElementProperty.XPath, Value = ElementInfo.XPath });
@@ -1143,7 +1166,13 @@ namespace GingerCore.Drivers.WindowsLib
 
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
         {
-            return GetElementLocators(ElementInfo);
+            ObservableList<ElementLocator> Locators = GetElementLocators(ElementInfo);
+            foreach (var elementLocator in Locators)
+            {
+                elementLocator.Active = true;
+                elementLocator.IsAutoLearned = true;
+            }
+            return Locators;
         }
 
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
