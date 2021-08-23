@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
@@ -501,7 +502,7 @@ namespace Ginger.Run
                     CreateStatistics(bizsList, eObjectType.BusinessFlow);                  
                     //Activities
                     List<GingerCoreNET.GeneralLib.StatItem> activitiesList = new List<GingerCoreNET.GeneralLib.StatItem>();
-                    var activitiesGroups = mBFESs.SelectMany(b => b.Activities).Where(b=> b.GetType() != typeof(ErrorHandler))
+                    var activitiesGroups = mBFESs.SelectMany(b => b.Activities).Where(b=> b.GetType() != typeof(ErrorHandler) && b.GetType() != typeof(CleanUpActivity))
                     .GroupBy(n => n.Status)
                     .Select(n => new
                     {
@@ -518,7 +519,7 @@ namespace Ginger.Run
                     CreateStatistics(activitiesList, eObjectType.Activity);                  
                     //Actions
                     List<GingerCoreNET.GeneralLib.StatItem> actionsList = new List<GingerCoreNET.GeneralLib.StatItem>();
-                    var actionsGroups = mBFESs.SelectMany(b => b.Activities).Where(b => b.GetType() != typeof(ErrorHandler)).SelectMany(x => x.Acts)
+                    var actionsGroups = mBFESs.SelectMany(b => b.Activities).Where(b => b.GetType() != typeof(ErrorHandler) && b.GetType() != typeof(CleanUpActivity)).SelectMany(x => x.Acts)
                     .GroupBy(n => n.Status)
                     .Select(n => new
                     {
