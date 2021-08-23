@@ -107,7 +107,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, string.Format("Exception occured during Action Analyze of App Model global Params, object='{0}', field='{1}'", item, mi.Name), ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Exception occured during Action Analyze of App Model global Params, object='{0}', field='{1}'", item, mi.Name), ex);
                     value = null;
                 }
 
@@ -145,7 +145,7 @@ namespace Amdocs.Ginger.Repository
                         }
                         catch (Exception ex) 
                         {
-                            Reporter.ToLog(eLogLevel.WARN, string.Format("Exception occured during Action Analyze of App Model global Params, object='{0}', field='{1}'", item, mi.Name), ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Exception occured during Action Analyze of App Model global Params, object='{0}', field='{1}'", item, mi.Name), ex);
                         }
                     }
                 }
