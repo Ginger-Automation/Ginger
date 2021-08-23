@@ -335,18 +335,23 @@ namespace GingerCore.FlowControlLib
                 else
                     fcValue = ValueCalculated;
 
-                if (fcValue.Contains(GUID_NAME_SEPERATOR))
+                if (!string.IsNullOrWhiteSpace(fcValue))
                 {
-                    string[] vals = fcValue.Split(new string[] { GUID_NAME_SEPERATOR }, StringSplitOptions.None);
-                    if (vals.Length > 0)
-                        return Guid.Parse(vals[0]);
+                    if (fcValue.Contains(GUID_NAME_SEPERATOR))
+                    {
+                        string[] vals = fcValue.Split(new string[] { GUID_NAME_SEPERATOR }, StringSplitOptions.None);
+                        if (vals.Length > 0)
+                            return Guid.Parse(vals[0]);
+                        else
+                            return Guid.Empty;
+                    }
                     else
-                        return Guid.Empty;
+                    {
+                        return Guid.Parse(fcValue);
+                    }
                 }
                 else
-                {
-                    return Guid.Parse(fcValue);
-                }
+                    return Guid.Empty;
             }
             catch (Exception ex)
             {
@@ -365,18 +370,23 @@ namespace GingerCore.FlowControlLib
                 else
                     fcValue = ValueCalculated;
 
-                if (fcValue.Contains(GUID_NAME_SEPERATOR))
+                if (!string.IsNullOrWhiteSpace(fcValue))
                 {
-                    string[] vals = fcValue.Split(new string[] { GUID_NAME_SEPERATOR }, StringSplitOptions.None);
-                    if (vals.Length > 1)
-                        return vals[1];
+                    if (fcValue.Contains(GUID_NAME_SEPERATOR))
+                    {
+                        string[] vals = fcValue.Split(new string[] { GUID_NAME_SEPERATOR }, StringSplitOptions.None);
+                        if (vals.Length > 1)
+                            return vals[1];
+                        else
+                            return string.Empty;
+                    }
                     else
-                        return string.Empty;
+                    {
+                        return fcValue;
+                    }
                 }
                 else
-                {
-                    return fcValue;
-                }
+                    return string.Empty;
             }
             catch (Exception ex)
             {

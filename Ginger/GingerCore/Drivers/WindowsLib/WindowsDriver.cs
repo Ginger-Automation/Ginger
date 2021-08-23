@@ -75,6 +75,21 @@ namespace GingerCore.Drivers.WindowsLib
             }
         }
 
+        public override bool StopProcess
+        {
+            get
+            {
+                return base.StopProcess;
+            }
+            set
+            {
+                base.StopProcess = value;
+                if (mUIAutomationHelper != null)
+                {
+                    mUIAutomationHelper.StopProcess = value;
+                }
+            }
+        }
 
         public WindowsDriver(BusinessFlow BF, eUIALibraryType type= eUIALibraryType.ComWrapper)
         {
@@ -1065,7 +1080,6 @@ namespace GingerCore.Drivers.WindowsLib
         {
             return await Task.Run(async () =>
             {
-
                 if (foundElementsList == null)
                 {
                     foundElementsList = new ObservableList<ElementInfo>();
@@ -1074,6 +1088,11 @@ namespace GingerCore.Drivers.WindowsLib
 
                 foreach (UIAElementInfo foundElemntInfo in elementInfoList)
                 {
+                    if(StopProcess)
+                    {
+                        break;
+                    }
+
                     ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
 
                     bool learnElement = true;
