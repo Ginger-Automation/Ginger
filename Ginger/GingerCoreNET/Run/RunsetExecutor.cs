@@ -714,7 +714,35 @@ namespace Ginger.Run
         }
 
 
+        static volatile object locker = new Object();
+        public static void ClearAndResetVirtualAgents(RunSetConfig runset, GingerRunner runner)
+        {
+            lock (locker)
+            {
+                var appAgents = runner.ApplicationAgents.Where(x => x.Agent != null && ((Agent)x.Agent).IsVirtual).ToList();
 
+                if (appAgents.Count > 0)
+                {
+                    for (var i = 0; i < appAgents.Count; i++)
+                    {
+                        var virtualAgent = (Agent)appAgents[i].Agent;
+
+                        var realAgent = runset.ActiveAgentList.Where(x => x.Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
+
+                        if (realAgent != null)
+                        {
+                            var runsetVirtualAgent = runset.ActiveAgentList.Where(x => x.Guid == ((Agent)virtualAgent).Guid).FirstOrDefault();
+                            appAgents[i].Agent = realAgent;
+                            
+                            if (runsetVirtualAgent != null)
+                            {
+                                runset.ActiveAgentList.Remove(runsetVirtualAgent);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
     }
 }
