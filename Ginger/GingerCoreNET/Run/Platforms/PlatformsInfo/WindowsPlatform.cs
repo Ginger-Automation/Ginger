@@ -364,6 +364,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementsTypeList.Add(eElementType.Dialog);
                 mElementsTypeList.Add(eElementType.MenuItem);
                 mElementsTypeList.Add(eElementType.MenuBar);
+                mElementsTypeList.Add(eElementType.Image);
                 //mElementsTypeList.Add(eElementType.Browser);
                 //mElementsTypeList.Add(eElementType.ScrollBar);
             }
