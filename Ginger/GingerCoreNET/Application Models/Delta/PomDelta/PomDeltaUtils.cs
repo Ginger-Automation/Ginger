@@ -144,10 +144,11 @@ namespace GingerCoreNET.Application_Models
                 POMElementsCopy.Add(copiedElement);
             }
             //try to locate them and pull real IWebElement for them for later comparison
-            Task.Run(() =>
-            {
+           
+            //Task.Run(() =>
+            //{
                 mIWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(POMElementsCopy);
-            });
+            //});
         }
 
         private void ElementsListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

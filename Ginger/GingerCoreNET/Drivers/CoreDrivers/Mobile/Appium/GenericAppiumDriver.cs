@@ -149,6 +149,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 mSeleniumDriver = value;
                 mSeleniumDriver.StopProcess = StopProcess;
+                mSeleniumDriver.BusinessFlow = this.BusinessFlow;
             }
         }
 
@@ -235,6 +236,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
+                mSeleniumDriver.BusinessFlow = this.BusinessFlow;
                 mSeleniumDriver.StopProcess = StopProcess;
 
                 if (AppType == eAppType.Web && mDefaultURL != null)
