@@ -191,7 +191,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             string chromeDriverFile = "chromedriver.exe";
             string fireFoxDriverFile = "geckodriver.exe";
             string IEDriverFile = "IEDriverServer.exe";
-            string EdgeDriverFile = "MicrosoftWebDriver.exe";
+            string EdgeDriverFile = "msedgedriver.exe";
 
             string chromeSourceFile = System.IO.Path.Combine(driversSourcePath, chromeDriverFile);
             string chromeDestFile = System.IO.Path.Combine(targetPath, chromeDriverFile);

@@ -6754,6 +6754,7 @@ namespace GingerCore.Drivers
                     if (e == null)
                     {
                         act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                        return;
                     }
                 }
             }

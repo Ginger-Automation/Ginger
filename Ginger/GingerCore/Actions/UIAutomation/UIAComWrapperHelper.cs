@@ -4736,6 +4736,11 @@ namespace GingerCore.Drivers
 
                 foreach (AutomationElement AE in AEC)
                 {
+                    if(StopProcess)
+                    {
+                        break;
+                    }
+
                     UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
                     if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
                     {

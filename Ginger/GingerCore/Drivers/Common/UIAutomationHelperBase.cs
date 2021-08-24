@@ -57,6 +57,7 @@ namespace GingerCore.Drivers.Common
         public BusinessFlow BusinessFlow { get; set; }
         public IWindowExplorer WindowExplorer { get; set; }
         public bool taskFinished;
+        public bool StopProcess { get; set; } = false;
         public abstract void StopRecording();
     
         public UIAElementInfo CurrentWindowRootElement = null;

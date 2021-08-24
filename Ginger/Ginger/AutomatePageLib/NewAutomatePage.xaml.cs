@@ -856,7 +856,7 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         AnalyzerPage analyzerPage = new AnalyzerPage();
 
-                        analyzerPage.Init(WorkSpace.Instance.Solution, mBusinessFlow,WorkSpace.Instance.AutomateTabSelfHealingConfiguration.ReprioritizePOMLocators);
+                        analyzerPage.Init(WorkSpace.Instance.Solution, mBusinessFlow,WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
                         await analyzerPage.AnalyzeWithoutUI();
                         Reporter.HideStatusMessage();
                         if (analyzerPage.TotalHighAndCriticalIssues > 0)

@@ -1525,7 +1525,7 @@ namespace Ginger.Run
                 if (runner.IsRunning == false)
                 {
                     runner.ResetRunnerExecutionDetails();
-                    runner.ClearAndResetVirtualAgents();
+                    RunsetExecutor.ClearAndResetVirtualAgents(WorkSpace.Instance.RunsetExecutor.RunSetConfig, runner);
                 }
             }
 
