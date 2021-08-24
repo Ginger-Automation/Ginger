@@ -328,7 +328,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             {
                 UpdateCellList.ForEach(x =>
                 mExcelDataTable.Select(filter).ToList().ForEach(dr =>
-                mSheet.GetRow(mExcelDataTable.Rows.IndexOf(dr) + 1).GetCell(mExcelDataTable.Columns[x.Item1.Replace("[","").Replace("]","")].Ordinal).SetCellValue((string)x.Item2)));
+                mSheet.GetRow(mExcelDataTable.Rows.IndexOf(dr) + 1).GetCell(mExcelDataTable.Columns[x.Item1.Replace("[","").Replace("]","").Trim()].Ordinal).SetCellValue(x.Item2.ToString().Trim())));
                 using (FileStream fs = new FileStream(fileName, FileMode.Create))
                 {
                     mWorkbook.Write(fs);

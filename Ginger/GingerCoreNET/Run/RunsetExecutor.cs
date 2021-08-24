@@ -38,7 +38,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
-
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 namespace Ginger.Run
 {
     public class RunsetExecutor : INotifyPropertyChanged
@@ -393,10 +393,23 @@ namespace Ginger.Run
 
                 //reset run       
                 if (doContinueRun == false)
-                {
+                {                    
                     if (WorkSpace.Instance.RunningInExecutionMode == false || RunSetConfig.ExecutionID == null)
                     {
                         RunSetConfig.ExecutionID = Guid.NewGuid();
+                    }
+                    else
+                    {
+                        if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+                        {
+                            AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+                            bool isValidated = accountReportApiHandler.ExecutionIdValidation((Guid)RunSetConfig.ExecutionID);
+                            if(!isValidated)
+                            {
+                                RunSetConfig.ExecutionID = Guid.NewGuid();
+                                Reporter.ToLog(eLogLevel.WARN, string.Format("Duplicate execution id used, creating new execution id : {0}", RunSetConfig.ExecutionID));                                
+                            }
+                        }                        
                     }
                     RunSetConfig.LastRunsetLoggerFolder = "-1";   // !!!!!!!!!!!!!!!!!!
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
@@ -701,7 +714,35 @@ namespace Ginger.Run
         }
 
 
+        static volatile object locker = new Object();
+        public static void ClearAndResetVirtualAgents(RunSetConfig runset, GingerRunner runner)
+        {
+            lock (locker)
+            {
+                var appAgents = runner.ApplicationAgents.Where(x => x.Agent != null && ((Agent)x.Agent).IsVirtual).ToList();
 
+                if (appAgents.Count > 0)
+                {
+                    for (var i = 0; i < appAgents.Count; i++)
+                    {
+                        var virtualAgent = (Agent)appAgents[i].Agent;
+
+                        var realAgent = runset.ActiveAgentList.Where(x => x.Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
+
+                        if (realAgent != null)
+                        {
+                            var runsetVirtualAgent = runset.ActiveAgentList.Where(x => x.Guid == ((Agent)virtualAgent).Guid).FirstOrDefault();
+                            appAgents[i].Agent = realAgent;
+                            
+                            if (runsetVirtualAgent != null)
+                            {
+                                runset.ActiveAgentList.Remove(runsetVirtualAgent);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
     }
 }

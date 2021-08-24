@@ -271,7 +271,7 @@ namespace amdocs.ginger.GingerCoreNET
                 BetaFeatures.DisplayStatus();
             }
 
-            Reporter.ToLog(eLogLevel.INFO, "######## Application version " + ApplicationInfo.ApplicationVersionWithInfo + " Started ! ########");
+            //Reporter.ToLog(eLogLevel.INFO, "######## Application version " + ApplicationInfo.ApplicationVersionWithInfo + " Started ! ########");
 
             Reporter.ToLog(eLogLevel.DEBUG, "Loading user messages pool");
             UserMsgsPool.LoadUserMsgsPool();
@@ -419,7 +419,14 @@ namespace amdocs.ginger.GingerCoreNET
                 mPluginsManager.SolutionChanged(SolutionRepository);
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Doing Source Control Configurations");
-                HandleSolutionLoadSourceControl(solution);
+                try
+                {
+                    HandleSolutionLoadSourceControl(solution);
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "exception occured while doing Solution Source Control Configurations", ex);
+                }
             
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Updating Application Functionalities to Work with Loaded Solution");
                 ValueExpression.SolutionFolder = solutionFolder;
