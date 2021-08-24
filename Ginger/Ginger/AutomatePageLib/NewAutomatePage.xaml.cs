@@ -390,7 +390,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 StopAutomateRun();
             }
-
+            SetEnvsCombo();
             if (mBusinessFlow != businessFlowToLoad)
             {
                 RemoveCurrentBusinessFlow();
