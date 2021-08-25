@@ -1862,8 +1862,12 @@ namespace Amdocs.Ginger.CoreNET
             RecordingEvent = null;
         }
 
+        bool IsRecording = false;
+
         void IRecord.StartRecording(bool learnAdditionalChanges)
         {
+            IsRecording = true;
+            OnDriverMessage(eDriverMessageType.RecordingEvent, IsRecording);
             //Dispatcher.Invoke(() =>
             //{
             //    if (DriverWindow != null) DriverWindow.StartRecording();
@@ -1872,6 +1876,8 @@ namespace Amdocs.Ginger.CoreNET
 
         void IRecord.StopRecording()
         {
+            IsRecording = false;
+            OnDriverMessage(eDriverMessageType.RecordingEvent, IsRecording);
             //Dispatcher.Invoke(() =>
             //{
             //    if (DriverWindow != null) DriverWindow.StopRecording();
@@ -2561,7 +2567,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public bool IsRecordingSupported()
         {
-            return false;
+            return true;
         }
 
         public bool IsPOMSupported()
@@ -2644,6 +2650,12 @@ namespace Amdocs.Ginger.CoreNET
         public void PerformScreenSwipe(eSwipeSide swipeSide, double impact = 1)
         {
             SwipeScreen(swipeSide, impact);
+            ActMobileDevice mobAct = new ActMobileDevice() { MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.swip}
+        }
+
+        public void RecordAction()
+        {
+
         }
 
         public void PerformSendKey(string key)
