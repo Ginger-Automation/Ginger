@@ -239,6 +239,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             var currentElementDelta = deltaElementInfos.Where(x => x.ElementInfo.Guid == currentPOMElementInfoGUID).FirstOrDefault();
             if (currentElementDelta == null || currentElementDelta.DeltaStatus == eDeltaStatus.Deleted)
             {
+                mAct.ExInfo += "Element not found during self healing process.";
                 return null;
             }
             else
@@ -308,11 +309,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 pomDeltaUtils.KeepOriginalLocatorsOrderAndActivation = true;
                 pomDeltaUtils.PropertiesChangesToAvoid = DeltaControlProperty.ePropertiesChangesToAvoid.All;
 
-                Reporter.ToLog(eLogLevel.INFO, "POM update process started during self healing operation..");
+                mAct.ExInfo += DateTime.Now.ToString() + " Self healing operation attempting to auto update application model";
                 this.GetCurrentPOM().StartDirtyTracking();
 
                 pomDeltaUtils.LearnDelta().Wait();
-                Reporter.ToLog(eLogLevel.INFO, "POM updated");
+                mAct.ExInfo += DateTime.Now + " Self healing operation application model was updated";
             }
             catch (Exception ex)
             {
