@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.UserControls;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
@@ -162,6 +163,8 @@ namespace Ginger.Run
                 foreach (Activity ac in ((BusinessFlow)ItemObject).Activities)
                 {
                     if (ac.GetType() == typeof(ErrorHandler)) continue;//do not show Error Handler for now
+
+                    if (ac.GetType() == typeof(CleanUpActivity)) continue;//do not show Clean Up Activity for now
 
                     RunnerItemPage ri = new RunnerItemPage(ac);
                     this.Context.BusinessFlow = (BusinessFlow)ItemObject; 

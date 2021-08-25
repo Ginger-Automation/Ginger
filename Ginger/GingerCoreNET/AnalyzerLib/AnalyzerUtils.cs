@@ -55,7 +55,7 @@ namespace Ginger.AnalyzerLib
             Parallel.ForEach(BFs, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
             {
                 List<string> tempList = RunBusinessFlowAnalyzer(BF, issuesList);
-                MergeVariablesList(usedVariablesInSolution, tempList);   
+                MergeVariablesList(usedVariablesInSolution, tempList);
             });
             ReportUnusedVariables(solution, usedVariablesInSolution, issuesList);
         }
@@ -70,7 +70,7 @@ namespace Ginger.AnalyzerLib
             // Check all GRs BFS
             //foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
             Parallel.ForEach(mRunSetConfig.GingerRunners, new ParallelOptions { MaxDegreeOfParallelism = 5 }, GR =>
-            {            
+            {
                 foreach (AnalyzerItemBase issue in AnalyzeGingerRunner.Analyze(GR, WorkSpace.Instance.Solution.ApplicationPlatforms))
                 {
                     AddIssue(issuesList, issue);
@@ -102,13 +102,14 @@ namespace Ginger.AnalyzerLib
                     }
                 });
             });
-        }       
+        }
 
         public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList)
         {
             List<string> usedVariablesInBF = new List<string>();
             List<string> usedVariablesInActivity = new List<string>();
             List<AnalyzerItemBase> missingVariableIssueList = new List<AnalyzerItemBase>();
+
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(WorkSpace.Instance.Solution, businessFlow))
             {
@@ -116,8 +117,8 @@ namespace Ginger.AnalyzerLib
             }
 
             Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
-            { 
-                if(activity.Active)
+            {
+                if (activity.Active)
                 {
                     foreach (AnalyzerItemBase issue in AnalyzeActivity.Analyze(businessFlow, activity))
                     {
@@ -126,44 +127,44 @@ namespace Ginger.AnalyzerLib
                 }
 
                 Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, iaction =>
-                 {
+                {
 
-                     Act action = (Act)iaction;
-                     if(action.Active)
-                     {
-                         foreach (AnalyzerItemBase issue in AnalyzeAction.Analyze(businessFlow, activity, action, DSList))
-                         {
-                             AddIssue(issuesList, issue);
-                             if (issue.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable)
-                             {
-                                 lock(mMissingVariableIssueLock)
-                                 {
-                                     missingVariableIssueList.Add(issue);
-                                 }
-                             }
-                               
-                         }
+                    Act action = (Act)iaction;
+                    if (action.Active)
+                    {
+                        foreach (AnalyzerItemBase issue in AnalyzeAction.Analyze(businessFlow, activity, action, DSList))
+                        {
+                            AddIssue(issuesList, issue);
+                            if (issue.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable)
+                            {
+                                lock (mMissingVariableIssueLock)
+                                {
+                                    missingVariableIssueList.Add(issue);
+                                }
+                            }
 
-                     }
+                        }
 
-                     List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);                     
-                     MergeVariablesList(usedVariablesInActivity,tempList);
-                 });
+                    }
 
-                 List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
-         
+                    List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
+                    MergeVariablesList(usedVariablesInActivity, tempList);
+                });
+
+                List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
+
                 MergeVariablesList(usedVariablesInActivity, activityVarList);
-                ReportUnusedVariables(activity, usedVariablesInActivity, issuesList);              
+                ReportUnusedVariables(activity, usedVariablesInActivity, issuesList);
                 MergeVariablesList(usedVariablesInBF, usedVariablesInActivity);
-             
-                 
-                 usedVariablesInActivity.Clear();
+
+
+                usedVariablesInActivity.Clear();
             });
 
             //Get all the missing variable issues Grouped by Variable name
             lock (mMissingVariableIssueLock)
             {
-                if(missingVariableIssueList.Count!=0)
+                if (missingVariableIssueList.Count != 0)
                 {
                     var missingVariableIssuesGroupList = missingVariableIssueList.GroupBy(x => x.IssueReferenceObject);
 
@@ -183,11 +184,10 @@ namespace Ginger.AnalyzerLib
 
                     }
                 }
-           
+
             }
 
             ReportUnusedVariables(businessFlow, usedVariablesInBF, issuesList);
-
             return usedVariablesInBF;
         }
 
@@ -334,11 +334,6 @@ namespace Ginger.AnalyzerLib
         {
             lock (mAddIssuesLock)
             {
-                if (issue.CanAutoFix == AnalyzerItemBase.eCanFix.Yes && issue.FixItHandler != null && SelfHealingAutoFixIssue)
-                {
-                    issue.FixItHandler.Invoke(issue, null);
-                    return;
-                }
                 issuesList.Add(issue);
             }
         }

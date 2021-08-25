@@ -60,7 +60,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -139,18 +138,7 @@ namespace Amdocs.Ginger.CoreNET
 
         private AppiumDriver<AppiumWebElement> Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
-        public SeleniumDriver AppiumSeleniumDriver
-        {
-            get
-            {
-                return mSeleniumDriver;
-            }
-            set
-            {
-                mSeleniumDriver = value;
-                mSeleniumDriver.StopProcess = StopProcess;
-            }
-        }
+     
 
         public override bool StopProcess
         {
@@ -235,7 +223,8 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-                mSeleniumDriver.StopProcess = StopProcess;
+                mSeleniumDriver.StopProcess = this.StopProcess;
+                mSeleniumDriver.BusinessFlow = this.BusinessFlow;
 
                 if (AppType == eAppType.Web && mDefaultURL != null)
                 {
@@ -947,12 +936,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-                string filename = Path.GetTempFileName();
-                ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
-                Bitmap tmp = new System.Drawing.Bitmap(filename);
-                act.AddScreenShot(tmp);
-                return;
+                act.AddScreenShot(Driver.GetScreenshot().AsByteArray, "Device Screenshot");
             }
             catch (Exception ex)
             {

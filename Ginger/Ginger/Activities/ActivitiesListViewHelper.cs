@@ -546,7 +546,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             ListItemGroupOperation rename = new ListItemGroupOperation();
             rename.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             rename.AutomationID = "renameGroup";
-            rename.Header = string.Concat("Rename", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
+            rename.Header = string.Concat("Rename ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
             rename.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
             rename.ToolTip =  string.Concat("Rename " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
             rename.OperationHandler = RenameGroupHandler;

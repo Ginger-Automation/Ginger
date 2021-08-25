@@ -185,33 +185,36 @@ namespace GingerCoreNET.SourceControl
 
         public abstract SourceControlItemInfoDetails GetRepositoryInfo(ref string error);
 
-        public eImageType GetFileStatusForRepositoryItemPath(string FullPath)
+        public Task<eImageType> GetFileStatusForRepositoryItemPath(string FullPath)
         {
-            string err = null;            
-            eRepositoryItemStatus ss = GetFileStatus(FullPath, true, ref err);
-            switch (ss)
+            return Task.Run(() =>
             {
-                case eRepositoryItemStatus.New:
-                    return eImageType.SourceControlNew;
+                string err = null;
+                eRepositoryItemStatus ss = GetFileStatus(FullPath, true, ref err);
+                switch (ss)
+                {
+                    case eRepositoryItemStatus.New:
+                        return eImageType.SourceControlNew;
 
-                case eRepositoryItemStatus.Modified:
-                    return eImageType.SourceControlModified;
+                    case eRepositoryItemStatus.Modified:
+                        return eImageType.SourceControlModified;
 
-                case eRepositoryItemStatus.Equel:
-                    return eImageType.SourceControlEquel;
+                    case eRepositoryItemStatus.Equel:
+                        return eImageType.SourceControlEquel;
 
-                case eRepositoryItemStatus.LockedByMe:
-                    return eImageType.SourceControlLockedByMe;
+                    case eRepositoryItemStatus.LockedByMe:
+                        return eImageType.SourceControlLockedByMe;
 
-                case eRepositoryItemStatus.LockedByAnotherUser:
-                    return eImageType.SourceControlLockedByAnotherUser;
+                    case eRepositoryItemStatus.LockedByAnotherUser:
+                        return eImageType.SourceControlLockedByAnotherUser;
 
-                case eRepositoryItemStatus.Unknown:
-                    return eImageType.SourceControlError;
+                    case eRepositoryItemStatus.Unknown:
+                        return eImageType.SourceControlError;
 
-                default:
-                    return eImageType.SourceControlDeleted;
-            }            
+                    default:
+                        return eImageType.SourceControlDeleted;
+                }
+            });
         }
     }
 }

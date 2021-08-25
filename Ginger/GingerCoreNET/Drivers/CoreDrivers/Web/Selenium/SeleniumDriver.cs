@@ -3178,6 +3178,10 @@ namespace GingerCore.Drivers
                         if (elem == null && pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
                         {
                             elem = LocateElementByLocators(currentPOMElementInfo.Locators);
+                            if (elem != null)
+                            {
+                                act.ExInfo += "Broken element was auto updated by Self healing operation";
+                            }
                         }
 
                         if (elem != null && currentPOMElementInfo.SelfHealingInfo == SelfHealingInfoEnum.ElementDeleted)
@@ -6754,6 +6758,7 @@ namespace GingerCore.Drivers
                     if (e == null)
                     {
                         act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                        return;
                     }
                 }
             }
