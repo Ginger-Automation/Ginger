@@ -303,7 +303,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                      act = new ActSwitchWindow { LocateBy = eLocateBy.ByTitle, Value = calculatedValue, ValueForDriver = calculatedValue, Active = true, WaitTime = 5 };
                     break;
                 case ePlatformType.Windows:
-                    act = new ActSwitchWindow { LocateBy = eLocateBy.ByTitle, LocateValue = calculatedValue, LocateValueCalculated = calculatedValue, Active = true, WaitTime= 5 };
+                    act = new ActSwitchWindow { LocateBy = eLocateBy.ByTitle, LocateValue = calculatedValue, LocateValueCalculated = calculatedValue, Active = true, WaitTime = 5 };
                     break;
             }
             if (act != null)
@@ -314,7 +314,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Navigating to Native Application not supported");
                 }
-                else
+                else if (!string.IsNullOrEmpty(act.Error))
                 {
                     Reporter.ToUser(eUserMsgKey.StaticErrorMessage, act.Error);
                 }
