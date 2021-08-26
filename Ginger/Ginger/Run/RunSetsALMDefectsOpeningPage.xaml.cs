@@ -156,7 +156,7 @@ namespace Ginger.Run
                     }
                     var defectFields = ((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).ALMDefectProfileFields.ToList();
                     //Update alm type to open defect
-                    ALMIntegration.Instance.UpdateALMType(((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).AlmType);
+                    ALMIntegration.Instance.UpdateALMType(((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).AlmType, true);
                     Dictionary<Guid, string> defectsOpeningResults = ALMIntegration.Instance.CreateNewALMDefects(defectsForOpening, defectFields);
 
                     if ((defectsOpeningResults != null) && (defectsOpeningResults.Count > 0))

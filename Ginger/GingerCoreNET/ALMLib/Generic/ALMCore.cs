@@ -37,11 +37,17 @@ namespace GingerCore.ALM
 
         public static GingerCoreNET.ALMLib.ALMConfig DefaultAlmConfig { get; set; }
 
-        public GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig()
+        public GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig(bool isOperationAlmType = false)
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = null;
-            AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
-
+            if (isOperationAlmType)
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == this.ALMType).FirstOrDefault();
+            }
+            else
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
+            }
             if (AlmConfig != null)
             {
                 GingerCoreNET.ALMLib.ALMUserConfig AlmUserConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == AlmConfig.AlmType);
@@ -72,9 +78,7 @@ namespace GingerCore.ALM
             }
             DefaultAlmConfig = AlmConfig;
             return AlmConfig;
-
         }
-
         public static string SolutionFolder { get; set; }
         public static ObservableList<ExternalItemFieldBase> AlmItemFields { get; set; }
         public abstract bool ConnectALMServer();

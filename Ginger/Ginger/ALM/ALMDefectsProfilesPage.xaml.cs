@@ -353,7 +353,7 @@ namespace Ginger.ALM
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
-                ALMIntegration.Instance.UpdateALMType(AlmType);
+                ALMIntegration.Instance.UpdateALMType(AlmType, true);
                 mALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ResourceType.DEFECT, null);
             }
             catch (Exception ex)
