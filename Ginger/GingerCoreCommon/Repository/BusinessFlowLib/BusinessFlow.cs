@@ -310,8 +310,8 @@ namespace GingerCore
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public new string ExternalID { get; set; } // will use it for QC ID or other external ID
+    //    [IsSerializedForLocalRepository] Commented as it is duplicate
+    //    public new string ExternalID { get; set; } // will use it for QC ID or other external ID
         [IsSerializedForLocalRepository]
         public string AlmData { get; set; }
         //[IsSerializedForLocalRepository]
