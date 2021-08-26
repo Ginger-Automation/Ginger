@@ -112,7 +112,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 catch (Exception ex)
                 {
                     Reporter.ToUser(eUserMsgKey.POMWizardFailedToLearnElement, ex.Message);
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed To Learn Elements", ex);
                     mWizard.IsLearningWasDone = false;
                 }
                 finally

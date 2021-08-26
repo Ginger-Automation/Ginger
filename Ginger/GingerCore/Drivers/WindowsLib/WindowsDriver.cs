@@ -1679,7 +1679,10 @@ namespace GingerCore.Drivers.WindowsLib
                 {
                     ((ExpandCollapsePattern)expandPattern).Expand();
                 }
-                catch {}
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed To Expand Element while POM Learning...", ex);
+                }
             }
 
             AutomationElementCollection itemList = automationElement.FindAll(TreeScope.Descendants,
