@@ -635,6 +635,10 @@ namespace GingerCore.Drivers.WindowsLib
                 if (pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
                 {
                     windowElement = LocateElementByLocators(currentPOMElementInfo.Locators,true);
+                    if (windowElement != null)
+                    {
+                        act.ExInfo += "Broken element was auto updated by Self healing operation";
+                    }
                 }
             }
             if (windowElement != null && currentPOMElementInfo.SelfHealingInfo == SelfHealingInfoEnum.ElementDeleted)
