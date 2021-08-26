@@ -457,7 +457,7 @@ namespace Ginger
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType)
         {
             //update alm type to open defect
-            ALMIntegration.Instance.UpdateALMType(almType);
+            ALMIntegration.Instance.UpdateALMType(almType, true);
 
             Dictionary<Guid, string> defectsOpeningResults;
             if ((defectsForOpening != null) && (defectsForOpening.Count > 0))
