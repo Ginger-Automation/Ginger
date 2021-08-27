@@ -1672,9 +1672,17 @@ namespace GingerCore.Drivers.WindowsLib
             //get child elements expand if combobox
             object expandPattern;
             automationElement.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out expandPattern);
-            if (expandPattern != null)
+            if (expandPattern != null && automationElement.Current.IsEnabled)
             {
-                ((ExpandCollapsePattern)expandPattern).Expand();
+                //try catch to handle if the screen is not focused
+                try
+                {
+                    ((ExpandCollapsePattern)expandPattern).Expand();
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed To Expand Element while POM Learning...", ex);
+                }
             }
 
             AutomationElementCollection itemList = automationElement.FindAll(TreeScope.Descendants,
