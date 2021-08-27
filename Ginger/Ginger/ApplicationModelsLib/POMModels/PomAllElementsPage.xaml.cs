@@ -74,7 +74,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public PomElementsPage unmappedUIElementsPage;
 
 
-        public PomAllElementsPage(ApplicationPOMModel POM, eAllElementsPageContext context)
+        public PomAllElementsPage(ApplicationPOMModel POM, eAllElementsPageContext context, bool AddSelfHealingColumn=true)
         {
             InitializeComponent();
             mPOM = POM;
@@ -88,10 +88,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPOM.MappedUIElements.CollectionChanged += MappedUIElements_CollectionChanged;
             mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
 
-            mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped);
+            mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, AddSelfHealingColumn);
             xMappedElementsFrame.Content = mappedUIElementsPage;
 
-            unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped);
+            unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped, AddSelfHealingColumn);
             xUnMappedElementsFrame.Content = unmappedUIElementsPage;
 
             UnMappedUIElementsUpdate();

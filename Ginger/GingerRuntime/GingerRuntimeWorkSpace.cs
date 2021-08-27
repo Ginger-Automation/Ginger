@@ -25,6 +25,7 @@ using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Amdocs.Ginger.GingerRuntime
 {
@@ -46,7 +47,7 @@ namespace Amdocs.Ginger.GingerRuntime
             SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref repositoryRootFolder);
             if (type == SourceControlBase.eSourceControlType.GIT)
             {
-                if (WorkSpace.Instance!=null && WorkSpace.Instance.UserProfile!=null && WorkSpace.Instance.UserProfile.SourceControlUseShellClient)
+                if ((WorkSpace.Instance!=null && WorkSpace.Instance.UserProfile!=null && WorkSpace.Instance.UserProfile.SourceControlUseShellClient) || !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     solution.SourceControl = new GitSourceControlShellWrapper();
                 }

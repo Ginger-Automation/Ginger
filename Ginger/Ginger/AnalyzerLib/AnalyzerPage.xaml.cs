@@ -213,6 +213,19 @@ namespace Ginger.AnalyzerLib
 
             finally
             {
+                if (mAnalyzerUtils.SelfHealingAutoFixIssue)
+                {
+                    for (var index = mIssues.Count - 1;index >=0 ; index--)
+                    {
+                        if (mIssues[index].CanAutoFix == AnalyzerItemBase.eCanFix.Yes && mIssues[index].FixItHandler != null)
+                        {
+                            mIssues[index].FixItHandler.Invoke(mIssues[index], null);
+                            mIssues.RemoveAt(index);
+                        }
+                    }
+                }
+                
+
                 BusyInProcess = false;
                 mAnalyzerCompleted = true;
                 SetAnalayzeProceesAsCompleted();

@@ -556,7 +556,7 @@ namespace Ginger.Run
             try
             {
                 
-                if (Active == false || BusinessFlows.Count == 0)
+                if (Active == false || BusinessFlows.Count == 0 || BusinessFlows.Where(x=>x.Active).FirstOrDefault() == null)
                 {
                     runnerExecutionSkipped = true;
                     return;
@@ -677,7 +677,7 @@ namespace Ginger.Run
                             ProjEnvironment.CloseEnvironment();
                         }
                         Status = eRunStatus.Completed;
-                        ClearAndResetVirtualAgents();
+                        RunsetExecutor.ClearAndResetVirtualAgents(WorkSpace.Instance.RunsetExecutor.RunSetConfig, this);
                     }
 
                     PostScopeVariableHandling(BusinessFlow.SolutionVariables);
@@ -700,33 +700,7 @@ namespace Ginger.Run
             }
         }
 
-        public void ClearAndResetVirtualAgents()
-        {
-            var appAgents = ApplicationAgents.Where(x => x.Agent != null && ((Agent)x.Agent).IsVirtual).ToList();
-
-            if (appAgents.Count > 0)
-            {
-                for (var i = 0; i < appAgents.Count;i++)
-                {
-
-                    var virtualAgent = (Agent)appAgents[i].Agent;
-
-                    var realAgent = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Where(x => x.Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
-
-                    if (realAgent != null)
-                    {
-                        appAgents[i].Agent = realAgent;
-                        var runsetVirtualAgent = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Where(x => x.Guid == virtualAgent.Guid).FirstOrDefault();
-
-                        if (runsetVirtualAgent != null)
-                        {
-                            WorkSpace.Instance.RunsetExecutor.RunSetConfig.ActiveAgentList.Remove(runsetVirtualAgent);
-                        }
-                    }
-
-                }
-            }
-        }
+       
 
         private void SetupVirtualAgents()
         {
@@ -762,7 +736,10 @@ namespace Ginger.Run
 
                             }
 
-                            runSetConfig.ActiveAgentList.Add(applicationAgent.Agent);
+                            if (applicationAgent.Agent != null)
+                            {
+                                runSetConfig.ActiveAgentList.Add(applicationAgent.Agent);
+                            }
 
                         }
                     }

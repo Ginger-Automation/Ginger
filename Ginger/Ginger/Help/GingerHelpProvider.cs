@@ -115,8 +115,8 @@ namespace Ginger.Help
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Error Ocurred while loading offline help library, error: {0}", ex.Message));
-                Reporter.ToLog(eLogLevel.ERROR, "Error Ocurred while loading help library", ex);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Error Occurred while loading offline help library, error: {0}", ex.Message));
+                Reporter.ToLog(eLogLevel.ERROR, "Error Occurred while loading help library", ex);
                 return false;
             }
         }
@@ -140,8 +140,8 @@ namespace Ginger.Help
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Error Ocurred while loading online help library, error: {0}", ex.Message));
-                Reporter.ToLog(eLogLevel.ERROR, "Error Ocurred while loading help library", ex);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Error Occurred while loading online help library, error: {0}", ex.Message));
+                Reporter.ToLog(eLogLevel.ERROR, "Error Occurred while loading help library", ex);
             }
         }
     }

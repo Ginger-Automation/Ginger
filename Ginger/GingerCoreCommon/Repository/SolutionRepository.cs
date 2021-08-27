@@ -414,7 +414,7 @@ namespace Amdocs.Ginger.Repository
         public string ConvertFullPathToBeRelative(string fullPath)
         {
             string relative = fullPath;
-            if (fullPath.ToUpper().Contains(SolutionFolder.ToUpper()))
+            if (fullPath != null && fullPath.ToUpper().Contains(SolutionFolder.ToUpper()))
             {
                 relative = cSolutionRootFolderSign + fullPath.Remove(0, SolutionFolder.Length);
             }
