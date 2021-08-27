@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override string GetCurrentBranchForSolution()
         {
-            throw new NotImplementedException();
+            return "master";
         }
 
         public override SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems, ref string error)
