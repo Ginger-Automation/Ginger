@@ -73,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override List<string> GetBranches()
         {
-            throw new NotImplementedException();
+            return new List<string>();
         }
 
         public override string GetCurrentBranchForSolution()
