@@ -131,8 +131,8 @@ namespace Ginger.Reports
 
         public enum eExecutionStatisticsCountBy
         {            
-            Actions = 1,
-            Activities =2
+            Actions = 0,
+            Activities =1
         }
 
         [IsSerializedForLocalRepository]

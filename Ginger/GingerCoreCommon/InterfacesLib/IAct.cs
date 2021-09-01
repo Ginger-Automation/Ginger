@@ -49,6 +49,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
          DateTime StartTimeStamp { get; set; }
          DateTime EndTimeStamp { get; set; }
          int RetryMechanismCount { get; set; }
+        int MaxNumberOfRetries { get; set; }
         long? Elapsed { get; set; }
         eStatusConverterOptions StatusConverter { get; set; }
         eRunStatus? Status { get; set; }

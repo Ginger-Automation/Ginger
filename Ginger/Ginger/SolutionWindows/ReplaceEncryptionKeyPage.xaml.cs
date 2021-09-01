@@ -606,7 +606,7 @@ namespace Ginger.SolutionWindows
 
         private async Task<int> ReEncryptBFAndACtivityVariable(string oldKey = null)
         {
-            ShowStatusMessage("Re-Rencrypting Business flow and activity Password variables Values with new Key...");
+            ShowStatusMessage("Re-Encrypting Business flow and activity Password variables Values with new Key...");
             return await Task.Run(() =>
             {
                 int varReencryptedCount = 0;
@@ -629,7 +629,7 @@ namespace Ginger.SolutionWindows
                            }
                            catch (Exception ex)
                            {
-                               Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password variable of {0} for {1}", Bf.Name, v.Name), ex);
+                               Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Re-encrypt password variable of {0} for {1}", Bf.Name, v.Name), ex);
                            }
                        });
 
@@ -641,7 +641,7 @@ namespace Ginger.SolutionWindows
                    }
                    catch (Exception ex)
                    {
-                       Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password variable of {0}.", Bf.Name), ex);
+                       Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Re encrypt password variable of {0}.", Bf.Name), ex);
                    }
                });
                 return varReencryptedCount;
@@ -652,7 +652,7 @@ namespace Ginger.SolutionWindows
         private async Task<int> ReEncryptGlobalVariables(string oldKey = null)
         {
 
-            ShowStatusMessage("Re-Rencrypting Global Password variables Values with new Key...");
+            ShowStatusMessage("Re-Encrypting Global Password variables Values with new Key...");
             return await Task.Run(() =>
             {
                 // For Global Variables
@@ -670,7 +670,7 @@ namespace Ginger.SolutionWindows
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password Global variable {1}", v.Name), ex);
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Re-encrypt password Global variable {1}", v.Name), ex);
                     }
                 }
                 if (isSaveRequired)
@@ -683,7 +683,7 @@ namespace Ginger.SolutionWindows
 
         private async Task<int> ReEncryptEnvironmentPasswordValues(string oldKey = null)
         {
-            ShowStatusMessage("Re-Rencrypting Environment paramters and DB Password Values with new Key...");
+            ShowStatusMessage("Re-Encrypting Environment paramters and DB Password Values with new Key...");
             return await Task.Run(() =>
             {
                 bool isSaveRequired = false;
@@ -721,7 +721,7 @@ namespace Ginger.SolutionWindows
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "ReEncryptVariable- Failed to Reencrypt password ProjEnvironment variable for " + pe.Name, ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "ReEncryptVariable- Failed to Re-encrypt password ProjEnvironment variable for " + pe.Name, ex);
                     }
                 });
 
@@ -731,7 +731,7 @@ namespace Ginger.SolutionWindows
 
         private async Task<int> ReEncryptSharedRepositoryPasswordValues(string oldKey = null)
         {
-            ShowStatusMessage("Re-Rencrypting Shared Repository Password variables Values with new Key...");
+            ShowStatusMessage("Re-Encrypting Shared Repository Password variables Values with new Key...");
             return await Task.Run(() =>
             {
                 int varReencryptedCount = 0;
@@ -750,7 +750,7 @@ namespace Ginger.SolutionWindows
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt shared password variable of {0}.", sharedVar.Name), ex);
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Re-encrypt shared password variable of {0}.", sharedVar.Name), ex);
                     }
                 }
 
@@ -771,7 +771,7 @@ namespace Ginger.SolutionWindows
                             }
                             catch (Exception ex)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Reencrypt password variable of shared activity {0} for {1}", sharedAct.ActivityName, v.Name), ex);
+                                Reporter.ToLog(eLogLevel.ERROR, string.Format("ReEncryptVariable- Failed to Re-encrypt password variable of shared activity {0} for {1}", sharedAct.ActivityName, v.Name), ex);
                             }
                         });
 
@@ -792,7 +792,7 @@ namespace Ginger.SolutionWindows
 
         private async Task<int> ReEncryptRunsetOperationsPassowrdValues(string oldKey = null)
         {
-            ShowStatusMessage("Re-Rencrypting Runset Operations SMTP Password Values with new Key...");
+            ShowStatusMessage("Re-Encrypting Runset Operations SMTP Password Values with new Key...");
             return await Task.Run(() =>
             {
                 bool isSaveRequired = false;
@@ -839,7 +839,7 @@ namespace Ginger.SolutionWindows
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Rencrypting Email SMTP password of " + rsc.Name, ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Encrypting Email SMTP password of " + rsc.Name, ex);
                     }
                 }
                 return varReencryptedCount;

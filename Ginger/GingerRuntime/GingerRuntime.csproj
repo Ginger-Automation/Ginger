@@ -22,6 +22,16 @@
     <CodeAnalysisRuleSet>GingerRuntime.ruleset</CodeAnalysisRuleSet>
     <WarningLevel>2</WarningLevel>
   </PropertyGroup>
+  
+    <PropertyGroup>
+    <WebDriverPlatform>linux64</WebDriverPlatform>
+    <PublishChromeDriver>true</PublishChromeDriver>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GeckoDriverPlatform>linux64</GeckoDriverPlatform>
+    <PublishGeckoDriver>true</PublishGeckoDriver>
+  </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="ReporterLib\**" />
@@ -33,6 +43,8 @@
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="1.3.0" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.1" />
     <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="5.8.64" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="92.0.4515.10700" />
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.29.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
     <PackageReference Include="System.Security.Permissions" Version="5.0.0" />
   </ItemGroup>
@@ -40,16 +52,4 @@
   <ItemGroup>
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
   </ItemGroup>
-
-  <Target Name="PostBuild_CopySeleniumDrivers" AfterTargets="Build">
-    <ItemGroup>
-      <LinuxDrivers Include="$(ProjectDir)..\GingerLinuxOsSupport\bin\$(Configuration)\netstandard2.0\chromedriver.*;$(ProjectDir)..\GingerLinuxOsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.*" />
-      <MacDrivers Include="$(ProjectDir)..\GingerMacOsSupport\bin\$(Configuration)\netstandard2.0\chromedriver.*;$(ProjectDir)..\GingerMacOsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.*" />     
-      <Windows64BitDrivers Include="$(ProjectDir)..\GingerWin64OsSupport\bin\$(Configuration)\netstandard2.0\IEDriverServer.exe;$(ProjectDir)..\GingerWin64OsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.exe" />
-    </ItemGroup>
-    <Copy SourceFiles="@(LinuxDrivers);" DestinationFolder="$(TargetDir)\Linux" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="@(MacDrivers);" DestinationFolder="$(TargetDir)\Mac" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="@(Windows64BitDrivers);" DestinationFolder="$(TargetDir)\Win64" SkipUnchangedFiles="true" />
-  </Target>
-
 </Project>

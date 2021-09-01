@@ -63,6 +63,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         bool IsFirstSelection = true;
 
+        bool mAddSelfHealingColumn = true;
+
         private Agent mAgent;
         IWindowExplorer mWinExplorer
         {
@@ -121,11 +123,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        public PomElementsPage(ApplicationPOMModel pom, eElementsContext context)
+        public PomElementsPage(ApplicationPOMModel pom, eElementsContext context,bool AddSelfHealingColumn)
         {
             InitializeComponent();
             mPOM = pom;
             mContext = context;
+            mAddSelfHealingColumn = AddSelfHealingColumn;
+
             if (mContext == eElementsContext.Mapped)
             {
                 mElements = mPOM.MappedUIElements;
@@ -274,8 +278,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             view.GridColsView.Add(new GridColView() { Field = "", Header = "Highlight", WidthWeight = 8, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.StatusIcon), Header = "Status", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.GetSelfHealingInfo),StyleType=GridColView.eGridColStyleType.Text, Header = "Self Healing Info.", WidthWeight = 22, ReadOnly = true, PropertyConverter = (new ColumnPropertyConverter(new SelfHealingInfoStatusConverter(), TextBlock.ForegroundProperty)) });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.LastUpdatedTime), Header = "Last Updated", WidthWeight = 10 });
+            if (mAddSelfHealingColumn)
+            {
+                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.GetSelfHealingInfo), StyleType = GridColView.eGridColStyleType.Text, Header = "Self Healing Info.", WidthWeight = 22, ReadOnly = true, PropertyConverter = (new ColumnPropertyConverter(new SelfHealingInfoStatusConverter(), TextBlock.ForegroundProperty)) });
+                view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.LastUpdatedTime), Header = "Last Updated", WidthWeight = 10 });
+            }
 
             GridViewDef mRegularView = new GridViewDef(eGridView.RegularView.ToString());
             mRegularView.GridColsView = new ObservableList<GridColView>();
@@ -684,9 +691,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void DisableDetailsExpander()
         {
-            xDetailsExpanderLabel.Content = "Element Details";
-            xDetailsExpander.IsEnabled = false;
-            xDetailsExpander.IsExpanded = false;
+            this.Dispatcher.Invoke(() =>
+            {
+                xDetailsExpanderLabel.Content = "Element Details";
+                xDetailsExpander.IsEnabled = false;
+                xDetailsExpander.IsExpanded = false;
+            });
         }
 
         private void HighlightElementClicked(object sender, RoutedEventArgs e)

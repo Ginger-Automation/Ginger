@@ -26,6 +26,6 @@ namespace Amdocs.Ginger.Common.Repository
 {    
     public interface ISourceControl
     {
-        eImageType GetFileStatusForRepositoryItemPath(string FullPath);
+        Task<eImageType> GetFileStatusForRepositoryItemPath(string FullPath);
     }
 }

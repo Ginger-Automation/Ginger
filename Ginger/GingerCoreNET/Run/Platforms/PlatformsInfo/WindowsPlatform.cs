@@ -364,6 +364,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementsTypeList.Add(eElementType.Dialog);
                 mElementsTypeList.Add(eElementType.MenuItem);
                 mElementsTypeList.Add(eElementType.MenuBar);
+                mElementsTypeList.Add(eElementType.Image);
                 //mElementsTypeList.Add(eElementType.Browser);
                 //mElementsTypeList.Add(eElementType.ScrollBar);
             }
@@ -671,114 +672,104 @@ namespace GingerCore.Platforms.PlatformsInfo
         public static eElementType GetElementType(string elementType, string elementClass)
         {
             eElementType elementTypeEnum;
-            switch(elementType)
+
+            if (elementType.Equals("button", StringComparison.OrdinalIgnoreCase))
             {
-                case "button":
-                    elementTypeEnum = eElementType.Button;
-                    break;
-
-                case "Edit Box":
-                case "edit":
-                    elementTypeEnum = eElementType.TextBox;
-                    break;
-
-                case "label":
-                case "text":
-                    elementTypeEnum = eElementType.Label;
-                    break;
-
-                case "combo box":                
-                    elementTypeEnum = eElementType.ComboBox;
-                    break;
-
-                case "tab ":                
-                    elementTypeEnum = eElementType.Tab;
-                    break;
-
-                case "tab item":
-                case "item":  //TODO: For  Grid rows control type is item.This will work, but can be enhanced to use Grid patterns
-                    elementTypeEnum = eElementType.TabItem;
-                    break;           
-
-                case "check box":
-                    elementTypeEnum = eElementType.CheckBox;
-                    break;
-
-                case "radio button":
-                    elementTypeEnum = eElementType.RadioButton;
-                    break;
-
-                case "list":
-                case "list view":
-                    elementTypeEnum = eElementType.List;
-                    break;
-
-                case "list item":
-                    elementTypeEnum = eElementType.ListItem;
-                    break;
-
-                case "tree":
-                case "tree view":
-                    elementTypeEnum = eElementType.TreeView;
-                    break;
-
-                case "tree view item":
-                case "tree item":
-                    elementTypeEnum = eElementType.TreeItem;
-                    break;
-
-                case "pane":
-                    // TODO: Remove Dependency on class name. Find a generic way
-                    if (elementClass.Contains("SysDateTimePick32"))
-                    {
-                        elementTypeEnum = eElementType.DatePicker;
-                    }
-                    //else if (elementClass == "Internet Explorer_Server")
-                    //{
-                    //    elementTypeEnum = eElementType.Browser;
-                    //}
-                    else
-                    {
-                        elementTypeEnum=eElementType.Unknown;
-                    }                 
-                    break;
-
-
-                case "link":
-                    elementTypeEnum = eElementType.HyperLink;
-                    break;
-
-                case "document":
-                case "":
-                    elementTypeEnum = eElementType.Document;
-                    break;
-
-                case "Dialog":
-                case "dialog":
-                    elementTypeEnum = eElementType.Dialog;
-                    break;
-
-                case "window":
-                case "Window":
-                    elementTypeEnum = eElementType.Window;
-                    break;
-
-                case "menu item":
-                    elementTypeEnum = eElementType.MenuItem;
-                    break;
-
-                case "menu bar":
-                    elementTypeEnum = eElementType.MenuBar;
-                    break;
-
-                //case "scroll bar":
-                //    elementTypeEnum = eElementType.ScrollBar;
-                //    break;
-
-                default:
-                    elementTypeEnum = eElementType.Unknown;
-                    break;
+                elementTypeEnum = eElementType.Button;
             }
+            else if (elementType.Equals("edit", StringComparison.OrdinalIgnoreCase) || elementType.Equals("edit box", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.TextBox;
+            }
+            else if (elementType.Equals("label", StringComparison.OrdinalIgnoreCase) || elementType.Equals("text", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.Label;
+            }
+            else if (elementType.Equals("combo box", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.ComboBox;
+            }
+            else if (elementType.Equals("tab", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.Tab;
+            }
+            else if (elementType.Equals("tab item", StringComparison.OrdinalIgnoreCase) || elementType.Equals("item", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.TabItem;
+            }
+            else if (elementType.Equals("check box", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.CheckBox;
+            }
+            else if (elementType.Equals("radio button", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.RadioButton;
+            }
+            else if (elementType.Equals("list view", StringComparison.OrdinalIgnoreCase) || elementType.Equals("list", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.List;
+            }
+            else if (elementType.Equals("list item", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.ListItem;
+            }
+            else if (elementType.Equals("tree view", StringComparison.OrdinalIgnoreCase) || elementType.Equals("tree", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.TreeView;
+            }
+            else if (elementType.Equals("tree view item", StringComparison.OrdinalIgnoreCase) || elementType.Equals("tree item", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.TreeItem;
+            }
+            else if (elementType.Equals("link", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.HyperLink;
+            }
+            else if (elementType.Equals("document", StringComparison.OrdinalIgnoreCase) || elementType.Equals("", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.Document;
+            }
+            else if (elementType.Equals("dialog", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.Dialog;
+            }
+            else if (elementType.Equals("window", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.Window;
+            }
+            else if (elementType.Equals("menu item", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.MenuItem;
+            }
+            else if (elementType.Equals("menu bar", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.MenuBar;
+            }
+            else if (elementType.Equals("image", StringComparison.OrdinalIgnoreCase))
+            {
+                elementTypeEnum = eElementType.Image;
+            }
+            else if (elementType.Equals("pane", StringComparison.OrdinalIgnoreCase))
+            {
+                // TODO: Remove Dependency on class name. Find a generic way
+                if (elementClass.Contains("SysDateTimePick32"))
+                {
+                    elementTypeEnum = eElementType.DatePicker;
+                }
+                //else if (elementClass == "Internet Explorer_Server")
+                //{
+                //    elementTypeEnum = eElementType.Browser;
+                //}
+                else
+                {
+                    elementTypeEnum = eElementType.Unknown;
+                }
+            }
+            else
+            {
+                elementTypeEnum = eElementType.Unknown;
+            }
+            
             return elementTypeEnum;
         }
 

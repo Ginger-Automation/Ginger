@@ -5,7 +5,7 @@ using Medallion.Shell;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.IO;
 namespace Amdocs.Ginger.CoreNET.SourceControl
 {
 
@@ -14,7 +14,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
     /// </summary>
     public class SVNSourceControlShellWrapper : SourceControlBase
     {
-
+        private string SourceCpntrolURL;
         public SVNSourceControlShellWrapper()
         {
             try
@@ -61,7 +61,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override bool CreateConfigFile(ref string error)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public override bool DeleteFile(string Path, ref string error)
@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override void Disconnect()
         {
-            throw new NotImplementedException();
+    ;
         }
 
         public override List<string> GetBranches()
@@ -96,8 +96,9 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
         {
-             RunSVNCommand(new object[] { "revert","-R", "." }, path);
-            return RunSVNCommand(new object[] { "up" }, path);
+            Console.WriteLine("Reverting and Get Latest");
+             RunSVNCommand(new object[] { "revert","-R", "." , "--username", SourceControlUser, "--password", SourceControlPass }, path);
+            return RunSVNCommand(new object[] { "up" , "--username", SourceControlUser, "--password", SourceControlPass }, path);
         }
 
         public override string GetLockOwner(string path, ref string error)
@@ -112,11 +113,12 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override bool GetProject(string Path, string URI, ref string error)
         {
+            Console.WriteLine("Check Out");
 
 
+            SourceControlURL = URI;
 
-
-            return RunSVNCommand(new object[] { "checkout", URI, "--username", SourceControlUser, "--password", SourceControlPass }, Path);
+            return RunSVNCommand(new object[] { "checkout", URI, Path, "--username", SourceControlUser, "--password", SourceControlPass }, Path);
         }
           
     
@@ -132,12 +134,12 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override string GetRepositoryURL(ref string error)
         {
-            throw new NotImplementedException();
+            return SourceControlURL;
         }
 
         public override void Init()
         {
-            throw new NotImplementedException();
+        
         }
 
         public override bool Lock(string path, string lockComment, ref string error)
@@ -152,7 +154,9 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override bool Revert(string path, ref string error)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Reverting ");
+            RunSVNCommand(new object[] { "revert", "-R", "." }, path);
+            return true;
         }
 
         public override bool TestConnection(ref string error)
@@ -172,6 +176,10 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         private static bool RunSVNCommand(object[] args,string Path)
         {
+            if (!Directory.Exists(Path))
+            {
+                Directory.CreateDirectory(Path);
+            }
             var result = Command.Run("svn",
                 args,
              options: o => o.WorkingDirectory(Path)).Result;

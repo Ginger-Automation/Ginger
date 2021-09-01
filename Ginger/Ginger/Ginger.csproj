@@ -4621,6 +4621,10 @@
       <Project>{80a06c2b-7da2-4f78-bf2a-5c0234f2349e}</Project>
       <Name>GingerUtils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GingerWin64OsSupport\GingerWin64OsSupport.csproj">
+      <Project>{76149bd0-05b7-4190-a2c2-5ef0284d5587}</Project>
+      <Name>GingerWin64OsSupport</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.1">
@@ -4822,6 +4826,18 @@
     <PackageReference Include="RestSharp">
       <Version>106.11.4</Version>
     </PackageReference>
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver">
+      <Version>92.0.4515.10700</Version>
+    </PackageReference>
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver">
+      <Version>0.29.1</Version>
+    </PackageReference>
+    <PackageReference Include="Selenium.WebDriver.IEDriver">
+      <Version>3.150.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver">
+      <Version>92.0.902.62</Version>
+    </PackageReference>
     <PackageReference Include="SharpAdbClient">
       <Version>2.3.23</Version>
     </PackageReference>
@@ -5006,10 +5022,7 @@
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)..\GingerLinuxOsSupport\bin\$(Configuration)\netstandard2.0\chromedriver.*" "$(TargetDir)Linux" /Y /I
-xcopy "$(ProjectDir)..\GingerLinuxOsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.*" "$(TargetDir)Linux" /Y /I
-xcopy "$(ProjectDir)..\GingerMacOsSupport\bin\$(Configuration)\netstandard2.0\chromedriver.*" "$(TargetDir)Mac" /Y /I
-xcopy "$(ProjectDir)..\GingerMacOsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.*" "$(TargetDir)Mac" /Y /I
+    <PostBuildEvent>
 xcopy "$(ProjectDir)..\GingerWin64OsSupport\bin\$(Configuration)\netstandard2.0\IEDriverServer.*" "$(TargetDir)Win64" /Y /I
 xcopy "$(ProjectDir)..\GingerWin64OsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.*" "$(TargetDir)Win64" /Y /I</PostBuildEvent>
   </PropertyGroup>

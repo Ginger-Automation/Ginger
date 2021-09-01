@@ -242,7 +242,24 @@ namespace GingerCore.Actions
 
         private bool mEnableRetryMechanism;
         [IsSerializedForLocalRepository]
-        public bool EnableRetryMechanism { get { return mEnableRetryMechanism; } set { mEnableRetryMechanism = value; OnPropertyChanged(Fields.EnableRetryMechanism); } }
+        public bool EnableRetryMechanism
+        {
+            get
+            {
+                return mEnableRetryMechanism;
+            }
+            set
+            {
+                mEnableRetryMechanism = value;
+
+                if (value == false)
+                {
+                    MaxNumberOfRetries = 0;
+                }
+
+                OnPropertyChanged(Fields.EnableRetryMechanism); 
+            }
+        }
 
         private int mRetryMechanismInterval = 5;
         [IsSerializedForLocalRepository]
@@ -250,7 +267,22 @@ namespace GingerCore.Actions
 
         private int mMaxNumberOfRetries = 2;
         [IsSerializedForLocalRepository]
-        public int MaxNumberOfRetries { get { return mMaxNumberOfRetries; } set { mMaxNumberOfRetries = value; OnPropertyChanged(Fields.MaxNumberOfRetries); } }
+        public int MaxNumberOfRetries
+        {
+            get
+            {
+                if(EnableRetryMechanism)
+                {
+                    return mMaxNumberOfRetries;
+                }
+                return 0;
+            }
+            set
+            {
+                mMaxNumberOfRetries = value;
+                OnPropertyChanged(Fields.MaxNumberOfRetries);
+            }
+        }
 
 
         private int mWait;

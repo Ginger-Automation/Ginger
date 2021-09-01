@@ -220,7 +220,7 @@ namespace Ginger.WindowExplorer
                 xmlNode = (sender as TreeView).SelectedItem as XmlNode;
             }
 
-            if (xmlNode != null)
+            if (xmlNode != null && xmlNode.Attributes.Count > 0)
             {
                 ElementInfo elemInfo = mWindowExplorerDriver.LearnElementInfoDetails(new ElementInfo() { ElementObject = xmlNode });
 
@@ -229,6 +229,11 @@ namespace Ginger.WindowExplorer
                     mCurrentControlTreeViewItem = GetTreeViewItemForElementInfo(elemInfo);
                     ShowCurrentControlInfo();
                 }
+            }
+            else
+            {
+                xUCElementDetails.SelectedElement = null;
+                mCurrentControlTreeViewItem = null;
             }
         }
 
@@ -468,6 +473,8 @@ namespace Ginger.WindowExplorer
         private async Task RefreshPageSrcContent()
         {
             xLoadingPageSrcBanner.Visibility = Visibility.Visible;
+            xXMLPageSrcViewer.Visibility = Visibility.Collapsed;
+            xHTMLPageSrcViewer.Visibility = Visibility.Collapsed;
 
             try
             {

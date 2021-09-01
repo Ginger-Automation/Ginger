@@ -22,10 +22,10 @@ namespace Amdocs.Ginger.Common.SelfHealingLib
     public class SelfHealingConfig : RepositoryItemBase
     {
         [IsSerializedForLocalRepository]
-        public bool EnableSelfHealing { get; set; }
+        public bool EnableSelfHealing { get; set; } = true;
 
         [IsSerializedForLocalRepository]
-        public bool ReprioritizePOMLocators { get; set; }
+        public bool ReprioritizePOMLocators { get; set; } = true;
 
         [IsSerializedForLocalRepository]
         public bool AutoFixAnalyzerIssue { get; set; }

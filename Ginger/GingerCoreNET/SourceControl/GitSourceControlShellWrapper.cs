@@ -4,11 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Medallion.Shell;
+using System.IO;
+
 namespace Amdocs.Ginger.CoreNET.SourceControl
 {
     public class GitSourceControlShellWrapper : SourceControlBase
     {
-
+        private string RepositoryUrl;
 
         public GitSourceControlShellWrapper()
         {
@@ -56,7 +58,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override bool CreateConfigFile(ref string error)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public override bool DeleteFile(string Path, ref string error)
@@ -71,12 +73,12 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override List<string> GetBranches()
         {
-            throw new NotImplementedException();
+            return new List<string>();
         }
 
         public override string GetCurrentBranchForSolution()
         {
-            throw new NotImplementedException();
+            return "master";
         }
 
         public override SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems, ref string error)
@@ -108,11 +110,11 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override bool GetProject(string Path, string URI, ref string error)
         {
+            RepositoryUrl = URI;
 
 
 
-
-            return RunGITCommand(new object[] { "clone", GetCloneUrlString() }, Path);
+            return RunGITCommand(new object[] { "clone",  GetCloneUrlString(),"." }, Path);
 
 
 
@@ -125,7 +127,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
                 Uri url = new Uri(URI);
                 string scheme = url.Scheme;
 
-                return url.Scheme + SourceControlUser + ":" + SourceControlPass + "@" + url.Host + url.AbsolutePath;
+                return url.Scheme+@"://" + SourceControlUser + ":" + SourceControlPass + "@" + url.Host + url.AbsolutePath;
             }
         }
 
@@ -142,12 +144,12 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override string GetRepositoryURL(ref string error)
         {
-            throw new NotImplementedException();
+            return RepositoryUrl;
         }
 
         public override void Init()
         {
-            throw new NotImplementedException();
+           
         }
 
         public override bool Lock(string path, string lockComment, ref string error)
@@ -182,7 +184,14 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         private static bool RunGITCommand(object[] args, string Path)
         {
-            var result = Command.Run("GIT",
+            if(!Directory.Exists(Path))
+            {
+                Directory.CreateDirectory(Path);
+            }
+            var command = "git";
+
+  
+            var result = Command.Run("git",
                 args,
              options: o => o.WorkingDirectory(Path)).Result;
 
