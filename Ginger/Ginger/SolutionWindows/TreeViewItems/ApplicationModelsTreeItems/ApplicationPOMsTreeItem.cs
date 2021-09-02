@@ -36,7 +36,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 {
     public class ApplicationPOMsTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        public RepositoryFolder<ApplicationPOMModel> mPOMModelFolder;        
+        public RepositoryFolder<ApplicationPOMModel> mPOMModelFolder;
         private POMModelsPage mPOMModelsPage;
         private ObservableList<ApplicationPOMModel> mChildPoms = null;
 
@@ -59,7 +59,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {           
+        {
             return NewTVItemFolderHeaderStyle(mPOMModelFolder);
         }
 
@@ -147,9 +147,21 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         }
 
         internal void AddPOM(object sender, RoutedEventArgs e)
-        {           
+        {
+            ObservableList<ApplicationPlatform> TargetApplications = new ObservableList<ApplicationPlatform>();
+            if (WorkSpace.Instance.Solution.ApplicationPlatforms != null)
+            {
+                TargetApplications = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.Solution.GetListOfPomSupportedPlatform());
+            }
+            if (TargetApplications.Count != 0)
+            {
                 mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
-                WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder), 1000, 700, DoNotShowAsDialog: true);           
+                WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder), 1000, 700, DoNotShowAsDialog: true);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Please Add at-least one Target Application that supports POM to continue adding Page Object Models");
+            }
         }
 
         internal void AddEmptyPOM(object sender, RoutedEventArgs e)
