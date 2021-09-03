@@ -23,9 +23,9 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         {
             WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-            File.Copy(excelPathWrite, excelPathWriteTemp,true);
+            File.Copy(excelPathWrite, excelPathWriteTemp, true);
         }
-        
+
         [TestMethod]
         public void ReadExcelFirstRowTest()
         {
@@ -41,7 +41,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             actExcel.Execute();
 
             //Assert
-            Assert.AreEqual(actExcel.ActReturnValues.Count,4);
+            Assert.AreEqual(actExcel.ActReturnValues.Count, 4);
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr");
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
         }
@@ -221,6 +221,34 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 actual = string.Join(',', actual, current);
             }
             Assert.AreEqual(actual.TrimStart(','), "1,Simon,Cohen,2109 Fox Dr,4,Simon,Cohen,NY");
+        }
+        [TestMethod]
+        public void WriteExcelToEmptyRowsTest()
+        {
+            ActExcel actExcel = new ActExcel();
+            actExcel.RunOnBusinessFlow = new GingerCore.BusinessFlow();
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ExcelFileName),
+                TestResources.GetTestResourcesFile(excelPathWriteTemp));
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SheetName), "Sheet1");
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.PrimaryKeyColumn), "ID");
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SelectRowsWhere), "ID='5'");
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ColMappingRules), "First='Rajdeep',Last='Mukherjee',Address='Pune'");
+            actExcel.ExcelActionType = ActExcel.eExcelActionType.WriteData;
+            actExcel.SelectAllRows = false;
+
+            //Act
+            actExcel.Execute();
+
+            //Assert
+            IExcelOperations excelOperations = new ExcelNPOIOperations();
+            DataTable dt = excelOperations.ReadData(excelPathWriteTemp, actExcel.SheetName, actExcel.SelectRowsWhere, actExcel.SelectAllRows);
+            string actual = "";
+            foreach (DataRow dr in dt.Rows)
+            {
+                string current = string.Join(',', dr.ItemArray.Select(x => x).ToList());
+                actual = string.Join(',', actual, current);
+            }
+            Assert.AreEqual(actual.TrimStart(','), "5,Rajdeep,Mukherjee,Pune");
         }
     }
 }
