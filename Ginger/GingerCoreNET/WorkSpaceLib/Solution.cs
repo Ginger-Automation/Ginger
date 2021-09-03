@@ -775,7 +775,10 @@ namespace Ginger.SolutionGeneral
         {
             if (ApplicationPlatforms != null)
             {
-                return ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
+                if (ApplicationPlatforms.Count != 0)
+                {
+                    return ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
+                }
             }
             return new List<ApplicationPlatform>();
         }
