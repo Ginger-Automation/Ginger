@@ -326,10 +326,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
             if (UpdateCellList.Count > 0)
             {
-                //UpdateCellList.ForEach(x =>
-                //mExcelDataTable.Select(filter).ToList().ForEach(dr =>
-                //mSheet.GetRow(mExcelDataTable.Rows.IndexOf(dr) + 1).GetCell(mExcelDataTable.Columns[x.Item1.Replace("[","").Replace("]","").Trim()].Ordinal).SetCellValue(x.Item2.ToString().Trim())));
-
                 foreach (var cell in UpdateCellList)
                 {
                     List<DataRow> filteredList = mExcelDataTable.Select(filter).ToList();
@@ -344,7 +340,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                                 targetCell = mSheet.GetRow(mExcelDataTable.Rows.IndexOf(objDataRow) + 1).
                                             CreateCell(mExcelDataTable.Columns[cell.Item1.Replace("[", "").Replace("]", "").Trim()].Ordinal);
                             }
-                            mSheet.GetRow(mExcelDataTable.Rows.IndexOf(objDataRow) + 1).GetCell(mExcelDataTable.Columns[cell.Item1.Replace("[", "").Replace("]", "").Trim()].Ordinal).SetCellValue(cell.Item2.ToString().Trim());
+                            targetCell.SetCellValue(cell.Item2.ToString().Trim());
                         }
                     }
                 }
