@@ -148,8 +148,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         internal void AddPOM(object sender, RoutedEventArgs e)
         {
-            List<ApplicationPlatform> TargetApplications = new List<ApplicationPlatform>();
-            TargetApplications = WorkSpace.Instance.Solution.GetListOfPomSupportedPlatform();
+            List<ApplicationPlatform> TargetApplications = WorkSpace.Instance.Solution.GetListOfPomSupportedPlatform();
             if (TargetApplications.Count != 0)
             {
                 mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
