@@ -62,6 +62,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Xml;
+using static GingerCore.Actions.ActMobileDevice;
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -970,6 +971,29 @@ namespace Amdocs.Ginger.CoreNET
         public void PerformBackButtonPress()
         {
             Driver.Navigate().Back();
+
+            if (IsRecording)
+            {
+                RecordingOperations(GetMobileActionforRecording(eMobileDeviceAction.PressBackButton));
+            }
+        }
+
+        public void RecordingOperations(ActMobileDevice RecordedAction)
+        {
+            RecordedAction.Active = true;
+            BusinessFlow.CurrentActivity.Acts.Add(RecordedAction);
+        }
+
+        public ActMobileDevice GetMobileActionforRecording(eMobileDeviceAction ActionPerformed)
+        {
+            ActMobileDevice mobDevAct = new ActMobileDevice()
+            {
+                MobileDeviceAction = ActionPerformed,
+            };
+
+            mobDevAct.Description = mobDevAct.ActionType;
+
+            return mobDevAct;
         }
 
         public void PerformHomeButtonPress()
@@ -986,6 +1010,11 @@ namespace Amdocs.Ginger.CoreNET
                     Driver.ExecuteScript("mobile: pressButton", commandArgs);
                     break;
             }
+
+            if (IsRecording)
+            {
+                RecordingOperations(GetMobileActionforRecording(eMobileDeviceAction.PressHomeButton));
+            }
         }
 
         public void PerformMenuButtonPress()
@@ -996,6 +1025,11 @@ namespace Amdocs.Ginger.CoreNET
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Menu);
                     break;
             }
+
+            if (IsRecording)
+            {
+                RecordingOperations(GetMobileActionforRecording(eMobileDeviceAction.PressMenuButton));
+            }
         }
 
         public void PerformOpenCamera()
@@ -1005,6 +1039,11 @@ namespace Amdocs.Ginger.CoreNET
                 case eDevicePlatformType.Android:
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Keycode_CAMERA);
                     break;
+            }
+
+            if (IsRecording)
+            {
+                RecordingOperations(GetMobileActionforRecording(eMobileDeviceAction.OpenCamera));
             }
         }
 
@@ -1038,6 +1077,11 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     break;
             }
+
+            if (IsRecording)
+            {
+                RecordingOperations(GetMobileActionforRecording(volumeOperation == eVolumeOperation.Up ? eMobileDeviceAction.PressVolumeUp : eMobileDeviceAction.PressVolumeDown));
+            }
         }
 
         public void PerformLockButtonPress(eLockOperation LockOperation)
@@ -1057,6 +1101,11 @@ namespace Amdocs.Ginger.CoreNET
                     break;
                 case eDevicePlatformType.iOS:
                     break;
+            }
+
+            if (IsRecording)
+            {
+                RecordingOperations(GetMobileActionforRecording(LockOperation == eLockOperation.Lock ? eMobileDeviceAction.LockDevice : eMobileDeviceAction.UnlockDevice));
             }
         }
 
@@ -1866,8 +1915,14 @@ namespace Amdocs.Ginger.CoreNET
 
         void IRecord.StartRecording(bool learnAdditionalChanges)
         {
-            IsRecording = true;
-            OnDriverMessage(eDriverMessageType.RecordingEvent, IsRecording);
+            if(AppType == eAppType.Web)
+            {
+                mSeleniumDriver.StartRecording();
+            }
+            else
+                IsRecording = true;
+
+            OnDriverMessage(eDriverMessageType.RecordingEvent, true);
             //Dispatcher.Invoke(() =>
             //{
             //    if (DriverWindow != null) DriverWindow.StartRecording();
@@ -1876,8 +1931,14 @@ namespace Amdocs.Ginger.CoreNET
 
         void IRecord.StopRecording()
         {
+            if (AppType == eAppType.Web)
+            {
+                mSeleniumDriver.StopRecording();
+            }
+
             IsRecording = false;
             OnDriverMessage(eDriverMessageType.RecordingEvent, IsRecording);
+
             //Dispatcher.Invoke(() =>
             //{
             //    if (DriverWindow != null) DriverWindow.StopRecording();
@@ -2008,32 +2069,10 @@ namespace Amdocs.Ginger.CoreNET
             {
                 mIsDriverBusy = true;
 
+                originalList.Select(e => { e.ElementStatus = ElementInfo.eElementStatus.Pending; return e; }).ToList();
                 foreach (ElementInfo EI in originalList)
                 {
                     EI.ElementStatus = ElementInfo.eElementStatus.Pending;
-                }
-
-
-                foreach (ElementInfo EI in originalList)
-                {
-                    try
-                    {
-                        if (LocateElementByLocators(EI.Locators) != null)
-                        //if (e != null)
-                        {
-                            //EI.ElementObject = e;
-                            EI.ElementStatus = ElementInfo.eElementStatus.Passed;
-                        }
-                        else
-                        {
-                            EI.ElementStatus = ElementInfo.eElementStatus.Failed;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        EI.ElementStatus = ElementInfo.eElementStatus.Failed;
-                        Console.WriteLine("CollectOriginalElementsDataForDeltaCheck error: " + ex.Message);
-                    }
                 }
             }
             finally
@@ -2215,18 +2254,61 @@ namespace Amdocs.Ginger.CoreNET
 
         public void PerformTap(long x, long y)
         {
-            TapXY(x, y);
+            if (IsRecording)
+            {
+                ElementInfo elemInfo = GetElementAtPoint(x, y).Result;
+                if (elemInfo != null)
+                {
+                    RecordingEventArgs args = new RecordingEventArgs();
+                    args.EventType = eRecordingEvent.ElementRecorded;
+
+                    ElementActionCongifuration configArgs = new ElementActionCongifuration();
+                    configArgs.LocateBy = eLocateBy.ByXPath;
+                    configArgs.LocateValue = elemInfo.Locators.Where(l => l.LocateBy == eLocateBy.ByXPath).FirstOrDefault().LocateValue;
+                    configArgs.ElementValue = elemInfo.Value;
+                    configArgs.Type = elemInfo.ElementTypeEnum;
+                    configArgs.LearnedElementInfo = elemInfo;
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+
+                    args.EventArgs = configArgs;
+                    RecordingEvent?.Invoke(this, args);
+                }
+
+                TapXY(x, y);
+            }
+            else
+                TapXY(x, y);
         }
 
         public void PerformLongPress(long x, long y)
         {
             TouchAction tc = new TouchAction(Driver);
             tc.LongPress(x, y).Perform();
+
+            if (IsRecording)
+            {
+                var mobDevAction = GetMobileActionforRecording(eMobileDeviceAction.LongPressXY);
+                mobDevAction.X1.ValueForDriver = x.ToString();
+                mobDevAction.Y1.ValueForDriver = y.ToString();
+                RecordingOperations(mobDevAction);
+            }
         }
 
         public void PerformDrag(Point start, Point end)
         {
             DoDrag(start.X, start.Y, end.X, end.Y);
+
+            if (IsRecording)
+            {
+                var mobDevAction = GetMobileActionforRecording(eMobileDeviceAction.DragXYXY);
+
+                mobDevAction.X1.ValueForDriver = start.X.ToString();
+                mobDevAction.Y1.ValueForDriver = start.Y.ToString();
+
+                mobDevAction.X2.ValueForDriver = end.X.ToString();
+                mobDevAction.Y2.ValueForDriver = end.Y.ToString();
+                RecordingOperations(mobDevAction);
+            }
         }
 
         public void SwitchToLandscape()
@@ -2650,12 +2732,31 @@ namespace Amdocs.Ginger.CoreNET
         public void PerformScreenSwipe(eSwipeSide swipeSide, double impact = 1)
         {
             SwipeScreen(swipeSide, impact);
-            ActMobileDevice mobAct = new ActMobileDevice() { MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.swip}
-        }
 
-        public void RecordAction()
-        {
+            ActMobileDevice mobAct = new ActMobileDevice();
+            switch (swipeSide)
+            {
+                case eSwipeSide.Up:
+                    mobAct.MobileDeviceAction = eMobileDeviceAction.SwipeUp;
+                    break;
 
+                case eSwipeSide.Down:
+                    mobAct.MobileDeviceAction = eMobileDeviceAction.SwipeDown;
+                    break;
+
+                case eSwipeSide.Right:
+                    mobAct.MobileDeviceAction = eMobileDeviceAction.SwipeRight;
+                    break;
+
+                case eSwipeSide.Left:
+                    mobAct.MobileDeviceAction = eMobileDeviceAction.SwipeLeft;
+                    break;
+            }
+
+            if (IsRecording)
+            {
+                RecordingOperations(mobAct);
+            }
         }
 
         public void PerformSendKey(string key)

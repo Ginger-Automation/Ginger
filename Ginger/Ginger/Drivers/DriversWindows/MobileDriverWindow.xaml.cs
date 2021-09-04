@@ -1035,5 +1035,10 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
         #endregion Functions
+
+        private void xRecordingImage_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

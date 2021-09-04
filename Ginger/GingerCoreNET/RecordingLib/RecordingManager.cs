@@ -273,7 +273,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     einfo = (ElementInfo)args.LearnedElementInfo;
                     args.AddPOMToAction = CreatePOM;
-                    args.POMGuid = CurrentPOM.Guid.ToString();
+                    args.POMGuid = CurrentPOM != null ? CurrentPOM.Guid.ToString() : string.Empty;
                     args.ElementGuid = einfo.Guid.ToString();
 
                     actUI = PlatformInfo.GetPlatformAction(einfo, args);
