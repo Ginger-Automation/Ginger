@@ -224,7 +224,7 @@ namespace Ginger.ALM.Repository
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to get create folder for Test Repository with Zephyr Ent.", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Failed to get create folder for Test Repository with Zephyr Ent.", ex);
                         }
                     }
                 }

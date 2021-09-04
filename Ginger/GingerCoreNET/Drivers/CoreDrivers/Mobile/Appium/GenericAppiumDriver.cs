@@ -475,12 +475,30 @@ namespace Amdocs.Ginger.CoreNET
                     case ActUIElement.eElementAction.GetText:
                     case ActUIElement.eElementAction.GetFont:
                         e = LocateElement(act);
-                        act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("text"));
+
+                        /// As text attribute does not exist on iOS devices
+                        if (DevicePlatformType == eDevicePlatformType.iOS)
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("value"));
+                        }
+                        else
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("text"));
+                        }
                         break;
 
                     case ActUIElement.eElementAction.GetTextLength:
                         e = LocateElement(act);
-                        act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("text").Length).ToString());
+
+                        /// As text attribute does not exist on iOS devices
+                        if (DevicePlatformType == eDevicePlatformType.iOS)
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("value").Length).ToString());
+                        }
+                        else
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("text").Length).ToString());
+                        }
                         break;
 
                     case ActUIElement.eElementAction.Select:
@@ -1553,6 +1571,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 case "android.widget.edittext":
                 case "xcuielementtypetextfield":
+                case "xcuielementtypesearchfield":
                     return eElementType.TextBox;
 
                 case "android.widget.button":
@@ -1575,6 +1594,8 @@ namespace Amdocs.Ginger.CoreNET
 
                 case "android.widget.view":
                 case "android.widget.textview":
+                case "android.widget.checkedtextview":
+                case "xcuielementtypecell":
                 case "xcuielementtypestatictext":
                     return eElementType.Label;
 
@@ -1614,8 +1635,12 @@ namespace Amdocs.Ginger.CoreNET
                 case "android.view.view":
                     return eElementType.Div;
 
-                case "android.widget.checkedtextview":
-                    return eElementType.ListItem;
+                //case "android.widget.checkedtextview":
+                //case "xcuielementtypecell":
+                //    return eElementType.ListItem;
+
+                case "xcuielementtypewindow":
+                    return eElementType.Window;
 
                 default:
                     return eElementType.Unknown;

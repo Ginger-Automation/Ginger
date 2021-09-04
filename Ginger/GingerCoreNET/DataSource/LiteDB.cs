@@ -28,6 +28,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using static GingerCore.Actions.ActDSTableElement;
 
 namespace GingerCoreNET.DataSource
@@ -543,7 +544,9 @@ namespace GingerCoreNET.DataSource
                                     if ((jt as JProperty).Name != "_id")
                                     {
                                         string sData = jt.ToString();
-                                        if (sData.Contains(": {\r\n  \"_type\": \"System.DBNull, mscorlib\"\r\n}"))
+                                        Regex regex = new Regex(@": {(\r|\n| )*""_type"": ""System.DBNull, mscorlib""(\r|\n| )*}");
+                                        Match match = regex.Match(sData);
+                                        if (match.Success)
                                         {
                                             if (jt.HasValues)
                                             {
