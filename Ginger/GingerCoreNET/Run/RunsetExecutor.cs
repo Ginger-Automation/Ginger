@@ -281,6 +281,11 @@ namespace Ginger.Run
             RepositoryItemBase.ObjectsDeepCopy(customizedVar, originalVar);//need to replace 'ObjectsDeepCopy' with AutoMapper and to map on it which values should be overiden
             originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
             originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
+            //Fix for Bug 9310 - Beeline - Empty variable are not being saved in Run Configuration
+            if (customizedVar.DiffrentFromOrigin && string.IsNullOrEmpty(customizedVar.MappedOutputVariable))
+            {
+                originalVar.Value = customizedVar.Value;
+            }
 
             //Restore original description values
             originalVar.Name = originalCopy.Name;
