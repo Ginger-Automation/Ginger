@@ -59,7 +59,6 @@ namespace amdocs.ginger.GingerCoreNET
     public class WorkSpace
     {
         private static WorkSpace mWorkSpace;
-        private static Mutex mutex = new Mutex(false, "CheckWebReportFolderMutex");
         public static WorkSpace Instance
         {
             get
