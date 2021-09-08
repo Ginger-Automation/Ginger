@@ -207,7 +207,7 @@ namespace Ginger.Run
                     }
                     if (businessFlowRun.BusinessFlowCustomizedRunVariables != null && businessFlowRun.BusinessFlowCustomizedRunVariables.Count > 0)
                     {
-                        ObservableList<VariableBase> allBfVars = BFCopy.GetBFandActivitiesVariabeles(true); 
+                        ObservableList<VariableBase> allBfVars = BFCopy.GetBFandActivitiesVariabeles(true);
                         Parallel.ForEach(businessFlowRun.BusinessFlowCustomizedRunVariables, customizedVar =>
                         {
                             //This is needed to handle updating the outputvariable mappedoutvalues to new style
@@ -276,12 +276,12 @@ namespace Ginger.Run
         {
             //keep original description values
             VariableBase originalCopy = (VariableBase)originalVar.CreateCopy(false);
-           
+
             //ovveride original variable configurations with user customizations
             RepositoryItemBase.ObjectsDeepCopy(customizedVar, originalVar);//need to replace 'ObjectsDeepCopy' with AutoMapper and to map on it which values should be overiden
             originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
             originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
-            //Fix for Bug 9310 - Beeline - Empty variable are not being saved in Run Configuration
+            //Fix for Empty variable are not being saved in Run Configuration (when variable has value in BusinessFlow but is changed to empty in RunSet)
             if (customizedVar.DiffrentFromOrigin && string.IsNullOrEmpty(customizedVar.MappedOutputVariable))
             {
                 originalVar.Value = customizedVar.Value;
@@ -384,7 +384,7 @@ namespace Ginger.Run
         {
             var result = await Task.Run(async () =>
             {
-               await RunRunset(doContinueRun);
+                await RunRunset(doContinueRun);
                 return 1;
             });
             return result;
@@ -398,7 +398,7 @@ namespace Ginger.Run
 
                 //reset run       
                 if (doContinueRun == false)
-                {                    
+                {
                     if (WorkSpace.Instance.RunningInExecutionMode == false || RunSetConfig.ExecutionID == null)
                     {
                         RunSetConfig.ExecutionID = Guid.NewGuid();
@@ -409,12 +409,12 @@ namespace Ginger.Run
                         {
                             AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
                             bool isValidated = accountReportApiHandler.ExecutionIdValidation((Guid)RunSetConfig.ExecutionID);
-                            if(!isValidated)
+                            if (!isValidated)
                             {
                                 RunSetConfig.ExecutionID = Guid.NewGuid();
-                                Reporter.ToLog(eLogLevel.WARN, string.Format("Duplicate execution id used, creating new execution id : {0}", RunSetConfig.ExecutionID));                                
+                                Reporter.ToLog(eLogLevel.WARN, string.Format("Duplicate execution id used, creating new execution id : {0}", RunSetConfig.ExecutionID));
                             }
-                        }                        
+                        }
                     }
                     RunSetConfig.LastRunsetLoggerFolder = "-1";   // !!!!!!!!!!!!!!!!!!
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
@@ -440,10 +440,10 @@ namespace Ginger.Run
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
                 }
 
-                if(mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
+                if (mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
                 {
-                    Runners[0].Centeralized_Logger.RunSetStart(RunSetConfig);                    
-                }                
+                    Runners[0].Centeralized_Logger.RunSetStart(RunSetConfig);
+                }
 
                 //Start Run 
                 if (doContinueRun == false)
@@ -462,7 +462,7 @@ namespace Ginger.Run
                 if (RunSetConfig.RunModeParallel)
                 {
                     foreach (GingerRunner GR in Runners)
-                    {                        
+                    {
                         if (mStopRun)
                         {
                             return;
@@ -563,20 +563,20 @@ namespace Ginger.Run
                 CloseAllEnvironments();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
-                if(mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.PostExecution)
+                if (mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.PostExecution)
                 {
                     await Runners[0].ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
-                }                
-               
+                }
+
             }
             finally
-            {                
+            {
                 mRunSetConfig.IsRunning = false;
             }
         }
         public void CreateGingerExecutionReportAutomaticly()
         {
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();            
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             if ((mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled) && (Runners != null) && (Runners.Count > 0))
             {
                 if (mSelectedExecutionLoggerConfiguration.ExecutionLoggerHTMLReportsAutomaticProdIsEnabled)
@@ -590,7 +590,7 @@ namespace Ginger.Run
                     {
                         runSetReportName = ExecutionLoggerManager.defaultRunTabLogName;
                     }
-                    string exec_folder = new ExecutionLoggerHelper().GetLoggerDirectory(Path.Combine(mSelectedExecutionLoggerConfiguration.CalculatedLoggerFolder,runSetReportName + "_" + Runners[0].ExecutionLoggerManager.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmssfff")));                    
+                    string exec_folder = new ExecutionLoggerHelper().GetLoggerDirectory(Path.Combine(mSelectedExecutionLoggerConfiguration.CalculatedLoggerFolder, runSetReportName + "_" + Runners[0].ExecutionLoggerManager.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmssfff")));
                 }
             }
         }
@@ -738,7 +738,7 @@ namespace Ginger.Run
                         {
                             var runsetVirtualAgent = runset.ActiveAgentList.Where(x => x.Guid == ((Agent)virtualAgent).Guid).FirstOrDefault();
                             appAgents[i].Agent = realAgent;
-                            
+
                             if (runsetVirtualAgent != null)
                             {
                                 runset.ActiveAgentList.Remove(runsetVirtualAgent);
