@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="6b02112c-cf7e-4988-952e-c67544e1d4e1" ItemType="BusinessFlow" CreatedBy="rajdeemu" Created="202109070817" GingerVersion="4.0.0.0" Version="8" LastUpdateBy="rajdeemu" LastUpdate="202109070857" />
+<BusinessFlow Guid="6b02112c-cf7e-4988-952e-c67544e1d4e1" Name="Check Variables" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="024ab1c7-ecf7-4487-a742-6b2207f6e301" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="0%" TargetApplication="MyWindowsApp">
+<Acts>
+<ActValidation Description="Condition Validation Action" Guid="7f1f84bd-c7ab-49d2-b9df-b08aadbd14ba" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="ca8e96c7-9cd0-4514-9400-40ccdeb63d3e" Param="CalcEngineType" ParentGuid="00000000-0000-0000-0000-000000000000" Value="CS" />
+<ActInputValue Guid="70e8ec40-70d9-4317-a8fd-8b64ec1dc8ce" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{Var Name=Var A}=A" />
+</InputValues>
+</ActValidation>
+</Acts>
+
+<Variables>
+<VariableString Guid="9ccbb042-9732-487a-abc9-dd200fa1cdec" InitialStringValue="A" MappedOutputType="None" Name="Var A" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsOutputValue="False" />
+<VariableString Guid="30408154-8a35-4f38-8572-ee47af5d69fb" InitialStringValue="B" MappedOutputType="None" Name="Var B" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsOutputValue="False" />
+<VariableString Guid="f809d619-c0be-4617-b384-8d2f1e0d932d" InitialStringValue="C" MappedOutputType="None" Name="Var C" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsOutputValue="False" />
+</Variables>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="99d6a529-260f-4b94-ae79-50474110f9d7" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="024ab1c7-ecf7-4487-a742-6b2207f6e301" ActivityName="Activity 1" Guid="a9fcc3a0-4cf4-4f7d-ba88-2cbda6811c48" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="MyWindowsApp" Guid="d010e620-3e30-43ab-8393-d71b5ffa4058" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>
