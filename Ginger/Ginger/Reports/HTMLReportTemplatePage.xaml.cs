@@ -40,7 +40,7 @@ namespace Ginger.Reports
     {
         GenericWindow _pageGenericWin = null;
         private bool _existingTemplatePage = false;
-        
+
         private HTMLReportTemplatePage mInstance;
         private HTMLReportConfiguration _HTMLReportConfiguration = new HTMLReportConfiguration();
         private HTMLReportConfiguration _newHTMLReportConfiguration = null;
@@ -114,7 +114,7 @@ namespace Ginger.Reports
             viewSummaryView.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" });
             viewSummaryView.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldType, WidthWeight = 20, ReadOnly = true, Header = "Field Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
             viewSummaryView.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdSummaryViewField.Resources["FieldIsAddedToReportSummaryView"] });
-            viewSummaryView.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdSummaryViewField.Resources["SectionCollapsedSummaryView"] });            
+            viewSummaryView.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdSummaryViewField.Resources["SectionCollapsedSummaryView"] });
             grdSummaryViewFields.SetAllColumnsDefaultView(viewSummaryView);
             grdSummaryViewFields.InitViewItems();
 
@@ -196,7 +196,7 @@ namespace Ginger.Reports
             viewEmailSummaryView.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSelected, WidthWeight = 20, Header = "Selected", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdEmailSummaryViewField.Resources["FieldIsAddedToEmailReportSummaryView"] });
             grdEmailSummaryViewFields.SetAllColumnsDefaultView(viewEmailSummaryView);
             grdEmailSummaryViewFields.InitViewItems();
-        }      
+        }
 
 
         private void SetHTMLReportsConfigFieldsGridsData(HTMLReportConfiguration HTMLReportConfiguration)
@@ -227,7 +227,7 @@ namespace Ginger.Reports
 
         public static HTMLReportConfiguration EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration HTMLReportConfiguration)
         {
-      
+
             return HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration);
         }
 
@@ -266,6 +266,37 @@ namespace Ginger.Reports
                     // do nothing                    
                     break;
             }
+
+            switch ((HTMLReportConfiguration.ReportsLevel)Enum.Parse(typeof(HTMLReportConfiguration.ReportsLevel), _HTMLReportConfiguration.ExecutionJsonDataLowerLevelToShow))
+            {
+                case HTMLReportConfiguration.ReportsLevel.ActivityGroupLevel:
+                    RunnerViewSourceFields_HeaderSelectionx.IsChecked = false;
+                    break;
+                case HTMLReportConfiguration.ReportsLevel.GingerRunnerLevel:
+                    BusinessFlowViewSourceFields_HeaderSelectionx.IsChecked = false;
+                    break;
+                case HTMLReportConfiguration.ReportsLevel.BusinessFlowLevel:
+                    ActivityViewSourceFields_HeaderSelectionx.IsChecked = false;
+                    break;
+                case HTMLReportConfiguration.ReportsLevel.ActivityLevel:
+                    ActionViewSourceFields_HeaderSelectionx.IsChecked = false;
+                    break;
+                case HTMLReportConfiguration.ReportsLevel.ActionLevel:
+                    // do nothing                    
+                    break;
+            }
+
+            if (_HTMLReportConfiguration.IsEnableExecutionJsonActivityGroup)
+                ActivityGroupsViewSourceFields_HeaderSelectionx.IsChecked = true;
+            else
+                ActivityGroupsViewSourceFields_HeaderSelectionx.IsChecked = false;
+
+            if (_HTMLReportConfiguration.IsEnableReportActivityGroup)
+                activityGroups_HeaderSelection.IsChecked = true;
+            else
+                activityGroups_HeaderSelection.IsChecked = false;
+
+
             tbiSummaryViewFields.IsSelected = true;
         }
 
@@ -292,6 +323,155 @@ namespace Ginger.Reports
             activities_HeaderSelection.Unchecked += activities_HeaderSelection_Unchecked;
             actions_HeaderSelection.Checked += actions_HeaderSelection_Checked;
             actions_HeaderSelection.Unchecked += actions_HeaderSelection_Unchecked;
+            activityGroups_HeaderSelection.Checked += ActivityGroups_HeaderSelection_Checked;
+            activityGroups_HeaderSelection.Unchecked += ActivityGroups_HeaderSelection_Unchecked;
+
+            //JSON Configuration Controls
+            RunnerViewSourceFields_HeaderSelectionx.Checked += JsonSourceFields_HeaderSelection_Checked;
+            RunnerViewSourceFields_HeaderSelectionx.Unchecked += JsonSourceFields_HeaderSelection_Unchecked;
+            BusinessFlowViewSourceFields_HeaderSelectionx.Checked += JsonSourceFields_HeaderSelection_Checked;
+            BusinessFlowViewSourceFields_HeaderSelectionx.Unchecked += JsonSourceFields_HeaderSelection_Unchecked;
+            ActivityGroupsViewSourceFields_HeaderSelectionx.Checked += JsonSourceFields_HeaderSelection_Checked;
+            ActivityGroupsViewSourceFields_HeaderSelectionx.Unchecked += JsonSourceFields_HeaderSelection_Unchecked;
+            ActivityViewSourceFields_HeaderSelectionx.Checked += JsonSourceFields_HeaderSelection_Checked;
+            ActivityViewSourceFields_HeaderSelectionx.Unchecked += JsonSourceFields_HeaderSelection_Unchecked;
+            ActionViewSourceFields_HeaderSelectionx.Checked += JsonSourceFields_HeaderSelection_Checked;
+            ActionViewSourceFields_HeaderSelectionx.Unchecked += JsonSourceFields_HeaderSelection_Unchecked;
+
+
+        }
+
+        private void ActivityGroups_HeaderSelection_Unchecked(object sender, RoutedEventArgs e)
+        {
+            grdActivityGroupsField.IsEnabled = false;
+            _HTMLReportConfiguration.IsEnableReportActivityGroup = false;
+        }
+
+        private void ActivityGroups_HeaderSelection_Checked(object sender, RoutedEventArgs e)
+        {
+            grdActivityGroupsField.IsEnabled = true;
+            _HTMLReportConfiguration.IsEnableReportActivityGroup = true;
+        }
+
+        /// <summary>
+        /// Generic Function to enable/disable the headers based on selection
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void JsonSourceFields_HeaderSelection_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckBox originObject = (CheckBox)e.OriginalSource;
+            string nameOfSource = originObject.Name;
+            switch (nameOfSource)
+            {
+                case nameof(RunnerViewSourceFields_HeaderSelectionx):
+                    _HTMLReportConfiguration.ExecutionJsonDataLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.GingerRunnerLevel.ToString();
+                    tbiRunnerViewSourceFields.IsSelected = true;
+                    grdRunnerViewSourceFields.IsEnabled = true;
+
+                    tbBusinessFlowViewSourceFields.IsEnabled = true;
+                    break;
+                case nameof(BusinessFlowViewSourceFields_HeaderSelectionx):
+                    _HTMLReportConfiguration.ExecutionJsonDataLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.BusinessFlowLevel.ToString();
+                    tbBusinessFlowViewSourceFields.IsSelected = true;
+                    grdBusinessFlowViewSourceFields.IsEnabled = true;
+
+                    tbiActivityViewSourceFields.IsEnabled = true;
+                    break;
+                case nameof(ActivityViewSourceFields_HeaderSelectionx):
+                    _HTMLReportConfiguration.ExecutionJsonDataLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActivityLevel.ToString();
+                    tbiActivityViewSourceFields.IsSelected = true;
+                    grdActivityViewSourceFields.IsEnabled = true;
+
+                    tbiActionViewSourceFields.IsEnabled = true;
+                    break;
+                case nameof(ActionViewSourceFields_HeaderSelectionx):
+                    _HTMLReportConfiguration.ExecutionJsonDataLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActionLevel.ToString();
+                    tbiActionViewSourceFields.IsSelected = true;
+                    grdActionViewSourceFields.IsEnabled = true;
+                    break;
+                case nameof(ActivityGroupsViewSourceFields_HeaderSelectionx):
+                    grdActivityGroupsViewSourceField.IsEnabled = true;
+                    _HTMLReportConfiguration.IsEnableExecutionJsonActivityGroup = true;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Generic Function to enable/disable the headers based on selection
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void JsonSourceFields_HeaderSelection_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CheckBox originObject = (CheckBox)e.OriginalSource;
+            string nameOfSource = originObject.Name;
+            switch (nameOfSource)
+            {
+                case nameof(RunnerViewSourceFields_HeaderSelectionx):
+                    _HTMLReportConfiguration.ExecutionJsonDataLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActivityGroupLevel.ToString();
+                    tbiRunsetViewSourceFields.IsSelected = true;
+                    tbiRunnerViewSourceFields.IsSelected = false;
+                    grdRunnerViewSourceFields.IsEnabled = false;
+
+                    BusinessFlowViewSourceFields_HeaderSelectionx.Unchecked -= JsonSourceFields_HeaderSelection_Unchecked;
+                    ActivityViewSourceFields_HeaderSelectionx.Unchecked -= JsonSourceFields_HeaderSelection_Unchecked;
+                    ActionViewSourceFields_HeaderSelectionx.Unchecked -= JsonSourceFields_HeaderSelection_Unchecked;
+
+                    BusinessFlowViewSourceFields_HeaderSelectionx.IsChecked = false;
+                    ActivityViewSourceFields_HeaderSelectionx.IsChecked = false;
+                    ActionViewSourceFields_HeaderSelectionx.IsChecked = false;
+
+                    BusinessFlowViewSourceFields_HeaderSelectionx.Unchecked += JsonSourceFields_HeaderSelection_Unchecked;
+                    ActivityViewSourceFields_HeaderSelectionx.Unchecked += JsonSourceFields_HeaderSelection_Unchecked;
+                    ActionViewSourceFields_HeaderSelectionx.Unchecked += JsonSourceFields_HeaderSelection_Unchecked;
+
+                    tbBusinessFlowViewSourceFields.IsEnabled = false;
+                    tbiActionViewSourceFields.IsEnabled = false;
+                    tbiActivityViewSourceFields.IsEnabled = false;
+                    break;
+                case nameof(BusinessFlowViewSourceFields_HeaderSelectionx):
+                    _HTMLReportConfiguration.ExecutionJsonDataLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.GingerRunnerLevel.ToString();
+                    tbiRunnerViewSourceFields.IsSelected = true;
+                    tbBusinessFlowViewSourceFields.IsSelected = false;
+                    grdBusinessFlowViewSourceFields.IsEnabled = false;
+
+                    ActivityViewSourceFields_HeaderSelectionx.Unchecked -= JsonSourceFields_HeaderSelection_Unchecked;
+                    ActionViewSourceFields_HeaderSelectionx.Unchecked -= JsonSourceFields_HeaderSelection_Unchecked;
+
+                    ActivityViewSourceFields_HeaderSelectionx.IsChecked = false;
+                    ActionViewSourceFields_HeaderSelectionx.IsChecked = false;
+
+                    ActivityViewSourceFields_HeaderSelectionx.Unchecked += JsonSourceFields_HeaderSelection_Unchecked;
+                    ActionViewSourceFields_HeaderSelectionx.Unchecked += JsonSourceFields_HeaderSelection_Unchecked;
+                    tbiActionViewSourceFields.IsEnabled = false;
+                    tbiActivityViewSourceFields.IsEnabled = false;
+                    break;
+                case nameof(ActivityViewSourceFields_HeaderSelectionx):
+                    tbBusinessFlowViewSourceFields.IsSelected = true;
+                    _HTMLReportConfiguration.ExecutionJsonDataLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.BusinessFlowLevel.ToString();
+                    tbiActivityViewSourceFields.IsSelected = false;
+                    grdActivityViewSourceFields.IsEnabled = false;
+
+                    ActionViewSourceFields_HeaderSelectionx.Unchecked -= JsonSourceFields_HeaderSelection_Unchecked;
+
+                    ActionViewSourceFields_HeaderSelectionx.IsChecked = false;
+
+                    ActionViewSourceFields_HeaderSelectionx.Unchecked += JsonSourceFields_HeaderSelection_Unchecked;
+
+                    tbiActionViewSourceFields.IsEnabled = false;
+                    break;
+                case nameof(ActionViewSourceFields_HeaderSelectionx):
+                    tbiActivityViewSourceFields.IsSelected = true;
+                    _HTMLReportConfiguration.ExecutionJsonDataLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActivityLevel.ToString();
+                    tbiActionViewSourceFields.IsSelected = false;
+                    grdActionViewSourceFields.IsEnabled = false;
+                    break;
+                case nameof(ActivityGroupsViewSourceFields_HeaderSelectionx):
+                    grdActivityGroupsViewSourceField.IsEnabled = false;
+                    _HTMLReportConfiguration.IsEnableExecutionJsonActivityGroup = false;
+                    break;
+            }
         }
 
         private void SetLoadedLogoImage()
@@ -324,11 +504,11 @@ namespace Ginger.Reports
             _HTMLReportConfiguration.Description = TemplateDescriptionTextBox.Text.ToString();
             _newHTMLReportConfiguration = _HTMLReportConfiguration;
             _pageGenericWin.Hide();
-             WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+            WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
 
             if (_existingTemplatePage)
             {
-                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, _HTMLReportConfiguration.GetNameForFileName(), "item");                
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, _HTMLReportConfiguration.GetNameForFileName(), "item");
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(_HTMLReportConfiguration);
                 Reporter.HideStatusMessage();
             }
@@ -669,18 +849,18 @@ namespace Ginger.Reports
             _previousCursor = Mouse.OverrideCursor;
             Mouse.OverrideCursor = Cursors.Wait;
 
-            HTMLReportsConfiguration currentConf =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+
             //changing the solution because report should not be created in installtion folder due to permissions issues + it can be multiple users will run same Ginger on server
-            if (Directory.Exists(mPreviewDummyReportPath))            
-                ClearDirectoryContent(mPreviewDummyReportPath);            
-            else            
+            if (Directory.Exists(mPreviewDummyReportPath))
+                ClearDirectoryContent(mPreviewDummyReportPath);
+            else
                 PrepareDummyReportData();
-            
+
             Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(mPreviewDummyReportDataPath),
                                                                                                         false,
                                                                                                         _HTMLReportConfiguration,
-                                                                                                        mPreviewDummyReportPath, false,currentConf.HTMLReportConfigurationMaximalFolderSize);
+                                                                                                        mPreviewDummyReportPath, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
 
             WBP = new WebBrowserPage();
             frmBrowser.Content = WBP;
@@ -699,13 +879,13 @@ namespace Ginger.Reports
                 {
                     string tempFolder = System.IO.Path.Combine(System.IO.Path.GetTempPath() + "GingerHtmlPreviewReport");
                     mPreviewDummyReportDataPath = System.IO.Path.Combine(tempFolder, "Data");
-                    if (Directory.Exists(mPreviewDummyReportDataPath))                    
+                    if (Directory.Exists(mPreviewDummyReportDataPath))
                         ClearDirectoryContent(mPreviewDummyReportDataPath);
                     else
                         Directory.CreateDirectory(mPreviewDummyReportDataPath);
                     ZipFile.ExtractToDirectory(dummyReportOriginalZipFilePath, mPreviewDummyReportDataPath);
 
-                    string unzippedDataTestPath= System.IO.Path.Combine(mPreviewDummyReportDataPath, "RunSet.txt");
+                    string unzippedDataTestPath = System.IO.Path.Combine(mPreviewDummyReportDataPath, "RunSet.txt");
                     if (File.Exists(unzippedDataTestPath) == false)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Missing HTML Report preview unzipped data on: " + unzippedDataTestPath);
@@ -720,9 +900,9 @@ namespace Ginger.Reports
                 else
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Missing HTML Report preview Dummy report Zip file on: " + dummyReportOriginalZipFilePath);
-                }                
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to prepare the dummy report data for HTML Report Preview", ex);
             }

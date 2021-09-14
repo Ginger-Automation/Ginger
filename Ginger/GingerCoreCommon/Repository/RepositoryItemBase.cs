@@ -222,7 +222,7 @@ namespace Amdocs.Ginger.Repository
 
         public async Task SaveBackupAsync()
         {
-            await Task.Run(() => 
+            await Task.Run(() =>
             {
                 SaveBackup();
             });
@@ -230,9 +230,9 @@ namespace Amdocs.Ginger.Repository
 
         public bool SaveBackup()
         {
-            if (DirtyStatus != eDirtyStatus.NoChange) 
+            if (DirtyStatus != eDirtyStatus.NoChange)
             {
-                return CreateBackup();                
+                return CreateBackup();
             }
             else
             {
@@ -271,7 +271,7 @@ namespace Amdocs.Ginger.Repository
                         if (mi.Name == nameof(mBackupDic))
                         {
                             return; // since we are running on repo item which contain the dic we need to ignore trying to save it...
-                    }
+                        }
 
                     }
                     if (mi.Name == nameof(mLocalBackupDic))
@@ -281,14 +281,14 @@ namespace Amdocs.Ginger.Repository
                     object v = null;
                     if (mi.MemberType == MemberTypes.Property)
                     {
-                    //Make sure we can do set - not all props have set, so do not save if there is only get
-                    PropertyInfo PI = this.GetType().GetProperty(mi.Name);
+                        //Make sure we can do set - not all props have set, so do not save if there is only get
+                        PropertyInfo PI = this.GetType().GetProperty(mi.Name);
                         if (PI.CanWrite)
                         {
-                        //TODO: mark with no backup
-                        //TODO: find better way, make it generic
-                        if (mi.Name != nameof(FileName) && mi.Name != nameof(FilePath) && mi.Name != nameof(ObjFolderName) && mi.Name != nameof(ObjFileExt) && mi.Name != nameof(ContainingFolder) && mi.Name != nameof(ContainingFolderFullPath)) // Will cause err to get filename on each repo item
-                        {
+                            //TODO: mark with no backup
+                            //TODO: find better way, make it generic
+                            if (mi.Name != nameof(FileName) && mi.Name != nameof(FilePath) && mi.Name != nameof(ObjFolderName) && mi.Name != nameof(ObjFileExt) && mi.Name != nameof(ContainingFolder) && mi.Name != nameof(ContainingFolderFullPath)) // Will cause err to get filename on each repo item
+                            {
                                 v = PI.GetValue(this);
                             }
                         }
@@ -542,7 +542,7 @@ namespace Amdocs.Ginger.Repository
             {
                 v.Clear();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //This is Temporary fix- Inputvalues list throwing observable collection cannot be modified exception
                 Reporter.ToLog(eLogLevel.DEBUG, "Clearing list values for restoring from back up", ex);
@@ -593,7 +593,7 @@ namespace Amdocs.Ginger.Repository
             {
                 isRestored = RestoreBackup(isLocalBackup);
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Error occured in the Undo Process", exc);
             }
@@ -655,7 +655,7 @@ namespace Amdocs.Ginger.Repository
                 Created = GetUTCDateTime(),
                 CreatedBy = Environment.UserName,
                 GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion,
-                Version= 1,
+                Version = 1,
                 LastUpdateBy = Environment.UserName,
                 LastUpdate = GetUTCDateTime()
 
@@ -683,9 +683,9 @@ namespace Amdocs.Ginger.Repository
         {
             Type objType = repoItemToCopy.GetType();
             var targetObj = Activator.CreateInstance(objType) as RepositoryItemBase;
-                        
+
             var objMembers = repoItemToCopy.GetType().GetMembers().Where(x => (x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field));
-            
+
             repoItemToCopy.PrepareItemToBeCopied();
             //targetObj.PreDeserialization();
             Parallel.ForEach(objMembers, mi =>
@@ -710,7 +710,7 @@ namespace Amdocs.Ginger.Repository
                             {
                                 var copiedList = (IObservableList)propInfo.GetValue(targetObj);
 
-                                if(copiedList == null)
+                                if (copiedList == null)
                                 {
                                     Type listItemType = memberValue.GetType().GetGenericArguments().SingleOrDefault();
                                     var listOfType = typeof(ObservableList<>).MakeGenericType(listItemType);
@@ -739,7 +739,7 @@ namespace Amdocs.Ginger.Repository
                 }
             });
             //targetObj.PostDeserialization();
-                  
+
 
             return targetObj;
         }
@@ -776,7 +776,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        protected bool ItemCopyIsInProgress= false;
+        protected bool ItemCopyIsInProgress = false;
         public RepositoryItemBase CreateCopy(bool setNewGUID = true)
         {
             try
@@ -784,7 +784,7 @@ namespace Amdocs.Ginger.Repository
                 ItemCopyIsInProgress = true;
 
                 List<GuidMapper> guidMappingList = new List<GuidMapper>();
-                var duplicatedItem = CopyRIObject(this, guidMappingList, setNewGUID);         
+                var duplicatedItem = CopyRIObject(this, guidMappingList, setNewGUID);
                 //change the GUID of duplicated item
                 if (duplicatedItem != null)
                 {
@@ -792,12 +792,12 @@ namespace Amdocs.Ginger.Repository
                     {
                         duplicatedItem.ParentGuid = Guid.Empty;   // TODO: why we don't keep parent GUID?
                         duplicatedItem.ExternalID = string.Empty;
-                        duplicatedItem.Guid = Guid.NewGuid();                        
+                        duplicatedItem.Guid = Guid.NewGuid();
                         duplicatedItem = duplicatedItem.ReplaceOldGuidUsages(guidMappingList);
                     }
                     duplicatedItem.UpdateCopiedItem();
                     duplicatedItem.DirtyStatus = eDirtyStatus.Modified;
-                }                
+                }
                 return duplicatedItem;
             }
             finally
@@ -806,7 +806,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-       
+
         /// <summary>
         /// Update flow control and other places with new guid of entities.
         /// If FC is GoTo action and action got a new guid this method update flow control value with new guid
@@ -1353,7 +1353,7 @@ namespace Amdocs.Ginger.Repository
         /// Overrid this method if you need to modify some object member before it been copied
         /// </summary>
         public virtual void PrepareItemToBeCopied()
-        {            
+        {
         }
 
         /// <summary>
@@ -1361,7 +1361,7 @@ namespace Amdocs.Ginger.Repository
         /// Overrid this method if you need to modify some object member after it been copied
         /// </summary>
         public virtual void UpdateCopiedItem()
-        {           
+        {
         }
 
         bool mPublish = false;
