@@ -284,17 +284,26 @@ namespace Ginger.Reports
                 case HTMLReportConfiguration.ReportsLevel.ActionLevel:
                     // do nothing                    
                     break;
+                default:
+                    break;
             }
 
             if (_HTMLReportConfiguration.IsEnableExecutionJsonActivityGroup)
+            {
                 ActivityGroupsViewSourceFields_HeaderSelectionx.IsChecked = true;
+            }
             else
+            {
                 ActivityGroupsViewSourceFields_HeaderSelectionx.IsChecked = false;
-
+            }
             if (_HTMLReportConfiguration.IsEnableReportActivityGroup)
+            {
                 activityGroups_HeaderSelection.IsChecked = true;
+            }
             else
+            {
                 activityGroups_HeaderSelection.IsChecked = false;
+            }
 
 
             tbiSummaryViewFields.IsSelected = true;
@@ -394,6 +403,8 @@ namespace Ginger.Reports
                     grdActivityGroupsViewSourceField.IsEnabled = true;
                     _HTMLReportConfiguration.IsEnableExecutionJsonActivityGroup = true;
                     break;
+                default:
+                    break;
             }
         }
 
@@ -470,6 +481,8 @@ namespace Ginger.Reports
                 case nameof(ActivityGroupsViewSourceFields_HeaderSelectionx):
                     grdActivityGroupsViewSourceField.IsEnabled = false;
                     _HTMLReportConfiguration.IsEnableExecutionJsonActivityGroup = false;
+                    break;
+                default:
                     break;
             }
         }
