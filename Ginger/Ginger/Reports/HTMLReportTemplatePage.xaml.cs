@@ -285,6 +285,7 @@ namespace Ginger.Reports
                     // do nothing                    
                     break;
                 default:
+                    //do nothing
                     break;
             }
 
