@@ -485,6 +485,7 @@ namespace Ginger.Reports
                     _HTMLReportConfiguration.IsEnableExecutionJsonActivityGroup = false;
                     break;
                 default:
+                    //do nothing
                     break;
             }
         }
