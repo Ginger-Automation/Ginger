@@ -397,8 +397,10 @@ namespace GingerCore.Drivers
                         FirefoxOptions FirefoxOption = new FirefoxOptions();
                         FirefoxOption.AcceptInsecureCertificates = true;
 
-                        if (HeadlessBrowserMode == true)
+                        if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                        {
                             FirefoxOption.AddArgument("--headless");
+                        }
                         
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                         {
@@ -453,8 +455,10 @@ namespace GingerCore.Drivers
                             options.AddArgument("--incognito");
                         }
 
-                        if (HeadlessBrowserMode == true)
+                        if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                        {
                             options.AddArgument("--headless");
+                        }
 
                         if (SeleniumUserArgs != null)
                             foreach (string arg in SeleniumUserArgs)
