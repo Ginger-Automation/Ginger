@@ -262,6 +262,7 @@ namespace Ginger.Variables
                 //combin with dataGrid                
                 grdDependencies.UseGridWithDataTableAsSource(mDependsDT);
                 grdDependencies.Grid.Loaded += grdMain_Loaded;
+                grdDependencies.Grid.CurrentCellChanged += grdMain_CurrentCellChanged;
                 grdDependencies.Grid.PreviewMouseUp += grdMain_PreviewMouseUp;              
             }
             catch (Exception ex)
@@ -326,35 +327,27 @@ namespace Ginger.Variables
             }
         }
 
+        private void grdMain_CurrentCellChanged(object sender, EventArgs e)
+        {
+            grdDependencies.grdMain.BeginEdit();
+
+            //update helper details
+            SetDependenciesHelper();
+        }
+
         private void grdMain_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.OriginalSource is CheckBox checkBox)
             {
-                if (!(bool)checkBox.IsChecked)
+                foreach (DataRow dr in mDependsDT.Rows)
                 {
-                    checkBox.Checked += CheckBox_StateChanged;
-                }
-                else
-                {
-                    checkBox.Unchecked += CheckBox_StateChanged;
-                }
-            }
-        }
-
-        private void CheckBox_StateChanged(object sender, RoutedEventArgs e)
-        {
-            if (e.OriginalSource is CheckBox checkBox)
-            {
-                checkBox.Checked -= CheckBox_StateChanged;
-                checkBox.Unchecked -= CheckBox_StateChanged;
-
-                foreach (DataRow rr in mDependsDT.Rows)
-                {
-                    if (((DataRowView)checkBox.DataContext).Row.Equals(rr))
+                    if (((DataRowView)checkBox.DataContext).Row.Equals(dr))
                     {
-                        rr[((DataGridCell)checkBox.Parent).Column.DisplayIndex] = checkBox.IsChecked;
+                        dr[((DataGridCell)checkBox.Parent).Column.DisplayIndex] = !checkBox.IsChecked;
                     }
                 }
+
+                grdDependencies.grdMain.Focus();
 
                 //update helper details
                 SetDependenciesHelper();
