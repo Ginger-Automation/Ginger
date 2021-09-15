@@ -262,8 +262,7 @@ namespace Ginger.Variables
                 //combin with dataGrid                
                 grdDependencies.UseGridWithDataTableAsSource(mDependsDT);
                 grdDependencies.Grid.Loaded += grdMain_Loaded;
-                grdDependencies.Grid.CellEditEnding += grdMain_CellEditEnding;
-                grdDependencies.Grid.CurrentCellChanged += grdMain_CurrentCellChanged;                
+                grdDependencies.Grid.PreviewMouseUp += grdMain_PreviewMouseUp;              
             }
             catch (Exception ex)
             {
@@ -324,6 +323,41 @@ namespace Ginger.Variables
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid data", ex);
+            }
+        }
+
+        private void grdMain_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource is CheckBox checkBox)
+            {
+                if (!(bool)checkBox.IsChecked)
+                {
+                    checkBox.Checked += CheckBox_StateChanged;
+                }
+                else
+                {
+                    checkBox.Unchecked += CheckBox_StateChanged;
+                }
+            }
+        }
+
+        private void CheckBox_StateChanged(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is CheckBox checkBox)
+            {
+                checkBox.Checked -= CheckBox_StateChanged;
+                checkBox.Unchecked -= CheckBox_StateChanged;
+
+                foreach (DataRow rr in mDependsDT.Rows)
+                {
+                    if (((DataRowView)checkBox.DataContext).Row.Equals(rr))
+                    {
+                        rr[((DataGridCell)checkBox.Parent).Column.DisplayIndex] = checkBox.IsChecked;
+                    }
+                }
+
+                //update helper details
+                SetDependenciesHelper();
             }
         }
 
@@ -480,28 +514,6 @@ namespace Ginger.Variables
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to set the " + mDepededItemType.ToString() + "-Variables dependencies helper text", ex);
             }
-        }
-
-        private void grdMain_CurrentCellChanged(object sender, EventArgs e)
-        {
-            grdDependencies.grdMain.BeginEdit();
-
-            //update helper details
-            SetDependenciesHelper();
-        }
-
-        private void grdMain_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            foreach (DataRow rr in mDependsDT.Rows)
-            {
-                if (((DataRowView)(e.Row.Item)).Row.Equals(rr))
-                {
-                    rr[e.Column.DisplayIndex] = ((CheckBox)e.EditingElement).IsChecked;
-                }
-            }
-
-            //update helper details 
-            SetDependenciesHelper();
         }
 
         private void chkBoxEnableDisableDepControl_Click(object sender, RoutedEventArgs e)
