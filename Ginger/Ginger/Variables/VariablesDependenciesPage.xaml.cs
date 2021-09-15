@@ -262,8 +262,8 @@ namespace Ginger.Variables
                 //combin with dataGrid                
                 grdDependencies.UseGridWithDataTableAsSource(mDependsDT);
                 grdDependencies.Grid.Loaded += grdMain_Loaded;
-                grdDependencies.Grid.CellEditEnding += grdMain_CellEditEnding;
-                grdDependencies.Grid.CurrentCellChanged += grdMain_CurrentCellChanged;                
+                grdDependencies.Grid.CurrentCellChanged += grdMain_CurrentCellChanged;
+                grdDependencies.Grid.PreviewMouseUp += grdMain_PreviewMouseUp;              
             }
             catch (Exception ex)
             {
@@ -324,6 +324,33 @@ namespace Ginger.Variables
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid data", ex);
+            }
+        }
+
+        private void grdMain_CurrentCellChanged(object sender, EventArgs e)
+        {
+            grdDependencies.grdMain.BeginEdit();
+
+            //update helper details
+            SetDependenciesHelper();
+        }
+
+        private void grdMain_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource is CheckBox checkBox)
+            {
+                foreach (DataRow dr in mDependsDT.Rows)
+                {
+                    if (((DataRowView)checkBox.DataContext).Row.Equals(dr))
+                    {
+                        dr[((DataGridCell)checkBox.Parent).Column.DisplayIndex] = !checkBox.IsChecked;
+                    }
+                }
+
+                grdDependencies.grdMain.Focus();
+
+                //update helper details
+                SetDependenciesHelper();
             }
         }
 
@@ -480,28 +507,6 @@ namespace Ginger.Variables
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to set the " + mDepededItemType.ToString() + "-Variables dependencies helper text", ex);
             }
-        }
-
-        private void grdMain_CurrentCellChanged(object sender, EventArgs e)
-        {
-            grdDependencies.grdMain.BeginEdit();
-
-            //update helper details
-            SetDependenciesHelper();
-        }
-
-        private void grdMain_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            foreach (DataRow rr in mDependsDT.Rows)
-            {
-                if (((DataRowView)(e.Row.Item)).Row.Equals(rr))
-                {
-                    rr[e.Column.DisplayIndex] = ((CheckBox)e.EditingElement).IsChecked;
-                }
-            }
-
-            //update helper details 
-            SetDependenciesHelper();
         }
 
         private void chkBoxEnableDisableDepControl_Click(object sender, RoutedEventArgs e)
