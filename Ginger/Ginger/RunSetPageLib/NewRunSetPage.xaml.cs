@@ -1421,11 +1421,10 @@ namespace Ginger.Run
                 xRunsetSaveBtn.IsEnabled = false;
 
                 IEnumerable<string> runnerNames = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.BusinessFlows.Count == 0).Select(y => y.Name);
-                string appendedRunnerNames = string.Join(", ", runnerNames);
 
-                if (!string.IsNullOrEmpty(appendedRunnerNames))
+                if (runnerNames.Any())
                 {
-                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"{appendedRunnerNames} is empty, please add {GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)} to run.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"{string.Join(", ", runnerNames)} is empty, please add {GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)} to run.");
                     return;
                 }
 
