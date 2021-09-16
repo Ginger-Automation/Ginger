@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.Common
         public static eAppReporterLoggingLevel AppLoggingLevel { get; set; }
         public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
-            if (logLevel == eLogLevel.DEBUG && AppLoggingLevel != eAppReporterLoggingLevel.Debug)
+            if (WorkSpaceReporter == null || (logLevel == eLogLevel.DEBUG && AppLoggingLevel != eAppReporterLoggingLevel.Debug))
             {
                 return;
             }
