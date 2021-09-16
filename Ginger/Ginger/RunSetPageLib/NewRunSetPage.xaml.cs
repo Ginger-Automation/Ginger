@@ -1420,11 +1420,12 @@ namespace Ginger.Run
             {
                 xRunsetSaveBtn.IsEnabled = false;
 
-                GingerRunner runner = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.BusinessFlows.Count == 0).FirstOrDefault();
+                IEnumerable<string> runnerNames = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.BusinessFlows.Count == 0).Select(y => y.Name);
+                string appendedRunnerNames = string.Join(", ", runnerNames);
 
-                if (runner != null)
+                if (!string.IsNullOrEmpty(appendedRunnerNames))
                 {
-                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"{runner.Name} is empty, please add {GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)} to run.");
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"{appendedRunnerNames} is empty, please add {GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)} to run.");
                     return;
                 }
 
