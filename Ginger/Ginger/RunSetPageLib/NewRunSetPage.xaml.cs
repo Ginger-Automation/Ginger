@@ -1420,6 +1420,14 @@ namespace Ginger.Run
             {
                 xRunsetSaveBtn.IsEnabled = false;
 
+                IEnumerable<string> runnerNames = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.BusinessFlows.Count == 0).Select(y => y.Name);
+
+                if (runnerNames.Any())
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"{string.Join(", ", runnerNames)} is empty, please add {GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)} to run.");
+                    return;
+                }
+
                 UpdateRunButtonIcon(true);                
 
                 ResetALMDefectsSuggestions();
