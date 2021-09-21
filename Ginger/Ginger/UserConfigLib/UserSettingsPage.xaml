@@ -23,6 +23,8 @@
             <CheckBox x:Name="xAskToUpgradeSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Do not ask to upgrade Solution"  Margin="0,5,0,0"/>
             
             <CheckBox x:Name="xAskToRecoverSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Do not offer to recover un-saved items"  Margin="0,5,0,0"/>
+
+            <CheckBox x:Name="xAutoLoadLastRunSetCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Auto load last Run Set"  Margin="0,5,0,0"/>
             
             <!--<CheckBox x:Name="xShowBFSaveWarnCheckBox" Style="{StaticResource $CeckBoxStyle}"  Margin="0,5,0,0">
                 <CheckBox.Content>
