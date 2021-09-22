@@ -585,6 +585,9 @@
     <None Update="TestResources\Solutions\OutputVariableOldSolution\Agents\MyWindowsApp - Agent 1.Ginger.Agent.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Solutions\OutputVariableOldSolution\BusinessFlows\Check Variables.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Solutions\OutputVariableOldSolution\BusinessFlows\Create Contact.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -607,6 +610,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\OutputVariableOldSolution\HTMLReportConfigurations\Default.Ginger.HTMLReportConfiguration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\OutputVariableOldSolution\RunSetConfigs\Check Variables Run Set.Ginger.RunSetConfig.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\OutputVariableOldSolution\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
