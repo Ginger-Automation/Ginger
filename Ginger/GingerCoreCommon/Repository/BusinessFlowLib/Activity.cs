@@ -59,9 +59,9 @@ namespace GingerCore
     }
     public enum eHandlerMappingType
     {
+        None = 0,
         [EnumValueDescription("All Available Error Handlers ")]
-        AllAvailableHandlers = 0,
-        None = 1,
+        AllAvailableHandlers = 1,
         [EnumValueDescription("Specific Error Handlers")]
         SpecificErrorHandlers = 2
     }
