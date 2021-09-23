@@ -8,7 +8,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver
 {
     public class WebserviceDriverConsoleReporter : IWebserviceDriverWindow
     {
-        public IDispatcher GingerDispatcher { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IDispatcher GingerDispatcher => throw new NotImplementedException();
 
         public void Close()
         {

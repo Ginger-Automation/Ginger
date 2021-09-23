@@ -142,7 +142,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         public WebServicesDriver(BusinessFlow BF)
         {
-            BusinessFlow = BF;
+            BusinessFlow = BF;           
         }
 
         public enum eSecurityType
@@ -169,22 +169,22 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public override void StartDriver()
         {
             if (ShowDriverWindowOnLaunch)
-                CreateSTA(mDriverWindow.ShowDriverWindow);
+                CreateSTA(ShowDriverWindow);
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
         public void LauncDriverWindow()
         {
-            CreateSTA(mDriverWindow.ShowDriverWindow);
+            CreateSTA(ShowDriverWindow);
         }
 
 
         private void ShowDriverWindow()
         {
-            mDriverWindow.ShowDriverWindow();
-
+            mDriverWindow = WorkSpace.Instance.TargetFrameworkHelper.GetWebserviceDriverWindow(BusinessFlow);
             Dispatcher = mDriverWindow.GingerDispatcher;
 
+            mDriverWindow.ShowDriverWindow();
         }
 
         public override void CloseDriver()

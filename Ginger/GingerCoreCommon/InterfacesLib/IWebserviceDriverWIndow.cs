@@ -6,8 +6,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
 {
     public interface IWebserviceDriverWindow
     {
-
-        IDispatcher GingerDispatcher { get; set; }
+        IDispatcher GingerDispatcher { get; }
         void ShowDriverWindow();
         void Close();
         void UpdateResponseTextBox(string responseCode);

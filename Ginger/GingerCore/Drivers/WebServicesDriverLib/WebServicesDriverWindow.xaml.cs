@@ -34,13 +34,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             this.WindowState = System.Windows.WindowState.Minimized;
         }
 
-        public IDispatcher GingerDispatcher { get; set; }
+        public IDispatcher GingerDispatcher => new DriverWindowDispatcher(Dispatcher);
 
         public void ShowDriverWindow()
         {
             Show();
-  
-            GingerDispatcher = new DriverWindowDispatcher(Dispatcher);
 
             System.Windows.Threading.Dispatcher.Run();
         }
