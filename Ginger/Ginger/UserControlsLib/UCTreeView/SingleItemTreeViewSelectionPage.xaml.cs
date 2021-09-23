@@ -231,7 +231,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
             else
             {
-                mSelectedItems.Add(itvItem);
+                mSelectedItems.Add(itvItem.NodeObject());
             }
 
             if (SelectCurrentItem())

@@ -66,7 +66,9 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
             xItemTypesToImportGrid.SetAllColumnsDefaultView(view);
             xItemTypesToImportGrid.InitViewItems();
-            
+            xItemTypesToImportGrid.SetBtnImage(xItemTypesToImportGrid.btnMarkAll, "@CheckAllColumn_16x16.png");
+            xItemTypesToImportGrid.btnMarkAll.Visibility = Visibility.Visible;
+            xItemTypesToImportGrid.MarkUnMarkAllActive += MarkUnMarkAllItems;
         }
 
         public ObservableList<GlobalSolutionItem> GetItemTypeListToImport()
@@ -74,10 +76,21 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             ObservableList<GlobalSolutionItem> ItemTypeListToImport = new ObservableList<GlobalSolutionItem>();
             foreach (GlobalSolution.eImportItemType ItemType in GlobalSolution.GetEnumValues<GlobalSolution.eImportItemType>())
             {
+                if (ItemType == GlobalSolution.eImportItemType.Solution)
+                {
+                    continue;
+                }
                 var description = ((EnumValueDescriptionAttribute[])typeof(GlobalSolution.eImportItemType).GetField(ItemType.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription;
                 ItemTypeListToImport.Add(new GlobalSolutionItem(ItemType, description, true, "", false));
             }
             return ItemTypeListToImport;
+        }
+        private void MarkUnMarkAllItems(bool ActiveStatus)
+        {
+            foreach (GlobalSolutionItem item in xItemTypesToImportGrid.DataSourceList)
+            {
+                item.Selected = ActiveStatus;
+            }
         }
     }
 }

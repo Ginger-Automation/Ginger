@@ -90,6 +90,30 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 {
                     filePaths = Directory.GetFiles(Path.Combine(wiz.SolutionFolder, item.ItemType.ToString()), "*", SearchOption.AllDirectories);
                 }
+                else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup)
+                {
+                    filePaths = Directory.GetFiles(Path.Combine(wiz.SolutionFolder, "SharedRepository", "ActivitiesGroup"), "*.xml", SearchOption.AllDirectories);
+                }
+                else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActivities)
+                {
+                    filePaths = Directory.GetFiles(Path.Combine(wiz.SolutionFolder, "SharedRepository", "Activities"), "*.xml", SearchOption.AllDirectories);
+                }
+                else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActions)
+                {
+                    filePaths = Directory.GetFiles(Path.Combine(wiz.SolutionFolder, "SharedRepository", "Actions"), "*.xml", SearchOption.AllDirectories);
+                }
+                else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryVariables)
+                {
+                    filePaths = Directory.GetFiles(Path.Combine(wiz.SolutionFolder, "SharedRepository", "Variables"), "*.xml", SearchOption.AllDirectories);
+                }
+                else if (item.ItemType == GlobalSolution.eImportItemType.APIModels)
+                {
+                    filePaths = Directory.GetFiles(Path.Combine(wiz.SolutionFolder, "Applications Models", "API Models"), "*.xml", SearchOption.AllDirectories);
+                }
+                else if (item.ItemType == GlobalSolution.eImportItemType.POMModels)
+                {
+                    filePaths = Directory.GetFiles(Path.Combine(wiz.SolutionFolder, "Applications Models", "POM Models"), "*.xml", SearchOption.AllDirectories);
+                }
                 else
                 {
                     filePaths = Directory.GetFiles(Path.Combine(wiz.SolutionFolder, item.ItemType.ToString()), "*.xml", SearchOption.AllDirectories);

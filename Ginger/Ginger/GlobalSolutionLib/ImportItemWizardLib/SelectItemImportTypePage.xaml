@@ -10,23 +10,25 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="70"/>
+            <RowDefinition Height="120"/>
             <RowDefinition Height="1*"/>
             
             
         </Grid.RowDefinitions>
         <StackPanel>
-            <Label Style="{StaticResource $LabelStyle}" >Select Global Solution Source Type:</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Importing Solution Encryption Key:</Label>
+            <TextBox x:Name="EncryptionKeyTextBox" Style="{StaticResource @TextBoxStyle}" Height="25"></TextBox>
+            <Label Style="{StaticResource @InputFieldLabelStyle}" >Select Global Solution Source Type:</Label>
             <RadioButton x:Name="ImportFromLocalFolderTypeRadio" IsChecked="True" Style="{StaticResource $InputRadioButtonStyle}" Checked="ImportFromLocalFolderTypeRadio_Checked">Solution folder located on this machine</RadioButton>
             <RadioButton x:Name="ImportFromSourceControlTypeRadio" Style="{StaticResource $InputRadioButtonStyle}" Checked="ImportFromSourceControlTypeRadio_Checked">Source Control</RadioButton>
             
         </StackPanel>
         <StackPanel x:Name="ImportFromLocalFolderPanel" Visibility="Visible" Grid.Row="1">
-            <Label Style="{StaticResource $LabelStyle}">Select Solution folder:</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Select Solution folder:</Label>
             <Actions:UCValueExpression x:Name="xGlobalSolutionFolderUC" VerticalAlignment="Center" ToolTip="Solutoin folder full path"/>
         </StackPanel>
         <StackPanel x:Name="ImportFromSourceControlPanel" Visibility="Collapsed" Grid.Row="1">
-            <Label Style="{StaticResource $LabelStyle}">Source Control Settings</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Source Control Settings</Label>
         </StackPanel>
 
         

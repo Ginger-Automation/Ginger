@@ -18,16 +18,18 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
         {
             //[EnumValueDescription("Business Flows")]
             //BusinessFlows,
-            //[EnumValueDescription("Shared Repository - Activities Group")]
-            //SharedRepositoryActivitiesGroup,
-            //[EnumValueDescription("Shared Repository - Activities")]
-            //SharedRepositoryActivities,
-            //[EnumValueDescription("Shared Repository - Actions")]
-            //SharedRepositoryActions,
-            //[EnumValueDescription("Shared Repository - Variables")]
-            //SharedRepositoryVariables,
-            //[EnumValueDescription("API Models")]
-            //APIModels,
+            [EnumValueDescription("Shared Repository - Activities Group")]
+            SharedRepositoryActivitiesGroup,
+            [EnumValueDescription("Shared Repository - Activities")]
+            SharedRepositoryActivities,
+            [EnumValueDescription("Shared Repository - Actions")]
+            SharedRepositoryActions,
+            [EnumValueDescription("Shared Repository - Variables")]
+            SharedRepositoryVariables,
+            [EnumValueDescription("API Models")]
+            APIModels,
+            [EnumValueDescription("Page Object Models")]
+            POMModels,
             //[EnumValueDescription("Target Applications")]
             //TargetApplications,
             //[EnumValueDescription("Runsets")]
@@ -41,7 +43,9 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
             [EnumValueDescription("Environments")]
             Environments,
             [EnumValueDescription("DataSources")]
-            DataSources
+            DataSources,
+            [EnumValueDescription("Solution")]
+            Solution
         }
         //public enum eItemDependancyType
         //{
@@ -62,34 +66,4 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
         }
 
     }
-    //public class GlobalSolutionItem: INotifyPropertyChanged
-    //{
-    //    public GlobalSolutionItem(GlobalSolution.ImportItemType ItemType, string ItemExtraInfo, bool Selected, string ItemName, GlobalSolution.ItemDependancyType ItemDependancyType)
-    //    {
-    //        this.ItemType = ItemType;
-    //        this.ItemExtraInfo= ItemExtraInfo;
-    //        this.Selected = Selected;
-    //        this.ItemName = ItemName;
-    //        this.ItemDependancyType = ItemDependancyType;
-
-    //    }
-
-    //    public event PropertyChangedEventHandler PropertyChanged;
-
-    //    private bool mSelected = true;
-    //    public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(nameof(Selected)); } } }
-    //    public GlobalSolution.eImportItemType ItemType { get; set; }
-    //    public string ItemExtraInfo { get; set; }
-    //    public string ItemName { get; set; }
-
-    //    public GlobalSolution.eItemDependancyType ItemDependancyType { get; set; }
-    //    public void OnPropertyChanged(string name)
-    //    {
-    //        PropertyChangedEventHandler handler = PropertyChanged;
-    //        if (handler != null)
-    //        {
-    //            handler(this, new PropertyChangedEventArgs(name));
-    //        }
-    //    }
-    //}
 }

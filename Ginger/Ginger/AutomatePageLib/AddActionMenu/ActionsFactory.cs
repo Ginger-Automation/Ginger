@@ -57,15 +57,21 @@ namespace Ginger.BusinessFlowPages
         public static int AddActionsHandler(object mItem, Context mContext, int targetIndex = -1)
         {
             Act instance = null;
+            ePlatformType currentActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
 
             if (mContext.Activity != null)
             {
                 mContext.BusinessFlow.CurrentActivity = mContext.Activity;//so new Actions will be added to correct Activity
             }
-
+            
             if (mItem is Act)
             {
                 Act selectedAction = mItem as Act;
+                if (!IsValidActionPlatformForActivity(selectedAction, mContext))
+                {
+                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Activity target platform is \"" + currentActivityPlatform + "\", where as action platform is \"" + selectedAction.Platform + "\"" + System.Environment.NewLine + "Please select same platform actions only.");
+                    return -1;
+                }
                 instance = GenerateSelectedAction(selectedAction, mContext);
             }
             else if (mItem is ElementInfo)
@@ -119,6 +125,15 @@ namespace Ginger.BusinessFlowPages
             if (instance != null)
             {
                 instance.Active = true;
+                if (instance is ActWithoutDriver)
+                {
+                    instance.Platform = ePlatformType.NA;
+                }
+                else
+                {
+                    instance.Platform = currentActivityPlatform;
+                }
+                //instance.Platform = currentActivityPlatform;
 
                 if (targetIndex > -1)
                 {
@@ -336,6 +351,25 @@ namespace Ginger.BusinessFlowPages
             }
 
             return null;
+        }
+        /// <summary>
+        /// Used to check action platform is the same as activity or NA
+        /// </summary>
+        /// <param name="mItem">Object(act) to check</param>
+        /// <param name="context">Current context</param>
+        /// <returns></returns>
+        public static bool IsValidActionPlatformForActivity(object repoItem, Context context)
+        {
+            if (repoItem is Act)
+            {
+                Act selectedAction = repoItem as Act;
+                ePlatformType currentActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == context.Activity.TargetApplication select x.Platform).FirstOrDefault();
+                if (currentActivityPlatform != selectedAction.Platform && selectedAction.Platform != ePlatformType.NA)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

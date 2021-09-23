@@ -38,6 +38,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System.Linq;
+using Amdocs.Ginger.Common.InterfacesLib;
+using System.Threading.Tasks;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -187,6 +191,22 @@ namespace GingerWPF.BusinessFlowsLib
 
             if (mActivity != null)
             {
+                //update actions platform
+                Task.Run(() =>
+                {
+                    foreach (Act act in mActivity.Acts)
+                    {
+                        if (act is ActWithoutDriver)
+                        {
+                            act.Platform = ePlatformType.NA;
+                        }
+                        else
+                        {
+                            ePlatformType currentActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
+                            act.Platform = currentActivityPlatform;
+                        }
+                    }
+                });
                 mActionsListView.DataSourceList = mActivity.Acts;
                 SetSharedRepositoryMark();
             }
