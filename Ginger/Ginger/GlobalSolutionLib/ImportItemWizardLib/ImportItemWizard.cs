@@ -21,8 +21,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
     class ImportItemWizard : WizardBase
     {
         public GlobalSolution.eImportFromType ImportFromType = GlobalSolution.eImportFromType.LocalFolder;
-        public string SolutionFolder { get; set; } = "C:\\Work\\GingerSolutions\\GeneralTest";//remove initialization
-        public string EncryptionKey { get; set; } = "D3^hdfr7%ws4Kb56=Qt";//remove initialization
+        public string SolutionFolder { get; set; } //= "C:\\Work\\GingerSolutions\\GeneralTest";//remove initialization
+        public string EncryptionKey { get; set; } //= "D3^hdfr7%ws4Kb56=Qt";//remove initialization
         public List<object> SelectedItems { get; set; }
 
         public List<string> ItemTypesList = Enum.GetNames(typeof(GlobalSolution.eImportItemType)).ToList();
@@ -103,7 +103,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     }
 
                     //Add env params and dbs to this solution from the list
-                    if(EnvAppListToImport.Count>0)
+                    if (EnvAppListToImport.Count > 0)
                     {
                         GlobalSolutionUtils.Instance.AddEnvDependanciesToSolution(EnvAppListToImport);
                     }
@@ -184,15 +184,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 }
                 
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(repoItemToImport);
-
-                //if (itemToImport.ItemType == GlobalSolution.eImportItemType.Solution)
-                //{
-                //    foreach (VariableBase vb in VariableListToImport)
-                //    {
-                //        WorkSpace.Instance.Solution.AddVariable(vb);
-                //    }
-                //    WorkSpace.Instance.Solution.SaveSolution();
-                //}
             }
             else
             {

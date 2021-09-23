@@ -42,8 +42,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     break;
                 case EventType.Active:
                     SetDependantItemsListToImportGridView();
-                    //GlobalSolutionUtils.Instance.EncryptionKey = wiz.EncryptionKey;
-                    //GlobalSolutionUtils.Instance.SolutionFolder = wiz.SolutionFolder;
                     wiz.SelectedItemTypeListToImport = GetSelectedItemsListToImport();
                     xDependantItemsToImportGrid.DataSourceList = wiz.SelectedItemTypeListToImport;
                     break;
@@ -132,58 +130,5 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             }
         }
 
-        //private void AddItemToList(GlobalSolutionItem itemToAdd, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport)
-        //{
-        //    bool skipAdd = false;
-        //    //check if item already exist in the list -> if duplicate keep dependant item
-        //    GlobalSolutionItem listItem = SelectedItemsListToImport.Where(x => x.ItemExtraInfo == itemToAdd.ItemExtraInfo).FirstOrDefault();
-
-        //    if (listItem != null)
-        //    {
-        //        if (!listItem.IsDependant)
-        //        {
-        //            SelectedItemsListToImport.Remove(listItem);
-        //        }
-        //        else
-        //        {
-        //            skipAdd = true;
-        //        }
-        //    }
-
-        //    itemToAdd.ItemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(itemToAdd.ItemExtraInfo);
-
-        //    //Check if GUID is already exist
-        //    bool isDuplicateGUID = GlobalSolutionUtils.Instance.CheckForItemWithDuplicateGUID(itemToAdd);
-        //    if (isDuplicateGUID)
-        //    {
-        //        itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.ReplaceExsiting;
-        //        itemToAdd.Comments = "Item already exist, with same GUID";
-        //    }
-
-        //    //check if file already exist
-        //    string targetFile = System.IO.Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, itemToAdd.ItemType.ToString(), System.IO.Path.GetFileName(itemToAdd.ItemExtraInfo));
-        //    if (File.Exists(targetFile) && !isDuplicateGUID)
-        //    {
-        //        if (GlobalSolutionUtils.Instance.IsGingerRepositoryItem(targetFile))
-        //        {
-        //            itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.CreateNew;
-        //            string newFileName = GlobalSolutionUtils.Instance.GetUniqFileName(targetFile, false);
-        //            itemToAdd.ItemNewName = newFileName;
-        //            itemToAdd.Comments = "Item already exist, importing item with new name " + newFileName;
-        //        }
-        //        else 
-        //        {
-        //            itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.ReplaceExsiting;
-        //            itemToAdd.Comments = "Item already exist, with same filename";
-        //        }
-        //    }
-
-        //    if (!skipAdd)
-        //    {
-        //        SelectedItemsListToImport.Add(itemToAdd);
-        //    }
-        //}
-
-        
     }
 }

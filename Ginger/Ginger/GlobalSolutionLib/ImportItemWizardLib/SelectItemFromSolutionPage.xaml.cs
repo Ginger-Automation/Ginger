@@ -80,9 +80,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
         public ObservableList<GlobalSolutionItem> GetItemsListToImport()
         {
             ObservableList<GlobalSolutionItem> ItemsListToImport = new ObservableList<GlobalSolutionItem>();
-
-            //foreach (string importItemType in wiz.ItemTypesList)
-            //foreach (GlobalSolution.ImportItemType ItemType in GlobalSolution.GetEnumValues<GlobalSolution.ImportItemType>())
             foreach (GlobalSolutionItem item in wiz.ItemTypeListToImport.Where(x => x.Selected))
             {
                 string[] filePaths = null;

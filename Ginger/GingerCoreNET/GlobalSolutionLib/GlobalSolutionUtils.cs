@@ -172,7 +172,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
         public string GetUniqFileName(string fileFullPath, bool returnWithExt = true)
         {
             //validate no other file with same name
-            //find first file which doesn't exist, add ~counter until found
+            //find first file which doesn't exist, add _counter until found
 
             RepositoryItemBase repositoryItem = newRepositorySerializer.DeserializeFromFile(fileFullPath);
             string ext = ".Ginger." + repositoryItem.GetItemType() + ".xml";
@@ -186,7 +186,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             while (true)
             {
                 counter++;
-                newName = OriginalName + "~" + counter;
+                newName = OriginalName + "_" + counter;
                 fileFullPath = fileFullPath.Replace(OriginalName + ext, newName + ext);
                 if (File.Exists(fileFullPath))
                 {
@@ -197,10 +197,6 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 {
                     break;
                 }
-                //if (counter > 100)
-                //{
-                //    return "Cannot find unique file after 100 tries...";
-                //}
             }
             if (returnWithExt)
             {
