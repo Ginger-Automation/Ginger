@@ -238,7 +238,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             AddDependaciesForGlobalVariable(itemEnv.ItemExtraInfo, ref SelectedItemsListToImport, ref VariableListToImport);
         }
 
-        public void AddDependaciesForSharedActivityGroup(GlobalSolutionItem itemActivitiesGroup, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport)
+        public void AddDependaciesForSharedActivityGroup(GlobalSolutionItem itemActivitiesGroup, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport)
         {
             ActivitiesGroup activitiesGroup = (ActivitiesGroup)newRepositorySerializer.DeserializeFromFile(itemActivitiesGroup.ItemExtraInfo);
             string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Activities"), "*.xml", SearchOption.AllDirectories);
@@ -253,8 +253,14 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     foreach (Act act in activity.Acts)
                     {
                         string filePath = GetApplicationPOMModelFilePathForAction(act);
-                        newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.POMModels, filePath, true, "", true);
-                        AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
+                        if (!string.IsNullOrEmpty(filePath))
+                        {
+                            newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.POMModels, filePath, true, "", true);
+                            AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
+
+                            //Add dependancies for POM
+                            AddDependaciesForPOMModel(newItem, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
+                        }
                     }
                 }
             }
@@ -266,8 +272,14 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             foreach (Act act in importedActivity.Acts)
             {
                 string filePath = GetApplicationPOMModelFilePathForAction(act);
-                GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.POMModels, filePath, true, "", true);
-                AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
+                if (!string.IsNullOrEmpty(filePath))
+                {
+                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.POMModels, filePath, true, "", true);
+                    AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
+
+                    //Add dependancies for POM
+                    AddDependaciesForPOMModel(newItem, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
+                }
             }
             //Add dependancies for Env
             AddDependaciesForEnvParam(itemActivity.ItemExtraInfo, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
@@ -280,12 +292,14 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
         {
             Act importedAct = (Act)newRepositorySerializer.DeserializeFromFile(itemAct.ItemExtraInfo);
             string filePath = GetApplicationPOMModelFilePathForAction(importedAct);
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.POMModels, filePath, true, "", true);
+                AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
 
-            GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.POMModels, filePath, true, "", true);
-            AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
-
-            //Add dependancies for POM
-            AddDependaciesForPOMModel(newItem, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
+                //Add dependancies for POM
+                AddDependaciesForPOMModel(newItem, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
+            }
             //Add dependancies for Env
             AddDependaciesForEnvParam(itemAct.ItemExtraInfo, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
             //Add dependancies for GlobalVariables

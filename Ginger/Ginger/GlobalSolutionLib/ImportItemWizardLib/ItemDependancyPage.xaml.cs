@@ -96,7 +96,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                             break;
                         case GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup:
                             GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                            GlobalSolutionUtils.Instance.AddDependaciesForSharedActivityGroup(item, ref SelectedItemsListToImport);
+                            GlobalSolutionUtils.Instance.AddDependaciesForSharedActivityGroup(item, ref SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
                             break;
                         case GlobalSolution.eImportItemType.SharedRepositoryActivities:
                             GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
