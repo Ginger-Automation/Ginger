@@ -488,6 +488,34 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
         [TestMethod]
         [Timeout(60000)]
+        public void ErrorHandlerActivityNameWithRetryMechanismActionFailed()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{FD Object=ErrorHandlerOriginActivity Field=ActivityName}";
+            mAct.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
+            mAct.EnableRetryMechanism = true;
+            mAct.MaxNumberOfRetries = 1;
+
+            ErrorHandler errorHandler = new ErrorHandler();
+            errorHandler.Active = true;
+            ActDummy dummy = new ActDummy();
+            dummy.Active = true;
+            dummy.Description = "Error Handler Dummy action";
+            errorHandler.Acts.Add(dummy);
+
+            mBF.AddActivity(errorHandler);
+
+            //Act                        
+            runner.RunRunner();
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "Activity1");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
         public void ErrorHandlerActionName()
         {
             //Arrange  
