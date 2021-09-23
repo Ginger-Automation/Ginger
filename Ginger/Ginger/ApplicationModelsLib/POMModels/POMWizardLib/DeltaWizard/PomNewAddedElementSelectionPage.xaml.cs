@@ -31,7 +31,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
     /// </summary>
     public partial class PomNewAddedElementSelectionPage : Page
     {
-        private PomDeltaViewPage mPomDeltaViewPage;
+        public PomDeltaViewPage mPomDeltaViewPage;
         private Agent mAgent;
         private PomDeltaUtils mPomDeltaUtils;
         private ObservableList<DeltaElementInfo> mDeltaElements;
@@ -39,7 +39,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         private ObservableList<ElementInfo> mElementInfoList = new ObservableList<ElementInfo>();
 
 
-        public PomNewAddedElementSelectionPage(ObservableList<DeltaElementInfo> deltaElementInfos, PomDeltaUtils pomDeltaUtils, string searchText)
+        public PomNewAddedElementSelectionPage(ObservableList<DeltaElementInfo> deltaElementInfos, PomDeltaUtils pomDeltaUtils, string searchText, UserControls.GridColView gridColView)
         {
             InitializeComponent();
             mPomDeltaUtils = pomDeltaUtils;
@@ -47,7 +47,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
             mAgent = mPomDeltaUtils.Agent;
 
-            mPomDeltaViewPage = new PomDeltaViewPage(mDeltaElements);
+            mPomDeltaViewPage = new PomDeltaViewPage(mDeltaElements, gridColView);
             mPomDeltaViewPage.SetAgent(mAgent);
             mPomDeltaViewPage.xMainElementsGrid.Grid.Columns[1].Visibility = Visibility.Collapsed;
             mPomDeltaViewPage.xMainElementsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
