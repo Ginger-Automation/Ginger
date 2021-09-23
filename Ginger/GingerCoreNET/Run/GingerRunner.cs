@@ -1249,12 +1249,8 @@ namespace Ginger.Run
                     }
 
                     if (!mErrorHandlerExecuted
-                        && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
+                        && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && act.EnableRetryMechanism && act.RetryMechanismCount == act.MaxNumberOfRetries)
                     {
-                        if (act.EnableRetryMechanism && act.RetryMechanismCount < act.MaxNumberOfRetries)
-                        {
-                            break;
-                        }
                         // returns list of mapped error handlers with the activity depending on type of error handling mapping chosen i.e. All Available Error Handlers, None or Specific Error Handlers
                         ObservableList<ErrorHandler> lstMappedErrorHandlers = GetErrorHandlersForCurrentActivity();
 
