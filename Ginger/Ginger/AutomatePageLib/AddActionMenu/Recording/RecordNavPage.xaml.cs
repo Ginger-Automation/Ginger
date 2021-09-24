@@ -92,6 +92,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     mApplicationPOMSelectionPage = null;
                 }
             }
+
+            xSelectedPOMsGrid.DataSourceList.Clear();
         }
 
         private void SetSelectedPOMsGridView()
