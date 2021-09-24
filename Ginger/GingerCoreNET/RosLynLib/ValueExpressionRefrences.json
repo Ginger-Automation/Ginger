@@ -80,7 +80,7 @@
     {
       "Category": "Data Operations",
       "SubCategory": "List",
-      "Name": "Concatenate list w delimiter",
+      "Name": "Concatenate list with delimiter",
       "Expression": "{CS Exp=String.Join(@\"|\", new string[] { @\"A\", @\"B\", @\"C\", @\"D\" })}",
       "UseCase": "Joins an array of elements with provided delimiter",
       "Samples": [ "{CS Exp=String.Join(@\"|\", new string[] { @\"A\", @\"B\", @\"C\", @\"D\" })} will results in A|B|C|D" ],
