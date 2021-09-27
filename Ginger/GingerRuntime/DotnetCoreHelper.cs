@@ -304,7 +304,10 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         public bool IsSharedRepositoryItem(RepositoryItemBase repositoryItem)
         {
             return SharedRepositoryOperations.IsSharedRepositoryItem(repositoryItem);
-        }       
+        }
 
+        public void DispatcherRun()
+        {
+        }
     }
 }
