@@ -1195,14 +1195,14 @@ namespace Ginger.Run
         {
             try
             {
+                mRunSetConfig = runSetConfig;
+                mRunSetConfig.DirtyTracking = eDirtyTracking.NotStarted;
+                mRunSetConfig.PauseDirtyTracking();
                 this.Dispatcher.Invoke(() =>
                 {
                     xRunSetLoadingPnl.Visibility = Visibility.Visible;
                     xRunsetPageGrid.Visibility = Visibility.Collapsed;
 
-                    runSetConfig.SaveBackup();
-                    runSetConfig.StartDirtyTracking();
-                    mRunSetConfig = runSetConfig;
                     mRunSetConfig.AllowAutoSave = false;
                     WorkSpace.Instance.RunsetExecutor.RunSetConfig = RunSetConfig;
 
@@ -1238,6 +1238,7 @@ namespace Ginger.Run
             }
             finally
             {
+                mRunSetConfig.ResumeDirtyTracking();
                 this.Dispatcher.Invoke(() =>
                 {
                     mRunSetConfig.AllowAutoSave = true;
