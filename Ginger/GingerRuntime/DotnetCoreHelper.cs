@@ -308,6 +308,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public void DispatcherRun()
         {
+            //Not required for GingerConsole
         }
     }
 }
