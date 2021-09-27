@@ -180,7 +180,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         public void DispatcherRun()
         {
-            throw new NotImplementedException();
+            //Not required
         }
     }
 }
