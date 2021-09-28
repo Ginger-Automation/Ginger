@@ -136,7 +136,7 @@ namespace Ginger.Run
         private bool mStopBusinessFlow = false;
 
         private bool mCurrentActivityChanged = false;
-        private bool mErrorHandlerExecuted = false;
+        //private bool mErrorHandlerExecuted = false;
 
         BusinessFlow mExecutedBusinessFlowWhenStopped=null;
         Activity mExecutedActivityWhenStopped=null;
@@ -985,7 +985,21 @@ namespace Ginger.Run
                 }
             }
             return outputVariables;                 
-        }            
+        }
+
+        public void ResetActionErrorHandlerExecutionStatus()
+        {
+            foreach (BusinessFlow businessFlow in BusinessFlows)
+            {
+                foreach (var activity in businessFlow.Activities)
+                {
+                    foreach (Act action in activity.Acts)
+                    {
+                        action.ErrorHandlerExecuted = false;
+                    }
+                }
+            }
+        }
 
         private BusinessFlowRun GetCurrenrtBusinessFlowRun()
         {
@@ -1236,6 +1250,8 @@ namespace Ginger.Run
                 string actionStartTimeStr = string.Empty;
                 while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                 {
+                    act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+
                     // Add time stamp                     
                     actionStartTimeStr = string.Format("Execution Start Time: {0}", DateTime.Now.ToString());
 
@@ -1248,13 +1264,9 @@ namespace Ginger.Run
                         ExecuteErrorHandlerActivities(lstPopUpHandlers);
                     }
 
-                    if (!mErrorHandlerExecuted
+                    if (!act.ErrorHandlerExecuted
                         && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                     {
-                        if (act.EnableRetryMechanism && act.RetryMechanismCount < act.MaxNumberOfRetries)
-                        {
-                            break;
-                        }
                         // returns list of mapped error handlers with the activity depending on type of error handling mapping chosen i.e. All Available Error Handlers, None or Specific Error Handlers
                         ObservableList<ErrorHandler> lstMappedErrorHandlers = GetErrorHandlersForCurrentActivity();
 
@@ -1270,12 +1282,12 @@ namespace Ginger.Run
                         CurrentBusinessFlow.ErrorHandlerOriginAction.ExInfo = orginAction.ExInfo;
                         CurrentBusinessFlow.ErrorHandlerOriginAction.Elapsed = orginAction.Elapsed;
 
-                        ResetAction(act);
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
-                        NotifyActionStart(act);
+                        //ResetAction(act);
+                        //act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
+                        //NotifyActionStart(act);
 
                         ExecuteErrorHandlerActivities(lstMappedErrorHandlers);
-                        mErrorHandlerExecuted = true;
+                       // mErrorHandlerExecuted = true;
                     }
                     else
                         break;
@@ -1296,7 +1308,7 @@ namespace Ginger.Run
                 act.ExInfo = actionStartTimeStr + Environment.NewLine + act.ExInfo;
                 
                 ProcessScreenShot(act, ActionExecutorType);
-                mErrorHandlerExecuted = false;
+
 
                 // Stop the counter before DoFlowControl
                 st.Stop();
@@ -1312,13 +1324,12 @@ namespace Ginger.Run
                     //NotifyActionEnd(act); //Needed?
                     return;
                 }              
-                // we capture current activity and action to use it for execution logger,
-                // because in DoFlowControl(act) it will point to the other action/activity(as flow control will be applied)
-                Activity activity = (Activity)CurrentBusinessFlow.CurrentActivity;
-                Act action = act;
-
-                DoFlowControl(act, moveToNextAction);
-                DoStatusConversion(act);   //does it need to be here or earlier?
+                    // we capture current activity and action to use it for execution logger,
+                    // because in DoFlowControl(act) it will point to the other action/activity(as flow control will be applied)
+                    Activity activity = (Activity)CurrentBusinessFlow.CurrentActivity;
+                    Act action = act;
+                    DoFlowControl(act, moveToNextAction);
+                    DoStatusConversion(act);   //does it need to be here or earlier?
             }
             finally
             {
@@ -1738,15 +1749,35 @@ namespace Ginger.Run
         private void ExecuteErrorHandlerActivities(ObservableList<ErrorHandler> errorHandlerActivities)
         {
             Activity originActivity = CurrentBusinessFlow.CurrentActivity;
-            
+            eErrorHandlerPostExecutionAction handlerPostExecutionAction = eErrorHandlerPostExecutionAction.ReRunOriginAction;
+
             Reporter.ToLog(eLogLevel.INFO, "--> Error Handlers Execution Started");
             try
             {
-                Act orginAction = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;                
-                
+                Act orginAction = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                orginAction.ErrorHandlerExecuted = true;
                 eActionExecutorType ActionExecutorType = eActionExecutorType.RunWithoutDriver;
+                
+                var isInErrorList = false;
+
                 foreach (ErrorHandler errActivity in errorHandlerActivities)
                 {
+                    if (errActivity.TriggerErrorType == eTriggerErrorType.SpecificError)
+                    {
+                        foreach (var error in errActivity.ErrorStringList.Where(x => x.IsSelected).Select(y=>y.ErrorString).ToList())
+                        {
+                            isInErrorList = CurrentBusinessFlow.ErrorHandlerOriginAction.Error.Contains(error);
+                            if (isInErrorList)
+                            {
+                                break;
+                            }
+                        }
+                        if (!isInErrorList)
+                        {
+                            continue;
+                        }
+                    }
+                    handlerPostExecutionAction = errActivity.ErrorHandlerPostExecutionAction;
                     CurrentBusinessFlow.CurrentActivity = errActivity;
                     SetCurrentActivityAgent();
                     Stopwatch stE = new Stopwatch();
@@ -1776,8 +1807,31 @@ namespace Ginger.Run
                     errActivity.Elapsed = stE.ElapsedMilliseconds;
                 }
 
-                CurrentBusinessFlow.CurrentActivity = originActivity;
-                CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = orginAction;
+                if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow)
+                {
+                    CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities[0];
+                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.Activities[0].Acts[0];
+                    CurrentBusinessFlow.Reset();
+                    NotifyBusinessFlowStart(CurrentBusinessFlow);
+                }
+                else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity)
+                {
+                    //NotifyActionEnd(orginAction);
+                    CurrentBusinessFlow.CurrentActivity = originActivity;
+                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = originActivity.Acts[0];
+                    ResetActivity(originActivity);
+                    NotifyActivityStart(originActivity);
+                }
+                else
+                {
+                    CurrentBusinessFlow.CurrentActivity = originActivity;
+                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = orginAction;
+                    ResetAction(orginAction);
+                    orginAction.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
+                    NotifyActionStart(orginAction);
+                }
+                //CurrentBusinessFlow.CurrentActivity = originActivity;
+                //CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = orginAction;
                 mCurrentActivityChanged = false;
                 SetCurrentActivityAgent();
             } 

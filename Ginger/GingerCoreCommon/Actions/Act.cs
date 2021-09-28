@@ -1849,6 +1849,7 @@ namespace GingerCore.Actions
         public Guid ExecutionId { get; set; }
 
         public Guid ParentExecutionId { get; set; }
+        public bool ErrorHandlerExecuted { get; set; }
 
         public virtual void DoNewActionSetup()
         {

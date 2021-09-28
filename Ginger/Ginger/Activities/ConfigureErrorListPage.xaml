@@ -13,7 +13,7 @@
             <RowDefinition Height="600"/>
         </Grid.RowDefinitions>
 
-        <Ginger:ucGrid x:Name="xErrorListConfigurationGrd" Visibility="Visible" AutomationProperties.AutomationId="ErrorListConfigurationGrd_AID" ShowUpDown="Collapsed" ShowAdd="Visible" ShowDelete="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Collapsed"/>
+        <Ginger:ucGrid x:Name="xErrorListConfigurationGrd" Visibility="Visible" AutomationProperties.AutomationId="ErrorListConfigurationGrd_AID" ShowUpDown="Collapsed"  ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowAdd="Visible" ShowDelete="Visible" ShowTitle="Collapsed"/>
 
     </Grid>
 </Page>

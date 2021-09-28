@@ -876,6 +876,9 @@ namespace GingerWPF.BusinessFlowsLib
                 mRunner.ResetRunnerExecutionDetails();
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
 
+                //reset ErrorHandlerExecution flag for action
+                mRunner.ResetActionErrorHandlerExecutionStatus();
+
                 //execute                
                 await mRunner.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
                 if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)

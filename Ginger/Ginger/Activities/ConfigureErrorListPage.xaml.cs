@@ -38,7 +38,6 @@ namespace Ginger.Activities
         }
         private void SetGridsView()
         {
-            xErrorListConfigurationGrd.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Errors", new RoutedEventHandler(CheckUnCheckAllBasicErrors));
 
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
@@ -49,34 +48,25 @@ namespace Ginger.Activities
 
             xErrorListConfigurationGrd.SetAllColumnsDefaultView(defView);
             xErrorListConfigurationGrd.InitViewItems();
-             
+            xErrorListConfigurationGrd.btnMarkAll.Visibility = Visibility.Visible;
+
+            xErrorListConfigurationGrd.MarkUnMarkAllActive += XErrorListConfigurationGrd_MarkUnMarkAllActive; ;
             xErrorListConfigurationGrd.btnAdd.Click += BtnAdd_Click;
-            xErrorListConfigurationGrd.btnDelete.Click += BtnDelete_Click;
             
             xErrorListConfigurationGrd.DataSourceList = mErrorHandler.ErrorStringList;
         }
 
-        private void CheckUnCheckAllBasicErrors(object sender, RoutedEventArgs e)
+        private void XErrorListConfigurationGrd_MarkUnMarkAllActive(bool Status)
         {
             if (mErrorHandler.ErrorStringList.Count > 0)
             {
-                bool valueToSet = !mErrorHandler.ErrorStringList[0].IsSelected;
                 foreach (ErrorDetails elem in mErrorHandler.ErrorStringList)
                 {
-                    elem.IsSelected = valueToSet;
+                    elem.IsSelected = Status;
                 }
             }
         }
 
-        private void BtnDelete_Click(object sender, RoutedEventArgs e)
-        {
-            var index = xErrorListConfigurationGrd.grdMain.SelectedIndex;
-            if (index >=0)
-            {
-                mErrorHandler.ErrorStringList.RemoveAt(index);
-                xErrorListConfigurationGrd.DataSourceList = mErrorHandler.ErrorStringList;
-            }
-        }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
