@@ -200,16 +200,45 @@ namespace Ginger.Run
                 Init();
 
                 //load Run Set
-                RunSetConfig defualtRunSet = GetDefualtRunSetConfig();
-                if (defualtRunSet != null)
+                RunSetConfig defaultRunSet = GetDefualtRunSetConfig();
+
+                if (defaultRunSet != null)
                 {
-                    LoadRunSetConfig(defualtRunSet);
+                    if (WorkSpace.Instance.UserProfile.AutoLoadLastRunSet)
+                    {
+                        LoadRunSetConfig(defaultRunSet);
+                    }
+                    else
+                    {
+                        LoadRunSetConfigBySelection(defaultRunSet);
+                    }
                 }
                 else
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("No {0} found to load, please add {0}.", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     //TODO: hide all pages elements
                 }
+            }
+        }
+
+        private void LoadRunSetConfigBySelection(RunSetConfig defaultRunSet)
+        {
+            if (mRunSetsSelectionPage == null)
+            {
+                RunSetFolderTreeItem runSetsRootfolder = new RunSetFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<RunSetConfig>());
+                mRunSetsSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.RunSets), eImageType.RunSet, runSetsRootfolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
+                mRunSetsSelectionPage.xTreeView.Tree.GetChildItembyNameandSelect(defaultRunSet.Name);
+            }
+
+            List<object> selectedRunSet = mRunSetsSelectionPage.ShowAsWindow();
+            if (selectedRunSet != null && selectedRunSet.Count > 0)
+            {
+                RunSetConfig selectedRunset = (RunSetConfig)selectedRunSet[0];
+                LoadRunSetConfig(selectedRunset);
+            }
+            else
+            {
+                LoadRunSetConfig(defaultRunSet);
             }
         }
 
@@ -1446,7 +1475,15 @@ namespace Ginger.Run
 
                 xRunsetSaveBtn.IsEnabled = false;
 
-                UpdateRunButtonIcon(true);
+                IEnumerable<string> runnerNames = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.BusinessFlows.Count == 0).Select(y => y.Name);
+
+                if (runnerNames.Any())
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"{string.Join(", ", runnerNames)} is empty, please add {GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)} to run.");
+                    return;
+                }
+
+                UpdateRunButtonIcon(true);                
 
                 ResetALMDefectsSuggestions();
 

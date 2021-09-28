@@ -246,10 +246,10 @@ namespace Amdocs.Ginger.CoreNET
                 Reporter.ToLog(eLogLevel.ERROR, error, ex);
                 ErrorMessageFromDriver = error;
 
-                if (!WorkSpace.Instance.RunningInExecutionMode)
-                {
-                    Reporter.ToUser(eUserMsgKey.MobileConnectionFailed, ex.Message);
-                }
+                //if (!WorkSpace.Instance.RunningInExecutionMode)
+                //{
+                //    Reporter.ToUser(eUserMsgKey.MobileConnectionFailed, ex.Message);
+                //}
                 return false;
             }
         }

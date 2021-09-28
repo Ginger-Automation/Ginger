@@ -31,8 +31,8 @@ using System.Reflection;
 namespace Ginger.Reports
 {
     public class HTMLReportConfiguration : RepositoryItemBase, IHTMLReportConfiguration
-    {        
-        public  static partial class Fields
+    {
+        public static partial class Fields
         {
             public static string ID = "ID";
             public static string Name = "Name";
@@ -101,6 +101,19 @@ namespace Ginger.Reports
         [IsSerializedForLocalRepository]
         public string ReportLowerLevelToShow { get { return mReportLowerLevelToShow; } set { if (mReportLowerLevelToShow != value) { mReportLowerLevelToShow = value; OnPropertyChanged(nameof(ReportLowerLevelToShow)); } } }
 
+        private bool bIsEnableReportActivityGroup;
+
+        [IsSerializedForLocalRepository]
+        public bool IsEnableReportActivityGroup { get { return bIsEnableReportActivityGroup; } set { if (bIsEnableReportActivityGroup != value) { bIsEnableReportActivityGroup = value; OnPropertyChanged(nameof(IsEnableReportActivityGroup)); } } }
+
+        private string mExecutionJsonDataLowerLevelToShow;
+        [IsSerializedForLocalRepository]
+        public string ExecutionJsonDataLowerLevelToShow { get { return mExecutionJsonDataLowerLevelToShow; } set { if (mExecutionJsonDataLowerLevelToShow != value) { mExecutionJsonDataLowerLevelToShow = value; OnPropertyChanged(nameof(ExecutionJsonDataLowerLevelToShow)); } } }
+
+        private bool bIsEnableExecutionJsonActivityGroup;
+        [IsSerializedForLocalRepository]
+        public bool IsEnableExecutionJsonActivityGroup { get { return bIsEnableExecutionJsonActivityGroup; } set { if (bIsEnableExecutionJsonActivityGroup != value) { bIsEnableExecutionJsonActivityGroup = value; OnPropertyChanged(nameof(ExecutionJsonDataLowerLevelToShow)); } } }
+
         public enum ReportsLevel
         {
             ActionLevel,
@@ -130,9 +143,9 @@ namespace Ginger.Reports
         }
 
         public enum eExecutionStatisticsCountBy
-        {            
+        {
             Actions = 0,
-            Activities =1
+            Activities = 1
         }
 
         [IsSerializedForLocalRepository]
@@ -240,7 +253,7 @@ namespace Ginger.Reports
         }
         public int SetReportTemplateSequence(bool isAddTemplate)
         {
-            if(isAddTemplate)
+            if (isAddTemplate)
             {
                 return WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
             }
@@ -260,6 +273,7 @@ namespace Ginger.Reports
         public void SetHTMLReportConfigurationWithDefaultValues(HTMLReportConfiguration reportConfiguraion)
         {
             reportConfiguraion.ReportLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActionLevel.ToString();
+            reportConfiguraion.ExecutionJsonDataLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActionLevel.ToString();
             reportConfiguraion.ShowAllIterationsElements = false;
             reportConfiguraion.UseLocalStoredStyling = false;
             reportConfiguraion.RunSetFieldsToSelect = GetReportLevelMembers(typeof(RunSetReport));
@@ -280,7 +294,7 @@ namespace Ginger.Reports
             reportConfiguraion.Description = string.Empty;
             using (var ms = new MemoryStream())
             {
-                string file = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),"Images","@amdocs_logo.jpg");
+                string file = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Images", "@amdocs_logo.jpg");
                 Bitmap bitmap = new Bitmap(file);
                 reportConfiguraion.LogoBase64Image = BitmapToBase64(bitmap);
             }
@@ -330,6 +344,11 @@ namespace Ginger.Reports
             if (HTMLReportConfiguration.ReportLowerLevelToShow == null)
             {
                 HTMLReportConfiguration.ReportLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActionLevel.ToString();
+            }
+
+            if (HTMLReportConfiguration.ExecutionJsonDataLowerLevelToShow == null)
+            {
+                HTMLReportConfiguration.ExecutionJsonDataLowerLevelToShow = HTMLReportConfiguration.ReportsLevel.ActionLevel.ToString();
             }
 
             return HTMLReportConfiguration;
@@ -398,7 +417,7 @@ namespace Ginger.Reports
 
     public class HTMLReportConfigFieldToSelect : RepositoryItemBase
     {
-        public  static class Fields
+        public static class Fields
         {
             public static string FieldKey = "FieldKey";
             public static string FieldName = "FieldName";

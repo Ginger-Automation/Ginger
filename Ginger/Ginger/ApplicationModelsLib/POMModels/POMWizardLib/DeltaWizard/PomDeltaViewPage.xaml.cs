@@ -48,6 +48,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         bool IsFirstSelection = true;
 
+        GridColView mGridCompareColumn;
+
         private Agent mAgent;
         IWindowExplorer mWinExplorer
         {
@@ -98,11 +100,16 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        public PomDeltaViewPage(ObservableList<DeltaElementInfo> deltaElements = null)
+        public PomDeltaViewPage(ObservableList<DeltaElementInfo> deltaElements = null, GridColView gridCompareColumn = null)
         {
             InitializeComponent();
 
             mDeltaElements = deltaElements;
+            
+            if (gridCompareColumn != null)
+            {
+                mGridCompareColumn = gridCompareColumn;
+            }
 
             SetDeltaElementsGridView();
             SetDeltaLocatorsGridView();
@@ -168,6 +175,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.DeltaExtraDetails), WidthWeight = 300, Header = "Comparison Details", AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = "", Header = "Highlight", WidthWeight = 80, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate"] });
+            
+            if (mGridCompareColumn !=null)
+            {
+                view.GridColsView.Add(mGridCompareColumn);
+            }
+
             xMainElementsGrid.SetAllColumnsDefaultView(view);
             xMainElementsGrid.InitViewItems();
 
