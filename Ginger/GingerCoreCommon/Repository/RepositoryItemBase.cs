@@ -1076,10 +1076,6 @@ namespace Amdocs.Ginger.Repository
             if (DirtyTracking != eDirtyTracking.NotStarted)
             {
                 DirtyTracking = eDirtyTracking.Paused;
-            }
-
-            if (PropertyChanged != null)
-            {
                 PropertyChanged -= ItmePropertyChanged;
             }
         }
@@ -1095,10 +1091,6 @@ namespace Amdocs.Ginger.Repository
             if (DirtyTracking == eDirtyTracking.Paused)
             {
                 DirtyTracking = eDirtyTracking.Started;
-            }
-
-            if (PropertyChanged == null)
-            {
                 PropertyChanged += ItmePropertyChanged;
             }
         }
