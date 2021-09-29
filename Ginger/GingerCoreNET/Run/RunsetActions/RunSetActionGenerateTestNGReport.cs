@@ -120,7 +120,7 @@ namespace Ginger.Run.RunSetActions
             TestNGResultReport TNGReport = new TestNGResultReport();
             string xml = TNGReport.CreateReport(RI, statusByGroupActivity, DynamicParameters);
 
-            System.IO.File.WriteAllLines(folder + @"\testng-results.xml", new string[] { xml });
+            System.IO.File.WriteAllLines(Path.Combine(folder,"testng-results.xml"), new string[] { xml });
         //TODO: let the user select file prefix
         }
 
