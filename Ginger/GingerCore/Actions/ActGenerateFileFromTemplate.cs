@@ -49,6 +49,7 @@ namespace GingerCore.Actions
         public override string ActionEditPage { get { return "ActGenerateFileFromTemplateEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return true; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
