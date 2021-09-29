@@ -181,6 +181,10 @@ namespace Ginger.BusinessFlowPages
                             selectedAction.Platform = mContext.Platform;
                         }
                         instance = ((IObsoleteAction)selectedAction).GetNewAction();
+                        if(instance == null)
+                        {
+                            return null;
+                        }
                         instance.Description = instance.ActionType;
                     }
                     else if (userSelection == eUserMsgSelection.Cancel)
