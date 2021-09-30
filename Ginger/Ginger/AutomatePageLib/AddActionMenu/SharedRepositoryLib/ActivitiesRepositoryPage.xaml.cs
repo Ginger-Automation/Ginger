@@ -133,7 +133,7 @@ namespace Ginger.Repository
 
         private void ActivityType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedItem = ((ComboBox)sender).SelectedItem.ToString();
+            var selectedItem = ((ComboBox)sender).SelectedItem;
 
             var allActiivtyType = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
@@ -142,6 +142,7 @@ namespace Ginger.Repository
                 xActivitiesRepositoryGrid.DataSourceList = allActiivtyType;
                 return;
             }
+            selectedItem = ((GingerCore.GeneralLib.ComboEnumItem)selectedItem).Value.ToString();
 
             ObservableList<Activity> activities = new ObservableList<Activity>();
             foreach (Activity item in allActiivtyType)
