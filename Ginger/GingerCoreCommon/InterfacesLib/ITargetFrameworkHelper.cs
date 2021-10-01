@@ -88,6 +88,7 @@ namespace Amdocs.Ginger.Common
 
         IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow);
 
+        void DispatcherRun();
 
         DbConnection GetOracleConnection(string ConnectionString);
 

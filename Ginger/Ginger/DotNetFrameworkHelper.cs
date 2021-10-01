@@ -578,6 +578,11 @@ namespace Ginger
         {
             return SharedRepositoryOperations.IsSharedRepositoryItem(repositoryItem);
         }
+
+        public void DispatcherRun()
+        {
+            Dispatcher.Run();
+        }
     }
 }
     
