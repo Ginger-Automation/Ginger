@@ -141,7 +141,15 @@ namespace Amdocs.Ginger.Repository
         {
             if (mFolderItemsList == null)
             {
-                ObservableList<T> list = LoadFolderFiles(FolderFullPath);
+                ObservableList<T> list = new ObservableList<T>();
+                foreach (dynamic item in LoadFolderFiles(FolderFullPath))
+                {
+                    if (!(from dynamic t in list where t.Guid == item.Guid select t).Any())
+                        list.Add(item);
+                    else
+                        Reporter.ToLog(eLogLevel.WARN, $"The duplicated entry found: {item.FilePath}");
+                }
+
                 mFolderItemsList = list;
 
                 //add it to general item cache if needed
