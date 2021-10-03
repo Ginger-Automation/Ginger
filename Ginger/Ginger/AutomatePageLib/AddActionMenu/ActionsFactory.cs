@@ -170,22 +170,34 @@ namespace Ginger.BusinessFlowPages
             else
             {
                 instance = (Act)selectedAction.CreateCopy();
-
                 if (selectedAction is IObsoleteAction && (selectedAction as IObsoleteAction).IsObsoleteForPlatform(mContext.Platform))
                 {
-                    eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyActionAndOfferNew, ((IObsoleteAction)selectedAction).TargetActionTypeName());
-                    if (userSelection == eUserMsgSelection.Yes)
+                    eUserMsgSelection userSelection;
+                    if (((IObsoleteAction)selectedAction).GetNewAction() == null)
                     {
-                        if (selectedAction.Platform == ePlatformType.NA)
+                        userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyAction, ((IObsoleteAction)selectedAction).TargetActionTypeName());
+                        if (userSelection == eUserMsgSelection.No)
                         {
-                            selectedAction.Platform = mContext.Platform;
+                            return null;
                         }
-                        instance = ((IObsoleteAction)selectedAction).GetNewAction();
-                        instance.Description = instance.ActionType;
                     }
-                    else if (userSelection == eUserMsgSelection.Cancel)
+                    else
                     {
-                        return null;            //do not add any action
+                        userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyActionAndOfferNew, ((IObsoleteAction)selectedAction).TargetActionTypeName());
+
+                        if (userSelection == eUserMsgSelection.Yes)
+                        {
+                            if (selectedAction.Platform == ePlatformType.NA)
+                            {
+                                selectedAction.Platform = mContext.Platform;
+                            }
+                            instance = ((IObsoleteAction)selectedAction).GetNewAction();
+                            instance.Description = instance.ActionType;
+                        }
+                        else if (userSelection == eUserMsgSelection.Cancel)
+                        {
+                            return null;            //do not add any action
+                        }
                     }
                 }
 
