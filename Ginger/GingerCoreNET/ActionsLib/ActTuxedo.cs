@@ -17,18 +17,16 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Helpers;
-using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Renci.SshNet;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using System.Text.RegularExpressions;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
+using System.Threading;
 
 namespace GingerCore.Actions.Tuxedo
 {
