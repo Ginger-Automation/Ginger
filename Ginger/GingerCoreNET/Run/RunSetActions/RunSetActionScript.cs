@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using Ginger.Reports;
 using GingerCore.Actions;
 using Amdocs.Ginger.Common.InterfacesLib;
-
+using System.Runtime.InteropServices;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -54,9 +54,16 @@ namespace Ginger.Run.RunSetActions
         {
             try
             {
-                TargetFrameworkHelper.Helper.ExecuteActScriptAction(ScriptFileName, SolutionFolder);
+                ActScript act = new ActScript();
+                string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScriptFileName);
+                RunSetActionScript actionScript = new RunSetActionScript();
+                actionScript.VerifySolutionFloder(SolutionFolder, FileName);
+                act.ScriptName = FileName;
+                act.ScriptInterpreterType = (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    ? ActScript.eScriptInterpreterType.VBS : ActScript.eScriptInterpreterType.SH;
+                act.Execute();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Errors = ex.Message.ToString();
                 Status = eRunSetActionStatus.Failed;

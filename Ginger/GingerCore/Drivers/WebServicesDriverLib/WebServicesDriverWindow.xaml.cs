@@ -41,8 +41,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             Show();
   
             GingerDispatcher = new DriverWindowDispatcher(Dispatcher);
-
-            System.Windows.Threading.Dispatcher.Run();
         }
 
         public void UpdateRequestParams(string uRL, string value, string mRequest)

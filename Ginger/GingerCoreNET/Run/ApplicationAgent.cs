@@ -34,7 +34,8 @@ namespace GingerCore.Platforms
         //Change to target
         private string mAppName;
         [IsSerializedForLocalRepository]
-        public string AppName {
+        public string AppName
+        {
             get
             {
                 return mAppName;
@@ -76,25 +77,34 @@ namespace GingerCore.Platforms
         }
 
         // No need to serialized as it used only in runtime        
-        public Agent Agent 
+        public Agent Agent
         {
             get { return mAgent; }
             set
             {
+                bool bTriggerPropertyChange = true;
                 if (mAgent != null) mAgent.PropertyChanged -= Agent_OnPropertyChange;
-                mAgent =(Agent) value;
+                mAgent = (Agent)value;
                 if (mAgent != null)
                 {
+                    if (mAgent.Name == AgentName)
+                    {
+                        bTriggerPropertyChange = false;
+                    }
+
                     AgentName = mAgent.Name;
                     mAgent.PropertyChanged += Agent_OnPropertyChange;
                 }
-                OnPropertyChanged(nameof(Agent));  
-                OnPropertyChanged(nameof(AgentName));
-                OnPropertyChanged(nameof(AgentID));
-                OnPropertyChanged(nameof(AppAndAgent));                
+                if (bTriggerPropertyChange)
+                {
+                    OnPropertyChanged(nameof(Agent));
+                    OnPropertyChanged(nameof(AgentName));
+                    OnPropertyChanged(nameof(AgentID));
+                    OnPropertyChanged(nameof(AppAndAgent));
+                }
             }
         }
-       
+
         private string mAgentName;
         [IsSerializedForLocalRepository]
         public string AgentName
@@ -114,8 +124,11 @@ namespace GingerCore.Platforms
             }
             set
             {
-                mAgentName = value;
-                OnPropertyChanged(nameof(AgentName));
+                if (mAgentName != value)
+                {
+                    mAgentName = value;
+                    OnPropertyChanged(nameof(AgentName));
+                }
             }
         }
 
@@ -143,7 +156,7 @@ namespace GingerCore.Platforms
         {
             get
             {
-                string s = AppName + ":" ;
+                string s = AppName + ":";
                 if (mAgent != null)
                 {
                     s += mAgent.Name;
@@ -160,7 +173,7 @@ namespace GingerCore.Platforms
         {
             if (e.PropertyName == GingerCore.Agent.Fields.Name)
             {
-               OnPropertyChanged(nameof(AgentName));
+                OnPropertyChanged(nameof(AgentName));
             }
         }
 
@@ -198,10 +211,10 @@ namespace GingerCore.Platforms
                     List<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Platform == appPlatform || x.ServiceId == AppName).ToList();
                     if (agents != null)
                     {
-                        foreach(IAgent agent in agents)
+                        foreach (IAgent agent in agents)
                         {
                             possibleAgents.Add(agent);
-                        }                        
+                        }
                     }
                 }
                 return possibleAgents;
