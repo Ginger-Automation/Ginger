@@ -145,9 +145,13 @@ namespace Amdocs.Ginger.Repository
                 foreach (dynamic item in LoadFolderFiles(FolderFullPath))
                 {
                     if (!(from dynamic t in list where t.Guid == item.Guid select t).Any())
+                    {
                         list.Add(item);
+                    }
                     else
+                    {
                         Reporter.ToLog(eLogLevel.WARN, $"The duplicated entry found: {item.FilePath}");
+                    }
                 }
 
                 mFolderItemsList = list;
