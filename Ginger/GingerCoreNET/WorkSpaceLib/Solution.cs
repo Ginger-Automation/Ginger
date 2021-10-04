@@ -274,7 +274,14 @@ namespace Ginger.SolutionGeneral
         {
             try
             {
-                return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Encryption Key was not found in OS passwords store");
+                }
             }
             catch (Exception ex)
             {
@@ -762,6 +769,18 @@ namespace Ginger.SolutionGeneral
                 SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory2));
                 SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory3));
             }
+        }
+
+        public List<ApplicationPlatform> GetListOfPomSupportedPlatform()
+        {
+            if (ApplicationPlatforms != null)
+            {
+                if (ApplicationPlatforms.Count != 0)
+                {
+                    return ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
+                }
+            }
+            return new List<ApplicationPlatform>();
         }
     }
 }

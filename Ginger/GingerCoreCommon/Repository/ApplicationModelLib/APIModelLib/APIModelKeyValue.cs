@@ -21,12 +21,42 @@ namespace Amdocs.Ginger.Repository
 {
     public class APIModelKeyValue : RepositoryItemBase
     {
-        
 
+        private string mParam;
         [IsSerializedForLocalRepository]
-        public string Param { get; set; }
+        public string Param
+        {
+            get
+            {
+                return mParam;
+            }
+            set
+            {
+                if (mParam != value)
+                {
+                    mParam = value;
+                    OnPropertyChanged(nameof(Param));
+                }
+            }
+        }
+
+        private string mValue;
         [IsSerializedForLocalRepository]
-        public string Value { get; set; }
+        public string Value
+        {
+            get
+            {
+                return mValue;
+            }
+            set
+            {
+                if (mValue != value)
+                {
+                    mValue = value;
+                    OnPropertyChanged(nameof(Value));
+                }
+            }
+        }
 
         public APIModelKeyValue(string Param, string Value)
         {

@@ -63,10 +63,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerPluginPlatforms", "Gi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerCoreTest", "GingerCoreTest\GingerCoreTest.csproj", "{755ED4B6-2CA1-46B0-A8FC-8B4771982023}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerMacOsSupport", "GingerMacOsSupport\GingerMacOsSupport.csproj", "{050486CB-217B-4EC8-8210-2284A6A7CAE5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerLinuxOsSupport", "GingerLinuxOsSupport\GingerLinuxOsSupport.csproj", "{488BFB56-6092-4FFD-BB91-B14F1760B837}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerWin64OsSupport", "GingerWin64OsSupport\GingerWin64OsSupport.csproj", "{76149BD0-05B7-4190-A2C2-5EF0284D5587}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerRuntime", "GingerRuntime\GingerRuntime.csproj", "{6BCC0C44-483A-47FB-BA58-0BEAB2C3C4E6}"
@@ -216,18 +212,6 @@ Global
 		{755ED4B6-2CA1-46B0-A8FC-8B4771982023}.Release|Any CPU.Build.0 = Release|Any CPU
 		{755ED4B6-2CA1-46B0-A8FC-8B4771982023}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{755ED4B6-2CA1-46B0-A8FC-8B4771982023}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
-		{050486CB-217B-4EC8-8210-2284A6A7CAE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{050486CB-217B-4EC8-8210-2284A6A7CAE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{050486CB-217B-4EC8-8210-2284A6A7CAE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{050486CB-217B-4EC8-8210-2284A6A7CAE5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{050486CB-217B-4EC8-8210-2284A6A7CAE5}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{050486CB-217B-4EC8-8210-2284A6A7CAE5}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
-		{488BFB56-6092-4FFD-BB91-B14F1760B837}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{488BFB56-6092-4FFD-BB91-B14F1760B837}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{488BFB56-6092-4FFD-BB91-B14F1760B837}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{488BFB56-6092-4FFD-BB91-B14F1760B837}.Release|Any CPU.Build.0 = Release|Any CPU
-		{488BFB56-6092-4FFD-BB91-B14F1760B837}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{488BFB56-6092-4FFD-BB91-B14F1760B837}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 		{76149BD0-05B7-4190-A2C2-5EF0284D5587}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{76149BD0-05B7-4190-A2C2-5EF0284D5587}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76149BD0-05B7-4190-A2C2-5EF0284D5587}.Release|Any CPU.ActiveCfg = Release|Any CPU

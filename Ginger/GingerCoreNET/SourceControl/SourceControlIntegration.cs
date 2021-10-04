@@ -29,7 +29,7 @@ using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Runtime.InteropServices;
 
 namespace Ginger.SourceControl
 {
@@ -386,7 +386,14 @@ namespace Ginger.SourceControl
                     }
                     else
                     {
-                        mSourceControl = new GITSourceControl();
+                        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                        {
+                            mSourceControl = new GITSourceControl();
+                        }
+                        else
+                        {
+                            mSourceControl = new GitSourceControlShellWrapper();
+                        }
                     }
 
 
@@ -463,7 +470,7 @@ namespace Ginger.SourceControl
                 }
 
                 string ProjectURI = string.Empty;
-                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN  && !( mSourceControl is  SVNSourceControlShellWrapper))
                 {
 
                     if (WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase))

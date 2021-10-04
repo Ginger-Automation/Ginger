@@ -472,6 +472,11 @@ namespace GingerCore.Drivers.JavaDriverLib
                 if (pomExcutionUtil.AutoUpdateCurrentPOM((Agent)(this.BusinessFlow.CurrentActivity.CurrentAgent)) != null)
                 {
                     response = ExecutePOMAction(act, locators, pomExcutionUtil);
+
+                    if (response.IsOK())
+                    {
+                        act.ExInfo += "Broken element was auto updated by Self healing operation";
+                    }
                 }
             }
             if (passStatus && currentPOMElementInfo.SelfHealingInfo == SelfHealingInfoEnum.ElementDeleted)

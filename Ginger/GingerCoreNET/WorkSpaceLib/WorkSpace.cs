@@ -59,7 +59,6 @@ namespace amdocs.ginger.GingerCoreNET
     public class WorkSpace
     {
         private static WorkSpace mWorkSpace;
-        private static Mutex mutex = new Mutex(false, "CheckWebReportFolderMutex");
         public static WorkSpace Instance
         {
             get
@@ -271,7 +270,7 @@ namespace amdocs.ginger.GingerCoreNET
                 BetaFeatures.DisplayStatus();
             }
 
-            Reporter.ToLog(eLogLevel.INFO, "######################## Application version " + ApplicationInfo.ApplicationVersionWithInfo + " Started ! ########################");
+            //Reporter.ToLog(eLogLevel.INFO, "######## Application version " + ApplicationInfo.ApplicationVersionWithInfo + " Started ! ########");
 
             Reporter.ToLog(eLogLevel.DEBUG, "Loading user messages pool");
             UserMsgsPool.LoadUserMsgsPool();
@@ -349,9 +348,9 @@ namespace amdocs.ginger.GingerCoreNET
                 CloseSolution();
 
                 //Load Solution file
-                Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Opening Solution located at: " + solutionFolder);
+                //Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Opening Solution located at: " + solutionFolder);
                 string solutionFile = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");
-                Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Loading Solution File: " + solutionFile);
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Loading Solution- Loading Solution File: '{0}'", solutionFile));
                 if (System.IO.File.Exists(solutionFile))
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Solution File exist");
@@ -376,7 +375,7 @@ namespace amdocs.ginger.GingerCoreNET
                     return false;
                 }
 
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution xml into object");
+                Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Loading Solution file xml into object");
                 Solution solution = Solution.LoadSolution(solutionFile, true, encryptionKey);
                 if (solution == null)
                 {
@@ -419,7 +418,14 @@ namespace amdocs.ginger.GingerCoreNET
                 mPluginsManager.SolutionChanged(SolutionRepository);
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Doing Source Control Configurations");
-                HandleSolutionLoadSourceControl(solution);
+                try
+                {
+                    HandleSolutionLoadSourceControl(solution);
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "exception occured while doing Solution Source Control Configurations", ex);
+                }
             
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Updating Application Functionalities to Work with Loaded Solution");
                 ValueExpression.SolutionFolder = solutionFolder;

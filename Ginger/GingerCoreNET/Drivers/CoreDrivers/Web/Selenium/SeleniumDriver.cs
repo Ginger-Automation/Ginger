@@ -34,9 +34,9 @@ using GingerCore.Drivers.Selenium.SeleniumBMP;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using HtmlAgilityPack;
 using InputSimulatorStandard;
+using Microsoft.Edge.SeleniumTools;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using Microsoft.Edge.SeleniumTools;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Remote;
@@ -56,8 +56,6 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Xml;
 
 namespace GingerCore.Drivers
 {
@@ -397,9 +395,13 @@ namespace GingerCore.Drivers
                         System.Environment.SetEnvironmentVariable("webdriver.gecko.driver", geckoDriverExePath2, EnvironmentVariableTarget.Process);
 
                         FirefoxOptions FirefoxOption = new FirefoxOptions();
-                        if (HeadlessBrowserMode == true)
-                            FirefoxOption.AddArgument("--headless");
+                        FirefoxOption.AcceptInsecureCertificates = true;
 
+                        if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                        {
+                            FirefoxOption.AddArgument("--headless");
+                        }
+                        
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                         {
                             FirefoxProfile ffProfile2 = new FirefoxProfile();
@@ -453,8 +455,10 @@ namespace GingerCore.Drivers
                             options.AddArgument("--incognito");
                         }
 
-                        if (HeadlessBrowserMode == true)
+                        if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                        {
                             options.AddArgument("--headless");
+                        }
 
                         if (SeleniumUserArgs != null)
                             foreach (string arg in SeleniumUserArgs)
@@ -608,11 +612,11 @@ namespace GingerCore.Drivers
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Mac");
+                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Linux");
+                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             }
             else
             {
@@ -3178,6 +3182,10 @@ namespace GingerCore.Drivers
                         if (elem == null && pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
                         {
                             elem = LocateElementByLocators(currentPOMElementInfo.Locators);
+                            if (elem != null)
+                            {
+                                act.ExInfo += "Broken element was auto updated by Self healing operation";
+                            }
                         }
 
                         if (elem != null && currentPOMElementInfo.SelfHealingInfo == SelfHealingInfoEnum.ElementDeleted)
@@ -6754,6 +6762,7 @@ namespace GingerCore.Drivers
                     if (e == null)
                     {
                         act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                        return;
                     }
                 }
             }

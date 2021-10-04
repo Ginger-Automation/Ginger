@@ -25,6 +25,7 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -72,7 +73,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (FileType == eFileType.JSON)
             {
                 string json = DynamicExecutionManager.CreateDynamicRunSetJSON(solution, runsetExecutor, cliHelper);
-                return json;
+                dynamic parsedJson = JsonConvert.DeserializeObject(json);
+                return JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
             }
             else
             {

@@ -848,7 +848,7 @@ namespace GingerCore.Actions
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, string.Concat("Erroe when checcking window with processId: ", processId), ex);
+                Reporter.ToLog(eLogLevel.DEBUG, string.Concat("Error when checking window with processId: ", processId), ex);
             }
 
             return bFound;

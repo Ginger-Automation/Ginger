@@ -43,6 +43,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string SEND_BUSINESSFLOW_EXECUTION_DATA = "api/AccountReport/businessflow/";
         private const string SEND_RUNNER_EXECUTION_DATA = "api/AccountReport/runner/";
         private const string UPLOAD_FILES = "api/AccountReport/UploadFiles/";
+        private const string EXECUTION_ID_VALIDATION = "api/AccountReport/ExecutionIdValidation/";
 
         public AccountReportApiHandler(string apiUrl)
         {
@@ -220,6 +221,30 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception when sending " + message, ex);
             }          
+        }
+
+        public bool ExecutionIdValidation(Guid executionId)
+        {
+            RestRequest restRequest = (RestRequest)new RestRequest(EXECUTION_ID_VALIDATION + executionId, Method.GET);           
+            string message = string.Format("execution id : {0}", executionId);
+            try
+            {
+                IRestResponse response = restClient.Execute(restRequest);
+                if (response.IsSuccessful)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Successfully validated execution id " + message);
+                    return Convert.ToBoolean(response.Content);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to validate " + message + "Response: " + response.Content);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception while validating execution id " + message, ex);
+            }
+            return true;
         }
 
         public async Task SendScreenShotsToCentralDBAsync(Guid executionId, List<string> filePaths)

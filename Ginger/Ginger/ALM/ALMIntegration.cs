@@ -44,7 +44,7 @@ namespace Ginger.ALM
         {
         }
 
-        public void UpdateALMType(eALMType AlmType)
+        public void UpdateALMType(eALMType AlmType, bool isOperationAlmType = false)
         {
             GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = ALMCore.GetCurrentAlmConfig(AlmType);
             ALMCore.DefaultAlmConfig = CurrentAlmConfigurations;
@@ -92,10 +92,9 @@ namespace Ginger.ALM
                     AlmRepo = new ZephyrEnt_Repository(AlmCore);
                     break;
             }
-            AlmCore.GetCurrentAlmConfig();
+            AlmCore.GetCurrentAlmConfig(isOperationAlmType);
             ALMCore.SetALMCoreConfigurations(AlmType, AlmCore);
         }
-
         public void SetALMCoreConfigurations(eALMType almType)
         {
             ALMCore.SetALMCoreConfigurations(almType, AlmCore);           

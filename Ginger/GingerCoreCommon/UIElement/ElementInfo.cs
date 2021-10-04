@@ -80,7 +80,7 @@ namespace Amdocs.Ginger.Common.UIElement
                 DateTime result;
                 if(DateTime.TryParse(value, out result))
                 {
-                    mLastUpdatedTime = result.ToString("dd-MMM-yyyy HH:mm:ss");
+                    mLastUpdatedTime = result.ToString("MM/dd/yyyy HH:mm:ss");
                 }
             } 
         }

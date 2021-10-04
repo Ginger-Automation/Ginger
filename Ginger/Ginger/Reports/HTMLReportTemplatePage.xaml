@@ -381,7 +381,7 @@
 
                                                         <Ginger:ucGrid x:Name="grdRunsetViewSourceFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                             <Ginger:ucGrid.Title>
-                                                                <GingerCore:ucTextDicResource Text="[Renset View]"/>
+                                                                <GingerCore:ucTextDicResource Text="[Runset View]"/>
                                                             </Ginger:ucGrid.Title>
                                                         </Ginger:ucGrid>
                                                     </Grid>

@@ -76,14 +76,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.ElementTypeImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.ElementName), Header = "Deleted Element Name", AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "Matching Element", Header = "Matching Element", BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xMatchingElementTemplate"] });
 
             GetNewAddedElementComboBoxItem();
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappedElementInfo), Header = "New Added Element", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = NewAddedElementComboList, ComboboxDisplayMemberField = nameof(NewAddedComboboxItem.DisplayValue), ComboboxSelectedValueField = nameof(NewAddedComboboxItem.InternalValue), BindingMode = BindingMode.TwoWay });
+            view.GridColsView.Add(new GridColView() { Field = " ", Header = " ",WidthWeight=15, BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xMatchingElementTemplate"] });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappingElementStatus), Header = "Element Status", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GetElementStatusComoList() });
-            view.GridColsView.Add(new GridColView() { Field = "Compare", Header = "Compare", BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, ReadOnly = false, CellTemplate = (DataTemplate)this.MainGrid.Resources["xCompareElementPropTemplate"] });
-
 
             xDeletedElementsMappingGrid.SetAllColumnsDefaultView(view);
             xDeletedElementsMappingGrid.InitViewItems();
@@ -170,7 +168,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             //filtering mapped added element
             var filteredAddedList = new ObservableList<DeltaElementInfo>(deltaAddedList.Where(x => NewAddedElementComboList.Any(y => y.InternalValue == x.ElementInfo.Guid.ToString())));
 
-            mPomNewAddedElementSelectionPage = new PomNewAddedElementSelectionPage(filteredAddedList, mPomWizard.mPomDeltaUtils, Convert.ToString(currentItem.ElementTypeEnum));
+            mPomNewAddedElementSelectionPage = new PomNewAddedElementSelectionPage(filteredAddedList, mPomWizard.mPomDeltaUtils, Convert.ToString(currentItem.ElementTypeEnum),new GridColView() { Field = "Compare", Header = "Compare", BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, ReadOnly = false, CellTemplate = (DataTemplate)this.MainGrid.Resources["xCompareElementPropTemplate"] });
 
             var selectedElement = mPomNewAddedElementSelectionPage.ShowAsWindow("Added Elements");
             if (selectedElement != null)
@@ -184,9 +182,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         private void xCompareElementPropButton_Click(object sender, RoutedEventArgs e)
         {
             var currentItem = (DeltaElementInfo)xDeletedElementsMappingGrid.CurrentItem;
-            var newAddedElement = mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Added) && x.ElementInfo.Guid.ToString().Equals(currentItem.MappedElementInfo)).FirstOrDefault();
+            var newAddedElement = mPomNewAddedElementSelectionPage.mPomDeltaViewPage.mSelectedElement;
 
-            new PomDeltaMappingElementsComparePage(currentItem,newAddedElement).ShowAsWindow("Element Details Comparsion");
+            new PomDeltaMappingElementsComparePage(currentItem,newAddedElement).ShowAsWindow("Element Details Comparison");
         }
     }
 

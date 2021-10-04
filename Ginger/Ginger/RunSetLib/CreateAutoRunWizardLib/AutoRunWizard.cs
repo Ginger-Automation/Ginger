@@ -87,10 +87,10 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(AutoRunShortcut.ShortcutFileFullPath);
             shortcut.Description = AutoRunShortcut.ShortcutFileName;
             shortcut.WorkingDirectory = AutoRunShortcut.ExecuterFolderPath;
-            if (AutoRunShortcut.ExecutorType == RunSetAutoRunShortcut.eExecutorType.GingerConsole)
+            if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("GINGER_HOME")))
             {                                
-                shortcut.TargetPath = "dotnet"; //@"C:\Program Files\dotnet\dotnet.exe"
-                shortcut.Arguments = string.Format("\"{0}\" {1}", AutoRunShortcut.ExecuterFullPath, AutoRunConfiguration.ConfigArgs); 
+                shortcut.TargetPath = "ginger"; 
+                shortcut.Arguments = AutoRunConfiguration.ConfigArgs;
             }
             else
             {

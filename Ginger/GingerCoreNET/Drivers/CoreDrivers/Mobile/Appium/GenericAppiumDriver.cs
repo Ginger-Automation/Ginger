@@ -60,7 +60,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -139,18 +138,7 @@ namespace Amdocs.Ginger.CoreNET
 
         private AppiumDriver<AppiumWebElement> Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
-        public SeleniumDriver AppiumSeleniumDriver
-        {
-            get
-            {
-                return mSeleniumDriver;
-            }
-            set
-            {
-                mSeleniumDriver = value;
-                mSeleniumDriver.StopProcess = StopProcess;
-            }
-        }
+     
 
         public override bool StopProcess
         {
@@ -235,7 +223,8 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-                mSeleniumDriver.StopProcess = StopProcess;
+                mSeleniumDriver.StopProcess = this.StopProcess;
+                mSeleniumDriver.BusinessFlow = this.BusinessFlow;
 
                 if (AppType == eAppType.Web && mDefaultURL != null)
                 {
@@ -257,10 +246,10 @@ namespace Amdocs.Ginger.CoreNET
                 Reporter.ToLog(eLogLevel.ERROR, error, ex);
                 ErrorMessageFromDriver = error;
 
-                if (!WorkSpace.Instance.RunningInExecutionMode)
-                {
-                    Reporter.ToUser(eUserMsgKey.MobileConnectionFailed, ex.Message);
-                }
+                //if (!WorkSpace.Instance.RunningInExecutionMode)
+                //{
+                //    Reporter.ToUser(eUserMsgKey.MobileConnectionFailed, ex.Message);
+                //}
                 return false;
             }
         }
@@ -485,12 +474,30 @@ namespace Amdocs.Ginger.CoreNET
                     case ActUIElement.eElementAction.GetText:
                     case ActUIElement.eElementAction.GetFont:
                         e = LocateElement(act);
-                        act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("text"));
+
+                        /// As text attribute does not exist on iOS devices
+                        if (DevicePlatformType == eDevicePlatformType.iOS)
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("value"));
+                        }
+                        else
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("text"));
+                        }
                         break;
 
                     case ActUIElement.eElementAction.GetTextLength:
                         e = LocateElement(act);
-                        act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("text").Length).ToString());
+
+                        /// As text attribute does not exist on iOS devices
+                        if (DevicePlatformType == eDevicePlatformType.iOS)
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("value").Length).ToString());
+                        }
+                        else
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("text").Length).ToString());
+                        }
                         break;
 
                     case ActUIElement.eElementAction.Select:
@@ -929,12 +936,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-                string filename = Path.GetTempFileName();
-                ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
-                Bitmap tmp = new System.Drawing.Bitmap(filename);
-                act.AddScreenShot(tmp);
-                return;
+                act.AddScreenShot(Driver.GetScreenshot().AsByteArray, "Device Screenshot");
             }
             catch (Exception ex)
             {
@@ -1520,6 +1522,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 case "android.widget.edittext":
                 case "xcuielementtypetextfield":
+                case "xcuielementtypesearchfield":
                     return eElementType.TextBox;
 
                 case "android.widget.button":
@@ -1542,6 +1545,8 @@ namespace Amdocs.Ginger.CoreNET
 
                 case "android.widget.view":
                 case "android.widget.textview":
+                case "android.widget.checkedtextview":
+                case "xcuielementtypecell":
                 case "xcuielementtypestatictext":
                     return eElementType.Label;
 
@@ -1581,8 +1586,12 @@ namespace Amdocs.Ginger.CoreNET
                 case "android.view.view":
                     return eElementType.Div;
 
-                case "android.widget.checkedtextview":
-                    return eElementType.ListItem;
+                //case "android.widget.checkedtextview":
+                //case "xcuielementtypecell":
+                //    return eElementType.ListItem;
+
+                case "xcuielementtypewindow":
+                    return eElementType.Window;
 
                 default:
                     return eElementType.Unknown;
@@ -1629,7 +1638,7 @@ namespace Amdocs.Ginger.CoreNET
 
             // the path to a node is the path to its parent, plus "/node()[n]", where n is its position among its siblings.
             if (node.Name.ToLower() == "appiumaut")
-                return string.Format("//");
+                return string.Format("/");
             else
                 return String.Format("{0}/{1}[{2}]", await GetXPathToNode(node.ParentNode), node.Name, indexInParent);          //Testing Async
         }
