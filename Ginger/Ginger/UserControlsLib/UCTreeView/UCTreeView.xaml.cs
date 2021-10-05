@@ -142,7 +142,33 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 mEnableDragDrop = value;
             }
         }
-       
+
+        internal List<TreeViewItem> GetAllNodes()
+        {
+            List<TreeViewItem> allNodes = new List<TreeViewItem>();
+            TreeViewItem TVI = (TreeViewItem)Tree.Items[0];
+
+            ExpandNodeByNameTVIRecursive(TVI, allNodes);
+
+            return allNodes;
+        }
+
+        private void ExpandNodeByNameTVIRecursive(TreeViewItem StartNode, List<TreeViewItem> allNodes)
+        {
+            foreach (TreeViewItem TVI in StartNode.Items)
+            {
+                if (TVI.Header.ToString() != "DUMMY") //added for stability bc sometimes i was getting issues
+                {
+                    allNodes.Add(TVI);
+                }
+
+                if (TVI.Items.Count > 0)
+                {
+                    ExpandNodeByNameTVIRecursive(TVI, allNodes);
+                }
+            }
+        }
+
         private void Tree_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             TreeItemDoubleClicked = true;

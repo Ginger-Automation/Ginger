@@ -72,7 +72,17 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         {
             if (item is ApplicationPOMModel)
             {
-                return new ApplicationPOMTreeItem((ApplicationPOMModel)item);
+                List<TreeViewItem> allVisisbleNodes = TreeView.Tree.GetAllNodes();
+                ApplicationPOMModel applicationPOMModel = (ApplicationPOMModel)item;
+                if (!IsSamePomPresent(allVisisbleNodes, applicationPOMModel.Guid))
+                {
+                    return new ApplicationPOMTreeItem(applicationPOMModel);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, $"The same entry is already loaded: {applicationPOMModel.FilePath}");
+                    return null;
+                }
             }
 
             if (item is RepositoryFolderBase)
@@ -101,10 +111,26 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             mChildPoms = mPOMModelFolder.GetFolderItems();
             mChildPoms.CollectionChanged -= TreeFolderItems_CollectionChanged;
             mChildPoms.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
+            
+            List<TreeViewItem> allVisisbleNodes = TreeView.Tree.GetAllNodes();
+            List<string> duplicateNodesName = new List<string>();
+
             foreach (ApplicationPOMModel pom in mChildPoms.OrderBy(nameof(ApplicationPOMModel.Name)))
             {
-                ApplicationPOMTreeItem pomTI = new ApplicationPOMTreeItem(pom);
-                Childrens.Add(pomTI);
+                if (!IsSamePomPresent(allVisisbleNodes, pom.Guid))
+                {
+                    ApplicationPOMTreeItem pomTI = new ApplicationPOMTreeItem(pom);
+                    Childrens.Add(pomTI);
+                }
+                else
+                {
+                    duplicateNodesName.Add(pom.FilePath);
+                }
+            }
+
+            if (duplicateNodesName.Any())
+            {
+                Reporter.ToLog(eLogLevel.WARN, $"The same entry is already loaded: {string.Join(", ", duplicateNodesName)}");
             }
 
             return Childrens;

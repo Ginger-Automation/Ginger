@@ -28,6 +28,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -347,7 +348,11 @@ namespace GingerWPF.TreeViewItemsLib
                     {
                         mTreeView.Tree.Dispatcher.Invoke(() =>
                         {
-                            mTreeView.Tree.AddChildItemAndSelect((ITreeViewItem)this, GetTreeItem((dynamic)e.NewItems[0]));
+                            ITreeViewItem treeItem = GetTreeItem((dynamic)e.NewItems[0]);
+                            if (treeItem != null)
+                            {
+                                mTreeView.Tree.AddChildItemAndSelect((ITreeViewItem)this, treeItem);
+                            }
                         });
                     }
                     break;
@@ -494,14 +499,50 @@ namespace GingerWPF.TreeViewItemsLib
 
             if (folderItems.Count > 0)
             {
+                List<TreeViewItem> allVisisbleNodes = TreeView.Tree.GetAllNodes();
+                List<string> duplicateNodesName = new List<string>();
                 object sampleItem = folderItems[0];
-                foreach (T item in folderItems.OrderBy(((RepositoryItemBase)sampleItem).ItemNameField))
+                foreach (dynamic item in folderItems.OrderBy(((RepositoryItemBase)sampleItem).ItemNameField))
                 {
-                    ITreeViewItem tvi = GetTreeItem(item);
-                    Childrens.Add(tvi);
+                    if (!IsSamePomPresent(allVisisbleNodes, item.Guid))
+                    {
+                        ITreeViewItem tvi = GetTreeItem(item);
+                        Childrens.Add(tvi);
+                    }
+                    else
+                    {
+                        duplicateNodesName.Add(item.FilePath);
+                    }
+                    
+                }
+
+                if (duplicateNodesName.Any())
+                {
+                    Reporter.ToLog(eLogLevel.WARN, $"The same entry is already loaded: {string.Join(", ", duplicateNodesName)}");
                 }
             }
             return Childrens;
+        }
+
+        internal bool IsSamePomPresent(List<TreeViewItem> allChilds, Guid guid)
+        {
+            foreach (TreeViewItem child in allChilds)
+            {
+                if (child.Tag is ITreeViewItem treeViewItem)
+                {
+                    dynamic item = treeViewItem.NodeObject();
+
+                    if (((Type)item.GetType()).GetProperties().Where(p => p.Name.Equals("Guid")).Any())
+                    {
+                        if (guid.Equals(item.Guid))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
 
         /// <summary>

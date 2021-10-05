@@ -207,23 +207,23 @@ namespace Amdocs.Ginger.Repository
         /// Get current folder and all of it sub folders items
         /// </summary>        
         /// <param name="list"></param>
-        public ConcurrentBag<T> GetFolderItemsRecursive(ConcurrentBag<T> list = null)
+        public ConcurrentBag<T> GetFolderItemsRecursive(ConcurrentBag<T> allItemsRecursive = null)
         {
-            ConcurrentBag<T> allItemsRecursive;
-
-            if (list == null)
+            if (allItemsRecursive == null)
             {
                 allItemsRecursive = new ConcurrentBag<T>();
             }
-            else
-            {
-                allItemsRecursive = list;
-            }
-            
 
-            foreach (T item in GetFolderItems())
+            foreach (dynamic item in GetFolderItems())
             {
-                allItemsRecursive.Add(item);
+                if (!(from dynamic t in allItemsRecursive where t.Guid == item.Guid select t).Any())
+                {
+                    allItemsRecursive.Add(item);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.WARN, $"The duplicated entry found: {item.FilePath}");
+                }
             }
 
             ObservableList<RepositoryFolder<T>> subfolders = GetSubFolders();
