@@ -1015,6 +1015,8 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public eDirtyTracking DirtyTracking = eDirtyTracking.NotStarted;
+
 
         public event EventHandler OnDirtyStatusChanged;
 
@@ -1069,10 +1071,34 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public void PauseDirtyTracking()
+        {
+            if (DirtyTracking != eDirtyTracking.NotStarted)
+            {
+                DirtyTracking = eDirtyTracking.Paused;
+                PropertyChanged -= ItmePropertyChanged;
+            }
+        }
+
+        public void ResumeDirtyTracking()
+        {
+            if (DirtyTracking == eDirtyTracking.NotStarted)
+            {
+                StartDirtyTracking();
+                return;
+            }
+
+            if (DirtyTracking == eDirtyTracking.Paused)
+            {
+                DirtyTracking = eDirtyTracking.Started;
+                PropertyChanged += ItmePropertyChanged;
+            }
+        }
+
         ConcurrentBag<string> DirtyTrackingFields;
         public void StartDirtyTracking()
         {
-            if (DirtyStatus != eDirtyStatus.NoTracked)
+            if (DirtyStatus != eDirtyStatus.NoTracked && DirtyTracking != eDirtyTracking.NotStarted)
             {
                 // Nothing to do
                 return;
@@ -1080,8 +1106,13 @@ namespace Amdocs.Ginger.Repository
 
             DirtyTrackingFields = new ConcurrentBag<string>();
             DirtyStatus = eDirtyStatus.NoChange;
-            //first track self item changes            
-            PropertyChanged += ItmePropertyChanged;
+            //first track self item changes
+            if (PropertyChanged == null)
+            {
+                PropertyChanged += ItmePropertyChanged;
+            }
+            //set dirty tracking to started
+            DirtyTracking = eDirtyTracking.Started;
 
             // now track all children which are marked with isSerizalized...
             // throw err if item is serialized but dindn't impl IsDirty
