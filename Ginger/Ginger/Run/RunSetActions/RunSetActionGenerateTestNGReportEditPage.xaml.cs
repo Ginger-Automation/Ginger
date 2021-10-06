@@ -47,14 +47,12 @@ namespace Ginger.Run.RunSetActions
         }
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.FolderBrowserDialog dlg = new System.Windows.Forms.FolderBrowserDialog();
-            System.Windows.Forms.DialogResult result = dlg.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (General.SetupBrowseFolder(new System.Windows.Forms.FolderBrowserDialog()) is string folderName)
             {
-                TargetTestNGReportFolderBox.Text = dlg.SelectedPath;
+                TargetTestNGReportFolderBox.Text = folderName;
             }
         }
-        private void useDynamicParameters_Checked(object sender, RoutedEventArgs e)
+    private void useDynamicParameters_Checked(object sender, RoutedEventArgs e)
         {
             if (xUseDynamicParameters.IsChecked == true)
             {
