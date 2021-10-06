@@ -48,7 +48,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             }
         }
 
-        
+
         private void SetDependantItemsListToImportGridView()
         {
             //Set the Data Grid columns            
@@ -58,10 +58,10 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.Selected), Header = "Select", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemType), Header = "Item Type", WidthWeight = 50, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemName), Header = "Item Name", WidthWeight = 50, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.IsDependant), Header = "Is Dependant", WidthWeight = 50, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemExtraInfo), Header = "Item Full Path", WidthWeight = 150, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.RequiredFor), Header = "RequiredFor", WidthWeight = 50, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemImportSetting), Header = "Import Setting", WidthWeight = 30, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.Comments), Header = "Comments", WidthWeight = 120, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemImportSetting), Header = "Import Setting", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GlobalSolution.GetEnumValues<GlobalSolution.eImportSetting>() });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemExtraInfo), Header = "Item Full Path", WidthWeight = 150, ReadOnly = true });
 
             xDependantItemsToImportGrid.SetAllColumnsDefaultView(view);
             xDependantItemsToImportGrid.InitViewItems();
@@ -119,6 +119,12 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     }
                 }
             }
+
+            foreach (GlobalSolutionItem gsi in SelectedItemsListToImport)
+            {
+                gsi.PropertyChanged -= Item_PropertyChanged;
+                gsi.PropertyChanged += Item_PropertyChanged;
+            }
             return SelectedItemsListToImport;
         }
 
@@ -126,9 +132,37 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
         {
             foreach (GlobalSolutionItem item in xDependantItemsToImportGrid.DataSourceList)
             {
+                if (!string.IsNullOrEmpty(item.RequiredFor))
+                {
+                    continue;
+                }
                 item.Selected = ActiveStatus;
             }
         }
+        private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            GlobalSolutionItem solutionItem = (GlobalSolutionItem)sender;
+            if (!string.IsNullOrEmpty(solutionItem.RequiredFor))
+            {
+                if (wiz.SelectedItemTypeListToImport.Where(x => x.ItemName == solutionItem.RequiredFor).FirstOrDefault().Selected && solutionItem.ItemImportSetting == GlobalSolution.eImportSetting.New)
+                {
+                    solutionItem.Selected = true;
+                    return;
+                }
+            }
+            else 
+            {
+                CheckUncheckDependantItems(solutionItem);
+            }
+        }
 
+        void CheckUncheckDependantItems(GlobalSolutionItem solutionItem)
+        {
+            foreach (GlobalSolutionItem item in wiz.SelectedItemTypeListToImport.Where(x => x.RequiredFor == solutionItem.ItemName))
+            {
+                item.Selected = solutionItem.Selected;
+                CheckUncheckDependantItems(item);
+            }
+        }
     }
 }

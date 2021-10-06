@@ -1,6 +1,7 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
+using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using GingerCore;
@@ -51,7 +52,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             bool isDuplicate = false;
             try
             {
-                RepositoryItemBase repositoryItem = newRepositorySerializer.DeserializeFromFile(itemToCheck.ItemExtraInfo);
+                RepositoryItemBase repositoryItem = newRepositorySerializer.DeserializeFromFile(itemToCheck.ItemFullPath);
                 RepositoryItemBase duplicateItem = null;
                 switch (itemToCheck.ItemType)
                 {
@@ -230,13 +231,13 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
 
         public void AddDependaciesForEnvironment(GlobalSolutionItem itemEnv, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport)
         {
-            AddDependaciesForDataSource(itemEnv.ItemExtraInfo, ref SelectedItemsListToImport);
-            AddDependaciesForGlobalVariable(itemEnv.ItemExtraInfo, ref SelectedItemsListToImport, ref VariableListToImport);
+            AddDependaciesForDataSource(itemEnv.ItemFullPath, ref SelectedItemsListToImport);
+            AddDependaciesForGlobalVariable(itemEnv.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport);
         }
 
         public void AddDependaciesForSharedActivityGroup(GlobalSolutionItem itemActivitiesGroup, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport)
         {
-            ActivitiesGroup activitiesGroup = (ActivitiesGroup)newRepositorySerializer.DeserializeFromFile(itemActivitiesGroup.ItemExtraInfo);
+            ActivitiesGroup activitiesGroup = (ActivitiesGroup)newRepositorySerializer.DeserializeFromFile(itemActivitiesGroup.ItemFullPath);
             string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Activities"), "*.xml", SearchOption.AllDirectories);
             foreach (string activityFile in filePaths)
             {
@@ -244,14 +245,14 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 ActivityIdentifiers actIdent = activitiesGroup.ActivitiesIdentifiers.Where(x => x.ActivityGuid == activity.Guid).FirstOrDefault();
                 if (actIdent != null)
                 {
-                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActivities, activity.FilePath, true, "", true);
+                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActivities, activity.FilePath, ConvertToRelativePath(activity.FilePath), true, "", activitiesGroup.Name);
                     AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
                     foreach (Act act in activity.Acts)
                     {
                         string filePath = GetApplicationPOMModelFilePathForAction(act);
                         if (!string.IsNullOrEmpty(filePath))
                         {
-                            newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.POMModels, filePath, true, "", true);
+                            newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.POMModels, filePath,ConvertToRelativePath(filePath), true, "", activitiesGroup.Name);
                             AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
 
                             //Add dependancies for POM
@@ -264,13 +265,13 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
         }
         public void AddDependaciesForSharedActivity(GlobalSolutionItem itemActivity, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport)
         {
-            Activity importedActivity = (Activity)newRepositorySerializer.DeserializeFromFile(itemActivity.ItemExtraInfo);
+            Activity importedActivity = (Activity)newRepositorySerializer.DeserializeFromFile(itemActivity.ItemFullPath);
             foreach (Act act in importedActivity.Acts)
             {
                 string filePath = GetApplicationPOMModelFilePathForAction(act);
                 if (!string.IsNullOrEmpty(filePath))
                 {
-                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.POMModels, filePath, true, "", true);
+                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.POMModels, filePath, ConvertToRelativePath(filePath), true, "", importedActivity.ActivityName);
                     AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
 
                     //Add dependancies for POM
@@ -278,30 +279,30 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 }
             }
             //Add dependancies for Env
-            AddDependaciesForEnvParam(itemActivity.ItemExtraInfo, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
+            AddDependaciesForEnvParam(itemActivity.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
             //Add dependancies for GlobalVariables
-            AddDependaciesForGlobalVariable(itemActivity.ItemExtraInfo, ref SelectedItemsListToImport, ref VariableListToImport);
+            AddDependaciesForGlobalVariable(itemActivity.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport);
             //Add dependancies for DS
-            AddDependaciesForDataSource(itemActivity.ItemExtraInfo, ref SelectedItemsListToImport);
+            AddDependaciesForDataSource(itemActivity.ItemFullPath, ref SelectedItemsListToImport);
         }
         public void AddDependaciesForSharedAction(GlobalSolutionItem itemAct, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport)
         {
-            Act importedAct = (Act)newRepositorySerializer.DeserializeFromFile(itemAct.ItemExtraInfo);
+            Act importedAct = (Act)newRepositorySerializer.DeserializeFromFile(itemAct.ItemFullPath);
             string filePath = GetApplicationPOMModelFilePathForAction(importedAct);
             if (!string.IsNullOrEmpty(filePath))
             {
-                GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.POMModels, filePath, true, "", true);
+                GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.POMModels, filePath, ConvertToRelativePath(filePath), true, "", importedAct.ActionDescription);
                 AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
 
                 //Add dependancies for POM
                 AddDependaciesForPOMModel(newItem, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
             }
             //Add dependancies for Env
-            AddDependaciesForEnvParam(itemAct.ItemExtraInfo, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
+            AddDependaciesForEnvParam(itemAct.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
             //Add dependancies for GlobalVariables
-            AddDependaciesForGlobalVariable(itemAct.ItemExtraInfo, ref SelectedItemsListToImport, ref VariableListToImport);
+            AddDependaciesForGlobalVariable(itemAct.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport);
             //Add dependancies for DS
-            AddDependaciesForDataSource(itemAct.ItemExtraInfo, ref SelectedItemsListToImport);
+            AddDependaciesForDataSource(itemAct.ItemFullPath, ref SelectedItemsListToImport);
         }
 
         private string GetApplicationPOMModelFilePathForAction(Act act)
@@ -351,15 +352,15 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
         }
         public void AddDependaciesForPOMModel(GlobalSolutionItem itemPOM, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport)
         {
-            AddDependaciesForEnvParam(itemPOM.ItemExtraInfo, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
-            AddDependaciesForGlobalVariable(itemPOM.ItemExtraInfo, ref SelectedItemsListToImport, ref VariableListToImport);
-            AddDependaciesForDataSource(itemPOM.ItemExtraInfo, ref SelectedItemsListToImport);
+            AddDependaciesForEnvParam(itemPOM.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
+            AddDependaciesForGlobalVariable(itemPOM.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport);
+            AddDependaciesForDataSource(itemPOM.ItemFullPath, ref SelectedItemsListToImport);
         }
         public void AddDependaciesForAPIModel(GlobalSolutionItem itemAPI, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport)
         {
-            AddDependaciesForEnvParam(itemAPI.ItemExtraInfo, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
-            AddDependaciesForGlobalVariable(itemAPI.ItemExtraInfo, ref SelectedItemsListToImport, ref VariableListToImport);
-            AddDependaciesForDataSource(itemAPI.ItemExtraInfo, ref SelectedItemsListToImport);
+            AddDependaciesForEnvParam(itemAPI.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
+            AddDependaciesForGlobalVariable(itemAPI.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport);
+            AddDependaciesForDataSource(itemAPI.ItemFullPath, ref SelectedItemsListToImport);
         }
         public void AddDependaciesForEnvParam(string filePath, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport)
         {
@@ -422,7 +423,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                                     isAlreadyAddedApp.GeneralParams.Add(gp);
                                 }
 
-                                GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.Environments, envFile, true, "", true);
+                                GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.Environments, envFile, ConvertToRelativePath(envFile), true, "", GetRepositoryItemName(filePath));
                                 AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
                                 //
                                 AddDependaciesForEnvironment(newItem, ref SelectedItemsListToImport, ref VariableListToImport);
@@ -443,6 +444,8 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             {
                 return;
             }
+            string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.AllDirectories);
+            Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
             foreach (Match matchValue in matches)
             {
                 string match = matchValue.Value;
@@ -455,14 +458,10 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     {
                         continue;
                     }
-                    string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.AllDirectories);
-                    Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
                     VariableBase vb = (from v1 in solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
-
                     if (vb != null)
                     {
-                        GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.Solution, solution.FilePath, true, "", true);
-                        AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
+                        
                         string varValue = string.Empty;
                         if (vb is VariablePasswordString)
                         {
@@ -477,6 +476,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     }
                 }
             }
+            GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.Variables, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", GetRepositoryItemName(filePath));
+            newItem.ItemName = string.Join(",",VariableListToImport);
+            AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
         }
 
         public void AddDependaciesForDataSource(string filePath, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport)
@@ -509,9 +511,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 if (dsList.Contains(Path.GetFileNameWithoutExtension(file).Replace(".Ginger.DataSource", "")))
                 {
                     //check if datasource is already added to list
-                    if (SelectedItemsListToImport.Where(x => x.ItemExtraInfo == file).ToList().Count == 0)
+                    if (SelectedItemsListToImport.Where(x => x.ItemFullPath == file).ToList().Count == 0)
                     {
-                        GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.DataSources, file, true, "", true);
+                        GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.DataSources, file, ConvertToRelativePath(file), true, "", GetRepositoryItemName(filePath));
                         AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
                     }
                 }
@@ -522,11 +524,11 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
         {
             bool skipAdd = false;
             //check if item already exist in the list -> if duplicate keep dependant item
-            GlobalSolutionItem listItem = SelectedItemsListToImport.Where(x => x.ItemExtraInfo == itemToAdd.ItemExtraInfo).FirstOrDefault();
+            GlobalSolutionItem listItem = SelectedItemsListToImport.Where(x => x.ItemFullPath == itemToAdd.ItemFullPath).FirstOrDefault();
 
             if (listItem != null)
             {
-                if (!listItem.IsDependant)
+                if (string.IsNullOrEmpty(listItem.RequiredFor))
                 {
                     SelectedItemsListToImport.Remove(listItem);
                 }
@@ -535,34 +537,36 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     skipAdd = true;
                 }
             }
-            if (itemToAdd.ItemType == GlobalSolution.eImportItemType.Solution)
+            if (itemToAdd.ItemType == GlobalSolution.eImportItemType.Variables)
             {
                 itemToAdd.Comments = "Only Used Global Variables will be added to your solution.";
             }
-            itemToAdd.ItemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(itemToAdd.ItemExtraInfo);
-
+            else
+            {
+                itemToAdd.ItemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(itemToAdd.ItemFullPath);
+            }
             //Check if GUID is already exist
             bool isDuplicateGUID = GlobalSolutionUtils.Instance.CheckForItemWithDuplicateGUID(itemToAdd);
             if (isDuplicateGUID)
             {
-                itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.ReplaceExsiting;
+                itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.Replace;
                 itemToAdd.Comments = "Item already exist, with same GUID";
             }
 
             //check if file already exist
-            string targetFile = System.IO.Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, itemToAdd.ItemType.ToString(), System.IO.Path.GetFileName(itemToAdd.ItemExtraInfo));
+            string targetFile = System.IO.Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, itemToAdd.ItemType.ToString(), System.IO.Path.GetFileName(itemToAdd.ItemFullPath));
             if (File.Exists(targetFile) && !isDuplicateGUID)
             {
-                if (GlobalSolutionUtils.Instance.IsGingerRepositoryItem(targetFile))
+                if (IsGingerRepositoryItem(targetFile))
                 {
-                    itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.CreateNew;
-                    string newFileName = GlobalSolutionUtils.Instance.GetUniqFileName(targetFile, false);
+                    itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.New;
+                    string newFileName = GetUniqFileName(targetFile, false);
                     itemToAdd.ItemNewName = newFileName;
                     itemToAdd.Comments = "Item already exist, importing item with new name " + newFileName;
                 }
                 else
                 {
-                    itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.ReplaceExsiting;
+                    itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.Replace;
                     itemToAdd.Comments = "Item already exist, with same filename";
                 }
             }
@@ -652,11 +656,22 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 }
             }
         }
-        public bool ValidateEncryptionKey()
+        public string GetEncryptionKey()
         {
             string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.AllDirectories);
             Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
-            return solution.ValidateKey(EncryptionKey);
+            solution.EncryptionKey = Solution.GetEncryptionKey(solution.Guid.ToString());
+            
+            return solution.EncryptionKey;
+        }
+
+        public Solution GetSolution()
+        {
+            string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.AllDirectories);
+            Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
+            solution.EncryptionKey = Solution.GetEncryptionKey(solution.Guid.ToString());
+
+            return solution;
         }
 
         public string EncryptValueWithCurrentSolutionKey(string oldEncryptedValue)
@@ -672,6 +687,39 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 varValue = oldEncryptedValue;
             }
             return EncryptionHandler.EncryptwithKey(varValue);
+        }
+
+        public string ConvertToRelativePath(string fullPath)
+        {
+            string relative = fullPath;
+            if (fullPath != null && fullPath.ToUpper().Contains(SolutionFolder.ToUpper()))
+            {
+                relative = @"~\" + fullPath.Remove(0, SolutionFolder.Length);
+            }
+            return relative;
+        }
+
+        public string ConvertSolutionFullPath(string relativePath)
+        {
+            if (String.IsNullOrWhiteSpace(relativePath))
+            {
+                return relativePath;
+            }
+            try
+            {
+                if (relativePath.TrimStart().StartsWith("~"))
+                {
+                    string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
+                    fullPath = Path.Combine(SolutionFolder, fullPath);
+                    return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(fullPath);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
+            }
+            return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(relativePath);
         }
     }
 }

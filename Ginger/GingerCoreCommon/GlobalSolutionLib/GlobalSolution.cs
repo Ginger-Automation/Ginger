@@ -44,8 +44,8 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
             Environments,
             [EnumValueDescription("DataSources")]
             DataSources,
-            [EnumValueDescription("Solution")]
-            Solution
+            [EnumValueDescription("Solution Variables")]
+            Variables
         }
         //public enum eItemDependancyType
         //{
@@ -60,9 +60,8 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
 
         public enum eImportSetting
         {
-            CreateNew,
-            ReplaceExsiting,
-            KeepLocal
+            New,
+            Replace
         }
 
     }

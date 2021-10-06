@@ -41,12 +41,14 @@ namespace Ginger.SourceControl
     {
         ObservableList<SolutionInfo> SourceControlSolutions = new ObservableList<SolutionInfo>();
 
+        SolutionInfo solutionInfo = null;
+
         GenericWindow genWin = null;
         Button downloadProjBtn = null;
 
         public static SourceControlBase mSourceControl;
-
-        public SourceControlProjectsPage()
+        bool IsOpen = true;
+        public SourceControlProjectsPage(bool IsOpen = true)
         {
             InitializeComponent();
             SolutionsGrid.SetTitleLightStyle = true;
@@ -60,6 +62,7 @@ namespace Ginger.SourceControl
             BrowseButton.Visibility = Visibility.Collapsed;
             SolutionsGrid.Visibility = Visibility.Collapsed;
 
+            this.IsOpen = IsOpen;
             Init();
         }
 
@@ -81,6 +84,10 @@ namespace Ginger.SourceControl
             {
                 // Default local solutions folder
                 mSourceControl.SourceControlLocalFolder = @"C:\GingerSourceControl\Solutions\";
+            }
+            if (!IsOpen)
+            {
+                mSourceControl.SourceControlLocalFolder = @"C:\GingerSourceControl\GlobalCrossSolutions";
             }
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConfigureProxyCheckBox, CheckBox.IsCheckedProperty, mSourceControl, nameof(SourceControlBase.SourceControlConfigureProxy));
@@ -176,6 +183,8 @@ namespace Ginger.SourceControl
                 );
 
                 SolutionsGrid.DataSourceList = SourceControlSolutions;
+                SolutionsGrid.grdMain.SelectedCellsChanged += GrdMain_SelectedCellsChanged;
+                SolutionsGrid.grdMain.SelectedItem = SolutionsGrid.DataSourceList[0];
                 SetGridView();
                 Mouse.OverrideCursor = null;
 
@@ -204,6 +213,11 @@ namespace Ginger.SourceControl
                 }
 
             }
+        }
+
+        private void GrdMain_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+        {
+            solutionInfo = (SolutionInfo)SolutionsGrid.grdMain.SelectedItem;
         }
 
         private void SetGridView()
@@ -237,8 +251,8 @@ namespace Ginger.SourceControl
                     Reporter.ToUser(eUserMsgKey.SourceControlConnMissingLocalFolderInput);
                 }
 
-                SolutionInfo sol = (SolutionInfo)SolutionsGrid.grdMain.SelectedItem;
-                if (sol == null)
+                solutionInfo = (SolutionInfo)SolutionsGrid.grdMain.SelectedItem;
+                if (solutionInfo == null)
                 {
                     Reporter.ToUser(eUserMsgKey.AskToSelectSolution);
                     return;
@@ -248,22 +262,22 @@ namespace Ginger.SourceControl
                 if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 {
                     ProjectURI =  WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase) ?
-                    sol.SourceControlLocation :  WorkSpace.Instance.UserProfile.SourceControlURL + sol.SourceControlLocation;
+                    solutionInfo.SourceControlLocation :  WorkSpace.Instance.UserProfile.SourceControlURL + solutionInfo.SourceControlLocation;
                 }
                 else
                 {
                     ProjectURI =  WorkSpace.Instance.UserProfile.SourceControlURL;
                 }
 
-                bool getProjectResult = await Task.Run(() => SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI));
+                bool getProjectResult = await Task.Run(() => SourceControlIntegration.GetProject(mSourceControl, solutionInfo.LocalFolder, ProjectURI));
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
 
                 GetProjetList();
                 Mouse.OverrideCursor = null;
-
-                if (getProjectResult && (Reporter.ToUser(eUserMsgKey.DownloadedSolutionFromSourceControl, sol.LocalFolder) == Amdocs.Ginger.Common.eUserMsgSelection.Yes))
+                
+                if (IsOpen && getProjectResult && (Reporter.ToUser(eUserMsgKey.DownloadedSolutionFromSourceControl, solutionInfo.LocalFolder) == Amdocs.Ginger.Common.eUserMsgSelection.Yes))
                 {
-                    OpenSolution(sol.LocalFolder, ProjectURI);
+                    OpenSolution(solutionInfo.LocalFolder, ProjectURI);
 
                     if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.SourceControl != null)
                     {
@@ -311,7 +325,7 @@ namespace Ginger.SourceControl
             return string.Empty;
         }
 
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
+        public string ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
             downloadProjBtn = new Button();
             downloadProjBtn.Content = "Download Selected Solution";
@@ -319,8 +333,20 @@ namespace Ginger.SourceControl
 
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Download Source Control Solution", this, new ObservableList<Button> { downloadProjBtn });
 
+            if (solutionInfo != null)
+            {
+                if (solutionInfo.ExistInLocaly)
+                {
+                    return solutionInfo.LocalFolder;
+                }
+            }
+            return "";
         }
-
+        //private void Close_Clicked(object sender, EventArgs e)
+        //{
+        //    solutionInfo = null;
+        //    genWin.Close();
+        //}
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new System.Windows.Forms.FolderBrowserDialog();

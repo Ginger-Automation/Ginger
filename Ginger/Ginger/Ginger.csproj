@@ -2008,7 +2008,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <Resource Include="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro.md" />
-    <None Include="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro_Old.md" />
     <None Include="Resources\VBSTemplate.bmp" />
     <None Include="Resources\VBSTemplate.vbs" />
     <Resource Include="Images\%40A_16x16.png" />

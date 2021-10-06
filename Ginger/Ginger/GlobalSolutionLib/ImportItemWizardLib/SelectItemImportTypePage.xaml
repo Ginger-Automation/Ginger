@@ -3,21 +3,21 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Ginger.GlobalSolutionLib.ImportItemWizardLib" xmlns:Actions="clr-namespace:Ginger.Actions" xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:local="clr-namespace:Ginger.GlobalSolutionLib.ImportItemWizardLib" xmlns:Actions="clr-namespace:Ginger.Actions" xmlns:Ginger="clr-namespace:Ginger" xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="800"
       Title="SelectItemImportTypePage">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="120"/>
+            <RowDefinition Height="70"/>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="60"/>
             
             
         </Grid.RowDefinitions>
         <StackPanel>
-            <Label Style="{StaticResource @InputFieldLabelStyle}">Importing Solution Encryption Key:</Label>
-            <TextBox x:Name="EncryptionKeyTextBox" Style="{StaticResource @TextBoxStyle}" Height="25"></TextBox>
+            
             <Label Style="{StaticResource @InputFieldLabelStyle}" >Select Global Solution Source Type:</Label>
             <RadioButton x:Name="ImportFromLocalFolderTypeRadio" IsChecked="True" Style="{StaticResource $InputRadioButtonStyle}" Checked="ImportFromLocalFolderTypeRadio_Checked">Solution folder located on this machine</RadioButton>
             <RadioButton x:Name="ImportFromSourceControlTypeRadio" Style="{StaticResource $InputRadioButtonStyle}" Checked="ImportFromSourceControlTypeRadio_Checked">Source Control</RadioButton>
@@ -29,8 +29,14 @@
         </StackPanel>
         <StackPanel x:Name="ImportFromSourceControlPanel" Visibility="Collapsed" Grid.Row="1">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Source Control Settings</Label>
+            <Frame x:Name="xDownloadSolutionPageFrame" DockPanel.Dock="Top" Margin="0,0,0,0"  Content="Download solution from source control" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
+
         </StackPanel>
 
-        
+        <StackPanel Grid.Row="2">
+
+            <!--<Label Style="{StaticResource @InputFieldLabelStyle}">Importing Solution Encryption Key:</Label>
+            <TextBox x:Name="EncryptionKeyTextBox" Style="{StaticResource @TextBoxStyle}" Height="25"></TextBox>-->
+        </StackPanel>
     </Grid>
 </Page>

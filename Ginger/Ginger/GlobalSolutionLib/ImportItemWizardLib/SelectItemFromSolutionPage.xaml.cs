@@ -118,7 +118,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 foreach (string file in filePaths)
                 {
                     string itemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(file);
-                    ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, true, itemName, false));
+                    string itemPath = GlobalSolutionUtils.Instance.ConvertToRelativePath(file);
+                    ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, itemPath, true, itemName, ""));
                 }
             }
             return ItemsListToImport;

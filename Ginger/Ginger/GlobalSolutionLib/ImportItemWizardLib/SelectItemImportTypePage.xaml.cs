@@ -3,6 +3,8 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
 using Amdocs.Ginger.CoreNET.GlobalSolutionLib;
 using Ginger.Actions;
+using Ginger.SolutionGeneral;
+using Ginger.SourceControl;
 using Ginger.UserControls;
 using GingerWPF.WizardLib;
 using System;
@@ -40,7 +42,10 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             {
                 case EventType.Init:
                     wiz = (ImportItemWizard)WizardEventArgs.Wizard;
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EncryptionKeyTextBox, TextBox.TextProperty, wiz, nameof(ImportItemWizard.EncryptionKey));
+                    ((WizardWindow)wiz.mWizardWindow).WindowState = WindowState.Maximized;
+
+                    //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EncryptionKeyTextBox, TextBox.TextProperty, wiz, nameof(ImportItemWizard.EncryptionKey));
+
                     xGlobalSolutionFolderUC.Init(null, wiz, nameof(ImportItemWizard.SolutionFolder), false, true, UCValueExpression.eBrowserType.Folder);
                     break;
                 case EventType.LeavingForNextPage:
@@ -56,21 +61,17 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
-                    else if (string.IsNullOrEmpty(wiz.EncryptionKey))
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Please provide Solution Encryption Key."));
-                        WizardEventArgs.CancelEvent = true;
-                        return;
-                    }
+                    
 
-                    GlobalSolutionUtils.Instance.EncryptionKey = wiz.EncryptionKey;
                     GlobalSolutionUtils.Instance.SolutionFolder = wiz.SolutionFolder;
-                    if (!GlobalSolutionUtils.Instance.ValidateEncryptionKey())
+                    Solution mSolution = GlobalSolutionUtils.Instance.GetSolution();
+                    if (string.IsNullOrEmpty(mSolution.EncryptedValidationString))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Loading Solution- Error: Encryption key validation failed."));
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Please open solution on Ginger v3.8 or above to use Encryption Key."));
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
+                    wiz.EncryptionKey = GlobalSolutionUtils.Instance.GetEncryptionKey();
 
                     break;
             }
@@ -96,6 +97,14 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             wiz.ImportFromType = GlobalSolution.eImportFromType.SourceControl;
             ImportFromSourceControlPanel.Visibility = Visibility.Visible;
             ImportFromLocalFolderPanel.Visibility = Visibility.Hidden;
+
+            SourceControlProjectsPage p = new SourceControlProjectsPage(false);
+            wiz.SolutionFolder = p.ShowAsWindow(eWindowShowStyle.Dialog);
+            xGlobalSolutionFolderUC.ValueTextBox.Text = wiz.SolutionFolder;
+
+            //get focus back to wizard
+            ((WizardWindow)wiz.mWizardWindow).Hide();
+            ((WizardWindow)wiz.mWizardWindow).Show();
         }
     }
 }

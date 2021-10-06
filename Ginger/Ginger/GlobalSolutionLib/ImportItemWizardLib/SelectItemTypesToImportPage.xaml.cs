@@ -1,10 +1,14 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
+using Amdocs.Ginger.CoreNET.GlobalSolutionLib;
+using Amdocs.Ginger.Repository;
 using Ginger.Actions;
+using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +30,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
     public partial class SelectItemTypesToImportPage : Page, IWizardPage
     {
         ImportItemWizard wiz;
-
         public SelectItemTypesToImportPage()
         {
             InitializeComponent();
@@ -41,12 +44,30 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     SetItemsListToImportGridView();
                     wiz.ItemTypeListToImport = GetItemTypeListToImport();
                     xItemTypesToImportGrid.DataSourceList = wiz.ItemTypeListToImport;
-
+                    break;
+                case EventType.Active:
+                    UCEncryptionKey.mSolution = GlobalSolutionUtils.Instance.GetSolution();
+                    if (!string.IsNullOrEmpty(wiz.EncryptionKey))
+                    {
+                        UCEncryptionKey.EncryptionKeyPasswordBox.Password = wiz.EncryptionKey;
+                        UCEncryptionKey.ValidateKey();
+                    }
                     break;
                 case EventType.LeavingForNextPage:
-                    if (string.IsNullOrEmpty(wiz.SolutionFolder))
+                    if (string.IsNullOrEmpty(UCEncryptionKey.EncryptionKeyPasswordBox.Password))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Please select Solution Folder."));
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Please provide Solution Encryption Key."));
+                        WizardEventArgs.CancelEvent = true;
+                        return;
+                    }
+                    if (UCEncryptionKey.ValidateKey())
+                    {
+                        wiz.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
+                        GlobalSolutionUtils.Instance.EncryptionKey = wiz.EncryptionKey;
+                    }
+                    else 
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Loading Solution- Error: Encryption key validation failed."));
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
@@ -76,12 +97,12 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             ObservableList<GlobalSolutionItem> ItemTypeListToImport = new ObservableList<GlobalSolutionItem>();
             foreach (GlobalSolution.eImportItemType ItemType in GlobalSolution.GetEnumValues<GlobalSolution.eImportItemType>())
             {
-                if (ItemType == GlobalSolution.eImportItemType.Solution)
+                if (ItemType == GlobalSolution.eImportItemType.Variables)
                 {
                     continue;
                 }
                 var description = ((EnumValueDescriptionAttribute[])typeof(GlobalSolution.eImportItemType).GetField(ItemType.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription;
-                ItemTypeListToImport.Add(new GlobalSolutionItem(ItemType, description, true, "", false));
+                ItemTypeListToImport.Add(new GlobalSolutionItem(ItemType, "",description, true, "", ""));
             }
             return ItemTypeListToImport;
         }
@@ -92,5 +113,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 item.Selected = ActiveStatus;
             }
         }
+
     }
 }
