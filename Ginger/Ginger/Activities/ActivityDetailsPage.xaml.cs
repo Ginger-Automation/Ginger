@@ -143,7 +143,7 @@ namespace Ginger.BusinessFlowPages
                 xHandlerPostExecutionCombo.BindControl(mActivity, nameof(ErrorHandler.ErrorHandlerPostExecutionAction));
 
                 xHandlerTriggerOnStackPanel.Visibility = Visibility.Visible;
-                xHandlerTriggerOnCombo.BindControl(mActivity, nameof(ErrorHandler.TriggerErrorType));
+                xHandlerTriggerOnCombo.BindControl(mActivity, nameof(ErrorHandler.TriggerType));
 
                 xHandlerMappingStack.Visibility = Visibility.Collapsed;
                 xHandlerTypeCombo.BindControl(mActivity, nameof(ErrorHandler.HandlerType));
@@ -192,7 +192,7 @@ namespace Ginger.BusinessFlowPages
 
         private void xHandlerTriggerOnCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xHandlerTriggerOnCombo.SelectedValue != null && xHandlerTriggerOnCombo.SelectedValue.ToString() == eTriggerErrorType.SpecificError.ToString())
+            if (xHandlerTriggerOnCombo.SelectedValue != null && xHandlerTriggerOnCombo.SelectedValue.ToString() == eTriggerType.SpecificError.ToString())
             {
                 xTriggerOnSpecificErrorBtn.Visibility = Visibility.Visible;
             }

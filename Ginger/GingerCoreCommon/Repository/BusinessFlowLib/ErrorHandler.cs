@@ -43,7 +43,7 @@ namespace GingerCore
 
     }
 
-    public enum eTriggerErrorType
+    public enum eTriggerType
     {
         [EnumValueDescription("Any Error")]
         AnyError,
@@ -76,9 +76,9 @@ namespace GingerCore
         }
 
 
-        private eTriggerErrorType mTriggerErrorType;
+        private eTriggerType mTriggerErrorType;
         [IsSerializedForLocalRepository]
-        public eTriggerErrorType TriggerErrorType
+        public eTriggerType TriggerType
         {
             get { return mTriggerErrorType; }
             set { if (mTriggerErrorType != value) { mTriggerErrorType = value; OnPropertyChanged(nameof(ErrorHandlerPostExecutionAction)); } }

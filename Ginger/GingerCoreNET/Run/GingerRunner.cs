@@ -1762,7 +1762,7 @@ namespace Ginger.Run
 
                 foreach (ErrorHandler errActivity in errorHandlerActivities)
                 {
-                    if (errActivity.TriggerErrorType == eTriggerErrorType.SpecificError)
+                    if (errActivity.TriggerType == eTriggerType.SpecificError)
                     {
                         foreach (var error in errActivity.ErrorStringList.Where(x => x.IsSelected).Select(y=>y.ErrorString).ToList())
                         {
