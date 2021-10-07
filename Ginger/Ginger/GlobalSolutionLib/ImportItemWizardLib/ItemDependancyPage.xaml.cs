@@ -141,12 +141,14 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
         }
         private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            xInfoMessageLabel.Content = "";
             GlobalSolutionItem solutionItem = (GlobalSolutionItem)sender;
             if (!string.IsNullOrEmpty(solutionItem.RequiredFor))
             {
                 if (wiz.SelectedItemTypeListToImport.Where(x => x.ItemName == solutionItem.RequiredFor).FirstOrDefault().Selected && solutionItem.ItemImportSetting == GlobalSolution.eImportSetting.New)
                 {
                     solutionItem.Selected = true;
+                    xInfoMessageLabel.Content = "Dependant items with import setting as 'New' can not be unchecked as it must be imported.";
                     return;
                 }
             }
