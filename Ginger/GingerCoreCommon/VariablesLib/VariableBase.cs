@@ -91,6 +91,21 @@ namespace GingerCore.Variables
             }
         }
 
+        private bool mMandatoryInput = false;
+        [IsSerializedForLocalRepository(false)]
+        public bool MandatoryInput
+        {
+            get { return mMandatoryInput; }
+            set
+            {
+                if (mMandatoryInput != value)
+                {
+                    mMandatoryInput = value;
+                    OnPropertyChanged(nameof(MandatoryInput));
+                }
+            }
+        }
+
         private bool mSetAsOutputValue = true;
         [IsSerializedForLocalRepository(true)]
         public bool SetAsOutputValue
@@ -131,8 +146,6 @@ namespace GingerCore.Variables
         }
 
         private string mValue;
-        //TODO: fixme value is temp and should not be serialized
-        // [IsSerializedForLocalRepository]
         public virtual string Value
         {
             get
@@ -146,9 +159,10 @@ namespace GingerCore.Variables
             }
         }
 
+
         public override void PostDeserialization()
         {
-            ResetValue();
+                ResetValue();
         }
 
         private string mFormula;

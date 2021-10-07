@@ -23,6 +23,7 @@ using Ginger.Repository;
 using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
@@ -82,12 +83,14 @@ namespace Ginger.Variables
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFormulaTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCurrentValueTextBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsInputValueCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMandatoryInputCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.MandatoryInput));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsOutputValueCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mVariable, nameof(RepositoryItemBase.Publish));
-
+          
             if (mode ==eEditMode.Global)
             {
                 xSetAsInputValueCheckBox.Visibility = Visibility.Hidden;
+                xMandatoryInputCheckBox.Visibility = Visibility.Hidden;
                 xSetAsOutputValueCheckBox.Visibility = Visibility.Hidden;
                 xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                 SharedRepoInstanceUC_Col.Width = new GridLength(0);
@@ -99,13 +102,12 @@ namespace Ginger.Variables
                     xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                     SharedRepoInstanceUC_Col.Width = new GridLength(0);
                 }
-                xSetAsInputValueCheckBox.Visibility=Visibility.Visible;
+                xSetAsInputValueCheckBox.Visibility= Visibility.Visible;              
                 xSetAsOutputValueCheckBox.Visibility = Visibility.Visible;
                 if (mContext != null && mContext.BusinessFlow != null)
                 {
                     xSharedRepoInstanceUC.Init(mVariable, mContext.BusinessFlow);
                 }
-
             }
      
             if (setGeneralConfigsAsReadOnly)
@@ -116,6 +118,7 @@ namespace Ginger.Variables
                 xTagsViewer.IsEnabled = false;
                 xSharedRepoInstanceUC.IsEnabled = false;
                 xSetAsInputValueCheckBox.IsEnabled = false;
+                xMandatoryInputCheckBox.IsEnabled = false;
                 xSetAsOutputValueCheckBox.IsEnabled = false;
                 xPublishcheckbox.IsEnabled = false;
                 xLinkedvariableCombo.IsEnabled = false;
@@ -465,6 +468,11 @@ namespace Ginger.Variables
         private void InputOutputChecked(object sender, RoutedEventArgs e)
         {
             xPublishcheckbox.Visibility = Visibility.Visible;
+
+            if (xSetAsInputValueCheckBox.IsChecked == true)
+            {
+                xMandatoryInputCheckBox.Visibility = Visibility.Visible;
+            }
         }
 
         private void InputOutputUnChecked(object sender, RoutedEventArgs e)
@@ -473,6 +481,12 @@ namespace Ginger.Variables
             {
                 xPublishcheckbox.IsChecked = false;
                 xPublishcheckbox.Visibility = Visibility.Collapsed;
+            }
+
+            if (xSetAsInputValueCheckBox.IsChecked == false)
+            {
+                xMandatoryInputCheckBox.IsChecked = false;
+                xMandatoryInputCheckBox.Visibility = Visibility.Collapsed;
             }
         }
     }

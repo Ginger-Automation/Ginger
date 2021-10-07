@@ -45,7 +45,7 @@
                     <UserControls:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="XUndoBtn_Click" ToolTip="Undo Last Changes"  ButtonFontImageSize="17" ButtonImageType="Undo" />
                     <UserControls:ucButton x:Name="xDeleteBtn" ButtonType="ImageButton" Click="xDeleteBtn_Click" ButtonFontImageSize="16" ButtonImageType="Delete">
                         <UserControls:ucButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Next [Variable]"/>
+                            <GingerCore:ucTextDicResource Text="Delete [Variable]"/>
                         </UserControls:ucButton.ToolTip>
                     </UserControls:ucButton>
                     <!--<Menu x:Name="xEditExtraOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations" HorizontalAlignment="Right">
