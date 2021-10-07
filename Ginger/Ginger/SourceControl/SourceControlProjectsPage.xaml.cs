@@ -47,8 +47,8 @@ namespace Ginger.SourceControl
         Button downloadProjBtn = null;
 
         public static SourceControlBase mSourceControl;
-        bool IsOpen = true;
-        public SourceControlProjectsPage(bool IsOpen = true)
+        static bool IsImportSolution = true;
+        public SourceControlProjectsPage(bool IsCalledFromImportPage = false)
         {
             InitializeComponent();
             SolutionsGrid.SetTitleLightStyle = true;
@@ -62,8 +62,9 @@ namespace Ginger.SourceControl
             BrowseButton.Visibility = Visibility.Collapsed;
             SolutionsGrid.Visibility = Visibility.Collapsed;
 
-            this.IsOpen = IsOpen;
+            IsImportSolution = IsCalledFromImportPage;
             Init();
+
         }
 
         private void Init()
@@ -79,15 +80,19 @@ namespace Ginger.SourceControl
             SourceControlClassComboBox.ComboBox.Items.RemoveAt(0);//removing the NONE option from user selection
 
             //ProjectPage Binding.
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlLocalFolderTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlLocalFolder));
+            if (IsImportSolution)
+            {
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlLocalFolderTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlLocalFolderForGlobalSolution));
+                mSourceControl.SourceControlLocalFolderForGlobalSolution = @"C:\GingerSourceControl\GlobalCrossSolutions";
+            }
+            else 
+            {
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlLocalFolderTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlLocalFolder));
+            }
             if (String.IsNullOrEmpty( WorkSpace.Instance.UserProfile.SourceControlLocalFolder))
             {
                 // Default local solutions folder
                 mSourceControl.SourceControlLocalFolder = @"C:\GingerSourceControl\Solutions\";
-            }
-            if (!IsOpen)
-            {
-                mSourceControl.SourceControlLocalFolder = @"C:\GingerSourceControl\GlobalCrossSolutions";
             }
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConfigureProxyCheckBox, CheckBox.IsCheckedProperty, mSourceControl, nameof(SourceControlBase.SourceControlConfigureProxy));
@@ -275,7 +280,7 @@ namespace Ginger.SourceControl
                 GetProjetList();
                 Mouse.OverrideCursor = null;
                 
-                if (IsOpen && getProjectResult && (Reporter.ToUser(eUserMsgKey.DownloadedSolutionFromSourceControl, solutionInfo.LocalFolder) == Amdocs.Ginger.Common.eUserMsgSelection.Yes))
+                if (!IsImportSolution && getProjectResult && (Reporter.ToUser(eUserMsgKey.DownloadedSolutionFromSourceControl, solutionInfo.LocalFolder) == Amdocs.Ginger.Common.eUserMsgSelection.Yes))
                 {
                     OpenSolution(solutionInfo.LocalFolder, ProjectURI);
 
@@ -400,6 +405,7 @@ namespace Ginger.SourceControl
                      WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout = 80;
                 }
                 mSourceControl.SourceControlTimeout =  WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+                mSourceControl.IsImportSolution = IsImportSolution;
 
                 mSourceControl.PropertyChanged += SourceControl_PropertyChanged;
             }

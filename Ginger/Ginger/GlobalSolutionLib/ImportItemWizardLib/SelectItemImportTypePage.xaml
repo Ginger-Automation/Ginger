@@ -12,7 +12,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="70"/>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="60"/>
             
             
         </Grid.RowDefinitions>
@@ -28,15 +27,9 @@
             <Actions:UCValueExpression x:Name="xGlobalSolutionFolderUC" VerticalAlignment="Center" ToolTip="Solutoin folder full path"/>
         </StackPanel>
         <StackPanel x:Name="ImportFromSourceControlPanel" Visibility="Collapsed" Grid.Row="1">
-            <Label Style="{StaticResource @InputFieldLabelStyle}">Source Control Settings</Label>
-            <Frame x:Name="xDownloadSolutionPageFrame" DockPanel.Dock="Top" Margin="0,0,0,0"  Content="Download solution from source control" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
-
+            <Label x:Name="xSourceControlLocalFolder" Style="{StaticResource @InputFieldLabelStyle}">Source Control Solution Local Folder Path</Label>
         </StackPanel>
 
-        <StackPanel Grid.Row="2">
-
-            <!--<Label Style="{StaticResource @InputFieldLabelStyle}">Importing Solution Encryption Key:</Label>
-            <TextBox x:Name="EncryptionKeyTextBox" Style="{StaticResource @TextBoxStyle}" Height="25"></TextBox>-->
-        </StackPanel>
+        
     </Grid>
 </Page>
