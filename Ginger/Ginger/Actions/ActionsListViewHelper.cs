@@ -685,16 +685,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(sender);
             //get target application for the action
-            //string targetapp = mContext.Activity.TargetApplication;
-            //mAction.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
-            ePlatformType currentActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
             if (mAction is ActWithoutDriver)
             {
                 mAction.Platform = ePlatformType.NA;
             }
             else
             {
-                mAction.Platform = currentActivityPlatform;
+                mAction.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
             }
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mAction));
         }
@@ -708,16 +705,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 list.Add(act);
                 //get target application for the action
-                //string targetapp = mContext.Activity.TargetApplication;
-                //act.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
-                ePlatformType currentActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
                 if (mAction is ActWithoutDriver)
                 {
                     mAction.Platform = ePlatformType.NA;
                 }
                 else
                 {
-                    mAction.Platform = currentActivityPlatform;
+                    mAction.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
                 }
             }
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, list));

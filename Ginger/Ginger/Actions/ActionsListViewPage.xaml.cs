@@ -202,8 +202,7 @@ namespace GingerWPF.BusinessFlowsLib
                         }
                         else
                         {
-                            ePlatformType currentActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
-                            act.Platform = currentActivityPlatform;
+                           act.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
                         }
                     }
                 });
