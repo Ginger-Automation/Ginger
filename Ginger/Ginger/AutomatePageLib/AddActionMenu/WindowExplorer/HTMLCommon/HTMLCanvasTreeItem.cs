@@ -21,16 +21,15 @@ using System.Windows.Controls;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.HTMLCommon
 {
     public class HTMLCanvasTreeItem : HTMLElementTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
         StackPanel ITreeViewItem.Header()
-        {
-            string ImageFileName = "@Canvas16x16.png";
-            string Title = this.ElementInfo.ElementTitle;            
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
+        {            
+            return TreeViewUtils.CreateItemHeader(ElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.Canvas));
         }
 
         HTMLCanvasElementPage mHTMLCanvasElementPage;

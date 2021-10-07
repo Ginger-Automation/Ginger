@@ -69,10 +69,7 @@ namespace Ginger.WindowExplorer.Appium
 
         StackPanel ITreeViewItem.Header()
         {
-            //TODO: Put better icon for generic control
-            string ImageFileName = "@Agent_16x16.png";
-            string Title = ElementInfo.ElementTitle;
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(Name, Amdocs.Ginger.Common.Enums.eImageType.Agent);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()

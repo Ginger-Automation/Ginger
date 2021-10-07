@@ -486,9 +486,9 @@ namespace Amdocs.Ginger.Common.UIElement
                 case eElementType.Image:
                     return eImageType.Image;
                 case eElementType.Label:
+                case eElementType.Text:
                     return eImageType.Label;
                 case eElementType.List:
-                    return eImageType.List;
                 case eElementType.ListItem:
                     return eImageType.List;
                 case eElementType.MenuBar:
@@ -499,8 +499,6 @@ namespace Amdocs.Ginger.Common.UIElement
                 case eElementType.Table:
                 case eElementType.TableItem:
                     return eImageType.Table;
-                case eElementType.Text:
-                    return eImageType.Label;
                 case eElementType.TextBox:
                     return eImageType.TextBox;
                 case eElementType.Window:
@@ -510,6 +508,8 @@ namespace Amdocs.Ginger.Common.UIElement
                     return eImageType.DatePicker;
                 case eElementType.TreeView:
                     return eImageType.TreeView;
+                case eElementType.Browser:
+                    return eImageType.Browser;
             }
 
             return eImageType.Element;
