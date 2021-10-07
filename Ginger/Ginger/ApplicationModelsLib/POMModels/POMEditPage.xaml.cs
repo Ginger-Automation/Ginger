@@ -104,7 +104,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xFrameBusinessFlowControl.Content = mBusinessFlowControl;
 
             xShowIDUC.Init(mPOM);
-            string expanderHeaderName = string.Format("'{0}...' Details", mPOM.Name);
+            string expanderHeaderName = string.Format("'{0}' Details", mPOM.Name);
             xFirstRowExpanderLabel.Content = expanderHeaderName;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
