@@ -104,6 +104,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xFrameBusinessFlowControl.Content = mBusinessFlowControl;
 
             xShowIDUC.Init(mPOM);
+            xFirstRowExpanderLabel.Content = string.Format("'{0}' Details", mPOM.Name);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
             xPageURLTextBox.Init(null, mPOM, nameof(mPOM.PageURL));
@@ -137,7 +138,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void SetDefaultPage()
         {
-
             if (mPOM.PageLoadFlow == ApplicationPOMModel.ePageLoadFlowType.PageURL)
             {
                 xPageUrlRadioBtn.IsChecked = true;
@@ -427,6 +427,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 xPageUrlStackPanel.Visibility = Visibility.Collapsed;
                 xFrameBusinessFlowControl.Visibility = Visibility.Visible;
             }
+        }
+
+        private void xEditPageExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            FirstRow.Height = new GridLength(235, GridUnitType.Pixel);
+            SecondRow.Height = new GridLength(100, GridUnitType.Star);
+        }
+
+        private void xEditPageExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            FirstRow.Height = new GridLength(6, GridUnitType.Star);
         }
     }
 }
