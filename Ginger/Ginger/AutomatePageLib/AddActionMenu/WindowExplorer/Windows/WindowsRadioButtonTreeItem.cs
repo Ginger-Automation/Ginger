@@ -23,6 +23,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Windows;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.Drivers.Windows
 {
@@ -30,9 +31,7 @@ namespace Ginger.Drivers.Windows
     {
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@RadioButton_16x16.png";
-            string Title = UIAElementInfo.ElementTitle;
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);            
+            return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.RadioButton));
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

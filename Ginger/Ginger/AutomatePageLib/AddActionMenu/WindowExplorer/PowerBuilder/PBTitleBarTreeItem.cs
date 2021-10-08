@@ -28,9 +28,7 @@ namespace Ginger.WindowExplorer.PowerBuilder
     {
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@Agent_16x16.png";
-            string Title = UIAElementInfo.ElementTitle;
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, Amdocs.Ginger.Common.Enums.eImageType.Agent);
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
