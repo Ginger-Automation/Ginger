@@ -321,7 +321,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             {
                 if (act.GetInputParamValue(ActBrowserElement.Fields.URLSrc) == ActBrowserElement.eURLSrc.UrlPOM.ToString())
                 {
-                    string POMGuid = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.PomGUID);
+                    string POMGuid = act.GetInputParamValue(ActBrowserElement.Fields.PomGUID);
                     filePath = GetPOMFilePathByGUID(POMGuid);
                 }
             }
@@ -476,9 +476,12 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     }
                 }
             }
-            GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.Variables, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", GetRepositoryItemName(filePath));
-            newItem.ItemName = string.Join(",",VariableListToImport);
-            AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
+            if (VariableListToImport.Count > 0)
+            {
+                GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.Variables, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", GetRepositoryItemName(filePath));
+                newItem.ItemName = string.Join(",", VariableListToImport);
+                AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
+            }
         }
 
         public void AddDependaciesForDataSource(string filePath, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport)
@@ -658,7 +661,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
         }
         public string GetEncryptionKey()
         {
-            string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.AllDirectories);
+            string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.TopDirectoryOnly);
             Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
             solution.EncryptionKey = Solution.GetEncryptionKey(solution.Guid.ToString());
             
@@ -667,11 +670,16 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
 
         public Solution GetSolution()
         {
-            string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.AllDirectories);
-            Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
-            solution.EncryptionKey = Solution.GetEncryptionKey(solution.Guid.ToString());
+            string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.TopDirectoryOnly);
+            if (filePaths.Length > 0)
+            {
+                Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
+                solution.EncryptionKey = Solution.GetEncryptionKey(solution.Guid.ToString());
 
-            return solution;
+                return solution;
+            }
+            else
+            { return null; }
         }
 
         public string EncryptValueWithCurrentSolutionKey(string oldEncryptedValue)

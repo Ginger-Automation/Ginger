@@ -624,12 +624,6 @@ namespace Ginger
 
         }
 
-        private void btnGlobalSolutionSourceControlSettings_Click(object sender, RoutedEventArgs e)
-        {
-            //SourceControlConnDetailsPage p = new SourceControlConnDetailsPage();
-            //p.ShowAsWindow(eWindowShowStyle.Dialog);
-        }
-
         private void btnGlobalSolutionImport_Click(object sender, RoutedEventArgs e)
         {
             GingerWPF.WizardLib.WizardWindow.ShowWizard(new Ginger.GlobalSolutionLib.ImportItemWizardLib.ImportItemWizard());

@@ -43,10 +43,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 case EventType.Init:
                     wiz = (ImportItemWizard)WizardEventArgs.Wizard;
                     ((WizardWindow)wiz.mWizardWindow).WindowState = WindowState.Maximized;
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xGlobalSolutionFolderTextBox, TextBox.TextProperty, wiz, nameof(ImportItemWizard.SolutionFolder));
 
-                    //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EncryptionKeyTextBox, TextBox.TextProperty, wiz, nameof(ImportItemWizard.EncryptionKey));
-
-                    xGlobalSolutionFolderUC.Init(null, wiz, nameof(ImportItemWizard.SolutionFolder), false, true, UCValueExpression.eBrowserType.Folder);
                     break;
                 case EventType.LeavingForNextPage:
                     if (string.IsNullOrEmpty(wiz.SolutionFolder))
@@ -61,16 +59,31 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
-                    
 
-                    GlobalSolutionUtils.Instance.SolutionFolder = wiz.SolutionFolder;
-                    Solution mSolution = GlobalSolutionUtils.Instance.GetSolution();
-                    if (string.IsNullOrEmpty(mSolution.EncryptedValidationString))
+                    if (!IsValidSolution(wiz.SolutionFolder))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Please open solution on Ginger v3.8 or above to use Encryption Key."));
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
+
+                    //Solution mSolution = GlobalSolutionUtils.Instance.GetSolution();
+                    //if (mSolution != null)
+                    //{
+                    //    if (string.IsNullOrEmpty(mSolution.EncryptedValidationString))
+                    //    {
+                    //        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Please open solution on Ginger v3.8 or above to use Encryption Key."));
+                    //        WizardEventArgs.CancelEvent = true;
+                    //        return;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Please select solution root folder."));
+                    //    WizardEventArgs.CancelEvent = true;
+                    //    return;
+                    //}
+
+                    GlobalSolutionUtils.Instance.SolutionFolder = wiz.SolutionFolder;
                     wiz.EncryptionKey = GlobalSolutionUtils.Instance.GetEncryptionKey();
 
                     break;
@@ -100,7 +113,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
             SourceControlProjectsPage p = new SourceControlProjectsPage(true);
             wiz.SolutionFolder = p.ShowAsWindow(eWindowShowStyle.Dialog);
-            xGlobalSolutionFolderUC.ValueTextBox.Text = wiz.SolutionFolder;
+            xGlobalSolutionFolderTextBox.Text = wiz.SolutionFolder;
             if (!string.IsNullOrEmpty(wiz.SolutionFolder))
             {
                 //ImportFromLocalFolderPanel.Visibility = Visibility.Visible;
@@ -110,6 +123,36 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             //get focus back to wizard
             ((WizardWindow)wiz.mWizardWindow).Hide();
             ((WizardWindow)wiz.mWizardWindow).Show();
+        }
+
+        private void SelectSolutionFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            string solutionFolder = General.OpenSelectFolderDialog("Select Ginger Solution Folder");
+            if (solutionFolder != null)
+            {
+                xGlobalSolutionFolderTextBox.Text = solutionFolder;
+                IsValidSolution(solutionFolder);
+            }
+        }
+
+        bool IsValidSolution(string solutionFolderPath)
+        {
+            GlobalSolutionUtils.Instance.SolutionFolder = solutionFolderPath;
+            Solution mSolution = GlobalSolutionUtils.Instance.GetSolution();
+            if (mSolution != null)
+            {
+                if (string.IsNullOrEmpty(mSolution.EncryptedValidationString))
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Please open solution on Ginger v3.8 or above to use Encryption Key."));
+                    return false;
+                }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Please select solution root folder."));
+                return false;
+            }
+            return true;
         }
     }
 }
