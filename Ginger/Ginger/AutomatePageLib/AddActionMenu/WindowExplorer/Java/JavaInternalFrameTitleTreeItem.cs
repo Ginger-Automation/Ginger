@@ -30,7 +30,8 @@ namespace Ginger.WindowExplorer.Java
     {
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.Browser));
+            string ImageFileName = "@Browser_16x16.png";
+            return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
         }
        
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

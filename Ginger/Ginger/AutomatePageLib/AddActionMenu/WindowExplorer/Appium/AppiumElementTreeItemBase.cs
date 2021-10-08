@@ -69,7 +69,7 @@ namespace Ginger.WindowExplorer.Appium
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(Name, Amdocs.Ginger.Common.Enums.eImageType.Agent);
+            return TreeViewUtils.CreateItemHeader(ElementInfo.ElementTitle, Amdocs.Ginger.Common.Enums.eImageType.Agent);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()

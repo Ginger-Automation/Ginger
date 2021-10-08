@@ -29,7 +29,8 @@ namespace Ginger.Drivers.PowerBuilder
     {
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.Document));
+            string ImageFileName = "@Documents_16x16.png";
+            return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, ImageFileName);
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

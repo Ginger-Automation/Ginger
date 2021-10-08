@@ -41,8 +41,7 @@ namespace Ginger.WindowExplorer.Java
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@Window_16x16.png";
-            return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.Window));
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()

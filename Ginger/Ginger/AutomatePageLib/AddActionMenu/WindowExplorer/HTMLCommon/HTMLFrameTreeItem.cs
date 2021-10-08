@@ -28,7 +28,8 @@ namespace Ginger.WindowExplorer.HTMLCommon
     {
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(ElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.Button));
+            string ImageFileName = "Button16x16.png";  // TODO:replace to black button style
+            return TreeViewUtils.CreateItemHeader(ElementInfo.ElementTitle, ImageFileName);
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

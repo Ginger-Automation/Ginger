@@ -21,7 +21,6 @@ using System.Windows.Controls;
 using Ginger.WindowExplorer;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.Drivers.PowerBuilder
 {
@@ -29,7 +28,7 @@ namespace Ginger.Drivers.PowerBuilder
     {
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.Tab));
+            return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, Amdocs.Ginger.Common.Enums.eImageType.Agent);
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

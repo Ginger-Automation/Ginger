@@ -28,7 +28,8 @@ namespace Ginger.WindowExplorer.HTMLCommon
     {
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(ElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.Div));
+            string ImageFileName = "@HorizentalScroller_16x16.png";  // TODO: create DIV icons
+            return TreeViewUtils.CreateItemHeader(ElementInfo.ElementTitle, ImageFileName);
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
