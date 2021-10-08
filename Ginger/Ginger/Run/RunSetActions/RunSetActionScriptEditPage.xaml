@@ -15,6 +15,7 @@
                 <TextBox x:Name="ScriptFileNameTextBox" Width="500" Style="{StaticResource @TextBoxStyle}" ></TextBox>
                 <Button x:Name="BrowseButton" Click="BrowseButton_Click" Style="{StaticResource @InputButtonStyle}" Width="50" Margin="5,0,0,0" VerticalAlignment="Center">Select</Button>
             </StackPanel>
+            <Label HorizontalAlignment="Left" Foreground="Red" Style="{StaticResource @LabelStyle}">Script Type: on windows only VBS supported, on linux only Shell supported.</Label>
         </StackPanel>
 
     </Grid>

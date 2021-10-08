@@ -521,8 +521,74 @@
     <Compile Include="SolutionCategories\SolutionCategoryOptionalValuesEditPage.xaml.cs">
       <DependentUpon>SolutionCategoryOptionalValuesEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SolutionWindows\AddApplicationPage.xaml.cs">
+      <DependentUpon>AddApplicationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionWindows\AddSolutionPage.xaml.cs">
+      <DependentUpon>AddSolutionPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionWindows\ImportDataSourceIntroductionPage.xaml.cs">
+      <DependentUpon>ImportDataSourceIntroductionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SolutionWindows\ReplaceEncryptionKeyPage.xaml.cs">
       <DependentUpon>ReplaceEncryptionKeyPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionWindows\SolutionPage.xaml.cs">
+      <DependentUpon>SolutionPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionWindows\TargetApplicationsPage.xaml.cs">
+      <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionWindows\TreeViewItems\AgentsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\AgentTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\AppApiModelsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\AppApiModelTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationPOMsTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationPOMTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationDBsTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationDBTableTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationDBTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationProcessTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\BusinessFlowsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\BusinessFlowTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\DataSourceFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\DataSourceTableTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\DataSourceTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\DocumentsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\DocumentTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvApplicationTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvironmentsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvironmentTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\HTMLGingerReportsTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\HTMLGingerReportTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\ExecutionResultsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\HTMLReportTemplatesTreeItem .cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\HTMLReportTemplateTreeItem .cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\LegacyReportTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\ReportsTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\ReportTemplatesTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\ReportTemplateTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\SharedRepositoryTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\Legacy\SolutionTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\NewAgentsTreeItems\NewAgentTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\NewTreeViewItemBase.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\PluginPackageTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\PlugInsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\RunSetFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\RunSetTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\SharedActionsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\SharedActionTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\SharedActivitiesFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\SharedActivitiesGroupsFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\SharedActivitiesGroupTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\SharedActivityTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\SharedVariablesFolderTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\SharedVariableTreeItem.cs" />
+    <Compile Include="SolutionWindows\TreeViewItems\TreeViewItemBase.cs" />
+    <Compile Include="SolutionWindows\UpgradePage.xaml.cs">
+      <DependentUpon>UpgradePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml.cs">
       <DependentUpon>CustomRelativeXpathTemplateUI.xaml</DependentUpon>
@@ -541,6 +607,9 @@
     </Compile>
     <Compile Include="UserControlsLib\UCExplorerWindowSelection.xaml.cs">
       <DependentUpon>UCExplorerWindowSelection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\ucLabel.xaml.cs">
+      <DependentUpon>ucLabel.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\ucShowItemID.xaml.cs">
       <DependentUpon>ucShowItemID.xaml</DependentUpon>
@@ -781,9 +850,6 @@
     <Compile Include="MenusLib\ResourcesMenu.cs" />
     <Compile Include="MenusLib\RunMenu.cs" />
     <Compile Include="RunSetLib\RunSetOperations.cs" />
-    <Compile Include="SolutionWindows\TargetApplicationsPage.xaml.cs">
-      <DependentUpon>TargetApplicationsPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="DataSource\ImportExcelWizardLib\ImportDataSourceBrowseFile.xaml.cs">
       <DependentUpon>ImportDataSourceBrowseFile.xaml</DependentUpon>
     </Compile>
@@ -1009,21 +1075,6 @@
     <Compile Include="SolutionLibNew\SaveNewSolutionWizardPage.xaml.cs">
       <DependentUpon>SaveNewSolutionWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\AppApiModelsFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\AppApiModelTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationDBsTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationDBTableTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationDBTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationPOMsTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\ApplicationPOMTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationProcessTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationsFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\ApplicationModelsTreeItems\NotYetUsed\ApplicationTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\NewAgentsTreeItems\NewAgentTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvironmentsFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\NewTreeViewItemBase.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\PlugInsFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\PluginPackageTreeItem.cs" />
     <Compile Include="PluginsLib\PluginPackagePage.xaml.cs">
       <DependentUpon>PluginPackagePage.xaml</DependentUpon>
     </Compile>
@@ -1202,9 +1253,6 @@
     <Compile Include="Run\RunSetActions\RunSetActionHTMLReportEditPage.xaml.cs">
       <DependentUpon>RunSetActionHTMLReportEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionWindows\TreeViewItems\DataSourceTableTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\HTMLGingerReportsTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\HTMLGingerReportTreeItem.cs" />
     <Compile Include="Actions\ActionEditPages\ActMediaEditPage.xaml.cs">
       <DependentUpon>ActMediaEditPage.xaml</DependentUpon>
     </Compile>
@@ -1226,7 +1274,6 @@
     <Compile Include="BusinessFlowWindows\SourceGherkinPage.xaml.cs">
       <DependentUpon>SourceGherkinPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionWindows\TreeViewItems\Legacy\LegacyReportTreeItem.cs" />
     <Compile Include="UserControlsLib\TextEditor\AutoDetect\AutoDetectTextEditor.cs" />
     <Compile Include="UserControlsLib\TextEditor\Common\SelectedContentArgs.cs" />
     <Compile Include="UserControlsLib\TextEditor\DocumentEditorPage.xaml.cs">
@@ -1272,8 +1319,6 @@
     <Compile Include="DataSource\AddNewDataSourcePage.xaml.cs">
       <DependentUpon>AddNewDataSourcePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionWindows\TreeViewItems\DataSourceTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\DataSourceFolderTreeItem.cs" />
     <Compile Include="UserControlsLib\UCComboBox.xaml.cs">
       <DependentUpon>UCComboBox.xaml</DependentUpon>
     </Compile>
@@ -1524,14 +1569,6 @@
     <Compile Include="Run\RunSetsExecutionsHistoryPage.xaml.cs">
       <DependentUpon>RunSetsExecutionsHistoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionWindows\UpgradePage.xaml.cs">
-      <DependentUpon>UpgradePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SolutionWindows\TreeViewItems\Legacy\ReportsTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\Legacy\HTMLReportTemplatesTreeItem .cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\Legacy\HTMLReportTemplateTreeItem .cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\Legacy\ReportTemplateTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\Legacy\ReportTemplatesTreeItem.cs" />
     <Compile Include="SourceControl\ResolveConflictPage.xaml.cs">
       <DependentUpon>ResolveConflictPage.xaml</DependentUpon>
     </Compile>
@@ -1798,11 +1835,6 @@
     <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemUsagePage.xaml.cs">
       <DependentUpon>RepositoryItemUsagePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionWindows\AddApplicationPage.xaml.cs">
-      <DependentUpon>AddApplicationPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SolutionWindows\TreeViewItems\SharedActivitiesGroupsFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\SharedActivitiesGroupTreeItem.cs" />
     <Compile Include="Variables\VariablesDependenciesPage.xaml.cs">
       <DependentUpon>VariablesDependenciesPage.xaml</DependentUpon>
     </Compile>
@@ -1850,14 +1882,8 @@
     <Compile Include="Run\BusinessFlowRunConfigurationsPage.xaml.cs">
       <DependentUpon>BusinessFlowRunConfigurationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionWindows\AddSolutionPage.xaml.cs">
-      <DependentUpon>AddSolutionPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ALM\QC\QCTestPlanExplorerPage.xaml.cs">
       <DependentUpon>QCTestPlanExplorerPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SolutionWindows\SolutionPage.xaml.cs">
-      <DependentUpon>SolutionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\ExtensionsMethods.cs" />
     <Compile Include="GeneralLib\General.cs" />
@@ -1874,31 +1900,11 @@
     <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryPage.xaml.cs">
       <DependentUpon>RepositoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionWindows\TreeViewItems\AgentsFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\AgentTreeItem.cs" />
     <Compile Include="ALM\QC\TreeViewItems\QCTestSetTreeItem.cs" />
     <Compile Include="ALM\QC\TreeViewItems\QCTestLabTreeItem.cs" />
     <Compile Include="ALM\QC\TreeViewItems\QCTestLabFolderTreeItem.cs" />
     <Compile Include="ALM\QC\TreeViewItems\QCTestPlanFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\BusinessFlowsFolderTreeItem.cs" />
     <Compile Include="ALM\QC\TreeViewItems\QCTestPlanTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\BusinessFlowTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\DocumentsFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\DocumentTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvApplicationTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\EnvironmentsTreeItems\EnvironmentTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\Legacy\ExecutionResultsFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\RunSetFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\RunSetTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\SharedActionsFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\SharedActionTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\SharedActivitiesFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\SharedActivityTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\Legacy\SharedRepositoryTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\SharedVariablesFolderTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\SharedVariableTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\Legacy\SolutionTreeItem.cs" />
-    <Compile Include="SolutionWindows\TreeViewItems\TreeViewItemBase.cs" />
     <Compile Include="ALM\QC\UploadBusinessFlowsPage.xaml.cs">
       <DependentUpon>UploadBusinessFlowsPage.xaml</DependentUpon>
     </Compile>
@@ -2940,9 +2946,33 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SolutionWindows\AddApplicationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="SolutionWindows\AddSolutionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="SolutionWindows\ImportDataSourceIntroductionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="SolutionWindows\ReplaceEncryptionKeyPage.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="SolutionWindows\SolutionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="SolutionWindows\TargetApplicationsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="SolutionWindows\UpgradePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml">
       <SubType>Designer</SubType>
@@ -2969,6 +2999,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\UCExplorerWindowSelection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\ucLabel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3061,10 +3095,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Run\RunSetActions\RunSetActionSummaryJSONPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SolutionWindows\TargetApplicationsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4111,10 +4141,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SolutionWindows\UpgradePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="SourceControl\ResolveConflictPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -4315,10 +4341,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SolutionWindows\AddApplicationPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Variables\VariablesDependenciesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -4375,17 +4397,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SolutionWindows\AddSolutionPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="ALM\QC\QCTestPlanExplorerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="SolutionWindows\SolutionPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
@@ -4796,16 +4810,16 @@
       <Version>106.11.4</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.ChromeDriver">
-      <Version>92.0.4515.10700</Version>
+      <Version>94.0.4606.6100</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.GeckoDriver">
-      <Version>0.29.1</Version>
+      <Version>0.30.0</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.IEDriver">
       <Version>3.150.1.2</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.MSEdgeDriver">
-      <Version>92.0.902.62</Version>
+      <Version>94.0.986</Version>
     </PackageReference>
     <PackageReference Include="SharpAdbClient">
       <Version>2.3.23</Version>

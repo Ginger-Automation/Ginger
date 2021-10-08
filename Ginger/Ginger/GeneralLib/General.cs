@@ -135,7 +135,14 @@ namespace Ginger
             }
             return null;
         }
-
+        internal static string SetupBrowseFolder(FolderBrowserDialog dlg, bool isRelativePath = true)
+        {
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                return isRelativePath ? ConvertSolutionRelativePath(dlg.SelectedPath) : dlg.SelectedPath;
+            }
+            return null;
+        }
         internal static ImageSource ToBitmapSource(System.Drawing.Bitmap source)
         {
             if (source == null) return null;
