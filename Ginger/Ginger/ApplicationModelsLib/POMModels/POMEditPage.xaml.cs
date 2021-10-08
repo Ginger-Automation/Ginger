@@ -125,6 +125,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
             xUIElementsFrame.Content = mPomAllElementsPage;
 
+            mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
             UIElementTabTextBlockUpdate();
 
             mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
@@ -209,6 +210,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 bitmap = new Bitmap(outStream);
             }
             return bitmap;
+        }
+
+        private void UIElementCountUpdatedHandler(object sender, EventArgs e)
+        {
+            UIElementTabTextBlockUpdate();
         }
 
         private void UIElementTabTextBlockUpdate()
