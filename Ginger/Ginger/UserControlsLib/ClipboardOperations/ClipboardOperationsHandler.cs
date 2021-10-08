@@ -148,7 +148,6 @@ namespace Ginger.UserControlsLib
                                 {
                                     IsValidActionPlatform = false;
                                     continue;
-                                    //return;
                                 }
                                 //paste on target and select                           
                                 containerControl.SetSelectedIndex(AddItemAfterCurrent(containerControl, item, currentIndex));
@@ -177,7 +176,6 @@ namespace Ginger.UserControlsLib
                                 {
                                     IsValidActionPlatform = false;
                                     continue;
-                                    //return;
                                 }
                                 //add and select
                                 containerControl.SetSelectedIndex(AddItemAfterCurrent(containerControl, copiedItem, currentIndex));

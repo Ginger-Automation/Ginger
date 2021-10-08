@@ -347,11 +347,7 @@ namespace Ginger.SourceControl
             }
             return "";
         }
-        //private void Close_Clicked(object sender, EventArgs e)
-        //{
-        //    solutionInfo = null;
-        //    genWin.Close();
-        //}
+       
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new System.Windows.Forms.FolderBrowserDialog();

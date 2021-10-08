@@ -339,7 +339,7 @@ namespace GingerCore.Actions
 
 
         private ePlatformType mPlatform;
-        [IsSerializedForLocalRepository(ePlatformType.NA)]
+        [IsSerializedForLocalRepository]
         public ePlatformType Platform { get { return mPlatform; } set { mPlatform = value; OnPropertyChanged(Fields.Platform); } }
         // -------------------------------
 

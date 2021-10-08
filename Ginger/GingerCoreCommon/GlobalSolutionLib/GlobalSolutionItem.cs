@@ -20,7 +20,6 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
         private bool mSelected = true;
         public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(nameof(Selected)); } } }
         public GlobalSolution.eImportItemType ItemType { get; set; }
-        //public bool IsDependant { get; set; }
         public string ItemName { get; set; }
         public string ItemExtraInfo { get; set; }
         public string ItemFullPath { get; set; }
@@ -31,7 +30,6 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
         public Guid ItemGUID { get; set; }
        
 
-        //public GlobalSolution.eItemDependancyType ItemDependancyType { get; set; }
         public GlobalSolution.eImportSetting ItemImportSetting { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;

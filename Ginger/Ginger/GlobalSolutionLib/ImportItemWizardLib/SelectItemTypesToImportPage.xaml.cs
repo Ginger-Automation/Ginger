@@ -56,7 +56,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 case EventType.LeavingForNextPage:
                     if (string.IsNullOrEmpty(UCEncryptionKey.EncryptionKeyPasswordBox.Password))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Please provide Solution Encryption Key."));
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide Solution Encryption Key.");
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
@@ -67,7 +67,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     }
                     else 
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Loading Solution- Error: Encryption key validation failed."));
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Loading Solution- Error: Encryption key validation failed.");
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }

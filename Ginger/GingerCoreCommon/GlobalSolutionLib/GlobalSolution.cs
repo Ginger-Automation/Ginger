@@ -30,14 +30,6 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
             APIModels,
             [EnumValueDescription("Page Object Models")]
             POMModels,
-            //[EnumValueDescription("Target Applications")]
-            //TargetApplications,
-            //[EnumValueDescription("Runsets")]
-            //Runsets,
-            //[EnumValueDescription("Report Templates")]
-            //ReportTemplates,
-            //[EnumValueDescription("Agents")]
-            //Agents,
             [EnumValueDescription("Documents")]
             Documents,
             [EnumValueDescription("Environments")]
@@ -47,12 +39,7 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
             [EnumValueDescription("Solution Variables")]
             Variables
         }
-        //public enum eItemDependancyType
-        //{
-        //    Original,
-        //    Dependant,
-        //    None
-        //}
+        
         public static IEnumerable<T> GetEnumValues<T>()
         {
             return Enum.GetValues(typeof(T)).Cast<T>();
