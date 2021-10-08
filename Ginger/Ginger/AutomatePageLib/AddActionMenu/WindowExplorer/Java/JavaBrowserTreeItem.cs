@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using System.Windows.Controls;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.Java
 {
@@ -27,8 +28,7 @@ namespace Ginger.WindowExplorer.Java
     {
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@Browser_16x16.png";
-            return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.Browser));
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

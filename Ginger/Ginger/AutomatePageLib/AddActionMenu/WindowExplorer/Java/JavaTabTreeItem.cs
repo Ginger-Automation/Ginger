@@ -28,8 +28,7 @@ namespace Ginger.WindowExplorer.Java
     {
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@Agent_16x16.png";
-            return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(Name, Amdocs.Ginger.Common.Enums.eImageType.Agent);
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

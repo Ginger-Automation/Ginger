@@ -21,6 +21,7 @@ using GingerCore.Actions;
 using System.Windows.Controls;
 using Ginger.Drivers.Windows;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.Windows
 {
@@ -28,9 +29,7 @@ namespace Ginger.WindowExplorer.Windows
     {
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@Browser_16x16.png";
-            string Title = UIAElementInfo.ElementTitle;
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.Browser));
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
