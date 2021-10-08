@@ -18,7 +18,7 @@
                 <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xAutoUpdateModelChkBox" Margin="5" Content="Auto-update Application Model During Execution" />
                 <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xRePrioritizeChkBox" Margin="5" Content="Re-Prioritize Failed POM Locators" />
                 <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xAutoFixAnalyzerChkBox" Margin="5" Content="Auto Fix Analyzer Issues" />
-                <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xAutoExecuteInSimulationChkBox" Margin="5" Content="Auto Execute in Simulation Mode" />
+                <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xAutoExecuteInSimulationChkBox" Margin="5" Content="Auto switch to simulation mode for failed actions" />
 
                 <!--<CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xUseVirtualEnvChkBox"  Margin="5" Visibility="Collapsed" Content="Use Virtual Environment On Failure" />-->
             </StackPanel>
