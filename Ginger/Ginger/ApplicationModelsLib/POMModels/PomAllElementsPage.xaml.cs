@@ -72,9 +72,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         public PomElementsPage mappedUIElementsPage;
         public PomElementsPage unmappedUIElementsPage;
+        public EventHandler raiseUIElementsCountUpdated;
 
 
-        public PomAllElementsPage(ApplicationPOMModel POM, eAllElementsPageContext context, bool AddSelfHealingColumn=true)
+        public PomAllElementsPage(ApplicationPOMModel POM, eAllElementsPageContext context, bool AddSelfHealingColumn = true)
         {
             InitializeComponent();
             mPOM = POM;
@@ -101,7 +102,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void UnMappedUIElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             UnMappedUIElementsUpdate();
-        }        
+            if (raiseUIElementsCountUpdated != null)
+            {
+                raiseUIElementsCountUpdated(null, null);
+            }
+        }
 
         private void UnMappedUIElementsUpdate()
         {
@@ -114,6 +119,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void MappedUIElements_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             MappedUIElementsUpdate();
+            if (raiseUIElementsCountUpdated != null)
+            {
+                raiseUIElementsCountUpdated(null, null);
+            }
         }
 
         public Visibility ShowTestAllElementsButton
@@ -286,7 +295,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 unmappedUIElementsPage.MainElementsGrid.ChangeGridView(GridViewDef.DefaultViewName);
             }
-            
+
             TestAllElementsAsync();
         }
 
@@ -314,7 +323,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             int TotalElements = Elements.Count;
             int TotalFails = 0;
-            
+
             bool WarnErrorOccured = false;
             foreach (ElementInfo EI in Elements)
             {
@@ -328,7 +337,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     return;
                 }
 
-                if (mWinExplorer.TestElementLocators(EI,true))
+                if (mWinExplorer.TestElementLocators(EI, true))
                 {
                     EI.ElementStatus = ElementInfo.eElementStatus.Passed;
                 }
@@ -416,7 +425,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
 
-            WizardWindow.ShowWizard(new PomDeltaWizard(mPOM, mAgent),1600,800, true);
+            WizardWindow.ShowWizard(new PomDeltaWizard(mPOM, mAgent), 1600, 800, true);
         }
 
 
