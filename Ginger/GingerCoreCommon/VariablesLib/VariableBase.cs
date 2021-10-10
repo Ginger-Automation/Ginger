@@ -133,6 +133,21 @@ namespace GingerCore.Variables
             }
         }
 
+        public string MandatoryIndication
+        {
+            get
+            {
+                if (mMandatoryInput)
+                {
+                    return "*";
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+        }
+
         private string mDescription;
         [IsSerializedForLocalRepository]
         public string Description
