@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -27,5 +27,12 @@ namespace Amdocs.Ginger.Common.Enums
         NoTracked,
         NoChange,
         Modified
+    }
+
+    public enum eDirtyTracking
+    {
+        NotStarted,
+        Paused,
+        Started
     }
 }
