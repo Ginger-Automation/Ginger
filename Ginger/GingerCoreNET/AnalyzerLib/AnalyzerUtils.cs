@@ -244,6 +244,7 @@ namespace Ginger.AnalyzerLib
                         aa.IssueType = AnalyzerItemBase.eType.Error;
                         aa.FixItHandler = DeleteUnusedVariables;
                         aa.Severity = AnalyzerItemBase.eSeverity.Medium;
+                        aa.ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable);
                         AddIssue(issuesList, aa);
                     }
                     else if (obj.GetType().Equals(typeof(Solution)))
@@ -252,6 +253,7 @@ namespace Ginger.AnalyzerLib
                         aa.Status = AnalyzerItemBase.eStatus.NeedFix;
                         aa.ItemName = var.Name;
                         aa.Description = var + " is Unused in Solution";
+                        aa.ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable);
                         aa.Details = variableSourceType;
                         aa.ItemParent = variableSourceName;
                         aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
@@ -268,6 +270,7 @@ namespace Ginger.AnalyzerLib
                         aa.Description = var + " is Unused in " + variableSourceType + ": " + activity.ActivityName;
                         aa.Details = variableSourceType;
                         aa.mActivity = activity;
+                        aa.ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable);
                         //aa.mBusinessFlow = businessFlow;
                         aa.ItemParent = variableSourceName;
                         aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;

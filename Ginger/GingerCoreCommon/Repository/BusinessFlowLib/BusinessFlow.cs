@@ -596,7 +596,7 @@ namespace GingerCore
                     varsList.Add(var);
             return varsList;
         }
-        public ObservableList<VariableBase> GetBFandActivitiesVariabeles(bool includeParentDetails, bool includeOnlySetAsInputValue = false, bool includeOnlySetAsOutputValue = false, bool includeOnlyPublishedVars = false)
+        public ObservableList<VariableBase> GetBFandActivitiesVariabeles(bool includeParentDetails, bool includeOnlySetAsInputValue = false, bool includeOnlySetAsOutputValue = false, bool includeOnlyPublishedVars = false, bool includeOnlyMandatoryInputs = false)
         {
             ObservableList<VariableBase> varsList = new ObservableList<VariableBase>();
 
@@ -609,6 +609,10 @@ namespace GingerCore
                     var.ParentName = this.Name;
                 }
                 if (includeOnlyPublishedVars && var.Publish == false)
+                {
+                    continue;
+                }
+                if (includeOnlyMandatoryInputs && var.MandatoryInput == false)
                 {
                     continue;
                 }

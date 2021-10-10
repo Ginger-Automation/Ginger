@@ -27,6 +27,7 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Platforms;
+using GingerCore.Variables;
 
 namespace Ginger.AnalyzerLib
 {
@@ -85,6 +86,32 @@ namespace Ginger.AnalyzerLib
                 ABF.Severity = eSeverity.Medium;
                 ABF.ItemClass = "BusinessFlow";
                 IssuesList.Add(ABF);
+            }
+
+            //check for mandatory inputs without value:
+            foreach(VariableBase var in BusinessFlow.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsInputValue: true, includeOnlyMandatoryInputs:true))
+            {
+                if (string.IsNullOrWhiteSpace(var.Value) && var.MappedOutputType == VariableBase.eOutputType.None)
+                {
+                    AnalyzeBusinessFlow mandatoryInputIssue = new AnalyzeBusinessFlow();
+                    mandatoryInputIssue.Description = string.Format("Mandatory Input {0} is missing a value", GingerDicser.GetTermResValue(eTermResKey.Variable)); 
+                    mandatoryInputIssue.UTDescription = "MissingMandatoryInputValue";
+                    mandatoryInputIssue.Details = string.Format("The {0} '{1}' was marked as 'Mandatory Input' but it has empty value and no dynamic mapped value.", GingerDicser.GetTermResValue(eTermResKey.Variable), var.Name);
+                    mandatoryInputIssue.HowToFix = string.Format("Set a value to the {0} before starting the execution.", GingerDicser.GetTermResValue(eTermResKey.Variable));
+                    mandatoryInputIssue.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                    mandatoryInputIssue.FixItHandler = null ;
+                    mandatoryInputIssue.Status = AnalyzerItemBase.eStatus.NeedFix;
+                    mandatoryInputIssue.IssueType = eType.Error;
+                    mandatoryInputIssue.ItemParent = var.ParentName;
+                    mandatoryInputIssue.mBusinessFlow = BusinessFlow;
+                    mandatoryInputIssue.ItemName = var.Name;
+                    mandatoryInputIssue.Impact = "Execution probably will fail due to missing input value.";
+                    mandatoryInputIssue.mSolution = Solution;
+                    mandatoryInputIssue.ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable);
+                    mandatoryInputIssue.Severity = eSeverity.High;
+                    mandatoryInputIssue.Selected = true;
+                    IssuesList.Add(mandatoryInputIssue);
+                }
             }
 
             // Check BF have actions with legacy outputValidation
