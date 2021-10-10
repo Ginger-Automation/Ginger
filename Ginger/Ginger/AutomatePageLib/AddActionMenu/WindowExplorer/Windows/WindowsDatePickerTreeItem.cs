@@ -22,6 +22,7 @@ using Ginger.WindowExplorer;
 using GingerCore.Actions;
 using GingerCore.Actions.Windows;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.Drivers.Windows
 {
@@ -29,9 +30,7 @@ namespace Ginger.Drivers.Windows
     {
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@TextBox_16x16.png";
-            string Title = UIAElementInfo.ElementTitle;          
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);            
+            return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.DatePicker));
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

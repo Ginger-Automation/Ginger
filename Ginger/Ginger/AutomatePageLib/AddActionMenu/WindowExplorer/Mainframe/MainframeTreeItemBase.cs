@@ -77,8 +77,7 @@ namespace Ginger.WindowExplorer.Mainframe
 
         public System.Windows.Controls.StackPanel Header()
         {
-            string ImageFileName = "@Window_16x16.png";
-            return TreeViewUtils.CreateItemHeader (Name, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.Window));
         }
 
         public bool IsExpandable()

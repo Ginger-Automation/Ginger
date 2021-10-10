@@ -37,9 +37,7 @@ namespace Ginger.Drivers.Windows
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@Agent_16x16.png";
-            string Title = UIAElementInfo.ElementTitle;
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);            
+            return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, eImageType.Agent);
         }
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)

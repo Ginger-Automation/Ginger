@@ -89,7 +89,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
             }
         }
-        
+
         // ScreenShotViewPage pd;
 
         readonly PomAllElementsPage mPomAllElementsPage;
@@ -99,11 +99,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
             InitializeComponent();
             mPOM = POM;
             mEditMode = editMode;
-            
+
             mBusinessFlowControl = new ucBusinessFlowMap(mPOM, nameof(mPOM.MappedBusinessFlow));
             xFrameBusinessFlowControl.Content = mBusinessFlowControl;
 
             xShowIDUC.Init(mPOM);
+            xFirstRowExpanderLabel.Content = string.Format("'{0}' Details", mPOM.Name);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
             xPageURLTextBox.Init(null, mPOM, nameof(mPOM.PageURL));
@@ -111,7 +112,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             FillTargetAppsComboBox();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mPOM, nameof(ApplicationPOMModel.TargetApplicationKey));
             xTagsViewer.Init(mPOM.TagsKeys);
-            
+
             BitmapSource source = null;
             if (mPOM.ScreenShotImage != null)
             {
@@ -120,10 +121,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
             xScreenShotFrame.Content = mScreenShotViewPage;
-            
+
             mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
             xUIElementsFrame.Content = mPomAllElementsPage;
 
+            mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
             UIElementTabTextBlockUpdate();
 
             mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
@@ -136,7 +138,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void SetDefaultPage()
         {
-        
             if (mPOM.PageLoadFlow == ApplicationPOMModel.ePageLoadFlowType.PageURL)
             {
                 xPageUrlRadioBtn.IsChecked = true;
@@ -161,7 +162,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             //get key object 
             if (mPOM.TargetApplicationKey != null)
             {
-                RepositoryItemKey key =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Guid == mPOM.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
+                RepositoryItemKey key = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Guid == mPOM.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
                 if (key != null)
                 {
                     mPOM.TargetApplicationKey = key;
@@ -194,7 +195,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             if (xTargetApplicationComboBox.SelectedValue != null)
             {
-                mBusinessFlowControl.TargetApplication = Convert.ToString(((Amdocs.Ginger.Repository.RepositoryItemKey)xTargetApplicationComboBox.SelectedValue).ItemName); 
+                mBusinessFlowControl.TargetApplication = Convert.ToString(((Amdocs.Ginger.Repository.RepositoryItemKey)xTargetApplicationComboBox.SelectedValue).ItemName);
             }
         }
 
@@ -209,6 +210,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 bitmap = new Bitmap(outStream);
             }
             return bitmap;
+        }
+
+        private void UIElementCountUpdatedHandler(object sender, EventArgs e)
+        {
+            UIElementTabTextBlockUpdate();
         }
 
         private void UIElementTabTextBlockUpdate()
@@ -234,7 +240,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
             mWinExplorer.UnHighLightElements();
-            Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mAgent.Driver).GetScreenShot(new Tuple<int,int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
+            Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mAgent.Driver).GetScreenShot(new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
             mPOM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShotBitmap);
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
             xScreenShotFrame.Content = mScreenShotViewPage;
@@ -270,7 +276,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     }
                 }
             }
-            
+
         }
 
         private void xPageURLBtn_Click(object sender, RoutedEventArgs e)
@@ -293,14 +299,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void GoToPage(string calculatedValue)
         {
             Act act = null;
-            switch(mAppPlatform)
+            switch (mAppPlatform)
             {
                 case ePlatformType.Web:
                 case ePlatformType.Mobile:
-                     act = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = calculatedValue, ValueForDriver = calculatedValue, Active = true };
+                    act = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = calculatedValue, ValueForDriver = calculatedValue, Active = true };
                     break;
                 case ePlatformType.Java:
-                     act = new ActSwitchWindow { LocateBy = eLocateBy.ByTitle, Value = calculatedValue, ValueForDriver = calculatedValue, Active = true, WaitTime = 5 };
+                    act = new ActSwitchWindow { LocateBy = eLocateBy.ByTitle, Value = calculatedValue, ValueForDriver = calculatedValue, Active = true, WaitTime = 5 };
                     break;
                 case ePlatformType.Windows:
                     act = new ActSwitchWindow { LocateBy = eLocateBy.ByTitle, LocateValue = calculatedValue, LocateValueCalculated = calculatedValue, Active = true, WaitTime = 5 };
@@ -359,8 +365,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.FreeMaximized)
-        {            
-            mPOM.SaveBackup();            
+        {
+            mPOM.SaveBackup();
             IsPageSaved = false;
             if (mPOM.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
             {
@@ -406,7 +412,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 Mouse.OverrideCursor = null;
             }
         }
-        
+
         private void xRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
             if (Convert.ToBoolean(xPageUrlRadioBtn.IsChecked))
@@ -421,6 +427,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 xPageUrlStackPanel.Visibility = Visibility.Collapsed;
                 xFrameBusinessFlowControl.Visibility = Visibility.Visible;
             }
+        }
+
+        private void xEditPageExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            FirstRow.Height = new GridLength(235, GridUnitType.Pixel);
+            SecondRow.Height = new GridLength(100, GridUnitType.Star);
+        }
+
+        private void xEditPageExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            FirstRow.Height = new GridLength(6, GridUnitType.Star);
         }
     }
 }
