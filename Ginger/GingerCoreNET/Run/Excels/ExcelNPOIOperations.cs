@@ -158,11 +158,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         public bool UpdateExcelData(string fileName, string sheetName, string filter, List<Tuple<string, object>> updateCellValuesList, string primaryKey = null, string key = null)
         {
-            UpdateCellList.AddRange(updateCellValuesList);
-            if (UpdateCellList.Count > 0)
+            if (updateCellValuesList.Count > 0)
             {
                 var headerRow = mSheet.GetRow(0);
-                foreach (string colName in UpdateCellList.Select(x => x.Item1))
+                foreach (string colName in updateCellValuesList.Select(x => x.Item1))
                 {
                     if (!headerRow.Cells.Any(x => x.RichStringCellValue.ToString().Equals(colName)))
                     {
@@ -173,7 +172,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 {
                     filter = primaryKey;
                 }
-                UpdateCellsData(UpdateCellList, mExcelDataTable, filter, fileName);
+                UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName);
             }
             return true;
         }

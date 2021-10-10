@@ -340,8 +340,8 @@ namespace GingerCore.Actions
         {
             try
             {
-                List<Tuple<string, object>> updateCellValuesList = new List<Tuple<string, object>>();
-                List<Tuple<string, object>> cellValuesToUpdateList = FieldsValueToTupleList(CalculatedSetDataUsed);
+                List<Tuple<string, object>> cellValuesToUpdateList = new List<Tuple<string, object>>();
+                cellValuesToUpdateList.AddRange(FieldsValueToTupleList(CalculatedSetDataUsed));
                 cellValuesToUpdateList.AddRange(FieldsValueToTupleList(CalculatedColMappingRules));
                 DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
                 if(excelDataTable == null)
@@ -359,7 +359,7 @@ namespace GingerCore.Actions
                     this.ExInfo = "Write action done";
                     if (cellValuesToUpdateList.Count > 0)
                     {
-                        bool isUpdated = string.IsNullOrEmpty(CalculatedPrimaryKeyFilter(r)) ? excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed, updateCellValuesList) : 
+                        bool isUpdated = string.IsNullOrEmpty(CalculatedPrimaryKeyFilter(r)) ? excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList) : 
                             excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList, CalculatedPrimaryKeyFilter(r));
                     }
                 }
