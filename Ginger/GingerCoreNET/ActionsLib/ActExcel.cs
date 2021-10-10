@@ -401,7 +401,7 @@ namespace GingerCore.Actions
                     VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
                     if (var != null)
                     {
-                        var.Value = ValueExpression.Calculate(valueToSet.ToString());
+                        var.Value = ValueExpression.Calculate(valueToSet);
                         fieldValue = var.Value;
                     }
                     columnNameAndValue.Add(new Tuple<string, object>(rowToSet, fieldValue));
