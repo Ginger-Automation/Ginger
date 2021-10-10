@@ -51,8 +51,7 @@ namespace Ginger.Actions.Locators.ASCF
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@Browser_16x16.png";            
-            return TreeViewUtils.CreateItemHeader(Name, ImageFileName);                        
+            return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.Browser));
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()

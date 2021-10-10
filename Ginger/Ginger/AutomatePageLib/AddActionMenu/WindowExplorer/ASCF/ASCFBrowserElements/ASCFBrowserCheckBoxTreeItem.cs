@@ -29,8 +29,7 @@ namespace Ginger.WindowExplorer.ASCF
     {        
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@Checkbox_16x16.png";
-            return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.CheckBox));
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

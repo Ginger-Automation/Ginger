@@ -22,6 +22,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.Java
 {
@@ -29,8 +30,7 @@ namespace Ginger.WindowExplorer.Java
     {
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@RadioButton_16x16.png"; // TODO:replace to black button style
-            return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.DatePicker));
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

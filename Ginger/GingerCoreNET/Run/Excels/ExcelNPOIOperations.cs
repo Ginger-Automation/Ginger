@@ -127,6 +127,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
             return true;
         }
+
         private DataTable GetFilteredDataTable(DataTable dataTable, bool selectAllRows)
         {
             return selectAllRows ? dataTable.DefaultView.ToTable() : dataTable.DefaultView.ToTable().AsEnumerable().Take(1).CopyToDataTable();
