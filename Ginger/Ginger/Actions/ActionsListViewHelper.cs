@@ -111,6 +111,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(Act.Description);
         }
 
+        public string GetItemMandatoryField()
+        {
+            return null;
+        }
+
         public string GetItemNameExtentionField()
         {
             return nameof(Act.ElapsedSecs);

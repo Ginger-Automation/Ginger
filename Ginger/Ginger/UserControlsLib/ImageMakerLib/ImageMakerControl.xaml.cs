@@ -868,6 +868,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Support:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Headphones);
                     break;
+                case eImageType.Asterisk:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Asterisk);
+                    break;
                 #endregion
 
                 #region ElementType Images

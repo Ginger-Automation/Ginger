@@ -693,5 +693,23 @@ namespace GingerCore.Variables
         {
             return "Variable";
         }
+
+        public static ObservableList<VariableBase> SortByMandatoryInput(ObservableList<VariableBase> variables)
+        {
+            int movedNum = 0;               
+            for (int indx=0; indx<variables.Count; indx++)
+            {
+                if (variables[indx].MandatoryInput)
+                {
+                    variables.Move(indx, 0);
+                    movedNum++;
+                }
+            }
+            for (int indx = 0; indx < movedNum; indx++)//keep original order
+            {
+                variables.Move(indx, 0);
+            }
+            return variables;
+        }
     }
 }
