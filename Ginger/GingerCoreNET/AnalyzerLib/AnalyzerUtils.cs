@@ -78,7 +78,6 @@ namespace Ginger.AnalyzerLib
 
                 //Code to analyze Runner Unique Businessflow with Source BF
                 List<Guid> checkedGuidList = new List<Guid>();
-                //foreach (BusinessFlow BF in GR.BusinessFlows)
                 Parallel.ForEach(GR.BusinessFlows, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
                 {
                     if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
@@ -104,14 +103,14 @@ namespace Ginger.AnalyzerLib
             });
         }
 
-        public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList)
+        public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList, bool includeMandatoryInputsAnalyze = true)
         {
             List<string> usedVariablesInBF = new List<string>();
             List<string> usedVariablesInActivity = new List<string>();
             List<AnalyzerItemBase> missingVariableIssueList = new List<AnalyzerItemBase>();
 
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(WorkSpace.Instance.Solution, businessFlow))
+            foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(WorkSpace.Instance.Solution, businessFlow, includeMandatoryInputsAnalyze: includeMandatoryInputsAnalyze))
             {
                 AddIssue(issuesList, issue);
             }
