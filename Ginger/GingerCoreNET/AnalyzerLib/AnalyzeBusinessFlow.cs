@@ -119,7 +119,7 @@ namespace Ginger.AnalyzerLib
             List<AnalyzerItemBase> issuesList = new List<AnalyzerItemBase>();
             foreach (VariableBase var in businessFlow.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsInputValue: true, includeOnlyMandatoryInputs: true))
             {
-                if (string.IsNullOrWhiteSpace(var.Value) && var.MappedOutputType == VariableBase.eOutputType.None)
+                if (var.SetAsInputValue && var.MandatoryInput && string.IsNullOrWhiteSpace(var.Value) && var.MappedOutputType == VariableBase.eOutputType.None)
                 {
                     AnalyzeBusinessFlow mandatoryInputIssue = new AnalyzeBusinessFlow();
                     mandatoryInputIssue.Description = string.Format("Mandatory Input {0} is missing a value", GingerDicser.GetTermResValue(eTermResKey.Variable));
