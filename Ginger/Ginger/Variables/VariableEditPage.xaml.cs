@@ -83,6 +83,7 @@ namespace Ginger.Variables
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFormulaTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCurrentValueTextBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsInputValueCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsInputValueCheckBox, CheckBox.VisibilityProperty, mVariable, nameof(VariableBase.SupportSetValue), bindingConvertor: new BoolVisibilityConverter(), BindingMode: BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMandatoryInputCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.MandatoryInput));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsOutputValueCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mVariable, nameof(RepositoryItemBase.Publish));
@@ -102,7 +103,10 @@ namespace Ginger.Variables
                     xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                     SharedRepoInstanceUC_Col.Width = new GridLength(0);
                 }
-                xSetAsInputValueCheckBox.Visibility= Visibility.Visible;              
+                if (mVariable.SupportSetValue)
+                {
+                    xSetAsInputValueCheckBox.Visibility = Visibility.Visible;
+                }
                 xSetAsOutputValueCheckBox.Visibility = Visibility.Visible;
                 if (mContext != null && mContext.BusinessFlow != null)
                 {
@@ -469,7 +473,7 @@ namespace Ginger.Variables
         {
             xPublishcheckbox.Visibility = Visibility.Visible;
 
-            if (xSetAsInputValueCheckBox.IsChecked == true)
+            if (xSetAsInputValueCheckBox.IsChecked == true && mVariable.SupportSetValue)
             {
                 xMandatoryInputCheckBox.Visibility = Visibility.Visible;
             }

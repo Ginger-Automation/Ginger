@@ -584,7 +584,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
                     break;
                 case eImageType.ItemModified:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Asterisk, Brushes.OrangeRed, 5, "Item was modified");
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Asterisk, Brushes.DarkOrange, 5, "Item was modified");
                     break;
                 case eImageType.Clock:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline);

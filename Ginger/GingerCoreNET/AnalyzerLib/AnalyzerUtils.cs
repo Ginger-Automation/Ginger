@@ -86,7 +86,7 @@ namespace Ginger.AnalyzerLib
                         BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == BF.Guid).FirstOrDefault();
                         if (actualBf != null)
                         {
-                            RunBusinessFlowAnalyzer(actualBf, issuesList);
+                            RunBusinessFlowAnalyzer(actualBf, issuesList, includeMandatoryInputsAnalyze:false);
                         }
                     }
                 });
