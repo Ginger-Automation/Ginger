@@ -735,6 +735,13 @@
         </Setter>
     </Style>
 
+    <Style TargetType="TextBlock" x:Key="$GridColumnRedTextStyle">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="Red" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
     <Style TargetType="Button" x:Key="$AddActionsMenuBtnStyle">
         <Setter Property="Background" Value="White" />
         <!--<Setter Property="Foreground" Value="{StaticResource $SelectionColor_LightBlue}" />-->
