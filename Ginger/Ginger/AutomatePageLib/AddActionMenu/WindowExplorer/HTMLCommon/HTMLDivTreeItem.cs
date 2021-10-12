@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using System.Windows.Controls;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.HTMLCommon
 {
@@ -28,8 +29,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
         StackPanel ITreeViewItem.Header()
         {
             string ImageFileName = "@HorizentalScroller_16x16.png";  // TODO: create DIV icons
-            string Title = this.ElementInfo.ElementTitle;
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(ElementInfo.ElementTitle, ImageFileName);
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

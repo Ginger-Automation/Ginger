@@ -1224,14 +1224,14 @@ namespace Ginger.Run
         {
             try
             {
-                mRunSetConfig = runSetConfig;
-                mRunSetConfig.DirtyTracking = eDirtyTracking.NotStarted;
-                mRunSetConfig.PauseDirtyTracking();
                 this.Dispatcher.Invoke(() =>
                 {
                     xRunSetLoadingPnl.Visibility = Visibility.Visible;
                     xRunsetPageGrid.Visibility = Visibility.Collapsed;
+                    mRunSetConfig = runSetConfig;
+                    mRunSetConfig.SaveBackup();
 
+                    mRunSetConfig.StartDirtyTracking();
                     mRunSetConfig.AllowAutoSave = false;
                     WorkSpace.Instance.RunsetExecutor.RunSetConfig = RunSetConfig;
 
@@ -1267,13 +1267,12 @@ namespace Ginger.Run
             }
             finally
             {
-                mRunSetConfig.ResumeDirtyTracking();
                 this.Dispatcher.Invoke(() =>
                 {
                     mRunSetConfig.AllowAutoSave = true;
                     xRunSetLoadingPnl.Visibility = Visibility.Collapsed;
                     xRunsetPageGrid.Visibility = Visibility.Visible;
-
+                    mRunSetConfig.DirtyStatus = eDirtyStatus.NoChange;
                     if (xAddBusinessflowBtn.IsLoaded && mRunSetConfig != null)
                     {
                         General.DoEvents();
@@ -1483,7 +1482,7 @@ namespace Ginger.Run
                     return;
                 }
 
-                UpdateRunButtonIcon(true);                
+                UpdateRunButtonIcon(true);
 
                 ResetALMDefectsSuggestions();
 
