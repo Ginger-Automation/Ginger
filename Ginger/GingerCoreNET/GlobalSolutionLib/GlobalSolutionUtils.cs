@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -143,6 +144,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             }
             catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
             return repositoryItem;
         }
@@ -166,6 +168,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             }
             catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
             return repositoryItems;
         }
@@ -540,14 +543,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     skipAdd = true;
                 }
             }
-            if (itemToAdd.ItemType == GlobalSolution.eImportItemType.Variables)
-            {
-                itemToAdd.Comments = "Only Used Global Variables will be added to your solution.";
-            }
-            else
-            {
-                itemToAdd.ItemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(itemToAdd.ItemFullPath);
-            }
+            
             //Check if GUID is already exist
             bool isDuplicateGUID = GlobalSolutionUtils.Instance.CheckForItemWithDuplicateGUID(itemToAdd);
             if (isDuplicateGUID)
@@ -556,24 +552,35 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 itemToAdd.Comments = "Item already exist, with same GUID";
             }
 
-            //check if file already exist
-            string targetFile = System.IO.Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, itemToAdd.ItemType.ToString(), System.IO.Path.GetFileName(itemToAdd.ItemFullPath));
-            if (File.Exists(targetFile) && !isDuplicateGUID)
+            if (itemToAdd.ItemType == GlobalSolution.eImportItemType.Variables)
             {
-                if (IsGingerRepositoryItem(targetFile))
+                itemToAdd.Comments = "Only Used Global Variables will be added to your solution.";
+            }
+            else
+            {
+                itemToAdd.ItemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(itemToAdd.ItemFullPath);
+                //check if file already exist
+                string path = Path.GetDirectoryName(itemToAdd.ItemFullPath);
+                string folderPath = path.Replace(SolutionFolder, "");
+                string targetFile = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, folderPath, Path.GetFileName(itemToAdd.ItemFullPath));
+                if (File.Exists(targetFile) && !isDuplicateGUID)
                 {
-                    itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.New;
-                    string newFileName = GetUniqFileName(targetFile, false);
-                    itemToAdd.ItemNewName = newFileName;
-                    itemToAdd.Comments = "Item already exist, importing item with new name " + newFileName;
-                }
-                else
-                {
-                    itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.Replace;
-                    itemToAdd.Comments = "Item already exist, with same filename";
+                    if (IsGingerRepositoryItem(targetFile))
+                    {
+                        itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.New;
+                        string newFileName = GetUniqFileName(targetFile, false);
+                        itemToAdd.ItemNewName = newFileName;
+                        itemToAdd.Comments = "Item already exist, importing item with new name " + newFileName;
+                    }
+                    else
+                    {
+                        itemToAdd.ItemImportSetting = GlobalSolution.eImportSetting.Replace;
+                        itemToAdd.Comments = "Item already exist, with same filename";
+                    }
                 }
             }
-
+            
+            
             if (!skipAdd)
             {
                 SelectedItemsListToImport.Add(itemToAdd);

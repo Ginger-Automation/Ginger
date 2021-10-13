@@ -46,6 +46,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     xItemTypesToImportGrid.DataSourceList = wiz.ItemTypeListToImport;
                     break;
                 case EventType.Active:
+                    ((WizardWindow)wiz.mWizardWindow).ShowFinishButton(false);
+
                     UCEncryptionKey.mSolution = GlobalSolutionUtils.Instance.GetSolution();
                     if (!string.IsNullOrEmpty(wiz.EncryptionKey))
                     {
@@ -71,6 +73,9 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
+                    break;
+                default:
+                    //Nothing to do
                     break;
             }
         }

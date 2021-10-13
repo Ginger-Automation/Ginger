@@ -34,22 +34,21 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
         public List<EnvApplication> EnvAppListToImport = new List<EnvApplication>();
 
         NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
-        RepositoryItemBase repoItemToImport = null;
         public ImportItemWizard()
         {
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Global Solution Introduction", Page: new WizardIntroPage("/GlobalSolutionLib/ImportItemWizardLib/ImportItemIntro.md"));
             
             AddPage(Name: "Select Item Source Type", Title: "Select Item Source Type", SubTitle: "Choose ...", Page: new SelectItemImportTypePage());
 
-            AddPage(Name: "Select Item Type To Import", Title: "Select Item Type To Import", SubTitle: "Choose ...", Page: new SelectItemTypesToImportPage());
+            AddPage(Name: "Select Item Types", Title: "Select Item Types", SubTitle: "Choose ...", Page: new SelectItemTypesToImportPage());
 
-            AddPage(Name: "Select Solution Item", Title: "Select Solution Item", SubTitle: "Select Solution Item...", Page: new SelectItemFromSolutionPage());
+            AddPage(Name: "Select Solution Items", Title: "Select Solution Items", SubTitle: "Select Solution Items...", Page: new SelectItemFromSolutionPage());
 
-            AddPage(Name: "Item Dependancy Mapping", Title: "Item Dependancy Mapping", SubTitle: "Item Dependancy Mapping...", Page: new ItemDependancyPage());
+            AddPage(Name: "Solution Items Dependancy Validation", Title: "Solution Items Dependancy Validation", SubTitle: "Solution Items Dependancy Validation...", Page: new ItemDependancyPage());
 
         }
 
-        public override string Title { get { return "Import Global Solution Wizard"; } }
+        public override string Title { get { return "Import Global Cross Solution Wizard"; } }
 
         public override void Finish()
         {
@@ -97,6 +96,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                         case GlobalSolution.eImportItemType.POMModels:
                             AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
                             break;
+                        default:
+                            break;
                     }
                 }
 
@@ -122,30 +123,28 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
         void AddItemToSolution(string sourceFile, string targetFile, bool saveAsRepo, GlobalSolutionItem itemToImport)
         {
-            switch (itemToImport.ItemImportSetting)
+            RepositoryItemBase repoItemToImport = null;
+            if (itemToImport.ItemImportSetting == GlobalSolution.eImportSetting.Replace)
             {
-                case GlobalSolution.eImportSetting.Replace:
-                    if (GlobalSolutionUtils.Instance.IsGingerRepositoryItem(sourceFile))
+                if (GlobalSolutionUtils.Instance.IsGingerRepositoryItem(sourceFile))
+                {
+                    RepositoryItemBase repositoryItem = newRepositorySerializer.DeserializeFromFile(sourceFile);
+                    RepositoryItemBase repoItem = GlobalSolutionUtils.Instance.GetRepositoryItemByGUID(itemToImport, repositoryItem);
+                    if (repoItem != null)
                     {
-                        RepositoryItemBase repositoryItem = newRepositorySerializer.DeserializeFromFile(sourceFile);
-                        RepositoryItemBase repoItem = GlobalSolutionUtils.Instance.GetRepositoryItemByGUID(itemToImport, repositoryItem);
-                        if (repoItem != null)
+                        WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(repoItem);
+                        if (itemToImport.ItemType == GlobalSolution.eImportItemType.DataSources)
                         {
-                            WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(repoItem);
-                            if (itemToImport.ItemType == GlobalSolution.eImportItemType.DataSources)
-                            {
-                                DataSourceBase dataSource = (DataSourceBase)repoItem;
-                                string dsFile = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(dataSource.FilePath);
-                                GlobalSolutionUtils.Instance.KeepBackupAndDeleteFile(dsFile);
-                            }
+                            DataSourceBase dataSource = (DataSourceBase)repoItem;
+                            string dsFile = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(dataSource.FilePath);
+                            GlobalSolutionUtils.Instance.KeepBackupAndDeleteFile(dsFile);
                         }
                     }
-                    else
-                    {
-                        GlobalSolutionUtils.Instance.KeepBackupAndDeleteFile(targetFile);
-                    }
-                    
-                    break;
+                }
+                else
+                {
+                    GlobalSolutionUtils.Instance.KeepBackupAndDeleteFile(targetFile);
+                }
             }
 
             if (saveAsRepo)

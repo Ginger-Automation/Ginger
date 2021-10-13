@@ -133,7 +133,6 @@ namespace Ginger.BusinessFlowPages
                 {
                     instance.Platform = currentActivityPlatform;
                 }
-                //instance.Platform = currentActivityPlatform;
 
                 if (targetIndex > -1)
                 {

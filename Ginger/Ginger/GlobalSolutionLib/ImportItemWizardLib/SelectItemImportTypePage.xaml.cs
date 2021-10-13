@@ -6,6 +6,7 @@ using Ginger.Actions;
 using Ginger.SolutionGeneral;
 using Ginger.SourceControl;
 using Ginger.UserControls;
+using GingerCoreNET.SourceControl;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
     public partial class SelectItemImportTypePage : Page, IWizardPage
     {
         ImportItemWizard wiz;
-
+        SourceControlProjectsPage sourceControlProjectsPage;
         public SelectItemImportTypePage()
         {
             InitializeComponent();
@@ -44,9 +45,30 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     wiz = (ImportItemWizard)WizardEventArgs.Wizard;
                     ((WizardWindow)wiz.mWizardWindow).WindowState = WindowState.Maximized;
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xGlobalSolutionFolderTextBox, TextBox.TextProperty, wiz, nameof(ImportItemWizard.SolutionFolder));
-
+                    ((WizardWindow)wiz.mWizardWindow).ShowFinishButton(false);
+                    sourceControlProjectsPage = new SourceControlProjectsPage(true);
+                    xImportFromSourceControlFrame.Content = sourceControlProjectsPage;
+                    sourceControlProjectsPage.Width = 1200; 
                     break;
                 case EventType.LeavingForNextPage:
+
+                    if (wiz.ImportFromType == GlobalSolution.eImportFromType.SourceControl)
+                    {
+                        SolutionInfo solutionInfo = (SolutionInfo) sourceControlProjectsPage.SolutionsGrid.grdMain.SelectedItem;
+                        if (solutionInfo != null)
+                        {
+                            if (solutionInfo.ExistInLocaly)
+                            {
+                                wiz.SolutionFolder = solutionInfo.LocalFolder;
+                            }
+                            else 
+                            {
+                                Reporter.ToUser(eUserMsgKey.AskToSelectSolution);
+                                WizardEventArgs.CancelEvent = true;
+                                return;
+                            }
+                        }
+                    }
                     if (string.IsNullOrEmpty(wiz.SolutionFolder))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select Solution Folder.");
@@ -59,16 +81,26 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
-
+                    else 
+                    {
+                        if (!wiz.SolutionFolder.EndsWith("\\"))
+                        {
+                            wiz.SolutionFolder = wiz.SolutionFolder + "\\";
+                        }
+                    }
                     if (!IsValidSolution(wiz.SolutionFolder))
                     {
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
 
+                    xGlobalSolutionFolderTextBox.Text = wiz.SolutionFolder;
                     GlobalSolutionUtils.Instance.SolutionFolder = wiz.SolutionFolder;
                     wiz.EncryptionKey = GlobalSolutionUtils.Instance.GetEncryptionKey();
 
+                    break;
+                default:
+                    //Nothing to do
                     break;
             }
         }
@@ -94,18 +126,19 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             ImportFromSourceControlPanel.Visibility = Visibility.Visible;
             ImportFromLocalFolderPanel.Visibility = Visibility.Hidden;
 
-            SourceControlProjectsPage p = new SourceControlProjectsPage(true);
-            wiz.SolutionFolder = p.ShowAsWindow(eWindowShowStyle.Dialog);
-            xGlobalSolutionFolderTextBox.Text = wiz.SolutionFolder;
-            if (!string.IsNullOrEmpty(wiz.SolutionFolder))
-            {
-                //ImportFromLocalFolderPanel.Visibility = Visibility.Visible;
-                xSourceControlLocalFolder.Content = xSourceControlLocalFolder.Content + " - " + wiz.SolutionFolder;
-
-            }
-            //get focus back to wizard
-            ((WizardWindow)wiz.mWizardWindow).Hide();
-            ((WizardWindow)wiz.mWizardWindow).Show();
+            //SourceControlProjectsPage sourceControlProjectsPage = new SourceControlProjectsPage(true);
+            //xImportFromSourceControlFrame.Content = sourceControlProjectsPage;
+            //SolutionInfo solutionInfo = (SolutionInfo) sourceControlProjectsPage.SolutionsGrid.grdMain.SelectedItem;
+            //SourceControlProjectsPage p = new SourceControlProjectsPage(true);
+            //wiz.SolutionFolder = p.ShowAsWindow(eWindowShowStyle.Dialog);
+            //xGlobalSolutionFolderTextBox.Text = wiz.SolutionFolder;
+            //if (!string.IsNullOrEmpty(wiz.SolutionFolder))
+            //{
+            //    xSourceControlLocalFolder.Content = wiz.SolutionFolder;
+            //}
+            ////get focus back to wizard
+            //((WizardWindow)wiz.mWizardWindow).Hide();
+            //((WizardWindow)wiz.mWizardWindow).Show();
         }
 
         private void SelectSolutionFolderButton_Click(object sender, RoutedEventArgs e)
@@ -126,7 +159,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             {
                 if (string.IsNullOrEmpty(mSolution.EncryptedValidationString))
                 {
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please open solution on Ginger v3.8 or above to use Encryption Key.");
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Solution to import items from was created with lower version which do not support Encryption key. " + Environment.NewLine + "To import solution items, upgrade the solution to latest version.");
                     return false;
                 }
             }

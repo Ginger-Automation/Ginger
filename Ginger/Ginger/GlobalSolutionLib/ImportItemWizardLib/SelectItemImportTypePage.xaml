@@ -26,7 +26,9 @@
             </StackPanel>
         </StackPanel>
         <StackPanel x:Name="ImportFromSourceControlPanel" Visibility="Collapsed" Grid.Row="1">
-            <Label x:Name="xSourceControlLocalFolder" Style="{StaticResource @InputFieldLabelStyle}">Source Control Solution Local Folder Path</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Source Control Solution Local Folder Path - </Label>
+            <Label x:Name="xSourceControlLocalFolder" Style="{StaticResource @InputFieldLabelStyle}"></Label>
+            <Frame x:Name="xImportFromSourceControlFrame"></Frame>
         </StackPanel>
 
         

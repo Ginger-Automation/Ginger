@@ -39,11 +39,17 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             {
                 case EventType.Init:
                     wiz = (ImportItemWizard)WizardEventArgs.Wizard;
+
                     break;
                 case EventType.Active:
+                    ((WizardWindow)wiz.mWizardWindow).ShowFinishButton(true);
+
                     SetDependantItemsListToImportGridView();
                     wiz.SelectedItemTypeListToImport = GetSelectedItemsListToImport();
                     xDependantItemsToImportGrid.DataSourceList = wiz.SelectedItemTypeListToImport;
+                    break;
+                default:
+                    //Nothing to do
                     break;
             }
         }
@@ -115,6 +121,9 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                             GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
                             GlobalSolutionUtils.Instance.AddDependaciesForPOMModel(item, ref SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
                             break;
+                        default:
+                            GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
+                            break;
 
                     }
                 }
@@ -150,6 +159,10 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     solutionItem.Selected = true;
                     xInfoMessageLabel.Content = "Dependant items with import setting as 'New' can not be unchecked as it must be imported.";
                     return;
+                }
+                else
+                {
+                    CheckUncheckDependantItems(solutionItem);
                 }
             }
             else 

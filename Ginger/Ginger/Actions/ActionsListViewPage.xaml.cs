@@ -194,6 +194,7 @@ namespace GingerWPF.BusinessFlowsLib
                 //update actions platform
                 Task.Run(() =>
                 {
+                    ePlatformType platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
                     foreach (Act act in mActivity.Acts)
                     {
                         if (act is ActWithoutDriver)
@@ -202,7 +203,7 @@ namespace GingerWPF.BusinessFlowsLib
                         }
                         else
                         {
-                           act.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
+                           act.Platform = platform;
                         }
                     }
                 });

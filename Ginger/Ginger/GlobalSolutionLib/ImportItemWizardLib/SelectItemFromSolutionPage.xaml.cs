@@ -22,7 +22,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-//using System.Windows.Shapes;
 
 namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 {
@@ -45,6 +44,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     wiz = (ImportItemWizard)WizardEventArgs.Wizard;
                     break;
                 case EventType.Active:
+                    ((WizardWindow)wiz.mWizardWindow).ShowFinishButton(false);
+
                     SetItemsListToImportGridView();
                     wiz.ItemsListToImport = GetItemsListToImport();
                     xItemsToImportGrid.DataSourceList = wiz.ItemsListToImport;
@@ -52,7 +53,10 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     GingerCore.General.FillComboFromList(ItemTypeListComboBox, wiz.ItemTypesList);
                     ItemTypeListComboBox.Items.Insert(0, "All");
                     ItemTypeListComboBox.SelectedIndex = 0;
-
+                    ItemTypeListComboBox.Items.RemoveAt(wiz.ItemTypesList.Count);
+                    break;
+                default:
+                    //Nothing to do
                     break;
             }
             
