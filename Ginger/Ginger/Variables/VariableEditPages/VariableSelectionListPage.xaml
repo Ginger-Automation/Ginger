@@ -14,7 +14,7 @@
             <ComboBox x:Name="comboSelectedValue" Style="{StaticResource @InputComboBoxStyle}" Margin="0,0,0,2"/>
             <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
                 <Label Style="{StaticResource @InputFieldLabelStyle}" DockPanel.Dock="Top">Optional Values:</Label>
-                <Ginger:ucGrid x:Name="grdOptionalValues" DockPanel.Dock="Top" Title="Optional Values" ShowTitle="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" Height="220"/>
+                <Ginger:ucGrid x:Name="grdOptionalValues" DockPanel.Dock="Top" Title="Optional Values" ShowTitle="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowUpDown="Visible" Height="220"/>
             </DockPanel>                       
         </StackPanel>
     </Grid>

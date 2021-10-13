@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using System.Windows.Controls;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.HTMLCommon
 {
@@ -29,9 +30,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
         
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@DropDownList_16x16.png";
-            string Title = this.ElementInfo.ElementTitle;
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(ElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.ComboBox));
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

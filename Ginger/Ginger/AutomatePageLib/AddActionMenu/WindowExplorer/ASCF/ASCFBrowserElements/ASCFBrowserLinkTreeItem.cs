@@ -31,8 +31,7 @@ namespace Ginger.WindowExplorer.ASCF
         StackPanel ITreeViewItem.Header()
         {
             //TODO: put text icon
-            string ImageFileName = "@A_16x16.png";
-            return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.HyperLink));
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

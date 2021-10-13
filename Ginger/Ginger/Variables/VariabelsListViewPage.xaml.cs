@@ -229,8 +229,8 @@ namespace Ginger.BusinessFlowPages
             {
                 mVariabelListHelper.VariablesParent = mVariabelsParent;
                 mVariabelListHelper.VariablesLevel = mVariablesLevel;
-                mVariabelListHelper.Variables = GetVariablesList(); 
-                mVariabelsListView.DataSourceList = GetVariablesList();
+                mVariabelListHelper.Variables = GetVariablesList();
+                mVariabelsListView.DataSourceList = VariableBase.SortByMandatoryInput(GetVariablesList());
                 if (mVariablesLevel != eVariablesLevel.Solution)
                 {
                     SharedRepositoryOperations.MarkSharedRepositoryItems(GetVariablesList(), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>());
