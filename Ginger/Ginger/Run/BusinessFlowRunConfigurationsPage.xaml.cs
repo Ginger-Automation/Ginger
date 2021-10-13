@@ -110,21 +110,23 @@ namespace Ginger.Run
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Image), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, MaxWidth = 20 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentType), Header = "Level", WidthWeight = 10, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentName), Header = "Parent Name", WidthWeight = 15, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Name), WidthWeight = 20, ReadOnly = true });
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Initial Value", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Name), Header = "Name", WidthWeight = 20, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MandatoryIndication), Header = " ", WidthWeight = 1, ReadOnly = true, BindingMode = BindingMode.OneWay, Style = FindResource("$GridColumnRedTextStyle") as Style });
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Initial Value", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
             if (mWindowMode == eWindowMode.Configuration)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCDataMapping.GetTemplate(nameof(VariableBase.MappedOutputType), nameof(VariableBase.MappedOutputValue), nameof(VariableBase.SupportSetValue), variabelsSourceProperty: nameof(VariableBase.PossibleVariables), outputVariabelsSourceProperty: nameof(VariableBase.PossibleOutputVariables)), WidthWeight = 70 });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCDataMapping.GetTemplate(nameof(VariableBase.MappedOutputType), nameof(VariableBase.MappedOutputValue), nameof(VariableBase.SupportSetValue), variabelsSourceProperty: nameof(VariableBase.PossibleVariables), outputVariabelsSourceProperty: nameof(VariableBase.PossibleOutputVariables)), WidthWeight = 40 });
             }
             else if (mWindowMode == eWindowMode.SummaryView)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", BindingMode = BindingMode.OneWay, ReadOnly = true, WidthWeight = 70 });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", BindingMode = BindingMode.OneWay, ReadOnly = true, WidthWeight = 40 });
             }
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.DiffrentFromOrigin), Header = "Different From Origin", WidthWeight = 15, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            //view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentType), Header = "Level", WidthWeight = 10, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentName), Header = "Path", WidthWeight = 20, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.DiffrentFromOrigin), Header = "Customized?", WidthWeight = 8, BindingMode = BindingMode.OneWay, ReadOnly = true });
             grdVariables.SetAllColumnsDefaultView(view);
             grdVariables.InitViewItems();
 
@@ -140,7 +142,7 @@ namespace Ginger.Run
                 case eWindowMode.Configuration:
                     grdVariables.Title = "'" + mBusinessFlow.Name + "' Run " + GingerDicser.GetTermResValue(eTermResKey.Variables);
                     ObservableList<VariableBase> bfInputVariables = mBusinessFlow.GetBFandActivitiesVariabeles(true, true);
-                    grdVariables.DataSourceList = bfInputVariables;
+                    grdVariables.DataSourceList = VariableBase.SortByMandatoryInput(bfInputVariables);
 
                     //**Legacy--- set the Variabels can be used- user should use Global Variabels/ Output Variabels instead
                     ObservableList<string> optionalVars = new ObservableList<string>();

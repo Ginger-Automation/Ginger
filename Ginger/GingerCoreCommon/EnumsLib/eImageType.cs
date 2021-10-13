@@ -285,6 +285,7 @@ namespace Amdocs.Ginger.Common.Enums
         AngleArrowLeft,
         AngleArrowRight,
         Support,
+        Asterisk,
         #endregion
 
         #region Source control Images     

@@ -1,18 +1,13 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore.Actions;
-using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
-using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Amdocs.Ginger.CoreNET.ActionsLib
@@ -133,37 +128,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             return true;
         }
 
-        private List<Tuple<string, object>> GetSetDataUsed(string setDataUsed)
-        {
-            List<Tuple<string, object>> columnNameAndValue = new List<Tuple<string, object>>();
-            if (String.IsNullOrEmpty(setDataUsed))
-            {
-                return columnNameAndValue;
-            }
-            bool isError = false;
-            string result = System.Text.RegularExpressions.Regex.Replace(setDataUsed, @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
-            string[] varColMaps = result.Split(',');
-            varColMaps.ToList().ForEach(c =>
-            {
-                result = System.Text.RegularExpressions.Regex.Replace(c, @"=(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-EQUAL-REPLACE^~");
-                string[] setData = result.Split('=');
-                if (setData.Length == 2)
-                {
-                    string rowToSet = setData[0].Replace("[", "").Replace("]", "");
-                    object valueToSet = setData[1].Replace("'", "").Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",")
-                                                   .Replace("~^GINGER-EXCEL-EQUAL-REPLACE^~", "=");
-                    columnNameAndValue.Add(new Tuple<string, object>(rowToSet, valueToSet));
-                }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.INFO, "Invalid data added to 'SetDataUsed' text box");
-                    isError = true;
-                }
-
-            });
-            return isError ? null : columnNameAndValue;
-        }
-
         private DataTable GetFilteredDataTable(DataTable dataTable, bool selectAllRows)
         {
             return selectAllRows ? dataTable.DefaultView.ToTable() : dataTable.DefaultView.ToTable().AsEnumerable().Take(1).CopyToDataTable();
@@ -188,13 +152,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             return workbook;
         }
 
-        public bool UpdateExcelData(string fileName, string sheetName, string filter, string setDataUsed, string primaryKey = null, string key = null)
+        public bool UpdateExcelData(string fileName, string sheetName, string filter, List<Tuple<string, object>> updateCellValuesList, string primaryKey = null, string key = null)
         {
-            UpdateCellList = GetSetDataUsed(setDataUsed);
-            if (UpdateCellList.Count > 0)
+            if (updateCellValuesList.Count > 0)
             {
                 var headerRow = mSheet.GetRow(0);
-                foreach (string colName in UpdateCellList.Select(x => x.Item1))
+                foreach (string colName in updateCellValuesList.Select(x => x.Item1))
                 {
                     if (!headerRow.Cells.Any(x => x.RichStringCellValue.ToString().Equals(colName)))
                     {
@@ -205,7 +168,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 {
                     filter = primaryKey;
                 }
-                UpdateCellsData(UpdateCellList, mExcelDataTable, filter, fileName);
+                UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName);
             }
             return true;
         }
@@ -306,8 +269,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         public bool WriteData(string fileName, string sheetName, string filter, string setDataUsed, List<Tuple<string, object>> updateCellValuesList, string primaryKey = null, string key = null)
         {
-            UpdateCellList = GetSetDataUsed(setDataUsed);
-            UpdateCellList.AddRange(updateCellValuesList);
             if (!String.IsNullOrWhiteSpace(primaryKey))
             {
                 if (string.IsNullOrWhiteSpace(filter))
@@ -319,14 +280,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     filter = $"({filter}) and ({primaryKey})";
                 }
             }
-            return UpdateCellsData(UpdateCellList, mExcelDataTable, filter, fileName);
+            return UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName);
         }
 
         private bool UpdateCellsData(List<Tuple<string, object>> updateCellList, DataTable mExcelDataTable, string filter, string fileName)
         {
-            if (UpdateCellList.Count > 0)
+            if (updateCellList.Count > 0)
             {
-                foreach (var cell in UpdateCellList)
+                foreach (var cell in updateCellList)
                 {
                     int columnIndex = mExcelDataTable.Columns[cell.Item1.Replace("[", "").Replace("]", "").Trim()].Ordinal;
                     List<DataRow> filteredList = mExcelDataTable.Select(filter).ToList();

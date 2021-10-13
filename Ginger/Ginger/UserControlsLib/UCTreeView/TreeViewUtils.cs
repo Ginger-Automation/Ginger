@@ -120,7 +120,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     modifiedIcon.Height = 6;
                     modifiedIcon.Width = 6;
                     modifiedIcon.SetAsFontImageWithSize = 6;
-                    modifiedIcon.Foreground = Brushes.OrangeRed;
+                    modifiedIcon.Foreground = Brushes.DarkOrange;
                     modifiedIcon.VerticalAlignment = VerticalAlignment.Top;
                     modifiedIcon.Margin = new Thickness(0, 10, 10, 0);
                     modifiedIcon.ToolTip = "This item was modified";
@@ -272,7 +272,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     modifiedIcon.Height = 6;
                     modifiedIcon.Width = 6;
                     modifiedIcon.SetAsFontImageWithSize = 6;
-                    modifiedIcon.Foreground = Brushes.OrangeRed;
+                    modifiedIcon.Foreground = Brushes.DarkOrange;
                     modifiedIcon.VerticalAlignment = VerticalAlignment.Top;
                     modifiedIcon.Margin = new Thickness(0, 10, 10, 0);
                     modifiedIcon.ToolTip = "This item was modified";

@@ -100,6 +100,9 @@ namespace Ginger.AnalyzerLib
                     }
                 }
             }
+
+            IssuesList.AddRange(AnalyzeBusinessFlow.AnalyzeForMissingMandatoryInputValues(BusinessFlow));
+
             return IssuesList;
         }
 
