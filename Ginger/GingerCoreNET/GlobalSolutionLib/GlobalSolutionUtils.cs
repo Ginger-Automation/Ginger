@@ -163,6 +163,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                         ObservableList<DataSourceBase> repoDataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                         repositoryItems = repoDataSourceList.OfType<RepositoryItemBase>().ToList();
                         break;
+                    default:
+                        //Nothing to do
+                        break;
                 }
 
             }
@@ -639,6 +642,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 //    BusinessFlow businessFlow = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(sourceFile);
                 //    variablePasswords = businessFlow.Variables.Where(x => x.VariableType == "PasswordString").ToList();
                 //    break;
+                default:
+                    //Nothing to do
+                    break;
             }
 
             foreach (VariablePasswordString vbs in variablePasswords)
