@@ -81,6 +81,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     case GlobalSolution.eImportItemType.POMModels:
                         duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
                         break;
+                    default:
+                        //Nothing to do
+                        break;
                 }
                 if (duplicateItem != null)
                 {
