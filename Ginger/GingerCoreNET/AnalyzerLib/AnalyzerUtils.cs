@@ -78,7 +78,6 @@ namespace Ginger.AnalyzerLib
 
                 //Code to analyze Runner Unique Businessflow with Source BF
                 List<Guid> checkedGuidList = new List<Guid>();
-                //foreach (BusinessFlow BF in GR.BusinessFlows)
                 Parallel.ForEach(GR.BusinessFlows, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
                 {
                     if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
@@ -87,7 +86,7 @@ namespace Ginger.AnalyzerLib
                         BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == BF.Guid).FirstOrDefault();
                         if (actualBf != null)
                         {
-                            RunBusinessFlowAnalyzer(actualBf, issuesList);
+                            RunBusinessFlowAnalyzer(actualBf, issuesList, includeMandatoryInputsAnalyze:false);
                         }
                     }
                 });
@@ -104,14 +103,14 @@ namespace Ginger.AnalyzerLib
             });
         }
 
-        public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList)
+        public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList, bool includeMandatoryInputsAnalyze = true)
         {
             List<string> usedVariablesInBF = new List<string>();
             List<string> usedVariablesInActivity = new List<string>();
             List<AnalyzerItemBase> missingVariableIssueList = new List<AnalyzerItemBase>();
 
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(WorkSpace.Instance.Solution, businessFlow))
+            foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(WorkSpace.Instance.Solution, businessFlow, includeMandatoryInputsAnalyze: includeMandatoryInputsAnalyze))
             {
                 AddIssue(issuesList, issue);
             }
@@ -244,6 +243,7 @@ namespace Ginger.AnalyzerLib
                         aa.IssueType = AnalyzerItemBase.eType.Error;
                         aa.FixItHandler = DeleteUnusedVariables;
                         aa.Severity = AnalyzerItemBase.eSeverity.Medium;
+                        aa.ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable);
                         AddIssue(issuesList, aa);
                     }
                     else if (obj.GetType().Equals(typeof(Solution)))
@@ -252,6 +252,7 @@ namespace Ginger.AnalyzerLib
                         aa.Status = AnalyzerItemBase.eStatus.NeedFix;
                         aa.ItemName = var.Name;
                         aa.Description = var + " is Unused in Solution";
+                        aa.ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable);
                         aa.Details = variableSourceType;
                         aa.ItemParent = variableSourceName;
                         aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
@@ -268,6 +269,7 @@ namespace Ginger.AnalyzerLib
                         aa.Description = var + " is Unused in " + variableSourceType + ": " + activity.ActivityName;
                         aa.Details = variableSourceType;
                         aa.mActivity = activity;
+                        aa.ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable);
                         //aa.mBusinessFlow = businessFlow;
                         aa.ItemParent = variableSourceName;
                         aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;

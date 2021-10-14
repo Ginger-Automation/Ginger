@@ -1,18 +1,13 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore.Actions;
-using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
-using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Amdocs.Ginger.CoreNET.ActionsLib
@@ -36,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 int colCount = headerRow.LastCellNum;
                 for (var c = 0; c < colCount; c++)
                 {
-                    if(headerRow.GetCell(c) == null)
+                    if (headerRow.GetCell(c) == null)
                     {
                         dtExcelTable.Columns.Add("Col " + c);
                         continue;
@@ -109,7 +104,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
                 return mFilteredDataTable;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Can't read sheet data, " + ex.Message);
                 return null;
@@ -119,46 +114,18 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         private bool GetExcelSheet(string fileName, string sheetName)
         {
             mWorkbook = GetExcelWorkbook(fileName);
-            if(mWorkbook == null)
+            if (mWorkbook == null)
             {
                 Reporter.ToLog(eLogLevel.WARN, "File name not Exists.");
                 return false;
             }
             mSheet = mWorkbook.GetSheet(sheetName);
-            if(mSheet == null)
+            if (mSheet == null)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Sheet name not Exists.");
                 return false;
             }
             return true;
-        }
-
-        private List<Tuple<string, object>> GetSetDataUsed(string setDataUsed)
-        {
-            List<Tuple<string, object>> columnNameAndValue = new List<Tuple<string, object>>();
-            if (String.IsNullOrEmpty(setDataUsed))
-            {
-                return columnNameAndValue;
-            }
-            bool isError = false;
-            string[] data = setDataUsed.Split(',');
-            data.ToList().ForEach(d =>
-            {
-                string[] setData = d.Split('=');
-                if (setData.Length == 2)
-                {
-                    string rowToSet = setData[0].Replace("[", "").Replace("]","");
-                    object valueToSet = setData[1].Replace("'", "");
-                    columnNameAndValue.Add(new Tuple<string, object>(rowToSet, valueToSet));
-                }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.INFO, "Invalid data added to 'SetDataUsed' text box");
-                    isError = true;
-                }
-
-            });
-            return isError ? null : columnNameAndValue;
         }
 
         private DataTable GetFilteredDataTable(DataTable dataTable, bool selectAllRows)
@@ -185,13 +152,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             return workbook;
         }
 
-        public bool UpdateExcelData(string fileName, string sheetName, string filter, string setDataUsed, string primaryKey = null, string key = null)
+        public bool UpdateExcelData(string fileName, string sheetName, string filter, List<Tuple<string, object>> updateCellValuesList, string primaryKey = null, string key = null)
         {
-            UpdateCellList = GetSetDataUsed(setDataUsed);
-            if (UpdateCellList.Count > 0)
+            if (updateCellValuesList.Count > 0)
             {
                 var headerRow = mSheet.GetRow(0);
-                foreach(string colName in UpdateCellList.Select(x => x.Item1))
+                foreach (string colName in updateCellValuesList.Select(x => x.Item1))
                 {
                     if (!headerRow.Cells.Any(x => x.RichStringCellValue.ToString().Equals(colName)))
                     {
@@ -202,15 +168,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 {
                     filter = primaryKey;
                 }
-                UpdateCellList.ForEach(x =>
-                mExcelDataTable.Select(filter).ToList().ForEach(dr =>
-                mSheet.GetRow(mExcelDataTable.Rows.IndexOf(dr) + 1).GetCell(mExcelDataTable.Columns[x.Item1].Ordinal).SetCellValue((string)x.Item2)));
-                
-                using (FileStream fs = new FileStream(fileName, FileMode.Create))
-                {
-                    mWorkbook.Write(fs);
-                    fs.Close();
-                }
+                UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName);
             }
             return true;
         }
@@ -311,9 +269,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         public bool WriteData(string fileName, string sheetName, string filter, string setDataUsed, List<Tuple<string, object>> updateCellValuesList, string primaryKey = null, string key = null)
         {
-            UpdateCellList = GetSetDataUsed(setDataUsed);
-            UpdateCellList.AddRange(updateCellValuesList);
-            if(!String.IsNullOrWhiteSpace(primaryKey))
+            if (!String.IsNullOrWhiteSpace(primaryKey))
             {
                 if (string.IsNullOrWhiteSpace(filter))
                 {
@@ -321,14 +277,34 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 }
                 else
                 {
-                    filter = filter + $"and {primaryKey}";
+                    filter = $"({filter}) and ({primaryKey})";
                 }
             }
-            if (UpdateCellList.Count > 0)
+            return UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName);
+        }
+
+        private bool UpdateCellsData(List<Tuple<string, object>> updateCellList, DataTable mExcelDataTable, string filter, string fileName)
+        {
+            if (updateCellList.Count > 0)
             {
-                UpdateCellList.ForEach(x =>
-                mExcelDataTable.Select(filter).ToList().ForEach(dr =>
-                mSheet.GetRow(mExcelDataTable.Rows.IndexOf(dr) + 1).GetCell(mExcelDataTable.Columns[x.Item1.Replace("[","").Replace("]","").Trim()].Ordinal).SetCellValue(x.Item2.ToString().Trim())));
+                foreach (var cell in updateCellList)
+                {
+                    int columnIndex = mExcelDataTable.Columns[cell.Item1.Replace("[", "").Replace("]", "").Trim()].Ordinal;
+                    List<DataRow> filteredList = mExcelDataTable.Select(filter).ToList();
+                    foreach (DataRow objDataRow in filteredList)
+                    {
+                        int rowIndex = mExcelDataTable.Rows.IndexOf(objDataRow) + 1;
+                        if (mSheet.GetRow(rowIndex) != null)
+                        {
+                            ICell targetCell = mSheet.GetRow(rowIndex).GetCell(columnIndex);
+                            if (targetCell == null)
+                            {
+                                targetCell = mSheet.GetRow(rowIndex).CreateCell(columnIndex);
+                            }
+                            targetCell.SetCellValue(cell.Item2.ToString().Trim());
+                        }
+                    }
+                }
                 using (FileStream fs = new FileStream(fileName, FileMode.Create))
                 {
                     mWorkbook.Write(fs);
@@ -339,14 +315,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             return false;
         }
 
-        
-
         public List<string> GetSheets(string fileName)
         {
             List<string> sheets = new List<string>();
             mFileName = fileName;
             var wb = GetExcelWorkbook(mFileName);
-            if(wb == null)
+            if (wb == null)
             {
                 return sheets;
             }

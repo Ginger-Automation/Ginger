@@ -71,7 +71,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             get
             {
                 if (mAgent != null && mAgent.Status == Agent.eStatus.Running)
-                {                    
+                {
                     return mAgent.Driver as IWindowExplorer;
                 }
                 else
@@ -123,7 +123,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        public PomElementsPage(ApplicationPOMModel pom, eElementsContext context,bool AddSelfHealingColumn)
+        public PomElementsPage(ApplicationPOMModel pom, eElementsContext context, bool AddSelfHealingColumn)
         {
             InitializeComponent();
             mPOM = pom;
@@ -189,7 +189,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void Locators_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if(mSelectedElement != null)
+            if (mSelectedElement != null)
                 UpdateLocatorsHeader();
         }
         private void UpdateLocatorsHeader()
@@ -307,7 +307,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 xMainElementsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddUnMappedElementRow));
                 xMainElementsGrid.SetbtnDeleteHandler(DeleteUnMappedElementRow);
             }
-            
+
             xMainElementsGrid.grdMain.PreparingCellForEdit += MainElementsGrid_PreparingCellForEdit;
             xMainElementsGrid.PasteItemEvent += PasteElementEvent;
 
@@ -373,7 +373,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                         par.OptionalValuesList = prms.OptionalValuesObjectsList;
                         par.OptionalValuesString = prms.OptionalValuesObjectsListAsString;
                         par.Description = prms.Description;
-                        parameters.Add(par); 
+                        parameters.Add(par);
                     }
                 }
             }
@@ -416,7 +416,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit this field of an Element which was auto learned, please duplicate it and create customized Element.");
                     e.EditingElement.IsEnabled = false;
-                } 
+                }
             }
             else
             {
@@ -450,7 +450,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             xMainElementsGrid.Grid.CommitEdit();
 
-           var EI = IntializeElement();
+            var EI = IntializeElement();
 
             mPOM.MappedUIElements.Add(EI);
 
@@ -514,7 +514,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private List<ComboEnumItem> GetPlatformLocatByList()
         {
             List<ComboEnumItem> locateByComboItemList = new List<ComboEnumItem>();
-            
+
             var targetPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
 
             if (!targetPlatform.Equals(ePlatformType.NA))
@@ -602,7 +602,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void PropertiesGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
-            if(mSelectedElement.IsAutoLearned == true || e.Column.Header.ToString() == nameof(ControlProperty.Name))
+            if (mSelectedElement.IsAutoLearned == true || e.Column.Header.ToString() == nameof(ControlProperty.Name))
             {
                 e.EditingElement.IsEnabled = false;
             }
@@ -636,13 +636,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
         }
 
         private void HandelElementSelectionChange()
-        {                      
+        {
             if (mSelectedElement != null)
             {
-                xDetailsExpander.IsEnabled = true;
                 if (IsFirstSelection)
                 {
-                    xDetailsExpander.IsExpanded = true;
                     IsFirstSelection = false;
                 }
 
@@ -672,7 +670,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
                 mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
                 xElementDetails.xPropertiesGrid.DataSourceList = mSelectedElement.Properties;
-                if(!mSelectedElement.IsAutoLearned && mSelectedElement.Properties.Where(c => c.Name == "Parent IFrame").FirstOrDefault() == null)
+                if (!mSelectedElement.IsAutoLearned && mSelectedElement.Properties.Where(c => c.Name == "Parent IFrame").FirstOrDefault() == null)
                 {
                     xElementDetails.xPropertiesGrid.ShowAdd = Visibility.Visible;
                 }
@@ -694,8 +692,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             this.Dispatcher.Invoke(() =>
             {
                 xDetailsExpanderLabel.Content = "Element Details";
-                xDetailsExpander.IsEnabled = false;
-                xDetailsExpander.IsExpanded = false;
             });
         }
 
@@ -708,7 +704,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.HighLightElement(mSelectedElement, true);               
+                mWinExplorer.HighLightElement(mSelectedElement, true);
             }
         }
 
@@ -741,9 +737,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                 if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Java))
                 {
-                    if(mSelectedElement.GetType().Equals(typeof(GingerCore.Drivers.Common.HTMLElementInfo)))
+                    if (mSelectedElement.GetType().Equals(typeof(GingerCore.Drivers.Common.HTMLElementInfo)))
                     {
-                        var htmlElementInfo = new GingerCore.Drivers.Common.HTMLElementInfo() { Path=testElement.Path, Locators = testElement.Locators};
+                        var htmlElementInfo = new GingerCore.Drivers.Common.HTMLElementInfo() { Path = testElement.Path, Locators = testElement.Locators };
                         testElement = htmlElementInfo;
                         testElement.Properties = CurrentEI.Properties;
                     }
@@ -857,8 +853,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             ElementInfo elementInfo = (ElementInfo)xMainElementsGrid.CurrentItem;
             if (elementInfo.IsAutoLearned)
             {
-               Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit Property which was auto learned.");
-               disabeledLocatorsMsgShown = true;
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit Property which was auto learned.");
+                disabeledLocatorsMsgShown = true;
             }
             else
             {

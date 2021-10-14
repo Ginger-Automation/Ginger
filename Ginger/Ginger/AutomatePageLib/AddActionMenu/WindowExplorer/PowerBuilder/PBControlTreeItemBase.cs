@@ -56,9 +56,7 @@ namespace Ginger.Drivers.PowerBuilder
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@Agent_16x16.png";
-            string Title = UIAElementInfo.ElementTitle;
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, eImageType.Agent);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()

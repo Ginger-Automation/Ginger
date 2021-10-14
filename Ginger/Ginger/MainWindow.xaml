@@ -183,6 +183,20 @@
                             </MenuItem>
                         </Menu>
 
+                        <Menu x:Name="xGlobalSolutionMenu" Background="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                            <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Global Solution Operations">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="ImportFile" FontWeight="Bold" Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                                
+                                <MenuItem Header="Import Global Cross Solution Items" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnGlobalSolutionImport_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="GetLatest"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                
+                            </MenuItem>
+                        </Menu>
                         <usercontrols:ucButton x:Name="xFindAndReplaceBtn" ButtonType="ImageButton" ToolTip="Find and Replace in Solution"  ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Search" Click="xFindAndReplaceSolutionButton_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="20,0,5,0"/>
                     </DockPanel>
                 </DockPanel>

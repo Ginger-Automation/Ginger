@@ -26,7 +26,7 @@
             </DockPanel>
         </Border>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
             <DockPanel>
                 <StackPanel x:Name="xAddActionsOptionsPnl" DockPanel.Dock="Top" HorizontalAlignment="Center">
                     <UserControls:ucButton x:Name="xSharedRepositoryItemBtn" ButtonType="PanelButton" ButtonText="  Shared Repository " ToolTip="Add Actions from Shared Repository" ButtonImageType="SharedRepositoryItem" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XNavSharedRepo_Click" Width="200" Margin="10,10,10,10"/>

@@ -529,22 +529,6 @@ namespace Ginger
             return null;
         }
 
-        public void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder)
-        {
-            //TODO: Remove from here and execute it in actual RunSetActionScript.cs (Not perticularly tested)
-            ActScript act = new ActScript();
-            //string FileName = ScriptFileName.Replace(@"~\", SolutionFolder);
-            string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScriptFileName);
-
-            Ginger.Run.RunSetActions.RunSetActionScript actionScript = new RunSetActionScript();
-            actionScript.VerifySolutionFloder(SolutionFolder, FileName);
-
-            act.ScriptName = FileName;
-            act.ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS;
-            act.Execute();
-            //this.Errors = act.Error;
-        }
-
         public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig PublishToALMConfig)
         {
             return ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Auto, false);
@@ -593,6 +577,11 @@ namespace Ginger
         public bool IsSharedRepositoryItem(RepositoryItemBase repositoryItem)
         {
             return SharedRepositoryOperations.IsSharedRepositoryItem(repositoryItem);
+        }
+
+        public void DispatcherRun()
+        {
+            Dispatcher.Run();
         }
     }
 }
