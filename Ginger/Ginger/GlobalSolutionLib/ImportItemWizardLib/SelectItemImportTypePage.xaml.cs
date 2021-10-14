@@ -125,20 +125,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             wiz.ImportFromType = GlobalSolution.eImportFromType.SourceControl;
             ImportFromSourceControlPanel.Visibility = Visibility.Visible;
             ImportFromLocalFolderPanel.Visibility = Visibility.Hidden;
-
-            //SourceControlProjectsPage sourceControlProjectsPage = new SourceControlProjectsPage(true);
-            //xImportFromSourceControlFrame.Content = sourceControlProjectsPage;
-            //SolutionInfo solutionInfo = (SolutionInfo) sourceControlProjectsPage.SolutionsGrid.grdMain.SelectedItem;
-            //SourceControlProjectsPage p = new SourceControlProjectsPage(true);
-            //wiz.SolutionFolder = p.ShowAsWindow(eWindowShowStyle.Dialog);
-            //xGlobalSolutionFolderTextBox.Text = wiz.SolutionFolder;
-            //if (!string.IsNullOrEmpty(wiz.SolutionFolder))
-            //{
-            //    xSourceControlLocalFolder.Content = wiz.SolutionFolder;
-            //}
-            ////get focus back to wizard
-            //((WizardWindow)wiz.mWizardWindow).Hide();
-            //((WizardWindow)wiz.mWizardWindow).Show();
         }
 
         private void SelectSolutionFolderButton_Click(object sender, RoutedEventArgs e)

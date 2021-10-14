@@ -249,9 +249,9 @@ namespace Ginger.SourceControl
             SolutionsGrid.InitViewItems();
         }
 
-        private void GetProject_Click(object sender, RoutedEventArgs e)
+        private async void GetProject_Click(object sender, RoutedEventArgs e)
         {
-            DownloadSolution();
+            await DownloadSolution().ConfigureAwait(false);
         }
 
         private void OpenSolution(string Path, string ProjectURI)
@@ -453,12 +453,12 @@ namespace Ginger.SourceControl
             xProcessingIcon.Visibility = Visibility.Collapsed;
         }
 
-        private void DownloadButton_Click(object sender, RoutedEventArgs e)
+        private async void DownloadButton_Click(object sender, RoutedEventArgs e)
         {
-            DownloadSolution();
+            await DownloadSolution().ConfigureAwait(false);
         }
 
-        private async void DownloadSolution()
+        private async Task DownloadSolution()
         {
             try
             {
