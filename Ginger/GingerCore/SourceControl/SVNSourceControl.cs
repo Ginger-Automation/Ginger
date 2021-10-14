@@ -548,6 +548,14 @@ namespace GingerCore.SourceControl
         public override ObservableList<SolutionInfo> GetProjectsList()
         {
             ObservableList<SolutionInfo> SourceControlSolutions = new ObservableList<SolutionInfo>();
+
+            //check which path to show to download
+            string localPath = SourceControlLocalFolder;
+            if (IsImportSolution)
+            {
+                localPath = SourceControlLocalFolderForGlobalSolution;
+            }
+
             if (SourceControlURL.ToUpper().Trim().StartsWith("HTTP"))
             {
                 WebRequest request = WebRequest.Create(SourceControlURL);
@@ -570,7 +578,7 @@ namespace GingerCore.SourceControl
                         int len = sLine.IndexOf(" href") - i1 - 11;
                         string SolutionName = sLine.Substring(i1 + 10, len);
 
-                        AddSolution(SourceControlSolutions, SourceControlLocalFolder + @"\" + SolutionName, SolutionName);
+                        AddSolution(SourceControlSolutions, localPath + @"\" + SolutionName, SolutionName);
                     }
                     else if (sLine.StartsWith("  <li><a href=\""))
                     {
@@ -580,7 +588,7 @@ namespace GingerCore.SourceControl
                         string SolutionName = sLine.Substring(0, end - 1);
 
                         if (!SolutionName.Contains("."))
-                            AddSolution(SourceControlSolutions, SourceControlLocalFolder + @"\" + SolutionName, SolutionName);
+                            AddSolution(SourceControlSolutions, localPath + @"\" + SolutionName, SolutionName);
                     }
                 }
             }
@@ -598,7 +606,7 @@ namespace GingerCore.SourceControl
                     {
                         foreach (var f in info)
                         {
-                            AddSolution(SourceControlSolutions, SourceControlLocalFolder + @"\" + f.Path, f.Uri.OriginalString);
+                            AddSolution(SourceControlSolutions, localPath + @"\" + f.Path, f.Uri.OriginalString);
                         }
                     }
                 }
