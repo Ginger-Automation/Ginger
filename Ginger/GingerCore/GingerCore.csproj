@@ -324,8 +324,6 @@
     <Compile Include="Actions\XML\ActXMLTagValidation.cs" />
     <Compile Include="Actions\XML\ActXMLProcessing.cs" />
     <Compile Include="Actions\XML\XMLProcessor.cs" />
-    <Compile Include="ALM\Octane\OctaneCore.cs" />
-    <Compile Include="ALM\Octane\OctaneSettings.cs" />
     <Compile Include="ALM\QtestCore.cs" />
     <Compile Include="ALM\Qtest\ImportFromQtest.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />

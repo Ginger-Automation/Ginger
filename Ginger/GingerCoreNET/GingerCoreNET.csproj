@@ -278,6 +278,12 @@
     <Reference Include="LibGit2Sharp">
       <HintPath>DLLS\LibGit2Sharp.dll</HintPath>
     </Reference>
+    <Reference Include="OctaneRepositoryStd">
+      <HintPath>DLLS\OctaneRepositoryStd.dll</HintPath>
+    </Reference>
+    <Reference Include="OctaneStdSDK">
+      <HintPath>DLLS\OctaneStdSDK.dll</HintPath>
+    </Reference>
     <Reference Include="ZephyrEntStdSDK">
       <HintPath>DLLS\ZephyrEntStdSDK.dll</HintPath>
     </Reference>

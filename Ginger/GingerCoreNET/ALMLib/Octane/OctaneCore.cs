@@ -13,8 +13,8 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.Data_Contracts;
-using ALM_Common.DataContracts;
+using AlmDataContractsStd.Contracts;
+using AlmDataContractsStd.Enums;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -27,7 +27,7 @@ using GingerCore.ALM.QC;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Octane_Repository;
+using OctaneRepositoryStd;
 using OctaneSdkStandard.Connector;
 using OctaneSdkStandard.Connector.Credentials;
 using OctaneSdkStandard.Entities.Base;
@@ -759,22 +759,22 @@ namespace GingerCore.ALM
 
             if (resource == ResourceType.ALL)
             {
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_CASE);
+                resourse = OctaneRepositoryStd.BLL.Extensions.ConvertResourceType(ResourceType.TEST_CASE);
                 ExtractFields(fields, resourse, "Test Case", _loginDto, listnodes);
 
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_SET);
+                resourse = OctaneRepositoryStd.BLL.Extensions.ConvertResourceType(ResourceType.TEST_SET);
                 ExtractFields(fields, resourse, "Test Suite", _loginDto, listnodes);
 
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.REQUIREMENT);
+                resourse = OctaneRepositoryStd.BLL.Extensions.ConvertResourceType(ResourceType.REQUIREMENT);
                 ExtractFields(fields, resourse, "Requirement", _loginDto, listnodes);
 
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_RUN);
+                resourse = OctaneRepositoryStd.BLL.Extensions.ConvertResourceType(ResourceType.TEST_RUN);
                 ExtractFields(fields, resourse, "Run", _loginDto, listnodes);
             }
             else
             {
 
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(resource);
+                resourse = OctaneRepositoryStd.BLL.Extensions.ConvertResourceType(resource);
 
                 ExtractFields(fields, resourse, resourse, _loginDto, listnodes);
             }
