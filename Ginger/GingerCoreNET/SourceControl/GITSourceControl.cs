@@ -390,7 +390,13 @@ namespace GingerCore.SourceControl
                     string SourceControlURLExcludeSlash = SourceControlURL.Substring(0, SourceControlURL.LastIndexOf("/"));
                     repositoryName = SourceControlURLExcludeSlash.Substring(SourceControlURLExcludeSlash.LastIndexOf("/") + 1);
                 }
-                AddSolution(SourceControlSolutions, SourceControlLocalFolder + @"\" + repositoryName, repositoryName);
+                //check which path to show to download
+                string localPath = SourceControlLocalFolder;
+                if (IsImportSolution)
+                {
+                    localPath = SourceControlLocalFolderForGlobalSolution;
+                }
+                AddSolution(SourceControlSolutions, localPath + @"\" + repositoryName, repositoryName);
             }
             catch (Exception ex)
             { Console.WriteLine(ex.StackTrace); }

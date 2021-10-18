@@ -59,6 +59,9 @@ namespace GingerCoreNET.SourceControl
         string mSourceControlLocalFolder;
         public string SourceControlLocalFolder { get { return mSourceControlLocalFolder; } set { mSourceControlLocalFolder = value; OnPropertyChanged(nameof(SourceControlLocalFolder)); } }
 
+        string mSourceControlLocalFolderForGlobalSolution;
+        public string SourceControlLocalFolderForGlobalSolution { get { return mSourceControlLocalFolderForGlobalSolution; } set { mSourceControlLocalFolderForGlobalSolution = value; OnPropertyChanged(nameof(SourceControlLocalFolderForGlobalSolution)); } }
+
         string mSourceControlProxyAddress;
         public string SourceControlProxyAddress { get { return mSourceControlProxyAddress; } set { mSourceControlProxyAddress = value; OnPropertyChanged(nameof(SourceControlProxyAddress)); } }
 
@@ -86,6 +89,7 @@ namespace GingerCoreNET.SourceControl
         public string RepositoryRootFolder { get; set; }
 
         public bool supressMessage { get; set; }
+        public bool IsImportSolution { get; set; }
 
 
         public abstract eSourceControlType GetSourceControlType { get; }

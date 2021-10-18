@@ -118,6 +118,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(VariableBase.Name);
         }
 
+        public string GetItemMandatoryField()
+        {
+            return nameof(VariableBase.MandatoryInput);
+        }
+
         public string GetItemDescriptionField()
         {
             return nameof(VariableBase.Description);

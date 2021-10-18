@@ -22,6 +22,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.Java
 {
@@ -29,8 +30,7 @@ namespace Ginger.WindowExplorer.Java
     {
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@MenuItem_16x16.png";
-            return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.MenuItem));
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

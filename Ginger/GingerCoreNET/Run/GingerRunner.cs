@@ -1163,9 +1163,13 @@ namespace Ginger.Run
                     SetDriverPreviousRunStoppedFlag(true);
                 }
                 else
+                {
                     SetDriverPreviousRunStoppedFlag(false);
+                }
+
+                SelfHealingExecuteInSimulationMode(act);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in Run Action", ex);
                 act.Error = act.Error + "\nException in Run Action " + ex.Message;
@@ -1173,6 +1177,24 @@ namespace Ginger.Run
             }
         }
 
+        private void SelfHealingExecuteInSimulationMode(Act act)
+        {
+            if ( act.Status == eRunStatus.Failed && act.SupportSimulation && ( (ExecutedFrom == eExecutedFrom.Automation && WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoExecuteInSimulateionMode) || (ExecutedFrom == eExecutedFrom.Run && WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoExecuteInSimulateionMode)))
+            {
+                var isSimulationModeTemp = mRunInSimulationMode;
+                var actErrorBeforeSimulation = act.Error;
+                var actExInfoBeforeSimulation = act.ExInfo;
+                mRunInSimulationMode = true;
+                
+                RunAction(act);
+                
+                mRunInSimulationMode = isSimulationModeTemp;
+
+                act.ExInfo = string.Concat(actExInfoBeforeSimulation, "\n",act.ExInfo, "\n","Action Executed in simulation mode during self healing operation");
+                
+                act.Error = string.Concat(actErrorBeforeSimulation,"\n",act.Error);
+            }
+        }
 
         private void ProcessIntervaleRetry(Act act)
         {
