@@ -141,14 +141,17 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 return columnNameAndValue;
             }
             bool isError = false;
-            string[] data = setDataUsed.Split(',');
-            data.ToList().ForEach(d =>
+            string result = System.Text.RegularExpressions.Regex.Replace(setDataUsed, @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
+            string[] varColMaps = result.Split(',');
+            varColMaps.ToList().ForEach(c =>
             {
-                string[] setData = d.Split('=');
+                result = System.Text.RegularExpressions.Regex.Replace(c, @"=(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-EQUAL-REPLACE^~");
+                string[] setData = result.Split('=');
                 if (setData.Length == 2)
                 {
                     string rowToSet = setData[0].Replace("[", "").Replace("]", "");
-                    object valueToSet = setData[1].Replace("'", "");
+                    object valueToSet = setData[1].Replace("'", "").Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",")
+                                                   .Replace("~^GINGER-EXCEL-EQUAL-REPLACE^~", "=");
                     columnNameAndValue.Add(new Tuple<string, object>(rowToSet, valueToSet));
                 }
                 else

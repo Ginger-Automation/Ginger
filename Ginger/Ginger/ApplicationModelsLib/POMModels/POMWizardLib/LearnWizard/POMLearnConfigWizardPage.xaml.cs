@@ -141,6 +141,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
 
             PlatformSpecificUIManipulations();
+            AddValidations();
         }
 
         private void AddValidations()
