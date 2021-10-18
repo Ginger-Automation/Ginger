@@ -107,7 +107,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamCalculatedValue(nameof(ColMappingRules));
+                return GetInputParamCalculatedValue(nameof(ColMappingRules)).Replace("\"", "'");
             }
         }
         public string SheetName
@@ -146,7 +146,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamCalculatedValue(nameof(SelectRowsWhere));
+                return GetInputParamCalculatedValue(nameof(SelectRowsWhere)).Replace("\"", "'");
             }
         }
         public string PrimaryKeyColumn
@@ -177,7 +177,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamCalculatedValue(nameof(SetDataUsed));
+                return GetInputParamCalculatedValue(nameof(SetDataUsed)).Replace("\"", "'");
             }
         }
         [IsSerializedForLocalRepository]
@@ -345,9 +345,6 @@ namespace GingerCore.Actions
                     Error = "Table return no Rows with given filter";
                     return;
                 }
-
-                string result = System.Text.RegularExpressions.Regex.Replace(CalculatedColMappingRules, @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
-                string[] varColMaps = result.Split(',');
                 // we expect only 1 record
                 if (excelDataTable.Rows.Count == 1 && !SelectAllRows)
                 {

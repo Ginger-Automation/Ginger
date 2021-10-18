@@ -66,7 +66,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                                     dr[j] = cell.BooleanCellValue;
                                     break;
                                 case CellType.Formula:
-                                    dr[j] = cell.CellFormula;
+                                    dr[j] = GetFormulaCellValue(cell);
                                     break;
                                 case CellType.Blank:
                                     dr[j] = null;
@@ -88,6 +88,32 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 Reporter.ToLog(eLogLevel.WARN, "Can't convert sheet to data, " + ex.Message);
                 return null;
             }
+        }
+
+        private object GetFormulaCellValue(ICell cell)
+        {
+            object cellVal;
+            switch(cell.CachedFormulaResultType)
+            {
+                case CellType.Numeric:
+                    cellVal = DateUtil.IsCellDateFormatted(cell)
+                        ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
+                        : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
+                    break;
+                case CellType.String:
+                    cellVal = cell.StringCellValue;
+                    break;
+                case CellType.Boolean:
+                    cellVal = cell.BooleanCellValue;
+                    break;
+                case CellType.Blank:
+                    cellVal = null;
+                    break;
+                default:
+                    cellVal = cell.RichStringCellValue;
+                    break;
+            }
+            return cellVal;
         }
 
         public DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows)
