@@ -107,7 +107,8 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamCalculatedValue(nameof(ColMappingRules)).Replace("\"", "'");
+                return (GetInputParamCalculatedValue(nameof(ColMappingRules)) == null) ?
+                    GetInputParamCalculatedValue(nameof(ColMappingRules)) : GetInputParamCalculatedValue(nameof(ColMappingRules)).Replace("\"", "'");
             }
         }
         public string SheetName
@@ -146,7 +147,8 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamCalculatedValue(nameof(SelectRowsWhere)).Replace("\"", "'");
+                return (GetInputParamCalculatedValue(nameof(SelectRowsWhere)) == null) ? 
+                    GetInputParamCalculatedValue(nameof(SelectRowsWhere)) : GetInputParamCalculatedValue(nameof(SelectRowsWhere)).Replace("\"", "'");
             }
         }
         public string PrimaryKeyColumn
@@ -177,7 +179,8 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamCalculatedValue(nameof(SetDataUsed)).Replace("\"", "'");
+                return (GetInputParamCalculatedValue(nameof(SetDataUsed)) == null) ?
+                    GetInputParamCalculatedValue(nameof(SetDataUsed)) : GetInputParamCalculatedValue(nameof(SetDataUsed)).Replace("\"", "'");
             }
         }
         [IsSerializedForLocalRepository]
