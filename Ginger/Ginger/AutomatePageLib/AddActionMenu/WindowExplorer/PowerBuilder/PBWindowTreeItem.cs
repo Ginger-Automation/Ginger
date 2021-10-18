@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Windows.Controls;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 using GingerWPF.UserControlsLib.UCTreeView;
 
 namespace Ginger.Drivers.PowerBuilder
@@ -32,9 +33,7 @@ namespace Ginger.Drivers.PowerBuilder
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@Window_16x16.png";
-            string Title = UIAElementInfo.ElementTitle;
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.Window));
         }
         
         bool ITreeViewItem.IsExpandable()

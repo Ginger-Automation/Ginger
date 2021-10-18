@@ -18,6 +18,6 @@
                                         Foreground="OrangeRed" />
         <TextBlock Grid.Column="1" x:Name="xNameTextBlock" DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Runset Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" MaxHeight="50" MaxWidth="500" />
         <UserControls:ImageMakerControl Grid.Column="2" Grid.Row="0" x:Name="xModifiedIcon" HorizontalAlignment="Left"  SetAsFontImageWithSize="8" Margin="1,1,1,3" Padding="1,1,1,3"
-                                        Foreground="OrangeRed"/>
+                                        Foreground="DarkOrange"/>
     </Grid>
 </UserControl>

@@ -29,9 +29,8 @@ namespace Ginger.WindowExplorer.ASCF
     class ASCFBrowserTextBoxTreeItem : ASCFBrowserElementTreeItem , ITreeViewItem, IWindowExplorerTreeItem
     {
         StackPanel ITreeViewItem.Header()
-        {            
-            string ImageFileName = "@TextBox_16x16.png";
-            return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
+        {
+            return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.TextBox));
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

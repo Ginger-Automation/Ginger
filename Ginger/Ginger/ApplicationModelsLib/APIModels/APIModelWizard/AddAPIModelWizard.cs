@@ -137,7 +137,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     apiModel.TargetApplicationKey = TargetApplicationKey;
                 }
 
-                if (apiModel.TagsKeys == null && TagsKeys != null)
+                if (apiModel.TagsKeys != null && TagsKeys != null)
                 {
                     foreach (RepositoryItemKey tagKey in TagsKeys)
                     {

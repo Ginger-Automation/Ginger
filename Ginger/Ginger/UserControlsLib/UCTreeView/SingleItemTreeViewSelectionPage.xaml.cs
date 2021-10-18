@@ -230,7 +230,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 mSelectedItems.Add(itvItem);
             }
             else
-            { 
+            {
                 mSelectedItems.Add(itvItem.NodeObject());
             }
 

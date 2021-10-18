@@ -96,5 +96,26 @@ namespace Ginger.UserControlsLib
         {
 
         }
+
+        private async void EncryptionKeyPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            //this inner method checks if user is still typing
+            async Task<bool> UserKeepsTyping()
+            {
+                string txt = EncryptionKeyPasswordBox.Password;
+                await Task.Delay(2000);
+                return txt != EncryptionKeyPasswordBox.Password;
+            }
+            if (await UserKeepsTyping()) { return; }
+            bool IsEncrytedStrAvailableOnSol = !string.IsNullOrEmpty(mSolution.EncryptedValidationString);
+            if (IsEncrytedStrAvailableOnSol)
+            {
+                ValidateKey();
+            }
+            else
+            {
+                CheckKeyCombination();
+            }
+        }
     }
 }

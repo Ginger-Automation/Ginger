@@ -22,6 +22,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.Java
 {

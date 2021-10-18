@@ -41,12 +41,13 @@
                             <TextBox x:Name="xVarDescritpiontxtBox" Style="{StaticResource $MultiRowsTextBoxStyle}" Height="50" Margin="0,0,0,0"/>
                             <Ginger:ucTagsViewer x:Name="xTagsViewer" Margin="0,0,0,0" HorizontalAlignment="Left" />
                             <StackPanel  Orientation="Vertical" >
-                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                    <CheckBox x:Name="xSetAsInputValueCheckBox" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Set as Input" HorizontalAlignment="Left" Margin="5,0,0,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked" />
-                                    <CheckBox x:Name="xSetAsOutputValueCheckBox" Style="{StaticResource $CeckBoxStyle}"  VerticalAlignment="Center" Content="Set as Output" HorizontalAlignment="Left" Margin="10,0,0,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked"/>
-                                    <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="30,0,0,0" Style="{StaticResource $CeckBoxStyle}" Visibility="Collapsed"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Margin="5,10,0,10" VerticalAlignment="Center">
+                                <DockPanel  Margin="0,5,0,0">
+                                    <CheckBox x:Name="xSetAsInputValueCheckBox" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Set as Input" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="5,0,0,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked" />
+                                    <CheckBox x:Name="xMandatoryInputCheckBox" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Mandatory Input" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="8,0,0,0" Visibility="Collapsed" ToolTip="Value must be provided before execution starts"/>
+                                </DockPanel>
+                                <CheckBox x:Name="xSetAsOutputValueCheckBox" Style="{StaticResource $CeckBoxStyle}"  VerticalAlignment="Center" Content="Set as Output" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="5,5,0,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked"/>
+                                <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" VerticalAlignment="Center" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="5,5,0,0" Style="{StaticResource $CeckBoxStyle}" Visibility="Collapsed"/>
+                                <StackPanel Orientation="Horizontal" Margin="5,10,0,0" VerticalAlignment="Center">
                                     <Label Style="{StaticResource $LabelStyle}" VerticalAlignment="Center">
                                         <Label.Content>
                                             <GingerCore:ucTextDicResource Text="Linked [Variable]:"/>
