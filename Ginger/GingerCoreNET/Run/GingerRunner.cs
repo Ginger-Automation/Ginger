@@ -1260,7 +1260,8 @@ namespace Ginger.Run
                 string actionStartTimeStr = string.Empty;
                 while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                 {
-                    if ((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem != null)
+                    var currentActItem = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                    if (currentActItem != null && act != currentActItem)
                     {
                         act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
                     }
