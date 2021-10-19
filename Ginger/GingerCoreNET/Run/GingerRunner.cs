@@ -988,20 +988,6 @@ namespace Ginger.Run
             return outputVariables;
         }
 
-        public void ResetActionErrorHandlerExecutionStatus()
-        {
-            foreach (BusinessFlow businessFlow in BusinessFlows)
-            {
-                foreach (var activity in businessFlow.Activities)
-                {
-                    foreach (Act action in activity.Acts)
-                    {
-                        action.ErrorHandlerExecuted = false;
-                    }
-                }
-            }
-        }
-
         private BusinessFlowRun GetCurrenrtBusinessFlowRun()
         {
             BusinessFlowRun businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowInstanceGuid == CurrentBusinessFlow?.InstanceGuid select x).FirstOrDefault();
@@ -1274,7 +1260,10 @@ namespace Ginger.Run
                 string actionStartTimeStr = string.Empty;
                 while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                 {
-                    act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                    if ((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem != null)
+                    {
+                        act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                    }
 
                     // Add time stamp                     
                     actionStartTimeStr = string.Format("Execution Start Time: {0}", DateTime.Now.ToString());
@@ -4274,7 +4263,7 @@ namespace Ginger.Run
             }
         }
 
-        public void ResetRunnerExecutionDetails(bool doNotResetBusFlows = false)
+        public void ResetRunnerExecutionDetails(bool doNotResetBusFlows = false,bool reSetActionErrorHandlerExecutionStatus = false)
         {
             Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
             mStopRun = false;
@@ -4284,7 +4273,7 @@ namespace Ginger.Run
             {
                 foreach (BusinessFlow businessFlow in BusinessFlows)
                 {
-                    businessFlow.Reset();
+                    businessFlow.Reset(reSetActionErrorHandlerExecutionStatus);
                     NotifyBusinessflowWasReset(businessFlow);
                 }
             }

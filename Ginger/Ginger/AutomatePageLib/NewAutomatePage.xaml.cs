@@ -873,11 +873,8 @@ namespace GingerWPF.BusinessFlowsLib
                 }
 
                 //execute preparations               
-                mRunner.ResetRunnerExecutionDetails();
+                mRunner.ResetRunnerExecutionDetails(false,true);
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
-
-                //reset ErrorHandlerExecution flag for action
-                mRunner.ResetActionErrorHandlerExecutionStatus();
 
                 //execute                
                 await mRunner.RunBusinessFlowAsync(mBusinessFlow, true, false).ConfigureAwait(false);
