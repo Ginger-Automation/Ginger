@@ -115,6 +115,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void TestCleanUp()
         {
             mSolutionRepository.StopAllRepositoryFolderWatchers();
+            mBF.Activities.ClearAll();
         }
 
 
@@ -467,6 +468,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void ErrorHandlerActivityName()
         {
             //Arrange  
+            mActivity.ErrorHandlerMappingType = eHandlerMappingType.AllAvailableHandlers;
             ValueExpression VE = new ValueExpression(mEnv, mBF);
             VE.Value = "{FD Object=ErrorHandlerOriginActivity Field=ActivityName}";
             mAct.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
@@ -502,6 +504,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             dummy1.Description = "Dummy action";
             dummy1.ActReturnValues.Add(new ActReturnValue() { Active = true, Actual = "a", Expected = "b" });
             activity.Acts.Add(dummy1);
+            activity.ErrorHandlerMappingType = eHandlerMappingType.AllAvailableHandlers;
             mBF.AddActivity(activity);
             ErrorHandler errorHandler = new ErrorHandler();
             errorHandler.Active = true;
