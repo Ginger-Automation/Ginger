@@ -534,6 +534,27 @@ namespace Ginger
             return tagsDesc;
         }
 
+        private static bool UndoChangesInRepoItem(RepositoryItemBase item, bool isLocalBackup, bool clearBackup)
+        {
+            try
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                item.RestoreFromBackup(isLocalBackup, clearBackup);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Failed to undo changes to the item '{0}', please view log for more details", item.ItemName));
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to undo changes to the item '{0}'", item.ItemName), ex);
+                return false;
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+                Mouse.OverrideCursor = null;
+            }
+        }
+
         public static bool UndoChangesInRepositoryItem(RepositoryItemBase item, bool isLocalBackup = false, bool clearBackup = true, bool showPopup = true)
         {
             if ((isLocalBackup && item.IsLocalBackupExist == false) || (isLocalBackup == false && item.IsBackupExist == false))
@@ -545,24 +566,8 @@ namespace Ginger
             {
                 if (Reporter.ToUser(eUserMsgKey.AskIfToUndoItemChanges, item.ItemName) == eUserMsgSelection.Yes)
                 {
-                    try
-                    {
-                        Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                        Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", item.ItemName));
-                        item.RestoreFromBackup(isLocalBackup, clearBackup);
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Failed to undo changes to the item '{0}', please view log for more details", item.ItemName));
-                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to undo changes to the item '{0}'", item.ItemName), ex);
-                        return false;
-                    }
-                    finally
-                    {
-                        Reporter.HideStatusMessage();
-                        Mouse.OverrideCursor = null;
-                    }
+                    Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", item.ItemName));
+                    return UndoChangesInRepoItem(item, isLocalBackup, clearBackup);
                 }
                 else
                 {
@@ -571,23 +576,7 @@ namespace Ginger
             }
             else
             {
-                try
-                {
-                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                    item.RestoreFromBackup(isLocalBackup, clearBackup);
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Failed to undo changes to the item '{0}', please view log for more details", item.ItemName));
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to undo changes to the item '{0}'", item.ItemName), ex);
-                    return false;
-                }
-                finally
-                {
-                    Reporter.HideStatusMessage();
-                    Mouse.OverrideCursor = null;
-                }
+                return UndoChangesInRepoItem(item, isLocalBackup, clearBackup);
             }
         }
     }
