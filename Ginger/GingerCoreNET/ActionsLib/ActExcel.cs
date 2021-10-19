@@ -107,8 +107,8 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (GetInputParamCalculatedValue(nameof(ColMappingRules)) == null) ?
-                    GetInputParamCalculatedValue(nameof(ColMappingRules)) : GetInputParamCalculatedValue(nameof(ColMappingRules)).Replace("\"", "'");
+                string mapping = GetInputParamCalculatedValue(nameof(ColMappingRules));
+                return mapping == null ? mapping : mapping.Replace("\"", "'");
             }
         }
         public string SheetName
@@ -147,8 +147,8 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (GetInputParamCalculatedValue(nameof(SelectRowsWhere)) == null) ? 
-                    GetInputParamCalculatedValue(nameof(SelectRowsWhere)) : GetInputParamCalculatedValue(nameof(SelectRowsWhere)).Replace("\"", "'");
+                string filter = GetInputParamCalculatedValue(nameof(SelectRowsWhere));
+                return filter == null ? filter : filter.Replace("\"", "'");
             }
         }
         public string PrimaryKeyColumn
@@ -179,8 +179,8 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (GetInputParamCalculatedValue(nameof(SetDataUsed)) == null) ?
-                    GetInputParamCalculatedValue(nameof(SetDataUsed)) : GetInputParamCalculatedValue(nameof(SetDataUsed)).Replace("\"", "'");
+                string setData = GetInputParamCalculatedValue(nameof(SetDataUsed));
+                return setData == null ? setData : setData.Replace("\"", "'");
             }
         }
         [IsSerializedForLocalRepository]

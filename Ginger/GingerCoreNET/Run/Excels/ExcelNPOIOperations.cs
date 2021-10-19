@@ -49,32 +49,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     for (var j = 0; j < dr.ItemArray.Length; j++)
                     {
                         var cell = currentRow.GetCell(j);
-
                         if (cell != null)
                         {
-                            switch (cell.CellType)
-                            {
-                                case CellType.Numeric:
-                                    dr[j] = DateUtil.IsCellDateFormatted(cell)
-                                        ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
-                                        : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
-                                    break;
-                                case CellType.String:
-                                    dr[j] = cell.StringCellValue;
-                                    break;
-                                case CellType.Boolean:
-                                    dr[j] = cell.BooleanCellValue;
-                                    break;
-                                case CellType.Formula:
-                                    dr[j] = GetFormulaCellValue(cell);
-                                    break;
-                                case CellType.Blank:
-                                    dr[j] = null;
-                                    break;
-                                default:
-                                    dr[j] = cell.RichStringCellValue;
-                                    break;
-                            }
+                            dr[j] = GetCellValue(cell, cell.CellType);
                         }
                     }
                     dtExcelTable.Rows.Add(dr);
@@ -90,10 +67,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
         }
 
-        private object GetFormulaCellValue(ICell cell)
+        private object GetCellValue(ICell cell, CellType cellType)
         {
             object cellVal;
-            switch(cell.CachedFormulaResultType)
+            switch(cellType)
             {
                 case CellType.Numeric:
                     cellVal = DateUtil.IsCellDateFormatted(cell)
@@ -105,6 +82,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     break;
                 case CellType.Boolean:
                     cellVal = cell.BooleanCellValue;
+                    break;
+                case CellType.Formula:
+                    cellVal = GetCellValue(cell, cell.CachedFormulaResultType);
                     break;
                 case CellType.Blank:
                     cellVal = null;
