@@ -311,15 +311,18 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public void StartRecording()
+        public bool StartRecording()
         {
             try
             {
                 PlatformDriver.StartRecording(LearnAdditionalDetails);
+                return true;
             }
             catch (Exception ex)
             {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to start recording.");
                 Reporter.ToLog(eLogLevel.ERROR, "Error in Start recording", ex);
+                return false;
             }
         }
 
