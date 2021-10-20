@@ -596,15 +596,19 @@ namespace GingerCore.ALM
         {
             try
             {
-                FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                BinaryReader br = new BinaryReader(fs);
-                byte[] fileData = br.ReadBytes((Int32)fs.Length);
-                var tt = Task.Run(() =>
+                string[] attachs = filePath.Split(',');
+                foreach (string attach in attachs)
                 {
-                    return this.octaneRepository.AttachEntity(GetLoginDTO(), new Defect() { Id = new EntityId(defectId) },
-                         filePath.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null);
-                }).Result;
-                fs.Close();
+                    FileStream fs = new FileStream(attach, FileMode.Open, FileAccess.Read);
+                    BinaryReader br = new BinaryReader(fs);
+                    byte[] fileData = br.ReadBytes((Int32)fs.Length);
+                    var tt = Task.Run(() =>
+                    {
+                        return this.octaneRepository.AttachEntity(GetLoginDTO(), new Defect() { Id = new EntityId(defectId) },
+                             filePath.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null);
+                    }).Result;
+                    fs.Close();
+                }
                 return true;
             }
             catch (Exception ex)
