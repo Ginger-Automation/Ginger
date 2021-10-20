@@ -91,6 +91,21 @@ namespace GingerCore.Variables
             }
         }
 
+        private bool mMandatoryInput = false;
+        [IsSerializedForLocalRepository(false)]
+        public bool MandatoryInput
+        {
+            get { return mMandatoryInput; }
+            set
+            {
+                if (mMandatoryInput != value)
+                {
+                    mMandatoryInput = value;
+                    OnPropertyChanged(nameof(MandatoryInput));
+                }
+            }
+        }
+
         private bool mSetAsOutputValue = true;
         [IsSerializedForLocalRepository(true)]
         public bool SetAsOutputValue
@@ -118,6 +133,21 @@ namespace GingerCore.Variables
             }
         }
 
+        public string MandatoryIndication
+        {
+            get
+            {
+                if (mMandatoryInput)
+                {
+                    return "*";
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+        }
+
         private string mDescription;
         [IsSerializedForLocalRepository]
         public string Description
@@ -131,8 +161,6 @@ namespace GingerCore.Variables
         }
 
         private string mValue;
-        //TODO: fixme value is temp and should not be serialized
-        // [IsSerializedForLocalRepository]
         public virtual string Value
         {
             get
@@ -146,9 +174,10 @@ namespace GingerCore.Variables
             }
         }
 
+
         public override void PostDeserialization()
         {
-            ResetValue();
+                ResetValue();
         }
 
         private string mFormula;
@@ -678,6 +707,24 @@ namespace GingerCore.Variables
         public override string GetItemType()
         {
             return "Variable";
+        }
+
+        public static ObservableList<VariableBase> SortByMandatoryInput(ObservableList<VariableBase> variables)
+        {
+            int movedNum = 0;               
+            for (int indx=0; indx<variables.Count; indx++)
+            {
+                if (variables[indx].MandatoryInput)
+                {
+                    variables.Move(indx, 0);
+                    movedNum++;
+                }
+            }
+            for (int indx = 0; indx < movedNum; indx++)//keep original order
+            {
+                variables.Move(indx, 0);
+            }
+            return variables;
         }
     }
 }

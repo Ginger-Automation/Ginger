@@ -29,10 +29,11 @@ using System.IO;
 using System.Text;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET;
 
 namespace GingerCore.Actions
 {
-    public class ActGenerateFileFromTemplate : ActWithoutDriver
+    public class ActGenerateFileFromTemplate : ActWithoutDriver, IObsoleteAction
     {
         public override string ActionDescription { get { return "Generate File From Template Action"; } }
         public override string ActionUserDescription { get { return "Generates File From Template Action"; } }
@@ -43,11 +44,12 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddText("To generate file from template action,Select file action type from File Action drop down and then enter data file name by clicking browse button.Then provide template file name and output file name and after that enter value and run the action.");
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActGenerateFileFromTemplateEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return true; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
@@ -69,14 +71,14 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public eFileAction FileAction { get; set; }
-        
+
 
         public new static partial class Fields
         {
             public static string TemplateFileName = "TemplateFileName";
             public static string OutputFileName = "OutputFileName";
             public static string FileAction = "FileAction";
-            public static string DataFileName = "DataFileName";            
+            public static string DataFileName = "DataFileName";
         }
 
         [IsSerializedForLocalRepository]
@@ -117,13 +119,13 @@ namespace GingerCore.Actions
         public override void Execute()
         {
             try
-            {                
+            {
                 switch (FileAction)
                 {
                     case eFileAction.CSVFromTemplate:
                         string CompleteOutputFileName = GenerateOutputPath();
                         string txt = GenerateCSVFromTemplate();
-                        File.WriteAllText(CompleteOutputFileName, txt, Encoding.UTF8);                       
+                        File.WriteAllText(CompleteOutputFileName, txt, Encoding.UTF8);
                         break;
                     default:
                         break;
@@ -143,17 +145,17 @@ namespace GingerCore.Actions
         }
 
         private string GenerateCSVFromTemplate()
-        {            
-            string[] lines=new string[]{};
-            if(File.Exists(TemplateFileName))
+        {
+            string[] lines = new string[] { };
+            if (File.Exists(TemplateFileName))
                 lines = System.IO.File.ReadAllLines(TemplateFileName);
-            
-            StringBuilder sbheader= new StringBuilder();
+
+            StringBuilder sbheader = new StringBuilder();
             StringBuilder sbdata = new StringBuilder();
             StringBuilder sbtrailer = new StringBuilder();
-            bool inHeader=false;
+            bool inHeader = false;
             bool inTrailer = false;
-            bool inData=false;
+            bool inData = false;
             foreach (string l in lines)
             {
 
@@ -166,7 +168,7 @@ namespace GingerCore.Actions
                 }
 
                 if (l.Contains("#GINGER_HEADER_START"))
-                {                    
+                {
                     inHeader = true;
                     inTrailer = false;
                     inData = false;
@@ -180,7 +182,7 @@ namespace GingerCore.Actions
                     inData = false;
                     continue;
                 }
-              
+
 
                 if (l.Contains("#GINGER_RECORD_TEMPLATE_START"))
                 {
@@ -199,7 +201,7 @@ namespace GingerCore.Actions
                     inData = false;
                     continue;
                 }
-                
+
                 if (l.Contains("#GINGER_TAIL_START"))
                 {
                     //step = 5; // Tail
@@ -216,7 +218,7 @@ namespace GingerCore.Actions
                     continue;
                 }
 
-                if (inHeader) 
+                if (inHeader)
                 {
                     string ld = ProcessLine(l);
                     sbheader.AppendLine(ld);
@@ -228,13 +230,13 @@ namespace GingerCore.Actions
                     foreach (var ld in lds)
                         sbdata.AppendLine(ld);
                     continue;
-                } 
-                if(inTrailer)
+                }
+                if (inTrailer)
                 {
                     string ld = ProcessLine(l);
                     sbtrailer.AppendLine(ld);
                     continue;
-                } 
+                }
             }
             return sbheader.Append(sbdata.ToString()).Append(sbtrailer.ToString()).ToString();
         }
@@ -260,7 +262,7 @@ namespace GingerCore.Actions
             // TODO: process params VE
             // Process Data for each line use l as template
             string[] lines = convertExcelToStringArray(DataFilePath, "Sheet1");
-            string[] headers=lines[0].Split(','); //get col headers
+            string[] headers = lines[0].Split(','); //get col headers
             List<string> results = new List<string>();
             string template = l;
             for (int i = 1; i < lines.Length; i++)
@@ -273,7 +275,7 @@ namespace GingerCore.Actions
                         continue;
                     template = template.Replace(",,", ",#,");
                     template = template.Replace("{Param=" + headers[j] + "}", tmp[j]);
-                }                
+                }
                 results.Add(ValueExpression.Calculate(template));
             }
 
@@ -283,7 +285,7 @@ namespace GingerCore.Actions
         static string[] convertExcelToStringArray(string sourceFile, string worksheetName)
         {
             string strConn = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + sourceFile + ";Extended Properties=\"Excel 12.0 Xml;HDR=NO;IMEX=1\"";
-            OleDbConnection conn = null;            
+            OleDbConnection conn = null;
             OleDbCommand cmd = null;
             OleDbDataAdapter da = null;
             List<string> ls = new List<string>();
@@ -304,9 +306,9 @@ namespace GingerCore.Actions
                     string rowString = "";
                     for (int y = 0; y < dt.Columns.Count; y++)
                     {
-                        rowString +=  dt.Rows[x][y].ToString() + ",";
+                        rowString += dt.Rows[x][y].ToString() + ",";
                     }
-                    ls.Add(rowString.Substring(0,rowString.Length-1));
+                    ls.Add(rowString.Substring(0, rowString.Length - 1));
                 }
             }
             catch (Exception exc)
@@ -322,6 +324,31 @@ namespace GingerCore.Actions
                 da.Dispose();
             }
             return ls.ToArray();
+        }
+
+        public bool IsObsoleteForPlatform(ePlatformType platform)
+        {
+            return true;
+        }
+
+        public Act GetNewAction()
+        {
+            return null;
+        }
+
+        public Type TargetAction()
+        {
+            return typeof(ActGenerateFileFromTemplate);
+        }
+
+        public string TargetActionTypeName()
+        {
+            return string.Empty;
+        }
+
+        public ePlatformType GetTargetPlatform()
+        {
+            return ePlatformType.NA;
         }
     }
 }

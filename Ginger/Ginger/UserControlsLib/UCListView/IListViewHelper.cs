@@ -34,6 +34,8 @@ namespace Ginger.UserControlsLib.UCListView
 
         string GetItemNameField();
 
+        string GetItemMandatoryField();
+
         string GetItemDescriptionField();
 
         string GetItemNameExtentionField();

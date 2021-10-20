@@ -24,14 +24,10 @@ using Amdocs.Ginger.CoreNET.ActionsLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.OleDb;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace GingerCore.Actions
 {
@@ -309,7 +305,7 @@ namespace GingerCore.Actions
                     {
                         if (!String.IsNullOrWhiteSpace(SetDataUsed))
                         {
-                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed);
+                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, FieldsValueToTupleList(CalculatedSetDataUsed));
                         }
                     }
                     else
@@ -321,7 +317,7 @@ namespace GingerCore.Actions
                                 Error += "Missing or Invalid Primary Key"; 
                                 return; 
                             }
-                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed, CalculatedPrimaryKeyFilter(excelDataTable.Rows[0]));
+                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, FieldsValueToTupleList(CalculatedSetDataUsed), CalculatedPrimaryKeyFilter(excelDataTable.Rows[0]));
                         }
                     }
                     if(!isUpdated)
@@ -340,82 +336,32 @@ namespace GingerCore.Actions
         {
             try
             {
-                List<Tuple<string, object>> updateCellValuesList = new List<Tuple<string, object>>();
+                List<Tuple<string, object>> cellValuesToUpdateList = new List<Tuple<string, object>>();
+                cellValuesToUpdateList.AddRange(FieldsValueToTupleList(CalculatedSetDataUsed));
+                cellValuesToUpdateList.AddRange(FieldsValueToTupleList(CalculatedColMappingRules));
                 DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
                 if(excelDataTable == null)
                 {
                     Error = "Table return no Rows with given filter";
                     return;
                 }
+
                 string result = System.Text.RegularExpressions.Regex.Replace(CalculatedColMappingRules, @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
                 string[] varColMaps = result.Split(',');
                 // we expect only 1 record
                 if (excelDataTable.Rows.Count == 1 && !SelectAllRows)
                 {
                     DataRow r = excelDataTable.Rows[0];
-                    //Read data to variables
-                    foreach (string vc in varColMaps)
-                    {
-                        //Do mapping
-                        string ColName = vc.Split('=')[0];
-                        string Value = vc.Split('=')[1];
-                        Value = Value.Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",");
-                        string txt = Value;
-
-                        //keeping the translation of vars to support previous implementation
-                        VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
-                        if (var != null)
-                        {
-                            var.Value = ValueExpression.Calculate(var.Value);
-                            txt = var.Value;
-                        }
-
-                        //remove '' from value
-                        txt = txt.TrimStart('\'');
-                        txt = txt.TrimEnd('\'');
-                        updateCellValuesList.Add(new Tuple<string, object>(ColName, txt));
-                    }
-                    string setCellData = string.Join(",", updateCellValuesList.Select(st => st.Item1 + " = '" + st.Item2 + "' ,")).TrimEnd(',');
-
                     this.ExInfo = "Write action done";
-                    if (updateCellValuesList.Count > 0)
+                    if (cellValuesToUpdateList.Count > 0)
                     {
-                        bool isUpdated = string.IsNullOrEmpty(CalculatedPrimaryKeyFilter(r)) ? excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed, updateCellValuesList) : 
-                            excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed, updateCellValuesList, CalculatedPrimaryKeyFilter(r));
+                        bool isUpdated = string.IsNullOrEmpty(CalculatedPrimaryKeyFilter(r)) ? excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList) : 
+                            excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList, CalculatedPrimaryKeyFilter(r));
                     }
                 }
                 else if (excelDataTable.Rows.Count > 0 && SelectAllRows)
                 {
-                    foreach (string vc in varColMaps)
-                    {
-                        //Do mapping
-                        string ColName = vc.Split('=')[0];
-                        string Value = vc.Split('=')[1];
-                        Value = Value.Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",");
-                        string txt = Value;
-
-                        //keeping the translation of vars to support previous implementation
-                        VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
-                        if (var != null)
-                        {
-                            var.Value = ValueExpression.Calculate(var.Value);
-                            if (var != null)
-                            {
-                                txt = var.Value;
-                            }
-                            else
-                            {
-                                txt = Value;
-                            }
-                        }
-
-                        //remove '' from value
-                        txt = txt.TrimStart('\'');
-                        txt = txt.TrimEnd('\'' );
-
-                        updateCellValuesList.Add(new Tuple<string, object>(ColName, txt));
-                    }
-                    bool isUpdated = excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, CalculatedSetDataUsed, updateCellValuesList);
+                    bool isUpdated = excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList);
                     
                     this.ExInfo += "write action done";
                 }
@@ -426,8 +372,48 @@ namespace GingerCore.Actions
             }
             catch (Exception ex)
             {
-                this.Error = "Error when trying to update the excel: " + ex.Message;
+                this.Error = "Error when trying to update the excel, Please check write data content";
             }
+        }
+        private List<Tuple<string, object>> FieldsValueToTupleList(string updatedFieldsValue)
+        {
+            List<Tuple<string, object>> columnNameAndValue = new List<Tuple<string, object>>();
+
+            if (String.IsNullOrEmpty(updatedFieldsValue))
+            {
+                return columnNameAndValue;
+            }
+            bool isError = false;
+            string result = System.Text.RegularExpressions.Regex.Replace(updatedFieldsValue, @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
+            string[] varColMaps = result.Split(',');
+            varColMaps.ToList().ForEach(c =>
+            {
+                result = System.Text.RegularExpressions.Regex.Replace(c, @"=(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-EQUAL-REPLACE^~");
+                string[] setData = result.Split('=');
+                
+                if (setData.Length == 2)
+                {
+                    string rowToSet = setData[0].Replace("[", "").Replace("]", "");
+                    string valueToSet = setData[1].Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",").Replace("~^GINGER-EXCEL-EQUAL-REPLACE^~", "=")
+                                        .TrimStart('\'').TrimEnd('\'');
+                    string fieldValue = valueToSet;
+                    //keeping the translation of vars to support previous implementation
+                    VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
+                    if (var != null)
+                    {
+                        var.Value = ValueExpression.Calculate(valueToSet);
+                        fieldValue = var.Value;
+                    }
+                    columnNameAndValue.Add(new Tuple<string, object>(rowToSet, fieldValue));
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.INFO, "Invalid data added to 'SetDataUsed' text box");
+                    isError = true;
+                }
+
+            });
+            return isError ? null : columnNameAndValue;
         }
         internal static ObservableList<ActReturnValue> GetVarColsFromString(string sVarCols)
         {
