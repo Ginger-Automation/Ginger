@@ -25,9 +25,14 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
         List<VariableBase> VariableListToImport = new List<VariableBase>();
         List<EnvApplication> EnvAppListToImport = new List<EnvApplication>();
 
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
+
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
+            mTestHelper.ClassInitialize(TC);
+
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "GlobalCrossSolution"));
             SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(path);
 
@@ -37,17 +42,19 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-
+            mTestHelper.ClassCleanup();
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
+            mTestHelper.TestInitialize(TestContext);
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
+            mTestHelper.TestCleanup();
         }
 
         [TestMethod]
