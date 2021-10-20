@@ -1117,6 +1117,7 @@ namespace Ginger.Run
         {
             try
             {
+                Reporter.ToLog(eLogLevel.ERROR, "Action Execution Started");
                 //init
                 act.SolutionFolder = SolutionFolder;
                 act.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
@@ -1124,6 +1125,8 @@ namespace Ginger.Run
                 //resetting the retry mechanism count before calling the function.
                 act.RetryMechanismCount = 0;
                 RunActionWithRetryMechanism(act, checkIfActionAllowedToRun, moveToNextAction);
+                Reporter.ToLog(eLogLevel.ERROR, "RunAction RunActionWithRetryMechanism" + " \n act.Status :" + act.Status);
+
                 if (act.EnableRetryMechanism & mStopRun == false)
                 {
                     while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && act.RetryMechanismCount < act.MaxNumberOfRetries & mStopRun == false)
@@ -1141,6 +1144,8 @@ namespace Ginger.Run
                         //Run Again
                         RunActionWithRetryMechanism(act, checkIfActionAllowedToRun, moveToNextAction);
                     }
+                    Reporter.ToLog(eLogLevel.ERROR, "RunAction after while" + " \n act.Status :" + act.Status);
+
                 }
                 if (mStopRun)
                 {
@@ -1161,6 +1166,9 @@ namespace Ginger.Run
                 act.Error = act.Error + "\nException in Run Action " + ex.Message;
                 act.Status = eRunStatus.Failed;
             }
+
+            Reporter.ToLog(eLogLevel.ERROR, "RunAction end" + " \n act.Status :" + act.Status);
+
         }
 
         private void SelfHealingExecuteInSimulationMode(Act act)
@@ -1213,6 +1221,7 @@ namespace Ginger.Run
             bool actionExecuted = false;
             try
             {
+                Reporter.ToLog(eLogLevel.ERROR, "RunActionWithRetryMechanism Execution Started");
                 //Not suppose to happen but just in case        
                 if (act == null)
                 {
@@ -1260,6 +1269,8 @@ namespace Ginger.Run
                 string actionStartTimeStr = string.Empty;
                 while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                 {
+                    Reporter.ToLog(eLogLevel.ERROR, "RunActionWithRetryMechanism while loop Started" + " \n act.Status :" + act.Status);
+
                     var currentActItem = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
                     if (currentActItem != null && act != currentActItem)
                     {
@@ -1271,6 +1282,8 @@ namespace Ginger.Run
 
                     RunActionWithTimeOutControl(act, ActionExecutorType);
                     CalculateActionFinalStatus(act);
+                    Reporter.ToLog(eLogLevel.ERROR, "RunActionWithRetryMechanism CalculateActionFinalStatus" + " \n act.Status :" + act.Status);
+
                     // fetch all pop-up handlers
                     ObservableList<ErrorHandler> lstPopUpHandlers = GetAllErrorHandlersByType(eHandlerType.Popup_Handler);
                     if (lstPopUpHandlers.Count > 0)
@@ -1353,6 +1366,8 @@ namespace Ginger.Run
                     NotifyActionEnd(act);
                 }
                 CurrentBusinessFlow.PreviousAction = act;
+                Reporter.ToLog(eLogLevel.ERROR, "RunActionWithRetryMechanism finally" + " \n act.Status :" + act.Status);
+
             }
         }
 
