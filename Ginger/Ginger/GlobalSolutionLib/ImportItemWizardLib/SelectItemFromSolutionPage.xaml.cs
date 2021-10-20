@@ -51,8 +51,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     xItemsToImportGrid.DataSourceList = wiz.ItemsListToImport;
 
                     //Remove Variables, TargetApplication
-                    wiz.ItemTypesList.Remove("Variables");
-                    wiz.ItemTypesList.Remove("TargetApplication");
+                    wiz.ItemTypesList.Remove(GlobalSolution.eImportItemType.Variables.ToString());
+                    wiz.ItemTypesList.Remove(GlobalSolution.eImportItemType.TargetApplication.ToString());
 
                     GingerCore.General.FillComboFromList(ItemTypeListComboBox, wiz.ItemTypesList);
                     ItemTypeListComboBox.Items.Insert(0, "All");
