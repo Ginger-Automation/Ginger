@@ -533,6 +533,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //Act
             mGR.RunAction(action);
 
+            Reporter.ToLog(eLogLevel.ERROR, "action.Status: " + action.Status);
+            Reporter.ToLog(eLogLevel.ERROR, "mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem: " + ((Act)mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem).Status);
+            Reporter.ToLog(eLogLevel.ERROR, "mGR.CurrentBusinessFlow.CurrentActivity.Acts[2]: " + ((Act)mGR.CurrentBusinessFlow.CurrentActivity.Acts[2]).Status);
+
             //Assert
             Assert.AreEqual(action.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
             Assert.AreEqual(mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem, mGR.CurrentBusinessFlow.CurrentActivity.Acts[2]);

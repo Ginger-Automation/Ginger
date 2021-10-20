@@ -1124,7 +1124,7 @@ namespace Ginger.Run
 
                 //resetting the retry mechanism count before calling the function.
                 act.RetryMechanismCount = 0;
-               act = RunActionWithRetryMechanism(act, checkIfActionAllowedToRun, moveToNextAction);
+                RunActionWithRetryMechanism(act, checkIfActionAllowedToRun, moveToNextAction);
                 Reporter.ToLog(eLogLevel.ERROR, "RunAction RunActionWithRetryMechanism" + " \n act.Status :" + act.Status);
 
                 if (act.EnableRetryMechanism & mStopRun == false)
@@ -1142,7 +1142,7 @@ namespace Ginger.Run
                             break;
 
                         //Run Again
-                       act= RunActionWithRetryMechanism(act, checkIfActionAllowedToRun, moveToNextAction);
+                        RunActionWithRetryMechanism(act, checkIfActionAllowedToRun, moveToNextAction);
                     }
                     Reporter.ToLog(eLogLevel.ERROR, "RunAction after while" + " \n act.Status :" + act.Status);
 
@@ -1216,7 +1216,7 @@ namespace Ginger.Run
             }
         }
 
-        private Act RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true, bool moveToNextAction = true)
+        private void RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true, bool moveToNextAction = true)
         {
             bool actionExecuted = false;
             try
@@ -1226,7 +1226,7 @@ namespace Ginger.Run
                 if (act == null)
                 {
                     //Reporter.ToUser(eUserMsgKey.AskToSelectAction);
-                    return act;
+                    return;
                 }
 
                 if (checkIfActionAllowedToRun)//to avoid duplicate checks in case the RunAction function is called from RunActvity
@@ -1240,16 +1240,16 @@ namespace Ginger.Run
                             NotifyActionEnd(act);
                         }
                         act.ExInfo = "Action is not active.";
-                        return act;
+                        return;
                     }
                     if (act.CheckIfVaribalesDependenciesAllowsToRun((Activity)(CurrentBusinessFlow.CurrentActivity), true) == false)
-                        return act;
+                        return;
                 }
                 if (act.BreakPoint)
                 {
                     StopRun();
                 }
-                if (mStopRun) return act;
+                if (mStopRun) return;
                 eActionExecutorType ActionExecutorType = eActionExecutorType.RunWithoutDriver;
                 // !!!!!!!!!!!! Remove SW use eventtime
                 Stopwatch st = new Stopwatch();
@@ -1260,7 +1260,7 @@ namespace Ginger.Run
 
                 if (mStopRun)
                 {
-                    return act;
+                    return;
                 }
                 GiveUserFeedback();
 
@@ -1349,7 +1349,7 @@ namespace Ginger.Run
                 {
                     //since we return and don't do flow control the action is going to run again                
                     //NotifyActionEnd(act); //Needed?
-                    return act;
+                    return;
                 }
                 // we capture current activity and action to use it for execution logger,
                 // because in DoFlowControl(act) it will point to the other action/activity(as flow control will be applied)
@@ -1368,7 +1368,6 @@ namespace Ginger.Run
                 CurrentBusinessFlow.PreviousAction = act;
                 Reporter.ToLog(eLogLevel.ERROR, "RunActionWithRetryMechanism finally" + " \n act.Status :" + act.Status);
             }
-            return act;
         }
 
         private ObservableList<ErrorHandler> GetAllErrorHandlersByType(eHandlerType errHandlerType)
