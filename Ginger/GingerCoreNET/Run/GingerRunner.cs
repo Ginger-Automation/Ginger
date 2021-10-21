@@ -1274,6 +1274,7 @@ namespace Ginger.Run
                     var currentActItem = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
                     if (currentActItem != null && act != currentActItem)
                     {
+                        Reporter.ToLog(eLogLevel.ERROR, "RunActionWithRetryMechanism updating act");
                         act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
                     }
 
