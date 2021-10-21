@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="e1f1917c-98c8-4025-9cb1-ab30cfd59d48" ItemType="Solution" CreatedBy="arvindgh" Created="202110200638" GingerVersion="4.0.0.0" Version="4" LastUpdateBy="arvindgh" LastUpdate="202110200913" />
-<Solution EncryptedValidationString="p9TvJt9JXwVYnKFJa96FPg==" Guid="e1f1917c-98c8-4025-9cb1-ab30cfd59d48" Name="GlobalCrossSolution" ParentGuid="00000000-0000-0000-0000-000000000000">
+<GingerRepositoryItem><Header ItemGuid="e1f1917c-98c8-4025-9cb1-ab30cfd59d48" ItemType="Solution" CreatedBy="arvindgh" Created="202110200638" GingerVersion="4.0.0.0" Version="6" LastUpdateBy="arvindgh" LastUpdate="202110210845" />
+<Solution EncryptedValidationString="VUmheVjtatgVR0oSpuArDg==" Guid="e1f1917c-98c8-4025-9cb1-ab30cfd59d48" Name="GlobalCrossSolution" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ApplicationPlatforms>
 <ApplicationPlatform AppName="MyWebApp" Guid="299ef2bb-5087-4343-8a27-6d5d9db5dd96" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" />
 <ApplicationPlatform AppName="MyWebServicesApp" Description="WebServices Application" Guid="3161ac5f-ed57-46df-9bdd-975d3599f4d6" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="WebServices" />
@@ -52,7 +52,7 @@
 
 <Variables>
 <VariableString Guid="33e8eb29-cb93-444d-9414-3f521d531152" InitialStringValue="ABCD" MappedOutputType="None" Name="NewVarString" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsInputValue="False" SetAsOutputValue="False" />
-<VariablePasswordString Guid="6ec063f2-966b-4087-af05-49f44ba00a7a" MappedOutputType="None" Name="NewVarPasswordString" ParentGuid="00000000-0000-0000-0000-000000000000" Password="Y1Q2Dri7XIEd69JQdSevKA==" SetAsInputValue="False" SetAsOutputValue="False" />
+<VariablePasswordString Guid="6ec063f2-966b-4087-af05-49f44ba00a7a" MappedOutputType="None" Name="NewVarPasswordString" ParentGuid="00000000-0000-0000-0000-000000000000" Password="QzNrH+82bxhxlQ5kS7tGNQ==" SetAsInputValue="False" SetAsOutputValue="False" />
 <VariableString Guid="38cc46b5-edf2-4679-ac02-3e4486c4b0a0" InitialStringValue="email" MappedOutputType="None" Name="VarString" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsInputValue="False" SetAsOutputValue="False" />
 </Variables>
 </Solution></GingerRepositoryItem>

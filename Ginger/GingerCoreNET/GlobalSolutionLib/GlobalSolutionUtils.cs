@@ -4,6 +4,7 @@ using Amdocs.Ginger.Common.GlobalSolutionLib;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
+using Ginger.Repository;
 using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
@@ -30,6 +31,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
 
         public string EncryptionKey { get; set; }
         public string SolutionFolder { get; set; }
+
+        bool linkIsByExternalID = false;
+        bool linkIsByParentID = false;
 
         private static readonly GlobalSolutionUtils _instance = new GlobalSolutionUtils();
         public static GlobalSolutionUtils Instance
@@ -484,7 +488,8 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             {
                 foreach (string file in filePaths)
                 {
-                    if (IsSharedRepositoryItem(ag, file))
+                    RepositoryItemBase existingRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
+                    if (SharedRepositoryOperations.IsMatchingRepoItem(ag, existingRepoItem,ref linkIsByExternalID, ref linkIsByParentID))
                     {
                         GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActions, file, ConvertToRelativePath(file), true, GetRepositoryItemName(file), importedBF.Name);
                         AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
@@ -502,7 +507,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 //2. Shared Activities
                 foreach (string file in filePathsActivity)
                 {
-                    if (IsSharedRepositoryItem(activity, file))
+                    //if (IsSharedRepositoryItem(activity, file))
+                    RepositoryItemBase existingRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
+                    if (SharedRepositoryOperations.IsMatchingRepoItem(activity, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
                     {
                         GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActivities, file, ConvertToRelativePath(file), true, GetRepositoryItemName(file), importedBF.Name);
                         AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
@@ -516,7 +523,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 {
                     foreach (string file in filePathsActs)
                     {
-                        if (IsSharedRepositoryItem(act, file))
+                        //if (IsSharedRepositoryItem(act, file))
+                        RepositoryItemBase existingRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
+                        if (SharedRepositoryOperations.IsMatchingRepoItem(act, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
                         {
                             GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActions, file, ConvertToRelativePath(file), true, GetRepositoryItemName(file), importedBF.Name);
                             AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
@@ -531,7 +540,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 {
                     foreach (string file in filePathsVars)
                     {
-                        if (IsSharedRepositoryItem(variable, file))
+                        //if (IsSharedRepositoryItem(variable, file))
+                        RepositoryItemBase existingRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
+                        if (SharedRepositoryOperations.IsMatchingRepoItem(variable, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
                         {
                             GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryVariables, file, ConvertToRelativePath(file), true, GetRepositoryItemName(file), importedBF.Name);
                             AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
@@ -545,7 +556,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             {
                 foreach (string file in filePathsVars)
                 {
-                    if (IsSharedRepositoryItem(variable, file))
+                    //if (IsSharedRepositoryItem(variable, file))
+                    RepositoryItemBase existingRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
+                    if (SharedRepositoryOperations.IsMatchingRepoItem(variable, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
                     {
                         GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryVariables, file, ConvertToRelativePath(file), true, GetRepositoryItemName(file), importedBF.Name);
                         AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
@@ -572,31 +585,31 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
 
         }
 
-        bool IsSharedRepositoryItem(RepositoryItemBase item, string file)
-        {
-            bool isShared = false;
-            RepositoryItemBase repositoryItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
-            if (repositoryItem.Guid == item.Guid)
-            {
-                isShared = true;
-            }
-            //check if there is already item in repo which map to a specific ExternalID
-            if (!string.IsNullOrEmpty(item.ExternalID) && item.ExternalID != "0")
-            {
-                if (repositoryItem.ExternalID == item.ExternalID)
-                {
-                    isShared = true;
-                }
-            }
-            if (item.ParentGuid != Guid.Empty)
-            {
-                if (repositoryItem.Guid == item.ParentGuid)
-                {
-                    isShared = true;
-                }
-            }
-            return isShared;
-        }
+        //bool IsSharedRepositoryItem(RepositoryItemBase item, string file)
+        //{
+        //    bool isShared = false;
+        //    RepositoryItemBase repositoryItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
+        //    if (repositoryItem.Guid == item.Guid)
+        //    {
+        //        isShared = true;
+        //    }
+        //    //check if there is already item in repo which map to a specific ExternalID
+        //    if (!string.IsNullOrEmpty(item.ExternalID) && item.ExternalID != "0")
+        //    {
+        //        if (repositoryItem.ExternalID == item.ExternalID)
+        //        {
+        //            isShared = true;
+        //        }
+        //    }
+        //    if (item.ParentGuid != Guid.Empty)
+        //    {
+        //        if (repositoryItem.Guid == item.ParentGuid)
+        //        {
+        //            isShared = true;
+        //        }
+        //    }
+        //    return isShared;
+        //}
         public void AddDependaciesForAgents(GlobalSolutionItem itemAgent, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport)
         {
             AddDependaciesForEnvParam(itemAgent.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);

@@ -37,6 +37,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(path);
 
             GlobalSolutionUtils.Instance.SolutionFolder = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "GlobalCrossSolution"));
+            GlobalSolutionUtils.Instance.EncryptionKey = EncryptionHandler.GetDefaultKey();
         }
 
         [ClassCleanup]
@@ -149,7 +150,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             GlobalSolutionUtils.Instance.AddDependaciesForBusinessFlows(item, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
 
             //Assert
-            Assert.AreEqual(SelectedItemsListToImport.Count, 12);
+            Assert.AreEqual(SelectedItemsListToImport.Count, 13);
             Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\Applications Models\\POM Models\\Selenium Easy - Input Form Demo with Validations.Ginger.ApplicationPOMModel.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\Browser Action.Ginger.Action.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\UIElement Action.Ginger.Action.xml"));
@@ -163,11 +164,78 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "MyWebServicesApp"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "MyWindowsApp"));
 
-            Assert.AreEqual(VariableListToImport.Count, 1);
+            Assert.AreEqual(VariableListToImport.Count, 2);
             Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarString"));
-
+            Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarPasswordString"));
+            string strValuetoPass = EncryptionHandler.DecryptwithKey(VariableListToImport.Where(x => x.Name == "NewVarPasswordString").FirstOrDefault().Value, EncryptionHandler.GetDefaultKey());
+            Assert.AreEqual(strValuetoPass, "ABCD");
+            
             Assert.AreEqual(EnvAppListToImport.Count, 1);
             Assert.IsNotNull(EnvAppListToImport.Where(x => x.Name == "MyWebApp"));
+
+        }
+        [TestMethod]
+        [Timeout(60000)]
+        public void GetDependaciesForEnvParamUsingRegex()
+        {
+            //Arrange            
+            string filePath = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "GlobalCrossSolution" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "Flow 1.Ginger.BusinessFlow.xml");
+
+            //Act
+            GlobalSolutionUtils.Instance.AddDependaciesForEnvParam(filePath, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
+
+            //Assert
+            Assert.AreEqual(EnvAppListToImport.Count, 1);
+            Assert.IsNotNull(EnvAppListToImport.Where(x => x.Name == "MyWebApp"));
+            string strValuetoPass = EncryptionHandler.DecryptwithKey(EnvAppListToImport[0].GeneralParams.Where(x => x.Name == "Password").FirstOrDefault().Value, EncryptionHandler.GetDefaultKey());
+            Assert.AreEqual(strValuetoPass, "ABCD");
+
+        }
+        [TestMethod]
+        [Timeout(60000)]
+        public void GetDependaciesForGlobalVariableUsingRegex()
+        {
+            //Arrange            
+            string filePath = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "GlobalCrossSolution" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "Flow 1.Ginger.BusinessFlow.xml");
+
+            //Act
+            GlobalSolutionUtils.Instance.AddDependaciesForGlobalVariable(filePath, ref SelectedItemsListToImport, ref VariableListToImport);
+
+            //Assert
+            Assert.AreEqual(VariableListToImport.Count, 2);
+            Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarString"));
+            Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarPasswordString"));
+            string strValuetoPass = EncryptionHandler.DecryptwithKey(VariableListToImport.Where(x => x.Name == "NewVarPasswordString").FirstOrDefault().Value, EncryptionHandler.GetDefaultKey());
+            Assert.AreEqual(strValuetoPass, "ABCD");
+
+        }
+        [TestMethod]
+        [Timeout(60000)]
+        public void GetDependaciesForDataSourceUsingRegex()
+        {
+            //Arrange            
+            string filePath = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "GlobalCrossSolution" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "Flow 1.Ginger.BusinessFlow.xml");
+
+            //Act
+            GlobalSolutionUtils.Instance.AddDependaciesForDataSource(filePath, ref SelectedItemsListToImport);
+
+            //Assert
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\DataSources\\AccessDS.Ginger.DataSource.xml"));
+
+        }
+        [TestMethod]
+        [Timeout(60000)]
+        public void GetDependaciesForDocumentsUsingRegex()
+        {
+            //Arrange            
+            string filePath = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "GlobalCrossSolution" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "Flow 1.Ginger.BusinessFlow.xml");
+
+            //Act
+            GlobalSolutionUtils.Instance.AddDependaciesForDocuments(filePath, ref SelectedItemsListToImport);
+
+            //Assert
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Documents\\bankCode3.xml"));
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Documents\\Multiple Values.xlsx"));
 
         }
     }
