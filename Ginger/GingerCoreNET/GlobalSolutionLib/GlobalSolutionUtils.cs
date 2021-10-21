@@ -507,7 +507,6 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 //2. Shared Activities
                 foreach (string file in filePathsActivity)
                 {
-                    //if (IsSharedRepositoryItem(activity, file))
                     RepositoryItemBase existingRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
                     if (SharedRepositoryOperations.IsMatchingRepoItem(activity, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
                     {
@@ -523,7 +522,6 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 {
                     foreach (string file in filePathsActs)
                     {
-                        //if (IsSharedRepositoryItem(act, file))
                         RepositoryItemBase existingRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
                         if (SharedRepositoryOperations.IsMatchingRepoItem(act, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
                         {
@@ -540,7 +538,6 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 {
                     foreach (string file in filePathsVars)
                     {
-                        //if (IsSharedRepositoryItem(variable, file))
                         RepositoryItemBase existingRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
                         if (SharedRepositoryOperations.IsMatchingRepoItem(variable, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
                         {
@@ -556,7 +553,6 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             {
                 foreach (string file in filePathsVars)
                 {
-                    //if (IsSharedRepositoryItem(variable, file))
                     RepositoryItemBase existingRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
                     if (SharedRepositoryOperations.IsMatchingRepoItem(variable, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
                     {
