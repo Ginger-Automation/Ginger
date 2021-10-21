@@ -839,6 +839,10 @@ namespace Ginger.Run
 
             mCurrentSelectedRunner.RunnerPageListener.UpdateBusinessflowActivities -= UpdateBusinessflowActivities;
             mCurrentSelectedRunner.RunnerPageListener.UpdateBusinessflowActivities += UpdateBusinessflowActivities;
+
+            mCurrentSelectedRunner.CheckIfRunsetDirty -= mCurrentSelectedRunner_CheckIfRunsetDirty;
+            mCurrentSelectedRunner.CheckIfRunsetDirty += mCurrentSelectedRunner_CheckIfRunsetDirty;
+
             UpdateRunnerTime();
 
             //set it as flow diagram current item
@@ -866,6 +870,14 @@ namespace Ginger.Run
             }
         }
 
+        private void mCurrentSelectedRunner_CheckIfRunsetDirty(object sender, EventArgs e)
+        {
+            bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified;
+            if (bIsRunsetDirty)
+            {
+                UserSelectionSaveOrUndoRunsetChanges();
+            }
+        }
 
         private void UpdateBusinessflowActivities(object sender, EventArgs e)
         {
