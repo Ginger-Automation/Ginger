@@ -27,6 +27,7 @@ using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
@@ -687,7 +688,16 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void AddToSRHandler(object sender, RoutedEventArgs e)
         {
-            SetItem(sender);          
+            SetItem(sender);
+            //get target application for the action
+            if (mAction is ActWithoutDriver)
+            {
+                mAction.Platform = ePlatformType.NA;
+            }
+            else
+            {
+                mAction.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
+            }
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mAction));
         }
 
@@ -699,6 +709,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             foreach (Act act in SelectedItemsList)
             {
                 list.Add(act);
+                //get target application for the action
+                if (mAction is ActWithoutDriver)
+                {
+                    mAction.Platform = ePlatformType.NA;
+                }
+                else
+                {
+                    mAction.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
+                }
             }
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, list));
         }
@@ -745,7 +764,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void PasteInListHandler(object sender, RoutedEventArgs e)
         {
-            ClipboardOperationsHandler.PasteItems(ListView);
+            ClipboardOperationsHandler.PasteItems(ListView, null, -1, mContext);
         }
 
         private void CopyHandler(object sender, RoutedEventArgs e)
@@ -767,7 +786,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void PasteAfterCurrentHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            ClipboardOperationsHandler.PasteItems(ListView, currentIndex: mContext.Activity.Acts.IndexOf(mAction));
+            ClipboardOperationsHandler.PasteItems(ListView, null, currentIndex: mContext.Activity.Acts.IndexOf(mAction), mContext);
         }
 
         public void CopySelected()

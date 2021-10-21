@@ -76,6 +76,10 @@ namespace Ginger
             DriverWindowHandler.Init();
 
             GingerCore.General.DoEvents();
+            if (!WorkSpace.Instance.BetaFeatures.ShowGlobalCrossSolution)
+            {
+                xGlobalSolutionMenu.Visibility = Visibility.Hidden;
+            }
         }
 
         private void TelemetryEventHandler(object sender, Telemetry.TelemetryEventArgs e)
@@ -618,6 +622,11 @@ namespace Ginger
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
             Reporter.HideStatusMessage();
 
+        }
+
+        private void btnGlobalSolutionImport_Click(object sender, RoutedEventArgs e)
+        {
+            GingerWPF.WizardLib.WizardWindow.ShowWizard(new Ginger.GlobalSolutionLib.ImportItemWizardLib.ImportItemWizard());
         }
 
         private void AnalyzerButton_Click(object sender, RoutedEventArgs e)

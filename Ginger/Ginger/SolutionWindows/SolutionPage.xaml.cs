@@ -97,6 +97,7 @@ namespace Ginger.SolutionWindows
             SolutionFolderTextBox.IsReadOnly = false;
             SolutionNameTextBox.IsReadOnly = false;
             AccountTextBox.IsReadOnly = false;
+            UCEncryptionKey.mSolution = WorkSpace.Instance.Solution;
             UCEncryptionKey.EncryptionKeyTextBox.IsReadOnly = true;
             UCEncryptionKey.EncryptionKeyPasswordBox.IsEnabled = false;
             UCEncryptionKey.ValidFlag.Visibility = Visibility.Collapsed;
@@ -157,7 +158,6 @@ namespace Ginger.SolutionWindows
 
             xCategoriesExpander.Visibility = Visibility.Collapsed;
 
-            UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button uSaveKeyBtn = new Button();
@@ -184,26 +184,6 @@ namespace Ginger.SolutionWindows
             }
         }
 
-        private async void EncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
-        {
-            //this inner method checks if user is still typing
-            async Task<bool> UserKeepsTyping()
-            {
-                string txt = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
-                await Task.Delay(2000);
-                return txt != UCEncryptionKey.EncryptionKeyPasswordBox.Password;
-            }
-            if (await UserKeepsTyping()) { return; }
-
-            if (IsEncrytedStrAvailableOnSol)
-            {
-                UCEncryptionKey.ValidateKey();
-            }
-            else
-            {
-                UCEncryptionKey.CheckKeyCombination();
-            }
-        }
 
         private void ReplaceKeyBtn_Click(object sender, RoutedEventArgs e)
         {
