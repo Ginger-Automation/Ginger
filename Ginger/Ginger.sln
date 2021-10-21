@@ -67,6 +67,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerWin64OsSupport", "Gin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerRuntime", "GingerRuntime\GingerRuntime.csproj", "{6BCC0C44-483A-47FB-BA58-0BEAB2C3C4E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerSikuliStandard", "GingerSikuliStandard\GingerSikuliStandard.csproj", "{72F4B38B-9900-4A17-A54B-0A7005F0937C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -224,6 +226,12 @@ Global
 		{6BCC0C44-483A-47FB-BA58-0BEAB2C3C4E6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6BCC0C44-483A-47FB-BA58-0BEAB2C3C4E6}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6BCC0C44-483A-47FB-BA58-0BEAB2C3C4E6}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
+		{72F4B38B-9900-4A17-A54B-0A7005F0937C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72F4B38B-9900-4A17-A54B-0A7005F0937C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72F4B38B-9900-4A17-A54B-0A7005F0937C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72F4B38B-9900-4A17-A54B-0A7005F0937C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72F4B38B-9900-4A17-A54B-0A7005F0937C}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72F4B38B-9900-4A17-A54B-0A7005F0937C}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

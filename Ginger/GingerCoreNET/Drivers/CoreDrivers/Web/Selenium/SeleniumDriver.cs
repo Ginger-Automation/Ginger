@@ -32,6 +32,8 @@ using GingerCore.Drivers.Common;
 using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Drivers.Selenium.SeleniumBMP;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerSikuliStandard.sikuli_REST;
+using GingerSikuliStandard.sikuli_UTIL;
 using HtmlAgilityPack;
 using InputSimulatorStandard;
 using Microsoft.Edge.SeleniumTools;
@@ -6746,33 +6748,64 @@ namespace GingerCore.Drivers
         // New HandleActUIElement - will replace ActGenElement
         // ----------------------------------------------------------------------------------------------------------------------------------
 
+        APILauncher sikuliLauncher = new APILauncher(true);
+
         public void HandleActUIElement(ActUIElement act)
         {
             IWebElement e = null;
 
-            if (act.ElementLocateBy != eLocateBy.NA && (!act.ElementType.Equals(eElementType.Window) && !act.ElementAction.Equals(ActUIElement.eElementAction.Switch)))
-            {
-                if (act.ElementAction.Equals(ActUIElement.eElementAction.IsVisible))
-                {
-                    e = LocateElement(act,true);
-                }
-                else
-                {
-                    e = LocateElement(act);
-                    if (e == null)
-                    {
-                        act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
-                        return;
-                    }
-                }
-            }
+            //if (act.ElementLocateBy != eLocateBy.NA && (!act.ElementType.Equals(eElementType.Window) && !act.ElementAction.Equals(ActUIElement.eElementAction.Switch)))
+            //{
+            //    if (act.ElementAction.Equals(ActUIElement.eElementAction.IsVisible))
+            //    {
+            //        e = LocateElement(act,true);
+            //    }
+            //    else
+            //    {
+            //        e = LocateElement(act);
+            //        if (e == null)
+            //        {
+            //            act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+            //            return;
+            //        }
+            //    }
+            //}
 
             try
             {
                 switch (act.ElementAction)
                 {
                     case ActUIElement.eElementAction.Click:
-                        DoUIElementClick(act.ElementAction, e);
+                        /// Original
+                        //DoUIElementClick(act.ElementAction, e)
+
+                        /// Testing
+
+                        //sikuliLauncher = new APILauncher();
+                        sikuliLauncher.Start();
+
+                        //Pattern clickImgPattern = new Pattern(@"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture.JPG");
+                        //Pattern txtBoxImgPattern = new Pattern(@"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture2.JPG");
+
+                        string clickImg = @"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture.JPG";
+                        string txtBoxImg = @"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture2.JPG";
+
+                        try
+                        {
+                            //SikuliAction. (clickImg);
+
+                            Screen sekuliScreen = new Screen();
+
+                            Pattern clickImgPattern = new Pattern(@"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture.JPG");
+                            Pattern txtBoxImgPattern = new Pattern(@"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture2.JPG");
+
+                            sekuliScreen.Click(clickImgPattern);
+                            sekuliScreen.Type(txtBoxImgPattern, "SUCCESS !");
+                        }
+                        catch(Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                        }
                         break;
 
                     case ActUIElement.eElementAction.JavaScriptClick:

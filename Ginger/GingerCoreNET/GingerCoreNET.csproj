@@ -259,6 +259,7 @@
     <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj" />
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
     <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
+    <ProjectReference Include="..\GingerSikuliStandard\GingerSikuliStandard.csproj" />
     <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" />
   </ItemGroup>
 
