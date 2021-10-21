@@ -153,12 +153,11 @@ namespace UnitTests.NonUITests
             Assert.AreEqual("Barbara", XTA.ActReturnValues[0].Actual);
         }
 
-        private ObservableList<ActInputValue> SetXMLDynamicParameters(ObservableList<ActInputValue> dynamicElements, string param)
+        private void SetXMLDynamicParameters(ObservableList<ActInputValue> dynamicElements, string param)
         {
             ActInputValue actInputValue = new ActInputValue();
             actInputValue.Param = param;
             dynamicElements.Add(actInputValue);
-            return dynamicElements;
         }
     }
 }
