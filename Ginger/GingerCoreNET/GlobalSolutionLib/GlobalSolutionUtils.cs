@@ -585,31 +585,6 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
 
         }
 
-        //bool IsSharedRepositoryItem(RepositoryItemBase item, string file)
-        //{
-        //    bool isShared = false;
-        //    RepositoryItemBase repositoryItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(file);
-        //    if (repositoryItem.Guid == item.Guid)
-        //    {
-        //        isShared = true;
-        //    }
-        //    //check if there is already item in repo which map to a specific ExternalID
-        //    if (!string.IsNullOrEmpty(item.ExternalID) && item.ExternalID != "0")
-        //    {
-        //        if (repositoryItem.ExternalID == item.ExternalID)
-        //        {
-        //            isShared = true;
-        //        }
-        //    }
-        //    if (item.ParentGuid != Guid.Empty)
-        //    {
-        //        if (repositoryItem.Guid == item.ParentGuid)
-        //        {
-        //            isShared = true;
-        //        }
-        //    }
-        //    return isShared;
-        //}
         public void AddDependaciesForAgents(GlobalSolutionItem itemAgent, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport)
         {
             AddDependaciesForEnvParam(itemAgent.ItemFullPath, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
