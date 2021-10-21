@@ -233,7 +233,8 @@ namespace GingerCore.Actions.XML
                     VE.Value = @aiv.Param;
                     // var.Value = VE.ValueCalculated;
 
-                    XmlNode node = xmlReqDoc.SelectSingleNode(VE.ValueCalculated);
+                    XmlNode node = ReadNodeFromXmlDoc(xmlReqDoc, VE.ValueCalculated);
+
                     if (node.InnerText != null)
                     {
                         AddOrUpdateReturnParamActualWithPath("InnerText", node.InnerText.ToString(), VE.ValueCalculated);
@@ -248,7 +249,6 @@ namespace GingerCore.Actions.XML
                                 AddOrUpdateReturnParamActualWithPath(aiv.Param, XA.Value.ToString(), XA.Name);
                             else
                                 rv.Actual= XA.Value.ToString();
-
                         }
                     }
                     else
@@ -261,11 +261,8 @@ namespace GingerCore.Actions.XML
                                 AddOrUpdateReturnParamActualWithPath(aiv.Param, nameAttribute.Value.ToString(), aiv.Value);
                             else
                                 rv.Actual = nameAttribute.Value.ToString();
-
-
                         }
                     }
-                    
                 }
             }
 
@@ -274,6 +271,51 @@ namespace GingerCore.Actions.XML
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
                 throw new System.ArgumentException("Node not found at provided path");
             }
+        }
+
+        private XmlNode ReadNodeFromXmlDoc(XmlDocument xmlReqDoc, string valueCalculated)
+        {
+            string namespaceName = "ns";
+            XmlNamespaceManager nameSpaceManager = null;
+
+            XmlAttribute xmlns = GetXmlAttribute(xmlReqDoc);
+            if (xmlns != null)
+            {
+                nameSpaceManager = new XmlNamespaceManager(xmlReqDoc.NameTable);
+                nameSpaceManager.AddNamespace(namespaceName, xmlns.Value);
+                string namespacePrefix = namespaceName + ":";
+                valueCalculated = GetWithPrefix(valueCalculated, namespacePrefix);
+            }
+
+            return xmlReqDoc.SelectSingleNode(valueCalculated, nameSpaceManager);
+        }
+
+        private XmlAttribute GetXmlAttribute(XmlDocument xmlDocument)
+        {
+            foreach (XmlNode node in xmlDocument.ChildNodes)
+            {
+                if (node.Attributes != null && node.Attributes["xmlns"] != null)
+                {
+                    return node.Attributes["xmlns"];
+                }
+            }
+
+            return null;
+        }
+
+        private string GetWithPrefix(string valueCalculated, string namespacePrefix)
+        {
+            string valueWithPrefix = string.Empty;
+
+            foreach (string value in valueCalculated.Split('/'))
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    valueWithPrefix += namespacePrefix + value + "/";
+                }
+            }
+
+            return valueWithPrefix.TrimEnd('/');
         }
     }
 }
