@@ -305,17 +305,17 @@ namespace GingerCore.Actions.XML
 
         private string GetWithPrefix(string valueCalculated, string namespacePrefix)
         {
-            string valueWithPrefix = string.Empty;
+            System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
 
             foreach (string value in valueCalculated.Split('/'))
             {
                 if (!string.IsNullOrEmpty(value))
                 {
-                    valueWithPrefix += namespacePrefix + value + "/";
+                    stringBuilder.Append(string.Format("{0}{1}/", namespacePrefix, value));
                 }
             }
 
-            return valueWithPrefix.TrimEnd('/');
+            return stringBuilder.Remove(stringBuilder.Length - 1, 1).ToString();
         }
     }
 }
