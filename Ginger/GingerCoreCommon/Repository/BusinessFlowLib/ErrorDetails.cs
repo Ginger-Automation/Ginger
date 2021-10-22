@@ -22,6 +22,7 @@ namespace GingerCore
     public class ErrorDetails : RepositoryItemBase
     {
         private bool mIsSelected;
+        [IsSerializedForLocalRepository]
         public bool IsSelected
         {
             get

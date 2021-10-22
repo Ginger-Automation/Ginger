@@ -32,10 +32,10 @@ namespace GingerCore
 
     public enum eErrorHandlerPostExecutionAction
     {
-        [EnumValueDescription("Rerun origin action")]
+        [EnumValueDescription("Rerun Origin Action")]
         ReRunOriginAction,
 
-        [EnumValueDescription("Rerun origin activity")]
+        [EnumValueDescription("Rerun Origin Activity")]
         ReRunOriginActivity,
 
         [EnumValueDescription("Rerun Business Flow")]

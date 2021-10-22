@@ -70,7 +70,7 @@ namespace Ginger.Activities
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
-            mErrorHandler.ErrorStringList.Add(new ErrorDetails() { ErrorString=string.Empty,ErrorDescription = string.Empty });
+            mErrorHandler.ErrorStringList.Add(new ErrorDetails() { ErrorString=string.Empty,ErrorDescription = string.Empty,IsSelected=true });
             xErrorListConfigurationGrd.DataSourceList = mErrorHandler.ErrorStringList;
         }
 

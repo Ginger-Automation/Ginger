@@ -963,6 +963,10 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             Act actionToExecute = actionToExecuteInfo.Item2;
+
+            // set errorhandler execution status
+            actionToExecute.ErrorHandlerExecuted = false;
+
             if (parentActivity.Acts.Count() == 0 && !skipInternalValidations)
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to Run.");

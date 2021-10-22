@@ -3294,7 +3294,7 @@ namespace Ginger.Run
                     if (!doContinueRun)
                     {
                         // We reset the activity unless we are in continue mode where user can start from middle of Activity
-                        ResetActivity(CurrentBusinessFlow.CurrentActivity);
+                        ResetActivity(CurrentBusinessFlow.CurrentActivity, true);
                     }
                     else
                     {
@@ -4330,9 +4330,9 @@ namespace Ginger.Run
             }
         }
 
-        private void ResetActivity(Activity a)
+        private void ResetActivity(Activity a, bool reSetActionErrorHandlerExecutionStatus = false)
         {
-            ((Activity)a).Reset();
+            ((Activity)a).Reset(reSetActionErrorHandlerExecutionStatus);
         }
 
         public void ClearAgents()
