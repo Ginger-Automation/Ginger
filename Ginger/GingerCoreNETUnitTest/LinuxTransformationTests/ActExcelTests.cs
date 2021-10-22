@@ -108,6 +108,48 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
         }
         [TestMethod]
+        public void ReadExcelAllWithFilterUsingQuotesTest()
+        {
+            //Arrange            
+            ActExcel actExcel = new ActExcel();
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ExcelFileName),
+                TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names.xlsx"));
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SheetName), "Sheet1");
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SelectRowsWhere), "First=\"Mark\"");
+            actExcel.ExcelActionType = ActExcel.eExcelActionType.ReadData;
+            actExcel.AddNewReturnParams = true;
+            actExcel.SelectAllRows = true;
+
+            //Act
+            actExcel.Execute();
+
+            //Assert
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()), "1,1,1,1");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
+        }
+        [TestMethod]
+        public void ReadExcelGetFormulaValueTest()
+        {
+            //Arrange            
+            ActExcel actExcel = new ActExcel();
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ExcelFileName),
+                TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names.xlsx"));
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SheetName), "Sheet1");
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SelectRowsWhere), "First='Con'");
+            actExcel.ExcelActionType = ActExcel.eExcelActionType.ReadData;
+            actExcel.AddNewReturnParams = true;
+            actExcel.SelectAllRows = true;
+
+            //Act
+            actExcel.Execute();
+
+            //Assert
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "4,Con,Cat,ConCat");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Path).ToList()), "1,1,1,1");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
+        }
+        [TestMethod]
         public void ReadExcelAllWithFilterRowsSetDataTest()
         {
             //Arrange            
