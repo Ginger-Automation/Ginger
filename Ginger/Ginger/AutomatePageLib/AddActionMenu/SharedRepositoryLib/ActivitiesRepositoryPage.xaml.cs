@@ -48,7 +48,7 @@ namespace Ginger.Repository
         GenericWindow _pageGenericWin = null;
         public enum ePageViewMode { Default, Selection }
 
-        public enum eAcvitityType 
+        public enum eActivityType 
         {
             [EnumValueDescription("Regular Activity")]
             Regular,
@@ -122,7 +122,7 @@ namespace Ginger.Repository
 
                 xActivitiesRepositoryGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditActivity));
 
-                xActivitiesRepositoryGrid.AddComboBoxToolbarTool("FilterBy Type", typeof(eAcvitityType), ActivityType_SelectionChanged,"All");
+                xActivitiesRepositoryGrid.AddComboBoxToolbarTool("FilterBy Type", typeof(eActivityType), ActivityType_SelectionChanged,"All");
 
                 xActivitiesRepositoryGrid.RowDoubleClick += grdActivitiesRepository_grdMain_MouseDoubleClick;
                 xActivitiesRepositoryGrid.ItemDropped += grdActivitiesRepository_ItemDropped;
@@ -147,15 +147,15 @@ namespace Ginger.Repository
             ObservableList<Activity> activities = new ObservableList<Activity>();
             foreach (Activity item in allActiivtyType)
             {
-                if (selectedItem.Equals(eAcvitityType.ErrorHandler.ToString()) && item.GetType() == typeof(ErrorHandler))
+                if (selectedItem.Equals(eActivityType.ErrorHandler.ToString()) && item.GetType() == typeof(ErrorHandler))
                 {
                     activities.Add(item);
                 }
-                else if (selectedItem.Equals(eAcvitityType.CleanUpActivity.ToString()) && item.GetType() == typeof(CleanUpActivity))
+                else if (selectedItem.Equals(eActivityType.CleanUpActivity.ToString()) && item.GetType() == typeof(CleanUpActivity))
                 {
                     activities.Add(item);
                 }
-                else if (selectedItem.Equals(eAcvitityType.Regular.ToString()) && item.GetType() == typeof(Activity))
+                else if (selectedItem.Equals(eActivityType.Regular.ToString()) && item.GetType() == typeof(Activity))
                 {
                     activities.Add(item);
                 }

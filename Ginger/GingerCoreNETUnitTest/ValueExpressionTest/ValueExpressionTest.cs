@@ -115,7 +115,6 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         public void TestCleanUp()
         {
             mSolutionRepository.StopAllRepositoryFolderWatchers();
-            mBF.Activities.ClearAll();
         }
 
 
