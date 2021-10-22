@@ -272,29 +272,47 @@ namespace Ginger.Repository
             linkIsByExternalID = false;
             linkIsByParentID = false;
 
-            //check if item with the same GUID already exist in repository
-            RepositoryItemBase repoItem = (RepositoryItemBase)existingRepoItems.Where(x => ((RepositoryItemBase)x).Guid == item.Guid).FirstOrDefault();
-            //check if there is already item in repo which map to a specific ExternalID
-            if (repoItem == null && item.ExternalID != null && item.ExternalID != string.Empty && item.ExternalID != "0")
+            foreach (RepositoryItemBase existingRepoItem in existingRepoItems)
             {
-                repoItem = (RepositoryItemBase)existingRepoItems.Where(x => ((RepositoryItemBase)x).ExternalID == item.ExternalID).FirstOrDefault();
-                if (repoItem != null)
+                if (IsMatchingRepoItem(item, existingRepoItem, ref linkIsByExternalID, ref linkIsByParentID))
                 {
-                    linkIsByExternalID = true;
+                    return existingRepoItem;
                 }
             }
-            if (repoItem == null && item.ParentGuid != Guid.Empty)
-            {
-                repoItem = (RepositoryItemBase)existingRepoItems.Where(x => ((RepositoryItemBase)x).Guid == item.ParentGuid).FirstOrDefault();
-                if (repoItem != null)
-                {
-                    linkIsByParentID = true;
-                }
-            }
-
-            return repoItem;
+            return null;
         }
 
+        public static bool IsMatchingRepoItem(RepositoryItemBase item, RepositoryItemBase existingRepoItem, ref bool linkIsByExternalID, ref bool linkIsByParentID)
+        {
+            bool isMatch = false;
+            //check if item with the same GUID already exist in repository
+            if (existingRepoItem.Guid == item.Guid)
+            {
+                isMatch = true;
+            }
+            else
+            {
+                //check if there is already item in repo which map to a specific ExternalID
+                if (!string.IsNullOrEmpty(item.ExternalID) && item.ExternalID != "0")
+                {
+                    if (existingRepoItem.ExternalID == item.ExternalID)
+                    {
+                        linkIsByExternalID = true;
+                        isMatch = true;
+                    }
+                }
+                //check if there is already item in repo which map to a specific ParentGuid
+                if (item.ParentGuid != Guid.Empty)
+                {
+                    if (existingRepoItem.Guid == item.ParentGuid)
+                    {
+                        linkIsByParentID = true;
+                        isMatch = true;
+                    }
+                }
+            }
+            return isMatch;
+        }
         public static bool CheckIfSureDoingChange(RepositoryItemBase item, string changeType)
         {
             //RepositoryItemUsagePage usagePage = null;
