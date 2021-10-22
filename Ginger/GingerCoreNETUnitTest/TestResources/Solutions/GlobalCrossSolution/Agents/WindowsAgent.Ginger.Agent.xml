@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="071fe74e-8751-4be5-bea8-6258b04064a8" ItemType="Agent" CreatedBy="arvindgh" Created="202110200640" GingerVersion="4.0.0.0" Version="1" LastUpdateBy="arvindgh" LastUpdate="202110200640" />
+<Agent Active="True" AgentType="Driver" DriverType="WindowsAutomation" Guid="071fe74e-8751-4be5-bea8-6258b04064a8" Name="WindowsAgent" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Windows">
+<DriverConfiguration>
+<DriverConfigParam Description="Action Timeout - default is 150 seconds" Guid="1d227f89-fb89-4921-b413-2f55b3b71221" Parameter="ActionTimeout" ParentGuid="00000000-0000-0000-0000-000000000000" Value="150" />
+<DriverConfigParam Description="Amount of time the driver should wait when searching for an element if it is not immediately present" Guid="6d3fc614-b9dc-4e2d-a0cf-4a70238b9ea7" Parameter="ImplicitWait" ParentGuid="00000000-0000-0000-0000-000000000000" Value="30" />
+<DriverConfigParam Description="The amount of maximum time (in seconds) to wait for the driver to load/connect" Guid="14487816-83e4-46fb-8547-acf45d233e15" Parameter="DriverLoadWaitingTime" ParentGuid="00000000-0000-0000-0000-000000000000" Value="30" />
+</DriverConfiguration>
+</Agent></GingerRepositoryItem>
