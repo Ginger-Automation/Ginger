@@ -16,27 +16,31 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
         }
         public enum eImportItemType
         {
-            //[EnumValueDescription("Business Flows")]
-            //BusinessFlows,
-            [EnumValueDescription("Shared Repository - Activities Group")]
+            [EnumValueDescription("~\\BusinessFlows\\")]
+            BusinessFlows,
+            [EnumValueDescription("~\\Shared Repository\\Activities Group\\")]
             SharedRepositoryActivitiesGroup,
-            [EnumValueDescription("Shared Repository - Activities")]
+            [EnumValueDescription("~\\Shared Repository\\Activities\\")]
             SharedRepositoryActivities,
-            [EnumValueDescription("Shared Repository - Actions")]
+            [EnumValueDescription("~\\Shared Repository\\Actions\\")]
             SharedRepositoryActions,
-            [EnumValueDescription("Shared Repository - Variables")]
+            [EnumValueDescription("~\\Shared Repository\\Variables\\")]
             SharedRepositoryVariables,
-            [EnumValueDescription("API Models")]
+            [EnumValueDescription("~\\Applications Models\\API Models\\")]
             APIModels,
-            [EnumValueDescription("Page Object Models")]
+            [EnumValueDescription("~\\Applications Models\\POM Models\\")]
             POMModels,
-            [EnumValueDescription("Documents")]
+            [EnumValueDescription("~\\Documents\\")]
             Documents,
-            [EnumValueDescription("Environments")]
+            [EnumValueDescription("~\\Environments\\")]
             Environments,
-            [EnumValueDescription("DataSources")]
+            [EnumValueDescription("~\\DataSources\\")]
             DataSources,
-            [EnumValueDescription("Solution Variables")]
+            [EnumValueDescription("~\\Agents\\")]
+            Agents,
+            [EnumValueDescription("~\\Ginger.Solution.xml")]
+            TargetApplication,
+            [EnumValueDescription("~\\Ginger.Solution.xml")]
             Variables
         }
         
