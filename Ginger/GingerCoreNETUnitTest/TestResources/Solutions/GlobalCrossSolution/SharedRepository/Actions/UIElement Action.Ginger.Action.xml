@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="436f6b5e-60bb-4e25-91c3-478b6ecd4ace" ItemType="ActUIElement" CreatedBy="arvindgh" Created="202110200932" GingerVersion="4.0.0.0" Version="1" LastUpdateBy="arvindgh" LastUpdate="202110200932" />
+<ActUIElement Active="True" Description="UIElement Action" Guid="436f6b5e-60bb-4e25-91c3-478b6ecd4ace" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="62d848fb-8d07-4eb9-9150-268a12c77694" Param="ElementType" ParentGuid="00000000-0000-0000-0000-000000000000" Value="TextBox" />
+<ActInputValue Guid="b980c92e-6ef6-499f-8953-da22a5cf504e" Param="ElementAction" ParentGuid="00000000-0000-0000-0000-000000000000" Value="SetValue" />
+<ActInputValue Guid="a28b8112-1ea3-47c9-9b3d-db3f5c1f8e14" Param="ElementLocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="POMElement" />
+<ActInputValue Guid="522fb1c9-e8f8-415a-bb2b-2bfa3fd5cfe0" Param="TargetLocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="NA" />
+<ActInputValue Guid="f5fc9b53-49ca-40fe-a4e1-08283135a321" Param="TargetElementType" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Unknown" />
+<ActInputValue Guid="7b7ea965-ff8d-414d-b4a0-c1ddb704e4e7" Param="ElementLocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="6917d2eb-75e6-4bdb-a0f7-6bba2c7d52df_0b641ef2-1058-4d2e-bf87-fdf7b47318e2" />
+<ActInputValue Guid="8bfc2222-c472-486e-ad68-875b1128d79d" Param="XCoordinate" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="f255a668-494a-4f4d-aa96-e4bb3caebcaa" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{Var Name=NewVarString}" />
+<ActInputValue Guid="beba3926-d270-4360-a91e-6fb98418aa55" Param="ValueToSelect" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="611c8cb3-a68e-49fa-8901-382f9286f1ce" Param="YCoordinate" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="b0386a6e-a833-4488-a325-c06005bcecca" Param="ControlAction" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActUIElement></GingerRepositoryItem>
