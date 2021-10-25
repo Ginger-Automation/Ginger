@@ -635,7 +635,7 @@ namespace Ginger.Run
                     else
                     {
                         //Execute the Business Flow
-                        RunBusinessFlow(executedBusFlow);// full BF run
+                        RunBusinessFlow(executedBusFlow, doReSetActionErrorHandlerExecutionStatus: true);// full BF run
                     }
                     //Do "During Execution" Run set Operations
                     if (PublishToALMConfig != null)
@@ -1153,7 +1153,7 @@ namespace Ginger.Run
                 {
                     SetDriverPreviousRunStoppedFlag(false);
                 }
-
+                CheckAndExecutePostErrorHandlerAction();
                 SelfHealingExecuteInSimulationMode(act);
             }
             catch(Exception ex)
@@ -1163,6 +1163,24 @@ namespace Ginger.Run
                 act.Status = eRunStatus.Failed;
             }
 
+        }
+
+        private void CheckAndExecutePostErrorHandlerAction()
+        {
+            if (mIsRerunActivityErrorHandlerPostAction)
+            {
+                mIsRerunActivityErrorHandlerPostAction = false;
+                var currentActItem = CurrentBusinessFlow.CurrentActivity.Acts.FirstOrDefault();
+                CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = currentActItem;
+                RunActivity(CurrentBusinessFlow.CurrentActivity, reSetActionErrorHandlerExecutionStatus:false);
+            }
+            else if (mIsRerunBusinessFlowErrorHandlerPostAction)
+            {
+                mIsRerunBusinessFlowErrorHandlerPostAction = false;
+                CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.FirstOrDefault();
+                CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.FirstOrDefault();
+                RunActivity(CurrentBusinessFlow.CurrentActivity, reSetActionErrorHandlerExecutionStatus: false);
+            }
         }
 
         private void SelfHealingExecuteInSimulationMode(Act act)
@@ -1298,8 +1316,12 @@ namespace Ginger.Run
                         //NotifyActionStart(act);
 
                         ExecuteErrorHandlerActivities(lstMappedErrorHandlers);
-                        act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
                         // mErrorHandlerExecuted = true;
+
+                        if (mIsRerunActivityErrorHandlerPostAction || mIsRerunBusinessFlowErrorHandlerPostAction)
+                        {
+                            break;
+                        }
                     }
                     else
                         break;
@@ -1341,7 +1363,10 @@ namespace Ginger.Run
                 Activity activity = (Activity)CurrentBusinessFlow.CurrentActivity;
                 Act action = act;
 
-                DoFlowControl(act, moveToNextAction);
+                if (!mIsRerunActivityErrorHandlerPostAction && !mIsRerunBusinessFlowErrorHandlerPostAction)
+                {
+                    DoFlowControl(act, moveToNextAction);
+                }
                 DoStatusConversion(act);   //does it need to be here or earlier?
             }
             finally
@@ -1759,6 +1784,9 @@ namespace Ginger.Run
             }
         }
 
+        private bool mIsRerunActivityErrorHandlerPostAction;
+        private bool mIsRerunBusinessFlowErrorHandlerPostAction;
+
         private void ExecuteErrorHandlerActivities(ObservableList<ErrorHandler> errorHandlerActivities)
         {
             Activity originActivity = CurrentBusinessFlow.CurrentActivity;
@@ -1796,6 +1824,7 @@ namespace Ginger.Run
                     Stopwatch stE = new Stopwatch();
                     stE.Start();
                     Reporter.ToLog(eLogLevel.INFO, "Error Handler '" + errActivity.ActivityName.ToString() + "' Started");
+                    CurrentBusinessFlow.CurrentActivity.StartTimeStamp = DateTime.UtcNow;
                     foreach (Act act in errActivity.Acts)
                     {
                         Stopwatch st = new Stopwatch();
@@ -1805,11 +1834,14 @@ namespace Ginger.Run
                             CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
                             if (errActivity.HandlerType == eHandlerType.Popup_Handler)
                                 act.Timeout = 1;
+                           
                             PrepAction(act, ref ActionExecutorType, st);
+                            NotifyActionStart(act);
                             RunActionWithTimeOutControl(act, ActionExecutorType);
                             ProcessStoretoValue(act);
                             UpdateDSReturnValues(act);
                             CalculateActionFinalStatus(act);
+                            NotifyActionEnd(act);
                         }
                         st.Stop();
                     }
@@ -1817,34 +1849,31 @@ namespace Ginger.Run
                     CalculateActivityFinalStatus(errActivity);
                     stE.Stop();
                     Reporter.ToLog(eLogLevel.INFO, "Error Handler '" + errActivity.ActivityName.ToString() + "' Ended");
+                    CurrentBusinessFlow.CurrentActivity.EndTimeStamp = DateTime.UtcNow;
                     errActivity.Elapsed = stE.ElapsedMilliseconds;
                 }
 
                 if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow)
                 {
-                    CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities[0];
-                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.Activities[0].Acts[0];
-                    CurrentBusinessFlow.Reset();
-                    NotifyBusinessFlowStart(CurrentBusinessFlow);
+                    mIsRerunBusinessFlowErrorHandlerPostAction = true;
+                    mIsRerunActivityErrorHandlerPostAction = false;
                 }
                 else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity)
                 {
-                    //NotifyActionEnd(orginAction);
-                    CurrentBusinessFlow.CurrentActivity = originActivity;
-                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = originActivity.Acts[0];
-                    ResetActivity(originActivity);
-                    NotifyActivityStart(originActivity);
+                    mIsRerunBusinessFlowErrorHandlerPostAction = false;
+                    mIsRerunActivityErrorHandlerPostAction = true;
                 }
-                else
+                if(handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginAction)
                 {
-                    CurrentBusinessFlow.CurrentActivity = originActivity;
-                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = orginAction;
-                    ResetAction(orginAction);
+                    mIsRerunBusinessFlowErrorHandlerPostAction = false;
+                    mIsRerunActivityErrorHandlerPostAction = false;
                     orginAction.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
+                    ResetAction(orginAction);
                     NotifyActionStart(orginAction);
                 }
-                //CurrentBusinessFlow.CurrentActivity = originActivity;
-                //CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = orginAction;
+                CurrentBusinessFlow.CurrentActivity = originActivity;
+                CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = orginAction;
+
                 mCurrentActivityChanged = false;
                 SetCurrentActivityAgent();
             }
@@ -3222,19 +3251,19 @@ namespace Ginger.Run
             }
         }
 
-        public async Task<int> RunActivityAsync(Activity activity, bool Continue = false, bool standaloneExecution = false)
+        public async Task<int> RunActivityAsync(Activity activity, bool Continue = false, bool standaloneExecution = false, bool reSetActionErrorHandlerExecutionStatus = false)
         {
             NotifyExecutionContext(AutomationTabContext.ActivityRun);
             var result = await Task.Run(() =>
             {
-                RunActivity(activity, false, standaloneExecution);
+                RunActivity(activity, false, standaloneExecution, reSetActionErrorHandlerExecutionStatus);
                 return 1;
             });
             return result;
         }
 
 
-        public void RunActivity(Activity activity, bool doContinueRun = false, bool standaloneExecution = false)
+        public void RunActivity(Activity activity, bool doContinueRun = false, bool standaloneExecution = false, bool reSetActionErrorHandlerExecutionStatus = false)
         {
             bool activityStarted = false;
             bool statusCalculationIsDone = false;
@@ -3294,7 +3323,7 @@ namespace Ginger.Run
                     if (!doContinueRun)
                     {
                         // We reset the activity unless we are in continue mode where user can start from middle of Activity
-                        ResetActivity(CurrentBusinessFlow.CurrentActivity, true);
+                        ResetActivity(CurrentBusinessFlow.CurrentActivity, reSetActionErrorHandlerExecutionStatus);
                     }
                     else
                     {
@@ -3716,7 +3745,7 @@ namespace Ginger.Run
             return result;
         }
 
-        public void RunBusinessFlow(BusinessFlow businessFlow, bool standaloneExecution = false, bool doContinueRun = false)
+        public void RunBusinessFlow(BusinessFlow businessFlow, bool standaloneExecution = false, bool doContinueRun = false, bool doReSetActionErrorHandlerExecutionStatus = false)
         {
             // !!
             // !!!!!!!!!! remove SW
@@ -3827,11 +3856,11 @@ namespace Ginger.Run
                         // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
                         if (FirstExecutedActivity.Equals(ExecutingActivity))
                         {
-                            RunActivity(ExecutingActivity, true);
+                            RunActivity(ExecutingActivity, true, reSetActionErrorHandlerExecutionStatus: doReSetActionErrorHandlerExecutionStatus);
                         }
                         else
                         {
-                            RunActivity(ExecutingActivity);
+                            RunActivity(ExecutingActivity, reSetActionErrorHandlerExecutionStatus: doReSetActionErrorHandlerExecutionStatus);
                         }
                         //TODO: Why this is here? do we need to rehook
                         CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
