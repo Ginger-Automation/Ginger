@@ -539,6 +539,7 @@ namespace Ginger
             try
             {
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", item.ItemName));
                 item.RestoreFromBackup(isLocalBackup, clearBackup);
                 return true;
             }
@@ -566,7 +567,6 @@ namespace Ginger
             {
                 if (Reporter.ToUser(eUserMsgKey.AskIfToUndoItemChanges, item.ItemName) == eUserMsgSelection.Yes)
                 {
-                    Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", item.ItemName));
                     return UndoChangesInRepoItem(item, isLocalBackup, clearBackup);
                 }
                 else
