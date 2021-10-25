@@ -48,9 +48,10 @@ namespace Ginger.SolutionWindows
             mSolution = s;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionNameTextBox, TextBox.TextProperty, s, nameof(Solution.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
+            UCEncryptionKey.mSolution = mSolution;
             UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
             GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform);
-        }        
+        }
 
         private void EncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
         {
