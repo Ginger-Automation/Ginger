@@ -1129,7 +1129,7 @@ namespace Ginger.Run
                 act.RetryMechanismCount = 0;
                 RunActionWithRetryMechanism(act, checkIfActionAllowedToRun, moveToNextAction);
                
-                if (act.EnableRetryMechanism & mStopRun == false)
+                if ((act.EnableRetryMechanism & mStopRun == false) && !mIsErrorHandlerPostActionSet)
                 {
                     while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && act.RetryMechanismCount < act.MaxNumberOfRetries & mStopRun == false)
                     {
