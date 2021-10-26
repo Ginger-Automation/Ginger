@@ -622,13 +622,13 @@ namespace GingerCore
             }
         }
 
-        public void Reset(bool reSetActionErrorHandlerExecutionStatus = false)
+        public void Reset(bool resetErrorHandlerExecutedFlag = false)
         {
             Elapsed = null;
             Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
             foreach (Act act in Acts)
             {
-                act.Reset(reSetActionErrorHandlerExecutionStatus);
+                act.Reset(resetErrorHandlerExecutedFlag);
             }
         }
 

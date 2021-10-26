@@ -920,7 +920,7 @@ namespace GingerWPF.BusinessFlowsLib
                 mContext.BusinessFlow.CurrentActivity = activity;
                 mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
 
-                await mRunner.RunActivityAsync((Activity)activity, false, true,reSetActionErrorHandlerExecutionStatus:true).ConfigureAwait(false);
+                await mRunner.RunActivityAsync((Activity)activity, false, true, resetErrorHandlerExecutedFlag: true).ConfigureAwait(false);
 
                 //When running Runactivity as standalone from GUI, SetActionSkipStatus is not called. Handling it here for now.
                 foreach (Act act in activity.Acts)
@@ -942,6 +942,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     ((Agent)activity.CurrentAgent).IsFailedToStart = false;
                 }
+                mRunner.CheckAndExecutePostErrorHandlerAction();
             }
         }
 
@@ -1025,6 +1026,8 @@ namespace GingerWPF.BusinessFlowsLib
                     ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
                 }
             }
+
+            mRunner.CheckAndExecutePostErrorHandlerAction();
         }
 
         private async Task ContinueRunFromAutomatePage(eContinueFrom continueFrom, object executedItem = null)
