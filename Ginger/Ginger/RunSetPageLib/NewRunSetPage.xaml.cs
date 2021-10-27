@@ -839,6 +839,10 @@ namespace Ginger.Run
 
             mCurrentSelectedRunner.RunnerPageListener.UpdateBusinessflowActivities -= UpdateBusinessflowActivities;
             mCurrentSelectedRunner.RunnerPageListener.UpdateBusinessflowActivities += UpdateBusinessflowActivities;
+
+            mCurrentSelectedRunner.CheckIfRunsetDirty -= mCurrentSelectedRunner_CheckIfRunsetDirty;
+            mCurrentSelectedRunner.CheckIfRunsetDirty += mCurrentSelectedRunner_CheckIfRunsetDirty;
+
             UpdateRunnerTime();
 
             //set it as flow diagram current item
@@ -866,6 +870,14 @@ namespace Ginger.Run
             }
         }
 
+        private void mCurrentSelectedRunner_CheckIfRunsetDirty(object sender, EventArgs e)
+        {
+            bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified;
+            if (bIsRunsetDirty)
+            {
+                UserSelectionSaveOrUndoRunsetChanges();
+            }
+        }
 
         private void UpdateBusinessflowActivities(object sender, EventArgs e)
         {
@@ -1224,6 +1236,11 @@ namespace Ginger.Run
         {
             try
             {
+                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified;
+                if (bIsRunsetDirty)
+                {
+                    UserSelectionSaveOrUndoRunsetChanges();
+                }
                 this.Dispatcher.Invoke(() =>
                 {
                     xRunSetLoadingPnl.Visibility = Visibility.Visible;
@@ -1444,32 +1461,40 @@ namespace Ginger.Run
 
         }
 
+        /// <summary>
+        /// moved dirty tracking handling to common function
+        /// </summary>
+        private void UserSelectionSaveOrUndoRunsetChanges()
+        {
+            eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.SaveRunsetChanges, "Please save or reset RunSet changes");
+            switch (userSelection)
+            {
+                case eUserMsgSelection.Yes:
+                    xRunsetSaveBtn.DoClick();
+                    return;
+                case eUserMsgSelection.No:
+                    mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
+
+                    if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true, true, false))
+                    {
+                        mRunSetConfig.SaveBackup();
+                        mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                    }
+                    mRunSetConfig.DirtyStatus = eDirtyStatus.NoChange;
+                    return;
+                default:
+                    //do nothing
+                    return;
+            }
+        }
+
         private async void xRunRunsetBtn_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (RunSetConfig.DirtyStatus.Equals(eDirtyStatus.Modified))
                 {
-                    eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.SaveRunsetChanges, "Please save or reset RunSet changes");
-                    switch (userSelection)
-                    {
-                        case eUserMsgSelection.Yes:
-                            xRunsetSaveBtn.DoClick();
-                            break;
-                        case eUserMsgSelection.No:
-                            mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
-
-                            if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true))
-                            {
-                                mRunSetConfig.SaveBackup();
-                                mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
-                            }
-                            mRunSetConfig.DirtyStatus = eDirtyStatus.NoChange;
-                            break;
-                        default:
-                            //do nothing
-                            break;
-                    }
+                    UserSelectionSaveOrUndoRunsetChanges();
                 }
 
                 xRunsetSaveBtn.IsEnabled = false;
