@@ -67,6 +67,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 ShowWidgetsElementCheckBox();
             }
 
+            //if widgets element, only supported to java platform now.
+            else if (act.Platform.Equals(ePlatformType.Web) || act.Platform.Equals(ePlatformType.Windows))
+            {
+                ShowSikuliElementCheckBox();
+            }
+
             BindElementTypeComboBox();
 
             SetLocateValueFrame();
@@ -94,6 +100,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             xWidgetElementCheckBox.Visibility = Visibility.Visible;
             BindingHandler.ActInputValueBinding(xWidgetElementCheckBox,CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(Fields.IsWidgetsElement, "false"),new InputValueToBoolConverter());           
+        }
+
+        private void ShowSikuliElementCheckBox()
+        {
+            xSikuliCheckBox.Visibility = Visibility.Visible;
+            BindingHandler.ActInputValueBinding(xSikuliCheckBox, CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(Fields.IsSikuliElement, "false"), new InputValueToBoolConverter());
         }
 
         private ePlatformType GetActionPlatform()

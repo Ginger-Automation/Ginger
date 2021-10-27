@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
+using Amdocs.Ginger.Common;
 
 namespace GingerSikuliStandard.sikuli_UTIL
 {
@@ -37,6 +38,14 @@ namespace GingerSikuliStandard.sikuli_UTIL
             APIProcess = new Process();
             APIProcess.StartInfo = APIProcessStartInfo;
 
+            if (APIProcess.Start())
+            {
+                Reporter.ToLog(eLogLevel.INFO, string.Format("API Path - {0} \n Proces Info - Id - {1}, Title - {2}, Start Time : {3}", APIPath, APIProcess.Id, APIProcess.MainWindowTitle, APIProcess.StartTime));
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.INFO, string.Format("API Path - {0} \n Error in starting Proces", APIPath));
+            }
             //Console.WriteLine("API PATH: " + APIPath);
             //Console.WriteLine("java -jar \"" + APIPath + "\"");
         }

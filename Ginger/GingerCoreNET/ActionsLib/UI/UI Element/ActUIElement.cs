@@ -115,6 +115,7 @@ namespace GingerCore.Actions.Common
             public static string WaitforIdle = "WaitforIdle";
             public static string IsWidgetsElement = "IsWidgetsElement";
             public static string IsMouseEvent = "IsMouseEvent";
+            public static string IsSikuliElement = "IsSikuliElement";
 
             //used to support switch action sync time
             public static string SyncTime = "SyncTime";
