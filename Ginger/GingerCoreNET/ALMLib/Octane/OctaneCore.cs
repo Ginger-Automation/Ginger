@@ -464,7 +464,15 @@ namespace GingerCore.ALM
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
             result = string.Empty;
-            ObservableList<ExternalItemFieldBase> runFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
+            ObservableList<ExternalItemFieldBase> runFields;
+            if (WorkSpace.Instance.RunningInExecutionMode)
+            {
+                runFields = GetSolutionALMFields("Run");
+            }
+            else
+            {
+                runFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
+            }
             runFields = new ObservableList<ExternalItemFieldBase>(runFields.Where(f => f.ItemType.Equals("Run")).ToList());
             if (bizFlow.ExternalID == "0" || String.IsNullOrEmpty(bizFlow.ExternalID))
             {
@@ -590,6 +598,23 @@ namespace GingerCore.ALM
             }
 
             return false;
+        }
+
+        private ObservableList<ExternalItemFieldBase> GetSolutionALMFields(string fieldType)
+        {
+            ObservableList<ExternalItemFieldBase> fields;
+            ObservableList<ExternalItemFieldBase> savedFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
+            fields = String.IsNullOrEmpty(fieldType) ? new ObservableList<ExternalItemFieldBase>(GetALMItemFields(null, true)) :
+                new ObservableList<ExternalItemFieldBase>(GetALMItemFields(null, true).Where(x => x.ItemType.Equals(fieldType)));
+            foreach (var item in fields)
+            {
+                ExternalItemFieldBase savedItem = savedFields.Where(i => i.ID.Equals(item.ID)).FirstOrDefault();
+                if (savedItem != null)
+                {
+                    item.SelectedValue = savedItem.SelectedValue;
+                }
+            }
+            return fields;
         }
 
         private bool AddAttachmentToDefect(string defectId, string filePath)
