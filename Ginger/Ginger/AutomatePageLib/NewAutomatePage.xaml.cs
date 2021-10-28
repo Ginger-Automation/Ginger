@@ -942,7 +942,6 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     ((Agent)activity.CurrentAgent).IsFailedToStart = false;
                 }
-                mRunner.CheckAndExecutePostErrorHandlerAction();
             }
         }
 
@@ -1027,7 +1026,6 @@ namespace GingerWPF.BusinessFlowsLib
                 }
             }
 
-            mRunner.CheckAndExecutePostErrorHandlerAction();
         }
 
         private async Task ContinueRunFromAutomatePage(eContinueFrom continueFrom, object executedItem = null)
