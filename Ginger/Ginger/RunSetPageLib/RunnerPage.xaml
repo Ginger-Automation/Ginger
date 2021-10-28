@@ -50,7 +50,7 @@
         <state:BorderStatus x:Name="xBorder" Grid.RowSpan="7"  Grid.ColumnSpan="4"></state:BorderStatus>
 
         <DockPanel x:Name="xExecutionOperationsPnl" HorizontalAlignment="Left" DockPanel.Dock="Left" Grid.Row="0" Grid.ColumnSpan="4" Margin="0 4 0 0" >
-            <usercontrols:ucButton x:Name="xRunRunnerBtn"  ToolTip="Rest &amp; Run Runner" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Run" Click="xRunRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
+            <usercontrols:ucButton x:Name="xRunRunnerBtn"  ToolTip="Reset &amp; Run Runner" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Run" Click="xRunRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
             <usercontrols:ucButton x:Name="xStopRunnerBtn" ToolTip="Stop Runner Execution" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Stop" Click="xStopRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
             <usercontrols:ucButton x:Name="xContinueRunnerBtn"  ToolTip="Continue Runner Execution from Last Stopped Action" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xContinueRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
         </DockPanel>
