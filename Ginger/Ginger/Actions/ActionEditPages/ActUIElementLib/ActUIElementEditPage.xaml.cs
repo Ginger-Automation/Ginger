@@ -66,11 +66,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 ShowWidgetsElementCheckBox();
             }
-
-            //if widgets element, only supported to java platform now.
-            else if (act.Platform.Equals(ePlatformType.Web) || act.Platform.Equals(ePlatformType.Windows))
+            else if (mPlatform.IsSikuliSupported())
             {
-                ShowSikuliElementCheckBox();
+                ConfigureSikuliElementCheckBox();
             }
 
             BindElementTypeComboBox();
@@ -102,10 +100,16 @@ namespace Ginger.Actions._Common.ActUIElementLib
             BindingHandler.ActInputValueBinding(xWidgetElementCheckBox,CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(Fields.IsWidgetsElement, "false"),new InputValueToBoolConverter());           
         }
 
-        private void ShowSikuliElementCheckBox()
+        private void ConfigureSikuliElementCheckBox()
         {
-            xSikuliCheckBox.Visibility = Visibility.Visible;
+            ToggleSikuliCheckBoxVisibility(SikuliSupportedOperations.Contains(mAction.ElementAction));
             BindingHandler.ActInputValueBinding(xSikuliCheckBox, CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(Fields.IsSikuliElement, "false"), new InputValueToBoolConverter());
+        }
+
+        void ToggleSikuliCheckBoxVisibility(bool ShowChkBox = false)
+        {
+            xSikuliCheckBox.Visibility = ShowChkBox ? Visibility.Visible : Visibility.Collapsed;
+            xSikuliElementImage.Visibility = ShowChkBox ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private ePlatformType GetActionPlatform()
@@ -203,6 +207,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 ShowControlSpecificPage();
             }
             mAction.OnPropertyChanged(nameof(Act.ActionType));
+
+            ToggleSikuliCheckBoxVisibility(SikuliSupportedOperations.Contains(mAction.ElementAction));
         }
 
         public Page GetPlatformEditPage()

@@ -544,6 +544,20 @@ namespace GingerCore.Actions.Common
             LongClick,
             #endregion NOT TO USE Action Types
         }
+
+        public static List<eElementAction> SikuliSupportedOperations = new List<eElementAction>() 
+        { 
+            eElementAction.Click, 
+            eElementAction.SetText, 
+            eElementAction.SetValue, 
+            //eElementAction.GetValue, 
+            //eElementAction.GetText, 
+            eElementAction.DoubleClick, 
+            eElementAction.MouseRightClick, 
+            //eElementAction.DragDrop, 
+            eElementAction.Exist 
+        };
+
         public enum eElementDragDropType
         {
             [EnumValueDescription("Using JavaScript")]

@@ -6784,13 +6784,13 @@ namespace GingerCore.Drivers
                     switch (act.ElementAction)
                     {
                         case ActUIElement.eElementAction.Click:
-                        case ActUIElement.eElementAction.JavaScriptClick:
+                        //case ActUIElement.eElementAction.JavaScriptClick:
                             sekuliScreen.Click(sikuliPattern);
                             break;
 
                         case ActUIElement.eElementAction.SetValue:
                         case ActUIElement.eElementAction.SetText:
-                        case ActUIElement.eElementAction.MultiSetValue:
+                        //case ActUIElement.eElementAction.MultiSetValue:
                             sekuliScreen.Type(sikuliPattern, act.ValueForDriver);
                             break;
 
@@ -6802,9 +6802,13 @@ namespace GingerCore.Drivers
                             sekuliScreen.RightClick(sikuliPattern);
                             break;
 
-                        default:
-                            sekuliScreen.RightClick(sikuliPattern);
+                        case ActUIElement.eElementAction.Exist:
+                            sekuliScreen.Exists(sikuliPattern);
                             break;
+
+                            //default:
+                            //    sekuliScreen.RightClick(sikuliPattern);
+                            //    break;
                     }
                 }
                 catch (Exception ex)
