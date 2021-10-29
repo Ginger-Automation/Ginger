@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -45,8 +46,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     ((WizardWindow)wiz.mWizardWindow).ShowFinishButton(true);
 
                     SetDependantItemsListToImportGridView();
-                    wiz.SelectedItemTypeListToImport = GetSelectedItemsListToImport();
-                    xDependantItemsToImportGrid.DataSourceList = wiz.SelectedItemTypeListToImport;
+                    xDependantItemsToImportGrid.DataSourceList = wiz.SelectedItemsListToImport;
+                    GetSelectedItemsListToImport();
                     break;
                 default:
                     //Nothing to do
@@ -77,72 +78,85 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             xDependantItemsToImportGrid.MarkUnMarkAllActive += MarkUnMarkAllItems;
         }
 
-        public ObservableList<GlobalSolutionItem> GetSelectedItemsListToImport()
+        public async void GetSelectedItemsListToImport()
         {
-            ObservableList<GlobalSolutionItem> SelectedItemsListToImport = new ObservableList<GlobalSolutionItem>();
-            if (wiz.ItemsListToImport != null)
+            wiz.SelectedItemsListToImport.ClearAll();
+            try
             {
-
-                foreach (GlobalSolutionItem item in wiz.ItemsListToImport.Where(x => x.Selected).ToList())
+                wiz.ProcessStarted();
+                await Task.Run(() =>
                 {
-                    switch (item.ItemType)
+                    if (wiz.ItemsListToImport.Where(x => x.Selected).ToList().Count > 0 )
                     {
-                        case GlobalSolution.eImportItemType.Documents:
-                            GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                            break;
-                        case GlobalSolution.eImportItemType.DataSources:
-                            GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                            break;
+                        foreach (GlobalSolutionItem item in wiz.ItemsListToImport.Where(x => x.Selected).ToList())
+                        {
+                            switch (item.ItemType)
+                            {
+                                case GlobalSolution.eImportItemType.Documents:
+                                    GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref wiz.SelectedItemsListToImport);
+                                    break;
+                                case GlobalSolution.eImportItemType.DataSources:
+                                    GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref wiz.SelectedItemsListToImport);
+                                    break;
 
-                        case GlobalSolution.eImportItemType.Environments:
-                            GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                            GlobalSolutionUtils.Instance.AddDependaciesForEnvironment(item, ref SelectedItemsListToImport, ref wiz.VariableListToImport);
-                            break;
-                        case GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup:
-                            GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                            GlobalSolutionUtils.Instance.AddDependaciesForSharedActivityGroup(item, ref SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
-                            break;
-                        case GlobalSolution.eImportItemType.SharedRepositoryActivities:
-                            GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                            GlobalSolutionUtils.Instance.AddDependaciesForSharedActivity(item, ref SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
-                            break;
-                        case GlobalSolution.eImportItemType.SharedRepositoryActions:
-                            GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                            GlobalSolutionUtils.Instance.AddDependaciesForSharedAction(item, ref SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
-                            break;
-                        case GlobalSolution.eImportItemType.SharedRepositoryVariables:
-                            GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                            break;
-                        case GlobalSolution.eImportItemType.APIModels:
-                            GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                            GlobalSolutionUtils.Instance.AddDependaciesForAPIModel(item, ref SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
-                            break;
-                        case GlobalSolution.eImportItemType.POMModels:
-                            GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                            GlobalSolutionUtils.Instance.AddDependaciesForPOMModel(item, ref SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
-                            break;
-                        case GlobalSolution.eImportItemType.BusinessFlows:
-                            GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                            GlobalSolutionUtils.Instance.AddDependaciesForBusinessFlows(item, ref SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
-                            break;
-                        case GlobalSolution.eImportItemType.Agents:
-                            GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                            GlobalSolutionUtils.Instance.AddDependaciesForAgents(item, ref SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
-                            break;
-                        default:
-                            GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
-                            break;
+                                case GlobalSolution.eImportItemType.Environments:
+                                    GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref wiz.SelectedItemsListToImport);
+                                    GlobalSolutionUtils.Instance.AddDependaciesForEnvironment(item, ref wiz.SelectedItemsListToImport, ref wiz.VariableListToImport);
+                                    break;
+                                case GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup:
+                                    GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref wiz.SelectedItemsListToImport);
+                                    GlobalSolutionUtils.Instance.AddDependaciesForSharedActivityGroup(item, ref wiz.SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
+                                    break;
+                                case GlobalSolution.eImportItemType.SharedRepositoryActivities:
+                                    GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref wiz.SelectedItemsListToImport);
+                                    GlobalSolutionUtils.Instance.AddDependaciesForSharedActivity(item, ref wiz.SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
+                                    break;
+                                case GlobalSolution.eImportItemType.SharedRepositoryActions:
+                                    GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref wiz.SelectedItemsListToImport);
+                                    GlobalSolutionUtils.Instance.AddDependaciesForSharedAction(item, ref wiz.SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
+                                    break;
+                                case GlobalSolution.eImportItemType.SharedRepositoryVariables:
+                                    GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref wiz.SelectedItemsListToImport);
+                                    break;
+                                case GlobalSolution.eImportItemType.APIModels:
+                                    GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref wiz.SelectedItemsListToImport);
+                                    GlobalSolutionUtils.Instance.AddDependaciesForAPIModel(item, ref wiz.SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
+                                    break;
+                                case GlobalSolution.eImportItemType.POMModels:
+                                    GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref wiz.SelectedItemsListToImport);
+                                    GlobalSolutionUtils.Instance.AddDependaciesForPOMModel(item, ref wiz.SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
+                                    break;
+                                case GlobalSolution.eImportItemType.BusinessFlows:
+                                    GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref wiz.SelectedItemsListToImport);
+                                    GlobalSolutionUtils.Instance.AddDependaciesForBusinessFlows(item, ref wiz.SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
+                                    break;
+                                case GlobalSolution.eImportItemType.Agents:
+                                    GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref wiz.SelectedItemsListToImport);
+                                    GlobalSolutionUtils.Instance.AddDependaciesForAgents(item, ref wiz.SelectedItemsListToImport, ref wiz.VariableListToImport, ref wiz.EnvAppListToImport);
+                                    break;
+                                default:
+                                    GlobalSolutionUtils.Instance.AddItemToSelectedItemsList(item, ref wiz.SelectedItemsListToImport);
+                                    break;
 
+                            }
+                        }
                     }
-                }
-            }
 
-            foreach (GlobalSolutionItem gsi in SelectedItemsListToImport)
-            {
-                gsi.PropertyChanged -= Item_PropertyChanged;
-                gsi.PropertyChanged += Item_PropertyChanged;
+                    foreach (GlobalSolutionItem gsi in wiz.SelectedItemsListToImport)
+                    {
+                        gsi.PropertyChanged -= Item_PropertyChanged;
+                        gsi.PropertyChanged += Item_PropertyChanged;
+                    }
+                });
             }
-            return SelectedItemsListToImport;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+            finally
+            {
+                wiz.ProcessEnded();
+            }
         }
 
         private void MarkUnMarkAllItems(bool ActiveStatus)
@@ -162,7 +176,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             GlobalSolutionItem solutionItem = (GlobalSolutionItem)sender;
             if (!string.IsNullOrEmpty(solutionItem.RequiredFor))
             {
-                if (wiz.SelectedItemTypeListToImport.Where(x => x.ItemName == solutionItem.RequiredFor).FirstOrDefault().Selected && solutionItem.ItemImportSetting == GlobalSolution.eImportSetting.New)
+                if (wiz.SelectedItemsListToImport.Where(x => x.ItemName == solutionItem.RequiredFor).FirstOrDefault().Selected && solutionItem.ItemImportSetting == GlobalSolution.eImportSetting.New)
                 {
                     solutionItem.Selected = true;
                     xInfoMessageLabel.Content = "Dependant items with import setting as 'New' can not be unchecked as it must be imported.";
@@ -181,7 +195,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
         void CheckUncheckDependantItems(GlobalSolutionItem solutionItem)
         {
-            foreach (GlobalSolutionItem item in wiz.SelectedItemTypeListToImport.Where(x => x.RequiredFor == solutionItem.ItemName))
+            foreach (GlobalSolutionItem item in wiz.SelectedItemsListToImport.Where(x => x.RequiredFor == solutionItem.ItemName))
             {
                 item.Selected = solutionItem.Selected;
                 CheckUncheckDependantItems(item);

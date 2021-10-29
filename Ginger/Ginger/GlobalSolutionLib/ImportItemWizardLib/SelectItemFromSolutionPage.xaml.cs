@@ -47,8 +47,9 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     ((WizardWindow)wiz.mWizardWindow).ShowFinishButton(false);
 
                     SetItemsListToImportGridView();
-                    wiz.ItemsListToImport = GetItemsListToImport();
+                    
                     xItemsToImportGrid.DataSourceList = wiz.ItemsListToImport;
+                    GetItemsListToImport();
 
                     //Remove Variables, TargetApplication
                     wiz.ItemTypesList.Remove(GlobalSolution.eImportItemType.Variables.ToString());
@@ -84,59 +85,63 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             xItemsToImportGrid.MarkUnMarkAllActive += MarkUnMarkAllItems;
         }
 
-        public ObservableList<GlobalSolutionItem> GetItemsListToImport()
+        public async void GetItemsListToImport()
         {
-            ObservableList<GlobalSolutionItem> ItemsListToImport = new ObservableList<GlobalSolutionItem>();
-            foreach (GlobalSolutionItem item in wiz.ItemTypeListToImport.Where(x => x.Selected))
+            wiz.ItemsListToImport.ClearAll();
+            wiz.ProcessStarted();
+            await Task.Run(() =>
             {
-                string dirPath = string.Empty;
-                string searchPattern = "*.xml";
-                string[] filePaths = null;
-                if (item.ItemType == GlobalSolution.eImportItemType.Documents)
+                foreach (GlobalSolutionItem item in wiz.ItemTypeListToImport.Where(x => x.Selected))
                 {
-                    dirPath = Path.Combine(wiz.SolutionFolder, item.ItemType.ToString());
-                    searchPattern = "*";
-                }
-                else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup)
-                {
-                    dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "ActivitiesGroup");
-                }
-                else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActivities)
-                {
-                    dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "Activities");
-                }
-                else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActions)
-                {
-                    dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "Actions");
-                }
-                else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryVariables)
-                {
-                    dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "Variables");
-                }
-                else if (item.ItemType == GlobalSolution.eImportItemType.APIModels)
-                {
-                    dirPath = Path.Combine(wiz.SolutionFolder, "Applications Models", "API Models");
-                }
-                else if (item.ItemType == GlobalSolution.eImportItemType.POMModels)
-                {
-                    dirPath = Path.Combine(wiz.SolutionFolder, "Applications Models", "POM Models");
-                }
-                else
-                {
-                    dirPath = Path.Combine(wiz.SolutionFolder, item.ItemType.ToString());
-                }
-                if (Directory.Exists(dirPath))
-                {
-                    filePaths = Directory.GetFiles(dirPath, searchPattern, SearchOption.AllDirectories);
-                    foreach (string file in filePaths)
+                    string dirPath = string.Empty;
+                    string searchPattern = "*.xml";
+                    string[] filePaths = null;
+                    if (item.ItemType == GlobalSolution.eImportItemType.Documents)
                     {
-                        string itemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(file);
-                        string itemPath = GlobalSolutionUtils.Instance.ConvertToRelativePath(file);
-                        ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, itemPath, true, itemName, ""));
+                        dirPath = Path.Combine(wiz.SolutionFolder, item.ItemType.ToString());
+                        searchPattern = "*";
+                    }
+                    else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup)
+                    {
+                        dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "ActivitiesGroup");
+                    }
+                    else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActivities)
+                    {
+                        dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "Activities");
+                    }
+                    else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActions)
+                    {
+                        dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "Actions");
+                    }
+                    else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryVariables)
+                    {
+                        dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "Variables");
+                    }
+                    else if (item.ItemType == GlobalSolution.eImportItemType.APIModels)
+                    {
+                        dirPath = Path.Combine(wiz.SolutionFolder, "Applications Models", "API Models");
+                    }
+                    else if (item.ItemType == GlobalSolution.eImportItemType.POMModels)
+                    {
+                        dirPath = Path.Combine(wiz.SolutionFolder, "Applications Models", "POM Models");
+                    }
+                    else
+                    {
+                        dirPath = Path.Combine(wiz.SolutionFolder, item.ItemType.ToString());
+                    }
+                    if (Directory.Exists(dirPath))
+                    {
+                        filePaths = Directory.GetFiles(dirPath, searchPattern, SearchOption.AllDirectories);
+                        foreach (string file in filePaths)
+                        {
+                            string itemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(file);
+                            string itemPath = GlobalSolutionUtils.Instance.ConvertToRelativePath(file);
+                            wiz.ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, itemPath, true, itemName, ""));
+                        }
                     }
                 }
-            }
-            return ItemsListToImport;
+            });
+            wiz.ProcessEnded();
         }
 
         private void ItemTypeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
