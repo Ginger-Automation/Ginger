@@ -36,7 +36,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             InitializeComponent();
         }
 
-        public void WizardEvent(WizardEventArgs WizardEventArgs)
+        public async void WizardEvent(WizardEventArgs WizardEventArgs)
         {
             switch (WizardEventArgs.EventType)
             {
@@ -49,7 +49,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     SetItemsListToImportGridView();
                     
                     xItemsToImportGrid.DataSourceList = wiz.ItemsListToImport;
-                    GetItemsListToImport();
+                    await GetItemsListToImport();
 
                     //Remove Variables, TargetApplication
                     wiz.ItemTypesList.Remove(GlobalSolution.eImportItemType.Variables.ToString());
@@ -85,7 +85,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             xItemsToImportGrid.MarkUnMarkAllActive += MarkUnMarkAllItems;
         }
 
-        public async void GetItemsListToImport()
+        public async Task GetItemsListToImport()
         {
             wiz.ItemsListToImport.ClearAll();
             wiz.ProcessStarted();
