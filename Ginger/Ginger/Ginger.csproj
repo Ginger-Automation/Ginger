@@ -271,6 +271,9 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Activities\ConfigureErrorListPage.xaml.cs">
+      <DependentUpon>ConfigureErrorListPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ALM\JIRA\JiraZephyrCyclesExplorerPage.xaml.cs">
       <DependentUpon>JiraZephyrCyclesExplorerPage.xaml</DependentUpon>
     </Compile>
@@ -2584,6 +2587,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Actions\ActionEditPages\ActValidationEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Activities\ConfigureErrorListPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

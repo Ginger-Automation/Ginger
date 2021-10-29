@@ -59,9 +59,9 @@ namespace GingerCore
     }
     public enum eHandlerMappingType
     {
+        None = 0,
         [EnumValueDescription("All Available Error Handlers ")]
-        AllAvailableHandlers = 0,
-        None = 1,
+        AllAvailableHandlers = 1,
         [EnumValueDescription("Specific Error Handlers")]
         SpecificErrorHandlers = 2
     }
@@ -622,13 +622,13 @@ namespace GingerCore
             }
         }
 
-        public void Reset()
+        public void Reset(bool resetErrorHandlerExecutedFlag = false)
         {
             Elapsed = null;
             Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
             foreach (Act act in Acts)
             {
-                act.Reset();
+                act.Reset(resetErrorHandlerExecutedFlag);
             }
         }
 
