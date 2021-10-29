@@ -192,12 +192,11 @@ namespace GingerCore.NoSqlBase
             var collection = db.GetCollection<BsonDocument>(collectionName);
 
             var result = collection.Find(new BsonDocument()).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList();
-            Dictionary<string, object> dictionary = null;
             foreach(var row in result)
             {
-                dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(row.ToString());
+                IEnumerable<string> columnNames = row.Elements.Select(x => x.Name);
                 List <string> previousRowColumns = columns.ToList();
-                var currentRowColumns = previousRowColumns.Union(dictionary.Keys);
+                var currentRowColumns = previousRowColumns.Union(columnNames);
                 if (currentRowColumns.Count() > previousRowColumns.Count)
                 {
                     columns.Clear();//clear previousRowColumns columns
@@ -316,8 +315,17 @@ namespace GingerCore.NoSqlBase
                             Limit(Convert.ToInt32(GetQueryParamater(SQLCalculated, "limit"))).
                             ToList();
 
-                            var obj = result.ToJson();
-                            Act.ParseJSONToOutputValues(obj.ToString(), 1);
+                            Dictionary<string, object> keyValuePairs = new Dictionary<string, object>();
+                            int entries = 1;
+
+                            foreach (BsonDocument res in result)
+                            {
+                                keyValuePairs.Add(Convert.ToString(entries), res.ElementCount);
+                                ExtractValuesFromResult(res, keyValuePairs, entries);
+                                entries++;
+                            }
+
+                            Act.AddToOutputValues(keyValuePairs);
                         }
                         break;
                     case Actions.ActDBValidation.eDBValidationType.RecordCount:
@@ -383,9 +391,52 @@ namespace GingerCore.NoSqlBase
             {
                 Disconnect();
             }
-
-
         }
+
+        private void ExtractValuesFromResult(BsonDocument result, Dictionary<string, object> keyValuePairs, int count, string path = "")
+        {
+            foreach (BsonElement element in result.Elements)
+            {
+                string key = string.IsNullOrEmpty(path) ? $"{count}.{element.Name}" : $"{count}.{path}{element.Name}";
+
+                if (element.Value.BsonType == BsonType.Document)
+                {
+                    BsonDocument bsonDocument = (BsonDocument)element.Value;
+                    keyValuePairs.Add(key, bsonDocument.ElementCount);
+                    string newPath = $"{path}{element.Name}.";
+                    ExtractValuesFromResult(bsonDocument, keyValuePairs, count, newPath);
+                }
+                else if (element.Value.BsonType == BsonType.Array)
+                {
+                    ExtractArrayElements((BsonArray)element.Value, keyValuePairs, key);
+                }
+                else
+                {
+                    keyValuePairs.Add(key, element.Value);
+                }
+            }
+        }
+
+        private void ExtractArrayElements(BsonArray element, Dictionary<string, object> keyValuePairs, string key)
+        {
+            int index = 1;
+            keyValuePairs.Add(key, element.Count);
+            foreach (var arrayElement in element)
+            {
+                if (arrayElement.BsonType == BsonType.Array)
+                {
+                    string newKey = $"{key}[{index}]";
+                    ExtractArrayElements((BsonArray)arrayElement, keyValuePairs, key);
+                }
+                else
+                {
+                    keyValuePairs.Add($"{key}[{index}]", arrayElement.ToString());
+                }
+
+                index++;
+            }
+        }
+
         void UpdateCollection(string query, IMongoCollection<BsonDocument> collection)
         {
             string updateQueryParams = GetUpdateQueryParams(query);

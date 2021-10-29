@@ -839,6 +839,10 @@ namespace Ginger.Run
 
             mCurrentSelectedRunner.RunnerPageListener.UpdateBusinessflowActivities -= UpdateBusinessflowActivities;
             mCurrentSelectedRunner.RunnerPageListener.UpdateBusinessflowActivities += UpdateBusinessflowActivities;
+
+            mCurrentSelectedRunner.CheckIfRunsetDirty -= mCurrentSelectedRunner_CheckIfRunsetDirty;
+            mCurrentSelectedRunner.CheckIfRunsetDirty += mCurrentSelectedRunner_CheckIfRunsetDirty;
+
             UpdateRunnerTime();
 
             //set it as flow diagram current item
@@ -866,6 +870,14 @@ namespace Ginger.Run
             }
         }
 
+        private void mCurrentSelectedRunner_CheckIfRunsetDirty(object sender, EventArgs e)
+        {
+            bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified;
+            if (bIsRunsetDirty)
+            {
+                UserSelectionSaveOrUndoRunsetChanges();
+            }
+        }
 
         private void UpdateBusinessflowActivities(object sender, EventArgs e)
         {
@@ -994,19 +1006,13 @@ namespace Ginger.Run
             RunnerFlowelement.OtherInfoVisibility = Visibility.Collapsed;
             RunnerFlowelement.Tag = GRP.Tag;
             RunnerFlowelement.MouseDoubleClick += RunnerFlowelement_MouseDoubleClick;
-            mFlowDiagram.AddFlowElem(RunnerFlowelement, index);
+
             if (mFlowDiagram.mCurrentFlowElem != null)
             {
-                FlowLink FL = new FlowLink(mFlowDiagram.mCurrentFlowElem, RunnerFlowelement, true);
-                FL.LinkStyle = FlowLink.eLinkStyle.Arrow;
-                FL.SourcePosition = FlowLink.eFlowElementPosition.Right;
-                FL.Tag = RunnerFlowelement.Tag;
-                FL.DestinationPosition = FlowLink.eFlowElementPosition.Left;
-                FL.Margin = new Thickness(0, 0, mFlowX, 0);
-
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FL, FlowLink.VisibilityProperty, mRunSetConfig, nameof(RunSetConfig.RunModeParallel), bindingConvertor: new ReverseBooleanToVisibilityConverter(), System.Windows.Data.BindingMode.OneWay);
-                mFlowDiagram.AddConnector(FL);
+                AddConnectorFlow(RunnerFlowelement);
             }
+
+            mFlowDiagram.AddFlowElem(RunnerFlowelement, index);
 
             mFlowDiagram.mCurrentFlowElem = RunnerFlowelement;
 
@@ -1016,6 +1022,19 @@ namespace Ginger.Run
             GRP.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
             mFlowX = mFlowX + 610;
             return GRP;
+        }
+
+        private void AddConnectorFlow(FlowElement RunnerFlowelement)
+        {
+            FlowLink FL = new FlowLink(mFlowDiagram.mCurrentFlowElem, RunnerFlowelement, true);
+            FL.LinkStyle = FlowLink.eLinkStyle.Arrow;
+            FL.SourcePosition = FlowLink.eFlowElementPosition.Right;
+            FL.Tag = RunnerFlowelement.Tag;
+            FL.DestinationPosition = FlowLink.eFlowElementPosition.Left;
+            FL.Margin = new Thickness(0, 0, mFlowX, 0);
+
+            BindingHandler.ObjFieldBinding(FL, FlowLink.VisibilityProperty, mRunSetConfig, nameof(RunSetConfig.RunModeParallel), bindingConvertor: new ReverseBooleanToVisibilityConverter(), System.Windows.Data.BindingMode.OneWay);
+            mFlowDiagram.AddConnector(FL);
         }
 
         private void RunnerFlowelement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -1224,6 +1243,11 @@ namespace Ginger.Run
         {
             try
             {
+                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified;
+                if (bIsRunsetDirty)
+                {
+                    UserSelectionSaveOrUndoRunsetChanges();
+                }
                 this.Dispatcher.Invoke(() =>
                 {
                     xRunSetLoadingPnl.Visibility = Visibility.Visible;
@@ -1444,32 +1468,40 @@ namespace Ginger.Run
 
         }
 
+        /// <summary>
+        /// moved dirty tracking handling to common function
+        /// </summary>
+        private void UserSelectionSaveOrUndoRunsetChanges()
+        {
+            eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.SaveRunsetChanges, "Please save or reset RunSet changes");
+            switch (userSelection)
+            {
+                case eUserMsgSelection.Yes:
+                    xRunsetSaveBtn.DoClick();
+                    return;
+                case eUserMsgSelection.No:
+                    mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
+
+                    if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true, true, false))
+                    {
+                        mRunSetConfig.SaveBackup();
+                        mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                    }
+                    mRunSetConfig.DirtyStatus = eDirtyStatus.NoChange;
+                    return;
+                default:
+                    //do nothing
+                    return;
+            }
+        }
+
         private async void xRunRunsetBtn_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (RunSetConfig.DirtyStatus.Equals(eDirtyStatus.Modified))
                 {
-                    eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.SaveRunsetChanges, "Please save or reset RunSet changes");
-                    switch (userSelection)
-                    {
-                        case eUserMsgSelection.Yes:
-                            xRunsetSaveBtn.DoClick();
-                            break;
-                        case eUserMsgSelection.No:
-                            mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
-
-                            if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true))
-                            {
-                                mRunSetConfig.SaveBackup();
-                                mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
-                            }
-                            mRunSetConfig.DirtyStatus = eDirtyStatus.NoChange;
-                            break;
-                        default:
-                            //do nothing
-                            break;
-                    }
+                    UserSelectionSaveOrUndoRunsetChanges();
                 }
 
                 xRunsetSaveBtn.IsEnabled = false;

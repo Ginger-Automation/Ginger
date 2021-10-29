@@ -1029,6 +1029,14 @@ namespace GingerCore.Actions
             }
         }
 
+        public void AddToOutputValues(Dictionary<string, object> keyValuePairs)
+        {
+            foreach (KeyValuePair<string, object> keyValuePair in keyValuePairs)
+            {
+                AddJsonKeyValueToOutputValue(keyValuePair.Value, keyValuePair.Key, 1);
+            }
+        }
+
         private void AddJsonKeyValueToOutputValue(object Value, string Key, int Path)
         {
             try
