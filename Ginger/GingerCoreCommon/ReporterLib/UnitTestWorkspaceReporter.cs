@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -41,7 +41,7 @@ namespace Amdocs.Ginger.Common
         public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
             // For unit tests we write to console too
-            Console.WriteLine("ToLog: " + messageToLog);
+            Console.WriteLine("ToLog: " + messageToLog + " " + exceptionToLog);
         }
 
         public override void ToStatus(eStatusMsgType messageType, string statusText)
