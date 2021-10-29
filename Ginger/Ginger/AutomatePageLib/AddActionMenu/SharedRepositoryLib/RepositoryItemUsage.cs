@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel;
 using GingerCore;
 using Amdocs.Ginger.Repository;
+using System.Collections.Generic;
 
 namespace Ginger.Repository
 {
@@ -36,10 +37,37 @@ namespace Ginger.Repository
             SaveFailed,
         }
 
+        public enum eRepositoryItemPublishType
+        {
+            None,
+            [EnumValueDescription("Publish Instance")]
+            PublishInstance,
+           // [EnumValueDescription("Publish Linked Instance")]
+           // PublishLinkedInstance
+        }
+
+        public enum ePublishStatus
+        {
+            [EnumValueDescription("Not Published")]
+            NotPublished,
+            Published,
+        }
+
+        public enum eInsertRepositoryInsatncePosition
+        {
+            [EnumValueDescription("At End")]
+            AtEnd,
+            [EnumValueDescription("Beginning")]
+            Beginning,
+            [EnumValueDescription("After Specific Activity")]
+            AfterSpecificActivity
+        }
+
         public enum eUsageTypes
         {
             Original,
-            Instance,           
+            Instance,
+            None,
         }
 
         public static class Fields
@@ -53,6 +81,10 @@ namespace Ginger.Repository
             public static string Status = "Status";
             public static string ItemParts = "ItemParts";
             public static string SelectedItemPart = "SelectedItemPart";
+
+            public static string RepositoryItemPublishType = "RepositoryItemPublishType";
+            public static string InsertRepositoryInsatncePosition = "InsertRepositoryInsatncePosition";
+            public static string PublishStatus = "PublishStatus";
         }
 
         bool mSelected;
@@ -94,6 +126,51 @@ namespace Ginger.Repository
                 }
             }
         }
+
+        private eRepositoryItemPublishType mRepositoryItemPublishType;
+        public eRepositoryItemPublishType RepositoryItemPublishType
+        {
+            get { return mRepositoryItemPublishType; }
+            set
+            {
+                if (mRepositoryItemPublishType != value)
+                {
+                    mRepositoryItemPublishType = value;
+                    OnPropertyChanged(Fields.RepositoryItemPublishType);
+                }
+            }
+        }
+
+        private eInsertRepositoryInsatncePosition mInsertRepositoryInsatncePosition;
+        public eInsertRepositoryInsatncePosition InsertRepositoryInsatncePosition
+        {
+            get { return mInsertRepositoryInsatncePosition; }
+            set
+            {
+                if (mInsertRepositoryInsatncePosition != value)
+                {
+                    mInsertRepositoryInsatncePosition = value;
+
+                    OnPropertyChanged(Fields.InsertRepositoryInsatncePosition);
+                }
+            }
+        }
+
+        private ePublishStatus mPublishStatus;
+        public ePublishStatus PublishStatus
+        {
+            get { return mPublishStatus; }
+            set
+            {
+                if (mPublishStatus != value)
+                {
+                    mPublishStatus = value;
+
+                    OnPropertyChanged(Fields.PublishStatus);
+                }
+            }
+        }
+
 
         ObservableList<string> mItemParts = new ObservableList<string>();
         public ObservableList<string> ItemParts

@@ -468,6 +468,9 @@
     <Compile Include="AutomatePageLib\AddActionMenu\Recording\RecordNavPage.xaml.cs">
       <DependentUpon>RecordNavPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemPublishInfoPage.xaml.cs">
+      <DependentUpon>RepositoryItemPublishInfoPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositoryNavPage.xaml.cs">
       <DependentUpon>SharedRepositoryNavPage.xaml</DependentUpon>
     </Compile>
@@ -2891,6 +2894,10 @@
     <Page Include="AutomatePageLib\AddActionMenu\Recording\RecordNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemPublishInfoPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositoryNavPage.xaml">
       <SubType>Designer</SubType>
