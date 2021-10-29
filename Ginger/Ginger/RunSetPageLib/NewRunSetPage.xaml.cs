@@ -1006,19 +1006,13 @@ namespace Ginger.Run
             RunnerFlowelement.OtherInfoVisibility = Visibility.Collapsed;
             RunnerFlowelement.Tag = GRP.Tag;
             RunnerFlowelement.MouseDoubleClick += RunnerFlowelement_MouseDoubleClick;
-            mFlowDiagram.AddFlowElem(RunnerFlowelement, index);
+
             if (mFlowDiagram.mCurrentFlowElem != null)
             {
-                FlowLink FL = new FlowLink(mFlowDiagram.mCurrentFlowElem, RunnerFlowelement, true);
-                FL.LinkStyle = FlowLink.eLinkStyle.Arrow;
-                FL.SourcePosition = FlowLink.eFlowElementPosition.Right;
-                FL.Tag = RunnerFlowelement.Tag;
-                FL.DestinationPosition = FlowLink.eFlowElementPosition.Left;
-                FL.Margin = new Thickness(0, 0, mFlowX, 0);
-
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FL, FlowLink.VisibilityProperty, mRunSetConfig, nameof(RunSetConfig.RunModeParallel), bindingConvertor: new ReverseBooleanToVisibilityConverter(), System.Windows.Data.BindingMode.OneWay);
-                mFlowDiagram.AddConnector(FL);
+                AddConnectorFlow(RunnerFlowelement);
             }
+
+            mFlowDiagram.AddFlowElem(RunnerFlowelement, index);
 
             mFlowDiagram.mCurrentFlowElem = RunnerFlowelement;
 
@@ -1028,6 +1022,19 @@ namespace Ginger.Run
             GRP.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
             mFlowX = mFlowX + 610;
             return GRP;
+        }
+
+        private void AddConnectorFlow(FlowElement RunnerFlowelement)
+        {
+            FlowLink FL = new FlowLink(mFlowDiagram.mCurrentFlowElem, RunnerFlowelement, true);
+            FL.LinkStyle = FlowLink.eLinkStyle.Arrow;
+            FL.SourcePosition = FlowLink.eFlowElementPosition.Right;
+            FL.Tag = RunnerFlowelement.Tag;
+            FL.DestinationPosition = FlowLink.eFlowElementPosition.Left;
+            FL.Margin = new Thickness(0, 0, mFlowX, 0);
+
+            BindingHandler.ObjFieldBinding(FL, FlowLink.VisibilityProperty, mRunSetConfig, nameof(RunSetConfig.RunModeParallel), bindingConvertor: new ReverseBooleanToVisibilityConverter(), System.Windows.Data.BindingMode.OneWay);
+            mFlowDiagram.AddConnector(FL);
         }
 
         private void RunnerFlowelement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
