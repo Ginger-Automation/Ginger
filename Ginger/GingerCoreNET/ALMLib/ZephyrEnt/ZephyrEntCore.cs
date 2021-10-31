@@ -50,6 +50,7 @@ namespace GingerCore.ALM
         }
 
         public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.ZephyrEnterprise;
+        bool isConnectALM = false;
 
         public ZephyrEntCore()
         {
@@ -214,7 +215,7 @@ namespace GingerCore.ALM
         }
         public override bool IsServerConnected()
         {
-            throw new NotImplementedException();
+            return isConnectALM;
         }
         public List<BaseResponseItem> GetTreeByCretiria(string type, int releaseId, int revisionId, int parentId)
         {
