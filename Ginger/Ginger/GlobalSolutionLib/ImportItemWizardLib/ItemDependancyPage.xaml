@@ -10,15 +10,13 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}" Margin="10,10,10,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
             <Label x:Name="xInfoMessageLabel" Style="{StaticResource $LabelStyle}" Foreground="Red"></Label>
-        </StackPanel>
-        <StackPanel Grid.Row="1">
             <Label Style="{StaticResource $LabelStyle}">Selected solution items with their dependent items List:</Label>
-            <Ginger:ucGrid x:Name="xDependantItemsToImportGrid" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
         </StackPanel>
+        <Ginger:ucGrid Grid.Row="1" x:Name="xDependantItemsToImportGrid" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
     </Grid>
 </Page>

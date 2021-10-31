@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="1d30db95-84df-43d3-8bc8-1ee77cd29299" ItemType="BusinessFlow" CreatedBy="MENIK" Created="202108011740" GingerVersion="3.9.0.0" Version="8" LastUpdateBy="MENIK" LastUpdate="202108181753" />
+<BusinessFlow Elapsed="1905" ExternalID="88895" ExternalID2="6905" Guid="1d30db95-84df-43d3-8bc8-1ee77cd29299" Name="API-Create Pet" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Create Pet &amp; Validate" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="7f660801-28c9-446d-82dd-d93a0f3f8db5" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="75%" TargetApplication="WebServices-App">
+<Acts>
+<ActSetVariableValue Active="True" Description="Set PetID" Guid="332fceea-9e6e-47f0-a5ad-b5581c44f2e2" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SetVariableValueOption="AutoGenerateValue" StatusConverter="None" VariableName="PetID" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="f80ad17d-37db-4c4e-ae18-4e31fcb8d869" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActSetVariableValue>
+<ActSetVariableValue Active="True" Description="Set PetName" Guid="ab463066-2bf0-4b78-9806-5dda4f4550f7" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SetVariableValueOption="AutoGenerateValue" StatusConverter="None" VariableName="PetName" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="a43ef8e0-f987-4e68-b731-9299392220f6" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActSetVariableValue>
+<ActWebAPIModel Active="True" Description="Add a new pet to the store-JSON- API Model Execution" Guid="0511abc5-8423-457d-8ee0-e9f90a372cbe" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<APIModelParamsValue>
+<EnhancedActInputValue Guid="6ff0b4f1-8fa0-474b-8138-8d3a40768811" Param="&lt;PetID&gt;" ParamGuid="3fedd2d5-1ad7-42fa-9cc9-0671664bd473" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{Var Name=PetID}" />
+<EnhancedActInputValue Guid="6175287a-47ec-49ad-97f0-2c717f35b13c" Param="&lt;CatID&gt;" ParamGuid="18428aea-51dc-4318-afa6-b49221005b1b" ParentGuid="00000000-0000-0000-0000-000000000000" Value="456" />
+<EnhancedActInputValue Guid="b9047b28-bf75-474c-b91b-a9d1950c95fd" Param="&lt;catNAME&gt;" ParamGuid="ee224fcc-4b80-4682-8e06-698dc4370503" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Dogs" />
+<EnhancedActInputValue Guid="537e881b-97ae-46de-bd2a-956d037b2dd1" Param="&lt;PetNAME&gt;" ParamGuid="ae5484f6-662c-47b2-b866-63ed5dcd6fe3" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{Var Name=PetName}" />
+</APIModelParamsValue>
+
+<InputValues>
+<ActInputValue Guid="ea2eb4b0-fb50-4f89-9308-11fd478bb539" Param="APImodelGUID" ParentGuid="00000000-0000-0000-0000-000000000000" Value="5a7884c6-db8c-460f-b9b0-21e285a1d622" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="f2f3445e-a08b-4ca9-aa1e-bae404ba3320" mExpected="{Var Name=PetID}" Operator="Equals" Param="id" ParentGuid="00000000-0000-0000-0000-000000000000" Path="1" StoreTo="None" />
+<ActReturnValue Active="True" Guid="ec5e4161-36cc-46dd-be45-e3c9812d2b06" mExpected="{Var Name=PetName}" Operator="Equals" Param="name" ParentGuid="00000000-0000-0000-0000-000000000000" Path="1" StoreTo="None" />
+</ReturnValues>
+</ActWebAPIModel>
+<ActWebAPIModel Description="Find pet by ID- API Model Execution" Guid="95aba174-9cbb-482c-8cb5-6ef79ba70aa1" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<APIModelParamsValue>
+<EnhancedActInputValue Description="{petId}in url" Guid="3849df39-5541-425f-a2cc-88eff9dcd6c4" Param="&lt;{PETID}&gt;" ParamGuid="bbf5fdde-97c9-401e-96f1-45a0f4676a49" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{Var Name=PetID}" />
+</APIModelParamsValue>
+
+<InputValues>
+<ActInputValue Guid="daaaf31b-971a-4e85-9093-3136cee93792" Param="APImodelGUID" ParentGuid="00000000-0000-0000-0000-000000000000" Value="2bfc0610-8228-4b3b-867e-06deb4864dd9" />
+</InputValues>
+</ActWebAPIModel>
+</Acts>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup ExternalID="1559578" ExternalID2="1557618" Guid="c4d39511-788e-4c93-9b9d-adde78acffa0" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="7f660801-28c9-446d-82dd-d93a0f3f8db5" ActivityName="Create Pet &amp; Validate" Guid="0e7d9640-180d-4139-869a-b7c8b769a09b" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="WebServices-App" Guid="414fd479-5507-4736-b563-2b57684f87d9" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+
+<Variables>
+<VariableRandomNumber Guid="318a7ac7-d5fa-499e-bfbc-6208df4857e5" Interval="12" IsInteger="True" MappedOutputType="None" Max="100000" Min="100" Name="PetID" ParentGuid="1d30db95-84df-43d3-8bc8-1ee77cd29299" ParentName="API-Create Pet" ParentType="Business Flow" SetAsInputValue="False" SetAsOutputValue="False" />
+<VariableRandomString Guid="941def12-5c1e-4f4e-976c-ff9ff6d91671" IsLowerCase="True" MappedOutputType="None" Max="10" Min="4" Name="PetName" ParentGuid="1d30db95-84df-43d3-8bc8-1ee77cd29299" ParentName="API-Create Pet" ParentType="Business Flow" SetAsInputValue="False" SetAsOutputValue="False" />
+</Variables>
+</BusinessFlow></GingerRepositoryItem>

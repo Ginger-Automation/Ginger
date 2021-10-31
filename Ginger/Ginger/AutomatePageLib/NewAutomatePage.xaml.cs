@@ -873,7 +873,7 @@ namespace GingerWPF.BusinessFlowsLib
                 }
 
                 //execute preparations               
-                mRunner.ResetRunnerExecutionDetails();
+                mRunner.ResetRunnerExecutionDetails(false,true);
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
 
                 //execute                
@@ -920,7 +920,7 @@ namespace GingerWPF.BusinessFlowsLib
                 mContext.BusinessFlow.CurrentActivity = activity;
                 mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = Ginger.Reports.ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun;
 
-                await mRunner.RunActivityAsync((Activity)activity, false, true).ConfigureAwait(false);
+                await mRunner.RunActivityAsync((Activity)activity, false, true, resetErrorHandlerExecutedFlag: true).ConfigureAwait(false);
 
                 //When running Runactivity as standalone from GUI, SetActionSkipStatus is not called. Handling it here for now.
                 foreach (Act act in activity.Acts)
@@ -963,6 +963,10 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             Act actionToExecute = actionToExecuteInfo.Item2;
+
+            // set errorhandler execution status
+            actionToExecute.ErrorHandlerExecuted = false;
+
             if (parentActivity.Acts.Count() == 0 && !skipInternalValidations)
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to Run.");
@@ -1021,6 +1025,7 @@ namespace GingerWPF.BusinessFlowsLib
                     ((Agent)mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
                 }
             }
+
         }
 
         private async Task ContinueRunFromAutomatePage(eContinueFrom continueFrom, object executedItem = null)

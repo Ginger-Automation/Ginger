@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages;
 using Ginger.Repository.AddItemToRepositoryWizard;
@@ -46,6 +47,16 @@ namespace Ginger.Repository
         Context mContext;
         GenericWindow _pageGenericWin = null;
         public enum ePageViewMode { Default, Selection }
+
+        public enum eActivityType 
+        {
+            [EnumValueDescription("Regular Activity")]
+            Regular,
+            [EnumValueDescription("Error Handler")]
+            ErrorHandler,
+            [EnumValueDescription("CleanUp Activity")]
+            CleanUpActivity
+        }
 
         ePageViewMode mViewMode;
 
@@ -111,11 +122,47 @@ namespace Ginger.Repository
 
                 xActivitiesRepositoryGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditActivity));
 
+                xActivitiesRepositoryGrid.AddComboBoxToolbarTool("FilterBy Type", typeof(eActivityType), ActivityType_SelectionChanged,"All");
+
                 xActivitiesRepositoryGrid.RowDoubleClick += grdActivitiesRepository_grdMain_MouseDoubleClick;
                 xActivitiesRepositoryGrid.ItemDropped += grdActivitiesRepository_ItemDropped;
                 xActivitiesRepositoryGrid.PreviewDragItem += grdActivitiesRepository_PreviewDragItem;
                 xActivitiesRepositoryGrid.ShowTagsFilter = Visibility.Visible;
             }
+        }
+
+        private void ActivityType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedItem = ((ComboBox)sender).SelectedItem;
+
+            var allActiivtyType = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+
+            if (selectedItem.ToString().Equals("All"))
+            {
+                xActivitiesRepositoryGrid.DataSourceList = allActiivtyType;
+                return;
+            }
+            selectedItem = ((GingerCore.GeneralLib.ComboEnumItem)selectedItem).Value.ToString();
+
+            ObservableList<Activity> activities = new ObservableList<Activity>();
+            foreach (Activity item in allActiivtyType)
+            {
+                if (selectedItem.Equals(eActivityType.ErrorHandler.ToString()) && item.GetType() == typeof(ErrorHandler))
+                {
+                    activities.Add(item);
+                }
+                else if (selectedItem.Equals(eActivityType.CleanUpActivity.ToString()) && item.GetType() == typeof(CleanUpActivity))
+                {
+                    activities.Add(item);
+                }
+                else if (selectedItem.Equals(eActivityType.Regular.ToString()) && item.GetType() == typeof(Activity))
+                {
+                    activities.Add(item);
+                }
+ 
+            }
+
+            xActivitiesRepositoryGrid.DataSourceList = activities;
         }
 
         private void AddFromRepository(object sender, RoutedEventArgs e)
