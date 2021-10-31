@@ -107,10 +107,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>D:\Sandesh workspace\Microsoft.Office.Interop.Outlook.dll</HintPath>
     </Reference>
-    <Reference Include="OctaneSdkStandard, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\OctaneSdkStandard.dll</HintPath>
-    </Reference>
     <Reference Include="Octane_Repository">
       <HintPath>DLLs\Octane_Repository.dll</HintPath>
     </Reference>

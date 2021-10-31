@@ -27,17 +27,18 @@ using GingerCore.ALM.QC;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using MicroFocus.Adm.Octane.Api.Core.Connector;
 using OctaneRepositoryStd;
-using OctaneSdkStandard.Connector;
-using OctaneSdkStandard.Connector.Credentials;
-using OctaneSdkStandard.Entities.Base;
-using OctaneSdkStandard.Entities.Releases;
-using OctaneSdkStandard.Entities.Tests;
-using OctaneSdkStandard.Entities.Users;
-using OctaneSdkStandard.Entities.WorkItems;
-using OctaneSdkStandard.Services;
-using OctaneSdkStandard.Services.Queries;
-using OctaneSdkStandard.Services.RequestContext;
+using OctaneStdSDK.Connector;
+using OctaneStdSDK.Connector.Credentials;
+using OctaneStdSDK.Entities.Base;
+using OctaneStdSDK.Entities.Releases;
+using OctaneStdSDK.Entities.Tests;
+using OctaneStdSDK.Entities.Users;
+using OctaneStdSDK.Entities.WorkItems;
+using OctaneStdSDK.Services;
+using OctaneStdSDK.Services.Queries;
+using OctaneStdSDK.Services.RequestContext;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -233,7 +234,7 @@ namespace GingerCore.ALM
                         else
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, "Performing Octane Sys-2-Sys connection");
-                            APIKeyConnectionInfo aPIKeyConnectionInfo = new APIKeyConnectionInfo(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword);
+                            OctaneStdSDK.Connector.Credentials.APIKeyConnectionInfo aPIKeyConnectionInfo = new OctaneStdSDK.Connector.Credentials.APIKeyConnectionInfo(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword);
                             ClientCertificateData clientCertificateData = null;
                             if (ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath != null)
                             {
@@ -463,10 +464,12 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, "ExportExecutionDetailsToALM");
             result = string.Empty;
             ObservableList<ExternalItemFieldBase> runFields;
             if (WorkSpace.Instance.RunningInExecutionMode)
             {
+                Reporter.ToLog(eLogLevel.DEBUG, "WorkSpace.Instance.RunningInExecutionMode=true");
                 runFields = GetSolutionALMFields("Run");
             }
             else
@@ -479,6 +482,7 @@ namespace GingerCore.ALM
                 result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + bizFlow.Name + " is missing ExternalID, cannot locate QC TestSet without External ID";
                 return false;
             }
+            Reporter.ToLog(eLogLevel.DEBUG, "Before try");
             try
             {
                 if ((publishToALMConfig.VariableForTCRunName == null) || (publishToALMConfig.VariableForTCRunName == string.Empty))
