@@ -27,7 +27,6 @@ using GingerCore.ALM.QC;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using MicroFocus.Adm.Octane.Api.Core.Connector;
 using OctaneRepositoryStd;
 using OctaneStdSDK.Connector;
 using OctaneStdSDK.Connector.Credentials;
