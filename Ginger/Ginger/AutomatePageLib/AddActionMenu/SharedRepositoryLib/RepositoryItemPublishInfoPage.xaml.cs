@@ -35,6 +35,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using System.Collections;
+using GingerCore.GeneralLib;
 
 namespace Ginger.Repository
 {
@@ -63,12 +65,12 @@ namespace Ginger.Repository
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.Selected, Header = "Selected", StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 5 });
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.UsageItemName, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name", WidthWeight = 15, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.HostBizFlowPath, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Path", WidthWeight = 20, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.RepositoryItemPublishType, Header = "Publish Type", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eRepositoryItemPublishType)) });
+            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.InsertRepositoryInsatncePosition, Header = "Insert At", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template,
+                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eInsertRepositoryInsatncePosition)), nameof(RepositoryItemUsage.InsertRepositoryInsatncePosition), comboSelectionChangedHandler: InsertPositionCobmo_SelectionChanged) });
 
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.RepositoryItemPublishType, Header = "Publish Type", WidthWeight = 10,StyleType = GridColView.eGridColStyleType.ComboBox,CellValuesList= GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eRepositoryItemPublishType)) });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.InsertRepositoryInsatncePosition, Header = "Insert At", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eInsertRepositoryInsatncePosition)) });
-
-            //view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.InsertAfterActivity, Header = "Index Activity", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList =  });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.PublishStatus, Header = "Status",WidthWeight = 20,ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemUsage.IndexActivityName), Header = "Index Activity", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(RepositoryItemUsage.ActivityNameList), nameof(RepositoryItemUsage.IndexActivityName), true) });
+            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.PublishStatus, Header = "Status", WidthWeight = 20, ReadOnly = true });
 
             xRepoItemPublisIngoGrid.SetAllColumnsDefaultView(view);
             xRepoItemPublisIngoGrid.InitViewItems();
@@ -77,13 +79,30 @@ namespace Ginger.Repository
             xRepoItemPublisIngoGrid.AddToolbarTool("@DropDownList_16x16.png", "Set Same Selected Part to All", new RoutedEventHandler(SetSamePartToAll));
         }
 
+         private void InsertPositionCobmo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var currentItem = (RepositoryItemUsage)xRepoItemPublisIngoGrid.CurrentItem;
+
+            if (currentItem != null && currentItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AfterSpecificActivity)
+            {
+                var activityIndex = 0;
+                foreach (var item in currentItem.HostBusinessFlow.Activities)
+                {
+                    currentItem.ActivityNameList.Add(activityIndex + "-" + item.ActivityName);
+                    activityIndex++;
+                }
+
+                GingerCore.General.DoEvents();
+            }
+        }
+
         private void SetSamePartToAll(object sender, RoutedEventArgs e)
         {
             if (xRepoItemPublisIngoGrid.CurrentItem != null)
             {
                 RepositoryItemUsage a = (RepositoryItemUsage)xRepoItemPublisIngoGrid.CurrentItem;
                 foreach (RepositoryItemUsage usage in mRepoItemUsages)
-                    usage.SelectedItemPart = a.SelectedItemPart;
+                    usage.InsertRepositoryInsatncePosition = a.InsertRepositoryInsatncePosition;
             }
             else
             {
@@ -123,7 +142,24 @@ namespace Ginger.Repository
                     {
                         if (repositoryItem.Selected && repositoryItem.RepositoryItemPublishType == RepositoryItemUsage.eRepositoryItemPublishType.PublishInstance)
                         {
-                            repositoryItem.HostBusinessFlow.AddActivity((ErrorHandler)mRepoItem);
+                            Activity activityCopy = (Activity)mRepoItem.CreateInstance(true);
+                            activityCopy.Active = true;
+
+                            if(repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd)
+                            {
+                                repositoryItem.HostBusinessFlow.AddActivity(activityCopy,repositoryItem.HostBusinessFlow.ActivitiesGroups.Last());
+                            }
+                            else if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.Beginning)
+                            {
+                                repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(),insertIndex:0);
+                            }
+                            else if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AfterSpecificActivity)
+                            {
+                                var indexToAdd = Convert.ToInt32(repositoryItem.IndexActivityName[0].ToString());
+                                repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(), insertIndex: indexToAdd);
+                            }
+                            repositoryItem.PublishStatus = RepositoryItemUsage.ePublishStatus.Published;
+                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(repositoryItem.HostBusinessFlow);
                         }
                     }
                     catch (Exception ex)
@@ -164,7 +200,7 @@ namespace Ginger.Repository
                             }
                             if (!isPublishedInBF)
                             {
-                                itemUsage = new() { HostBusinessFlow = BF, HostBizFlowPath = System.IO.Path.Combine(BF.ContainingFolder, businessFlowName), UsageItemName = businessFlowName, UsageItemType = usageType, Selected = false, RepositoryItemPublishType = RepositoryItemUsage.eRepositoryItemPublishType.None,InsertRepositoryInsatncePosition = RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd,BusinessFlowActivityList = BF.Activities.ToList() };
+                                itemUsage = new() { HostBusinessFlow = BF, HostBizFlowPath = System.IO.Path.Combine(BF.ContainingFolder, businessFlowName), UsageItemName = businessFlowName, UsageItemType = usageType, Selected = false, RepositoryItemPublishType = RepositoryItemUsage.eRepositoryItemPublishType.PublishInstance, InsertRepositoryInsatncePosition = RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd };
                                 AddBFUsageInList(itemUsage);
                             }
                         }

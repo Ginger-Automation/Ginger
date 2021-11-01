@@ -22,6 +22,8 @@ using System.ComponentModel;
 using GingerCore;
 using Amdocs.Ginger.Repository;
 using System.Collections.Generic;
+using System.Collections;
+using GingerCore.GeneralLib;
 
 namespace Ginger.Repository
 {
@@ -39,7 +41,6 @@ namespace Ginger.Repository
 
         public enum eRepositoryItemPublishType
         {
-            None,
             [EnumValueDescription("Publish Instance")]
             PublishInstance,
            // [EnumValueDescription("Publish Linked Instance")]
@@ -85,6 +86,7 @@ namespace Ginger.Repository
             public static string RepositoryItemPublishType = "RepositoryItemPublishType";
             public static string InsertRepositoryInsatncePosition = "InsertRepositoryInsatncePosition";
             public static string PublishStatus = "PublishStatus";
+            public static string IndexActivityGuid = "IndexActivityGuid";
         }
 
         bool mSelected;
@@ -140,6 +142,34 @@ namespace Ginger.Repository
                 }
             }
         }
+
+        private string mIndexActivityName;
+        public string IndexActivityName
+        {
+            get { return mIndexActivityName; }
+            set
+            {
+                if (mIndexActivityName != value)
+                {
+                    mIndexActivityName = value;
+                    OnPropertyChanged(Fields.IndexActivityGuid);
+                }
+            }
+        }
+
+        private  ObservableList<string> mActivityList = new ObservableList<string>();
+       public  ObservableList<string> ActivityNameList
+        {
+            get
+            {
+                return mActivityList;
+            }
+            set
+            {
+                mActivityList = value;
+            }
+        }
+
 
         private eInsertRepositoryInsatncePosition mInsertRepositoryInsatncePosition;
         public eInsertRepositoryInsatncePosition InsertRepositoryInsatncePosition
