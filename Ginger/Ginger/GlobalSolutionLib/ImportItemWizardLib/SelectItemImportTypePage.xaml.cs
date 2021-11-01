@@ -75,7 +75,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
-                    else if (wiz.SolutionFolder == WorkSpace.Instance.SolutionRepository.SolutionFolder)
+                    else if (wiz.SolutionFolder.Contains(WorkSpace.Instance.SolutionRepository.SolutionFolder))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select different Solution Folder.");
                         WizardEventArgs.CancelEvent = true;
