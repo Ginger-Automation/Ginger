@@ -86,7 +86,7 @@ namespace Ginger.Repository
             public static string RepositoryItemPublishType = "RepositoryItemPublishType";
             public static string InsertRepositoryInsatncePosition = "InsertRepositoryInsatncePosition";
             public static string PublishStatus = "PublishStatus";
-            public static string IndexActivityGuid = "IndexActivityGuid";
+            public static string IndexActivityName = "IndexActivityName";
         }
 
         bool mSelected;
@@ -152,7 +152,7 @@ namespace Ginger.Repository
                 if (mIndexActivityName != value)
                 {
                     mIndexActivityName = value;
-                    OnPropertyChanged(Fields.IndexActivityGuid);
+                    OnPropertyChanged(Fields.IndexActivityName);
                 }
             }
         }
