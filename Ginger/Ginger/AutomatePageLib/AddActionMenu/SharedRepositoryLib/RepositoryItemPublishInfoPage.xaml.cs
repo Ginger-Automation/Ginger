@@ -156,7 +156,7 @@ namespace Ginger.Repository
                             else if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AfterSpecificActivity)
                             {
                                 var indexToAdd = Convert.ToInt32(repositoryItem.IndexActivityName[0].ToString());
-                                repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(), insertIndex: indexToAdd);
+                                repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(), insertIndex: indexToAdd+1);
                             }
                             repositoryItem.PublishStatus = RepositoryItemUsage.ePublishStatus.Published;
                             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(repositoryItem.HostBusinessFlow);
