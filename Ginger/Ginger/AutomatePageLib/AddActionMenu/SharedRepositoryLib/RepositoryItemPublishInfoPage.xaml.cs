@@ -117,7 +117,9 @@ namespace Ginger.Repository
             {
                 selectValue = !mRepoItemUsages[0].Selected;//decide if to take or not
                 foreach (RepositoryItemUsage usage in mRepoItemUsages)
+                {
                     usage.Selected = selectValue;
+                }
             }
         }
 
