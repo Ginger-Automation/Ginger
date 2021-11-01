@@ -207,15 +207,13 @@ namespace Ginger.Repository
 
 
                     });
+                    StopProcessingIcon();
                 });
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetBusinessFlowPublishedInfo", ex);
-            }
-            finally
-            {
                 StopProcessingIcon();
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetBusinessFlowPublishedInfo", ex);
             }
         }
 
