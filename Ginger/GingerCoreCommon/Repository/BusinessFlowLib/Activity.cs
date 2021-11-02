@@ -59,11 +59,14 @@ namespace GingerCore
     }
     public enum eHandlerMappingType
     {
-        None = 0,
+        [EnumValueDescription("Error Handlers Matching The Trigger")]
+        ErrorHandlersMatchingTrigger = 0,
+        None = 1,
         [EnumValueDescription("All Available Error Handlers ")]
-        AllAvailableHandlers = 1,
+        AllAvailableHandlers = 2,
         [EnumValueDescription("Specific Error Handlers")]
-        SpecificErrorHandlers = 2
+        SpecificErrorHandlers = 3,
+
     }
 
 
