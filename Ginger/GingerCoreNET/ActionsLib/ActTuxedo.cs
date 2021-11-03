@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Renci.SshNet;
@@ -30,7 +31,7 @@ using System.Threading;
 
 namespace GingerCore.Actions.Tuxedo
 {
-    public class ActTuxedo : ActWithoutDriver
+    public class ActTuxedo : ActWithoutDriver, IObsoleteAction
     {
         public new static partial class Fields
         {
@@ -47,6 +48,7 @@ namespace GingerCore.Actions.Tuxedo
 
         public override string ActionDescription { get { return "Tuxedo UD File Action"; } }
         public override string ActionUserDescription { get { return "Performs Tuxedo UD File action"; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -289,6 +291,31 @@ namespace GingerCore.Actions.Tuxedo
                 iCount++;
             }
             return cmdResult;
+        }
+
+        public bool IsObsoleteForPlatform(ePlatformType platform)
+        {
+            return true;
+        }
+
+        public Act GetNewAction()
+        {
+            return null;
+        }
+
+        public Type TargetAction()
+        {
+            return typeof(ActTuxedo);
+        }
+
+        public string TargetActionTypeName()
+        {
+            return string.Empty;
+        }
+
+        public ePlatformType GetTargetPlatform()
+        {
+            return ePlatformType.NA;
         }
     }
 }
