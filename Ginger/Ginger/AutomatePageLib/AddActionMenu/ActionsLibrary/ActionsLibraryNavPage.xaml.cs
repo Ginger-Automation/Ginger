@@ -54,6 +54,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         // bool IsPlugInAvailable = false;
         Context mContext;
 
+        ActionsListViewHelper mActionsListHelper;
+        Ginger.General.eRIPageViewMode mPageViewMode;
+
         public ActionsLibraryNavPage(Context context)
         {
             InitializeComponent();
@@ -162,11 +165,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
             }
 
-            //xPlatformActionsListView.DataSourceList = platformActions;
-            PlatformActionsGrid.DataSourceList = platformActions;
+            // Gidon Added, 11/3/2021
+            mActionsListHelper = new ActionsListViewHelper(mContext, mPageViewMode);
+            xPlatformActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
+            xPlatformActionsListView.ListSelectionMode = SelectionMode.Extended;
+
+            xPlatformActionsListView.DataSourceList = platformActions;
+            //----------------
+
+            //PlatformActionsGrid.DataSourceList = platformActions;            
+
             GeneralActionsGrid.DataSourceList = generalActions;
             LegacyActionsGrid.DataSourceList = LegacyActions;
-        }
+        }   
 
         private ObservableList<Act> GetPlatformsActions(bool ShowAll = false)
         {
@@ -229,7 +240,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void SetActionsGridsView()
         {
             //SetActionsListView(xPlatformActionsListView);
-            SetActionsGridView(PlatformActionsGrid);
+            //SetActionsGridView(PlatformActionsGrid); // Gidon removed, 11/3/2021
             SetActionsGridView(GeneralActionsGrid);
             SetActionsGridView(LegacyActionsGrid);
             SetActionsGridView(PlugInsActionsGrid);
