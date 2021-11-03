@@ -22,6 +22,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using System.Windows.Controls;
 using Ginger.Actions._Common.ActUIElementLib;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.Java
 {
@@ -31,9 +32,8 @@ namespace Ginger.WindowExplorer.Java
       UIElementTableConfigPage mUIElementTableConfigPage = null;
       StackPanel ITreeViewItem.Header()
       {
-          string ImageFileName = "@Grid_16x16.png";
-          return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
-      }
+            return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.Table));
+        }
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             return mAvailableActions;

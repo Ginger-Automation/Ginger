@@ -237,5 +237,9 @@ namespace Amdocs.Ginger.Repository
             }
 
         }
+        public override string GetItemType()
+        {
+            return nameof(ApplicationPOMModel);
+        }
     }
 }

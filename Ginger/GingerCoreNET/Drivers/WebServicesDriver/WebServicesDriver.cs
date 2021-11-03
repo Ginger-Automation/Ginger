@@ -169,7 +169,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public override void StartDriver()
         {
             if (ShowDriverWindowOnLaunch)
-                CreateSTA(mDriverWindow.ShowDriverWindow);
+                CreateSTA(ShowDriverWindow);
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
@@ -181,10 +181,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         private void ShowDriverWindow()
         {
+            mDriverWindow = WorkSpace.Instance.TargetFrameworkHelper.GetWebserviceDriverWindow(BusinessFlow);
             mDriverWindow.ShowDriverWindow();
 
-            Dispatcher = mDriverWindow.GingerDispatcher;
-
+            this.Dispatcher = mDriverWindow.GingerDispatcher;
+            WorkSpace.Instance.TargetFrameworkHelper.DispatcherRun();
         }
 
         public override void CloseDriver()

@@ -74,8 +74,6 @@ namespace Amdocs.Ginger.Common
         // CDL
         public bool ShowCDL { get { return GetFeature(nameof(ShowCDL)).Selected; } set { UpdateFeature(nameof(ShowCDL), value); } }
 
-
-
         public BetaFeatures()
         {
             // Env

@@ -25,6 +25,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ginger.SolutionGeneral;
 using Ginger.AnalyzerLib;
 using System.Linq;
+using Amdocs.Ginger.Common;
+using System.Collections.Generic;
 
 namespace UnitTests.NonUITests
 {
@@ -39,14 +41,24 @@ namespace UnitTests.NonUITests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-             Solution = new Solution();
-            
-
+             Solution = new Solution();           
              BF = new BusinessFlow();
 
             VariableString VarString = new VariableString();
-            VarString.Name = "NewVarString";
+            VarString.Name = "BF_VarString";
+            VarString.SetAsInputValue = true;
+            VarString.MandatoryInput = true;
             BF.Variables.Add(VarString);
+
+            VariableSelectionList VarList= new VariableSelectionList();
+            VarList.Name = "BF_VarList";
+            VarList.SetAsInputValue = true;
+            VarList.MandatoryInput = true;
+            VarList.OptionalValuesList.Add(new OptionalValue(value: " "));
+            VarList.OptionalValuesList.Add(new OptionalValue(value: "aa"));
+            VarList.OptionalValuesList.Add(new OptionalValue(value: "bb"));
+            VarList.Value = " ";
+            BF.Variables.Add(VarList);
 
             Activity Acty = new Activity();
             Acty.ActivityName = "Act1";
@@ -58,6 +70,9 @@ namespace UnitTests.NonUITests
 
             VariableString VarString3 = new VariableString();
             VarString3.Name = "NewVarString3";
+            VarString3.SetAsInputValue = true;
+            VarString3.MandatoryInput = true;
+            VarString3.Value = "test123";
             Acty.AddVariable(VarString3);
 
             VariableString VarString4 = new VariableString();
@@ -68,9 +83,10 @@ namespace UnitTests.NonUITests
             VarString5.Name = "NewVarString";
             Acty.AddVariable(VarString5);
 
-
             VariableString VarString6 = new VariableString();
-            VarString6.Name = "NewVarString";
+            VarString6.Name = "NewVarString6";
+            VarString6.SetAsInputValue = true;
+            VarString6.MandatoryInput = true;
             Acty.AddVariable(VarString6);
 
             ActDummy DummyAction = new ActDummy();
@@ -96,7 +112,6 @@ namespace UnitTests.NonUITests
             };
             DummyAction.ReturnValues.Add(ARV2);
 
-
             //ActReturnValue with two variables
             ActReturnValue ARV3 = new ActReturnValue
             {
@@ -120,15 +135,12 @@ namespace UnitTests.NonUITests
             DummyAction.ReturnValues.Add(ARV5);
 
             ABF =  (AnalyzeBusinessFlow)AnalyzeBusinessFlow.Analyze(Solution, BF).Where(x=>x.Description.Equals(AnalyzeBusinessFlow.LegacyOutPutValidationDescription)).First();
-
-
         }
         
 
         [TestMethod]
         public void ValidateOutPutValidationPostFixeValues()
         {
-
             ABF.FixItHandler.Invoke(ABF, null);
             var ReturnValues = ABF.ReturnValues;
 
@@ -148,6 +160,23 @@ namespace UnitTests.NonUITests
             ActReturnValue ARV5 = ReturnValues.Where(x => x.Param.Equals("Value5")).FirstOrDefault();
             Assert.AreEqual(Amdocs.Ginger.Common.Expressions.eOperator.Equals, ARV5.Operator);
 
+        }
+
+        [TestMethod]
+        public void ValidateMandatoryInputValuesAnalayzing()
+        {
+            //Arrange
+            List<AnalyzerItemBase> issuesList = new List<AnalyzerItemBase>();
+
+            //Act
+            issuesList.AddRange(AnalyzeBusinessFlow.AnalyzeForMissingMandatoryInputValues(BF));
+
+            //Assert
+            List<AnalyzerItemBase> valIssuesList = issuesList.Where(x => x.UTDescription == "MissingMandatoryInputValue").ToList();
+            Assert.AreEqual(valIssuesList.Count, 3); 
+            Assert.AreEqual(valIssuesList[0].ItemName, "BF_VarString");
+            Assert.AreEqual(valIssuesList[1].ItemName, "BF_VarList");
+            Assert.AreEqual(valIssuesList[2].ItemName, "NewVarString6");
         }
     }
 }

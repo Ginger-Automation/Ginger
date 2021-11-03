@@ -81,6 +81,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(ActivitiesGroup.Name);
         }
 
+        public string GetItemMandatoryField()
+        {
+            return null;
+        }
+
         public string GetItemDescriptionField()
         {
             return nameof(ActivitiesGroup.Description);

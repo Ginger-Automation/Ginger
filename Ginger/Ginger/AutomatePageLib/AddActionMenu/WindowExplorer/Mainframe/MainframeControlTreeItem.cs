@@ -32,8 +32,7 @@ namespace Ginger.WindowExplorer.Mainframe
     {
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@TextBox_16x16.png";
-            return TreeViewUtils.CreateItemHeader (Name, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.TextBox));
         }
 
         public XMLScreenField XSF { get; set; }

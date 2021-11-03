@@ -41,7 +41,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         Object ITreeViewItem.NodeObject()
         {
-            return null;
+            return FileName;
         }
         override public string NodePath()
         {

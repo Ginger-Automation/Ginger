@@ -172,5 +172,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             return SharedRepositoryOperations.IsSharedRepositoryItem(item);
         }
+
+        public void DispatcherRun()
+        {
+            //Not required
+        }
     }
 }
