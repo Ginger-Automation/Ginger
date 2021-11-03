@@ -1429,7 +1429,7 @@ namespace Ginger.Run
                 // pass only specific mapped error handlers present the business flow
                 errorHandlersToExecute = lstMappedErrorHandler;
             }
-            else if (typeHandlerMapping == eHandlerMappingType.AllAvailableHandlers)
+            else if (typeHandlerMapping == eHandlerMappingType.AllAvailableHandlers || typeHandlerMapping == eHandlerMappingType.ErrorHandlersMatchingTrigger)
             {
                 // pass all error handlers, by default
                 errorHandlersToExecute = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
@@ -1804,7 +1804,7 @@ namespace Ginger.Run
 
                 foreach (ErrorHandler errActivity in errorHandlerActivities)
                 {
-                    if (errActivity.TriggerType == eTriggerType.SpecificError)
+                    if (errActivity.TriggerType == eTriggerType.SpecificError || originActivity.ErrorHandlerMappingType == eHandlerMappingType.ErrorHandlersMatchingTrigger)
                     {
                         foreach (var error in errActivity.ErrorStringList.Where(x => x.IsSelected).Select(y=>y.ErrorString).ToList())
                         {
@@ -1814,7 +1814,7 @@ namespace Ginger.Run
                                 break;
                             }
                         }
-                        if (!isInErrorList)
+                        if (!isInErrorList && originActivity.ErrorHandlerMappingType != eHandlerMappingType.ErrorHandlersMatchingTrigger)
                         {
                             continue;
                         }
