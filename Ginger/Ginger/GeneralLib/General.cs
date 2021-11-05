@@ -43,37 +43,37 @@ namespace Ginger
             /// <summary>
             /// Item opened from Automate page and saved item should be the BusiessFlow which currently loaded in Automate page
             /// </summary>
-            Automation = 0, 
+            Automation = 0,
 
             /// <summary>
             /// Allow edit with Save
             /// </summary>
-            Standalone = 1, 
+            Standalone = 1,
 
             /// <summary>
             /// Item opened from Shared Repository in which the item iteself supposed to be saved to XML
             /// </summary>
-            SharedReposiotry = 2, 
-            
+            SharedReposiotry = 2,
+
             /// <summary>
             /// Item opened for edit without save
             /// </summary>
-            Child = 3, 
+            Child = 3,
 
             /// <summary>
             /// Item opened as standalone but in save allows to save it original parent
             /// </summary>
-            ChildWithSave = 4, 
+            ChildWithSave = 4,
 
             /// <summary>
             /// Item should be open for read only
             /// </summary>
-            View = 5, 
+            View = 5,
 
             /// <summary>
             /// List of Library items to add
             /// </summary>
-            Add = 6, 
+            Add = 6,
 
             /// <summary>
             /// List of items in Shared Repository to add
@@ -91,7 +91,7 @@ namespace Ginger
             //TODO: move this func to General
             bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
             return designMode;
-        }       
+        }
 
         public static string ConvertSolutionRelativePath(string fileName)
         {
@@ -117,12 +117,12 @@ namespace Ginger
             {
                 string p = OFD.FileName;
                 p = p.Replace(System.IO.Path.GetFileName(p), "");
-                return p;                
+                return p;
             }
             return null;
         }
 
-        public static void ShowGingerHelpWindow(string SearchString="")
+        public static void ShowGingerHelpWindow(string SearchString = "")
         {
             GingerHelpProvider.ShowHelpLibrary(SearchString);
         }
@@ -135,7 +135,14 @@ namespace Ginger
             }
             return null;
         }
-
+        internal static string SetupBrowseFolder(FolderBrowserDialog dlg, bool isRelativePath = true)
+        {
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                return isRelativePath ? ConvertSolutionRelativePath(dlg.SelectedPath) : dlg.SelectedPath;
+            }
+            return null;
+        }
         internal static ImageSource ToBitmapSource(System.Drawing.Bitmap source)
         {
             if (source == null) return null;
@@ -205,7 +212,7 @@ namespace Ginger
         {
 
             Amdocs.Ginger.Common.GeneralLib.General.DirectoryCopy(sourceDirName, destDirName, copySubDirs);
-           
+
         }
 
         //TODO: same function and code is copied in several placed - unite all to use the one below
@@ -241,7 +248,7 @@ namespace Ginger
             return strOne.Equals(strTwo, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static Viewbox makeImgFromControl(UIElement control, string count,int typ)
+        public static Viewbox makeImgFromControl(UIElement control, string count, int typ)
         {
             Viewbox viewbox;
             int xAxis = 0;
@@ -268,11 +275,11 @@ namespace Ginger
             if (parent != null)
             {
                 parent.Children.Remove(control);
-            }                    
+            }
 
             grd.Children.Add(control);
-            grd.Children.Add(CreateAnEllipse());          
-            TextBlock txt = new TextBlock { Margin = new Thickness(xAxis, 168, 0, 0)};
+            grd.Children.Add(CreateAnEllipse());
+            TextBlock txt = new TextBlock { Margin = new Thickness(xAxis, 168, 0, 0) };
             // if(typ==0)
             // {
             //     App.RunsetBFTextbox = txt;
@@ -286,7 +293,7 @@ namespace Ginger
             //     App.RunsetActionTextbox = txt;
             // }        
             txt.Text = count.ToString();
-            grd.Children.Add(txt);        
+            grd.Children.Add(txt);
             viewbox.Child = grd;
             viewbox.Measure(new System.Windows.Size(400, 200));
             viewbox.Arrange(new Rect(0, 0, 400, 200));
@@ -322,7 +329,7 @@ namespace Ginger
         {
             return new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + resourceImageName));
         }
-        
+
         public static void DoEvents()
         {
             try
@@ -332,7 +339,7 @@ namespace Ginger
                     new DispatcherOperationCallback(ExitFrame), frame);
                 Dispatcher.PushFrame(frame);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Error Occurred while doing DoEvents()", ex);
             }
@@ -486,8 +493,8 @@ namespace Ginger
         public static Tuple<int, int> RecalculatingSizeWithKeptRatio(Tuple<int, int> a, int boxWidth, int boxHight)
         {
 
-          return  Amdocs.Ginger.Common.GeneralLib.General.RecalculatingSizeWithKeptRatio(a, boxWidth, boxHight);
-          
+            return Amdocs.Ginger.Common.GeneralLib.General.RecalculatingSizeWithKeptRatio(a, boxWidth, boxHight);
+
         }
 
         //For logos
@@ -527,38 +534,50 @@ namespace Ginger
             return tagsDesc;
         }
 
-        public static bool UndoChangesInRepositoryItem(RepositoryItemBase item, bool isLocalBackup = false, bool clearBackup = true)
+        private static bool UndoChangesInRepoItem(RepositoryItemBase item, bool isLocalBackup, bool clearBackup)
+        {
+            try
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", item.ItemName));
+                item.RestoreFromBackup(isLocalBackup, clearBackup);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Failed to undo changes to the item '{0}', please view log for more details", item.ItemName));
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to undo changes to the item '{0}'", item.ItemName), ex);
+                return false;
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+                Mouse.OverrideCursor = null;
+            }
+        }
+
+        public static bool UndoChangesInRepositoryItem(RepositoryItemBase item, bool isLocalBackup = false, bool clearBackup = true, bool showPopup = true)
         {
             if ((isLocalBackup && item.IsLocalBackupExist == false) || (isLocalBackup == false && item.IsBackupExist == false))
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Backup not created or still in progress for '{0}'", item.ItemName));
                 return false;
             }
-            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoItemChanges, item.ItemName) == eUserMsgSelection.Yes)
+            if (showPopup)
             {
-                try
+                if (Reporter.ToUser(eUserMsgKey.AskIfToUndoItemChanges, item.ItemName) == eUserMsgSelection.Yes)
                 {
-                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                    Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", item.ItemName));
-                    item.RestoreFromBackup(isLocalBackup, clearBackup);
-                    return true;
+                    return UndoChangesInRepoItem(item, isLocalBackup, clearBackup);
                 }
-                catch (Exception ex)
+                else
                 {
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Failed to undo changes to the item '{0}', please view log for more details", item.ItemName));
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to undo changes to the item '{0}'", item.ItemName), ex);
                     return false;
-                }
-                finally
-                {
-                    Reporter.HideStatusMessage();
-                    Mouse.OverrideCursor = null;
                 }
             }
             else
             {
-                return false;
+                return UndoChangesInRepoItem(item, isLocalBackup, clearBackup);
             }
         }
-    }         
+    }
 }

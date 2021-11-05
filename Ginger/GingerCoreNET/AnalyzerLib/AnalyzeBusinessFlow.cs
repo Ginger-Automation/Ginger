@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
@@ -27,6 +28,7 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Platforms;
+using GingerCore.Variables;
 
 namespace Ginger.AnalyzerLib
 {
@@ -40,7 +42,7 @@ namespace Ginger.AnalyzerLib
         private Solution mSolution { get; set; }
 
         public List<ActReturnValue> ReturnValues { get; set; } = new List<ActReturnValue>();
-        public static List<AnalyzerItemBase> Analyze(Solution Solution, BusinessFlow BusinessFlow)
+        public static List<AnalyzerItemBase> Analyze(Solution Solution, BusinessFlow BusinessFlow, bool includeMandatoryInputsAnalyze = true)
         {
             // Put all tests on BF here
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
@@ -87,6 +89,12 @@ namespace Ginger.AnalyzerLib
                 IssuesList.Add(ABF);
             }
 
+            //check for mandatory inputs without value:
+            if (includeMandatoryInputsAnalyze)
+            {
+                IssuesList.AddRange(AnalyzeForMissingMandatoryInputValues(BusinessFlow));
+            }
+
             // Check BF have actions with legacy outputValidation
 
             AnalyzeBusinessFlow OutputValidationIssue = GetOutputvalidationErros(BusinessFlow);
@@ -104,6 +112,36 @@ namespace Ginger.AnalyzerLib
                 IssuesList.Add(OutputValidationIssue);
             }
             return IssuesList;
+        }
+
+        public static List<AnalyzerItemBase> AnalyzeForMissingMandatoryInputValues(BusinessFlow businessFlow)
+        {
+            List<AnalyzerItemBase> issuesList = new List<AnalyzerItemBase>();
+            foreach (VariableBase var in businessFlow.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsInputValue: true, includeOnlyMandatoryInputs: true))
+            {
+                if (var.SetAsInputValue && var.MandatoryInput && string.IsNullOrWhiteSpace(var.Value) && var.MappedOutputType == VariableBase.eOutputType.None)
+                {
+                    AnalyzeBusinessFlow mandatoryInputIssue = new AnalyzeBusinessFlow();
+                    mandatoryInputIssue.Description = string.Format("Mandatory Input {0} is missing a value", GingerDicser.GetTermResValue(eTermResKey.Variable));
+                    mandatoryInputIssue.UTDescription = "MissingMandatoryInputValue";
+                    mandatoryInputIssue.Details = string.Format("The {0} '{1}' was marked as 'Mandatory Input' but it has empty value and no dynamic mapped value.", GingerDicser.GetTermResValue(eTermResKey.Variable), var.Name);
+                    mandatoryInputIssue.HowToFix = string.Format("Set a value to the {0} before starting the execution.", GingerDicser.GetTermResValue(eTermResKey.Variable));
+                    mandatoryInputIssue.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                    mandatoryInputIssue.FixItHandler = null;
+                    mandatoryInputIssue.Status = AnalyzerItemBase.eStatus.NeedFix;
+                    mandatoryInputIssue.IssueType = eType.Error;
+                    mandatoryInputIssue.ItemParent = var.ParentName;
+                    mandatoryInputIssue.mBusinessFlow = businessFlow;
+                    mandatoryInputIssue.ItemName = var.Name;
+                    mandatoryInputIssue.Impact = "Execution probably will fail due to missing input value.";
+                    mandatoryInputIssue.mSolution = WorkSpace.Instance.Solution;
+                    mandatoryInputIssue.ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable);
+                    mandatoryInputIssue.Severity = eSeverity.High;
+                    mandatoryInputIssue.Selected = true;
+                    issuesList.Add(mandatoryInputIssue);
+                }
+            }
+            return issuesList;
         }
 
         private static void FixOutputValidationIssue(object sender, EventArgs e)

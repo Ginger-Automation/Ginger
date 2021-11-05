@@ -132,7 +132,10 @@ namespace GingerCore.Environments
                 return nameof(this.Name);
             }
         }
-
+        public override string GetItemType()
+        {
+            return "Environment";
+        }
         // object ProjEnvironment.Guid => throw new NotImplementedException();
     }
 }

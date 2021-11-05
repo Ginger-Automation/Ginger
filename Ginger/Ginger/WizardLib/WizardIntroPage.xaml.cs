@@ -47,7 +47,6 @@ namespace Ginger.WizardLib
             InitializeComponent();
 
             RenderMarkDown(location);
-            
         }
 
         private void RenderMarkDown(string location)

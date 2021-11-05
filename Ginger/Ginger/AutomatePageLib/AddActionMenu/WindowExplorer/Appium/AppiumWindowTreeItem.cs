@@ -22,6 +22,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.Appium
 {
@@ -31,9 +32,7 @@ namespace Ginger.WindowExplorer.Appium
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@Window_16x16.png";
-            string Title = "Page"; 
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
+            return TreeViewUtils.CreateItemHeader("Page", ElementInfo.GetElementTypeImage(eElementType.Window));
         }
 
         bool ITreeViewItem.IsExpandable()

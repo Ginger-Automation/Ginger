@@ -21,6 +21,7 @@ using GingerCore.Actions;
 using System.Windows.Controls;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Ginger.Drivers.PowerBuilder;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.PowerBuilder
 {
@@ -28,9 +29,7 @@ namespace Ginger.WindowExplorer.PowerBuilder
     {
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@Label_16x16.png";
-            string Title = UIAElementInfo.ElementTitle;
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.Label));
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

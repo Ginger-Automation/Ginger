@@ -92,6 +92,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     mApplicationPOMSelectionPage = null;
                 }
             }
+
+            xSelectedPOMsGrid.DataSourceList.Clear();
         }
 
         private void SetSelectedPOMsGridView()
@@ -163,8 +165,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (xWindowSelectionUC.SelectedWindow != null)
             {
-                IsRecording = true;
-                StartRecording();
+                IsRecording = StartRecording();
                 SetRecordingControls();
                 return;
             }
@@ -183,7 +184,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             SetRecordingControls();
         }
 
-        private void StartRecording()
+        private bool StartRecording()
         {
             IRecord record = (IRecord)mDriver;
             IPlatformInfo platformInfo = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
@@ -198,7 +199,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
 
             mRecordingMngr.RecordingNotificationEvent += RecordingMngr_RecordingNotificationEvent;
-            mRecordingMngr.StartRecording();
+            return mRecordingMngr.StartRecording();
         }
 
         /// <summary>

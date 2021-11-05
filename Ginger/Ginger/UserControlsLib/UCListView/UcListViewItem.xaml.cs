@@ -117,6 +117,7 @@ namespace Ginger.UserControlsLib.UCListView
         }
 
         string mItemNameField;
+        string mItemMandatoryField;
         string mItemDescriptionField;
         string mItemErrorField;
         string mItemNameExtentionField;
@@ -167,6 +168,7 @@ namespace Ginger.UserControlsLib.UCListView
                 mItemIconField = ListHelper.GetItemIconField();
                 mItemIconTooltipField = ListHelper.GetItemIconTooltipField();
                 mItemNameField = ListHelper.GetItemNameField();
+                mItemMandatoryField = ListHelper.GetItemMandatoryField();
                 mItemNameExtentionField = ListHelper.GetItemNameExtentionField();
                 mItemExecutionStatusField = ListHelper.GetItemExecutionStatusField();
                 mItemActiveField = ListHelper.GetItemActiveField();
@@ -575,7 +577,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == mItemNameField || e.PropertyName == mItemNameExtentionField)
+            if (e.PropertyName == mItemNameField || e.PropertyName == mItemNameExtentionField || e.PropertyName == mItemMandatoryField)
             {
                 SetItemFullName();
             }
@@ -583,7 +585,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 SetItemDescription();
             }
-            SetItemUniqueIdentifier();            
+            SetItemUniqueIdentifier();         
         }
 
         private void xExpandCollapseBtn_Click(object sender, RoutedEventArgs e)
@@ -677,27 +679,42 @@ namespace Ginger.UserControlsLib.UCListView
                             xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
                             {
                                 FontSize = 15,
-                                Text = name.ToString() + " "
+                                Text = name.ToString()
                             });
 
                             fullname += name;
                         }
                     }
+                    if (!string.IsNullOrEmpty(mItemMandatoryField))
+                    {
+                        bool isMandatory = (bool)Item.GetType().GetProperty(mItemMandatoryField).GetValue(Item);
+                        if (isMandatory)
+                        {
+                            xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
+                            {
+                                FontSize = 18,
+                                Text = "*",
+                                FontWeight = FontWeights.Bold,
+                                Foreground = Brushes.Red
+                            });
+                            fullname += "*";
+                        }
+                    }
                     if (!string.IsNullOrEmpty(mItemNameExtentionField))
                     {
-                        Object group = Item.GetType().GetProperty(mItemNameExtentionField).GetValue(Item);
-                        if (group != null)
+                        Object extension = Item.GetType().GetProperty(mItemNameExtentionField).GetValue(Item);
+                        if (extension != null)
                         {
                             xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
                             {
                                 FontSize = 11,
-                                Text = string.Format("[{0}]", group.ToString())
+                                Text = string.Format(" [{0}]", extension.ToString())
                             });
 
-                            fullname += string.Format("[{0}]", group.ToString());
+                            fullname += string.Format(" [{0}]", extension.ToString());
                         }
                     }
-
+                  
                     xItemNameTxtBlock.ToolTip = fullname;
                 }
                 catch (Exception ex)

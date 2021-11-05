@@ -41,6 +41,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Collections.Specialized;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -64,6 +65,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mActionsList = mContext.BusinessFlow.CurrentActivity.Acts;
 
             mContext.PropertyChanged += MContext_PropertyChanged;
+            mContext.BusinessFlow.TargetApplications.CollectionChanged += TargetApplications_CollectionChanged;
 
             SetActionsGridsView();
 
@@ -72,6 +74,14 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             Button addActionBtn = new Button();
             addActionBtn.Content = "Add Action";
             addActionBtn.Click += new RoutedEventHandler(AddActionButton_Click);
+        }
+
+        private void TargetApplications_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (mContext.BusinessFlow.TargetApplications.Count != 0)
+            {
+                FillActionsList();
+            }
         }
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

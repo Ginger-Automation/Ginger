@@ -130,12 +130,6 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         }
 
 
-
-        public void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder)
-        {
-            throw new NotImplementedException();
-        }
-
         public void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
         {
             ALMCore aLMCore = GetALMCore();
@@ -304,7 +298,11 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         public bool IsSharedRepositoryItem(RepositoryItemBase repositoryItem)
         {
             return SharedRepositoryOperations.IsSharedRepositoryItem(repositoryItem);
-        }       
+        }
 
+        public void DispatcherRun()
+        {
+            //Not required for GingerConsole
+        }
     }
 }

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="3a6133d5-87ee-46a9-bf87-1c4fa353be89" ItemType="RunSetConfig" CreatedBy="rajdeemu" Created="202109070824" GingerVersion="4.0.0.0" Version="6" LastUpdateBy="rajdeemu" LastUpdate="202109070858" />
+<RunSetConfig Guid="3a6133d5-87ee-46a9-bf87-1c4fa353be89" Name="Check Variables Run Set" ParentGuid="00000000-0000-0000-0000-000000000000">
+<CategoriesDefinitions>
+<SolutionCategoryDefinition Category="Product" Guid="3152bcf3-333e-44e2-8059-1cc2f67ac5e2" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="TestType" Guid="5d9521d8-06d9-4c89-b57c-c4bbafb02c75" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="Release" Guid="0ffa37a9-c877-4707-a318-fc121d940cac" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="Iteration" Guid="38ea5123-70b7-44c9-9829-08aa93b1bd79" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="UserCategory1" Guid="209a2d4e-a359-4058-ada7-3fa5959a4249" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="UserCategory2" Guid="93fe8c52-5cfe-4768-a13b-7ec84cd30fbe" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+<SolutionCategoryDefinition Category="UserCategory3" Guid="a45acae7-401b-450b-954e-f41a80c2687d" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedValueID="00000000-0000-0000-0000-000000000000" />
+</CategoriesDefinitions>
+
+<GingerRunners>
+<GingerRunner Guid="c4aeecaf-45f9-49e4-8e56-2418e2e091bc" Name="Runner 1" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall">
+<ApplicationAgents>
+<ApplicationAgent AgentID="a9450eb5-c6e0-461a-a7c2-83e745bead37" AgentName="MyWindowsApp - Agent 1" AppID="1bcd3f3e-554c-4429-9532-aafe06420186" AppName="MyWindowsApp" Guid="747f495d-cb54-4632-b90e-6a243efd17fe" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+<BusinessFlowRun BusinessFlowGuid="6b02112c-cf7e-4988-952e-c67544e1d4e1" BusinessFlowInstanceGuid="ca5de1ff-024f-4dae-af19-c60c0bfdc811" BusinessFlowIsActive="True" BusinessFlowName="Check Variables" Guid="ca815260-100b-4c71-91c2-31cca4897eba" ParentGuid="00000000-0000-0000-0000-000000000000">
+<BusinessFlowCustomizedRunVariables>
+<VariableString DiffrentFromOrigin="True" Guid="9ccbb042-9732-487a-abc9-dd200fa1cdec" MappedOutputType="None" Name="Var A" ParentGuid="024ab1c7-ecf7-4487-a742-6b2207f6e301" ParentName="Check Variables\Group\Activity 1" ParentType="Activity" SetAsOutputValue="False" VarValChanged="True" />
+<VariableString DiffrentFromOrigin="True" Guid="30408154-8a35-4f38-8572-ee47af5d69fb" InitialStringValue="B2" MappedOutputType="None" Name="Var B" ParentGuid="024ab1c7-ecf7-4487-a742-6b2207f6e301" ParentName="Check Variables\Group\Activity 1" ParentType="Activity" SetAsOutputValue="False" VarValChanged="True" />
+</BusinessFlowCustomizedRunVariables>
+</BusinessFlowRun>
+</BusinessFlowsRunList>
+</GingerRunner>
+</GingerRunners>
+
+<SelfHealingConfiguration>
+<SelfHealingConfig EnableSelfHealing="True" Guid="f56f1bc3-7ac0-46f8-bce4-dd8b35ea4d70" ParentGuid="00000000-0000-0000-0000-000000000000" ReprioritizePOMLocators="True" />
+</SelfHealingConfiguration>
+</RunSetConfig></GingerRepositoryItem>

@@ -645,7 +645,8 @@ namespace Ginger
 
         public void LoadDefaults()
         {
-            AutoLoadLastSolution = true; //#Task 160            
+            AutoLoadLastSolution = true; //#Task 160
+            AutoLoadLastRunSet = true; //#Task 160
             string defualtFolder = WorkSpace.Instance.DefualtUserLocalWorkingFolder;//calling it so it will be created
         }
 
@@ -710,6 +711,21 @@ namespace Ginger
 
         [IsSerializedForLocalRepository]
         public bool DoNotAskToRecoverSolutions { get; set; }
+
+        bool mAutoLoadLastRunSet;
+        [IsSerializedForLocalRepository]
+        public bool AutoLoadLastRunSet
+        {
+            get
+            {
+                return mAutoLoadLastRunSet;
+            }
+            set
+            {
+                mAutoLoadLastRunSet = value;
+                OnPropertyChanged(nameof(AutoLoadLastRunSet));
+            }
+        }
 
         string mProfileImage;
         [IsSerializedForLocalRepository]

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="d34c61de-392f-4367-9607-3960ab65093c" ItemType="ProjEnvironment" CreatedBy="arvindgh" Created="202110200644" GingerVersion="4.0.0.0" Version="5" LastUpdateBy="arvindgh" LastUpdate="202110210845" />
+<ProjEnvironment Guid="d34c61de-392f-4367-9607-3960ab65093c" Name="Test" ParentGuid="00000000-0000-0000-0000-000000000000">
+<Applications>
+<EnvApplication Active="True" Guid="c053790a-f730-4c17-8c2b-aacfd1098a1d" Name="MyWebApp" ParentGuid="00000000-0000-0000-0000-000000000000">
+<GeneralParams>
+<GeneralParam Guid="e885b7fe-eebb-4950-bbdb-77e4b6b2d101" Name="Username" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{Var Name=NewVarString}" />
+<GeneralParam Encrypt="True" Guid="556dcb71-50bd-4673-aaec-fa3372a3d1c7" Name="Password" ParentGuid="00000000-0000-0000-0000-000000000000" Value="QzNrH+82bxhxlQ5kS7tGNQ==" />
+<GeneralParam Guid="397bfc97-69d8-45aa-81e3-a1e54e608d3c" Name="Hostname" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{DS Name=AccessDS DST=MyCustomizedDataTable ACT=MASD MASD=N MR=N IDEN=Cust ICOLVAL=Param IROW=NxtAvail}" />
+</GeneralParams>
+</EnvApplication>
+<EnvApplication Active="True" Guid="d142735d-e415-495a-882f-a6e1febf99ab" Name="MyWebServicesApp" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<EnvApplication Active="True" Guid="96b595f7-2228-4199-bccf-8598018ea076" Name="MyWindowsApp" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</Applications>
+</ProjEnvironment></GingerRepositoryItem>
