@@ -55,7 +55,10 @@
                         <TextBlock Text="General Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Ginger:ucGrid x:Name="GeneralActionsGrid" RowChangedEvent="ActionsGrid_RowChangedEvent"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" IsReadOnly="True"  />
+                <!--<Ginger:ucGrid x:Name="GeneralActionsGrid" RowChangedEvent="ActionsGrid_RowChangedEvent"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" IsReadOnly="True"  />-->
+
+                <userControlsLib1:UcListView x:Name="xPlatformGenericActionsListView" AllowDrop="True"/>
+
             </TabItem>
             <TabItem x:Name="PlugInsActionsTab" Margin="8,0,-12,0"  GotFocus="Tab_GotFocus">
                 <TabItem.Header>
@@ -64,7 +67,9 @@
                         <TextBlock Text="PlugIns Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Ginger:ucGrid x:Name="PlugInsActionsGrid" RowChangedEvent="ActionsGrid_RowChangedEvent"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" IsReadOnly="True"  />
+                <!--<Ginger:ucGrid x:Name="PlugInsActionsGrid" RowChangedEvent="ActionsGrid_RowChangedEvent"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" IsReadOnly="True"  />-->
+
+                <userControlsLib1:UcListView x:Name="xPlatformPlugInsActionsListView" AllowDrop="True"/>
             </TabItem>
             <TabItem x:Name="LegacyActionsTab"  Margin="15,0,-18,0" GotFocus="Tab_GotFocus" >
                 <TabItem.Resources>
@@ -86,7 +91,11 @@
                         <TextBlock Text="Legacy Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="SemiBold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Ginger:ucGrid x:Name="LegacyActionsGrid" RowChangedEvent="ActionsGrid_RowChangedEvent"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" IsReadOnly="True"  />
+                
+                <!--<Ginger:ucGrid x:Name="LegacyActionsGrid" RowChangedEvent="ActionsGrid_RowChangedEvent"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" IsReadOnly="True"  />-->
+
+                <userControlsLib1:UcListView x:Name="xPlatformLegacyActionListView" AllowDrop="True"/>
+
             </TabItem>
         </TabControl>
 

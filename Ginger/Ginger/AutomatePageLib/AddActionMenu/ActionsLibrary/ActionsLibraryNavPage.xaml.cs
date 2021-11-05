@@ -54,7 +54,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         // bool IsPlugInAvailable = false;
         Context mContext;
 
-        ActionsListViewHelper mActionsListHelper;
+        ActionsLibraryListViewHelper mActionsListHelper;
         Ginger.General.eRIPageViewMode mPageViewMode;
 
         public ActionsLibraryNavPage(Context context)
@@ -87,6 +87,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void FillActionsList()
         {
+            mActionsListHelper = new ActionsLibraryListViewHelper(mContext, mPageViewMode);
+
             LoadGridData();
             LoadPluginsActions();
             if (mContext.Activity != null)
@@ -132,7 +134,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
             }
 
-            PlugInsActionsGrid.DataSourceList = PlugInsActions;
+            xPlatformPlugInsActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
+            xPlatformPlugInsActionsListView.ListSelectionMode = SelectionMode.Extended;
+            xPlatformPlugInsActionsListView.DataSourceList = PlugInsActions;
         }
 
         private void LoadGridData()
@@ -166,17 +170,17 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
 
             // Gidon Added, 11/3/2021
-            mActionsListHelper = new ActionsListViewHelper(mContext, mPageViewMode);
             xPlatformActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
             xPlatformActionsListView.ListSelectionMode = SelectionMode.Extended;
-
             xPlatformActionsListView.DataSourceList = platformActions;
-            //----------------
+            
+            xPlatformGenericActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
+            xPlatformGenericActionsListView.ListSelectionMode = SelectionMode.Extended;
+            xPlatformGenericActionsListView.DataSourceList = LegacyActions;
 
-            //PlatformActionsGrid.DataSourceList = platformActions;            
-
-            GeneralActionsGrid.DataSourceList = generalActions;
-            LegacyActionsGrid.DataSourceList = LegacyActions;
+            xPlatformLegacyActionListView.SetDefaultListDataTemplate(mActionsListHelper);
+            xPlatformLegacyActionListView.ListSelectionMode = SelectionMode.Extended;
+            xPlatformLegacyActionListView.DataSourceList = LegacyActions;
         }   
 
         private ObservableList<Act> GetPlatformsActions(bool ShowAll = false)
@@ -241,9 +245,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             //SetActionsListView(xPlatformActionsListView);
             //SetActionsGridView(PlatformActionsGrid); // Gidon removed, 11/3/2021
-            SetActionsGridView(GeneralActionsGrid);
-            SetActionsGridView(LegacyActionsGrid);
-            SetActionsGridView(PlugInsActionsGrid);
+            //SetActionsGridView(GeneralActionsGrid);
+            //SetActionsGridView(LegacyActionsGrid);
+            //SetActionsGridView(PlugInsActionsGrid);
         }
 
         private void SetActionsListView(UcListView xActionsListView)
@@ -266,6 +270,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             //xActionsListView.List.ItemsSource = mActivity.Acts;
         }
 
+        /*
         private void SetActionsGridView(ucGrid actionsGrid)
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -289,6 +294,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             actionsGrid.RowDoubleClick += ActionsGrid_MouseDoubleClick;
         }
+        */
 
         private void AddMultipleActions(object sender, RoutedEventArgs e)
         {
