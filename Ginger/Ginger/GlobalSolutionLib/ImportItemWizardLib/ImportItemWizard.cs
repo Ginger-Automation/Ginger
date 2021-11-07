@@ -2,18 +2,23 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.GlobalSolutionLib;
 using Amdocs.Ginger.Repository;
+using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.WizardLib;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
@@ -28,8 +33,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
         public List<string> ItemTypesList = Enum.GetNames(typeof(GlobalSolution.eImportItemType)).ToList();
 
         public ObservableList<GlobalSolutionItem> ItemTypeListToImport = null;
-        public ObservableList<GlobalSolutionItem> ItemsListToImport = null;
-        public ObservableList<GlobalSolutionItem> SelectedItemTypeListToImport = null;
+        public ObservableList<GlobalSolutionItem> ItemsListToImport = new ObservableList<GlobalSolutionItem>();
+        public ObservableList<GlobalSolutionItem> SelectedItemsListToImport = new ObservableList<GlobalSolutionItem>();
         public List<VariableBase> VariableListToImport = new List<VariableBase>();
         public List<EnvApplication> EnvAppListToImport = new List<EnvApplication>();
 
@@ -52,15 +57,32 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
         public override void Finish()
         {
+            try
+            {
+                ProcessStarted();
+                ValidateAndAddItemToSolution().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+            finally
+            {
+                ProcessEnded();
+            }
+        }
+
+        private async Task ValidateAndAddItemToSolution()
+        {
             if (!string.IsNullOrEmpty(SolutionFolder))
             {
-                foreach (GlobalSolutionItem itemToAdd in SelectedItemTypeListToImport.Where(x => x.Selected).ToList())
+                foreach (GlobalSolutionItem itemToAdd in SelectedItemsListToImport.Where(x => x.Selected).ToList())
                 {
                     string sourceFile = itemToAdd.ItemFullPath;
                     string targetFile = string.Empty;
                     //Get subdirectory path
                     string path = Path.GetDirectoryName(itemToAdd.ItemFullPath);
-                    string folderPath = path.Replace(SolutionFolder + "\\", "");
+                    string folderPath = path.Replace(SolutionFolder, "");
 
                     if (string.IsNullOrEmpty(itemToAdd.ItemNewName))
                     {
@@ -80,22 +102,25 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                         case GlobalSolution.eImportItemType.Environments:
                             GlobalSolutionUtils.Instance.EnvParamsToReEncrypt(sourceFile, itemToAdd);
                             AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
-
                             break;
-                        //case GlobalSolution.eImportItemType.BusinesFlows:
+                        case GlobalSolution.eImportItemType.BusinessFlows:
                         case GlobalSolution.eImportItemType.SharedRepositoryActivities:
                             GlobalSolutionUtils.Instance.VariablesToReEncrypt(sourceFile, itemToAdd);
                             AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
-
                             break;
+
                         case GlobalSolution.eImportItemType.DataSources:
                         case GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup:
                         case GlobalSolution.eImportItemType.SharedRepositoryActions:
                         case GlobalSolution.eImportItemType.SharedRepositoryVariables:
                         case GlobalSolution.eImportItemType.APIModels:
                         case GlobalSolution.eImportItemType.POMModels:
+                        case GlobalSolution.eImportItemType.Agents:
+                        case GlobalSolution.eImportItemType.TargetApplication:
+                        case GlobalSolution.eImportItemType.Variables:
                             AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
                             break;
+
                         default:
                             break;
                     }
@@ -106,6 +131,13 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 {
                     GlobalSolutionUtils.Instance.AddEnvDependanciesToSolution(EnvAppListToImport);
                 }
+            }
+        }
+
+        void AddItemToSolution(string sourceFile, string targetFile, bool saveAsRepo, GlobalSolutionItem itemToImport)
+        {
+            if (itemToImport.ItemType == GlobalSolution.eImportItemType.Variables)
+            {
                 //Add Global Variables from the list
                 if (VariableListToImport.Count > 0)
                 {
@@ -118,11 +150,21 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     }
                     WorkSpace.Instance.Solution.SaveSolution();
                 }
+                return;
             }
-        }
+            if (itemToImport.ItemType == GlobalSolution.eImportItemType.TargetApplication)
+            {
+                string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.AllDirectories);
+                Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
+                ApplicationPlatform applicationPlatform  = solution.ApplicationPlatforms.Where(x=>x.AppName == itemToImport.ItemName).FirstOrDefault();
 
-        void AddItemToSolution(string sourceFile, string targetFile, bool saveAsRepo, GlobalSolutionItem itemToImport)
-        {
+                ApplicationPlatform appPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == applicationPlatform.AppName && x.Platform == applicationPlatform.Platform).FirstOrDefault();
+                if (appPlatform == null)
+                {
+                    WorkSpace.Instance.Solution.ApplicationPlatforms.Add(applicationPlatform);
+                }
+                return;
+            }
             RepositoryItemBase repoItemToImport = null;
             if (itemToImport.ItemImportSetting == GlobalSolution.eImportSetting.Replace)
             {

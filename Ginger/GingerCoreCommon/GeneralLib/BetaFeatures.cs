@@ -74,10 +74,6 @@ namespace Amdocs.Ginger.Common
         // CDL
         public bool ShowCDL { get { return GetFeature(nameof(ShowCDL)).Selected; } set { UpdateFeature(nameof(ShowCDL), value); } }
 
-        // GlobalCrossSolution
-        public bool ShowGlobalCrossSolution { get { return GetFeature(nameof(ShowGlobalCrossSolution)).Selected; } set { UpdateFeature(nameof(ShowGlobalCrossSolution), value); } }
-
-
         public BetaFeatures()
         {
             // Env
@@ -107,9 +103,6 @@ namespace Amdocs.Ginger.Common
 
             //CDL            
             mFeatures.Add(new BetaFeature() { Group = "CDL", Description = "Show CDL - Change Definition Language", ID = nameof(ShowCDL) });
-
-            //GlobalCrossSolution            
-            mFeatures.Add(new BetaFeature() { Group = "GlobalCrossSolution", Description = "Show GlobalCrossSolution - Import Solution Items", ID = nameof(ShowGlobalCrossSolution) });
 
             //hook prop change
             foreach (BetaFeature f in mFeatures)

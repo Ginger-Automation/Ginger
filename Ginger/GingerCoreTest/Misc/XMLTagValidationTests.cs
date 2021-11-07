@@ -38,6 +38,7 @@ namespace UnitTests.NonUITests
     {
         static string jsonFileName = string.Empty;
         static string xmlFileName = string.Empty;
+        static string xmlWithPrefixFileName = string.Empty;
         static ObservableList<ActInputValue> DynamicElements ;
    
 
@@ -69,8 +70,8 @@ namespace UnitTests.NonUITests
         {
             jsonFileName= TestResources.GetTestResourcesFile (@"JSON\sample2.json");
             xmlFileName = TestResources.GetTestResourcesFile(@"XML\book.xml");
+            xmlWithPrefixFileName = TestResources.GetTestResourcesFile(@"XML\book_with_prefix.xml");
             DynamicElements = new ObservableList<ActInputValue>();
-            
         }
 
         private static ObservableList<ActInputValue> SetJSONDynamicParameters()
@@ -120,8 +121,11 @@ namespace UnitTests.NonUITests
             XTA.DocumentType = ActXMLTagValidation.eDocumentType.XML;
             XTA.ReqisFromFile = true;
             XTA.InputFile.ValueForDriver = xmlFileName;
-            DynamicElements = SetXMLDynamicParameters();
-            XTA.DynamicElements = DynamicElements;
+
+            ObservableList<ActInputValue> dynamicElements = new ObservableList<ActInputValue>();
+            SetXMLDynamicParameters(dynamicElements, "//book[@publisher='amdocs']");
+            SetXMLDynamicParameters(dynamicElements, "/catalog/book[2]");
+            XTA.DynamicElements = dynamicElements;
             XTA.AddNewReturnParams = true;
             XTA.Execute();
 
@@ -129,19 +133,31 @@ namespace UnitTests.NonUITests
             Assert.AreEqual("amdocs", XTA.ActReturnValues.Where(x => x.Param == "//book[@publisher='amdocs']" && x.Path == "publisher").FirstOrDefault().Actual);
         }
 
-        private ObservableList<ActInputValue> SetXMLDynamicParameters()
+        [TestMethod]
+        [Timeout(60000)]
+        public void XMLWithPrefixTests()
         {
-            ObservableList<ActInputValue> temp = new ObservableList<ActInputValue>();
-            ActInputValue inp = new ActInputValue();
-            inp.Param = "//book[@publisher='amdocs']";
-            temp.Add(inp);
-            inp = null;
-            inp = new ActInputValue();
-            inp.Param = "/catalog/book[2]";
-            temp.Add(inp);
-            inp = null;
-            return temp;
-            
+            ActXMLTagValidation XTA = new ActXMLTagValidation();
+
+            XTA.DocumentType = ActXMLTagValidation.eDocumentType.XML;
+            XTA.ReqisFromFile = true;
+            XTA.InputFile.ValueForDriver = xmlWithPrefixFileName;
+
+            ObservableList<ActInputValue> dynamicElements = new ObservableList<ActInputValue>();
+            SetXMLDynamicParameters(dynamicElements, "/bookstore/book[2]/author/first-name");
+            XTA.DynamicElements = dynamicElements;
+            XTA.AddNewReturnParams = true;
+            XTA.Execute();
+
+            Assert.AreEqual(1, XTA.ActReturnValues.Count);
+            Assert.AreEqual("Barbara", XTA.ActReturnValues[0].Actual);
+        }
+
+        private void SetXMLDynamicParameters(ObservableList<ActInputValue> dynamicElements, string param)
+        {
+            ActInputValue actInputValue = new ActInputValue();
+            actInputValue.Param = param;
+            dynamicElements.Add(actInputValue);
         }
     }
 }
