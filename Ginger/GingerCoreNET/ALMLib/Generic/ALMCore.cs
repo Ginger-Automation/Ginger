@@ -79,10 +79,6 @@ namespace GingerCore.ALM
             DefaultAlmConfig = AlmConfig;
             return AlmConfig;
         }
-        public void SetConnectionFalse()
-        {
-            IsConnectValidationDone = false;
-        }
         public static string SolutionFolder { get; set; }
         public static ObservableList<ExternalItemFieldBase> AlmItemFields { get; set; }
         public abstract bool ConnectALMServer();
