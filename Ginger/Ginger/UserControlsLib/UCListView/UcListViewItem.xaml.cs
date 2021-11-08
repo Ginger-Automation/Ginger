@@ -152,13 +152,15 @@ namespace Ginger.UserControlsLib.UCListView
                 if (ListHelper.AllowExpandItems == false)
                 {
                     CollapseItem();
-                    xExpandCollapseBtn.Visibility = Visibility.Collapsed;
+                    xExpandCollapseBtn.Visibility = Visibility.Collapsed;                    
                 }
                 else if(ListHelper.ExpandItemOnLoad)
                 {
                     ExpandItem();
                 }
             }
+
+            xItemStatusImage.Visibility = ListHelper.GetItemStatusVisibility();
         }
 
         private void SetItemMainView()
@@ -227,7 +229,7 @@ namespace Ginger.UserControlsLib.UCListView
         private void SetItemSubView()
         {
             if (!mSubViewWasSet)
-            {
+            {                
                 mItemDescriptionField = ListHelper.GetItemDescriptionField();
                 mItemTagsField = ListHelper.GetItemTagsField();
                 mItemErrorField = ListHelper.GetItemErrorField();
@@ -793,6 +795,18 @@ namespace Ginger.UserControlsLib.UCListView
         {
             xItemOperationsMainPnl.Visibility = Visibility.Collapsed;
             xItemOperationsClm.Width = new GridLength(0);
+        }
+
+        public Visibility ListItemStatusVisibility
+        {
+            get
+            {
+                return xItemStatusImage.Visibility;
+            }
+            set
+            {
+                xItemStatusImage.Visibility = value;
+            }
         }
     }
 

@@ -132,6 +132,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(Act.ActionUserDescription);
         }
 
+        public System.Windows.Visibility GetItemStatusVisibility()
+        {
+            return Visibility.Hidden;
+        }
+
         public string GetItemErrorField()
         {
             return nameof(Act.Error);
@@ -183,22 +188,34 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             if (PageViewMode != General.eRIPageViewMode.View)
             {
-                ListItemOperation deleteSelected = new ListItemOperation();
-                deleteSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-                deleteSelected.AutomationID = "deleteSelected";
-                deleteSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-                deleteSelected.ToolTip = "Delete Selected Actions (Del)";
-                deleteSelected.OperationHandler = DeleteSelectedHandler;
-                operationsList.Add(deleteSelected);
+                ListItemOperation addSelected = new ListItemOperation();
+                addSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+                addSelected.AutomationID = "addSelected";
+                addSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+                addSelected.ToolTip = "Add Selected Actions";
+                addSelected.OperationHandler = AddActionListView;
+                operationsList.Add(addSelected);
             }
 
             return operationsList;
         }
 
+        private void AddActionListView(object sender, RoutedEventArgs e)
+        {
+            List<RepositoryItemBase> list = new List<RepositoryItemBase>();
+            List<object> SelectedItemsList = mListView.List.SelectedItems.Cast<object>().ToList();
+            foreach (Act act in SelectedItemsList)
+            {
+                list.Add(act);
+                ActionsFactory.AddActionsHandler(act, mContext);
+            }
+            
+        }
+
         public List<ListItemOperation> GetListExtraOperations()
         {
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
-
+            /*
             ListItemOperation actionVarsDep = new ListItemOperation();
             actionVarsDep.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             actionVarsDep.AutomationID = "actionVarsDep";
@@ -287,7 +304,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             addSelectedToSR.Header = "Add Selected to Shared Repository";
             addSelectedToSR.OperationHandler = AddSelectedToSRHandler;
             extraOperationsList.Add(addSelectedToSR);
-
+            */
             return extraOperationsList;
         }
 
@@ -379,7 +396,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(item);
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
-
+            /*
             ListItemOperation edit = new ListItemOperation();
             edit.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             edit.AutomationID = "edit";
@@ -422,6 +439,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             active.ToolTip = "Active";
             active.OperationHandler = ActiveHandler;
             operationsList.Add(active);
+            */
 
             return operationsList;
         }
@@ -431,6 +449,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
 
+            /*
             ListItemOperation breakPoint = new ListItemOperation();
             breakPoint.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation };
             breakPoint.AutomationID = "breakPoint";
@@ -500,7 +519,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             addToSR.ToolTip = "Add to Shared Repository";
             addToSR.OperationHandler = AddToSRHandler;
             extraOperationsList.Add(addToSR);
-
+            */
             return extraOperationsList;
         }
 
@@ -508,7 +527,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(item);
             List<ListItemOperation> executionOperationsList = new List<ListItemOperation>();
-
+            /*
             ListItemOperation run = new ListItemOperation();
             run.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation};
             run.AutomationID = "run";
@@ -524,8 +543,9 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             continueRun.ToolTip = "Continue Run from Action";
             continueRun.OperationHandler = ContinueRunHandler;
             executionOperationsList.Add(continueRun);
-
+            */
             return executionOperationsList;
+            
         }
 
         public List<ListItemNotification> GetItemGroupNotificationsList(string GroupName)

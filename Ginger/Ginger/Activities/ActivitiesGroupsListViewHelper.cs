@@ -266,6 +266,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             throw new System.NotImplementedException();
         }
 
+        public System.Windows.Visibility GetItemStatusVisibility()
+        {
+            return System.Windows.Visibility.Visible;
+        }
+
         //private void EditHandler(object sender, RoutedEventArgs e)
         //{
         //    SetItem(sender);

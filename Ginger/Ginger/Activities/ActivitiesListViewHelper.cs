@@ -1194,6 +1194,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 }
             }
         }
+
+        public System.Windows.Visibility GetItemStatusVisibility()
+        {
+            return Visibility.Visible;
+        }
     }
 
     public class ActivityListItemEventArgs

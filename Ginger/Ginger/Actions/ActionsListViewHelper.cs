@@ -823,6 +823,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 DeleteSelectedHandler(null, null);
             }
         }
+
+        public System.Windows.Visibility GetItemStatusVisibility()
+        {
+            return Visibility.Visible;
+        }
     }
 
 
