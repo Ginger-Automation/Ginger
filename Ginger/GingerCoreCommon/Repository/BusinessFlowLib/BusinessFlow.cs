@@ -1066,7 +1066,7 @@ namespace GingerCore
             }
         }
 
-        public void Reset()
+        public void Reset(bool reSetActionErrorHandlerExecutionStatus = false)
         {
             Elapsed = null;
             RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
@@ -1074,7 +1074,7 @@ namespace GingerCore
             ExecutionFullLogFolder = string.Empty;
             foreach (Activity a in Activities)
             {
-                a.Reset();
+                a.Reset(reSetActionErrorHandlerExecutionStatus);
             }            
             foreach (ActivitiesGroup ag in ActivitiesGroups)
             {
