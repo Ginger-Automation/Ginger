@@ -1525,6 +1525,8 @@ namespace Ginger.Run
                     if (analyzeRes == 1) return;//cancel run because issues found
                 }
 
+                ResetRunners();
+
                 //run             
                 var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
 
@@ -1547,6 +1549,22 @@ namespace Ginger.Run
             {
                 UpdateRunButtonIcon();
             }
+        }
+
+        private void ResetRunners()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                foreach (FlowElement f in mFlowDiagram.GetAllFlowElements())
+                {
+                    RunnerPage rp = (RunnerPage)f.GetCustomeShape().Content;
+                    if (rp != null)
+                    {
+                        rp.ResetRunnerPage();
+                    }
+                }
+
+            });
         }
 
         private async void xContinueRunsetBtn_Click(object sender, RoutedEventArgs e)
