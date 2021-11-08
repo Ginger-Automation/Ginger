@@ -36,8 +36,7 @@ namespace GingerCore.ALM
         public static ObservableList<GingerCoreNET.ALMLib.ALMConfig> AlmConfigs { get; set; } = new ObservableList<GingerCoreNET.ALMLib.ALMConfig>();
 
         public static GingerCoreNET.ALMLib.ALMConfig DefaultAlmConfig { get; set; }
-        public bool IsConnectValidation { get; set; }
-
+        public bool IsConnectValidationDone { get; set; }
         public GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig(bool isOperationAlmType = false)
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = null;
@@ -79,6 +78,10 @@ namespace GingerCore.ALM
             }
             DefaultAlmConfig = AlmConfig;
             return AlmConfig;
+        }
+        public void SetConnectionFalse()
+        {
+            IsConnectValidationDone = false;
         }
         public static string SolutionFolder { get; set; }
         public static ObservableList<ExternalItemFieldBase> AlmItemFields { get; set; }
@@ -299,10 +302,5 @@ namespace GingerCore.ALM
             }
             return AlmConfig;
         }
-        public virtual void SetConnectValidationStatus(bool isConnect)
-        {
-            IsConnectValidation = isConnect; 
-        }
-
     }
 }

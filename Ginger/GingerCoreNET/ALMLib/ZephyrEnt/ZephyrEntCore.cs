@@ -160,7 +160,6 @@ namespace GingerCore.ALM
             {
                 return zephyrEntRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
             }).Result;
-            SetConnectValidationStatus(false);
             return domains.DataResult.Where(f => f.DomainName.Equals(ALMDomainName)).FirstOrDefault().Projects.ToDictionary(project => project.ProjectId.ToString(), project => project.ProjectName);
         }
 
@@ -215,7 +214,7 @@ namespace GingerCore.ALM
         }
         public override bool IsServerConnected()
         {
-            return IsConnectValidation;
+            return IsConnectValidationDone;
         }
         public List<BaseResponseItem> GetTreeByCretiria(string type, int releaseId, int revisionId, int parentId)
         {
