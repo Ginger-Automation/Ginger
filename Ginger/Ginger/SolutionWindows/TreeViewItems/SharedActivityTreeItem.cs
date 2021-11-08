@@ -94,6 +94,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                 TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
 
+                TreeViewUtils.AddMenuItem(mContextMenu, "Publish To Business Flows", ShowErrorHandlerPublishInfo, null, eImageType.Link);
+
                 AddSourceControlOptions(mContextMenu);
             }
             else
@@ -101,6 +103,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
             }
         }
+
+        private void ShowErrorHandlerPublishInfo(object sender, RoutedEventArgs e)
+        {
+            RepositoryItemPublishInfoPage repositoryItemErroHandlerPublishInfoPage = new RepositoryItemPublishInfoPage(mActivity);
+            repositoryItemErroHandlerPublishInfoPage.ShowAsWindow();
+        }    
 
         private void ShowUsage(object sender, RoutedEventArgs e)
         {
