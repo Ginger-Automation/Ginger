@@ -463,12 +463,10 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "ExportExecutionDetailsToALM");
             result = string.Empty;
             ObservableList<ExternalItemFieldBase> runFields;
             if (WorkSpace.Instance.RunningInExecutionMode)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "WorkSpace.Instance.RunningInExecutionMode=true");
                 runFields = GetSolutionALMFields("Run");
             }
             else
@@ -481,7 +479,6 @@ namespace GingerCore.ALM
                 result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + bizFlow.Name + " is missing ExternalID, cannot locate QC TestSet without External ID";
                 return false;
             }
-            Reporter.ToLog(eLogLevel.DEBUG, "Before try");
             try
             {
                 if ((publishToALMConfig.VariableForTCRunName == null) || (publishToALMConfig.VariableForTCRunName == string.Empty))
