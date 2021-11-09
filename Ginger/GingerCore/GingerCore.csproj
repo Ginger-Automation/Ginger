@@ -298,7 +298,6 @@
     <Compile Include="Actions\ScreenCapture\ScreenCaptureWindow.xaml.cs">
       <DependentUpon>ScreenCaptureWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\Tuxedo\ActTuxedo.cs" />
     <Compile Include="Actions\UIAutomation\ActionHelperMenu.xaml.cs">
       <DependentUpon>ActionHelperMenu.xaml</DependentUpon>
     </Compile>
