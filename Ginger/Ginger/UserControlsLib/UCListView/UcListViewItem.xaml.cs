@@ -159,8 +159,6 @@ namespace Ginger.UserControlsLib.UCListView
                     ExpandItem();
                 }
             }
-
-            xItemStatusImage.Visibility = ListHelper.GetItemStatusVisibility();
         }
 
         private void SetItemMainView()

@@ -132,11 +132,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(Act.ActionUserDescription);
         }
 
-        public System.Windows.Visibility GetItemStatusVisibility()
-        {
-            return Visibility.Hidden;
-        }
-
         public string GetItemErrorField()
         {
             return nameof(Act.Error);
@@ -144,14 +139,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemExecutionStatusField()
         {
-            if (PageViewMode == General.eRIPageViewMode.Automation)
-            {
-                return nameof(Act.Status);
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public string GetItemActiveField()
