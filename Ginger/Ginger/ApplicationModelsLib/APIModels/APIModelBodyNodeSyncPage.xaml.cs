@@ -158,8 +158,8 @@ namespace Ginger.ApplicationModelsLib.APIModels
                     }
                     else //With color
                     {
-                        TBH.AddFormattedText(mApplicationAPIModel.RequestBody.Substring(stringIndex, mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item2 - stringIndex), Brushes.Red, true);
-                        stringIndex = mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item2 + 1;
+                        TBH.AddFormattedText(mApplicationAPIModel.RequestBody.Substring(stringIndex, mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item2 - stringIndex), System.Windows.Media.Brushes.Red, true);
+                        stringIndex = mNodesToDeleteList[nodeToDeleteIndex].stringNodeRange.Item2;
                         nodeToDeleteIndex++;
                     }
                 }
