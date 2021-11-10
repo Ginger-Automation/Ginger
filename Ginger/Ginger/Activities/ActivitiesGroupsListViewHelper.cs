@@ -16,11 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
+using Ginger.Activities;
+using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
+using GingerCore;
 using GingerCore.Activities;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 
 namespace Ginger.BusinessFlowPages.ListHelpers
 {
@@ -28,7 +35,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
     {
         ActivitiesGroup mActivitiesGroup;
         Context mContext;
-
         public General.eRIPageViewMode PageViewMode { get; set; }
 
         UcListView mListView = null;
@@ -59,9 +65,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public bool ExpandItemOnLoad { get; set; } = false;
 
-        public ActivitiesGroupsListViewHelper(Context context)
+        public ActivitiesGroupsListViewHelper(Context context, General.eRIPageViewMode pageViewMode)
         {
             mContext = context;
+            PageViewMode = pageViewMode;
         }
 
         public void SetItem(object item)
@@ -108,7 +115,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemExecutionStatusField()
         {
-            return nameof(ActivitiesGroup.RunStatus);
+            return null;
         }
 
         public string GetItemActiveField()
@@ -137,31 +144,67 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
-            //ListItemOperation addNew = new ListItemOperation();
-            //addNew.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
-            //addNew.ToolTip = "Add New " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-            //addNew.OperationHandler = AddNewHandler;
-            //operationsList.Add(addNew);
+            ListItemOperation addToFlow = new ListItemOperation();
+            addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.AngleArrowLeft;
+            addToFlow.ToolTip = "Add to Flow";
+            addToFlow.OperationHandler = AddFromRepository;
+            operationsList.Add(addToFlow);
 
-            //ListItemOperation deleteAll = new ListItemOperation();
-            //deleteAll.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            //deleteAll.ToolTip = "Delete All " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-            //deleteAll.OperationHandler = DeleteAllHandler;
-            //operationsList.Add(deleteAll);
+            ListItemOperation editItem = new ListItemOperation();
+            editItem.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            editItem.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
+            editItem.ToolTip = "Edit Item";
+            editItem.OperationHandler = EditActivityGroup;
+            operationsList.Add(editItem);
 
             return operationsList;
+        }
+
+        private void AddFromRepository(object sender, RoutedEventArgs e)
+        {
+            if (mListView.List.SelectedItems != null && mListView.List.SelectedItems.Count > 0)
+            {
+                if (mContext.BusinessFlow == null)
+                {
+                    return;
+                }
+                List<ActivitiesGroup> list = new List<ActivitiesGroup>();
+                foreach (ActivitiesGroup selectedItem in mListView.List.SelectedItems)
+                {
+                    list.Add(selectedItem);
+                }
+                ActionsFactory.AddActivitiesGroupsFromSRHandler(list, mContext.BusinessFlow);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
+        }
+
+        private void EditActivityGroup(object sender, RoutedEventArgs e)
+        {
+            if (mListView.List.SelectedItems != null && mListView.List.SelectedItems.Count > 0)
+            {
+                ActivitiesGroup activityGroup = (ActivitiesGroup)mListView.List.SelectedItem;
+                BusinessFlow currentBF = null;
+                if (mContext != null)
+                {
+                    currentBF = mContext.BusinessFlow;
+                }
+
+                ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activityGroup, currentBF, ActivitiesGroupPage.eEditMode.SharedRepository);
+                mActivitiesGroupPage.ShowAsWindow();
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
+            }
         }
 
         public List<ListItemOperation> GetListExtraOperations()
         {
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
-
-            //ListItemOperation activeUnactiveAllActivities = new ListItemOperation();
-            //activeUnactiveAllActivities.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
-            //activeUnactiveAllActivities.Header = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-            //activeUnactiveAllActivities.ToolTip = "Activate/Un-Activate all " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-            //activeUnactiveAllActivities.OperationHandler = ActiveUnactiveAllActivitiesHandler;
-            //extraOperationsList.Add(activeUnactiveAllActivities);
 
             return extraOperationsList;
         }
@@ -178,24 +221,29 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
-            //ListItemOperation edit = new ListItemOperation();
-            //edit.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
-            //edit.ToolTip = "Edit Action";
-            //edit.OperationHandler = EditHandler;
-            //operationsList.Add(edit);
-
-
-            //ListItemOperation active = new ListItemOperation();
-            //active.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
-            //active.ImageBindingObject = mAction;
-            //active.ImageBindingFieldName = nameof(Act.Active);
-            //active.ImageBindingConverter = new ActiveImageTypeConverter();
-            //active.ToolTip = "Activate/Un-Activate Action";
-            ////active.ImageSize = 15;
-            //active.OperationHandler = ActiveHandler;
-            //operationsList.Add(active);
+            ListItemOperation ViewLinkedInstances = new ListItemOperation();
+            ViewLinkedInstances.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            ViewLinkedInstances.AutomationID = "ViewLinkedInstances";
+            ViewLinkedInstances.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Analyze;
+            ViewLinkedInstances.ToolTip = "View Linked Instances";
+            ViewLinkedInstances.OperationHandler = ViewRepositoryItemUsage;
+            operationsList.Add(ViewLinkedInstances);
 
             return operationsList;
+        }
+        private void ViewRepositoryItemUsage(object sender, RoutedEventArgs e)
+        {
+            List<object> SelectedItemsList = mListView.List.SelectedItems.Cast<object>().ToList();
+
+            if (SelectedItemsList.Count > 0)
+            {
+                RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItemBase)mListView.List.SelectedItem);
+                usagePage.extraDetails = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                usagePage.ShowAsWindow();
+            }
+            else
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected); 
+            
         }
 
         public List<ListItemOperation> GetItemExtraOperationsList(object item)
