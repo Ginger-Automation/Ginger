@@ -49,7 +49,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
             AddPage(Name: "Select Solution Items", Title: "Select Solution Items", SubTitle: "Select Solution Items...", Page: new SelectItemFromSolutionPage());
 
-            AddPage(Name: "Solution Items Dependancy Validation", Title: "Solution Items Dependancy Validation", SubTitle: "Solution Items Dependancy Validation...", Page: new ItemDependancyPage());
+            AddPage(Name: "Solution Items Dependency Validation", Title: "Solution Items Dependency Validation", SubTitle: "Solution Items Dependency Validation...", Page: new ItemDependancyPage());
 
         }
 
@@ -131,6 +131,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 {
                     GlobalSolutionUtils.Instance.AddEnvDependanciesToSolution(EnvAppListToImport);
                 }
+                //Save solution
+                WorkSpace.Instance.Solution.SaveSolution();
             }
         }
 
@@ -148,7 +150,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                             WorkSpace.Instance.Solution.AddVariable(vb);
                         }
                     }
-                    WorkSpace.Instance.Solution.SaveSolution();
                 }
                 return;
             }
