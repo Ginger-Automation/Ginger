@@ -51,15 +51,9 @@ namespace Ginger.SolutionAutoSaveAndRecover
         }
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, closeEventHandler: closeEventHandler);
-
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this);
         }
 
-        private void closeEventHandler(object sender, EventArgs e)
-        {
-            //App.AppSolutionRecover.CleanUp();     //??why cleanup?       
-        }
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             List<RecoveredItem> SelectedFiles = mRecoveredItems.Where(x => x.Selected == true && (x.Status != eRecoveredItemStatus.Deleted && x.Status != eRecoveredItemStatus.Recovered)).ToList();
