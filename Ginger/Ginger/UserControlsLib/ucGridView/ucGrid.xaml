@@ -78,7 +78,7 @@
                         <Image Source= "{StaticResource @ArrowDown_16x16}"/>
                     </Button>
 
-                    <TextBox x:Name="txtSearch" MinWidth="120" Height="15" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="txtSearch_TextChanged" BorderBrush="White" />
+                    <TextBox x:Name="txtSearch" MinWidth="120" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="txtSearch_TextChanged" BorderBrush="White" />
                     <usercontrols:ucButton x:Name="btnClearSearch" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="btnClearSearchText_Click" BorderBrush="Transparent" Background="Transparent" Margin="-3,0,6,0" ></usercontrols:ucButton>
                     <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" BorderBrush="Transparent" Background="Transparent" Margin="-3,0,6,0" ></usercontrols:ucButton>
 
