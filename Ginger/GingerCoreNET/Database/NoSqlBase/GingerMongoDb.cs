@@ -245,17 +245,31 @@ namespace GingerCore.NoSqlBase
         }
         private string GetQueryParamater(string inputSQL,string param)
         {
-            int startIndex = inputSQL.IndexOf(param);
-            string queryParameterValue = "";
-            if (startIndex != -1)
+            string queryParameterValue = GetQueryParameterValue(inputSQL, param);
+
+            if (param.Equals("find"))
             {
-                int endIndex = inputSQL.IndexOf(")", startIndex);
-                queryParameterValue = inputSQL.Substring(startIndex, endIndex - startIndex);
+                if (string.IsNullOrEmpty(queryParameterValue))
+                {
+                    return "{}";
+                }
+
+                int startIndex = queryParameterValue.IndexOf("{");
+                int endIndex = queryParameterValue.IndexOf("}");
+                queryParameterValue = queryParameterValue.Substring(startIndex, endIndex + 1);
             }
-            queryParameterValue = queryParameterValue.Replace(param + "(", "");
-            if (param.Equals("find") && string.IsNullOrEmpty(queryParameterValue))
+            if (param.Equals("project"))
             {
-                return "{}";
+                queryParameterValue = GetQueryParameterValue(inputSQL, "find");
+
+                string[] splitParameters = queryParameterValue.Split('{');
+
+                if (splitParameters.Count() < 3)
+                {
+                    return "{_id:0}";
+                }
+
+                return $"{{_id:0, {splitParameters[2]}";
             }
             if (param.Equals("sort") && string.IsNullOrEmpty(queryParameterValue))
             {
@@ -267,6 +281,21 @@ namespace GingerCore.NoSqlBase
             }
             return queryParameterValue;
         }
+
+        private string GetQueryParameterValue(string inputSQL, string param)
+        {
+            int startIndex = inputSQL.IndexOf(param);
+            string queryParameterValue = "";
+            if (startIndex != -1)
+            {
+                int endIndex = inputSQL.IndexOf(")", startIndex);
+                queryParameterValue = inputSQL.Substring(startIndex, endIndex - startIndex);
+            }
+            queryParameterValue = queryParameterValue.Replace(param + "(", "");
+
+            return queryParameterValue;
+        }
+
         public override void PerformDBAction()
         {
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
@@ -310,22 +339,12 @@ namespace GingerCore.NoSqlBase
                         else
                         {
                             var result = collection.Find(GetQueryParamater(SQLCalculated, "find")).
-                            Project(Builders<BsonDocument>.Projection.Exclude("_id").Exclude(GetQueryParamater(SQLCalculated, "projection"))).
+                            Project(GetQueryParamater(SQLCalculated, "project")).
                             Sort(BsonDocument.Parse(GetQueryParamater(SQLCalculated, "sort"))).
                             Limit(Convert.ToInt32(GetQueryParamater(SQLCalculated, "limit"))).
                             ToList();
 
-                            Dictionary<string, object> keyValuePairs = new Dictionary<string, object>();
-                            int entries = 1;
-
-                            foreach (BsonDocument res in result)
-                            {
-                                keyValuePairs.Add(Convert.ToString(entries), res.ElementCount);
-                                ExtractValuesFromResult(res, keyValuePairs, entries);
-                                entries++;
-                            }
-
-                            Act.AddToOutputValues(keyValuePairs);
+                            AddValuesFromResult(result);
                         }
                         break;
                     case Actions.ActDBValidation.eDBValidationType.RecordCount:
@@ -373,9 +392,12 @@ namespace GingerCore.NoSqlBase
                             {
                                 filter = "{" + col + ":\"" + where + "\"}";
                             }
+                        
                         }
-                        var resultSimpleSQLOne = collection.Find(filter).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList().ToJson();
-                        Act.ParseJSONToOutputValues(resultSimpleSQLOne.ToString(), 1);
+
+                        var resultSimpleSQLOne = collection.Find(filter).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList();
+
+                        AddValuesFromResult(resultSimpleSQLOne);
                         break;
                     default:                        
                         Act.Error+= "Operation Type "+ Action +" is not yes supported for Mongo DB";
@@ -391,6 +413,20 @@ namespace GingerCore.NoSqlBase
             {
                 Disconnect();
             }
+        }
+
+        private void AddValuesFromResult(List<BsonDocument> result)
+        {
+            Dictionary<string, object> keyValues = new Dictionary<string, object>();
+            int counts = 1;
+            foreach (BsonDocument res in result)
+            {
+                keyValues.Add(Convert.ToString(counts), res.ElementCount);
+                ExtractValuesFromResult(res, keyValues, counts);
+                counts++;
+            }
+
+            Act.AddToOutputValues(keyValues);
         }
 
         private void ExtractValuesFromResult(BsonDocument result, Dictionary<string, object> keyValuePairs, int count, string path = "")
