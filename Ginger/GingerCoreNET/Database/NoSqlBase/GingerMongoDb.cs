@@ -256,7 +256,7 @@ namespace GingerCore.NoSqlBase
 
                 int startIndex = queryParameterValue.IndexOf("{");
                 int endIndex = queryParameterValue.IndexOf("}");
-                queryParameterValue = queryParameterValue.Substring(startIndex, endIndex + 1);
+                queryParameterValue = queryParameterValue.Substring(startIndex, endIndex);
             }
             if (param.Equals("project"))
             {
