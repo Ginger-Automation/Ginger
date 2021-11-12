@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.CoreNET.WorkSpaceLib
     {
         private static string mEmailReportTempFolder = null;
         public string EmailReportTempFolder
-        {
+        {//jhjohk;k b
             get
             {
                 if (mEmailReportTempFolder == null)

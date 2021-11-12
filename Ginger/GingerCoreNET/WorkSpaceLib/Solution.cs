@@ -48,6 +48,7 @@ namespace Ginger.SolutionGeneral
 
         public Solution()
         {
+          //  ?some work 
             Tags = new ObservableList<RepositoryItemTag>();
         }
 
@@ -62,6 +63,7 @@ namespace Ginger.SolutionGeneral
             {
                 solution.StartDirtyTracking();
             }
+            //adding comment 
             return solution;
         }
 
