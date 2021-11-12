@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
@@ -28,6 +29,29 @@ namespace GingerCore
         Error_Handler = 0,
         Popup_Handler = 1
     }
+
+    public enum eErrorHandlerPostExecutionAction
+    {
+        [EnumValueDescription("Rerun Origin Action")]
+        ReRunOriginAction,
+
+        [EnumValueDescription("Rerun Origin Activity")]
+        ReRunOriginActivity,
+
+        [EnumValueDescription("Rerun Business Flow")]
+        ReRunBusinessFlow,
+
+    }
+
+    public enum eTriggerType
+    {
+        [EnumValueDescription("Any Error")]
+        AnyError,
+        [EnumValueDescription("Specific Error")]
+        SpecificError
+    }
+
+
     //Activity can have several steps - Acts
     // The activities can come from external like: QC TC Step, vStorm    
     public class ErrorHandler : Activity, IErrorHandler
@@ -41,6 +65,27 @@ namespace GingerCore
             get{return mHandlerType;}
             set { if (mHandlerType != value) { mHandlerType = value; OnPropertyChanged(nameof(HandlerType)); } }
         }
+
+
+        private eErrorHandlerPostExecutionAction mErrorHandlerPostExecutionAction;
+        [IsSerializedForLocalRepository]
+        public eErrorHandlerPostExecutionAction ErrorHandlerPostExecutionAction
+        {
+            get { return mErrorHandlerPostExecutionAction; }
+            set { if (mErrorHandlerPostExecutionAction != value) { mErrorHandlerPostExecutionAction = value; OnPropertyChanged(nameof(ErrorHandlerPostExecutionAction)); } }
+        }
+
+
+        private eTriggerType mTriggerErrorType;
+        [IsSerializedForLocalRepository]
+        public eTriggerType TriggerType
+        {
+            get { return mTriggerErrorType; }
+            set { if (mTriggerErrorType != value) { mTriggerErrorType = value; OnPropertyChanged(nameof(ErrorHandlerPostExecutionAction)); } }
+        }
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<ErrorDetails> ErrorStringList = new ObservableList<ErrorDetails>();
 
         public override eImageType ItemImageType
         {

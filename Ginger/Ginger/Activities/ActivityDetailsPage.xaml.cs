@@ -138,7 +138,13 @@ namespace Ginger.BusinessFlowPages
 
             if (mActivity.GetType() == typeof(ErrorHandler))
             {
-                xHandlerTypeStack.Visibility = Visibility.Visible;
+                xHandlerTypeStack.Visibility = Visibility.Collapsed;
+                xHandlerPostExecutionActionStack.Visibility = Visibility.Visible;
+                xHandlerPostExecutionCombo.BindControl(mActivity, nameof(ErrorHandler.ErrorHandlerPostExecutionAction));
+
+                xHandlerTriggerOnStackPanel.Visibility = Visibility.Visible;
+                xHandlerTriggerOnCombo.BindControl(mActivity, nameof(ErrorHandler.TriggerType));
+
                 xHandlerMappingStack.Visibility = Visibility.Collapsed;
                 xHandlerTypeCombo.BindControl(mActivity, nameof(ErrorHandler.HandlerType));
             }
@@ -152,6 +158,8 @@ namespace Ginger.BusinessFlowPages
                 BindingHandler.ObjFieldBinding(xErrorHandlerMappingCmb, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.ErrorHandlerMappingType));
                 xHandlerMappingStack.Visibility = Visibility.Visible;
                 xHandlerTypeStack.Visibility = Visibility.Collapsed;
+                xHandlerTriggerOnStackPanel.Visibility = Visibility.Collapsed;
+                xHandlerPostExecutionActionStack.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -171,6 +179,27 @@ namespace Ginger.BusinessFlowPages
         {
             ErrorHandlerMappingPage errorHandlerMappingPage = new ErrorHandlerMappingPage(mActivity, mContext.BusinessFlow);
             errorHandlerMappingPage.ShowAsWindow();
+        }
+
+        private void xTriggerOnSpecificErrorBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mActivity.GetType() == typeof(ErrorHandler))
+            {
+                ConfigureErrorListPage configureErrorListPage = new ConfigureErrorListPage((ErrorHandler)mActivity);
+                configureErrorListPage.ShowAsWindow();
+            }
+        }
+
+        private void xHandlerTriggerOnCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xHandlerTriggerOnCombo.SelectedValue != null && xHandlerTriggerOnCombo.SelectedValue.ToString() == eTriggerType.SpecificError.ToString())
+            {
+                xTriggerOnSpecificErrorBtn.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xTriggerOnSpecificErrorBtn.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }
