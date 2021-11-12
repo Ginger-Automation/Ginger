@@ -42,6 +42,7 @@ namespace Ginger.Run
             get { return mName; }
             set
             {
+                Console.Write("adsds");
                 if (mName != value)
                 {
                     mName = value;
