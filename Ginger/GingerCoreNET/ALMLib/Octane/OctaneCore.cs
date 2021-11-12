@@ -13,8 +13,8 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.Data_Contracts;
-using ALM_Common.DataContracts;
+using AlmDataContractsStd.Contracts;
+using AlmDataContractsStd.Enums;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -27,17 +27,17 @@ using GingerCore.ALM.QC;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Octane_Repository;
-using OctaneSdkStandard.Connector;
-using OctaneSdkStandard.Connector.Credentials;
-using OctaneSdkStandard.Entities.Base;
-using OctaneSdkStandard.Entities.Releases;
-using OctaneSdkStandard.Entities.Tests;
-using OctaneSdkStandard.Entities.Users;
-using OctaneSdkStandard.Entities.WorkItems;
-using OctaneSdkStandard.Services;
-using OctaneSdkStandard.Services.Queries;
-using OctaneSdkStandard.Services.RequestContext;
+using OctaneRepositoryStd;
+using OctaneStdSDK.Connector;
+using OctaneStdSDK.Connector.Credentials;
+using OctaneStdSDK.Entities.Base;
+using OctaneStdSDK.Entities.Releases;
+using OctaneStdSDK.Entities.Tests;
+using OctaneStdSDK.Entities.Users;
+using OctaneStdSDK.Entities.WorkItems;
+using OctaneStdSDK.Services;
+using OctaneStdSDK.Services.Queries;
+using OctaneStdSDK.Services.RequestContext;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -233,7 +233,7 @@ namespace GingerCore.ALM
                         else
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, "Performing Octane Sys-2-Sys connection");
-                            APIKeyConnectionInfo aPIKeyConnectionInfo = new APIKeyConnectionInfo(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword);
+                            OctaneStdSDK.Connector.Credentials.APIKeyConnectionInfo aPIKeyConnectionInfo = new OctaneStdSDK.Connector.Credentials.APIKeyConnectionInfo(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword);
                             ClientCertificateData clientCertificateData = null;
                             if (ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath != null)
                             {
@@ -464,7 +464,15 @@ namespace GingerCore.ALM
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
             result = string.Empty;
-            ObservableList<ExternalItemFieldBase> runFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
+            ObservableList<ExternalItemFieldBase> runFields;
+            if (WorkSpace.Instance.RunningInExecutionMode)
+            {
+                runFields = GetSolutionALMFields("Run");
+            }
+            else
+            {
+                runFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
+            }
             runFields = new ObservableList<ExternalItemFieldBase>(runFields.Where(f => f.ItemType.Equals("Run")).ToList());
             if (bizFlow.ExternalID == "0" || String.IsNullOrEmpty(bizFlow.ExternalID))
             {
@@ -592,19 +600,40 @@ namespace GingerCore.ALM
             return false;
         }
 
+        private ObservableList<ExternalItemFieldBase> GetSolutionALMFields(string fieldType)
+        {
+            ObservableList<ExternalItemFieldBase> fields;
+            ObservableList<ExternalItemFieldBase> savedFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
+            fields = String.IsNullOrEmpty(fieldType) ? new ObservableList<ExternalItemFieldBase>(GetALMItemFields(null, true)) :
+                new ObservableList<ExternalItemFieldBase>(GetALMItemFields(null, true).Where(x => x.ItemType.Equals(fieldType)));
+            foreach (var item in fields)
+            {
+                ExternalItemFieldBase savedItem = savedFields.Where(i => i.ID.Equals(item.ID)).FirstOrDefault();
+                if (savedItem != null)
+                {
+                    item.SelectedValue = savedItem.SelectedValue;
+                }
+            }
+            return fields;
+        }
+
         private bool AddAttachmentToDefect(string defectId, string filePath)
         {
             try
             {
-                FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                BinaryReader br = new BinaryReader(fs);
-                byte[] fileData = br.ReadBytes((Int32)fs.Length);
-                var tt = Task.Run(() =>
+                string[] attachs = filePath.Split(',');
+                foreach (string attach in attachs)
                 {
-                    return this.octaneRepository.AttachEntity(GetLoginDTO(), new Defect() { Id = new EntityId(defectId) },
-                         filePath.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null);
-                }).Result;
-                fs.Close();
+                    FileStream fs = new FileStream(attach, FileMode.Open, FileAccess.Read);
+                    BinaryReader br = new BinaryReader(fs);
+                    byte[] fileData = br.ReadBytes((Int32)fs.Length);
+                    var tt = Task.Run(() =>
+                    {
+                        return this.octaneRepository.AttachEntity(GetLoginDTO(), new Defect() { Id = new EntityId(defectId) },
+                             filePath.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null);
+                    }).Result;
+                    fs.Close();
+                }
                 return true;
             }
             catch (Exception ex)
@@ -759,22 +788,22 @@ namespace GingerCore.ALM
 
             if (resource == ResourceType.ALL)
             {
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_CASE);
+                resourse = OctaneRepositoryStd.BLL.Extensions.ConvertResourceType(ResourceType.TEST_CASE);
                 ExtractFields(fields, resourse, "Test Case", _loginDto, listnodes);
 
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_SET);
+                resourse = OctaneRepositoryStd.BLL.Extensions.ConvertResourceType(ResourceType.TEST_SET);
                 ExtractFields(fields, resourse, "Test Suite", _loginDto, listnodes);
 
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.REQUIREMENT);
+                resourse = OctaneRepositoryStd.BLL.Extensions.ConvertResourceType(ResourceType.REQUIREMENT);
                 ExtractFields(fields, resourse, "Requirement", _loginDto, listnodes);
 
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_RUN);
+                resourse = OctaneRepositoryStd.BLL.Extensions.ConvertResourceType(ResourceType.TEST_RUN);
                 ExtractFields(fields, resourse, "Run", _loginDto, listnodes);
             }
             else
             {
 
-                resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(resource);
+                resourse = OctaneRepositoryStd.BLL.Extensions.ConvertResourceType(resource);
 
                 ExtractFields(fields, resourse, resourse, _loginDto, listnodes);
             }

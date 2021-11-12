@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
@@ -31,8 +33,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
         public List<string> ItemTypesList = Enum.GetNames(typeof(GlobalSolution.eImportItemType)).ToList();
 
         public ObservableList<GlobalSolutionItem> ItemTypeListToImport = null;
-        public ObservableList<GlobalSolutionItem> ItemsListToImport = null;
-        public ObservableList<GlobalSolutionItem> SelectedItemTypeListToImport = null;
+        public ObservableList<GlobalSolutionItem> ItemsListToImport = new ObservableList<GlobalSolutionItem>();
+        public ObservableList<GlobalSolutionItem> SelectedItemsListToImport = new ObservableList<GlobalSolutionItem>();
         public List<VariableBase> VariableListToImport = new List<VariableBase>();
         public List<EnvApplication> EnvAppListToImport = new List<EnvApplication>();
 
@@ -47,7 +49,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
             AddPage(Name: "Select Solution Items", Title: "Select Solution Items", SubTitle: "Select Solution Items...", Page: new SelectItemFromSolutionPage());
 
-            AddPage(Name: "Solution Items Dependancy Validation", Title: "Solution Items Dependancy Validation", SubTitle: "Solution Items Dependancy Validation...", Page: new ItemDependancyPage());
+            AddPage(Name: "Solution Items Dependency Validation", Title: "Solution Items Dependency Validation", SubTitle: "Solution Items Dependency Validation...", Page: new ItemDependancyPage());
 
         }
 
@@ -55,9 +57,26 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
         public override void Finish()
         {
+            try
+            {
+                ProcessStarted();
+                ValidateAndAddItemToSolution().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+            finally
+            {
+                ProcessEnded();
+            }
+        }
+
+        private async Task ValidateAndAddItemToSolution()
+        {
             if (!string.IsNullOrEmpty(SolutionFolder))
             {
-                foreach (GlobalSolutionItem itemToAdd in SelectedItemTypeListToImport.Where(x => x.Selected).ToList())
+                foreach (GlobalSolutionItem itemToAdd in SelectedItemsListToImport.Where(x => x.Selected).ToList())
                 {
                     string sourceFile = itemToAdd.ItemFullPath;
                     string targetFile = string.Empty;
@@ -101,7 +120,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                         case GlobalSolution.eImportItemType.Variables:
                             AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
                             break;
-                        
+
                         default:
                             break;
                     }
@@ -112,6 +131,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 {
                     GlobalSolutionUtils.Instance.AddEnvDependanciesToSolution(EnvAppListToImport);
                 }
+                //Save solution
+                WorkSpace.Instance.Solution.SaveSolution();
             }
         }
 
@@ -129,7 +150,6 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                             WorkSpace.Instance.Solution.AddVariable(vb);
                         }
                     }
-                    WorkSpace.Instance.Solution.SaveSolution();
                 }
                 return;
             }
