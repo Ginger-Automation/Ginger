@@ -274,6 +274,7 @@
     <Compile Include="Activities\ConfigureErrorListPage.xaml.cs">
       <DependentUpon>ConfigureErrorListPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ALM\MappedToALMWizard\AddMappedToALMWizard.cs" />
     <Compile Include="ALM\JIRA\JiraZephyrCyclesExplorerPage.xaml.cs">
       <DependentUpon>JiraZephyrCyclesExplorerPage.xaml</DependentUpon>
     </Compile>
@@ -281,6 +282,15 @@
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrFolderTreeItem.cs" />
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrCycleTreeItem.cs" />
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrVersionTreeItem.cs" />
+    <Compile Include="ALM\MappedToALMWizard\TestCaseMappingPage.xaml.cs">
+      <DependentUpon>TestCaseMappingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\MappedToALMWizard\TestSetMappingPage.xaml.cs">
+      <DependentUpon>TestSetMappingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\MappedToALMWizard\TestStepMappingPage.xaml.cs">
+      <DependentUpon>TestStepMappingPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ALM\Qtest\QtestModuleExplorerPage.xaml.cs">
       <DependentUpon>QtestModuleExplorerPage.xaml</DependentUpon>
     </Compile>
@@ -2015,6 +2025,7 @@
     <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
     <None Include="ALMRESTConfiguration\appsettings_QTest.json" />
+    <Resource Include="ALM\MappedToALMWizard\MappedToALMIntro.md" />
     <None Include="Ginger.ruleset" />
     <EmbeddedResource Include="Resources\LiteDB.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -2601,6 +2612,18 @@
     <Page Include="Actions\ActionEditPages\ActLogActionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ALM\MappedToALMWizard\TestCaseMappingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ALM\MappedToALMWizard\TestSetMappingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ALM\MappedToALMWizard\TestStepMappingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ALM\Qtest\QtestCyclesExplorerPage.xaml">
       <Generator>MSBuild:Compile</Generator>

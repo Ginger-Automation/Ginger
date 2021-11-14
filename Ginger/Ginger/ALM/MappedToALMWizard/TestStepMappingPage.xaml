@@ -1,0 +1,43 @@
+﻿<Page x:Class="Ginger.ALM.MappedToALMWizard.TestStepMappingPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.ALM.MappedToALMWizard"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="TestStepMappingPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="20*"/>
+            <RowDefinition Height="40*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40*"/>
+                <ColumnDefinition Width="20*"/>
+                <ColumnDefinition Width="40*"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Center" Width="120"/>
+            <ComboBox Grid.Column="2" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Center" Width="120"/>
+            <Button x:Name="xMapTSBtn" Content="Map" Grid.Column="1" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Center"/>
+
+        </Grid>
+        <DataGrid x:Name="xTCGrid" HorizontalAlignment="Center" Height="Auto" Margin="10,10,10,30" VerticalAlignment="Stretch" Width="Auto">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Activity Group" IsReadOnly="True" Binding="{Binding Path=Test1}" Width="50"></DataGridTextColumn>
+                <DataGridTextColumn Header="Test Case" IsReadOnly="True"  Binding="{Binding Path=Test2}" Width="130"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid x:Name="xTSGrid" HorizontalAlignment="Center" Height="Auto" Margin="10,10,10,30" Grid.Row="2" VerticalAlignment="Stretch" Width="Auto">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Activity" IsReadOnly="True" Binding="{Binding Path=Test1}" Width="50"></DataGridTextColumn>
+                <DataGridTextColumn Header="Test Step" IsReadOnly="True"  Binding="{Binding Path=Test2}" Width="130"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button x:Name="xSelectTCBtn" Content="Select" HorizontalAlignment="Center" Margin="0,0,0,5" VerticalAlignment="Bottom"/>
+        <Button x:Name="xRemoveTSBtn" Content="Remove" HorizontalAlignment="Center" Margin="0,0,0,5" Grid.Row="2" VerticalAlignment="Bottom"/>
+    </Grid>
+</Page>

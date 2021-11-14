@@ -32,6 +32,7 @@ using GingerCore.ALM.QC;
 using amdocs.ginger.GingerCoreNET;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 using GingerCoreNET.ALMLib;
+using GingerWPF.WizardLib;
 
 namespace Ginger.ALM
 {
@@ -258,6 +259,25 @@ namespace Ginger.ALM
 
             Mouse.OverrideCursor = null;
             return domainList;
+        }
+
+        internal bool MappedBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false)
+        {
+            //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            WizardWindow.ShowWizard(new MappedToALMWizard.AddMappedToALMWizard(/*mContext*/));
+            Reporter.ToLog(eLogLevel.INFO, ("Exporting " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
+            //Passing Solution Folder path to GingerCore
+            ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+
+            bool isExportSucc = false;
+            if (AutoALMProjectConnect(eALMConnectType.Auto))
+            {
+                isExportSucc = AlmRepo.MappedBusinessFlowToALM(businessFlow, performSaveAfterExport);
+                DisconnectALMServer();
+            }
+
+            Mouse.OverrideCursor = null;
+            return isExportSucc;
         }
 
         public List<string> GetJiraTestingALMs()

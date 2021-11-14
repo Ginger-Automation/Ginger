@@ -96,5 +96,9 @@ namespace Ginger.ALM.Repository
             }
         }
 
+        public virtual bool MappedBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

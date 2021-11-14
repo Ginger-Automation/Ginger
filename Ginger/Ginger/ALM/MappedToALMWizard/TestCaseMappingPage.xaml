@@ -1,0 +1,46 @@
+﻿<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.ALM.MappedToALMWizard"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" xmlns:UCDataGridView="clr-namespace:Ginger.UserControlsLib.UCDataGridView" x:Class="Ginger.ALM.MappedToALMWizard.TestCaseMappingPage"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="TestCaseMappingPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="15*"/>
+            <RowDefinition Height="25*"/>
+            <RowDefinition Height="55*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="50*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Ginger" HorizontalAlignment="Left" Margin="140,3,0,0" VerticalAlignment="Top"/>
+            <Label Content="Selected BF" HorizontalAlignment="Left" Margin="140,42,0,0" VerticalAlignment="Top"/>
+            <Label Content="ALM" Grid.Column="2" HorizontalAlignment="Left" Margin="134,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.197,0.231"/>
+            <Label Content="Selected TS" Grid.Column="2" HorizontalAlignment="Left" Margin="134,44,0,0" VerticalAlignment="Top"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40*"/>
+                <ColumnDefinition Width="20*"/>
+                <ColumnDefinition Width="40*"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox x:Name="gingerAGCbx" HorizontalAlignment="Left" Margin="98,22,0,0" VerticalAlignment="Top" Width="120"/>
+            <ComboBox x:Name="almTCCbx" Grid.Column="2" HorizontalAlignment="Left" Margin="96,19,0,0" VerticalAlignment="Top" Width="120"/>
+            <Button Content="Map" Grid.Column="1" HorizontalAlignment="Left" Margin="48,21,0,0" VerticalAlignment="Top" Width="74" Click="Button_Click"/>
+        </Grid>
+        <DataGrid x:Name="DataGridTest" HorizontalAlignment="Center" Height="Auto" Margin="30,30,30,50" Grid.Row="2" VerticalAlignment="Stretch" Width="Auto">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Activity Group" IsReadOnly="True" Binding="{Binding Path=Test1}" Width="50"></DataGridTextColumn>
+                <DataGridTextColumn Header="Test Case" IsReadOnly="True"  Binding="{Binding Path=Test2}" Width="130"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button x:Name="removeMapBtn" Content="Remove Mapped" HorizontalAlignment="Center" Margin="0,0,0,10" Grid.Row="2" VerticalAlignment="Bottom" Width="76" Click="removeMapBtn_Click"/>
+    </Grid>
+</Page>

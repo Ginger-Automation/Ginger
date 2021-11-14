@@ -27,6 +27,7 @@ using GingerCore.ALM;
 using GingerCore.ALM.ZephyrEnt.Bll;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -571,6 +572,10 @@ namespace Ginger.ALM.Repository
             return; // todo refresh
         }
 
-        
+        public override bool MappedBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport)
+        {
+            
+            return true;
+        }
     }
 }
