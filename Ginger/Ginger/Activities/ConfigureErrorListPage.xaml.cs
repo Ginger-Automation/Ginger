@@ -18,6 +18,8 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Ginger.UserControls;
 using GingerCore;
+using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -76,9 +78,9 @@ namespace Ginger.Activities
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
         {
-            //Button okBtn = new Button();
-            //okBtn.Content = "Ok";
-            //okBtn.Click += new RoutedEventHandler(OkBtn_Click);
+            Button okBtn = new Button();
+            okBtn.Content = "Ok";
+            okBtn.Click += new RoutedEventHandler(OkBtn_Click);
 
             Button closeBtn = new Button();
             closeBtn.Content = "Close";
@@ -86,24 +88,44 @@ namespace Ginger.Activities
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
 
-            winButtons.Add(closeBtn); //winButtons.Add(okBtn);
+            winButtons.Add(closeBtn); winButtons.Add(okBtn);
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle,"Error String Configuration", this, winButtons, false, string.Empty, CloseWinClicked);
         }
 
+        private void OkBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ValidateErrorStringList();
+        }
+
+        private bool ValidateErrorStringList()
+        {
+            if (mErrorHandler.ErrorStringList.Where(x => x.ErrorString == string.Empty || x.ErrorString == null).Count() > 0)
+            {
+                Reporter.ToUser(eUserMsgKey.MissingErrorString);
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         private void CloseWinClicked(object sender, RoutedEventArgs e)
         {
-            _pageGenericWin.Close();
+            if(ValidateErrorStringList())
+            {
+                _pageGenericWin.Close();
+            }
         }
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
-            _pageGenericWin.Close();
+            if (ValidateErrorStringList())
+            {
+                _pageGenericWin.Close();
+            }
         }
 
-        //private void OkBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    _pageGenericWin.Close();
-        //}
     }
 }
