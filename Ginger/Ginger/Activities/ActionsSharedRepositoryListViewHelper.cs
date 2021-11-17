@@ -20,10 +20,12 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
+using Ginger.Actions;
 using Ginger.Activities;
 using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Activities;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,9 +33,9 @@ using System.Windows;
 
 namespace Ginger.BusinessFlowPages.ListHelpers
 {
-    public class ActivitiesGroupsListViewHelper : IListViewHelper
+    public class ActionsSharedRepositoryListViewHelper : IListViewHelper
     {
-        ActivitiesGroup mActivitiesGroup;
+        Act mAct;
         Context mContext;
         public General.eRIPageViewMode PageViewMode { get; set; }
 
@@ -65,7 +67,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public bool ExpandItemOnLoad { get; set; } = false;
 
-        public ActivitiesGroupsListViewHelper(Context context, General.eRIPageViewMode pageViewMode)
+        public ActionsSharedRepositoryListViewHelper(Context context, General.eRIPageViewMode pageViewMode)
         {
             mContext = context;
             PageViewMode = pageViewMode;
@@ -73,19 +75,19 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public void SetItem(object item)
         {
-            if (item is ActivitiesGroup)
+            if (item is Act)
             {
-                mActivitiesGroup = (ActivitiesGroup)item;
+                mAct = (Act)item;
             }
             else if (item is ucButton)
             {
-                mActivitiesGroup = (ActivitiesGroup)(((ucButton)item).Tag);
+                mAct = (Act)(((ucButton)item).Tag);
             }
         }
 
         public string GetItemNameField()
         {
-            return nameof(ActivitiesGroup.Name);
+            return nameof(Act.ItemName);
         }
 
         public string GetItemMandatoryField()
@@ -95,7 +97,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemDescriptionField()
         {
-            return nameof(ActivitiesGroup.Description);
+            return nameof(Act.Description);
         }
 
         public string GetItemErrorField()
@@ -110,7 +112,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemTagsField()
         {
-            return nameof(ActivitiesGroup.Tags);
+            return nameof(Act.Tags);
         }
 
         public string GetItemExecutionStatusField()
@@ -126,11 +128,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public ListItemUniqueIdentifier GetItemUniqueIdentifier(object item)
         {
             SetItem(item);
-            //return new ListItemUniqueIdentifier() { Color = mActivitiesGroup.GroupColor, Tooltip = mActivitiesGroup.Name };
+            //return new ListItemUniqueIdentifier() { Color = mAct.GroupColor, Tooltip = mAct.Name };
             return null;
         }
 
-        public string GetItemIconField()
+       public string GetItemIconField()
         {
             return nameof(RepositoryItemBase.ItemImageType);
         }
@@ -155,7 +157,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             editItem.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             editItem.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
             editItem.ToolTip = "Edit Item";
-            editItem.OperationHandler = EditActivityGroup;
+            editItem.OperationHandler = EditAct;
             operationsList.Add(editItem);
 
             return operationsList;
@@ -169,12 +171,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 {
                     return;
                 }
-                List<ActivitiesGroup> list = new List<ActivitiesGroup>();
-                foreach (ActivitiesGroup selectedItem in mListView.List.SelectedItems)
+                List<Act> list = new List<Act>();
+                foreach (Act selectedItem in mListView.List.SelectedItems)
                 {
-                    list.Add(selectedItem);
-                }
-                ActionsFactory.AddActivitiesGroupsFromSRHandler(list, mContext.BusinessFlow);
+                    ActionsFactory.AddActionsHandler(selectedItem, mContext);
+                }                
             }
             else
             {
@@ -182,19 +183,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
         }
 
-        private void EditActivityGroup(object sender, RoutedEventArgs e)
+        private void EditAct(object sender, RoutedEventArgs e)
         {
             if (mListView.List.SelectedItems != null && mListView.List.SelectedItems.Count > 0)
             {
-                ActivitiesGroup activityGroup = (ActivitiesGroup)mListView.List.SelectedItem;
-                BusinessFlow currentBF = null;
-                if (mContext != null)
-                {
-                    currentBF = mContext.BusinessFlow;
-                }
-
-                ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activityGroup, currentBF, ActivitiesGroupPage.eEditMode.SharedRepository);
-                mActivitiesGroupPage.ShowAsWindow();
+                Act a = (Act)mListView.CurrentItem;
+                ActionEditPage actedit = new ActionEditPage(a, General.eRIPageViewMode.SharedReposiotry, new GingerCore.BusinessFlow(), new GingerCore.Activity());
+                actedit.ShowAsWindow(eWindowShowStyle.Dialog);
             }
             else
             {
@@ -238,12 +233,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (SelectedItemsList.Count > 0)
             {
                 RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItemBase)mListView.List.SelectedItem);
-                usagePage.extraDetails = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                 usagePage.ShowAsWindow();
             }
             else
-                Reporter.ToUser(eUserMsgKey.NoItemWasSelected); 
-            
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }          
         }
 
         public List<ListItemOperation> GetItemExtraOperationsList(object item)
@@ -253,8 +248,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             //ListItemOperation mandatory = new ListItemOperation();
             //mandatory.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
-            //mandatory.ImageBindingObject = mActivity;
-            //mandatory.ImageBindingFieldName = nameof(Activity.Mandatory);
+            //mandatory.ImageBindingObject = mAct;
+            //mandatory.ImageBindingFieldName = nameof(Act.Mandatory);
             //mandatory.ImageBindingConverter = new ActiveImageTypeConverter();
             //mandatory.ToolTip = "Mandatory";
             ////active.ImageSize = 15;
@@ -271,13 +266,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             //ListItemOperation run = new ListItemOperation();
             //run.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
-            //run.ToolTip = "Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+            //run.ToolTip = "Run " + GingerDicser.GetTermResValue(eTermResKey.Act);
             //run.OperationHandler = RunHandler;
             //executionOperationsList.Add(run);
 
             //ListItemOperation continueRun = new ListItemOperation();
             //continueRun.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Continue;
-            //continueRun.ToolTip = "Continue Run " + GingerDicser.GetTermResValue(eTermResKey.Activity);
+            //continueRun.ToolTip = "Continue Run " + GingerDicser.GetTermResValue(eTermResKey.Act);
             //continueRun.OperationHandler = ContinueRunHandler;
             //executionOperationsList.Add(continueRun);
 
