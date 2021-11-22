@@ -132,7 +132,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemIconField()
         {
-            return nameof(RepositoryItemBase.ItemImageType); // g
+            return nameof(RepositoryItemBase.ItemImageType);
         }
 
         public string GetItemIconTooltipField()

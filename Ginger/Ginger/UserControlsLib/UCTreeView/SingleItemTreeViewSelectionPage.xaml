@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
       mc:Ignorable="d" 
-      Height="600" Width="400"
+      Height="600" 
       Title="SingleItemTreeViewSelectionPage">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">

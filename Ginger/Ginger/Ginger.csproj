@@ -273,6 +273,7 @@
     </Compile>
     <Compile Include="Actions\ActionsLibraryListViewHelper.cs" />
     <Compile Include="Activities\ActionsSharedRepositoryListViewHelper.cs" />
+    <Compile Include="Activities\ActionsPOMListViewHelper.cs" />
     <Compile Include="Activities\ActivitiesSharedRepositoryListViewHelper.cs" />
     <Compile Include="Activities\ConfigureErrorListPage.xaml.cs">
       <DependentUpon>ConfigureErrorListPage.xaml</DependentUpon>
