@@ -76,6 +76,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             //SetElementsGridView();
             mPOMPage.HorizontalAlignment = HorizontalAlignment.Stretch;
             mPOMPage.xTreeView.HorizontalAlignment = HorizontalAlignment.Stretch;
+            mPOMPage.Width = Double.NaN;
             xPOMFrame.Content = mPOMPage;
         }
 
