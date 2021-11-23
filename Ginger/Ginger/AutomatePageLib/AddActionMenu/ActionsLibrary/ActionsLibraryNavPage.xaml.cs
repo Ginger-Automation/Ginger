@@ -193,8 +193,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             ucListView.ListSelectionMode = SelectionMode.Extended;
             mActionsListHelper.ListView = ucListView;
 
-            ucListView.MouseDoubleClick -= ActionsListView_MouseDoubleClick;  // In order to prevent adding multiple time of the event
-
             ucListView.MouseDoubleClick += ActionsListView_MouseDoubleClick;
         }
 
