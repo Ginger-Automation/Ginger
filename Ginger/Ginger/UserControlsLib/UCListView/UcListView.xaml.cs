@@ -482,8 +482,6 @@ namespace Ginger.UserControlsLib.UCListView
 
         public void SetListOperations()
         {
-            xListOperationsPnl.Children.Clear();
-
             List<ListItemOperation> listOperations = mListViewHelper.GetListOperations();
             if (listOperations != null && listOperations.Count > 0)
             {

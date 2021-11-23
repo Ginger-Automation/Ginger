@@ -69,6 +69,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             FillActionsList();
 
+            SetActionsListView(xPlatformPlugInsActionsListView);
+            SetActionsListView(xPlatformActionsListView);
+            SetActionsListView(xPlatformGenericActionsListView);
+            SetActionsListView(xPlatformLegacyActionListView);
+
             Button addActionBtn = new Button();
             addActionBtn.Content = "Add Action";
             addActionBtn.Click += new RoutedEventHandler(AddActionButton_Click);
@@ -141,7 +146,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
             }
 
-            SetActionsListView(xPlatformPlugInsActionsListView, PlugInsActions);            
+            SetActionsListViewData(xPlatformPlugInsActionsListView, PlugInsActions);            
         }
 
         private void LoadGridData()
@@ -174,24 +179,28 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
             }
 
-            SetActionsListView(xPlatformActionsListView, platformActions);
-            SetActionsListView(xPlatformGenericActionsListView, generalActions);
-            SetActionsListView(xPlatformLegacyActionListView, LegacyActions);
+            SetActionsListViewData(xPlatformActionsListView, platformActions);
+            SetActionsListViewData(xPlatformGenericActionsListView, generalActions);
+            SetActionsListViewData(xPlatformLegacyActionListView, LegacyActions);
         }
 
-        private void SetActionsListView(UcListView ucListView, ObservableList<Act> dataSource)
+        private void SetActionsListView(UcListView ucListView)
         {
             ucListView.ListTitleVisibility = Visibility.Hidden;
             mActionsListHelper = new ActionsLibraryListViewHelper(mContext, mPageViewMode);
 
             ucListView.SetDefaultListDataTemplate(mActionsListHelper);
             ucListView.ListSelectionMode = SelectionMode.Extended;
-            ucListView.DataSourceList = dataSource;
             mActionsListHelper.ListView = ucListView;
 
             ucListView.MouseDoubleClick -= ActionsListView_MouseDoubleClick;  // In order to prevent adding multiple time of the event
 
             ucListView.MouseDoubleClick += ActionsListView_MouseDoubleClick;
+        }
+
+        private void SetActionsListViewData(UcListView ucListView, ObservableList<Act> dataSource)
+        {
+            ucListView.DataSourceList = dataSource;
         }
 
         private ObservableList<Act> GetPlatformsActions(bool ShowAll = false)
@@ -252,26 +261,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             return Acts;
         }
                 
-        private void SetActionsListView(UcListView xActionsListView)
-        {
-            xActionsListView.Title = "Actions";
-            xActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
-
-            ////TODO: move DataTemplate into ListView
-            //DataTemplate dataTemp = new DataTemplate();
-            //FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
-            ////listItemFac.SetValue(UcListViewItem.ParentListProperty, xActionsListView);
-            //listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
-            //listItemFac.SetValue(UcListViewItem.ItemInfoProperty, new ActionListItemInfo(mContext));
-            //dataTemp.VisualTree = listItemFac;
-            //xActionsListView.List.ItemTemplate = dataTemp;
-
-            xActionsListView.SetDefaultListDataTemplate(new ActionsListViewHelper(mContext, General.eRIPageViewMode.Automation));
-
-            xActionsListView.DataSourceList = mContext.BusinessFlow.CurrentActivity.Acts;
-            //xActionsListView.List.ItemsSource = mActivity.Acts;
-        }
-
         /*
         private void SetActionsGridView(ucGrid actionsGrid)
         {
