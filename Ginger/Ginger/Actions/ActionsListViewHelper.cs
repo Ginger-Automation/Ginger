@@ -129,7 +129,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemDescriptionField()
         {
-            return nameof(Act.ActionType);
+            if (PageViewMode == General.eRIPageViewMode.Add)
+            {
+                return nameof(Act.ActionUserDescription);
+            }
+            else
+            {
+                return nameof(Act.ActionType);
+            }
         }
 
         public string GetItemErrorField()
@@ -177,7 +184,51 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(Act.ActionType);
         }
 
+
+
         public List<ListItemOperation> GetListOperations()
+        {
+            if (PageViewMode == General.eRIPageViewMode.Add)
+            {
+                return GetListOperationsActions();
+            }
+            else
+            {
+                return GetListOperationsDefault();
+            }
+        }
+
+        public List<ListItemOperation> GetListOperationsActions()
+        {
+            List<ListItemOperation> operationsList = new List<ListItemOperation>();
+
+            if (PageViewMode != General.eRIPageViewMode.View)
+            {
+                ListItemOperation addSelected = new ListItemOperation();
+                addSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone, General.eRIPageViewMode.Add, General.eRIPageViewMode.AddFromModel };
+                addSelected.AutomationID = "addSelected";
+                addSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+                addSelected.ToolTip = "Add Selected Actions";
+                addSelected.OperationHandler = AddActionListView;
+                operationsList.Add(addSelected);
+            }
+
+            return operationsList;
+        }
+
+        private void AddActionListView(object sender, RoutedEventArgs e)
+        {
+            List<RepositoryItemBase> list = new List<RepositoryItemBase>();
+            List<object> SelectedItemsList = mListView.List.SelectedItems.Cast<object>().ToList();
+            foreach (Act act in SelectedItemsList)
+            {
+                list.Add(act);
+                ActionsFactory.AddActionsHandler(act, mContext);
+            }
+
+        }
+
+        public List<ListItemOperation> GetListOperationsDefault()
         {
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
@@ -194,8 +245,26 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             return operationsList;
         }
-
         public List<ListItemOperation> GetListExtraOperations()
+        {
+            if (PageViewMode == General.eRIPageViewMode.Add)
+            {
+                return GetListExtraOperationsActions();
+            }
+            else
+            {
+                return GetListExtraOperationsDefault();
+            }
+        }
+
+        public List<ListItemOperation> GetListExtraOperationsActions()
+        {
+            List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+
+            return extraOperationsList;
+        }
+
+        public List<ListItemOperation> GetListExtraOperationsDefault()
         {
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
 
@@ -377,6 +446,26 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public List<ListItemOperation> GetItemOperationsList(object item)
         {
+            if (PageViewMode == General.eRIPageViewMode.Add)
+            {
+                return GetItemOperationsListActions(item);
+            }
+            else
+            {
+                return GetItemOperationsListDefault(item);
+            }
+        }
+
+        public List<ListItemOperation> GetItemOperationsListActions(object item)
+        {
+            SetItem(item);
+            List<ListItemOperation> operationsList = new List<ListItemOperation>();
+
+            return operationsList;
+        }
+
+        public List<ListItemOperation> GetItemOperationsListDefault(object item)
+        {
             SetItem(item);
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
@@ -427,6 +516,26 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         }
 
         public List<ListItemOperation> GetItemExtraOperationsList(object item)
+        {
+            if (PageViewMode == General.eRIPageViewMode.Add)
+            {
+                return GetItemExtraOperationsListActions(item);
+            }
+            else
+            {
+                return GetItemExtraOperationsListDefault(item);
+            }
+        }
+
+        public List<ListItemOperation> GetItemExtraOperationsListActions(object item)
+        {
+            SetItem(item);
+            List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
+
+            return extraOperationsList;
+        }
+
+        public List<ListItemOperation> GetItemExtraOperationsListDefault(object item)
         {
             SetItem(item);
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();

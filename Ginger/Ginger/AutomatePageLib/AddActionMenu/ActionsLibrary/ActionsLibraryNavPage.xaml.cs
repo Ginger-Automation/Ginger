@@ -55,7 +55,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         // bool IsPlugInAvailable = false;
         Context mContext;
 
-        ActionsLibraryListViewHelper mActionsListHelper;
+        ActionsListViewHelper mActionsListHelper;
         Ginger.General.eRIPageViewMode mPageViewMode;
 
         public ActionsLibraryNavPage(Context context)
@@ -69,10 +69,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             FillActionsList();
 
-            SetActionsListView(xPlatformPlugInsActionsListView);
-            SetActionsListView(xPlatformActionsListView);
-            SetActionsListView(xPlatformGenericActionsListView);
-            SetActionsListView(xPlatformLegacyActionListView);
+            SetActionsListView(xPlatformPlugInsActionsListView, Ginger.General.eRIPageViewMode.Add);
+            SetActionsListView(xPlatformActionsListView, Ginger.General.eRIPageViewMode.Add);
+            SetActionsListView(xPlatformGenericActionsListView, Ginger.General.eRIPageViewMode.Add);
+            SetActionsListView(xPlatformLegacyActionListView, Ginger.General.eRIPageViewMode.Add);
 
             Button addActionBtn = new Button();
             addActionBtn.Content = "Add Action";
@@ -184,10 +184,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             SetActionsListViewData(xPlatformLegacyActionListView, LegacyActions);
         }
 
-        private void SetActionsListView(UcListView ucListView)
+        private void SetActionsListView(UcListView ucListView, Ginger.General.eRIPageViewMode pageViewMode)
         {
             ucListView.ListTitleVisibility = Visibility.Hidden;
-            mActionsListHelper = new ActionsLibraryListViewHelper(mContext, mPageViewMode);
+                        
+            mActionsListHelper = new ActionsListViewHelper(mContext, pageViewMode);
 
             ucListView.SetDefaultListDataTemplate(mActionsListHelper);
             ucListView.ListSelectionMode = SelectionMode.Extended;

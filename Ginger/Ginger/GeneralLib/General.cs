@@ -80,6 +80,9 @@ namespace Ginger
             /// </summary>
             AddFromShardRepository = 7,
 
+            /// <summary>  /// List of items in model to add                    
+            AddFromModel = 9,
+
             /// <summary>
             /// Item opened from Windows Explorer in the Side Panel
             /// </summary>
