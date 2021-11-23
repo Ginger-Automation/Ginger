@@ -793,19 +793,7 @@ namespace Ginger.UserControlsLib.UCListView
         {
             xItemOperationsMainPnl.Visibility = Visibility.Collapsed;
             xItemOperationsClm.Width = new GridLength(0);
-        }
-
-        public Visibility ListItemStatusVisibility
-        {
-            get
-            {
-                return xItemStatusImage.Visibility;
-            }
-            set
-            {
-                xItemStatusImage.Visibility = value;
-            }
-        }
+        }        
     }
 
     public class ActiveBackgroundColorConverter : IValueConverter
