@@ -38,9 +38,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         public void RunSetStart(RunSetConfig runsetConfig)
         {
             Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Publishing Execution data to central DB");
-            runsetConfig.ExecutionID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
-
-            SendRunsetExecutionDataToCentralDbTaskAsync(runsetConfig);
+            if (WorkSpace.Instance.RunsetExecutor != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null
+                && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID != null)
+            {
+                runsetConfig.ExecutionID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
+            }
+            Task.Run(() => SendRunsetExecutionDataToCentralDbTaskAsync(runsetConfig));
         }
 
         public async void SendRunsetExecutionDataToCentralDbTaskAsync(RunSetConfig runsetConfig)
@@ -51,7 +54,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public void RunSetEnd(RunSetConfig runsetConfig)
         {
-            SendRunsetEndDataToCentralDbTaskAsync(runsetConfig);
+            Task.Run(() => SendRunsetEndDataToCentralDbTaskAsync(runsetConfig));
             Reporter.HideStatusMessage();
         }
 
@@ -66,7 +69,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         #region Runner
         public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
-            RunnerRunStartTask(gingerRunner);
+            Task.Run(() => RunnerRunStartTask(gingerRunner));
         }
 
         private async void RunnerRunStartTask(GingerRunner gingerRunner)
@@ -81,7 +84,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 return;
             }
-            RunnerRunEndTask(gingerRunner);
+            Task.Run(() => RunnerRunEndTask(gingerRunner));
         }
 
         private async void RunnerRunEndTask(GingerRunner gingerRunner)
@@ -95,7 +98,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         #region BusinessFlow
         public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
-            BusinessFlowStartTask(businessFlow);
+            Task.Run(() => BusinessFlowStartTask(businessFlow));
         }
 
         private async void BusinessFlowStartTask(BusinessFlow businessFlow)
@@ -110,10 +113,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 return;
             }
-            BusinessFlowEndTask(businessFlow);
+            Task.Run(() => BusinessFlowEndTask(businessFlow));
         }
 
-        private async void BusinessFlowEndTask(BusinessFlow businessFlow)
+        private async Task BusinessFlowEndTask(BusinessFlow businessFlow)
         {
             AccountReportBusinessFlow accountReportBusinessFlow = AccountReportEntitiesDataMapping.MapBusinessFlowEndData(businessFlow, mContext);
             await AccountReportApiHandler.SendBusinessflowExecutionDataToCentralDBAsync(accountReportBusinessFlow, true);
@@ -122,9 +125,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         #endregion BusinessFlow
 
         #region Activity
-        public async override void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
+        public override void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
         {
-            await ActivityStartTask(activity);
+            Task.Run(() => ActivityStartTask(activity));
         }
 
         private async Task ActivityStartTask(Activity activity)
@@ -133,17 +136,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             await AccountReportApiHandler.SendActivityExecutionDataToCentralDBAsync(accountReportActivity);
         }
 
-        public override async void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
+        public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
             if (!activity.Active || activity.ExecutionId == Guid.Empty || activity.Status == Execution.eRunStatus.Blocked)
             {
                 return;
             }
 
-            ActivityEndTask(activity);
+            Task.Run(() => ActivityEndTask(activity));
         }
 
-        private async void ActivityEndTask(Activity activity)
+        private async Task ActivityEndTask(Activity activity)
         {
             AccountReportActivity accountReportActivity = AccountReportEntitiesDataMapping.MapActivityEndData(activity, mContext);
             //accountReportActivity.UpdateData = true;
@@ -155,10 +158,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         #region Activity Group 
         public override void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)
         {
-            ActivityGroupStartTask(activityGroup);
+            Task.Run(() => ActivityGroupStartTask(activityGroup));
         }
 
-        private async void ActivityGroupStartTask(ActivitiesGroup activityGroup)
+        private async Task ActivityGroupStartTask(ActivitiesGroup activityGroup)
         {
             AccountReportActivityGroup accountReportActivityGroup = AccountReportEntitiesDataMapping.MapActivityGroupStartData(activityGroup, mContext);
             await AccountReportApiHandler.SendActivityGroupExecutionDataToCentralDBAsync(accountReportActivityGroup);
@@ -170,10 +173,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 return;
             }
-            SendActivityGroupDataActionTask(activityGroup);
+            Task.Run(() => SendActivityGroupDataActionTask(activityGroup));
         }
 
-        private async void SendActivityGroupDataActionTask(ActivitiesGroup activityGroup)
+        private async Task SendActivityGroupDataActionTask(ActivitiesGroup activityGroup)
         {
             AccountReportActivityGroup accountReportActivityGroup = AccountReportEntitiesDataMapping.MapActivityGroupEndData(activityGroup, mContext);
             await AccountReportApiHandler.SendActivityGroupExecutionDataToCentralDBAsync(accountReportActivityGroup, true);
@@ -182,12 +185,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         #endregion Activity Group
 
         #region Action
-        public async override void ActionStart(uint eventTime, Act action)
+        public override void ActionStart(uint eventTime, Act action)
         {
-            ActionStartTask(action);
+            Task.Run(() => ActionStartTask(action));
         }
 
-        private async void ActionStartTask(Act action)
+        private async Task ActionStartTask(Act action)
         {
             AccountReportAction accountReportAction = AccountReportEntitiesDataMapping.MapActionStartData(action, mContext);
             await AccountReportApiHandler.SendActionExecutionDataToCentralDBAsync(accountReportAction);
@@ -199,10 +202,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 return;
             }
-            SendDataOnActionEndTask(action);
+            Task.Run(() => SendDataOnActionEndTask(action));
         }
 
-        private async void SendDataOnActionEndTask(Act action)
+        private async Task SendDataOnActionEndTask(Act action)
         {
             AccountReportAction accountReportAction = AccountReportEntitiesDataMapping.MapActionEndData(action, mContext);
             await AccountReportApiHandler.SendScreenShotsToCentralDBAsync((Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID, action.ScreenShots.ToList());
