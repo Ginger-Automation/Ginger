@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             Task.Run(() => SendRunsetExecutionDataToCentralDbTaskAsync(runsetConfig));
         }
 
-        public async void SendRunsetExecutionDataToCentralDbTaskAsync(RunSetConfig runsetConfig)
+        public async Task SendRunsetExecutionDataToCentralDbTaskAsync(RunSetConfig runsetConfig)
         {
             AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetStartData(runsetConfig, mContext);
             await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
@@ -58,7 +58,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             Reporter.HideStatusMessage();
         }
 
-        public async void SendRunsetEndDataToCentralDbTaskAsync(RunSetConfig runsetConfig)
+        public async Task SendRunsetEndDataToCentralDbTaskAsync(RunSetConfig runsetConfig)
         {
             AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runsetConfig, mContext);
             await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
@@ -72,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             Task.Run(() => RunnerRunStartTask(gingerRunner));
         }
 
-        private async void RunnerRunStartTask(GingerRunner gingerRunner)
+        private async Task RunnerRunStartTask(GingerRunner gingerRunner)
         {
             AccountReportRunner accountReportRunner = AccountReportEntitiesDataMapping.MapRunnerStartData(gingerRunner, mContext);
             await AccountReportApiHandler.SendRunnerExecutionDataToCentralDBAsync(accountReportRunner);
@@ -87,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             Task.Run(() => RunnerRunEndTask(gingerRunner));
         }
 
-        private async void RunnerRunEndTask(GingerRunner gingerRunner)
+        private async Task RunnerRunEndTask(GingerRunner gingerRunner)
         {
             AccountReportRunner accountReportRunner = AccountReportEntitiesDataMapping.MapRunnerEndData(gingerRunner, mContext);
             await AccountReportApiHandler.SendRunnerExecutionDataToCentralDBAsync(accountReportRunner, true);
@@ -101,7 +101,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             Task.Run(() => BusinessFlowStartTask(businessFlow));
         }
 
-        private async void BusinessFlowStartTask(BusinessFlow businessFlow)
+        private async Task BusinessFlowStartTask(BusinessFlow businessFlow)
         {
             AccountReportBusinessFlow accountReportBusinessFlow = AccountReportEntitiesDataMapping.MapBusinessFlowStartData(businessFlow, mContext);
             await AccountReportApiHandler.SendBusinessflowExecutionDataToCentralDBAsync(accountReportBusinessFlow);
