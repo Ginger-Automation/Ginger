@@ -4848,7 +4848,7 @@
       <Version>12.0.9</Version>
     </PackageReference>
     <PackageReference Include="Oracle.ManagedDataAccess">
-      <Version>19.10.1</Version>
+      <Version>12.2.1100</Version>
     </PackageReference>
     <PackageReference Include="RestSharp">
       <Version>106.11.4</Version>
