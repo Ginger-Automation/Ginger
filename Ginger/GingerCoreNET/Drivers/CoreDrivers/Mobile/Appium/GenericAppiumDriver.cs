@@ -62,7 +62,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Xml;
-using static GingerCore.Actions.ActMobileDevice;
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -992,7 +991,7 @@ namespace Amdocs.Ginger.CoreNET
 
             if (IsRecording)
             {
-                RecordingOperations(GetMobileActionforRecording(eMobileDeviceAction.PressBackButton));
+                RecordingOperations(GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.PressBackButton));
             }
         }
 
@@ -1002,7 +1001,7 @@ namespace Amdocs.Ginger.CoreNET
             BusinessFlow.CurrentActivity.Acts.Add(RecordedAction);
         }
 
-        public ActMobileDevice GetMobileActionforRecording(eMobileDeviceAction ActionPerformed)
+        public ActMobileDevice GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction ActionPerformed)
         {
             ActMobileDevice mobDevAct = new ActMobileDevice()
             {
@@ -1031,7 +1030,7 @@ namespace Amdocs.Ginger.CoreNET
 
             if (IsRecording)
             {
-                RecordingOperations(GetMobileActionforRecording(eMobileDeviceAction.PressHomeButton));
+                RecordingOperations(GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.PressHomeButton));
             }
         }
 
@@ -1046,7 +1045,7 @@ namespace Amdocs.Ginger.CoreNET
 
             if (IsRecording)
             {
-                RecordingOperations(GetMobileActionforRecording(eMobileDeviceAction.PressMenuButton));
+                RecordingOperations(GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.PressMenuButton));
             }
         }
 
@@ -1061,7 +1060,7 @@ namespace Amdocs.Ginger.CoreNET
 
             if (IsRecording)
             {
-                RecordingOperations(GetMobileActionforRecording(eMobileDeviceAction.OpenCamera));
+                RecordingOperations(GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.OpenCamera));
             }
         }
 
@@ -1098,7 +1097,7 @@ namespace Amdocs.Ginger.CoreNET
 
             if (IsRecording)
             {
-                RecordingOperations(GetMobileActionforRecording(volumeOperation == eVolumeOperation.Up ? eMobileDeviceAction.PressVolumeUp : eMobileDeviceAction.PressVolumeDown));
+                RecordingOperations(GetMobileActionforRecording(volumeOperation == eVolumeOperation.Up ? ActMobileDevice.eMobileDeviceAction.PressVolumeUp : ActMobileDevice.eMobileDeviceAction.PressVolumeDown));
             }
         }
 
@@ -1123,7 +1122,7 @@ namespace Amdocs.Ginger.CoreNET
 
             if (IsRecording)
             {
-                RecordingOperations(GetMobileActionforRecording(LockOperation == eLockOperation.Lock ? eMobileDeviceAction.LockDevice : eMobileDeviceAction.UnlockDevice));
+                RecordingOperations(GetMobileActionforRecording(LockOperation == eLockOperation.Lock ? ActMobileDevice.eMobileDeviceAction.LockDevice : ActMobileDevice.eMobileDeviceAction.UnlockDevice));
             }
         }
 
@@ -2312,7 +2311,7 @@ namespace Amdocs.Ginger.CoreNET
 
             if (IsRecording)
             {
-                var mobDevAction = GetMobileActionforRecording(eMobileDeviceAction.LongPressXY);
+                var mobDevAction = GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.LongPressXY);
                 mobDevAction.X1.ValueForDriver = x.ToString();
                 mobDevAction.Y1.ValueForDriver = y.ToString();
                 RecordingOperations(mobDevAction);
@@ -2325,7 +2324,7 @@ namespace Amdocs.Ginger.CoreNET
 
             if (IsRecording)
             {
-                var mobDevAction = GetMobileActionforRecording(eMobileDeviceAction.DragXYXY);
+                var mobDevAction = GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.DragXYXY);
 
                 mobDevAction.X1.ValueForDriver = start.X.ToString();
                 mobDevAction.Y1.ValueForDriver = start.Y.ToString();
@@ -2758,28 +2757,28 @@ namespace Amdocs.Ginger.CoreNET
         {
             SwipeScreen(swipeSide, impact);
 
-            ActMobileDevice mobAct = new ActMobileDevice();
-            switch (swipeSide)
-            {
-                case eSwipeSide.Up:
-                    mobAct.MobileDeviceAction = eMobileDeviceAction.SwipeUp;
-                    break;
-
-                case eSwipeSide.Down:
-                    mobAct.MobileDeviceAction = eMobileDeviceAction.SwipeDown;
-                    break;
-
-                case eSwipeSide.Right:
-                    mobAct.MobileDeviceAction = eMobileDeviceAction.SwipeRight;
-                    break;
-
-                case eSwipeSide.Left:
-                    mobAct.MobileDeviceAction = eMobileDeviceAction.SwipeLeft;
-                    break;
-            }
-
             if (IsRecording)
             {
+                ActMobileDevice mobAct = new ActMobileDevice();
+                switch (swipeSide)
+                {
+                    case eSwipeSide.Up:
+                        mobAct.MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.SwipeUp;
+                        break;
+
+                    case eSwipeSide.Down:
+                        mobAct.MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.SwipeDown;
+                        break;
+
+                    case eSwipeSide.Right:
+                        mobAct.MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.SwipeRight;
+                        break;
+
+                    case eSwipeSide.Left:
+                        mobAct.MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.SwipeLeft;
+                        break;
+                }
+
                 RecordingOperations(mobAct);
             }
         }
