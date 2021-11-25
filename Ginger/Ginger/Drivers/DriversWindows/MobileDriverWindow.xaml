@@ -32,20 +32,6 @@
             <Frame x:Name="xMainTopFrame" Grid.Row="0" Grid.Column="1" Margin="0,0,0,0" Background="Black"/>
             <UserControls:ucButton x:Name="xRefreshButton"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Bottom" ButtonFontImageSize="18" ButtonImageType="Refresh" Click="xRefreshButton_Click" ToolTip="Refresh Device Screenshot" Margin="0,0,0,0" Visibility="Collapsed"/>
             <UserControls:ImageMakerControl x:Name="xRecordingImage" Grid.Row="0" Grid.Column="1" Height="18" Width="18" ImageType="Recording" Foreground="Red" ImageForeground="Red" HorizontalAlignment="Right" VerticalAlignment="Center" SetBorder="False" ToolTip="Recording..." Margin="0,0,60,0" Visibility="Collapsed" />
-            <!--<UserControls:ImageMakerControl x:Name="xRecordingImage" Grid.Row="0" Grid.Column="1" Height="18" Width="18" ImageType="Camera" Foreground="Red" ImageForeground="Red" HorizontalAlignment="Right" VerticalAlignment="Center" SetBorder="False" ToolTip="Recording..." Margin="0,0,60,0" Visibility="Collapsed">
-                <Style>
-                    <Style.Triggers>
-                        <EventTrigger RoutedEvent="Loaded">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetProperty="(Image.Opacity)" BeginTime="00:00:01" 
-                                             Duration="00:00:02" From="1.0" To="0.5" RepeatBehavior="Forever" AutoReverse="True"/>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-                    </Style.Triggers>
-                </Style>
-            </UserControls:ImageMakerControl>-->
             <UserControls:ucButton x:Name="xConfigurationsBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="17" ButtonImageType="Config" Click="xConfigurationsBtn_Click" ToolTip="Show Configurations" Margin="0,0,5,0" />
             <UserControls:ucButton x:Name="xPinBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="17" ButtonImageType="Pin" Click="xPinBtn_Click" ToolTip="Dock Window" Margin="0,0,30,0" />
             <UserControls:ucButton x:Name="xSwipeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="14" ButtonImageType="Pointer" Click="xSwipeBtn_Click" ToolTip="Perform Swipe" Margin="35,0,0,2" Visibility="Collapsed" />
