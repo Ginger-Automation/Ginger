@@ -266,6 +266,7 @@ namespace Ginger.Reports
                             if (control.Name == "No")
                             {
                                 control.IsChecked = true;
+                                break;
                             }
                             else
                             {

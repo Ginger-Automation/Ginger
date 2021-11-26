@@ -97,23 +97,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 {
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Finishing to publish execution data to central DB for Runset- '{0}'", accountReportRunSet.Name));
                 }
-                RestRequest restRequest = (RestRequest)new RestRequest(SEND_RUNSET_EXECUTION_DATA, isUpdate ? Method.PUT : Method.POST) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportRunSet);
                 string message = string.Format("execution data to Central DB for the Runset:'{0}' (Execution Id:'{1}')", accountReportRunSet.Name, accountReportRunSet.Id);
-                try
+                bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate);
+                if (responseIsSuccess)
                 {
-                    IRestResponse response = await restClient.ExecuteTaskAsync(restRequest);
-                    if (response.IsSuccessful)
-                    {
-                        Reporter.ToLog(eLogLevel.INFO, "Successfully sent " + message);
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message + "Response: " + response.Content);
-                    }
+                    Reporter.ToLog(eLogLevel.INFO, "Successfully sent " + message);
                 }
-                catch (Exception ex)
+                else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception when sending " + message, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message);
                 }
             }
             else
@@ -126,18 +118,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(SEND_RUNNER_EXECUTION_DATA, isUpdate ? Method.PUT : Method.POST) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportRunner);
                 string message = string.Format("execution data to Central DB for the Runner:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportRunner.Name, accountReportRunner.Id, accountReportRunner.AccountReportDbRunSetId);
                 try
                 {
-                    IRestResponse response = await restClient.ExecuteTaskAsync(restRequest);
-                    if (response.IsSuccessful)
+                    bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_RUNNER_EXECUTION_DATA, accountReportRunner, isUpdate);
+                    if (responseIsSuccess)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message + "Response: " + response.Content);
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message);
                     }
                 }
                 catch (Exception ex)
@@ -151,23 +142,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(SEND_BUSINESSFLOW_EXECUTION_DATA, isUpdate ? Method.PUT : Method.POST) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportBusinessFlow);
                 string message = string.Format("execution data to Central DB for the Business Flow:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportBusinessFlow.Name, accountReportBusinessFlow.Id, accountReportBusinessFlow.AccountReportDbRunnerId);
-                try
+                bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_BUSINESSFLOW_EXECUTION_DATA, accountReportBusinessFlow, isUpdate);
+                if (responseIsSuccess)
                 {
-                    IRestResponse response = await restClient.ExecuteTaskAsync(restRequest);
-                    if (response.IsSuccessful)
-                    {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message + "Response: " + response.Content);
-                    }
+                    Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
                 }
-                catch (Exception ex)
+                else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception when sending " + message, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message);
                 }
             }
         }
@@ -180,14 +163,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 string message = string.Format("execution data to Central DB for the Activities Group:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportActivityGroup.Name, accountReportActivityGroup.Id, accountReportActivityGroup.AccountReportDbBusinessFlowId);
                 try
                 {
-                    IRestResponse response = await restClient.ExecuteTaskAsync(restRequest);
-                    if (response.IsSuccessful)
+                    bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_ACTIVITYGROUP_EXECUTION_DATA, accountReportActivityGroup, isUpdate);
+                    if (responseIsSuccess)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message + "Response: " + response.Content);
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message);
                     }
                 }
                 catch (Exception ex)
@@ -201,18 +184,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(SEND_ACTIVITY_EXECUTION_DATA, isUpdate ? Method.PUT : Method.POST) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportActivity);
                 string message = string.Format("execution data to Central DB for the Activity:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportActivity.Name, accountReportActivity.Id, accountReportActivity.AccountReportDbActivityGroupId);
                 try
                 {
-                    IRestResponse response = await restClient.ExecuteTaskAsync(restRequest);
-                    if (response.IsSuccessful)
+                    bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_ACTIVITY_EXECUTION_DATA, accountReportActivity, isUpdate);
+                    if (responseIsSuccess)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message + "Response: " + response.Content);
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message);
                     }
                 }
                 catch (Exception ex)
@@ -226,19 +208,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(SEND_ACTION_EXECUTION_DATA, isUpdate ? Method.PUT : Method.POST) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportAction);
-                // restRequest.Parameters.Add(new Parameter("IsUpdate", isUpdate, ParameterType.HttpHeader));
                 string message = string.Format("execution data to Central DB for the Action:'{0}' (Execution Id:'{1}', Parent Activity Id:'{2}')", accountReportAction.Name, accountReportAction.Id, accountReportAction.AccountReportDbActivityId);
                 try
                 {
-                    IRestResponse response = await restClient.ExecuteTaskAsync(restRequest);
-                    if (response.IsSuccessful)
+                    bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_ACTION_EXECUTION_DATA, accountReportAction, isUpdate);
+                    if (responseIsSuccess)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message + "Response: " + response.Content);
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message);
                     }
                 }
                 catch (Exception ex)
@@ -332,7 +312,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     {
                         restRequest.AddFile(Path.GetFileName(item), item);
                     }
-                    IRestResponse response = await restClient.ExecuteTaskAsync(restRequest);
+                    IRestResponse response = await restClient.ExecuteAsync(restRequest);
 
                     if (response.IsSuccessful)
                     {
@@ -348,6 +328,31 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Exception occured during uploading " + message, ex);
                 }
+            }
+        }
+
+        private async Task<bool> SendRestRequestAndGetResponse(string api, AccountReportBase accountReport, bool isUpdate = false)
+        {
+            try
+            {
+                Method method = isUpdate ? Method.PUT : Method.POST;
+                RestRequest restRequest = (RestRequest)new RestRequest(api, method) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReport);
+                IRestResponse response = await restClient.ExecuteAsync(restRequest);
+                if (response.IsSuccessful)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + api);
+                    return true;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + api + "Response: " + response.Content);
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception when sending " + api, ex);
+                return false;
             }
         }
     }
