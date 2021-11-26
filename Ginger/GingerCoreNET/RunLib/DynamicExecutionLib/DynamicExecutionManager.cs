@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.ExecuterService.Contracts;
+using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Requests;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration.RunsetOperations;
 using Ginger.Run;
@@ -377,13 +378,27 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         #endregion XML
 
         #region JSON
-        public static string CreateDynamicRunSetJSON(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
+        public static string CreateDynamicRunSetJSON(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper,bool isRemoteExecution=false)
         {
             runsetExecutor.RunSetConfig.UpdateRunnersBusinessFlowRunsList();
 
             //Create execution object
             GingerExecConfig executionConfig = new GingerExecConfig();
             
+            //create execution object for CLIRequest
+            AddExecutionRequest remoteExecutionRequest = new AddExecutionRequest();
+            if (isRemoteExecution)
+            {
+                remoteExecutionRequest.Priority = eExecutionPriority.Normal;
+                remoteExecutionRequest.Title = runsetExecutor.RunSetConfig.Name;
+                remoteExecutionRequest.Description = "Execution Requested from Ginger Desktop";
+                remoteExecutionRequest.RequestingUser = Environment.UserName;
+                remoteExecutionRequest.RequestingApplication = "Ginger Desktop";
+                remoteExecutionRequest.PreferredAgentId = null;
+                remoteExecutionRequest.TagName = string.Empty;
+                remoteExecutionRequest.ExecutionConfigurations = executionConfig;
+            }
+
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
             {
                 executionConfig.SolutionScmDetails = new ScmDetails();
@@ -481,6 +496,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             executionConfig.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
             executionConfig.VerboseLevel = GingerExecConfig.eVerboseLevel.normal;
             executionConfig.EncryptionKey = solution.EncryptionKey;
+
+
 
             RunsetExecConfig runset = new RunsetExecConfig();
             runset.Exist = true;
@@ -724,7 +741,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             executionConfig.Runset = runset;
 
             //serilize object to JSON String
-            return SerializeDynamicExecutionToJSON(executionConfig);
+            if (isRemoteExecution)
+            {
+                return SerializeDynamicExecutionToJSON(remoteExecutionRequest);
+            }
+            else
+            {
+                return SerializeDynamicExecutionToJSON(executionConfig);
+            }
         }
 
         public static GingerExecConfig DeserializeDynamicExecutionFromJSON(string content)
@@ -732,10 +756,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             return NewtonsoftJsonUtils.DeserializeObject<GingerExecConfig>(content);
         }
 
-        public static string SerializeDynamicExecutionToJSON(GingerExecConfig gingerExecConfig)
+        public static AddExecutionRequest DeserializeRequestExecutionFromJSON(string content)
+        {
+            return NewtonsoftJsonUtils.DeserializeObject<AddExecutionRequest>(content);
+        }
+
+        public static string SerializeDynamicExecutionToJSON(dynamic gingerExecConfig)
         {
             return NewtonsoftJsonUtils.SerializeObject(gingerExecConfig);
         }
+
 
         public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, GingerExecConfig gingerExecConfig)
         {

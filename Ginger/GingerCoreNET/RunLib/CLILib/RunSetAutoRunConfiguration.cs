@@ -41,14 +41,29 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         RunsetExecutor mRunsetExecutor;
         CLIHelper mCLIHelper;
         
+        public int ParallelExecutionCount;
+        public bool IsRequestAPIExecution;
 
         public ICLI SelectedCLI;
 
+        private string mCLIContent;
         public string CLIContent
         {
             get
             {
-                return SelectedCLI.CreateConfigurationsContent(mSolution, mRunsetExecutor, mCLIHelper);
+                if (string.IsNullOrEmpty(mCLIContent))
+                {
+                    mCLIContent = SelectedCLI.CreateConfigurationsContent(mSolution, mRunsetExecutor, mCLIHelper);
+                }
+
+                return mCLIContent;
+            }
+            set
+            {
+                if (mCLIContent != value)
+                {
+                    mCLIContent = value;
+                }
             }
         }
 
@@ -118,11 +133,25 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        public string ExecutionServiceUrl
+        {
+            get
+            {
+                return mRunsetExecutor.RunSetConfig.ExecutionServiceURLUsed;
+            }
+            set
+            {
+                if (mRunsetExecutor.RunSetConfig.ExecutionServiceURLUsed != value)
+                {
+                    mRunsetExecutor.RunSetConfig.ExecutionServiceURLUsed = value;
+                }
+            }
+        }
         public string ConfigFileName
         {
             get
             {
-                return FileUtils.RemoveInvalidChars(ConfigName) + ".Ginger.AutoRunConfigs." + SelectedCLI.FileExtension;
+                return System.Text.RegularExpressions.Regex.Replace(FileUtils.RemoveInvalidChars(ConfigName) + ".Ginger.AutoRunConfigs." + SelectedCLI.FileExtension, @"\s+", ""); ;
             }
         }
 
