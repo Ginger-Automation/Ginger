@@ -18,8 +18,17 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Applitools;
+using Applitools.Selenium;
+using Applitools.Utils.Geometry;
+using Applitools.VisualGrid;
+using GingerCore.Drivers;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using System;
+using System.Collections.Generic;
 using System.Net;
+using static GingerCore.Agent;
+using static GingerCore.Drivers.SeleniumDriver;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -27,6 +36,7 @@ namespace GingerCore.Actions.VisualTesting
     {
         ActVisualTesting mAct;
         IVisualTestingDriver mDriver;
+        
 
         public static string ApplitoolsAction = "ApplitoolsAction";
         public static string ApplitoolsEyesClose = "ApplitoolsEyesClose";
@@ -36,8 +46,11 @@ namespace GingerCore.Actions.VisualTesting
 
         // We keep one static eyes so we can reuse across action and close when done, to support applitools behaviour
         static Applitools.Images.Eyes mEyes = null;
+        static Eyes newmEyes = null;
+        static ClassicRunner runner = null;
         string mAppName;
         string mTestName;
+        string mBaseServerUrl;
 
         bool IVisualAnalyzer.SupportUniqueExecution()
         {
@@ -88,35 +101,86 @@ namespace GingerCore.Actions.VisualTesting
             }
         }
 
-        void IVisualAnalyzer.Execute()
+        private void NewSetEyesMatchLevel()
         {
-            switch (GetSelectedApplitoolsActionEnum())
+            eMatchLevel matchLevel = (eMatchLevel)mAct.GetInputParamCalculatedValue<eMatchLevel>(ApplitoolsMatchLevel);
+            switch (matchLevel)
             {
-                case eApplitoolsAction.OpenEyes:
-                    EyesOpen();
+                case eMatchLevel.Content:
+                    newmEyes.MatchLevel = MatchLevel.Content;
                     break;
-
-                case eApplitoolsAction.Checkpoint:
-                    Checkpoint();
+                case eMatchLevel.Exact:
+                    newmEyes.MatchLevel = MatchLevel.Exact;
                     break;
-
-                case eApplitoolsAction.CloseEyes:
-                    CloseEyes();
+                case eMatchLevel.Layout:
+                    newmEyes.MatchLevel = MatchLevel.Layout;
+                    break;
+                case eMatchLevel.Strict:
+                    newmEyes.MatchLevel = MatchLevel.Strict;
                     break;
             }
         }
 
-        void EyesOpen()
+        void IVisualAnalyzer.Execute(SeleniumDriver webDriver)
+        {
+            if (webDriver.GetType().Name == "SeleniumDriver")
+            {
+                switch (GetSelectedApplitoolsActionEnum())
+                {
+                    case eApplitoolsAction.OpenEyes:
+                        NewEyesOpen(webDriver);
+                        break;
+
+                    case eApplitoolsAction.Checkpoint:
+                        NewCheckpoint();
+                        break;
+
+                    case eApplitoolsAction.CloseEyes:
+                        NewCloseEyes();
+                        break;
+                }
+            }
+            else
+            {
+                switch (GetSelectedApplitoolsActionEnum())
+                {
+                    case eApplitoolsAction.OpenEyes:
+                        EyesOpen(webDriver);
+                        break;
+
+                    case eApplitoolsAction.Checkpoint:
+                        Checkpoint();
+                        break;
+
+                    case eApplitoolsAction.CloseEyes:
+                        CloseEyes();
+                        break;
+                }
+            }
+            
+        }
+
+
+        void EyesOpen(SeleniumDriver seleniumDriver)
         {
             mEyes = new Applitools.Images.Eyes();
+
             //TODO: set the proxy
             // IWebProxy p = WebRequest.DefaultWebProxy; // .GetSystemWebProxy();
-            
+
             mAppName = mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
             mTestName = mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
+            mBaseServerUrl = mEyes.ServerUrl;
             mAct.CheckSetAppWindowSize();
-            mEyes.ApiKey = GetApplitoolsAPIKey();
-            mEyes.Open(mAppName, mTestName);
+            mEyes.ApiKey = seleniumDriver.ApplitoolsViewKey; 
+            mEyes.ServerUrl = seleniumDriver.ApplitoolsServerUrl;
+            mEyes.ServerUrl = string.IsNullOrEmpty(mEyes.ServerUrl) ? mBaseServerUrl : mEyes.ServerUrl;
+            OperatingSystem Os_info = System.Environment.OSVersion;
+            mEyes.HostOS = Os_info.VersionString;
+            mEyes.HostApp = seleniumDriver.GetBrowserType().ToString();
+            List<int> mResolution = mAct.GetWindowResolution();
+
+            mEyes.Open(mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
         }
 
         private void Checkpoint()
@@ -172,6 +236,100 @@ namespace GingerCore.Actions.VisualTesting
             }
         }
 
+        void NewEyesOpen(SeleniumDriver seleniumDriver)
+        {
+            runner = new ClassicRunner();
+            newmEyes = new Eyes(runner);
+            SetUp(newmEyes,seleniumDriver.ApplitoolsServerUrl,seleniumDriver.ApplitoolsViewKey, seleniumDriver.GetBrowserType());
+            mAppName = mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
+            mTestName = mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
+            mAct.CheckSetAppWindowSize();
+            List<int> mResolution= mAct.GetWindowResolution();
+            newmEyes.Open(seleniumDriver.GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
+
+        }
+
+        private void NewCheckpoint()
+        {
+            if (newmEyes.IsOpen == false)
+            {
+                mAct.Error = "Applitools Eyes is not opened";
+                mAct.ExInfo = "You require to add Eyes.Open Action on step before.";
+                return;
+            }
+
+            NewSetEyesMatchLevel();
+            newmEyes.Check(Target.Window().Fully());
+            newmEyes.CloseAsync();
+            
+            TestResultsSummary allTestResults = runner.GetAllTestResults(false);
+            TestResultContainer[] resultContainer =  allTestResults.GetAllResults();
+            bool IsMatch = resultContainer[0].TestResults.Matches == 1 ? true :false;
+            mAct.AddOrUpdateReturnParamActual("ExactMatches", IsMatch.ToString());
+            bool FailActionOnMistmach = Boolean.Parse(mAct.GetInputParamValue(ApplitoolsAnalyzer.FailActionOnMistmach));
+            if (IsMatch == true || !FailActionOnMistmach)
+            {
+                mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                if (!FailActionOnMistmach)
+                    mAct.ExInfo = "Created new baseline in Applitools or Mismatch between saved baseline and target checkpoint image";
+            }
+            else if (IsMatch == false)
+            {
+                mAct.Error = "Created new baseline in Applitools or Mismatch between saved baseline and target checkpoint image";
+            }
+            
+        }
+        private void NewCloseEyes()
+        {
+            try
+            {
+                TestResults TR = new TestResults();
+                if (newmEyes.IsOpen == true)
+                {
+                    TR = newmEyes.Close(false);
+                }
+                else
+                {
+                    TestResultsSummary allTestResults = runner.GetAllTestResults(false);
+                    TestResultContainer[] resultContainer = allTestResults.GetAllResults();
+                    TR = resultContainer[0].TestResults;
+                }
+                 
+                // Update results info into outputs
+                mAct.ExInfo = "URL to view results: " + TR.Url;
+                mAct.AddOrUpdateReturnParamActual("ResultsURL", TR.Url + "");
+                mAct.AddOrUpdateReturnParamActual("Steps", TR.Steps + "");
+                mAct.AddOrUpdateReturnParamActual("Mismatches", TR.Mismatches + "");
+                mAct.AddOrUpdateReturnParamActual("ExactMatches", TR.ExactMatches + "");
+                mAct.AddOrUpdateReturnParamActual("StrictMatches", TR.StrictMatches + "");
+                mAct.AddOrUpdateReturnParamActual("ContentMatches", TR.ContentMatches + "");
+                mAct.AddOrUpdateReturnParamActual("LayoutMatches", TR.LayoutMatches + "");
+                mAct.AddOrUpdateReturnParamActual("ExactMatches", TR.ExactMatches + "");
+                mAct.AddOrUpdateReturnParamActual("IsNew", TR.IsNew + "");
+            }
+            catch (Exception ex)
+            {
+                mAct.Error += "Eyes Close operation failed, Error: " + ex.Message;
+            }
+            finally
+            {
+                newmEyes.AbortIfNotClosed();
+            }
+        }
+        private void SetUp(Eyes eyes,string AppilToolServerUrl,string AppilToolsApiKey, eBrowserType BrowserType)
+        {
+            Applitools.Selenium.Configuration config = new Applitools.Selenium.Configuration();
+            
+            config.SetApiKey(AppilToolsApiKey);
+            config.SetServerUrl(AppilToolServerUrl);
+            OperatingSystem Os_info = System.Environment.OSVersion;
+            config.SetHostOS(Os_info.VersionString);
+            config.SetHostApp(BrowserType.ToString());
+            eyes.SetConfiguration(config);
+
+        }
+        
+
         private eApplitoolsAction GetSelectedApplitoolsActionEnum()
         {
             eApplitoolsAction applitoolsAction = eApplitoolsAction.Checkpoint;
@@ -226,6 +384,11 @@ namespace GingerCore.Actions.VisualTesting
                 WebClient webClient = new WebClient();
                 webClient.DownloadFile(currImageURL, currImagePath);
             }
+        }
+
+        private string GetServerUrl()
+        {
+            return mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ServerUrl).ValueForDriver;
         }
     }
 }

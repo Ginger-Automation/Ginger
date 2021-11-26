@@ -17,12 +17,15 @@ limitations under the License.
 #endregion
 
 
+using GingerCore.Drivers;
+using OpenQA.Selenium;
+
 namespace GingerCore.Actions.VisualTesting
 {
     public interface IVisualAnalyzer
     {
         bool SupportUniqueExecution();
-        void Execute();
+        void Execute(SeleniumDriver webDriver);
         void SetAction(IVisualTestingDriver driver, ActVisualTesting act);
         void CreateBaseline();
         void Compare();

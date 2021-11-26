@@ -229,9 +229,11 @@
   
     <PackageReference Include="EPPlus" Version="4.5.3.1" />
   
-    <PackageReference Include="Eyes.Images" Version="2.16.0" />
+    <PackageReference Include="Eyes.Images" Version="2.32.0" />
   
-    <PackageReference Include="Eyes.Sdk.Core" Version="2.34.1" />
+    <PackageReference Include="Eyes.Sdk.Core" Version="2.51.0" />
+  
+    <PackageReference Include="Eyes.Selenium" Version="2.57.0" />
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="1.2.0" />
   

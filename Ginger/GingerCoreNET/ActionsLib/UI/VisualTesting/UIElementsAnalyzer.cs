@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using GingerCore.Drivers;
+using OpenQA.Selenium;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -101,9 +103,11 @@ namespace GingerCore.Actions.VisualTesting
             VEI.Save(filename);
         }
 
-        void IVisualAnalyzer.Execute()
+        void IVisualAnalyzer.Execute(SeleniumDriver webDriver)
         {
             throw new NotImplementedException();
         }
+
+        
     }
 }

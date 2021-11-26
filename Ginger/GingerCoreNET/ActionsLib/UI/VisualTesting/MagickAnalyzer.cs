@@ -17,7 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
+using GingerCore.Drivers;
 using ImageMagick;
+using OpenQA.Selenium;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -80,9 +82,10 @@ namespace GingerCore.Actions.VisualTesting
         {
         }
 
-        void IVisualAnalyzer.Execute()
+        void IVisualAnalyzer.Execute(SeleniumDriver webDriver)
         {
             throw new NotImplementedException();
         }
+
     }
 }
