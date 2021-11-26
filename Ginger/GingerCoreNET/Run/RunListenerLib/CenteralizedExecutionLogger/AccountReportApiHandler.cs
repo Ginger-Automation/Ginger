@@ -98,7 +98,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Finishing to publish execution data to central DB for Runset- '{0}'", accountReportRunSet.Name));
                 }
                 string message = string.Format("execution data to Central DB for the Runset:'{0}' (Execution Id:'{1}')", accountReportRunSet.Name, accountReportRunSet.Id);
-                bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate);
+                bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).ConfigureAwait(false);
                 if (responseIsSuccess)
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Successfully sent " + message);
@@ -121,7 +121,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 string message = string.Format("execution data to Central DB for the Runner:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportRunner.Name, accountReportRunner.Id, accountReportRunner.AccountReportDbRunSetId);
                 try
                 {
-                    bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_RUNNER_EXECUTION_DATA, accountReportRunner, isUpdate);
+                    bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_RUNNER_EXECUTION_DATA, accountReportRunner, isUpdate).ConfigureAwait(false);
                     if (responseIsSuccess)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
@@ -143,7 +143,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             if (restClient != null)
             {
                 string message = string.Format("execution data to Central DB for the Business Flow:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportBusinessFlow.Name, accountReportBusinessFlow.Id, accountReportBusinessFlow.AccountReportDbRunnerId);
-                bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_BUSINESSFLOW_EXECUTION_DATA, accountReportBusinessFlow, isUpdate);
+                bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_BUSINESSFLOW_EXECUTION_DATA, accountReportBusinessFlow, isUpdate).ConfigureAwait(false);
                 if (responseIsSuccess)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
@@ -163,7 +163,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 string message = string.Format("execution data to Central DB for the Activities Group:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportActivityGroup.Name, accountReportActivityGroup.Id, accountReportActivityGroup.AccountReportDbBusinessFlowId);
                 try
                 {
-                    bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_ACTIVITYGROUP_EXECUTION_DATA, accountReportActivityGroup, isUpdate);
+                    bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_ACTIVITYGROUP_EXECUTION_DATA, accountReportActivityGroup, isUpdate).ConfigureAwait(false);
                     if (responseIsSuccess)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
@@ -187,7 +187,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 string message = string.Format("execution data to Central DB for the Activity:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportActivity.Name, accountReportActivity.Id, accountReportActivity.AccountReportDbActivityGroupId);
                 try
                 {
-                    bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_ACTIVITY_EXECUTION_DATA, accountReportActivity, isUpdate);
+                    bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_ACTIVITY_EXECUTION_DATA, accountReportActivity, isUpdate).ConfigureAwait(false);
                     if (responseIsSuccess)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
@@ -211,7 +211,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 string message = string.Format("execution data to Central DB for the Action:'{0}' (Execution Id:'{1}', Parent Activity Id:'{2}')", accountReportAction.Name, accountReportAction.Id, accountReportAction.AccountReportDbActivityId);
                 try
                 {
-                    bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_ACTION_EXECUTION_DATA, accountReportAction, isUpdate);
+                    bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_ACTION_EXECUTION_DATA, accountReportAction, isUpdate).ConfigureAwait(false);
                     if (responseIsSuccess)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
