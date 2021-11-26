@@ -13,6 +13,7 @@ using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.Environments;
+using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -87,6 +88,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                         break;
                     case GlobalSolution.eImportItemType.POMModels:
                         duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        break;
+                    case GlobalSolution.eImportItemType.Agents:
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
                         break;
                     default:
                         //Nothing to do
@@ -254,7 +258,11 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
         public void AddDependaciesForSharedActivityGroup(GlobalSolutionItem itemActivitiesGroup, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport)
         {
             ActivitiesGroup activitiesGroup = (ActivitiesGroup)newRepositorySerializer.DeserializeFromFile(itemActivitiesGroup.ItemFullPath);
-            string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Activities"), "*.xml", SearchOption.AllDirectories);
+            List<string> filePaths = new List<string>();
+            if (Directory.Exists(Path.Combine(SolutionFolder, "SharedRepository", "Activities")))
+            {
+                filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Activities"), "*.xml", SearchOption.AllDirectories).ToList();
+            }
             foreach (string activityFile in filePaths)
             {
                 Activity activity = (Activity)newRepositorySerializer.DeserializeFromFile(activityFile);
@@ -368,7 +376,11 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             Guid selectedPOMGUID = new Guid(GUID);
             if (!string.IsNullOrEmpty(GUID))
             {
-                string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "Applications Models", "POM Models"), "*.xml", SearchOption.AllDirectories);
+                List<string> filePaths = new List<string>();
+                if (Directory.Exists(Path.Combine(SolutionFolder, "Applications Models", "POM Models")))
+                {
+                    filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "Applications Models", "POM Models"), "*.xml", SearchOption.AllDirectories).ToList();
+                }
                 foreach (string pomFile in filePaths)
                 {
                     ApplicationPOMModel pomModel = (ApplicationPOMModel)newRepositorySerializer.DeserializeFromFile(pomFile);
@@ -401,7 +413,11 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             Guid selectedPOMGUID = new Guid(GUID);
             if (!string.IsNullOrEmpty(GUID))
             {
-                string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "Applications Models", "API Models"), "*.xml", SearchOption.AllDirectories);
+                List<string> filePaths = new List<string>();
+                if (Directory.Exists(Path.Combine(SolutionFolder, "Applications Models", "API Models")))
+                {
+                    filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "Applications Models", "API Models"), "*.xml", SearchOption.AllDirectories).ToList();
+                }
                 foreach (string file in filePaths)
                 {
                     ApplicationAPIModel apiModel = (ApplicationAPIModel)newRepositorySerializer.DeserializeFromFile(file);
@@ -436,7 +452,11 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             }
             //Shared Items
             //1. Shared ActivitiesGroup
-            string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "ActivitiesGroup"), "*.xml", SearchOption.AllDirectories);
+            List<string> filePaths = new List<string>();
+            if (Directory.Exists(Path.Combine(SolutionFolder, "SharedRepository", "ActivitiesGroup")))
+            {
+                filePaths = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "ActivitiesGroup"), "*.xml", SearchOption.AllDirectories).ToList();
+            }
             foreach (ActivitiesGroup ag in importedBF.ActivitiesGroups)
             {
                 foreach (string file in filePaths)
@@ -452,9 +472,23 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     }
                 }
             }
-            string[] filePathsActivity = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Activities"), "*.xml", SearchOption.AllDirectories);
-            string[] filePathsActs = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Actions"), "*.xml", SearchOption.AllDirectories);
-            string[] filePathsVars = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Variables"), "*.xml", SearchOption.AllDirectories);
+            //if the solution is cloned, empty foldes will not be created at local
+            List<string> filePathsActivity = new List<string>();
+            List<string> filePathsActs = new List<string>();
+            List<string> filePathsVars = new List<string>();
+
+            if (Directory.Exists(Path.Combine(SolutionFolder, "SharedRepository", "Activities")))
+            {
+                filePathsActivity = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Activities"), "*.xml", SearchOption.AllDirectories).ToList();
+            }
+            if (Directory.Exists(Path.Combine(SolutionFolder, "SharedRepository", "Actions")))
+            {
+                filePathsActs = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Actions"), "*.xml", SearchOption.AllDirectories).ToList();
+            }
+            if (Directory.Exists(Path.Combine(SolutionFolder, "SharedRepository", "Variables")))
+            {
+                filePathsVars = Directory.GetFiles(Path.Combine(SolutionFolder, "SharedRepository", "Variables"), "*.xml", SearchOption.AllDirectories).ToList();
+            }
             foreach (Activity activity in importedBF.Activities)
             {
                 //2. Shared Activities
@@ -484,6 +518,24 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                             AddDependaciesForSharedAction(item, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
                             break;
                         }
+                        //Check any mapped FlowControl with "RunSharedRepositoryActivity"
+                        FlowControl flowControl = act.FlowControls.Where(x => x.FlowControlAction == eFlowControlAction.RunSharedRepositoryActivity).FirstOrDefault();
+                        if (flowControl != null)
+                        {
+                            string activityName = flowControl.GetNameFromValue().ToUpper();
+                            foreach (string filename in filePathsActivity)
+                            {
+                                RepositoryItemBase existingSharedActivityRepoItem = (RepositoryItemBase)newRepositorySerializer.DeserializeFromFile(filename);
+                                if (((Activity)existingSharedActivityRepoItem).ActivityName.ToUpper() == activityName)
+                                {
+                                    GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActivities, filename, ConvertToRelativePath(filename), true, GetRepositoryItemName(filename), importedBF.Name);
+                                    AddItemToSelectedItemsList(item, ref SelectedItemsListToImport);
+
+                                    AddDependaciesForSharedActivity(item, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
                 //4. Shared Activity Variables
@@ -510,7 +562,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             AddDependaciesForDocuments(itemBF.ItemFullPath, ref SelectedItemsListToImport);
 
         }
-        void AddSharedVariblesDependancies(ObservableList<VariableBase> variables, string[] filePathsVars, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, string dependancyFor)
+        void AddSharedVariblesDependancies(ObservableList<VariableBase> variables, List<string> filePathsVars, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, string dependancyFor)
         {
             foreach (VariableBase variable in variables)
             {
