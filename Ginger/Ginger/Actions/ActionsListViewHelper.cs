@@ -121,10 +121,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 mAction = (Act)item;
             }
-            else if (item is ElementInfo)
-            {
-                mAction = (Act)item;
-            }
         }
 
         public string GetItemNameField()
@@ -540,14 +536,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             viewLinkedInstances.OperationHandler = ViewRepositoryItemUsage;
             operationsList.Add(viewLinkedInstances);
 
-            ListItemOperation highlight = new ListItemOperation();
-            highlight.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromModel};
-            highlight.AutomationID = "HighlightElement";
-            highlight.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Pointer;
-            highlight.ToolTip = "Highlight Element";
-            highlight.OperationHandler = HighlightElementClicked;
-            operationsList.Add(highlight);
-
             return operationsList;
         }
 
@@ -716,12 +704,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
-        }
-
-        private void HighlightElementClicked(object sender, RoutedEventArgs e)
-        {
-            SetItem(sender);
-            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.HighlightElement, mAction);
         }
 
 

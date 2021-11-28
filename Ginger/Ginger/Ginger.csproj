@@ -318,6 +318,7 @@
       <DependentUpon>ActDataSourcePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\ModelOptionalValue\ImportOptionalValuesForParameters.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\ElementInfoListViewHelper.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMBindingObjectHelper.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMsSelectionPage.xaml.cs">
       <DependentUpon>POMsSelectionPage.xaml</DependentUpon>

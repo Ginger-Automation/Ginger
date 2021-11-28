@@ -44,7 +44,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         Context mContext;
         ITreeViewItem mItemTypeRootNode;
         SingleItemTreeViewSelectionPage mPOMPage;
-        ActionsListViewHelper mPOMListHelper;
+        ElementInfoListViewHelper mPOMListHelper;
 
         private Agent mAgent;
 
@@ -71,9 +71,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             get
             {
-                if (xMainElementsListView.List.SelectedItem != null)
+                if (xPomElementsListView.List.SelectedItem != null)
                 {
-                    return (ElementInfo)xMainElementsListView.List.SelectedItem;
+                    return (ElementInfo)xPomElementsListView.List.SelectedItem;
                 }
                 else
                 {
@@ -91,11 +91,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             mContext = context;
 
-            xMainElementsListView.ListTitleVisibility = Visibility.Hidden;
-            mPOMListHelper = new ActionsListViewHelper(mContext, General.eRIPageViewMode.AddFromModel);
-            xMainElementsListView.SetDefaultListDataTemplate(mPOMListHelper);
-            xMainElementsListView.ListSelectionMode = SelectionMode.Extended;
-            mPOMListHelper.ListView = xMainElementsListView;
+            xPomElementsListView.ListTitleVisibility = Visibility.Hidden;
+            mPOMListHelper = new ElementInfoListViewHelper(mContext, General.eRIPageViewMode.AddFromModel);
+            xPomElementsListView.SetDefaultListDataTemplate(mPOMListHelper);
+            xPomElementsListView.ListSelectionMode = SelectionMode.Extended;
+            mPOMListHelper.ListView = xPomElementsListView;
 
             ApplicationPOMsTreeItem mPOMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
             mItemTypeRootNode = mPOMsRoot;
@@ -153,16 +153,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     mPOM.StartDirtyTracking();
                     xPOMDetails.Height = xPOMItems.Height;
-                    xMainElementsListView.DataSourceList = mPOM.MappedUIElements;
-                    xMainElementsListView.Visibility = Visibility.Visible;
+                    xPomElementsListView.DataSourceList = mPOM.MappedUIElements;
+                    xPomElementsListView.Visibility = Visibility.Visible;
                     xPOMSplitter.IsEnabled = true;
                 }
             }
             else
             {
                 xPOMDetails.Height = new GridLength(0, GridUnitType.Star);
-                xMainElementsListView.DataSourceList = null;
-                xMainElementsListView.Visibility = Visibility.Hidden;
+                xPomElementsListView.DataSourceList = null;
+                xPomElementsListView.Visibility = Visibility.Hidden;
                 xPOMSplitter.IsEnabled = false;
             }
         }        
