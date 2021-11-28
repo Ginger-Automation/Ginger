@@ -6,28 +6,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Ginger="clr-namespace:Ginger"
     xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
-    xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
+    xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView" xmlns:userControlsLib1="clr-namespace:Ginger.UserControlsLib.UCListView"
     mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="ActivitiesRepositoryPage">
 
     <Grid x:Name="pageGrid">
-        <Grid.Resources>
-            <DataTemplate x:Key="ViewInstancesButton">
-                <Button x:Name="ViewInstancesBtn" Click="ViewRepositoryItemUsage" ToolTip="View Linked Instances" Style="{StaticResource @InputImageGridCellButtonStyle}">
-                    <Image Source="{StaticResource @Link_16x16.png}" Height="16" Width="16"/>
-                </Button>
-            </DataTemplate>
-        </Grid.Resources>
-        
-        <Ginger:ucGrid x:Name="xActivitiesRepositoryGrid" Grid.Column="3" Grid.Row="4" Grid.ColumnSpan="2" ShowTitle="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowUpDown="Collapsed" IsReadOnly="True" ShowRefresh="Collapsed">
-            <Ginger:ucGrid.Title>
-                <GingerCore:ucTextDicResource Text="[Activities] Repository"/>
-            </Ginger:ucGrid.Title>
-        </Ginger:ucGrid>
-        <!--<UCTreeView:TreeView2 x:Name="ActivitiesRepositoryTreeView" ShowTitle="Collapsed" Visibility="Collapsed" MouseMove="treeViewTree_MouseMove"  AllowDrop="True" Drop="ActivitiesRepositoryTreeView_Drop"/>
-        <Button x:Name="GridTreeViewButton" Click="GridTreeViewButton_Click" ToolTip="Switch to Tree View" Width="26" Height="26" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,3,3,0">
-            <Image Source="{StaticResource @TreeView_24x24.png}"/>
-        </Button>-->
+
+        <userControlsLib1:UcListView x:Name="xActivitiesRepositoryListView" AllowDrop="True"/>
+
     </Grid>
 </Page>

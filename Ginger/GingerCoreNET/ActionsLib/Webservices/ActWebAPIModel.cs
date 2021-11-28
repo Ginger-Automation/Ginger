@@ -37,7 +37,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
         {
             get
             {
-                return "ActWebAPIModel";
+                return ActionDescription;
             }
         }
 
