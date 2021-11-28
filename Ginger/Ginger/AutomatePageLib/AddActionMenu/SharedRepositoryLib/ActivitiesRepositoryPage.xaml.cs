@@ -48,7 +48,6 @@ namespace Ginger.Repository
         RoutedEventHandler mAddActivityHandler;
         Context mContext;
         GenericWindow _pageGenericWin = null;
-        Ginger.General.eRIPageViewMode mPageViewMode;
 
         public enum ePageViewMode { Default, Selection }
 
@@ -93,7 +92,7 @@ namespace Ginger.Repository
         private void SetGridAndTreeData()
         {
             xActivitiesRepositoryListView.ListTitleVisibility = Visibility.Hidden;
-            ActivitiesSharedRepositoryListViewHelper mActionsListHelper = new ActivitiesSharedRepositoryListViewHelper(mContext, mPageViewMode);
+            ActivitiesListViewHelper mActionsListHelper = new ActivitiesListViewHelper(mContext, General.eRIPageViewMode.AddFromShardRepository);
 
             xActivitiesRepositoryListView.SetDefaultListDataTemplate(mActionsListHelper);
             xActivitiesRepositoryListView.ListSelectionMode = SelectionMode.Extended;

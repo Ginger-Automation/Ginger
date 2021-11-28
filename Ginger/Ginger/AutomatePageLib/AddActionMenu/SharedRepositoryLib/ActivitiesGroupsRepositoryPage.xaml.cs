@@ -47,7 +47,6 @@ namespace Ginger.Repository
         bool mInTreeModeView = false;
 
         Context mContext = null;
-        Ginger.General.eRIPageViewMode mPageViewMode;
 
         public ActivitiesGroupsRepositoryPage(RepositoryFolder<ActivitiesGroup> activitiesGroupFolder, Context context)
         {
@@ -63,7 +62,7 @@ namespace Ginger.Repository
         private void SetGridAndTreeData()
         {
             xActivitiesGroupsRepositoryListView.ListTitleVisibility = Visibility.Hidden;
-            ActivitiesGroupsListViewHelper mActionsListHelper = new ActivitiesGroupsListViewHelper(mContext, mPageViewMode);
+            ActivitiesGroupsListViewHelper mActionsListHelper = new ActivitiesGroupsListViewHelper(mContext, General.eRIPageViewMode.AddFromShardRepository);
 
             xActivitiesGroupsRepositoryListView.SetDefaultListDataTemplate(mActionsListHelper);
             xActivitiesGroupsRepositoryListView.ListSelectionMode = SelectionMode.Extended;

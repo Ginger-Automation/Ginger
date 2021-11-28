@@ -467,15 +467,18 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             screenshotInd.BindingConverter = new BoolVisibilityConverter();
             notificationsList.Add(screenshotInd);
 
-            ListItemNotification sharedRepoInd = new ListItemNotification();
-            sharedRepoInd.AutomationID = "sharedRepoInd";
-            sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-            sharedRepoInd.ToolTip = "Action source is from Shared Repository";
-            sharedRepoInd.ImageForeground = Brushes.Orange;
-            sharedRepoInd.BindingObject = mAction;
-            sharedRepoInd.BindingFieldName = nameof(Act.IsSharedRepositoryInstance);
-            sharedRepoInd.BindingConverter = new BoolVisibilityConverter();
-            notificationsList.Add(sharedRepoInd);
+            if (PageViewMode != General.eRIPageViewMode.AddFromShardRepository)
+            {
+                ListItemNotification sharedRepoInd = new ListItemNotification();
+                sharedRepoInd.AutomationID = "sharedRepoInd";
+                sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+                sharedRepoInd.ToolTip = "Action source is from Shared Repository";
+                sharedRepoInd.ImageForeground = Brushes.Orange;
+                sharedRepoInd.BindingObject = mAction;
+                sharedRepoInd.BindingFieldName = nameof(Act.IsSharedRepositoryInstance);
+                sharedRepoInd.BindingConverter = new BoolVisibilityConverter();
+                notificationsList.Add(sharedRepoInd);
+            }
 
             return notificationsList;
         }
