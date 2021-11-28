@@ -61,6 +61,9 @@ namespace Amdocs.Ginger.CoreNET
                 PlatformInfo = pInfo;
                 PlatformDriver = platformDriver;
                 mApplicationPOMList = lstApplicationPOM;
+                BusinessFlow = bFlow;
+                Context = context;
+
                 //if lstApplicationPOM == null then dont create POM or if applicationPOM.Name has some value then use the existing POM
                 //or else create new POM
                 if (mApplicationPOMList == null)
@@ -79,7 +82,7 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        CurrentPOM = new ApplicationPOMModel();
+                        CurrentPOM = AddNewEmptyPOM("NewEmptyPOM");
                     }
                     ListPOMObjectHelper = new List<POMObjectRecordingHelper>();
                     foreach (var cPom in mApplicationPOMList)
@@ -88,8 +91,6 @@ namespace Amdocs.Ginger.CoreNET
                     }
                 }
 
-                BusinessFlow = bFlow;
-                Context = context;
                 PlatformDriver.ResetRecordingEventHandler();
                 PlatformDriver.RecordingEvent += PlatformDriver_RecordingEvent;
             }
@@ -153,6 +154,46 @@ namespace Amdocs.Ginger.CoreNET
             return recordingHelper;
         }
 
+        private ApplicationPOMModel AddNewEmptyPOM(string POMName)
+        {
+            ApplicationPOMModel newPOM = new ApplicationPOMModel() { Name = POMName };
+            try
+            {
+                string uniquTitle = GetUniquePOMName(POMName);
+                newPOM.Name = uniquTitle;
+                newPOM.MappedUIElements = new ObservableList<ElementInfo>();
+                if (WorkSpace.Instance.Solution != null)//check for unit tests
+                {
+                    RepositoryItemKey tAppkey = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == Context.Target.Name).Select(x => x.Key).FirstOrDefault();
+                    if (tAppkey != null)
+                    {
+                        newPOM.TargetApplicationKey = tAppkey;
+                    }
+                    else
+                    {
+                        newPOM.TargetApplicationKey = Context.Target.Key;
+                    }
+                }
+
+                //Save new POM
+                if (WorkSpace.Instance.SolutionRepository != null)//check for unit tests
+                {
+                    RepositoryFolder<ApplicationPOMModel> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
+                    repositoryFolder.AddRepositoryItem(newPOM);
+                }
+
+                if (mApplicationPOMList != null)
+                {
+                    mApplicationPOMList.Add(newPOM);//adding so user will notice it was added during recording
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in creating Recording object", ex);
+            }
+            return newPOM;
+        }
+
         /// <summary>
         /// This method is used to get the unique POM name for new POM creation
         /// </summary>
@@ -188,7 +229,7 @@ namespace Amdocs.Ginger.CoreNET
                     var obj = ListPOMObjectHelper.FirstOrDefault(s => s.PageURL == args.PageURL);
                     if (obj == null && !string.IsNullOrEmpty(args.PageTitle) && !string.IsNullOrEmpty(args.PageURL))
                     {
-                        newPOMHelper = GetNewPOM(args.PageTitle, args.PageURL, args.ScreenShot);                        
+                        newPOMHelper = GetNewPOM(args.PageTitle, args.PageURL, args.ScreenShot);
                         ListPOMObjectHelper.Add(newPOMHelper);
                         CurrentPOM = newPOMHelper.ApplicationPOM;
                     }
@@ -202,7 +243,7 @@ namespace Amdocs.Ginger.CoreNET
                     newPOMHelper = GetNewPOM(args.PageTitle, args.PageURL, args.ScreenShot);
                     CurrentPOM = newPOMHelper.ApplicationPOM;
                     ListPOMObjectHelper = new List<POMObjectRecordingHelper>();
-                    ListPOMObjectHelper.Add(newPOMHelper);                    
+                    ListPOMObjectHelper.Add(newPOMHelper);
                 }
                 AddBrowserAction(args.PageTitle, args.PageURL);
             }

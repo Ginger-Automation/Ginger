@@ -1358,6 +1358,11 @@ namespace Amdocs.Ginger.CoreNET
 
         ElementInfo IWindowExplorer.GetControlFromMousePosition()
         {
+            return GetElementAtMousePosition();
+        }
+
+        private ElementInfo GetElementAtMousePosition()
+        {
             Point mousePosCurrent = new Point(-1, -1);
             XmlNode foundNode = null;
             ElementInfo foundElement = null;
@@ -1939,14 +1944,16 @@ namespace Amdocs.Ginger.CoreNET
 
         void IRecord.StartRecording(bool learnAdditionalChanges)
         {
-            if(AppType == eAppType.Web)
-            {
-                mSeleniumDriver.StartRecording();
-            }
-            else
-                IsRecording = true;
+            //if(AppType == eAppType.Web)
+            //{
+            //    mSeleniumDriver.StartRecording();
+            //}
+            //else
+                //IsRecording = true;
+            
+            IsRecording = true;
 
-            OnDriverMessage(eDriverMessageType.RecordingEvent, true);
+            OnDriverMessage(eDriverMessageType.RecordingEvent, IsRecording);
             //Dispatcher.Invoke(() =>
             //{
             //    if (DriverWindow != null) DriverWindow.StartRecording();
@@ -1955,10 +1962,10 @@ namespace Amdocs.Ginger.CoreNET
 
         void IRecord.StopRecording()
         {
-            if (AppType == eAppType.Web)
-            {
-                mSeleniumDriver.StopRecording();
-            }
+            //if (AppType == eAppType.Web)
+            //{
+            //    mSeleniumDriver.StopRecording();
+            //}
 
             IsRecording = false;
             OnDriverMessage(eDriverMessageType.RecordingEvent, IsRecording);
@@ -2280,15 +2287,26 @@ namespace Amdocs.Ginger.CoreNET
         {
             if (IsRecording)
             {
-                ElementInfo elemInfo = GetElementAtPoint(x, y).Result;
+                //ElementInfo elemInfo = GetElementAtPoint(x, y).Result;
+                ElementInfo elemInfo = GetElementAtMousePosition();
+
                 if (elemInfo != null)
                 {
                     RecordingEventArgs args = new RecordingEventArgs();
                     args.EventType = eRecordingEvent.ElementRecorded;
 
                     ElementActionCongifuration configArgs = new ElementActionCongifuration();
-                    configArgs.LocateBy = eLocateBy.ByXPath;
-                    configArgs.LocateValue = elemInfo.Locators.Where(l => l.LocateBy == eLocateBy.ByXPath).FirstOrDefault().LocateValue;
+
+                    if (TestLocatorOutput(elemInfo, elemInfo.Locators.Where(l => l.LocateBy == eLocateBy.ByXPath).FirstOrDefault()))
+                    {
+                        configArgs.LocateBy = eLocateBy.ByXPath;
+                        configArgs.LocateValue = elemInfo.Locators.Where(l => l.LocateBy == eLocateBy.ByXPath).FirstOrDefault().LocateValue;
+                    }
+                    else
+                    {
+                        configArgs.LocateBy = eLocateBy.ByXY;
+                        configArgs.LocateValue = string.Format("{0},{1}", elemInfo.X, elemInfo.Y);
+                    }
                     configArgs.ElementValue = elemInfo.Value;
                     configArgs.Type = elemInfo.ElementTypeEnum;
                     configArgs.LearnedElementInfo = elemInfo;
@@ -2297,11 +2315,20 @@ namespace Amdocs.Ginger.CoreNET
                     args.EventArgs = configArgs;
                     RecordingEvent?.Invoke(this, args);
                 }
-
-                TapXY(x, y);
             }
-            else
-                TapXY(x, y);
+            TapXY(x, y);
+        }
+
+        public bool TestLocatorOutput(ElementInfo Elem, ElementLocator LocatorToTest)
+        {
+            var elem = LocateElementByLocator(LocatorToTest) as IWebElement;
+
+            if (elem != null)
+            {
+                return elem.Location.X == Elem.X && elem.Location.Y == Elem.Y;
+            }
+
+            return false;
         }
 
         public void PerformLongPress(long x, long y)

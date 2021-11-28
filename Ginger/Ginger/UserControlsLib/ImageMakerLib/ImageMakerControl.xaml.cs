@@ -289,7 +289,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline, (SolidColorBrush)FindResource("$PendingStatusColor"), 0, "Pending");
                     break;
                 case eImageType.Recording:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.VideoCamera, (SolidColorBrush)FindResource("$PendingStatusColor"), 0, "Recording...", true);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.VideoCamera, new SolidColorBrush(Color.FromRgb(255, 0, 0)), 0, "Recording...", true);
                     break;
                 case eImageType.Processing:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (SolidColorBrush)FindResource("$HighlightColor_Orange"), 2);
@@ -1045,7 +1045,7 @@ namespace Amdocs.Ginger.UserControls
                 {
                     From = 1,
                     To = 0,
-                    Duration = new Duration(TimeSpan.FromSeconds(2)),
+                    Duration = new Duration(TimeSpan.FromSeconds(1)),
                     AutoReverse = true,
                     RepeatBehavior = RepeatBehavior.Forever
                 };
