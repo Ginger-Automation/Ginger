@@ -156,7 +156,7 @@ namespace GingerCore.Actions.WebServices
         {
             get
             {
-                return "ActWebAPI";
+                return ActionDescription;
             }
         }
 

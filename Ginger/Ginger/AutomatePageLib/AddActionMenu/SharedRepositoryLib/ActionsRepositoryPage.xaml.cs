@@ -44,8 +44,6 @@ namespace Ginger.Repository
     {
         readonly RepositoryFolder<Act> mActionsFolder;
         Context mContext;
-        Ginger.General.eRIPageViewMode mPageViewMode;
-        readonly RepositoryFolder<Act> mActivitiesFolder;
 
         public ActionsRepositoryPage(RepositoryFolder<Act> actionsFolder, Context context)
         {
@@ -67,7 +65,7 @@ namespace Ginger.Repository
         private void SetGridAndTreeData()
         {
             xActionListView.ListTitleVisibility = Visibility.Hidden;
-            ActionsSharedRepositoryListViewHelper mActionsListHelper = new ActionsSharedRepositoryListViewHelper(mContext, mPageViewMode);
+            ActionsListViewHelper mActionsListHelper = new ActionsListViewHelper(mContext, General.eRIPageViewMode.AddFromShardRepository);
 
             xActionListView.SetDefaultListDataTemplate(mActionsListHelper);
             xActionListView.ListSelectionMode = SelectionMode.Extended;

@@ -271,9 +271,6 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\OLD_ActionsLibraryListViewHelper.cs" />
-    <Compile Include="Activities\ActionsSharedRepositoryListViewHelper.cs" />
-    <Compile Include="Activities\ActionsPOMListViewHelper.cs" />
     <Compile Include="Activities\ActivitiesSharedRepositoryListViewHelper.cs" />
     <Compile Include="Activities\ConfigureErrorListPage.xaml.cs">
       <DependentUpon>ConfigureErrorListPage.xaml</DependentUpon>

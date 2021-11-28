@@ -18,8 +18,11 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
+using Ginger.Actions;
+using Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
@@ -43,7 +46,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
     public class ActionsListViewHelper : IListViewHelper
     {
         Act mAction;
-        Context mContext;
+        
         public General.eRIPageViewMode PageViewMode { get; set; }
 
         UcListView mListView = null;
@@ -67,6 +70,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                     //    mListView.UcListViewEvent += ListView_UcListViewEvent;
                     //}
                 }
+            }
+        }
+
+        Context mContext;
+        public Context Context
+        {
+            get
+            {
+                return mContext;
             }
         }
 
@@ -105,6 +117,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 mAction = (Act)(((MenuItem)item).Tag);
             }
+            else if(item is ApplicationPOMModel)
+            {
+                mAction = (Act)item;
+            }
+            else if (item is ElementInfo)
+            {
+                mAction = (Act)item;
+            }
         }
 
         public string GetItemNameField()
@@ -119,7 +139,17 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemNameExtentionField()
         {
-            return nameof(Act.ElapsedSecs);
+            switch (PageViewMode)
+            {
+                case General.eRIPageViewMode.Automation:
+                    return nameof(Act.ElapsedSecs);
+
+                case General.eRIPageViewMode.AddFromModel: //Add from POM
+                    return nameof(ElementInfo.ElementTypeEnum);
+
+                default:
+                    return null;
+            }
         }
 
         public string GetItemTagsField()
@@ -129,13 +159,18 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemDescriptionField()
         {
-            if (PageViewMode == General.eRIPageViewMode.Add)
+            switch(PageViewMode)
             {
-                return nameof(Act.ActionUserDescription);
-            }
-            else
-            {
-                return nameof(Act.ActionType);
+                case General.eRIPageViewMode.Automation:
+                case General.eRIPageViewMode.AddFromShardRepository:
+                case General.eRIPageViewMode.AddFromModel: //Add from POM
+                    return nameof(Act.ActionType);
+
+                case General.eRIPageViewMode.Add: //Actions Library
+                    return nameof(Act.ActionUserDescription);
+
+                default:
+                    return nameof(Act.ActionType);
             }
         }
 
@@ -164,7 +199,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public ListItemUniqueIdentifier GetItemUniqueIdentifier(object item)
         {
             SetItem(item);
-            if (mAction.BreakPoint)
+
+            if (PageViewMode == General.eRIPageViewMode.Automation && mAction.BreakPoint)
             {
                 return new ListItemUniqueIdentifier() { Color = "Red", Tooltip = "Break Point was set for this Action" };
             }
@@ -184,34 +220,39 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(Act.ActionType);
         }
 
-
-
         public List<ListItemOperation> GetListOperations()
-        {
-            if (PageViewMode == General.eRIPageViewMode.Add)
-            {
-                return GetListOperationsActions();
-            }
-            else
-            {
-                return GetListOperationsDefault();
-            }
-        }
-
-        public List<ListItemOperation> GetListOperationsActions()
         {
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
-            if (PageViewMode != General.eRIPageViewMode.View)
-            {
-                ListItemOperation addSelected = new ListItemOperation();
-                addSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone, General.eRIPageViewMode.Add, General.eRIPageViewMode.AddFromModel };
-                addSelected.AutomationID = "addSelected";
-                addSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
-                addSelected.ToolTip = "Add Selected Actions";
-                addSelected.OperationHandler = AddActionListView;
-                operationsList.Add(addSelected);
-            }
+            ListItemOperation deleteSelected = new ListItemOperation();
+            deleteSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            deleteSelected.AutomationID = "deleteSelected";
+            deleteSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
+            deleteSelected.ToolTip = "Delete Selected Actions (Del)";
+            deleteSelected.OperationHandler = DeleteSelectedHandler;
+            operationsList.Add(deleteSelected);
+
+            ListItemOperation addSelected = new ListItemOperation();
+            addSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Add };
+            addSelected.AutomationID = "addSelected";
+            addSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+            addSelected.ToolTip = "Add Selected Actions";
+            addSelected.OperationHandler = AddActionListView;
+            operationsList.Add(addSelected);
+
+            ListItemOperation addToFlow = new ListItemOperation();
+            addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
+            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+            addToFlow.ToolTip = "Add to Flow";
+            addToFlow.OperationHandler = AddFromRepository;
+            operationsList.Add(addToFlow);
+
+            ListItemOperation editItem = new ListItemOperation();
+            editItem.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
+            editItem.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
+            editItem.ToolTip = "Edit Item";
+            editItem.OperationHandler = EditAct;
+            operationsList.Add(editItem);
 
             return operationsList;
         }
@@ -228,43 +269,42 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         }
 
-        public List<ListItemOperation> GetListOperationsDefault()
+        private void AddFromRepository(object sender, RoutedEventArgs e)
         {
-            List<ListItemOperation> operationsList = new List<ListItemOperation>();
-
-            if (PageViewMode != General.eRIPageViewMode.View)
+            if (mListView.List.SelectedItems != null && mListView.List.SelectedItems.Count > 0)
             {
-                ListItemOperation deleteSelected = new ListItemOperation();
-                deleteSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-                deleteSelected.AutomationID = "deleteSelected";
-                deleteSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-                deleteSelected.ToolTip = "Delete Selected Actions (Del)";
-                deleteSelected.OperationHandler = DeleteSelectedHandler;
-                operationsList.Add(deleteSelected);
-            }
-
-            return operationsList;
-        }
-        public List<ListItemOperation> GetListExtraOperations()
-        {
-            if (PageViewMode == General.eRIPageViewMode.Add)
-            {
-                return GetListExtraOperationsActions();
+                if (mContext.BusinessFlow == null)
+                {
+                    return;
+                }
+                List<Act> list = new List<Act>();
+                foreach (Act selectedItem in mListView.List.SelectedItems)
+                {
+                    ActionsFactory.AddActionsHandler(selectedItem, mContext);
+                }
             }
             else
             {
-                return GetListExtraOperationsDefault();
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             }
         }
 
-        public List<ListItemOperation> GetListExtraOperationsActions()
+        private void EditAct(object sender, RoutedEventArgs e)
         {
-            List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
-
-            return extraOperationsList;
+            if (mListView.List.SelectedItems != null && mListView.List.SelectedItems.Count > 0)
+            {
+                Act a = (Act)mListView.CurrentItem;
+                ActionEditPage actedit = new ActionEditPage(a, General.eRIPageViewMode.SharedReposiotry, new GingerCore.BusinessFlow(), new GingerCore.Activity());
+                actedit.ShowAsWindow(eWindowShowStyle.Dialog);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
+            }
         }
 
-        public List<ListItemOperation> GetListExtraOperationsDefault()
+    
+        public List<ListItemOperation> GetListExtraOperations()
         {
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
 
@@ -446,26 +486,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public List<ListItemOperation> GetItemOperationsList(object item)
         {
-            if (PageViewMode == General.eRIPageViewMode.Add)
-            {
-                return GetItemOperationsListActions(item);
-            }
-            else
-            {
-                return GetItemOperationsListDefault(item);
-            }
-        }
-
-        public List<ListItemOperation> GetItemOperationsListActions(object item)
-        {
-            SetItem(item);
-            List<ListItemOperation> operationsList = new List<ListItemOperation>();
-
-            return operationsList;
-        }
-
-        public List<ListItemOperation> GetItemOperationsListDefault(object item)
-        {
             SetItem(item);
             List<ListItemOperation> operationsList = new List<ListItemOperation>();
 
@@ -512,30 +532,26 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             active.OperationHandler = ActiveHandler;
             operationsList.Add(active);
 
+            ListItemOperation viewLinkedInstances = new ListItemOperation();
+            viewLinkedInstances.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
+            viewLinkedInstances.AutomationID = "ViewLinkedInstances";
+            viewLinkedInstances.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InstanceLink;
+            viewLinkedInstances.ToolTip = "View Linked Instances";
+            viewLinkedInstances.OperationHandler = ViewRepositoryItemUsage;
+            operationsList.Add(viewLinkedInstances);
+
+            ListItemOperation highlight = new ListItemOperation();
+            highlight.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromModel};
+            highlight.AutomationID = "HighlightElement";
+            highlight.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Pointer;
+            highlight.ToolTip = "Highlight Element";
+            highlight.OperationHandler = HighlightElementClicked;
+            operationsList.Add(highlight);
+
             return operationsList;
         }
 
         public List<ListItemOperation> GetItemExtraOperationsList(object item)
-        {
-            if (PageViewMode == General.eRIPageViewMode.Add)
-            {
-                return GetItemExtraOperationsListActions(item);
-            }
-            else
-            {
-                return GetItemExtraOperationsListDefault(item);
-            }
-        }
-
-        public List<ListItemOperation> GetItemExtraOperationsListActions(object item)
-        {
-            SetItem(item);
-            List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
-
-            return extraOperationsList;
-        }
-
-        public List<ListItemOperation> GetItemExtraOperationsListDefault(object item)
         {
             SetItem(item);
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
@@ -686,6 +702,28 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(sender);
             mAction.Active = !mAction.Active;
         }
+
+        private void ViewRepositoryItemUsage(object sender, RoutedEventArgs e)
+        {
+            List<object> SelectedItemsList = mListView.List.SelectedItems.Cast<object>().ToList();
+
+            if (SelectedItemsList.Count > 0)
+            {
+                RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItemBase)mListView.List.SelectedItem);
+                usagePage.ShowAsWindow();
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
+        }
+
+        private void HighlightElementClicked(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.HighlightElement, mAction);
+        }
+
 
         private void ActionsVarsHandler(object sender, RoutedEventArgs e)
         {            

@@ -22,18 +22,15 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
-using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.BusinessFlowWindows;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
-using Ginger.UserControls;
 using GingerCore;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using static Ginger.ApplicationModelsLib.POMModels.PomElementsPage;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -47,19 +44,55 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         Context mContext;
         ITreeViewItem mItemTypeRootNode;
         SingleItemTreeViewSelectionPage mPOMPage;
-        Ginger.General.eRIPageViewMode mPageViewMode;
-        ActionsPOMListViewHelper mPOMListHelper;
+        ActionsListViewHelper mPOMListHelper;
 
         private Agent mAgent;
+
+        IWindowExplorer mWinExplorer
+        {
+            get
+            {
+                if (mAgent != null && mAgent.Status == Agent.eStatus.Running)
+                {
+                    return mAgent.Driver as IWindowExplorer;
+                }
+                else
+                {
+                    if (mAgent != null)
+                    {
+                        mAgent.Close();
+                    }
+                    return null;
+                }
+            }
+        }
+
+        ElementInfo mSelectedElement
+        {
+            get
+            {
+                if (xMainElementsListView.List.SelectedItem != null)
+                {
+                    return (ElementInfo)xMainElementsListView.List.SelectedItem;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
 
         public POMNavPage(Context context)
         {
             InitializeComponent();
 
+            App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEventAsync;
+            App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEventAsync;
+
             mContext = context;
 
             xMainElementsListView.ListTitleVisibility = Visibility.Hidden;
-            mPOMListHelper = new ActionsPOMListViewHelper(mContext, mPageViewMode);
+            mPOMListHelper = new ActionsListViewHelper(mContext, General.eRIPageViewMode.AddFromModel);
             xMainElementsListView.SetDefaultListDataTemplate(mPOMListHelper);
             xMainElementsListView.ListSelectionMode = SelectionMode.Extended;
             mPOMListHelper.ListView = xMainElementsListView;
@@ -91,7 +124,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus))
                 {
                     mAgent = mContext.Agent;
-                    mPOMListHelper.mContext.Agent = mContext.Agent;
+                    mPOMListHelper.Context.Agent = mContext.Agent;
                 }
             }
         }
@@ -143,6 +176,59 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             UpdatePOMTree();
             mAgent = mContext.Agent;
+        }
+
+        private async void App_AutomateBusinessFlowEventAsync(AutomateEventArgs args)
+        {
+            switch (args.EventType)
+            {
+                case AutomateEventArgs.eEventType.HighlightElement:
+                    HighlightElementClicked();
+                    break;
+                default:
+                    //Avoid other operations
+                    break;
+            }
+        }
+
+        private void HighlightElementClicked()
+        {
+            if (!ValidateDriverAvalability())
+            {
+                return;
+            }
+
+            if (mSelectedElement != null)
+            {
+                mWinExplorer.HighLightElement(mSelectedElement, true);
+            }
+        }
+        private bool ValidateDriverAvalability()
+        {
+            if (mWinExplorer == null)
+            {
+                Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);
+                return false;
+            }
+
+            if (IsDriverBusy())
+            {
+                Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
+                return false;
+            }
+
+            return true;
+        }
+        private bool IsDriverBusy()
+        {
+            if (mAgent != null && mAgent.Driver.IsDriverBusy)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
