@@ -71,7 +71,7 @@ namespace Ginger.Environments
             {
                 DataGrid dataGrid = sender as DataGrid;
                 DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.CurrentItem);
-                ToolTipService.SetToolTip(row, new ToolTip { Content = "Expected Format: host:Port/Keyspace/querytimeout=90\nKeyspace and query timeout are optional", Style= FindResource("ToolTipStyle") as Style });
+                ToolTipService.SetToolTip(row, new ToolTip { Content = "Expected Format: host:Port/Keyspace/querytimeout=90\nKeyspace and query timeout are optional", Style = FindResource("ToolTipStyle") as Style });
                 ToolTipService.SetShowDuration(row, 15000);//15sec
             }
         }
@@ -82,7 +82,8 @@ namespace Ginger.Environments
             {
                 Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
                 String intialValue = selectedEnvDB.Pass;
-                if (!string.IsNullOrEmpty(intialValue))
+                //if Pass is stored in the form of variable, encryption not required at this stage
+                if (!string.IsNullOrEmpty(intialValue) && !intialValue.Contains("{Var Name"))
                 {
                     if (!EncryptionHandler.IsStringEncrypted(intialValue))
                     {
@@ -91,7 +92,7 @@ namespace Ginger.Environments
                         {
                             selectedEnvDB.Pass = null;
                         }
-                    }                   
+                    }
                 }
             }
 
@@ -165,8 +166,8 @@ namespace Ginger.Environments
                 }
                 db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 db.ProjEnvironment = mContext.Environment;
-                db.BusinessFlow =  null;
-                
+                db.BusinessFlow = null;
+
                 db.CloseConnection();
                 if (db.Connect(true))
                 {
@@ -186,13 +187,13 @@ namespace Ginger.Environments
                     {
                         System.Diagnostics.Process.Start("https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149");
                         System.Threading.Thread.Sleep(2000);
-                        System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html"); 
-                        
+                        System.Diagnostics.Process.Start("http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html");
+
                     }
                     return;
                 }
-                
-               Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
+
+                Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
             }
         }
         #endregion Events
@@ -217,15 +218,15 @@ namespace Ginger.Environments
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.Description, WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.DBVer, Header = "Version", WidthWeight = 10 });
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.Type, WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = Database.DbTypes, Header = "DB Type" });
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.TNS, Header="TNS / File Path / Host ", WidthWeight = 30 });
-            view.GridColsView.Add(new GridColView() { Field = "VE1", Header="...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["TNSValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.User, Header="User Name", WidthWeight = 10 });
+            view.GridColsView.Add(new GridColView() { Field = Database.Fields.TNS, Header = "TNS / File Path / Host ", WidthWeight = 30 });
+            view.GridColsView.Add(new GridColView() { Field = "VE1", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["TNSValueExpressionButton"] });
+            view.GridColsView.Add(new GridColView() { Field = Database.Fields.User, Header = "User Name", WidthWeight = 10 });
             view.GridColsView.Add(new GridColView() { Field = "VE2", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["UserValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.Pass,Header="User Password", WidthWeight = 10 });
+            view.GridColsView.Add(new GridColView() { Field = Database.Fields.Pass, Header = "User Password", WidthWeight = 10 });
             view.GridColsView.Add(new GridColView() { Field = "VE3", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["PswdValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = Database.Fields.ConnectionString, WidthWeight = 20, Header = "Connection String (Optional)" });
             view.GridColsView.Add(new GridColView() { Field = "VE4", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["ConnStrValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.KeepConnectionOpen, Header = "Keep Connection Open" , StyleType= GridColView.eGridColStyleType.CheckBox, MaxWidth = 150, WidthWeight=10 });
+            view.GridColsView.Add(new GridColView() { Field = Database.Fields.KeepConnectionOpen, Header = "Keep Connection Open", StyleType = GridColView.eGridColStyleType.CheckBox, MaxWidth = 150, WidthWeight = 10 });
             grdAppDbs.SetAllColumnsDefaultView(view);
             grdAppDbs.InitViewItems();
         }

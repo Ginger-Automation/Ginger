@@ -816,6 +816,11 @@ namespace Ginger.Run
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
 
+            ResetRunnerPage();
+        }
+
+        public void ResetRunnerPage()
+        {
             Runner.ResetRunnerExecutionDetails();
 
             UpdateExecutionStats();
@@ -826,7 +831,4 @@ namespace Ginger.Run
             OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.ResetRunnerStatus, Runner);
         }
     }
-
-
-
 }

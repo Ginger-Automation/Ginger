@@ -289,6 +289,9 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                 case eALMType.ZephyrEnterprise:
                     almCore = new ZephyrEntCore();
                     break;
+                case eALMType.Octane:
+                    almCore = new OctaneCore();
+                    break;
                 default:
                     Reporter.ToLog(eLogLevel.ERROR, $"Invalid ALM Type - {almType}");
                     break;
