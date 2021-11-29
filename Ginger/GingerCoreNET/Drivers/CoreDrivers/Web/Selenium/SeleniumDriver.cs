@@ -3870,6 +3870,7 @@ namespace GingerCore.Drivers
                                 learnElement = false;
                         }
 
+                        IWebElement webElement = null;
                         if (learnElement)
                         {
                             var xpath = htmlElemNode.XPath;
@@ -3878,21 +3879,21 @@ namespace GingerCore.Drivers
                                 xpath= string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()=\'svg\']");
                             }
 
-                            IWebElement el = Driver.FindElement(By.XPath(xpath));
-                            if (el == null)
+                            webElement = Driver.FindElement(By.XPath(xpath));
+                            if (webElement == null)
                             {
                                 continue;
                             }
 
                             //filter none visible elements
-                            if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
+                            if (!webElement.Displayed || webElement.Size.Width == 0 || webElement.Size.Height == 0)
                             {
                                 //for some element like select tag el.Displayed is false but element is visible in page
-                                if (el.GetCssValue("display").Equals("none", StringComparison.OrdinalIgnoreCase) )
+                                if (webElement.GetCssValue("display").Equals("none", StringComparison.OrdinalIgnoreCase) )
                                 {
                                     continue;
                                 }
-                                else if(el.GetCssValue("width").Equals("auto") || el.GetCssValue("height").Equals("auto"))
+                                else if(webElement.GetCssValue("width").Equals("auto") || webElement.GetCssValue("height").Equals("auto"))
                                 {
                                     continue;
                                 }
@@ -3901,7 +3902,7 @@ namespace GingerCore.Drivers
                             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
                             foundElemntInfo.ElementType = elementTypeEnum.Item1;
                             foundElemntInfo.ElementTypeEnum = elementTypeEnum.Item2;
-                            foundElemntInfo.ElementObject = el;
+                            foundElemntInfo.ElementObject = webElement;
                             foundElemntInfo.Path = path;
                             //foundElemntInfo.XPath = htmlElemNode.XPath;
                             foundElemntInfo.XPath = xpath;
@@ -3930,7 +3931,11 @@ namespace GingerCore.Drivers
                         if (eElementType.Iframe == elementTypeEnum.Item2)
                         {
                             string xpath = htmlElemNode.XPath;
-                            Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(xpath)));
+                            if (webElement == null)
+                            {
+                                webElement = Driver.FindElement(By.XPath(xpath));
+                            }
+                            Driver.SwitchTo().Frame(webElement);
                             string newPath = string.Empty;
                             if (path == string.Empty)
                             {

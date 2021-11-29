@@ -70,7 +70,7 @@ namespace Ginger.Repository
                 CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eInsertRepositoryInsatncePosition)), nameof(RepositoryItemUsage.InsertRepositoryInsatncePosition), comboSelectionChangedHandler: InsertPositionCobmo_SelectionChanged) });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemUsage.IndexActivityName), Header = "Index Activity", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(RepositoryItemUsage.ActivityNameList), nameof(RepositoryItemUsage.IndexActivityName), true) });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.PublishStatus, Header = "Status", WidthWeight = 20, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.PublishStatus, Header = "Status", WidthWeight = 20, ReadOnly = true,StyleType = GridColView.eGridColStyleType.ComboBox,CellValuesList = GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.ePublishStatus)) });
 
             xRepoItemPublisIngoGrid.SetAllColumnsDefaultView(view);
             xRepoItemPublisIngoGrid.InitViewItems();
@@ -85,14 +85,17 @@ namespace Ginger.Repository
 
             if (currentItem != null && currentItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AfterSpecificActivity)
             {
-                var activityIndex = 0;
-                foreach (var item in currentItem.HostBusinessFlow.Activities)
-                {
-                    currentItem.ActivityNameList.Add(activityIndex + "-" + item.ActivityName);
-                    activityIndex++;
-                }
+                SetActivityList(currentItem);
+            }
+        }
 
-                GingerCore.General.DoEvents();
+        private static void SetActivityList(RepositoryItemUsage currentItem)
+        {
+            var activityIndex = 0;
+            foreach (var item in currentItem.HostBusinessFlow.Activities)
+            {
+                currentItem.ActivityNameList.Add(activityIndex + "-" + item.ActivityName);
+                activityIndex++;
             }
         }
 
@@ -100,9 +103,25 @@ namespace Ginger.Repository
         {
             if (xRepoItemPublisIngoGrid.CurrentItem != null)
             {
-                RepositoryItemUsage a = (RepositoryItemUsage)xRepoItemPublisIngoGrid.CurrentItem;
-                foreach (RepositoryItemUsage usage in mRepoItemUsages)
-                    usage.InsertRepositoryInsatncePosition = a.InsertRepositoryInsatncePosition;
+                try
+                {
+                    StartProcessingIcon();
+                    RepositoryItemUsage repositoryItemUsage = (RepositoryItemUsage)xRepoItemPublisIngoGrid.CurrentItem;
+                    foreach (RepositoryItemUsage usage in mRepoItemUsages)
+                    {
+                        usage.InsertRepositoryInsatncePosition = repositoryItemUsage.InsertRepositoryInsatncePosition;
+
+                        if (usage.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AfterSpecificActivity)
+                        {
+                            usage.ActivityNameList.ClearAll();
+                            SetActivityList(usage);
+                        }
+                    }
+                }
+                finally
+                {
+                    StopProcessingIcon();
+                }
             }
             else
             {
@@ -138,11 +157,13 @@ namespace Ginger.Repository
         {
             await Task.Run(() =>
             {
+                StartProcessingIcon();
+                var errorOccured = false;
                 foreach (var repositoryItem in mRepoItemUsages)
                 {
                     try
                     {
-                        if (repositoryItem.Selected && repositoryItem.RepositoryItemPublishType == RepositoryItemUsage.eRepositoryItemPublishType.PublishInstance)
+                        if (repositoryItem.Selected && repositoryItem.RepositoryItemPublishType == RepositoryItemUsage.eRepositoryItemPublishType.PublishInstance && repositoryItem.PublishStatus != RepositoryItemUsage.ePublishStatus.Published)
                         {
                             Activity activityCopy = (Activity)mRepoItem.CreateInstance(true);
                             activityCopy.Active = true;
@@ -157,18 +178,39 @@ namespace Ginger.Repository
                             }
                             else if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AfterSpecificActivity)
                             {
-                                var indexToAdd = Convert.ToInt32(repositoryItem.IndexActivityName[0].ToString());
-                                repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(), insertIndex: indexToAdd+1);
+                                if (repositoryItem.IndexActivityName == null)
+                                {
+                                    errorOccured = true;
+                                }
+                                else
+                                {
+                                    var indexToAdd = Convert.ToInt32(repositoryItem.IndexActivityName[0].ToString());
+                                    repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(), insertIndex: indexToAdd + 1);
+                                }
                             }
-                            repositoryItem.PublishStatus = RepositoryItemUsage.ePublishStatus.Published;
-                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(repositoryItem.HostBusinessFlow);
+                            if (!errorOccured)
+                            {
+                                repositoryItem.PublishStatus = RepositoryItemUsage.ePublishStatus.Published;
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(repositoryItem.HostBusinessFlow);
+                            }
+
                         }
                     }
                     catch (Exception ex)
                     {
+                        errorOccured = true;
+                        repositoryItem.PublishStatus = RepositoryItemUsage.ePublishStatus.FailedToPublish;
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {System.Reflection.MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
-
+                }
+                StopProcessingIcon();
+                if (errorOccured)
+                {
+                    Reporter.ToUser(eUserMsgKey.FailedToPublishRepositoryInfo);
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.PublishRepositoryInfo);
                 }
             }
              );

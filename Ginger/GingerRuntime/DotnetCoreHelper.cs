@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             ALMCore aLMCore = null;
             eALMType defaultAlmType = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(typ => typ.DefaultAlm).AlmType;
-            if (almType != defaultAlmType)
+            if (aLMCore == null || almType != defaultAlmType)
             {
                 aLMCore = (ALMCore)UpdateALMType(almType);
             }
