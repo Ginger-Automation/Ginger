@@ -52,6 +52,8 @@ namespace Ginger.Repository
             [EnumValueDescription("Not Published")]
             NotPublished,
             Published,
+            [EnumValueDescription("Failed To Publish")]
+            FailedToPublish
         }
 
         public enum eInsertRepositoryInsatncePosition
@@ -167,6 +169,7 @@ namespace Ginger.Repository
             set
             {
                 mActivityList = value;
+                OnPropertyChanged(nameof(ActivityNameList));
             }
         }
 

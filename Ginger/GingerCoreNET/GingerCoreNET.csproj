@@ -841,6 +841,9 @@
     <None Update="Reports\Ginger-Web-Client\main.9a7f41ac158394ee2cff.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main.a85721ac59f1d0ff0fe1.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main.ac18b79c87efc4589d26.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -882,6 +885,9 @@
     </None>
     <None Update="Reports\Ginger-Web-Client\styles.d68bd4172acd061a314e.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\HTMLTemplates\viewreport.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
