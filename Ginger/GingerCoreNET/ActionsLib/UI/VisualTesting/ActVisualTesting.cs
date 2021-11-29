@@ -265,7 +265,7 @@ namespace GingerCore.Actions
             if (mVisualAnalyzer.SupportUniqueExecution())
             {
                 mVisualAnalyzer.SetAction(mDriver, this);
-                mVisualAnalyzer.Execute(webDriver);
+                mVisualAnalyzer.Execute();
                 
             }
             else

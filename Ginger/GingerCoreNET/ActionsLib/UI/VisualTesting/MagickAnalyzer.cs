@@ -82,7 +82,7 @@ namespace GingerCore.Actions.VisualTesting
         {
         }
 
-        void IVisualAnalyzer.Execute(SeleniumDriver webDriver)
+        void IVisualAnalyzer.Execute()
         {
             throw new NotImplementedException();
         }

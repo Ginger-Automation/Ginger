@@ -103,7 +103,7 @@ namespace GingerCore.Actions.VisualTesting
             VEI.Save(filename);
         }
 
-        void IVisualAnalyzer.Execute(SeleniumDriver webDriver)
+        void IVisualAnalyzer.Execute()
         {
             throw new NotImplementedException();
         }

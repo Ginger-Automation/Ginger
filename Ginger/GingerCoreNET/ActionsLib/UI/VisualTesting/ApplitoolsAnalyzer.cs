@@ -122,14 +122,14 @@ namespace GingerCore.Actions.VisualTesting
             }
         }
 
-        void IVisualAnalyzer.Execute(SeleniumDriver webDriver)
+        void IVisualAnalyzer.Execute()
         {
-            if (webDriver.GetType().Name == "SeleniumDriver")
+            if (mDriver.GetType().Name == "SeleniumDriver")
             {
                 switch (GetSelectedApplitoolsActionEnum())
                 {
                     case eApplitoolsAction.OpenEyes:
-                        NewEyesOpen(webDriver);
+                        NewEyesOpen();
                         break;
 
                     case eApplitoolsAction.Checkpoint:
@@ -146,7 +146,7 @@ namespace GingerCore.Actions.VisualTesting
                 switch (GetSelectedApplitoolsActionEnum())
                 {
                     case eApplitoolsAction.OpenEyes:
-                        EyesOpen(webDriver);
+                        EyesOpen();
                         break;
 
                     case eApplitoolsAction.Checkpoint:
@@ -162,7 +162,7 @@ namespace GingerCore.Actions.VisualTesting
         }
 
 
-        void EyesOpen(SeleniumDriver seleniumDriver)
+        void EyesOpen()
         {
             mEyes = new Applitools.Images.Eyes();
 
@@ -170,17 +170,14 @@ namespace GingerCore.Actions.VisualTesting
             // IWebProxy p = WebRequest.DefaultWebProxy; // .GetSystemWebProxy();
 
             mAppName = mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
-            mTestName = mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
-            mBaseServerUrl = mEyes.ServerUrl;
+            mTestName = mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamTestName); 
             mAct.CheckSetAppWindowSize();
-            mEyes.ApiKey = seleniumDriver.ApplitoolsViewKey; 
-            mEyes.ServerUrl = seleniumDriver.ApplitoolsServerUrl;
-            mEyes.ServerUrl = string.IsNullOrEmpty(mEyes.ServerUrl) ? mBaseServerUrl : mEyes.ServerUrl;
+            mEyes.ApiKey = ((SeleniumDriver)mDriver).ApplitoolsViewKey; 
+            mEyes.ServerUrl = string.IsNullOrEmpty(((SeleniumDriver)mDriver).ApplitoolsServerUrl) ? mEyes.ServerUrl : ((SeleniumDriver)mDriver).ApplitoolsServerUrl;
             OperatingSystem Os_info = System.Environment.OSVersion;
             mEyes.HostOS = Os_info.VersionString;
-            mEyes.HostApp = seleniumDriver.GetBrowserType().ToString();
+            mEyes.HostApp = ((SeleniumDriver)mDriver).GetBrowserType().ToString();
             List<int> mResolution = mAct.GetWindowResolution();
-
             mEyes.Open(mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
         }
 
@@ -237,16 +234,16 @@ namespace GingerCore.Actions.VisualTesting
             }
         }
 
-        void NewEyesOpen(SeleniumDriver seleniumDriver)
+        void NewEyesOpen()
         {
             runner = new ClassicRunner();
             newmEyes = new Eyes(runner);
-            SetUp(newmEyes,seleniumDriver.ApplitoolsServerUrl,seleniumDriver.ApplitoolsViewKey, seleniumDriver.GetBrowserType());
+            SetUp(newmEyes,((SeleniumDriver)mDriver).ApplitoolsServerUrl, ((SeleniumDriver)mDriver).ApplitoolsViewKey, ((SeleniumDriver)mDriver).GetBrowserType());
             mAppName = mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
             mTestName = mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
             mAct.CheckSetAppWindowSize();
             List<int> mResolution= mAct.GetWindowResolution();
-            newmEyes.Open(seleniumDriver.GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
+            newmEyes.Open(((SeleniumDriver)mDriver).GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
 
         }
 

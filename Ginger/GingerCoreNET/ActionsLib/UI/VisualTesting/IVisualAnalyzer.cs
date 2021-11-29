@@ -25,7 +25,7 @@ namespace GingerCore.Actions.VisualTesting
     public interface IVisualAnalyzer
     {
         bool SupportUniqueExecution();
-        void Execute(SeleniumDriver webDriver);
+        void Execute();
         void SetAction(IVisualTestingDriver driver, ActVisualTesting act);
         void CreateBaseline();
         void Compare();
