@@ -34,6 +34,8 @@ namespace Ginger.UserControlsLib.UCListView
 
         string GetItemNameField();
 
+        string GetItemMandatoryField();
+
         string GetItemDescriptionField();
 
         string GetItemNameExtentionField();
@@ -75,5 +77,5 @@ namespace Ginger.UserControlsLib.UCListView
         void Paste();
 
         void DeleteSelected();
-    }
+      }
 }

@@ -620,6 +620,11 @@ namespace Ginger
 
         }
 
+        private void btnGlobalSolutionImport_Click(object sender, RoutedEventArgs e)
+        {
+            GingerWPF.WizardLib.WizardWindow.ShowWizard(new Ginger.GlobalSolutionLib.ImportItemWizardLib.ImportItemWizard());
+        }
+
         private void AnalyzerButton_Click(object sender, RoutedEventArgs e)
         {
             AnalyzerPage AP = new AnalyzerPage();

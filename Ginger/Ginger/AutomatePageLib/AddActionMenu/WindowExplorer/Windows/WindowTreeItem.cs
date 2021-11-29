@@ -23,6 +23,7 @@ using GingerCore.Actions;
 using System;
 using System.Windows.Controls;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.Drivers.Windows
 {
@@ -35,9 +36,7 @@ namespace Ginger.Drivers.Windows
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@Window_16x16.png";
-            string Title = UIAElementInfo.ElementTitle;
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.Window));
         }
 
         bool ITreeViewItem.IsExpandable()

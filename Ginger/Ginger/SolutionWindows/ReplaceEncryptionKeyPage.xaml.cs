@@ -8,6 +8,7 @@ using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Variables;
 using System;
@@ -83,11 +84,11 @@ namespace Ginger.SolutionWindows
             uOkBtn.Content = "Ok";
             uOkBtn.Click += new RoutedEventHandler(OkBtn_Click);
             uOkBtn.Visibility = Visibility.Collapsed;
-            
+
             uSaveKeyBtn = new Button();
             uSaveKeyBtn.Content = "Save Key";
             uSaveKeyBtn.Click += new RoutedEventHandler(SaveKeyBtn_Click);
-           
+
             uCloseBtn = new Button();
             uCloseBtn.Content = "Cancel";
             uCloseBtn.Click += new RoutedEventHandler(CloseBtn_Click);
@@ -98,7 +99,7 @@ namespace Ginger.SolutionWindows
             loaderElement.Name = "xProcessingImage";
             loaderElement.Height = 30;
             loaderElement.Width = 30;
-            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;            
+            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
             loaderElement.Visibility = Visibility.Collapsed;
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Replace/Forget Encryption key", this, winButtons, false, "Cancel", CloseBtn_Click, false, loaderElement);
@@ -164,7 +165,7 @@ namespace Ginger.SolutionWindows
         private void ShowLoader()
         {
             this.Dispatcher.Invoke(() =>
-            {                
+            {
                 loaderElement.Visibility = Visibility.Visible;
                 uOkBtn.IsEnabled = false;
             });
@@ -213,7 +214,7 @@ namespace Ginger.SolutionWindows
             }
         }
 
-   
+
         private async void SaveKeyBtn_Click(object sender, RoutedEventArgs e)
         {
             if (xForgetRadioButton.IsChecked.Value && UCEncryptionKey.CheckKeyCombination())
@@ -224,10 +225,10 @@ namespace Ginger.SolutionWindows
                     _solution.SaveEncryptionKey();
                     _solution.SaveSolution(false);
 
-                    uOkBtn.Visibility = Visibility.Visible;                   
+                    uOkBtn.Visibility = Visibility.Visible;
                     uSaveKeyBtn.Visibility = Visibility.Collapsed;
                     uCloseBtn.Visibility = Visibility.Collapsed;
-    
+
                     xForgetRadioButton.IsEnabled = false;
                     xReplaceRadioButton.IsEnabled = false;
                     UCEncryptionKey.IsEnabled = false;
@@ -262,7 +263,7 @@ namespace Ginger.SolutionWindows
 
                 xSolutionPasswordsParamtersGrid.Visibility = Visibility.Collapsed;
                 validKeyAdded = true;
-               
+
                 _pageGenericWin.Close();
             }
         }
@@ -477,14 +478,14 @@ namespace Ginger.SolutionWindows
                     List<ProjEnvironment> projEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().ToList();
                     projEnvironments.ForEach(pe =>
                     {
-                       // GingerCore.Variables.VariablePasswordString vp;
+                        // GingerCore.Variables.VariablePasswordString vp;
                         foreach (EnvApplication ea in pe.Applications)
                         {
                             foreach (Database db in ea.Dbs)
                             {
                                 if (!string.IsNullOrEmpty(db.Pass))
                                 {
-                                    variables.Add(CreatePasswordVariable(db.Name, "Database Password", pe.Name+"-->"+ea.Name, db.Guid));
+                                    variables.Add(CreatePasswordVariable(db.Name, "Database Password", pe.Name + "-->" + ea.Name, db.Guid));
                                 }
                             }
                             foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
@@ -529,7 +530,7 @@ namespace Ginger.SolutionWindows
                                 {
                                     if (((RunSetActionHTMLReportSendEmail)ra).Email != null && !string.IsNullOrEmpty(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass))
                                     {
-                                        variables.Add(CreatePasswordVariable(ra.ItemName, "Run Set Operation", rsc.Name,((RunSetActionHTMLReportSendEmail)ra).Email.Guid));
+                                        variables.Add(CreatePasswordVariable(ra.ItemName, "Run Set Operation", rsc.Name, ((RunSetActionHTMLReportSendEmail)ra).Email.Guid));
                                     }
                                 }
                                 else if (ra is RunSetActionSendFreeEmail)
@@ -580,8 +581,8 @@ namespace Ginger.SolutionWindows
 
         private VariablePasswordString CreatePasswordVariable(string itemName, string parentType, string parentName, Guid guid)
         {
-            VariablePasswordString variablePassword= new VariablePasswordString();
-            variablePassword.Name = itemName;            
+            VariablePasswordString variablePassword = new VariablePasswordString();
+            variablePassword.Name = itemName;
             variablePassword.ParentType = parentType;
             variablePassword.ParentName = parentName;
             variablePassword.Guid = guid;
@@ -591,7 +592,7 @@ namespace Ginger.SolutionWindows
 
         public async Task<int> HandlePasswordValuesReEncryption(string oldKey = null)
         {
-            
+
             return await Task.Run(async () =>
             {
                 int varReencryptedCount = 0;
@@ -708,7 +709,11 @@ namespace Ginger.SolutionWindows
                             {
                                 if (!string.IsNullOrEmpty(db.Pass))
                                 {
-                                    db.Pass = EncryptionHandler.ReEncryptString(db.Pass, oldKey);
+                                    //if Pass is stored in the form of variable, encryption not required at this stage
+                                    if (!db.Pass.Contains("{Var Name"))
+                                    {
+                                        db.Pass = EncryptionHandler.ReEncryptString(db.Pass, oldKey);
+                                    }
                                     isSaveRequired = true;
                                     varReencryptedCount++;
                                 }
@@ -799,7 +804,7 @@ namespace Ginger.SolutionWindows
                 int varReencryptedCount = 0;
                 //Email Passwords
                 var runSetConfigs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                
+
                 foreach (var rsc in runSetConfigs)
                 {
                     try

@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             ALMCore aLMCore = null;
             eALMType defaultAlmType = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(typ => typ.DefaultAlm).AlmType;
-            if (almType != defaultAlmType)
+            if (aLMCore == null || almType != defaultAlmType)
             {
                 aLMCore = (ALMCore)UpdateALMType(almType);
             }
@@ -129,12 +129,6 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             throw new NotImplementedException();
         }
 
-
-
-        public void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder)
-        {
-            throw new NotImplementedException();
-        }
 
         public void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
         {
@@ -295,6 +289,9 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                 case eALMType.ZephyrEnterprise:
                     almCore = new ZephyrEntCore();
                     break;
+                case eALMType.Octane:
+                    almCore = new OctaneCore();
+                    break;
                 default:
                     Reporter.ToLog(eLogLevel.ERROR, $"Invalid ALM Type - {almType}");
                     break;
@@ -304,7 +301,11 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         public bool IsSharedRepositoryItem(RepositoryItemBase repositoryItem)
         {
             return SharedRepositoryOperations.IsSharedRepositoryItem(repositoryItem);
-        }       
+        }
 
+        public void DispatcherRun()
+        {
+            //Not required for GingerConsole
+        }
     }
 }

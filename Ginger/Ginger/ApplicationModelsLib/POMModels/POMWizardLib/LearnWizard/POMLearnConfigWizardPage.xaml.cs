@@ -44,7 +44,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public POMLearnConfigWizardPage()
         {
-            InitializeComponent();           
+            InitializeComponent();
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -54,14 +54,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
 
-                    ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList( WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
+                    ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
                     xTargetApplicationComboBox.BindControl<ApplicationPlatform>(mWizard.mPomLearnUtils.POM, nameof(ApplicationPOMModel.TargetApplicationKey), TargetApplications, nameof(ApplicationPlatform.AppName), nameof(ApplicationPlatform.Key));
                     xTargetApplicationComboBox.AddValidationRule(new POMTAValidationRule());
 
                     if (xTargetApplicationComboBox.Items != null && xTargetApplicationComboBox.Items.Count > 0)
                     {
                         xTargetApplicationComboBox.SelectedIndex = 0;
-                    }                                      
+                    }
 
                     AddValidations();
 
@@ -93,7 +93,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void PlatformSpecificUIManipulations()
         {
-            if(mAppPlatform.Equals(ePlatformType.Java))
+            if (mAppPlatform.Equals(ePlatformType.Java))
             {
                 xSpecificFrameConfigPanel.Visibility = Visibility.Visible;
             }
@@ -116,7 +116,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         }
 
         private void XTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        
+
         {
             if (mWizard.mPomLearnUtils.POM.TargetApplicationKey != null)
             {
@@ -141,6 +141,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
 
             PlatformSpecificUIManipulations();
+            AddValidations();
         }
 
         private void AddValidations()
@@ -163,7 +164,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
-        
+
 
         private void SetAutoMapElementTypesGridView()
         {
@@ -175,8 +176,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.Selected), Header = "To Map", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox});           
-            view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementType), Header = "Element Type", WidthWeight = 100, ReadOnly=true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.Selected), Header = "To Map", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementType), Header = "Element Type", WidthWeight = 100, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementExtraInfo), Header = "Element Extra Info", WidthWeight = 100, ReadOnly = true });
 
             xAutoMapBasicElementTypesGrid.SetAllColumnsDefaultView(view);
@@ -215,7 +216,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             defView.GridColsView = new ObservableList<GridColView>();
 
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly=true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
 
             xElementLocatorsSettingsGrid.SetAllColumnsDefaultView(defView);
@@ -306,7 +307,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void xLearnSpecificFrameChkBox_Click(object sender, RoutedEventArgs e)
         {
-            if(Convert.ToBoolean(xLearnSpecificFrameChkBox.IsChecked))
+            if (Convert.ToBoolean(xLearnSpecificFrameChkBox.IsChecked))
             {
                 xFrameListGrid.Visibility = Visibility.Visible;
                 BindWindowFrameCombox();
@@ -323,7 +324,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             mWizard.mPomLearnUtils.SpecificFramePath = null;
             if (mAppPlatform.Equals(ePlatformType.Java))
             {
-               var windowExplorerDriver = ((IWindowExplorer)(mWizard.mPomLearnUtils.Agent.Driver));
+                var windowExplorerDriver = ((IWindowExplorer)(mWizard.mPomLearnUtils.Agent.Driver));
 
                 var list = windowExplorerDriver.GetWindowAllFrames();
                 xFrameListCmbBox.ItemsSource = list;

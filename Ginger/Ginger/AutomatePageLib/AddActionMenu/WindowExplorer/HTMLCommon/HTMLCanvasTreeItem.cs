@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using System.Windows.Controls;
-using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Repository;
 
@@ -29,8 +28,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
         StackPanel ITreeViewItem.Header()
         {
             string ImageFileName = "@Canvas16x16.png";
-            string Title = this.ElementInfo.ElementTitle;            
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(ElementInfo.ElementTitle, ImageFileName);
         }
 
         HTMLCanvasElementPage mHTMLCanvasElementPage;

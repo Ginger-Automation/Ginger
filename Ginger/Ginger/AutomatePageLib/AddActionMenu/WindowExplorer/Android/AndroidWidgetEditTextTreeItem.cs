@@ -21,6 +21,7 @@ using System.Windows.Controls;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.Android
 {
@@ -28,8 +29,7 @@ namespace Ginger.WindowExplorer.Android
     {
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "@TextBox_16x16.png";
-            return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
+            return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.TextBox));
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()

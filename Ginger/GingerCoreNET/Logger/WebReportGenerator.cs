@@ -63,43 +63,44 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
                 reportsResultFolder = Path.Combine(ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports", "Ginger-Web-Client");
             }
+            string ReportrootPath = Path.Combine(reportsResultFolder, "WebReport");
             try
             {
                 string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "Ginger-Web-Client");
                 Reporter.ToLog(eLogLevel.INFO, "Copying web report folder from: " + clientAppFolderPath);
                 
-                Reporter.ToLog(eLogLevel.INFO, "Copying web report folder to: " + reportsResultFolder);
+                Reporter.ToLog(eLogLevel.INFO, "Copying web report folder to: " + ReportrootPath);
                 if (Directory.Exists(clientAppFolderPath))
                 {
-                    string rootFolder = Path.Combine(reportsResultFolder);
+                    string rootFolder = Path.Combine(ReportrootPath);
                     if (Directory.Exists(rootFolder))
                     {
                         IoHandler.Instance.TryFolderDelete(rootFolder);
                     }
-                    IoHandler.Instance.CopyFolderRec(clientAppFolderPath, reportsResultFolder, true);
+                    IoHandler.Instance.CopyFolderRec(clientAppFolderPath, ReportrootPath, true);
                 }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Check WebReportFolder Error: " + ex.Message, ex);
             }
-
+            
             //get exeution data and replace
             LiteDbRunSet lightDbRunSet = new LiteDbRunSet();
             bool response = false;
             try
             {
-                if (!Directory.Exists(reportsResultFolder))
+                if (!Directory.Exists(ReportrootPath))
                 {
                     return lightDbRunSet;
                 }
-                IoHandler.Instance.DeleteFoldersData(Path.Combine(reportsResultFolder, "assets", "Execution_Data"));
-                IoHandler.Instance.DeleteFoldersData(Path.Combine(reportsResultFolder, "assets", "screenshots"));
+                IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "Execution_Data"));
+                IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "screenshots"));
                 LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));              
                 lightDbRunSet = dbManager.GetLatestExecutionRunsetData(runSetGuid);
-                PopulateMissingFields(lightDbRunSet, reportsResultFolder);
+                PopulateMissingFields(lightDbRunSet, ReportrootPath);
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(lightDbRunSet);
-                response = RunClientApp(json, reportsResultFolder, openObject, shouldDisplayReport);
+                response = RunClientApp(json, ReportrootPath, openObject, shouldDisplayReport);
             }
             catch (Exception ex)
             {
@@ -117,14 +118,19 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
             try
             {
+                string backDir = System.IO.Directory.GetParent(clientAppFolderPath).FullName;
+                string viewReportTemplatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "HTMLTemplates", "viewreport.html");
+                string strViewReport = System.IO.File.ReadAllText(viewReportTemplatePath);
+                strViewReport = strViewReport.Replace("<!--FULLREPORTPATH-->", Path.GetFileName(clientAppFolderPath));
+                System.IO.File.WriteAllText(Path.Combine(backDir, "viewreport.html"), strViewReport);
                 json = $"window.runsetData={json};";
-
+                
 #warning Report Fix MEN not stable approach 
                 StringBuilder pageDataSb = new StringBuilder();
                 pageDataSb.Append("file:///");
-                pageDataSb.Append(clientAppFolderPath.Replace('\\', '/'));
+                pageDataSb.Append(backDir.Replace('\\', '/'));
                 pageDataSb.Append("/");
-                pageDataSb.Append("index.html");
+                pageDataSb.Append("viewreport.html");
                 if (openObject != null)
                 {
                     pageDataSb.Append("#/?Routed_Guid=");
@@ -136,7 +142,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 if (shouldDisplayReport && !Assembly.GetEntryAssembly().FullName.ToUpper().Contains("CONSOLE"))
                 {
                     System.Diagnostics.Process.Start(@browserPath, taskCommand);
-                    System.Diagnostics.Process.Start(clientAppFolderPath);
+                    System.Diagnostics.Process.Start(backDir);
                 }
                 response = true;
             }

@@ -215,6 +215,7 @@ namespace Amdocs.Ginger.Common.Enums
         Ticket,        
         Pointer,
         Camera,
+        Recording,
         Wrench,
         Eraser,
         Power,
@@ -285,6 +286,7 @@ namespace Amdocs.Ginger.Common.Enums
         AngleArrowLeft,
         AngleArrowRight,
         Support,
+        Asterisk,
         #endregion
 
         #region Source control Images     

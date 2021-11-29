@@ -596,7 +596,7 @@ namespace GingerCore
                     varsList.Add(var);
             return varsList;
         }
-        public ObservableList<VariableBase> GetBFandActivitiesVariabeles(bool includeParentDetails, bool includeOnlySetAsInputValue = false, bool includeOnlySetAsOutputValue = false, bool includeOnlyPublishedVars = false)
+        public ObservableList<VariableBase> GetBFandActivitiesVariabeles(bool includeParentDetails, bool includeOnlySetAsInputValue = false, bool includeOnlySetAsOutputValue = false, bool includeOnlyPublishedVars = false, bool includeOnlyMandatoryInputs = false)
         {
             ObservableList<VariableBase> varsList = new ObservableList<VariableBase>();
 
@@ -609,6 +609,10 @@ namespace GingerCore
                     var.ParentName = this.Name;
                 }
                 if (includeOnlyPublishedVars && var.Publish == false)
+                {
+                    continue;
+                }
+                if (includeOnlyMandatoryInputs && var.MandatoryInput == false)
                 {
                     continue;
                 }
@@ -1062,7 +1066,7 @@ namespace GingerCore
             }
         }
 
-        public void Reset()
+        public void Reset(bool reSetActionErrorHandlerExecutionStatus = false)
         {
             Elapsed = null;
             RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
@@ -1070,7 +1074,7 @@ namespace GingerCore
             ExecutionFullLogFolder = string.Empty;
             foreach (Activity a in Activities)
             {
-                a.Reset();
+                a.Reset(reSetActionErrorHandlerExecutionStatus);
             }            
             foreach (ActivitiesGroup ag in ActivitiesGroups)
             {

@@ -41,6 +41,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Collections.Specialized;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -54,6 +55,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         // bool IsPlugInAvailable = false;
         Context mContext;
 
+        ActionsListViewHelper mActionsListHelper;
+        Ginger.General.eRIPageViewMode mPageViewMode;
+
         public ActionsLibraryNavPage(Context context)
         {
             InitializeComponent();
@@ -61,14 +65,26 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mActionsList = mContext.BusinessFlow.CurrentActivity.Acts;
 
             mContext.PropertyChanged += MContext_PropertyChanged;
-
-            SetActionsGridsView();
+            mContext.BusinessFlow.TargetApplications.CollectionChanged += TargetApplications_CollectionChanged;
 
             FillActionsList();
+
+            SetActionsListView(xPlatformPlugInsActionsListView, Ginger.General.eRIPageViewMode.Add);
+            SetActionsListView(xPlatformActionsListView, Ginger.General.eRIPageViewMode.Add);
+            SetActionsListView(xPlatformGenericActionsListView, Ginger.General.eRIPageViewMode.Add);
+            SetActionsListView(xPlatformLegacyActionListView, Ginger.General.eRIPageViewMode.Add);
 
             Button addActionBtn = new Button();
             addActionBtn.Content = "Add Action";
             addActionBtn.Click += new RoutedEventHandler(AddActionButton_Click);
+        }
+
+        private void TargetApplications_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (mContext.BusinessFlow.TargetApplications.Count != 0)
+            {
+                FillActionsList();
+            }
         }
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -86,6 +102,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             LoadGridData();
             LoadPluginsActions();
+
             if (mContext.Activity != null)
             {
                 mActionsList = mContext.Activity.Acts;
@@ -129,7 +146,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
             }
 
-            PlugInsActionsGrid.DataSourceList = PlugInsActions;
+            SetActionsListViewData(xPlatformPlugInsActionsListView, PlugInsActions);            
         }
 
         private void LoadGridData()
@@ -162,10 +179,27 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
             }
 
-            //xPlatformActionsListView.DataSourceList = platformActions;
-            PlatformActionsGrid.DataSourceList = platformActions;
-            GeneralActionsGrid.DataSourceList = generalActions;
-            LegacyActionsGrid.DataSourceList = LegacyActions;
+            SetActionsListViewData(xPlatformActionsListView, platformActions);
+            SetActionsListViewData(xPlatformGenericActionsListView, generalActions);
+            SetActionsListViewData(xPlatformLegacyActionListView, LegacyActions);
+        }
+
+        private void SetActionsListView(UcListView ucListView, Ginger.General.eRIPageViewMode pageViewMode)
+        {
+            ucListView.ListTitleVisibility = Visibility.Hidden;
+                        
+            mActionsListHelper = new ActionsListViewHelper(mContext, pageViewMode);
+
+            ucListView.SetDefaultListDataTemplate(mActionsListHelper);
+            ucListView.ListSelectionMode = SelectionMode.Extended;
+            mActionsListHelper.ListView = ucListView;
+
+            ucListView.MouseDoubleClick += ActionsListView_MouseDoubleClick;
+        }
+
+        private void SetActionsListViewData(UcListView ucListView, ObservableList<Act> dataSource)
+        {
+            ucListView.DataSourceList = dataSource;
         }
 
         private ObservableList<Act> GetPlatformsActions(bool ShowAll = false)
@@ -225,36 +259,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             return Acts;
         }
-
-        private void SetActionsGridsView()
-        {
-            //SetActionsListView(xPlatformActionsListView);
-            SetActionsGridView(PlatformActionsGrid);
-            SetActionsGridView(GeneralActionsGrid);
-            SetActionsGridView(LegacyActionsGrid);
-            SetActionsGridView(PlugInsActionsGrid);
-        }
-
-        private void SetActionsListView(UcListView xActionsListView)
-        {
-            xActionsListView.Title = "Actions";
-            xActionsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Action;
-
-            ////TODO: move DataTemplate into ListView
-            //DataTemplate dataTemp = new DataTemplate();
-            //FrameworkElementFactory listItemFac = new FrameworkElementFactory(typeof(UcListViewItem));
-            ////listItemFac.SetValue(UcListViewItem.ParentListProperty, xActionsListView);
-            //listItemFac.SetBinding(UcListViewItem.ItemProperty, new Binding());
-            //listItemFac.SetValue(UcListViewItem.ItemInfoProperty, new ActionListItemInfo(mContext));
-            //dataTemp.VisualTree = listItemFac;
-            //xActionsListView.List.ItemTemplate = dataTemp;
-
-            xActionsListView.SetDefaultListDataTemplate(new ActionsListViewHelper(mContext, General.eRIPageViewMode.Automation));
-
-            xActionsListView.DataSourceList = mContext.BusinessFlow.CurrentActivity.Acts;
-            //xActionsListView.List.ItemsSource = mActivity.Acts;
-        }
-
+                
+        /*
         private void SetActionsGridView(ucGrid actionsGrid)
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -278,6 +284,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             actionsGrid.RowDoubleClick += ActionsGrid_MouseDoubleClick;
         }
+        */
 
         private void AddMultipleActions(object sender, RoutedEventArgs e)
         {
@@ -305,6 +312,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
+        private void AddActionListView()
+        {
+            if (ActionsTabs.SelectedContent != null && ((UcListView)ActionsTabs.SelectedContent).CurrentItem != null)
+            {
+                Act selectedAction = ((UcListView)ActionsTabs.SelectedContent).CurrentItem as Act;
+                ActionsFactory.AddActionsHandler(selectedAction, mContext);
+            }
+        }
+
         private void AddActionButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -318,9 +334,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
-        private void ActionsGrid_MouseDoubleClick(object sender, EventArgs e)
+        private void ActionsListView_MouseDoubleClick(object sender, EventArgs e)
         {
-            AddAction();
+            AddActionListView();
         }
 
         private void ActionsGrid_RowChangedEvent(object sender, EventArgs e)

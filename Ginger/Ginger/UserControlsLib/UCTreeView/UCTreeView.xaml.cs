@@ -957,8 +957,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
                 if (TVI.Items.Count > 0)
                 {
+                    TVI.IsExpanded = true;
                     TreeViewItem vv = ExpandNodeByNameTVIRecursive(TVI, NodeName, Refresh, ExpandChildren);
                     if (vv != null) return vv;
+                    TVI.IsExpanded = false;
                 }
             }
             return null;

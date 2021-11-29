@@ -1,0 +1,1211 @@
+{
+  "GingerVersion": "3.2.4.1",
+  "MachineName": "",
+  "ExecutedbyUser": "",
+  "RunnersColl": [
+    {
+      "ApplicationAgentsMappingList": [
+        "agent 2_:_MyWebApp"
+      ],
+      "BusinessFlowsColl": [
+        {
+          "InstanceGUID": "01404c93-ddc1-4836-aa9a-a28d4d304fbf",
+          "SolutionVariablesBeforeExec": [
+            
+          ],
+          "SolutionVariablesAfterExec": [
+            
+          ],
+          "ActivitiesColl": [
+            {
+              "ActivityGroupName": "TC01",
+              "ActionsColl": [
+                {
+                  "ActionType": "Dummy",
+                  "CurrentRetryIteration": 0,
+                  "Error": null,
+                  "ExInfo": "5/20/2019 11:14:23 AM -",
+                  "InputValues": [
+                    "Value_:__:_"
+                  ],
+                  "OutputValues": [
+                    
+                  ],
+                  "FlowControls": [
+                    
+                  ],
+                  "ScreenShots": [
+                    
+                  ],
+                  "Wait": 0,
+                  "TimeOut": null,
+                  "Seq": 1,
+                  "GUID": "1",
+                  "Name": "Dummy Action",
+                  "Description": "Dummy Action",
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:23.668+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:23.733+03:00",
+                  "Elapsed": 71.0,
+                  "RunStatus": "Passed",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": null,
+                  "_id": {
+                    "Timestamp": 1558340063,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419798,
+                    "CreationTime": "2019-05-20T08:14:23Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                }
+              ],
+              "Seq": 1,
+              "GUID": "2",
+              "Name": "TC01>TC01>enter customer",
+              "Description": null,
+              "RunDescription": null,
+              "Environment": null,
+              "StartTimeStamp": "2019-05-20T11:14:23.641+03:00",
+              "EndTimeStamp": "2019-05-20T11:14:23.82+03:00",
+              "Elapsed": 165.0,
+              "RunStatus": "Passed",
+              "VariablesBeforeExec": null,
+              "VariablesAfterExec": [
+                "NewVar_:_<Empty>_:_"
+              ],
+              "_id": {
+                "Timestamp": 1558340063,
+                "Machine": 16237588,
+                "Pid": 26520,
+                "Increment": 5419799,
+                "CreationTime": "2019-05-20T08:14:23Z"
+              },
+              "ExecutionRate": "100",
+              "PassRate": "100"
+            },
+            {
+              "ActivityGroupName": "TC01",
+              "ActionsColl": [
+                {
+                  "ActionType": "Dummy",
+                  "CurrentRetryIteration": 0,
+                  "Error": null,
+                  "ExInfo": "5/20/2019 11:14:23 AM -",
+                  "InputValues": [
+                    "Value_:__:_"
+                  ],
+                  "OutputValues": [
+                    
+                  ],
+                  "FlowControls": [
+                    
+                  ],
+                  "ScreenShots": [
+                    
+                  ],
+                  "Wait": 0,
+                  "TimeOut": null,
+                  "Seq": 1,
+                  "GUID": "3",
+                  "Name": "Dummy Action",
+                  "Description": "Dummy Action",
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:23.888+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:23.906+03:00",
+                  "Elapsed": 23.0,
+                  "RunStatus": "Passed",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": null,
+                  "_id": {
+                    "Timestamp": 1558340063,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419800,
+                    "CreationTime": "2019-05-20T08:14:23Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                }
+              ],
+              "Seq": 2,
+              "GUID": "4",
+              "Name": "TC01>TC01>enter address",
+              "Description": "H405",
+              "RunDescription": null,
+              "Environment": null,
+              "StartTimeStamp": "2019-05-20T11:14:23.879+03:00",
+              "EndTimeStamp": "2019-05-20T11:14:23.915+03:00",
+              "Elapsed": 32.0,
+              "RunStatus": "Passed",
+              "VariablesBeforeExec": null,
+              "VariablesAfterExec": [
+                "NewVar_:_<Empty>_:_"
+              ],
+              "_id": {
+                "Timestamp": 1558340063,
+                "Machine": 16237588,
+                "Pid": 26520,
+                "Increment": 5419801,
+                "CreationTime": "2019-05-20T08:14:23Z"
+              },
+              "ExecutionRate": "100",
+              "PassRate": "100"
+            },
+            {
+              "ActivityGroupName": "TC01",
+              "ActionsColl": [
+                {
+                  "ActionType": "Dummy",
+                  "CurrentRetryIteration": 0,
+                  "Error": null,
+                  "ExInfo": "5/20/2019 11:14:23 AM -",
+                  "InputValues": [
+                    "Value_:__:_"
+                  ],
+                  "OutputValues": [
+                    
+                  ],
+                  "FlowControls": [
+                    
+                  ],
+                  "ScreenShots": [
+                    
+                  ],
+                  "Wait": 0,
+                  "TimeOut": null,
+                  "Seq": 1,
+                  "GUID": "5",
+                  "Name": "Dummy Action",
+                  "Description": "Dummy Action",
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:23.967+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:23.985+03:00",
+                  "Elapsed": 20.0,
+                  "RunStatus": "Passed",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": null,
+                  "_id": {
+                    "Timestamp": 1558340063,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419802,
+                    "CreationTime": "2019-05-20T08:14:23Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                }
+              ],
+              "Seq": 3,
+              "GUID": "6",
+              "Name": "TC01>TC01>New test step from Ginger",
+              "Description": null,
+              "RunDescription": null,
+              "Environment": null,
+              "StartTimeStamp": "2019-05-20T11:14:23.96+03:00",
+              "EndTimeStamp": "2019-05-20T11:14:23.993+03:00",
+              "Elapsed": 28.0,
+              "RunStatus": "Passed",
+              "VariablesBeforeExec": null,
+              "VariablesAfterExec": [
+                "NewVar_:_<Empty>_:_"
+              ],
+              "_id": {
+                "Timestamp": 1558340063,
+                "Machine": 16237588,
+                "Pid": 26520,
+                "Increment": 5419803,
+                "CreationTime": "2019-05-20T08:14:23Z"
+              },
+              "ExecutionRate": "100",
+              "PassRate": "100"
+            },
+            {
+              "ActivityGroupName": "TC04fromGinger",
+              "ActionsColl": [
+                {
+                  "ActionType": "UI Element Action. Unknown",
+                  "CurrentRetryIteration": 0,
+                  "Error": "Error: Unknown Action: Unknown",
+                  "ExInfo": "5/20/2019 11:14:31 AM -",
+                  "InputValues": [
+                    "ElementLocateValue_:__:_"
+                  ],
+                  "OutputValues": [
+                    
+                  ],
+                  "FlowControls": [
+                    
+                  ],
+                  "ScreenShots": [
+                    "ScreenShot_1_1.png",
+                    "ScreenShot_1_2.png"
+                  ],
+                  "Wait": 0,
+                  "TimeOut": null,
+                  "Seq": 1,
+                  "GUID": "7",
+                  "Name": "UIElement Action",
+                  "Description": "UIElement Action",
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:31.538+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:32.467+03:00",
+                  "Elapsed": 930.0,
+                  "RunStatus": "Failed",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": null,
+                  "_id": {
+                    "Timestamp": 1558340072,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419804,
+                    "CreationTime": "2019-05-20T08:14:32Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                },
+                {
+                  "ActionType": "UI Element Action. Unknown",
+                  "CurrentRetryIteration": 0,
+                  "Error": "Error: Unknown Action: Unknown",
+                  "ExInfo": "5/20/2019 11:14:31 AM -",
+                  "InputValues": [
+                    "ElementLocateValue_:__:_"
+                  ],
+                  "OutputValues": [
+                    
+                  ],
+                  "FlowControls": [
+                    
+                  ],
+                  "ScreenShots": [
+                    "ScreenShot_1_2.png"
+                  ],
+                  "Wait": 0,
+                  "TimeOut": null,
+                  "Seq": 1,
+                  "GUID": "8",
+                  "Name": "UIElement Action",
+                  "Description": "UIElement Action",
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:31.538+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:37.107+03:00",
+                  "Elapsed": 930.0,
+                  "RunStatus": "Failed",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": null,
+                  "_id": {
+                    "Timestamp": 1558340077,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419805,
+                    "CreationTime": "2019-05-20T08:14:37Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                }
+              ],
+              "Seq": 4,
+              "GUID": "9",
+              "Name": "TC04fromGinger>TC04>New Step for new TC from Ginger",
+              "Description": null,
+              "RunDescription": null,
+              "Environment": null,
+              "StartTimeStamp": "2019-05-20T11:14:24.049+03:00",
+              "EndTimeStamp": "2019-05-20T11:14:37.126+03:00",
+              "Elapsed": 5588.0,
+              "RunStatus": "Failed",
+              "VariablesBeforeExec": null,
+              "VariablesAfterExec": [
+                "NewVar_:_<Empty>_:_"
+              ],
+              "_id": {
+                "Timestamp": 1558340077,
+                "Machine": 16237588,
+                "Pid": 26520,
+                "Increment": 5419806,
+                "CreationTime": "2019-05-20T08:14:37Z"
+              },
+              "ExecutionRate": "100",
+              "PassRate": "0"
+            },
+            {
+              "ActivityGroupName": "TC02",
+              "ActionsColl": [
+                {
+                  "ActionType": "BrowserControl: InitializeBrowser",
+                  "CurrentRetryIteration": 0,
+                  "Error": null,
+                  "ExInfo": "5/20/2019 11:14:45 AM -",
+                  "InputValues": [
+                    "Value_:__:_",
+                    "GotoURLType_:_Current_:_Current",
+                    "URLSrc_:_Static_:_Static",
+                    "PomGUID_:__:_"
+                  ],
+                  "OutputValues": [
+                    
+                  ],
+                  "FlowControls": [
+                    
+                  ],
+                  "ScreenShots": [
+                    
+                  ],
+                  "Wait": 0,
+                  "TimeOut": null,
+                  "Seq": 1,
+                  "GUID": "10",
+                  "Name": "Browser Action",
+                  "Description": "Browser Action",
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:37.6+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:45.347+03:00",
+                  "Elapsed": 7747.0,
+                  "RunStatus": "Passed",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": null,
+                  "_id": {
+                    "Timestamp": 1558340085,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419807,
+                    "CreationTime": "2019-05-20T08:14:45Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                },
+                {
+                  "ActionType": "UI Element Action. Unknown",
+                  "CurrentRetryIteration": 0,
+                  "Error": "Error: Unknown Action: Unknown",
+                  "ExInfo": "5/20/2019 11:14:45 AM -",
+                  "InputValues": [
+                    "ElementLocateValue_:__:_"
+                  ],
+                  "OutputValues": [
+                    
+                  ],
+                  "FlowControls": [
+                    
+                  ],
+                  "ScreenShots": [
+                    "ScreenShot_1_1.png"
+                  ],
+                  "Wait": 0,
+                  "TimeOut": null,
+                  "Seq": 2,
+                  "GUID": "11",
+                  "Name": "UIElement Action",
+                  "Description": "UIElement Action",
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:45.356+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:46.549+03:00",
+                  "Elapsed": 1196.0,
+                  "RunStatus": "FailIgnored",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": null,
+                  "_id": {
+                    "Timestamp": 1558340086,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419808,
+                    "CreationTime": "2019-05-20T08:14:46Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                },
+                {
+                  "ActionType": "UI Element Action. Unknown",
+                  "CurrentRetryIteration": 0,
+                  "Error": "Error: Unknown Action: Unknown",
+                  "ExInfo": "5/20/2019 11:14:46 AM -",
+                  "InputValues": [
+                    "ElementLocateValue_:__:_"
+                  ],
+                  "OutputValues": [
+                    
+                  ],
+                  "FlowControls": [
+                    
+                  ],
+                  "ScreenShots": [
+                    "ScreenShot_1_1.png"
+                  ],
+                  "Wait": 0,
+                  "TimeOut": null,
+                  "Seq": 3,
+                  "GUID": "12",
+                  "Name": "UIElement Action_Copy",
+                  "Description": "UIElement Action_Copy",
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:46.565+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:47.543+03:00",
+                  "Elapsed": 979.0,
+                  "RunStatus": "Failed",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": null,
+                  "_id": {
+                    "Timestamp": 1558340087,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419809,
+                    "CreationTime": "2019-05-20T08:14:47Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                },
+                {
+                  "ActionType": "UI Element Action. Unknown",
+                  "CurrentRetryIteration": 0,
+                  "Error": "Error: Unknown Action: Unknown",
+                  "ExInfo": "5/20/2019 11:14:46 AM -",
+                  "InputValues": [
+                    "ElementLocateValue_:__:_"
+                  ],
+                  "OutputValues": [
+                    
+                  ],
+                  "FlowControls": [
+                    
+                  ],
+                  "ScreenShots": [
+                    "ScreenShot_1_1.png"
+                  ],
+                  "Wait": 0,
+                  "TimeOut": null,
+                  "Seq": 3,
+                  "GUID": "13",
+                  "Name": "UIElement Action_Copy",
+                  "Description": "UIElement Action_Copy",
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:46.565+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:47.559+03:00",
+                  "Elapsed": 979.0,
+                  "RunStatus": "Failed",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": null,
+                  "_id": {
+                    "Timestamp": 1558340087,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419810,
+                    "CreationTime": "2019-05-20T08:14:47Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                }
+              ],
+              "Seq": 5,
+              "GUID": "14",
+              "Name": "TC02>TC02>nter",
+              "Description": "435",
+              "RunDescription": null,
+              "Environment": null,
+              "StartTimeStamp": "2019-05-20T11:14:37.492+03:00",
+              "EndTimeStamp": "2019-05-20T11:14:47.583+03:00",
+              "Elapsed": 9983.0,
+              "RunStatus": "Failed",
+              "VariablesBeforeExec": null,
+              "VariablesAfterExec": [
+                "NewVar_:_<Empty>_:_"
+              ],
+              "_id": {
+                "Timestamp": 1558340087,
+                "Machine": 16237588,
+                "Pid": 26520,
+                "Increment": 5419811,
+                "CreationTime": "2019-05-20T08:14:47Z"
+              },
+              "ExecutionRate": "100",
+              "PassRate": "25"
+            }
+          ],
+          "ActivitiesGroupsColl": [
+            {
+              "ExecutedActivitiesGUID": [
+                "503d8c14-1461-4154-986a-0f4886d57542",
+                "2772661e-f2fa-4ca3-8381-8fa046e3ab3d",
+                "3314a087-6f68-4cc1-be95-08633a429af0"
+              ],
+              "AutomationPrecentage": "0%",
+              "ActivitiesColl": [
+                {
+                  "ActivityGroupName": "TC01",
+                  "ActionsColl": [
+                    {
+                      "ActionType": "Dummy",
+                      "CurrentRetryIteration": 0,
+                      "Error": null,
+                      "ExInfo": "5/20/2019 11:14:23 AM -",
+                      "InputValues": [
+                        "Value_:__:_"
+                      ],
+                      "OutputValues": [
+                        
+                      ],
+                      "FlowControls": [
+                        
+                      ],
+                      "ScreenShots": [
+                        
+                      ],
+                      "Wait": 0,
+                      "TimeOut": null,
+                      "Seq": 1,
+                      "GUID": "15",
+                      "Name": "Dummy Action",
+                      "Description": "Dummy Action",
+                      "RunDescription": null,
+                      "Environment": null,
+                      "StartTimeStamp": "2019-05-20T11:14:23.668+03:00",
+                      "EndTimeStamp": "2019-05-20T11:14:23.733+03:00",
+                      "Elapsed": 71.0,
+                      "RunStatus": "Passed",
+                      "VariablesBeforeExec": null,
+                      "VariablesAfterExec": null,
+                      "_id": {
+                        "Timestamp": 1558340063,
+                        "Machine": 16237588,
+                        "Pid": 26520,
+                        "Increment": 5419798,
+                        "CreationTime": "2019-05-20T08:14:23Z"
+                      },
+                      "ExecutionRate": null,
+                      "PassRate": null
+                    }
+                  ],
+                  "Seq": 1,
+                  "GUID": "16",
+                  "Name": "TC01>TC01>enter customer",
+                  "Description": null,
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:23.641+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:23.82+03:00",
+                  "Elapsed": 165.0,
+                  "RunStatus": "Passed",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": [
+                    "NewVar_:_<Empty>_:_"
+                  ],
+                  "_id": {
+                    "Timestamp": 1558340063,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419799,
+                    "CreationTime": "2019-05-20T08:14:23Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                },
+                {
+                  "ActivityGroupName": "TC01",
+                  "ActionsColl": [
+                    {
+                      "ActionType": "Dummy",
+                      "CurrentRetryIteration": 0,
+                      "Error": null,
+                      "ExInfo": "5/20/2019 11:14:23 AM -",
+                      "InputValues": [
+                        "Value_:__:_"
+                      ],
+                      "OutputValues": [
+                        
+                      ],
+                      "FlowControls": [
+                        
+                      ],
+                      "ScreenShots": [
+                        
+                      ],
+                      "Wait": 0,
+                      "TimeOut": null,
+                      "Seq": 1,
+                      "GUID": "17",
+                      "Name": "Dummy Action",
+                      "Description": "Dummy Action",
+                      "RunDescription": null,
+                      "Environment": null,
+                      "StartTimeStamp": "2019-05-20T11:14:23.888+03:00",
+                      "EndTimeStamp": "2019-05-20T11:14:23.906+03:00",
+                      "Elapsed": 23.0,
+                      "RunStatus": "Passed",
+                      "VariablesBeforeExec": null,
+                      "VariablesAfterExec": null,
+                      "_id": {
+                        "Timestamp": 1558340063,
+                        "Machine": 16237588,
+                        "Pid": 26520,
+                        "Increment": 5419800,
+                        "CreationTime": "2019-05-20T08:14:23Z"
+                      },
+                      "ExecutionRate": null,
+                      "PassRate": null
+                    }
+                  ],
+                  "Seq": 2,
+                  "GUID": "18",
+                  "Name": "TC01>TC01>enter address",
+                  "Description": "H405",
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:23.879+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:23.915+03:00",
+                  "Elapsed": 32.0,
+                  "RunStatus": "Passed",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": [
+                    "NewVar_:_<Empty>_:_"
+                  ],
+                  "_id": {
+                    "Timestamp": 1558340063,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419801,
+                    "CreationTime": "2019-05-20T08:14:23Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                },
+                {
+                  "ActivityGroupName": "TC01",
+                  "ActionsColl": [
+                    {
+                      "ActionType": "Dummy",
+                      "CurrentRetryIteration": 0,
+                      "Error": null,
+                      "ExInfo": "5/20/2019 11:14:23 AM -",
+                      "InputValues": [
+                        "Value_:__:_"
+                      ],
+                      "OutputValues": [
+                        
+                      ],
+                      "FlowControls": [
+                        
+                      ],
+                      "ScreenShots": [
+                        
+                      ],
+                      "Wait": 0,
+                      "TimeOut": null,
+                      "Seq": 1,
+                      "GUID": "19",
+                      "Name": "Dummy Action",
+                      "Description": "Dummy Action",
+                      "RunDescription": null,
+                      "Environment": null,
+                      "StartTimeStamp": "2019-05-20T11:14:23.967+03:00",
+                      "EndTimeStamp": "2019-05-20T11:14:23.985+03:00",
+                      "Elapsed": 20.0,
+                      "RunStatus": "Passed",
+                      "VariablesBeforeExec": null,
+                      "VariablesAfterExec": null,
+                      "_id": {
+                        "Timestamp": 1558340063,
+                        "Machine": 16237588,
+                        "Pid": 26520,
+                        "Increment": 5419802,
+                        "CreationTime": "2019-05-20T08:14:23Z"
+                      },
+                      "ExecutionRate": null,
+                      "PassRate": null
+                    }
+                  ],
+                  "Seq": 3,
+                  "GUID": "20",
+                  "Name": "TC01>TC01>New test step from Ginger",
+                  "Description": null,
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:23.96+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:23.993+03:00",
+                  "Elapsed": 28.0,
+                  "RunStatus": "Passed",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": [
+                    "NewVar_:_<Empty>_:_"
+                  ],
+                  "_id": {
+                    "Timestamp": 1558340063,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419803,
+                    "CreationTime": "2019-05-20T08:14:23Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                }
+              ],
+              "Seq": 1,
+              "GUID": "21",
+              "Name": "TC01",
+              "Description": "<p>enter customer details</p>",
+              "RunDescription": null,
+              "Environment": null,
+              "StartTimeStamp": "0001-01-01T00:00:00",
+              "EndTimeStamp": "0001-01-01T00:00:00",
+              "Elapsed": null,
+              "RunStatus": "Passed",
+              "VariablesBeforeExec": null,
+              "VariablesAfterExec": null,
+              "_id": {
+                "Timestamp": 1558340087,
+                "Machine": 16237588,
+                "Pid": 26520,
+                "Increment": 5419812,
+                "CreationTime": "2019-05-20T08:14:47Z"
+              },
+              "ExecutionRate": null,
+              "PassRate": null
+            },
+            {
+              "ExecutedActivitiesGUID": [
+                "75306b1f-b1a2-44ef-87ce-cf3d786a2e80"
+              ],
+              "AutomationPrecentage": "0%",
+              "ActivitiesColl": [
+                {
+                  "ActivityGroupName": "TC02",
+                  "ActionsColl": [
+                    {
+                      "ActionType": "BrowserControl: InitializeBrowser",
+                      "CurrentRetryIteration": 0,
+                      "Error": null,
+                      "ExInfo": "5/20/2019 11:14:45 AM -",
+                      "InputValues": [
+                        "Value_:__:_",
+                        "GotoURLType_:_Current_:_Current",
+                        "URLSrc_:_Static_:_Static",
+                        "PomGUID_:__:_"
+                      ],
+                      "OutputValues": [
+                        
+                      ],
+                      "FlowControls": [
+                        
+                      ],
+                      "ScreenShots": [
+                        
+                      ],
+                      "Wait": 0,
+                      "TimeOut": null,
+                      "Seq": 1,
+                      "GUID": "22",
+                      "Name": "Browser Action",
+                      "Description": "Browser Action",
+                      "RunDescription": null,
+                      "Environment": null,
+                      "StartTimeStamp": "2019-05-20T11:14:37.6+03:00",
+                      "EndTimeStamp": "2019-05-20T11:14:45.347+03:00",
+                      "Elapsed": 7747.0,
+                      "RunStatus": "Passed",
+                      "VariablesBeforeExec": null,
+                      "VariablesAfterExec": null,
+                      "_id": {
+                        "Timestamp": 1558340085,
+                        "Machine": 16237588,
+                        "Pid": 26520,
+                        "Increment": 5419807,
+                        "CreationTime": "2019-05-20T08:14:45Z"
+                      },
+                      "ExecutionRate": null,
+                      "PassRate": null
+                    },
+                    {
+                      "ActionType": "UI Element Action. Unknown",
+                      "CurrentRetryIteration": 0,
+                      "Error": "Error: Unknown Action: Unknown",
+                      "ExInfo": "5/20/2019 11:14:45 AM -",
+                      "InputValues": [
+                        "ElementLocateValue_:__:_"
+                      ],
+                      "OutputValues": [
+                        
+                      ],
+                      "FlowControls": [
+                        
+                      ],
+                      "ScreenShots": [
+                        
+                      ],
+                      "Wait": 0,
+                      "TimeOut": null,
+                      "Seq": 2,
+                      "GUID": "23",
+                      "Name": "UIElement Action",
+                      "Description": "UIElement Action",
+                      "RunDescription": null,
+                      "Environment": null,
+                      "StartTimeStamp": "2019-05-20T11:14:45.356+03:00",
+                      "EndTimeStamp": "2019-05-20T11:14:46.549+03:00",
+                      "Elapsed": 1196.0,
+                      "RunStatus": "FailIgnored",
+                      "VariablesBeforeExec": null,
+                      "VariablesAfterExec": null,
+                      "_id": {
+                        "Timestamp": 1558340086,
+                        "Machine": 16237588,
+                        "Pid": 26520,
+                        "Increment": 5419808,
+                        "CreationTime": "2019-05-20T08:14:46Z"
+                      },
+                      "ExecutionRate": null,
+                      "PassRate": null
+                    },
+                    {
+                      "ActionType": "UI Element Action. Unknown",
+                      "CurrentRetryIteration": 0,
+                      "Error": "Error: Unknown Action: Unknown",
+                      "ExInfo": "5/20/2019 11:14:46 AM -",
+                      "InputValues": [
+                        "ElementLocateValue_:__:_"
+                      ],
+                      "OutputValues": [
+                        
+                      ],
+                      "FlowControls": [
+                        
+                      ],
+                      "ScreenShots": [
+                        "ScreenShot_1_1.png"
+                      ],
+                      "Wait": 0,
+                      "TimeOut": null,
+                      "Seq": 3,
+                      "GUID": "24",
+                      "Name": "UIElement Action_Copy",
+                      "Description": "UIElement Action_Copy",
+                      "RunDescription": null,
+                      "Environment": null,
+                      "StartTimeStamp": "2019-05-20T11:14:46.565+03:00",
+                      "EndTimeStamp": "2019-05-20T11:14:47.543+03:00",
+                      "Elapsed": 979.0,
+                      "RunStatus": "Failed",
+                      "VariablesBeforeExec": null,
+                      "VariablesAfterExec": null,
+                      "_id": {
+                        "Timestamp": 1558340087,
+                        "Machine": 16237588,
+                        "Pid": 26520,
+                        "Increment": 5419809,
+                        "CreationTime": "2019-05-20T08:14:47Z"
+                      },
+                      "ExecutionRate": null,
+                      "PassRate": null
+                    },
+                    {
+                      "ActionType": "UI Element Action. Unknown",
+                      "CurrentRetryIteration": 0,
+                      "Error": "Error: Unknown Action: Unknown",
+                      "ExInfo": "5/20/2019 11:14:46 AM -",
+                      "InputValues": [
+                        "ElementLocateValue_:__:_"
+                      ],
+                      "OutputValues": [
+                        
+                      ],
+                      "FlowControls": [
+                        
+                      ],
+                      "ScreenShots": [
+                        "ScreenShot_1_1.png"
+                      ],
+                      "Wait": 0,
+                      "TimeOut": null,
+                      "Seq": 3,
+                      "GUID": "25",
+                      "Name": "UIElement Action_Copy",
+                      "Description": "UIElement Action_Copy",
+                      "RunDescription": null,
+                      "Environment": null,
+                      "StartTimeStamp": "2019-05-20T11:14:46.565+03:00",
+                      "EndTimeStamp": "2019-05-20T11:14:47.559+03:00",
+                      "Elapsed": 979.0,
+                      "RunStatus": "Failed",
+                      "VariablesBeforeExec": null,
+                      "VariablesAfterExec": null,
+                      "_id": {
+                        "Timestamp": 1558340087,
+                        "Machine": 16237588,
+                        "Pid": 26520,
+                        "Increment": 5419810,
+                        "CreationTime": "2019-05-20T08:14:47Z"
+                      },
+                      "ExecutionRate": null,
+                      "PassRate": null
+                    }
+                  ],
+                  "Seq": 5,
+                  "GUID": "26",
+                  "Name": "TC02>TC02>nter",
+                  "Description": "435",
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:37.492+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:47.583+03:00",
+                  "Elapsed": 9983.0,
+                  "RunStatus": "Failed",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": [
+                    "NewVar_:_<Empty>_:_"
+                  ],
+                  "_id": {
+                    "Timestamp": 1558340087,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419811,
+                    "CreationTime": "2019-05-20T08:14:47Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                }
+              ],
+              "Seq": 2,
+              "GUID": "27",
+              "Name": "TC02",
+              "Description": "<p>fvgdfg</p>",
+              "RunDescription": null,
+              "Environment": null,
+              "StartTimeStamp": "0001-01-01T00:00:00",
+              "EndTimeStamp": "0001-01-01T00:00:00",
+              "Elapsed": null,
+              "RunStatus": "Failed",
+              "VariablesBeforeExec": null,
+              "VariablesAfterExec": null,
+              "_id": {
+                "Timestamp": 1558340087,
+                "Machine": 16237588,
+                "Pid": 26520,
+                "Increment": 5419813,
+                "CreationTime": "2019-05-20T08:14:47Z"
+              },
+              "ExecutionRate": null,
+              "PassRate": null
+            },
+            {
+              "ExecutedActivitiesGUID": [
+                "fe0b8381-02b7-4bbe-9811-fbbbb31f5435"
+              ],
+              "AutomationPrecentage": "0%",
+              "ActivitiesColl": [
+                {
+                  "ActivityGroupName": "TC04fromGinger",
+                  "ActionsColl": [
+                    {
+                      "ActionType": "UI Element Action. Unknown",
+                      "CurrentRetryIteration": 0,
+                      "Error": "Error: Unknown Action: Unknown",
+                      "ExInfo": "5/20/2019 11:14:31 AM -",
+                      "InputValues": [
+                        "ElementLocateValue_:__:_"
+                      ],
+                      "OutputValues": [
+                        
+                      ],
+                      "FlowControls": [
+                        
+                      ],
+                      "ScreenShots": [
+                        "ScreenShot_1_1.png"
+                      ],
+                      "Wait": 0,
+                      "TimeOut": null,
+                      "Seq": 1,
+                      "GUID": "28",
+                      "Name": "UIElement Action",
+                      "Description": "UIElement Action",
+                      "RunDescription": null,
+                      "Environment": null,
+                      "StartTimeStamp": "2019-05-20T11:14:31.538+03:00",
+                      "EndTimeStamp": "2019-05-20T11:14:32.467+03:00",
+                      "Elapsed": 930.0,
+                      "RunStatus": "Failed",
+                      "VariablesBeforeExec": null,
+                      "VariablesAfterExec": null,
+                      "_id": {
+                        "Timestamp": 1558340072,
+                        "Machine": 16237588,
+                        "Pid": 26520,
+                        "Increment": 5419804,
+                        "CreationTime": "2019-05-20T08:14:32Z"
+                      },
+                      "ExecutionRate": null,
+                      "PassRate": null
+                    },
+                    {
+                      "ActionType": "UI Element Action. Unknown",
+                      "CurrentRetryIteration": 0,
+                      "Error": "Error: Unknown Action: Unknown",
+                      "ExInfo": "5/20/2019 11:14:31 AM -",
+                      "InputValues": [
+                        "ElementLocateValue_:__:_"
+                      ],
+                      "OutputValues": [
+                        
+                      ],
+                      "FlowControls": [
+                        
+                      ],
+                      "ScreenShots": [
+                        "ScreenShot_1_1.png"
+                      ],
+                      "Wait": 0,
+                      "TimeOut": null,
+                      "Seq": 1,
+                      "GUID": "29",
+                      "Name": "UIElement Action",
+                      "Description": "UIElement Action",
+                      "RunDescription": null,
+                      "Environment": null,
+                      "StartTimeStamp": "2019-05-20T11:14:31.538+03:00",
+                      "EndTimeStamp": "2019-05-20T11:14:37.107+03:00",
+                      "Elapsed": 930.0,
+                      "RunStatus": "Failed",
+                      "VariablesBeforeExec": null,
+                      "VariablesAfterExec": null,
+                      "_id": {
+                        "Timestamp": 1558340077,
+                        "Machine": 16237588,
+                        "Pid": 26520,
+                        "Increment": 5419805,
+                        "CreationTime": "2019-05-20T08:14:37Z"
+                      },
+                      "ExecutionRate": null,
+                      "PassRate": null
+                    }
+                  ],
+                  "Seq": 4,
+                  "GUID": "30",
+                  "Name": "TC04fromGinger>TC04>New Step for new TC from Ginger",
+                  "Description": null,
+                  "RunDescription": null,
+                  "Environment": null,
+                  "StartTimeStamp": "2019-05-20T11:14:24.049+03:00",
+                  "EndTimeStamp": "2019-05-20T11:14:37.126+03:00",
+                  "Elapsed": 5588.0,
+                  "RunStatus": "Failed",
+                  "VariablesBeforeExec": null,
+                  "VariablesAfterExec": [
+                    "NewVar_:_<Empty>_:_"
+                  ],
+                  "_id": {
+                    "Timestamp": 1558340077,
+                    "Machine": 16237588,
+                    "Pid": 26520,
+                    "Increment": 5419806,
+                    "CreationTime": "2019-05-20T08:14:37Z"
+                  },
+                  "ExecutionRate": null,
+                  "PassRate": null
+                }
+              ],
+              "Seq": 3,
+              "GUID": "31",
+              "Name": "TC04fromGinger",
+              "Description": null,
+              "RunDescription": null,
+              "Environment": null,
+              "StartTimeStamp": "0001-01-01T00:00:00",
+              "EndTimeStamp": "0001-01-01T00:00:00",
+              "Elapsed": null,
+              "RunStatus": "Failed",
+              "VariablesBeforeExec": null,
+              "VariablesAfterExec": null,
+              "_id": {
+                "Timestamp": 1558340087,
+                "Machine": 16237588,
+                "Pid": 26520,
+                "Increment": 5419814,
+                "CreationTime": "2019-05-20T08:14:47Z"
+              },
+              "ExecutionRate": null,
+              "PassRate": null
+            }
+          ],
+          "BFFlowControlDT": [
+            
+          ],
+          "Seq": 1,
+          "GUID": "32",
+          "Name": "MultiTest",
+          "Description": null,
+          "RunDescription": null,
+          "Environment": "Default",
+          "StartTimeStamp": "2019-05-20T11:14:23.623+03:00",
+          "EndTimeStamp": "2019-05-20T11:14:47.66+03:00",
+          "Elapsed": 24.028999328613281,
+          "RunStatus": "Failed",
+          "VariablesBeforeExec": [
+            
+          ],
+          "VariablesAfterExec": [
+            
+          ],
+          "_id": {
+            "Timestamp": 1558340087,
+            "Machine": 16237588,
+            "Pid": 26520,
+            "Increment": 5419815,
+            "CreationTime": "2019-05-20T08:14:47Z"
+          },
+          "ExecutionRate": "100",
+          "PassRate": "60"
+        }
+      ],
+      "Seq": 1,
+      "GUID": "33",
+      "Name": "Runner 2",
+      "Description": null,
+      "RunDescription": null,
+      "Environment": "Default",
+      "StartTimeStamp": "2019-05-20T11:14:23.601+03:00",
+      "EndTimeStamp": "2019-05-20T11:14:48.889+03:00",
+      "Elapsed": 25.278,
+      "RunStatus": "Passed",
+      "VariablesBeforeExec": null,
+      "VariablesAfterExec": null,
+      "_id": {
+        "Timestamp": 1558340088,
+        "Machine": 16237588,
+        "Pid": 26520,
+        "Increment": 5419816,
+        "CreationTime": "2019-05-20T08:14:48Z"
+      },
+      "ExecutionRate": "100",
+      "PassRate": "0"
+    }
+  ],
+  "Seq": 0,
+  "GUID": "34",
+  "Name": "Default Run Set",
+  "Description": null,
+  "RunDescription": null,
+  "Environment": null,
+  "StartTimeStamp": "2019-05-20T11:14:23.556+03:00",
+  "EndTimeStamp": "2019-05-20T11:14:48.997+03:00",
+  "Elapsed": 25.441,
+  "RunStatus": "Passed",
+  "VariablesBeforeExec": null,
+  "VariablesAfterExec": null,
+  "_id": {
+    "Timestamp": 1558340088,
+    "Machine": 16237588,
+    "Pid": 26520,
+    "Increment": 5419817,
+    "CreationTime": "2019-05-20T08:14:48Z"
+  },
+  "ExecutionRate": "100",
+  "PassRate": "100"
+}

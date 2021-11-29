@@ -28,6 +28,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using static GingerCore.Actions.ActDSTableElement;
 
 namespace GingerCoreNET.DataSource
@@ -111,15 +112,22 @@ namespace GingerCoreNET.DataSource
         }
         public override void AddColumn(string tableName, string columnName, string columnType)
         {
-            using (var db = new LiteDatabase(FileFullPath))
+            try
             {
-                var results = db.GetCollection(tableName).Find(Query.All(), 0).ToList();
-                var table = db.GetCollection(tableName);
-                foreach (var doc in results)
+                using (var db = new LiteDatabase(FileFullPath))
                 {
-                    doc.Add(columnName, "");
-                    table.Update(doc);
+                    var results = db.GetCollection(tableName).Find(Query.All(), 0).ToList();
+                    var table = db.GetCollection(tableName);
+                    foreach (var doc in results)
+                    {
+                        doc.Add(columnName, "");
+                        table.Update(doc);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please enter valid column name");
             }
         }
 
@@ -275,7 +283,7 @@ namespace GingerCoreNET.DataSource
             }
         }
 
-        public override bool ExporttoExcel(string TableName, string sExcelPath, string sSheetName,string sTableQueryValue="")
+        public override bool ExporttoExcel(string TableName, string sExcelPath, string sSheetName, string sTableQueryValue = "")
         {
             var dataTable = GetTable(TableName);
 
@@ -291,10 +299,10 @@ namespace GingerCoreNET.DataSource
 
                     selectedColumn = sTableQueryValue.Substring(0, index);
 
-                    var filter = whereCond.Remove(0,6).Trim();
+                    var filter = whereCond.Remove(0, 6).Trim();
                     if (filter.Contains("\""))
                     {
-                      filter =  filter.Replace("\"", "'");
+                        filter = filter.Replace("\"", "'");
                     }
                     DataView dv = new DataView(dataTable);
                     dv.RowFilter = filter;
@@ -306,7 +314,7 @@ namespace GingerCoreNET.DataSource
                 {
                     dataTable = dataTable.DefaultView.ToTable(false, sTableQueryValue.Trim().Split(','));
                 }
-                
+
             }
             else
             {
@@ -543,7 +551,9 @@ namespace GingerCoreNET.DataSource
                                     if ((jt as JProperty).Name != "_id")
                                     {
                                         string sData = jt.ToString();
-                                        if (sData.Contains(": {\r\n  \"_type\": \"System.DBNull, mscorlib\"\r\n}"))
+                                        Regex regex = new Regex(@": {(\r|\n| )*""_type"": ""System.DBNull, mscorlib""(\r|\n| )*}");
+                                        Match match = regex.Match(sData);
+                                        if (match.Success)
                                         {
                                             if (jt.HasValues)
                                             {
@@ -878,7 +888,7 @@ namespace GingerCoreNET.DataSource
                                 dr["GINGER_LAST_UPDATED_BY"] = System.Environment.UserName;
                                 dr["GINGER_LAST_UPDATE_DATETIME"] = DateTime.Now.ToString();
                             }
-                            
+
                             if (dr["GINGER_ID"] != null || string.IsNullOrWhiteSpace((Convert.ToString(dr["GINGER_ID"]))))
                             {
                                 dr["GINGER_ID"] = dtChange.Rows.IndexOf(dr) + 1;
@@ -1116,14 +1126,14 @@ namespace GingerCoreNET.DataSource
                 case eControlAction.ExportToExcel:
                     if (actDSTable.ExcelConfig != null)
                     {
-                        ExporttoExcel(actDSTable.DSTableName,actDSTable.ExcelConfig.ExcelPath, actDSTable.ExcelConfig.ExcelSheetName, actDSTable.ExcelConfig.ExportQueryValue);
+                        ExporttoExcel(actDSTable.DSTableName, actDSTable.ExcelConfig.ExcelPath, actDSTable.ExcelConfig.ExcelSheetName, actDSTable.ExcelConfig.ExportQueryValue);
                     }
                     else
                     {
                         string[] token = Query.Split(new[] { "," }, StringSplitOptions.None);
                         ExporttoExcel(actDSTable.DSTableName, token[0], token[1]);
                     }
-                    
+
                     break;
                 case eControlAction.DeleteRow:
                     if (actDSTable.IsKeyValueTable)
@@ -1197,7 +1207,7 @@ namespace GingerCoreNET.DataSource
                     SaveTable(DSTable.DataTable);
                     //Get GingerId
                     dt = GetTable(actDSTable.DSTableName);
-                    DataRow dr = dt.Rows[dt.Rows.Count-1];
+                    DataRow dr = dt.Rows[dt.Rows.Count - 1];
                     string GingerId = Convert.ToString(dr["GINGER_ID"]);
                     actDSTable.AddOrUpdateReturnParamActual("GINGER_ID", GingerId);
                     break;

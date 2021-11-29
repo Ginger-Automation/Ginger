@@ -72,7 +72,6 @@ namespace Amdocs.Ginger.Common
 
         object CreateNewReportTemplate();
 
-        void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder);
         bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string refe, PublishToALMConfig PublishToALMConfig);
 
 
@@ -89,6 +88,7 @@ namespace Amdocs.Ginger.Common
 
         IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow);
 
+        void DispatcherRun();
 
         DbConnection GetOracleConnection(string ConnectionString);
 

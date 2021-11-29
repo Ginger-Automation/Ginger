@@ -16,10 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.BusinessFlowPages;
+using GingerCore.Actions;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -107,8 +112,10 @@ namespace Ginger.UserControlsLib
         /// </summary>
         /// <param name="containerControl">The UI control which paste is done on (DataGrid/TreeView/ListView)</param>
         /// <param name="propertiesToSet">List of properties PropertyName-Value to set in reflection to they paste item</param>
-        public static void PasteItems(IClipboardOperations containerControl,  List<Tuple<string,object>> propertiesToSet = null, int currentIndex = -1)
+        public static void PasteItems(IClipboardOperations containerControl,  List<Tuple<string,object>> propertiesToSet = null, int currentIndex = -1, Context context = null)
         {
+            bool IsValidActionPlatform = true;
+
             ((Control)containerControl).Dispatcher.Invoke(() =>
             {
                 try
@@ -136,6 +143,12 @@ namespace Ginger.UserControlsLib
                                     //set unique name
                                     GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(containerControl.GetSourceItemsAsList(), item);
                                 }
+                                //check action platform before copy
+                                if (!ActionsFactory.IsValidActionPlatformForActivity(item, context))
+                                {
+                                    IsValidActionPlatform = false;
+                                    continue;
+                                }
                                 //paste on target and select                           
                                 containerControl.SetSelectedIndex(AddItemAfterCurrent(containerControl, item, currentIndex));
                                 //Trigger event for changing sub classes fields
@@ -157,7 +170,14 @@ namespace Ginger.UserControlsLib
                                 GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(containerControl.GetSourceItemsAsList(), copiedItem, "_Copy");
                                 //set needed properties if any
                                 SetProperties(copiedItem, propertiesToSet);
-                                //add and select                      
+
+                                //check action platform before copy
+                                if (!ActionsFactory.IsValidActionPlatformForActivity(copiedItem,context))
+                                {
+                                    IsValidActionPlatform = false;
+                                    continue;
+                                }
+                                //add and select
                                 containerControl.SetSelectedIndex(AddItemAfterCurrent(containerControl, copiedItem, currentIndex));
                                 //Trigger event for changing sub classes fields
                                 containerControl.OnPasteItemEvent(PasteItemEventArgs.ePasteType.PasteCopiedItem, copiedItem);
@@ -167,6 +187,10 @@ namespace Ginger.UserControlsLib
                     else
                     {
                         Reporter.ToStatus(eStatusMsgKey.PasteProcess, null, "No items found to paste");
+                    }
+                    if (!IsValidActionPlatform)
+                    {
+                        Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Unable to copy actions with different platform.");
                     }
                 }
                 catch (Exception ex)

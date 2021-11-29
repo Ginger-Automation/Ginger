@@ -96,6 +96,13 @@
     <Folder Include="TestResources\Conversion\" />
     <Folder Include="TestResources\Solutions\EmailWebReport\HTMLReportConfigurations\HTMLReportTemplate\" />
     <Folder Include="TestResources\Solutions\EmailWebReport\HTMLReportConfigurations\ReportTemplates\" />
+    <Folder Include="TestResources\Solutions\GlobalCrossSolution\Applications Models\Global Models Parameters\" />
+    <Folder Include="TestResources\Solutions\GlobalCrossSolution\RemoteServiceGrid\" />
+    <Folder Include="TestResources\Solutions\GlobalCrossSolution\RunSetConfigs\" />
+    <Folder Include="TestResources\Solutions\GlobalCrossSolution\SharedRepository\Actions\" />
+    <Folder Include="TestResources\Solutions\GlobalCrossSolution\SharedRepository\ActivitiesGroup\" />
+    <Folder Include="TestResources\Solutions\GlobalCrossSolution\SharedRepository\Activities\" />
+    <Folder Include="TestResources\Solutions\GlobalCrossSolution\SharedRepository\Variables\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -582,7 +589,76 @@
     <None Update="TestResources\Solutions\EmailWebReport\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Agents\MyWebApp - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Agents\WebServiceAgnet.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Agents\WindowsAgent.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Applications Models\API Models\Add a new pet to the store-JSON.Ginger.ApplicationAPIModel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Applications Models\POM Models\Facebook\Facebook.Ginger.ApplicationPOMModel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Applications Models\POM Models\Selenium Easy - Input Form Demo with Validations.Ginger.ApplicationPOMModel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\BusinessFlows\API-Create Pet.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\BusinessFlows\Facebook Login.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\BusinessFlows\Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\DataSources\AccessDS.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\DataSources\AccessDS.mdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\DataSources\DefaultDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\DataSources\LiteDB.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Documents\02E202C7-BDB1-4C0A-B89A-8D401DB7C69F.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Documents\bankCode3.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Documents\Multiple Values.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Documents\Repository.xls">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Environments\Test.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\SharedRepository\Actions\Browser Action.Ginger.Action.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\SharedRepository\Actions\UIElement Action.Ginger.Action.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\GlobalCrossSolution\SharedRepository\Activities\Activity 2.Ginger.Activity.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Solutions\OutputVariableOldSolution\Agents\MyWindowsApp - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\OutputVariableOldSolution\BusinessFlows\Check Variables.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\OutputVariableOldSolution\BusinessFlows\Create Contact.Ginger.BusinessFlow.xml">
@@ -607,6 +683,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\OutputVariableOldSolution\HTMLReportConfigurations\Default.Ginger.HTMLReportConfiguration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\OutputVariableOldSolution\RunSetConfigs\Check Variables Run Set.Ginger.RunSetConfig.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\OutputVariableOldSolution\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">

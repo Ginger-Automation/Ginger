@@ -16,12 +16,36 @@ limitations under the License.
 */
 #endregion
 
+using System.ComponentModel;
+
 namespace GingerCoreNET.SourceControl
 {
-    public class SolutionInfo
+    public class SolutionInfo : INotifyPropertyChanged
     {
         public string LocalFolder { get; set; }
         public string SourceControlLocation { get; set; }
-        public bool ExistInLocaly { get; set; }
+        private bool mExistInLocaly;
+        public bool ExistInLocaly {
+            get 
+            {
+                return mExistInLocaly;
+            } 
+            set 
+            {
+                mExistInLocaly = value;
+                OnPropertyChanged(nameof(ExistInLocaly));
+            } 
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
     }
 }

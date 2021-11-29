@@ -42,7 +42,11 @@
                 <Label Style="{StaticResource $LabelStyle}" Content="Target Application:"/>
                 <ComboBox x:Name="xTargetApplicationComboBox" Width="250" Margin="19,0,0,0" Style="{StaticResource $FlatEditInputComboBoxStyle}" />
             </StackPanel>
-            
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,10,0,0" VerticalAlignment="Top">
+                <Label Content="Automation Status:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                <ComboBox x:Name="xAutomationStatusCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="15,0,0,0"/>
+                <CheckBox x:Name="xPublishcheckbox" Content="Publish" Margin="10,0,0,0" ToolTip="Publish to third party applications" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
+            </StackPanel>
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,10,0,0">
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                     <Label Content="Actions Run Option:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
@@ -51,22 +55,28 @@
                 <CheckBox x:Name="xMandatoryActivityCB" Margin="10,0,0,0" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Mandatory"/>
             </StackPanel>
 
-            <StackPanel x:Name="xHandlerTypeStack" DockPanel.Dock="Top" Margin="0,25,0,0" Orientation="Horizontal">
+            <StackPanel x:Name="xHandlerTypeStack" Visibility="Collapsed" DockPanel.Dock="Top" Margin="0,10,0,0" Orientation="Horizontal">
                 <Label Content="Error Handler Type:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
                 <ComboBox x:Name="xHandlerTypeCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="15,0,0,0"/>
             </StackPanel>
-            
+
+            <StackPanel x:Name="xHandlerTriggerOnStackPanel" DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed" Orientation="Horizontal">
+                <Label Content="Trigger On:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Width="120"/>
+                <ComboBox x:Name="xHandlerTriggerOnCombo" Width="250" SelectionChanged="xHandlerTriggerOnCombo_SelectionChanged" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="15,0,0,0"/>
+                <Button x:Name="xTriggerOnSpecificErrorBtn" Content="Configure Error" Click="xTriggerOnSpecificErrorBtn_Click"  Margin="10,-5,0,0" Visibility="Collapsed"  Style="{StaticResource $InputButtonStyle}"/>
+            </StackPanel>
+            <StackPanel x:Name="xHandlerPostExecutionActionStack" DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed" Orientation="Horizontal">
+                <Label Content="Post Exceution Action:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                <ComboBox x:Name="xHandlerPostExecutionCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="2,0,0,0"/>
+            </StackPanel>
+
             <StackPanel x:Name="xHandlerMappingStack" DockPanel.Dock="Top" Margin="0,10,0,0" Orientation="Horizontal" VerticalAlignment="Top">
                 <Label Content="Error Handler Map:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
                 <ComboBox x:Name="xErrorHandlerMappingCmb"  Style="{StaticResource $FlatEditInputComboBoxStyle}" Width="250" Margin="15,0,0,0" SelectionChanged="xErrorHandlerMappingCmb_SelectionChanged"/>
                 <Button x:Name="xSpecificErrorHandlerBtn" Content="Set Error Handler" Click="xSpecificErrorHandlerBtn_Click"  Margin="10,-5,0,0" Width="120" Style="{StaticResource $InputButtonStyle}"/>
             </StackPanel>
 
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,10,0,0" VerticalAlignment="Top">
-                <Label Content="Automation Status:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
-                <ComboBox x:Name="xAutomationStatusCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="15,0,0,0"/>
-                <CheckBox x:Name="xPublishcheckbox" Content="Publish" Margin="10,0,0,0" ToolTip="Publish to third party applications" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
-            </StackPanel>
+
         </DockPanel>
     </ScrollViewer>
 </Page>

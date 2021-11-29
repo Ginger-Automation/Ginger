@@ -17,6 +17,9 @@ limitations under the License.
 #endregion
 
 
+using GingerCore.Drivers;
+using OpenQA.Selenium;
+
 namespace GingerCore.Actions.VisualTesting
 {
     public interface IVisualAnalyzer

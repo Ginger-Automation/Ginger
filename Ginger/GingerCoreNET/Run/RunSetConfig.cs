@@ -42,6 +42,7 @@ namespace Ginger.Run
             get { return mName; }
             set
             {
+             //
                 if (mName != value)
                 {
                     mName = value;

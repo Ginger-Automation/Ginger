@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             var args = CommandLine.Parser.Default.FormatCommandLine<RunOptions>(options);
             args = args.Replace(solution.EncryptionKey, "\"" + solution.EncryptionKey + "\"");
-            if (options.PasswordEncrypted && options.Pass != null)
+            if (options.PasswordEncrypted && !string.IsNullOrEmpty(options.Pass))
             {
                 args = args.Replace(options.Pass, "\"" + options.Pass + "\"");
             }

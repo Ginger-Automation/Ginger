@@ -64,6 +64,7 @@ namespace Ginger.ALM
         public ALMConnectionPage(eALMConnectType almConnectStyle, bool isConnWin = false)
         {
             CurrentAlmConfigurations = ALMIntegration.Instance.GetDefaultAlmConfig();
+            CurrentAlmConfigurations.PropertyChanged += CurrentAlmConfigurations_PropertyChanged;
             CurrentAlmUserConfigurations = ALMIntegration.Instance.GetCurrentAlmUserConfig(CurrentAlmConfigurations.AlmType);
             ALMIntegration.Instance.UpdateALMType(CurrentAlmConfigurations.AlmType);
 
@@ -92,6 +93,20 @@ namespace Ginger.ALM
             StyleRadioButtons();
             SetControls();
             ChangeALMType();
+        }
+
+        private void CurrentAlmConfigurations_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(GingerCoreNET.ALMLib.ALMConfig.ALMUserName) ||
+                 e.PropertyName == nameof(GingerCoreNET.ALMLib.ALMConfig.ALMPassword) ||
+                 e.PropertyName == nameof(GingerCoreNET.ALMLib.ALMConfig.ALMServerURL))
+            {
+                if(ALMIntegration.Instance.AlmCore != null)
+                {
+                    ALMIntegration.Instance.AlmCore.IsConnectValidationDone = false;
+                }
+            }
+
         }
 
         private GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations { get; set; }

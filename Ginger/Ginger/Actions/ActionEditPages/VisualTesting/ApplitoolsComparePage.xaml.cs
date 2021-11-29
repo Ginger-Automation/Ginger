@@ -51,7 +51,6 @@ namespace Ginger.Actions.VisualTesting
             TestNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsParamTestName, (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
 
 
-            ApplitoolsKeyUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsKey), true, false);
             SetMatchLevelComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ApplitoolsMatchLevel, ApplitoolsAnalyzer.eMatchLevel.Strict.ToString()), typeof(ApplitoolsAnalyzer.eMatchLevel), false, null);
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotFailActionOnMismatch, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.FailActionOnMistmach, "False"));
 
@@ -64,7 +63,6 @@ namespace Ginger.Actions.VisualTesting
             switch (applitoolsAction)
             {
                 case ApplitoolsAnalyzer.eApplitoolsAction.OpenEyes:
-                    xApplitoolsKey.Visibility = Visibility.Visible;
                     xApplitoolsApplicationName.Visibility = Visibility.Visible;
                     xApplitoolsTestName.Visibility = Visibility.Visible;
                     xApplitoolsMatchLevel.Visibility = Visibility.Collapsed;
@@ -75,14 +73,12 @@ namespace Ginger.Actions.VisualTesting
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetTargetSectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetResultsSectionVisibility, eVisualTestingVisibility.Collapsed);
                     break;
-
                 case ApplitoolsAnalyzer.eApplitoolsAction.Checkpoint:
-                    xApplitoolsKey.Visibility = Visibility.Collapsed;
                     xApplitoolsApplicationName.Visibility = Visibility.Collapsed;
                     xApplitoolsTestName.Visibility = Visibility.Collapsed;
                     xApplitoolsMatchLevel.Visibility = Visibility.Visible;
                     xApplitoolsResultsButton.Visibility = Visibility.Collapsed;
-                    xDoNotFailActionOnMismatchPanel.Visibility = Visibility.Visible;
+                    xDoNotFailActionOnMismatchPanel.Visibility = Visibility.Collapsed;
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetBaselineSectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetTargetSectionVisibility, eVisualTestingVisibility.Collapsed);
@@ -90,7 +86,6 @@ namespace Ginger.Actions.VisualTesting
                     break;
 
                 case ApplitoolsAnalyzer.eApplitoolsAction.CloseEyes:
-                    xApplitoolsKey.Visibility = Visibility.Collapsed;
                     xApplitoolsApplicationName.Visibility = Visibility.Collapsed;
                     xApplitoolsTestName.Visibility = Visibility.Collapsed;
                     xApplitoolsMatchLevel.Visibility = Visibility.Collapsed;

@@ -60,12 +60,12 @@ namespace GingerCore.Variables
             All
             //Details
         }
-        
+
         public override string ToString()
         {
             return Name;
         }
-        
+
         public enum eOutputType
         {
             None,
@@ -76,7 +76,7 @@ namespace GingerCore.Variables
             DataSource
         }
 
-        private bool mSetAsInputValue= true;
+        private bool mSetAsInputValue = true;
         [IsSerializedForLocalRepository(true)]
         public bool SetAsInputValue
         {
@@ -87,6 +87,21 @@ namespace GingerCore.Variables
                 {
                     mSetAsInputValue = value;
                     OnPropertyChanged(nameof(SetAsInputValue));
+                }
+            }
+        }
+
+        private bool mMandatoryInput = false;
+        [IsSerializedForLocalRepository(false)]
+        public bool MandatoryInput
+        {
+            get { return mMandatoryInput; }
+            set
+            {
+                if (mMandatoryInput != value)
+                {
+                    mMandatoryInput = value;
+                    OnPropertyChanged(nameof(MandatoryInput));
                 }
             }
         }
@@ -118,6 +133,21 @@ namespace GingerCore.Variables
             }
         }
 
+        public string MandatoryIndication
+        {
+            get
+            {
+                if (mMandatoryInput)
+                {
+                    return "*";
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+        }
+
         private string mDescription;
         [IsSerializedForLocalRepository]
         public string Description
@@ -130,9 +160,7 @@ namespace GingerCore.Variables
             }
         }
 
-        private string mValue;       
-        //TODO: fixme value is temp and should not be serialized
-       // [IsSerializedForLocalRepository]
+        private string mValue;
         public virtual string Value
         {
             get
@@ -146,9 +174,10 @@ namespace GingerCore.Variables
             }
         }
 
+
         public override void PostDeserialization()
         {
-            ResetValue();
+                ResetValue();
         }
 
         private string mFormula;
@@ -156,11 +185,11 @@ namespace GingerCore.Variables
         {
             get
             {
-                string formula = GetFormula();                
+                string formula = GetFormula();
                 if (formula != mFormula)
                 {
                     mFormula = formula;
-                    
+
                     OnPropertyChanged(nameof(Formula));
                 }
                 return mFormula;
@@ -170,12 +199,12 @@ namespace GingerCore.Variables
                 if (value != mFormula)
                 {
                     mFormula = value;
-                    if ((this is VariableSelectionList) == false) 
+                    if ((this is VariableSelectionList) == false)
                     {
-                           if (mFormula != null)
-                           this.ResetValue();
+                        if (mFormula != null)
+                            this.ResetValue();
                     }
-                    
+
                     OnPropertyChanged(nameof(Formula));
                 }
             }
@@ -198,7 +227,21 @@ namespace GingerCore.Variables
         public string ParentName { get; set; }
         private bool mVarValChanged;
         [IsSerializedForLocalRepository]
-        public bool VarValChanged { get { return mVarValChanged; } set { mVarValChanged = value; OnPropertyChanged(nameof(VarValChanged)); } }
+        public bool VarValChanged
+        {
+            get
+            {
+                return mVarValChanged;
+            }
+            set
+            {
+                if (mVarValChanged != value)
+                {
+                    mVarValChanged = value;
+                    OnPropertyChanged(nameof(VarValChanged));
+                }
+            }
+        }
 
         //used to identify the variables which the user customized for specific BF run
         private bool mDiffrentFromOrigin;
@@ -214,7 +257,8 @@ namespace GingerCore.Variables
                 }
                 return mDiffrentFromOrigin;
             }
-            set { mDiffrentFromOrigin = value; OnPropertyChanged(nameof(DiffrentFromOrigin)); } }
+            set { mDiffrentFromOrigin = value; OnPropertyChanged(nameof(DiffrentFromOrigin)); }
+        }
 
         public string NameBeforeEdit;
 
@@ -271,7 +315,7 @@ namespace GingerCore.Variables
                             if (value == prevVarName)
                                 PI.SetValue(item, newVarName);
                             else if (value.IndexOf("{Var Name=" + prevVarName + "}") > 0)
-                                PI.SetValue(item, value.Replace("{Var Name=" + prevVarName + "}", "{Var Name=" + newVarName + "}"));                            
+                                PI.SetValue(item, value.Replace("{Var Name=" + prevVarName + "}", "{Var Name=" + newVarName + "}"));
                             namechange = true;
                         }
                         else
@@ -325,8 +369,8 @@ namespace GingerCore.Variables
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Exception occured during Action Analyze of Used Variabels, object='{0}', field='{1}'", item, mi.Name), ex);
                     value = null;
-                } 
-                
+                }
+
                 if (value is IObservableList)
                 {
                     foreach (object o in (IObservableList)value)
@@ -349,7 +393,7 @@ namespace GingerCore.Variables
                             if (PI.CanWrite)
                             {
                                 //TODO: Use nameof !!!!!
-                                if (mi.Name == "StoreToValue" && mi.DeclaringType.Name=="ActReturnValue" && value.ToString().IndexOf("{DS Name") == -1)
+                                if (mi.Name == "StoreToValue" && mi.DeclaringType.Name == "ActReturnValue" && value.ToString().IndexOf("{DS Name") == -1)
                                 {
                                     //check that it is not GUID of global model Param
                                     Guid dummyGuid = new Guid();
@@ -359,19 +403,19 @@ namespace GingerCore.Variables
                                             if (usedVariables.Contains(value.ToString()) == false)
                                                 usedVariables.Add(value.ToString());
                                     }
-                                }                               
-                                else if(mi.Name == "FlowControlAction" && value.ToString() == "SetVariableValue") //get used variable in flow control with set variable action type.
-                                {                                    
+                                }
+                                else if (mi.Name == "FlowControlAction" && value.ToString() == "SetVariableValue") //get used variable in flow control with set variable action type.
+                                {
                                     string[] vals = ((string)item.GetType().GetRuntimeProperty("ValueCalculated").GetValue(item)).Split(new[] { '=' });
                                     const int count = 2;
                                     if (vals.Count() == count && !usedVariables.Contains(vals[0]))
-                                    {                                       
-                                        usedVariables.Add(vals[0]);                                     
+                                    {
+                                        usedVariables.Add(vals[0]);
                                     }
                                 }
-                                else if (mi.Name == "VariableName" && mi.DeclaringType.Name == "VariableDependency" && usedVariables!=null)
+                                else if (mi.Name == "VariableName" && mi.DeclaringType.Name == "VariableDependency" && usedVariables != null)
                                 {
-                                    if(!usedVariables.Contains(value))
+                                    if (!usedVariables.Contains(value))
                                     {
                                         usedVariables.Add((string)value);
                                     }
@@ -399,7 +443,7 @@ namespace GingerCore.Variables
                         catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Exception occured during Action Analyze of Used Variabels, object='{0}', field='{1}'", item, mi.Name), ex);
-                        } 
+                        }
                     }
                 }
             }
@@ -464,7 +508,7 @@ namespace GingerCore.Variables
             switch (ePartToUpdate)
             {
                 case eItemParts.All:
-                //case eItemParts.Details:
+                    //case eItemParts.Details:
                     newInstance.Guid = variableBaseInstance.Guid;
                     newInstance.ParentGuid = variableBaseInstance.ParentGuid;
                     newInstance.ExternalID = variableBaseInstance.ExternalID;
@@ -491,21 +535,21 @@ namespace GingerCore.Variables
                         }
                     }
                     break;
-            }           
+            }
         }
 
         public override RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase itemToUpload, RepositoryItemBase existingRepoItem, string itemPartToUpdate)
         {
 
-            VariableBase updatedVariable = null;       
+            VariableBase updatedVariable = null;
 
             //update required part
             eItemParts ePartToUpdate = (eItemParts)Enum.Parse(typeof(VariableBase.eItemParts), itemPartToUpdate);
             switch (ePartToUpdate)
             {
-                case eItemParts.All:               
+                case eItemParts.All:
                     updatedVariable = (VariableBase)itemToUpload.CreateCopy(false);
-                
+
                     break;
             }
 
@@ -546,7 +590,7 @@ namespace GingerCore.Variables
         /// e.g. when showing possible output values on the Runset business flow configuration page
         /// for output variable possible values we will show <<VariableName>>[<<BusinessFlowName(<<BusinessflowRunInstanceNumber>>)>>]
         /// </summary>
-        public string Path {get; set; }
+        public string Path { get; set; }
 
         /// <summary>
         /// This field is used to store the variable instance info in the runset.
@@ -565,7 +609,7 @@ namespace GingerCore.Variables
                 return mMappedOutputVariable;
             }
             set
-            {                
+            {
                 if (String.IsNullOrEmpty(value) == false)
                 {
                     DiffrentFromOrigin = true;
@@ -573,10 +617,10 @@ namespace GingerCore.Variables
                     mMappedOutputValue = value;
                     OnPropertyChanged(nameof(MappedOutputType));
                     OnPropertyChanged(nameof(MappedOutputValue));
-                }                    
+                }
             }
         }
-        
+
         private eOutputType mMappedOutputType;
         [IsSerializedForLocalRepository]
         public eOutputType MappedOutputType
@@ -601,7 +645,7 @@ namespace GingerCore.Variables
             set
             {
                 mMappedOutputValue = value;
-                if (String.IsNullOrEmpty(value) == false || VarValChanged == true)                
+                if (String.IsNullOrEmpty(value) == false || VarValChanged == true)
                     DiffrentFromOrigin = true;
                 else
                     DiffrentFromOrigin = false;
@@ -663,6 +707,24 @@ namespace GingerCore.Variables
         public override string GetItemType()
         {
             return "Variable";
+        }
+
+        public static ObservableList<VariableBase> SortByMandatoryInput(ObservableList<VariableBase> variables)
+        {
+            int movedNum = 0;               
+            for (int indx=0; indx<variables.Count; indx++)
+            {
+                if (variables[indx].MandatoryInput)
+                {
+                    variables.Move(indx, 0);
+                    movedNum++;
+                }
+            }
+            for (int indx = 0; indx < movedNum; indx++)//keep original order
+            {
+                variables.Move(indx, 0);
+            }
+            return variables;
         }
     }
 }

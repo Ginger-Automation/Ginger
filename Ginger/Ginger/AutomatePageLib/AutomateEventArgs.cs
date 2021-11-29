@@ -40,7 +40,8 @@ namespace Ginger.BusinessFlowWindows
             StopRun,
             GenerateLastExecutedItemReport,
             ShowBusinessFlowsList,
-            UpdateAutomatePage
+            UpdateAutomatePage,
+            HighlightElement
         }
 
         public eEventType EventType;
