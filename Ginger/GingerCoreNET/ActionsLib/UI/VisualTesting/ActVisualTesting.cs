@@ -323,6 +323,8 @@ namespace GingerCore.Actions
             switch (ChangeAppWindowSize)
             {
                 case eChangeAppWindowSize.None:
+                    Resolution.Add(0);
+                    Resolution.Add(0);
                     return Resolution;
                 case eChangeAppWindowSize.Maximized:
                     Resolution.Add(0);

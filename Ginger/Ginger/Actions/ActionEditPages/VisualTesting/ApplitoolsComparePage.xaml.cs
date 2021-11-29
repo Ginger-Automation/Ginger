@@ -78,7 +78,7 @@ namespace Ginger.Actions.VisualTesting
                     xApplitoolsTestName.Visibility = Visibility.Collapsed;
                     xApplitoolsMatchLevel.Visibility = Visibility.Visible;
                     xApplitoolsResultsButton.Visibility = Visibility.Collapsed;
-                    xDoNotFailActionOnMismatchPanel.Visibility = Visibility.Visible;
+                    xDoNotFailActionOnMismatchPanel.Visibility = Visibility.Collapsed;
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetBaselineSectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetTargetSectionVisibility, eVisualTestingVisibility.Collapsed);

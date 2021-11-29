@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Net;
 using static GingerCore.Agent;
 using static GingerCore.Drivers.SeleniumDriver;
+using System.Linq;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -259,25 +260,11 @@ namespace GingerCore.Actions.VisualTesting
             }
 
             NewSetEyesMatchLevel();
-            newmEyes.Check(Target.Window().Fully());
-            newmEyes.CloseAsync();
             
-            TestResultsSummary allTestResults = runner.GetAllTestResults(false);
-            TestResultContainer[] resultContainer =  allTestResults.GetAllResults();
-            bool IsMatch = resultContainer[0].TestResults.Matches == 1 ? true :false;
-            mAct.AddOrUpdateReturnParamActual("ExactMatches", IsMatch.ToString());
-            bool FailActionOnMistmach = Boolean.Parse(mAct.GetInputParamValue(ApplitoolsAnalyzer.FailActionOnMistmach));
-            if (IsMatch == true || !FailActionOnMistmach)
-            {
-                mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
-                if (!FailActionOnMistmach)
-                    mAct.ExInfo = "Created new baseline in Applitools or Mismatch between saved baseline and target checkpoint image";
-            }
-            else if (IsMatch == false)
-            {
-                mAct.Error = "Created new baseline in Applitools or Mismatch between saved baseline and target checkpoint image";
-            }
-            
+            newmEyes.Check(Target.Window().Fully().WithName(mAct.ItemName));
+
+            mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;          
+
         }
         private void NewCloseEyes()
         {
@@ -299,13 +286,38 @@ namespace GingerCore.Actions.VisualTesting
                 mAct.ExInfo = "URL to view results: " + TR.Url;
                 mAct.AddOrUpdateReturnParamActual("ResultsURL", TR.Url + "");
                 mAct.AddOrUpdateReturnParamActual("Steps", TR.Steps + "");
+                mAct.AddOrUpdateReturnParamActual("Matches", TR.Matches + "");
                 mAct.AddOrUpdateReturnParamActual("Mismatches", TR.Mismatches + "");
                 mAct.AddOrUpdateReturnParamActual("ExactMatches", TR.ExactMatches + "");
                 mAct.AddOrUpdateReturnParamActual("StrictMatches", TR.StrictMatches + "");
                 mAct.AddOrUpdateReturnParamActual("ContentMatches", TR.ContentMatches + "");
                 mAct.AddOrUpdateReturnParamActual("LayoutMatches", TR.LayoutMatches + "");
-                mAct.AddOrUpdateReturnParamActual("ExactMatches", TR.ExactMatches + "");
+                if (!TR.IsNew)
+                {
+                    foreach (StepInfo step in TR.StepsInfo)
+                    {
+                        mAct.AddOrUpdateReturnParamActual(step.Name, step.IsDifferent ? "Failed" : "Passed" + "");
+                    }
+                }
                 mAct.AddOrUpdateReturnParamActual("IsNew", TR.IsNew + "");
+                if (TR.Mismatches == 0 || TR.IsNew)
+                {
+                    mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                    if (TR.IsNew)
+                    {
+                        mAct.ExInfo = "Created new baseline in Applitools.";
+                    }
+                    else
+                    {
+                        mAct.ExInfo = TR.Matches + " steps Matched with saved baseline in Applitools."; 
+                    }
+                    
+                }
+                else
+                {
+                    mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                    mAct.Error = TR.Mismatches + " steps Mismatched with saved baseline image in Applitools.";
+                }
             }
             catch (Exception ex)
             {
