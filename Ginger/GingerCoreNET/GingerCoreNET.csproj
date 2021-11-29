@@ -42,8 +42,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="DLLS\AlmDataContractsStd.dll" />
+    <None Remove="DLLS\ALMInteractionStd.dll" />
+    <None Remove="DLLS\AlmRepositoryStd.dll" />
+    <None Remove="DLLS\JiraRepositoryStd.dll" />
     <None Remove="DLLS\LibGit2Sharp.dll" />
-    <None Remove="DLLS\OctaneSdkStandard.dll" />
+    <None Remove="DLLS\OctaneInteractionStd.dll" />
+    <None Remove="DLLS\OctaneRepositoryStd.dll" />
+    <None Remove="DLLS\ZephyrEntStdSDK.dll" />
+    <None Remove="DLLS\Zepyhr_Ent_Repository_Std.dll" />
     <None Remove="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
     <None Remove="log4netLib\log4net.config" />
     <None Remove="Reports\Ginger-Web-Client\main.83a800d55fc7d8ada5fd.js" />
@@ -91,7 +98,31 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="DLLS\AlmDataContractsStd.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DLLS\ALMInteractionStd.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DLLS\AlmRepositoryStd.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DLLS\JiraRepositoryStd.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="DLLS\LibGit2Sharp.dll" />
+    <Content Include="DLLS\OctaneInteractionStd.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DLLS\OctaneRepositoryStd.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DLLS\ZephyrEntStdSDK.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DLLS\Zepyhr_Ent_Repository_Std.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\GingerExecutionReport\assets\css\bootstrap.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -277,6 +308,12 @@
     </Reference>
     <Reference Include="LibGit2Sharp">
       <HintPath>DLLS\LibGit2Sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="OctaneRepositoryStd">
+      <HintPath>DLLS\OctaneRepositoryStd.dll</HintPath>
+    </Reference>
+    <Reference Include="OctaneStdSDK">
+      <HintPath>DLLS\OctaneStdSDK.dll</HintPath>
     </Reference>
     <Reference Include="ZephyrEntStdSDK">
       <HintPath>DLLS\ZephyrEntStdSDK.dll</HintPath>

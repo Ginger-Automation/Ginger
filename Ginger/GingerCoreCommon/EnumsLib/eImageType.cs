@@ -215,6 +215,7 @@ namespace Amdocs.Ginger.Common.Enums
         Ticket,        
         Pointer,
         Camera,
+        Recording,
         Wrench,
         Eraser,
         Power,

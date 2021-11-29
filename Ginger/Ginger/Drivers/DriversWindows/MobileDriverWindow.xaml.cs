@@ -37,6 +37,7 @@ namespace Ginger.Drivers.DriversWindows
         public BusinessFlow mBF;
         eAutoScreenshotRefreshMode mDeviceAutoScreenshotRefreshMode;
         bool mWindowIsOpen = true;
+        bool IsRecording = false;
 
         public MobileDriverWindow(DriverBase driver, Agent agent)
         {
@@ -105,6 +106,17 @@ namespace Ginger.Drivers.DriversWindows
             xHighlighterBorder.Visibility = Visibility.Collapsed;
         }
 
+        public void UpdateRecordingImage(bool ShowRecordIcon)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if(ShowRecordIcon)
+                    xRecordingImage.Visibility = Visibility.Visible;
+                else
+                    xRecordingImage.Visibility = Visibility.Collapsed;
+            });
+        }
+
         #region Events
         private async void MobileDriverWindow_DriverMessageEvent(object sender, DriverMessageEventArgs e)
         {
@@ -137,6 +149,13 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         await RefreshDeviceScreenshotAsync(100);
                     }
+                    break;
+
+                case DriverBase.eDriverMessageType.RecordingEvent:
+                    IsRecording = (sender == null) ? false : (bool)sender;
+                    
+                    UpdateRecordingImage(IsRecording);
+
                     break;
 
                 case DriverBase.eDriverMessageType.HighlightElement:
@@ -1016,5 +1035,10 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
         #endregion Functions
+
+        private void xRecordingImage_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
