@@ -480,7 +480,7 @@ namespace Ginger.Run.RunSetActions
                 bool isSuccess = false;
                 try
                 {
-                    //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Before send email");
+                    //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Before send email");                    
                     isSuccess = Email.Send();
                     //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: After send email result = " + isSuccess);
                 }
@@ -753,8 +753,15 @@ namespace Ginger.Run.RunSetActions
                                     }
                                     fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd; color:red;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-break: break-all;'>" + OverrideHTMLRelatedCharacters(act.Error) + "</td>");
                                 }
-                                if ((selectedField_internal.FieldKey == ActionReport.Fields.ElapsedSecs) ||
-                                    (selectedField_internal.FieldKey == ActionReport.Fields.CurrentRetryIteration) ||
+                                if (selectedField_internal.FieldKey == ActionReport.Fields.ElapsedSecs)
+                                {
+                                    if (firstIteration)
+                                    {
+                                        fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                    }
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(General.TimeConvert(Convert.ToString(act.GetType().GetProperty(fieldName).GetValue(act)))) + "</td>");
+                                }
+                                if ((selectedField_internal.FieldKey == ActionReport.Fields.CurrentRetryIteration) ||
                                     (selectedField_internal.FieldKey == ActionReport.Fields.ExInfo))
                                 {
                                     if (firstIteration)
@@ -984,6 +991,11 @@ namespace Ginger.Run.RunSetActions
                                 string activityRunStatusValue = ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(fieldName).GetValue(activityReport)));
                                 fieldsValuesHTMLTableCells.Append("<td class='Status" + activityRunStatusValue + "' style='padding: 10px; border: 1px solid #dddddd'>" + activityRunStatusValue + "</td>");
                             }
+                            else if (selectedField_internal.FieldKey == ActivityReport.Fields.ElapsedSecs)
+                            {
+                                string activityElapsedSecsValue = ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(fieldName).GetValue(activityReport)));
+                                fieldsValuesHTMLTableCells.Append(tableStyle + General.TimeConvert(activityElapsedSecsValue) + "</td>");
+                            }
                             else
                             {
                                 string activityHTMLValue = (activityReport.GetType().GetProperty(fieldName).GetValue(activityReport) == null) ? "N/A" : ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(fieldName).GetValue(activityReport)));
@@ -1108,7 +1120,7 @@ namespace Ginger.Run.RunSetActions
                     }
                     else if (selectedField.FieldKey == RunSetReport.Fields.ExecutionDuration)
                     {
-                        columnValue.Append(string.Concat(tableStyle,columnDbValue, 's', "</td>"));
+                        columnValue.Append(string.Concat(tableStyle, General.TimeConvert(columnDbValue), "</td>"));
                     }
                     else if (selectedField.FieldKey == RunSetReport.Fields.RunSetExecutionRate || selectedField.FieldKey == RunSetReport.Fields.GingerRunnersPassRate)
                     {
@@ -1198,7 +1210,7 @@ namespace Ginger.Run.RunSetActions
 
                         if (selectedField.FieldKey == RunSetReport.Fields.ExecutionDuration)
                         {
-                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString() + 's') + "</td>");
+                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(General.TimeConvert(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString())) + "</td>");
                         }
                         else if ((selectedField.FieldKey == RunSetReport.Fields.StartTimeStamp) || (selectedField.FieldKey == RunSetReport.Fields.EndTimeStamp))
                         {
@@ -1567,8 +1579,15 @@ namespace Ginger.Run.RunSetActions
                                                 }
                                                 fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd; color:red;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-break: break-all;'>" + OverrideHTMLRelatedCharacters(act.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(act).ToString()) + "</td>");
                                             }
-                                            if ((selectedField_internal.FieldKey == ActionReport.Fields.ElapsedSecs) ||
-                                                (selectedField_internal.FieldKey == ActionReport.Fields.CurrentRetryIteration) ||
+                                            if (selectedField_internal.FieldKey == ActionReport.Fields.ElapsedSecs)
+                                            {
+                                                if (firstIteration)
+                                                {
+                                                    fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                                }
+                                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(General.TimeConvert(act.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(act).ToString())) + "</td>");
+                                            }
+                                            if ((selectedField_internal.FieldKey == ActionReport.Fields.CurrentRetryIteration) ||
                                                 (selectedField_internal.FieldKey == ActionReport.Fields.ExInfo))
                                             {
                                                 if (firstIteration)
@@ -1771,7 +1790,7 @@ namespace Ginger.Run.RunSetActions
                                     fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
                                 }
                                 string activityElapsedSecsValue = Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(Convert.ToString(activityReport.GetType().GetProperty(selectedField_internal.FieldKey.ToString()).GetValue(activityReport)));
-                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + activityElapsedSecsValue + "</td>");
+                                fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + General.TimeConvert(activityElapsedSecsValue) + "</td>");
                             }
                             if (selectedField_internal.FieldKey == ActivityReport.Fields.RunStatus)
                             {
