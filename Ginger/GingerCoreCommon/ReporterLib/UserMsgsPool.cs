@@ -149,7 +149,10 @@ namespace Amdocs.Ginger.Common
         WarnAddSwingOrWidgetElement,
         AskToSelectValidItem,
         InvalidEncryptionKey,
-        SaveRunsetChangesWarn
+        SaveRunsetChangesWarn,
+        PublishRepositoryInfo,
+        FailedToPublishRepositoryInfo,
+        MissingErrorString
     }
 
     public static class UserMsgsPool
@@ -223,6 +226,11 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToDeLink, new UserMsg(eUserMsgType.WARN, "De-Link to Shared Repository", "Are you sure you want to de-link the item from it Shared Repository source item?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.OfferToUploadAlsoTheActivityGroupToRepository, new UserMsg(eUserMsgType.QUESTION, "Add the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to Repository", "The " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '{0}' is part of the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " '{1}', do you want to add the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to the shared repository as well?" + System.Environment.NewLine + System.Environment.NewLine + "Note: If you select Yes, only the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " will be added to the repository and not all of it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ".", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.PublishRepositoryInfo, new UserMsg(eUserMsgType.INFO, "Item Repository Publish Info", "Repository item is published to selected BusinessFlow.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToPublishRepositoryInfo, new UserMsg(eUserMsgType.ERROR, "Failed to pulblish Repository Item", "Failed to publish in one or more Business flows.", eUserMsgOption.OK, eUserMsgSelection.None));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MissingErrorString, new UserMsg(eUserMsgType.ERROR, "Missing Error String details", "Error String is missing for one or more row."+ Environment.NewLine +"Please add error string for missing rows", eUserMsgOption.OK,eUserMsgSelection.None));
+
             #endregion Repository
 
             #region Analyzer
