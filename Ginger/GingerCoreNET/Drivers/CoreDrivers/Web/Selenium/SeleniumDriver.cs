@@ -215,15 +215,20 @@ namespace GingerCore.Drivers
         public string SeleniumUserArguments { get; set; }
 
 
+        //[UserConfigured]
+        //[UserConfiguredDefault("False")]
+        //[UserConfiguredDescription("Applitool - Set to true if you want to use Applitools for visual testing")]
+        //public Boolean UseApplitools { get; set; }
+
         [UserConfigured]
-        [UserConfiguredDefault("False")]
-        [UserConfiguredDescription("Applitool - Set to true if you want to use Applitools for visual testing")]
-        public Boolean UseApplitools { get; set; }
+        [UserConfiguredDefault("W3IBcWNoSAABDt21U3X3XpS2xpeV7Rgt990JwQz8th4A110")]
+        [UserConfiguredDescription("Applitool View Key number")]
+        public String ApplitoolsViewKey { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Applitool View Key number")]
-        public String ApplitoolsViewKey { get; set; }
+        [UserConfiguredDescription("Applitool Server Url")]
+        public String ApplitoolsServerUrl { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("true")]
@@ -301,6 +306,16 @@ namespace GingerCore.Drivers
                 RemotePlatform = agent.GetParamValue(SeleniumDriver.RemotePlatformParam);
                 RemoteVersion = agent.GetParamValue(SeleniumDriver.RemoteVersionParam);
             }
+        }
+
+        public IWebDriver GetWebDriver()
+        {
+            return Driver;
+        }
+
+        public eBrowserType GetBrowserType()
+        {
+            return mBrowserTpe;
         }
 
         public override void StartDriver()
@@ -383,6 +398,11 @@ namespace GingerCore.Drivers
                         if (!(String.IsNullOrEmpty(SeleniumUserArguments) && String.IsNullOrWhiteSpace(SeleniumUserArguments)))
                             ieoptions.BrowserCommandLineArguments += "," + SeleniumUserArguments;
 
+                        if (!(String.IsNullOrEmpty(ApplitoolsViewKey) && String.IsNullOrWhiteSpace(ApplitoolsViewKey)))
+                            ieoptions.BrowserCommandLineArguments += "," + ApplitoolsViewKey;
+
+                        if (!(String.IsNullOrEmpty(ApplitoolsServerUrl) && String.IsNullOrWhiteSpace(ApplitoolsServerUrl)))
+                            ieoptions.BrowserCommandLineArguments += "," + ApplitoolsServerUrl;
                         InternetExplorerDriverService IEService  = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                         IEService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -474,6 +494,12 @@ namespace GingerCore.Drivers
                             { UserAgent = BrowserUserAgent.Trim() };
                             options.EnableMobileEmulation(chromeMobileEmulationDevice);
                         }
+
+                        if (!(String.IsNullOrEmpty(ApplitoolsViewKey) && String.IsNullOrWhiteSpace(ApplitoolsViewKey)))
+                            options.AddArgument(ApplitoolsViewKey);
+
+                        if (!(String.IsNullOrEmpty(ApplitoolsServerUrl) && String.IsNullOrWhiteSpace(ApplitoolsServerUrl)))
+                            options.AddArgument(ApplitoolsServerUrl);
 
                         ChromeDriverService ChService = ChromeDriverService.CreateDefaultService(GetDriversPathPerOS());
                         if (HideConsoleWindow)
