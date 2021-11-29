@@ -252,7 +252,7 @@ namespace GingerCore.Actions.VisualTesting
 
         private void NewCheckpoint()
         {
-            if (newmEyes.IsOpen == false)
+            if (!newmEyes.IsOpen)
             {
                 mAct.Error = "Applitools Eyes is not opened";
                 mAct.ExInfo = "You require to add Eyes.Open Action on step before.";
@@ -270,8 +270,8 @@ namespace GingerCore.Actions.VisualTesting
         {
             try
             {
-                TestResults TR = new TestResults();
-                if (newmEyes.IsOpen == true)
+                TestResults TR;
+                if (newmEyes.IsOpen)
                 {
                     TR = newmEyes.Close(false);
                 }
