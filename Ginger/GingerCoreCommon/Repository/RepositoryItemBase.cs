@@ -45,6 +45,13 @@ namespace Amdocs.Ginger.Repository
         PropertyNotFound,
         SetValueException   // if type changed, and we can add more handling...
     }
+    public enum eType
+    {
+        [EnumValueDescription("Regular Item")]
+        Regular = 0,
+        [EnumValueDescription("Linked Item")]
+        Link = 1
+    }
 
     public abstract class RepositoryItemBase : INotifyPropertyChanged, ISearchFilter
     {
@@ -368,6 +375,13 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public virtual bool ISLinkedItem
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public bool ClearBackup(bool isLocalBackup = false)
         {

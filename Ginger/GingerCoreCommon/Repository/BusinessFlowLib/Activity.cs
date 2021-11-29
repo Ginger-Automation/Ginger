@@ -343,6 +343,23 @@ namespace GingerCore
                 }
             }
         }
+        
+        //Defines if activity is linked or regular
+        eType mType = eType.Regular;
+
+        [IsSerializedForLocalRepository]
+        public eType Type
+        {
+            get { return mType; }
+            set
+            {
+                if (mType != value)
+                {
+                    mType = value;
+                    OnPropertyChanged(nameof(mType));
+                }
+            }
+        }
 
         private ObservableList<IAct> mActs;
         /// <summary>
@@ -913,6 +930,18 @@ namespace GingerCore
             {
                 // no need to save activities which were added dynamically
                 if (AddDynamicly)
+                    return true;
+                else
+                    return false;
+            }
+        }
+
+        public override bool ISLinkedItem
+        {
+            get
+            {
+                // no need to save activities which were added dynamically
+                if (this.Type == eType.Link)
                     return true;
                 else
                     return false;

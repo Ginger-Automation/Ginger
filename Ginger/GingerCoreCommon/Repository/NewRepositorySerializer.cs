@@ -377,12 +377,18 @@ namespace Amdocs.Ginger.Repository
             foreach (var v in list)
             {                
                 if (v is RepositoryItemBase)
-                {                    
+                {
+                    if (((RepositoryItemBase)v).ISLinkedItem)
+                    {
+                        ((GingerCore.Activity)v).Acts = null;
+                        ((GingerCore.Activity)v).Variables = null;
+                    }
                     if (!((RepositoryItemBase)v).IsTempItem) // Ignore temp items like dynamic activities or some output values if marked as temp
                     {
                         xml.WriteWhitespace("\n");
                         xmlwriteObject(xml, (RepositoryItemBase)v);
                     }
+
                 }
                 else if (v is RepositoryItemKey)
                 {
