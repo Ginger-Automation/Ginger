@@ -122,7 +122,7 @@ namespace Ginger.Reports
         public DateTime EndTimeStamp { get { return mAction != null ? mAction.EndTimeStamp : endTimeStamp; } set { endTimeStamp = value; } }
 
         [FieldParams]
-        [FieldParamsNameCaption("Elapsed (Seconds)")]
+        [FieldParamsNameCaption("Elapsed")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
