@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using GingerCore.Drivers;
+using OpenQA.Selenium;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -105,5 +107,7 @@ namespace GingerCore.Actions.VisualTesting
         {
             throw new NotImplementedException();
         }
+
+        
     }
 }

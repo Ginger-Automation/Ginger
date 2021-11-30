@@ -82,8 +82,13 @@ namespace Ginger
 
             /// <summary>
             /// Item opened from Windows Explorer in the Side Panel
+           /// </summary>
+            Explorer = 8,
+
+            /// <summary>
+            /// List of items in model to add  
             /// </summary>
-            Explorer
+            AddFromModel = 9,
         }
 
         public static bool isDesignMode()

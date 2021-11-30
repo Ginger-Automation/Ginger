@@ -158,6 +158,7 @@ namespace GingerCore.Drivers
         {
             DriverStatusChanged,
             ActionPerformed,
+            RecordingEvent,
             HighlightElement,
             UnHighlightElement
         }
