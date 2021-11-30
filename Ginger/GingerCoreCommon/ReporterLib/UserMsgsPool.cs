@@ -152,8 +152,7 @@ namespace Amdocs.Ginger.Common
         SaveRunsetChangesWarn,
         PublishRepositoryInfo,
         FailedToPublishRepositoryInfo,
-        MissingErrorString
-        SaveRunsetChangesWarn,
+        MissingErrorString,
         RunsetAutoRunResult,
         RunsetAutoConfigBackWarn
     }

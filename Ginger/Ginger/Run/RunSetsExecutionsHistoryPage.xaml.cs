@@ -144,7 +144,16 @@ namespace Ginger.Run
                         LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "GingerExecutionResults.db"));
                         var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
 
-                        var runSetDataColl = rsLiteColl.FindAll();
+                        IEnumerable<LiteDbRunSet> runSetDataColl = null;
+                        if (RunsetConfig != null)
+                        {
+                            runSetDataColl = rsLiteColl.Find(x => x.GUID == RunsetConfig.Guid);
+                        }
+                        else
+                        {
+                             runSetDataColl = rsLiteColl.FindAll();
+                        }
+
                         foreach (var runSet in runSetDataColl)
                         {
                             RunSetReport runSetReport = new RunSetReport();
@@ -153,7 +162,10 @@ namespace Ginger.Run
                             mExecutionsHistoryList.Add(runSetReport);
                         }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error Occured during LoadExecutionHistory.", ex);
+                    }
                 }
                 
             });
