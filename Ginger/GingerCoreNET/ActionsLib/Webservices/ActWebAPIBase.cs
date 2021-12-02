@@ -234,7 +234,7 @@ namespace GingerCore.Actions.WebServices
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.StackTrace);
+                Reporter.ToLog(eLogLevel.DEBUG, $"XMLStringCanBeParsed:\n{ex.StackTrace}");
                 return false;
             }
         }
