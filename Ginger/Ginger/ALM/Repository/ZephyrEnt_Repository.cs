@@ -55,11 +55,17 @@ namespace Ginger.ALM.Repository
         }
         public override bool ConnectALMServer(eALMConnectType userMsgStyle)
         {
+            if(AlmCore.IsConnectValidationDone)
+            {
+                return true;
+            }
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Zephyr server");
                 if (ALMIntegration.Instance.AlmCore.ConnectALMServer())
                 {
+                    AlmCore.IsConnectValidationDone = true;
+
                     return true;
                 }
                 else

@@ -379,7 +379,7 @@ namespace GingerCore
                     catch (Exception e)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to set Agent Driver", e);
-                        return;
+                       return;
                     }
 
                     if (AgentType == Agent.eAgentType.Service)
@@ -597,6 +597,7 @@ namespace GingerCore
                 DriverClass = TargetFrameworkHelper.Helper.GetDriverType(this);
 
                 SetDriverMissingParams(DriverClass);
+                
 
                 foreach (DriverConfigParam DCP in DriverConfiguration)
                 {
@@ -849,7 +850,6 @@ namespace GingerCore
 
             }
         }
-
 
 
         private DriverConfigParam GetDriverConfigParam(MemberInfo mi)

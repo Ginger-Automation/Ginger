@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             ALMCore aLMCore = null;
             eALMType defaultAlmType = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(typ => typ.DefaultAlm).AlmType;
-            if (almType != defaultAlmType)
+            if (aLMCore == null || almType != defaultAlmType)
             {
                 aLMCore = (ALMCore)UpdateALMType(almType);
             }
@@ -288,6 +288,9 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                     break;
                 case eALMType.ZephyrEnterprise:
                     almCore = new ZephyrEntCore();
+                    break;
+                case eALMType.Octane:
+                    almCore = new OctaneCore();
                     break;
                 default:
                     Reporter.ToLog(eLogLevel.ERROR, $"Invalid ALM Type - {almType}");

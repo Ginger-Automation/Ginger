@@ -77,5 +77,5 @@ namespace Ginger.UserControlsLib.UCListView
         void Paste();
 
         void DeleteSelected();
-    }
+      }
 }
