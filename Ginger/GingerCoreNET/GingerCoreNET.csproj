@@ -229,9 +229,11 @@
   
     <PackageReference Include="EPPlus" Version="4.5.3.1" />
   
-    <PackageReference Include="Eyes.Images" Version="2.16.0" />
+    <PackageReference Include="Eyes.Images" Version="2.32.0" />
   
-    <PackageReference Include="Eyes.Sdk.Core" Version="2.34.1" />
+    <PackageReference Include="Eyes.Sdk.Core" Version="2.51.0" />
+  
+    <PackageReference Include="Eyes.Selenium" Version="2.57.0" />
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="1.2.0" />
   
@@ -839,6 +841,9 @@
     <None Update="Reports\Ginger-Web-Client\main.9a7f41ac158394ee2cff.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main.a85721ac59f1d0ff0fe1.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main.ac18b79c87efc4589d26.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -880,6 +885,9 @@
     </None>
     <None Update="Reports\Ginger-Web-Client\styles.d68bd4172acd061a314e.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\HTMLTemplates\viewreport.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
