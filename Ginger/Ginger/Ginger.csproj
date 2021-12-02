@@ -282,12 +282,22 @@
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrFolderTreeItem.cs" />
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrCycleTreeItem.cs" />
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrVersionTreeItem.cs" />
+    <Compile Include="ALM\MappedToALMWizard\AlmMappingGridParam.cs" />
+    <Compile Include="ALM\MappedToALMWizard\ALMTestCaseManualMappingConfig.cs" />
+    <Compile Include="ALM\MappedToALMWizard\ALMTestStepManualMappingConfig.cs" />
+    <Compile Include="ALM\MappedToALMWizard\GingerALMGridParam.cs" />
+    <Compile Include="ALM\MappedToALMWizard\MappedTestCasesTestSteps.cs" />
+    <Compile Include="ALM\MappedToALMWizard\TestCaseGridParam.cs" />
     <Compile Include="ALM\MappedToALMWizard\TestCaseMappingPage.xaml.cs">
       <DependentUpon>TestCaseMappingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\MappedToALMWizard\TestCasesMappingPage.xaml.cs">
+      <DependentUpon>TestCasesMappingPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ALM\MappedToALMWizard\TestSetMappingPage.xaml.cs">
       <DependentUpon>TestSetMappingPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ALM\MappedToALMWizard\TestStepGridParam.cs" />
     <Compile Include="ALM\MappedToALMWizard\TestStepMappingPage.xaml.cs">
       <DependentUpon>TestStepMappingPage.xaml</DependentUpon>
     </Compile>
@@ -2614,6 +2624,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ALM\MappedToALMWizard\TestCaseMappingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ALM\MappedToALMWizard\TestCasesMappingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

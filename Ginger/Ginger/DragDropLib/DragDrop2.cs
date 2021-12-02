@@ -120,7 +120,10 @@ namespace GingerWPF.DragDropLib
                     {
                         _DroppedPoint = e.GetPosition(sender as UcListView);
                     }
-
+                    if(sender is Ginger.ucGrid)
+                    {
+                        _DroppedPoint = e.GetPosition(sender as Ginger.ucGrid);
+                    }
                     object droppedItem = DrgInfo.Data;
                     if (droppedItem is ObservableList<RepositoryItemBase>)
                     {
@@ -186,7 +189,28 @@ namespace GingerWPF.DragDropLib
 
             return null;
         }
+        public static object GetGridItemHit(Ginger.ucGrid xUCGrid)
+        {
+            if (_DroppedPoint != null)
+            {
+                HitTestResult htResult = VisualTreeHelper.HitTest(xUCGrid, _DroppedPoint);
 
+                if (htResult != null)
+                {
+                    FrameworkElement fwElem = htResult.VisualHit as FrameworkElement;
+                    if (fwElem != null)
+                    {
+                        if (fwElem.DataContext != null && fwElem.DataContext is Ginger.ALM.MappedToALMWizard.ALMTestCaseManualMappingConfig)
+                        {
+                            return fwElem.DataContext;
+                        }
+                    }
+                }
+
+            }
+
+            return null;
+        }
         private static void DragTarget_DragEnter(object sender, DragEventArgs e)
         {
             DrgInfo.DragIcon = DragDropLib.DragInfo.eDragIcon.Unknown;

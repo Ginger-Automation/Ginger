@@ -4,15 +4,17 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.ALM.MappedToALMWizard"
+      xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" 
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" 
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="TestStepMappingPage">
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40*"/>
-            <RowDefinition Height="20*"/>
-            <RowDefinition Height="40*"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="50*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -20,24 +22,11 @@
                 <ColumnDefinition Width="20*"/>
                 <ColumnDefinition Width="40*"/>
             </Grid.ColumnDefinitions>
-            <ComboBox HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Center" Width="120"/>
-            <ComboBox Grid.Column="2" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Center" Width="120"/>
-            <Button x:Name="xMapTSBtn" Content="Map" Grid.Column="1" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Center"/>
-
+            <ComboBox x:Name="xGingerActivityCbx" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Center" Width="120"/>
+            <ComboBox x:Name="xAlmTestStepCbx" Grid.Column="2" HorizontalAlignment="Center" Margin="10,10,0,0" VerticalAlignment="Center" Width="120"/>
+            <UserControls:ucButton x:Name="xMapTestsStep" Grid.Column="1" ButtonType="RoundTextAndImageButton" Margin="10,10,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" ButtonText="Map" ButtonImageType="MapSigns" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="Button_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Visibility="Visible"/>
         </Grid>
-        <DataGrid x:Name="xTCGrid" HorizontalAlignment="Center" Height="Auto" Margin="10,10,10,30" VerticalAlignment="Stretch" Width="Auto">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Activity Group" IsReadOnly="True" Binding="{Binding Path=Test1}" Width="50"></DataGridTextColumn>
-                <DataGridTextColumn Header="Test Case" IsReadOnly="True"  Binding="{Binding Path=Test2}" Width="130"></DataGridTextColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-        <DataGrid x:Name="xTSGrid" HorizontalAlignment="Center" Height="Auto" Margin="10,10,10,30" Grid.Row="2" VerticalAlignment="Stretch" Width="Auto">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Activity" IsReadOnly="True" Binding="{Binding Path=Test1}" Width="50"></DataGridTextColumn>
-                <DataGridTextColumn Header="Test Step" IsReadOnly="True"  Binding="{Binding Path=Test2}" Width="130"></DataGridTextColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-        <Button x:Name="xSelectTCBtn" Content="Select" HorizontalAlignment="Center" Margin="0,0,0,5" VerticalAlignment="Bottom"/>
-        <Button x:Name="xRemoveTSBtn" Content="Remove" HorizontalAlignment="Center" Margin="0,0,0,5" Grid.Row="2" VerticalAlignment="Bottom"/>
+        <Ginger:ucGrid ScrollViewer.CanContentScroll="True" x:Name="xMapActivityGroupTestCaseGrid" Title="Mapped Tests Case" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Visible" ShowUpDown="Visible" ShowDelete="Visible"/>
+        <Ginger:ucGrid ScrollViewer.CanContentScroll="True" x:Name="xMapActivityTestStepGrid" Grid.Row="2" Title="Mapped Tests Step" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Visible" ShowUpDown="Visible" ShowDelete="Visible"/>
     </Grid>
 </Page>

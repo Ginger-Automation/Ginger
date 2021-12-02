@@ -39,7 +39,7 @@ namespace Ginger.ALM.ZephyrEnt
     /// </summary>
     public partial class ZephyrEntPlanningExplorerPage : Page
     {
-        public enum eExplorerTestPlanningPageUsageType { Import, Select, BrowseFolders }
+        public enum eExplorerTestPlanningPageUsageType { Import, Select, BrowseFolders, Map }
         private eExplorerTestPlanningPageUsageType mExplorerTestPlanningPageUsageType;
         ObservableList<BusinessFlow> mBizFlows;
         Dictionary<string, BusinessFlow> bfsExternalIds = new Dictionary<string, BusinessFlow>();
@@ -260,6 +260,12 @@ namespace Ginger.ALM.ZephyrEnt
                     selectFolderBtn.Click += new RoutedEventHandler(SelectFolder);
                     GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Planning", this, new ObservableList<Button> { selectFolderBtn }, true, "Cancel", Cancel_Clicked);
                     return CurrentSelectedPath;
+                case (eExplorerTestPlanningPageUsageType.Map):
+                    //Button importBtn = new Button();
+                    //importBtn.Content = "Import Selected";
+                    //importBtn.Click += new RoutedEventHandler(ImportSelected);
+                    //GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Planning", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
+                    return CurrentSelectedTestSets;
                 default:
                     return "";
             }

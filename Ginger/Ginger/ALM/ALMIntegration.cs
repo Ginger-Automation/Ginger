@@ -264,7 +264,7 @@ namespace Ginger.ALM
         internal bool MappedBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false)
         {
             //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            WizardWindow.ShowWizard(new MappedToALMWizard.AddMappedToALMWizard(/*mContext*/));
+            WizardWindow.ShowWizard(new MappedToALMWizard.AddMappedToALMWizard(businessFlow));
             Reporter.ToLog(eLogLevel.INFO, ("Exporting " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
             //Passing Solution Folder path to GingerCore
             ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
