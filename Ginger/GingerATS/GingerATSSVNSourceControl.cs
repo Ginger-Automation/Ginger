@@ -24,6 +24,7 @@ namespace GingerATS
 {
     public class GingerATSSVNSourceControl
     {
+        public GingerATSLog Logger = null;
         private SvnClient mClient;
         public SourceConnectionDetails mSourceConnectionDetails { get; set; }
         string mSolutionFullLocalPath=string.Empty;
@@ -72,6 +73,7 @@ namespace GingerATS
             }
             catch (Exception ex)
             {
+                Logger.AddLineToLog(eLogLineType.ERROR, "Failed to Clone the Repository to local, Error: " + ex.Message);
                 mClient = null;
                 throw ex;
             }
@@ -87,10 +89,11 @@ namespace GingerATS
 
             try
             {
-                mClient.Update(mSolutionFullLocalPath + @"/SharedRepository", out mOperationResult);
+                mClient.Update(Path.Combine(mSolutionFullLocalPath, "SharedRepository"), out mOperationResult);
             }
             catch (Exception ex)
             {
+                Logger.AddLineToLog(eLogLineType.ERROR, "Failed to Update the Repository to local, Error: " + ex.Message);
                 mClient = null;
                 throw ex;
             }
