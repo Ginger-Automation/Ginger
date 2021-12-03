@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="150" />
         </Grid.ColumnDefinitions>
 
         <!--Window Selection Area-->
@@ -156,7 +156,7 @@
             <Ginger:UCElementDetails x:Name="xUCElementDetails" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Grid>
 
-        <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+        <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="2" Margin="0,0,-1,-0.4">
             <Border BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Top" />
             <usercontrols:ImageMakerControl x:Name="xStatusBarIcon" DockPanel.Dock="Left" ImageType="MousePointer" Width="12" Height="12" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed" />
             <TextBlock x:Name="xStatusBarText" Text="Click on an element to see its details" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="10,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" Visibility="Collapsed" />
