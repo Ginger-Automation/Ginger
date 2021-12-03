@@ -104,7 +104,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     {
                         var responseString = new CLIRequestAPI().ExecuteFromRunsetShortCutWizard(AutoRunConfiguration.ExecutionServiceUrl, AutoRunConfiguration.CLIContent);
 
-                        if (responseString == "201")
+                        if (responseString == "Created")
                         {
                             successCount++;
                         }
@@ -135,14 +135,15 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
                 count++;
             }
-            if (failCount == 0)
+            if (failCount == 0 && successCount > 0)
             {
-                userMsg += "Total: "+ successCount + " Execution proces/s started successfully." + Environment.NewLine;
+                userMsg += "Total "+ successCount + " proces/s started successfully." + Environment.NewLine;
             }
             else if(failCount > 0)
             {
-                userMsg += "Total: " + successCount + " :Execution proces/s started successfully." + Environment.NewLine + failCount + " :Execution process failed to start." + Environment.NewLine;
+                userMsg += "Total " + successCount + " proces/s started successfully." + Environment.NewLine + "Total "+ failCount + " process failed to start." + Environment.NewLine;
             }
+
             return userMsg;
         }
 

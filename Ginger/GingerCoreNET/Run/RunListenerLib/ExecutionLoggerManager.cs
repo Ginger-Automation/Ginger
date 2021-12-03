@@ -838,7 +838,7 @@ namespace Ginger.Run
             throw new NotImplementedException();
         }
 
-        public async System.Threading.Tasks.Task PublishToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId)
+        public async System.Threading.Tasks.Task PublishToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, Guid runsetGuid)
         {
             if(Configuration.PublishLogToCentralDB== ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
             {
@@ -847,7 +847,7 @@ namespace Ginger.Run
                     Reporter.ToLog(eLogLevel.INFO, string.Format("######## Publishing {0} Execution details to central DB", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     Configuration.IsPublishToCentralDBRunning = true;
 
-                    await mExecutionLogger.SendExecutionLogToCentralDBAsync(runsetId, executionId, Configuration.DeleteLocalDataOnPublish);
+                    await mExecutionLogger.SendExecutionLogToCentralDBAsync(runsetId, executionId, Configuration.DeleteLocalDataOnPublish, runsetGuid);
 
                     Reporter.ToLog(eLogLevel.INFO, string.Format("########################## Execution details Publish to Central DB Completed", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 }

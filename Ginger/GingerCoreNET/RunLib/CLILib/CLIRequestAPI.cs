@@ -56,13 +56,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 response.Wait(20000);
                 
                 var responseString = response.Result.ToString();
-                Reporter.ToLog(eLogLevel.INFO, responseString);
-
                 if (response.Result.StatusCode != System.Net.HttpStatusCode.Created)
                 {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to start process. error :" + responseString);
                     return response.Result.ReasonPhrase;
                 }
-                
+                Reporter.ToLog(eLogLevel.DEBUG, responseString);
                 return response.Result.StatusCode.ToString();
             }
         }

@@ -51,11 +51,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             get
             {
-                if (string.IsNullOrEmpty(mCLIContent))
+                if (mCLIContent == null)
                 {
-                    mCLIContent = SelectedCLI.CreateConfigurationsContent(mSolution, mRunsetExecutor, mCLIHelper);
+                    mCLIContent = GetCLIContent();
                 }
-
                 return mCLIContent;
             }
             set
@@ -65,6 +64,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     mCLIContent = value;
                 }
             }
+        }
+
+        public string GetCLIContent()
+        {
+            return SelectedCLI.CreateConfigurationsContent(mSolution, mRunsetExecutor, mCLIHelper);
         }
 
         string mConfigFileFolderPath = null;

@@ -99,10 +99,14 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 xCLICommandPnl.Visibility = Visibility.Collapsed;
                 xShortCutCreationConfigsPnl.Visibility = Visibility.Collapsed;
                 xCreateShortCutRadioPnl.Visibility = Visibility.Collapsed;
+
+                if (mAutoRunWizard.AutoRunShortcut.StartExecution)
+                {
+                    xRequestSettingsPnl.Visibility = Visibility.Visible;
+                }
             }
             else
             {
-                //xShortCutCreationConfigsPnl.Visibility = Visibility.Visible;
                 xCreateShortCutRadioPnl.Visibility = Visibility.Visible;
                 xCLICommandPnl.Visibility = Visibility.Visible;
                 xRequestSettingsPnl.Visibility = Visibility.Collapsed;

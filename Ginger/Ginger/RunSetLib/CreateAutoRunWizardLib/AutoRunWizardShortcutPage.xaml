@@ -39,16 +39,16 @@
             </StackPanel>
         </DockPanel>
         <StackPanel x:Name="xExecutionRequestPnl">
-            <DockPanel x:Name="xRequestSettingsPnl" DockPanel.Dock="Top" Visibility="Collapsed">
-                <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="-5,0,0,0">Execution Service URL:</Label>
-                <TextBox x:Name="xExecutionServiceUrlTextBox" DockPanel.Dock="Top" Margin="0" Style="{StaticResource $TextBoxStyle}" Height="25"></TextBox>
-            </DockPanel>
             <DockPanel Margin="0 15 0 0">
                 <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Left" Margin="-5,0,0,0">Execute Now :</Label>
                 <RadioButton  x:Name="xRequestExecutionYesRadioButton" Checked="xRequestExecutionYesRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Yes</RadioButton>
                 <RadioButton  x:Name="xRequestExecutionNoRadioButton" Checked="xRequestExecutionNoRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">No</RadioButton>
             </DockPanel>
-            <DockPanel x:Name="xParallelExecutionPnl">
+            <DockPanel x:Name="xRequestSettingsPnl" DockPanel.Dock="Top" Visibility="Collapsed">
+                <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="-5,0,0,0">Execution Service URL:</Label>
+                <TextBox x:Name="xExecutionServiceUrlTextBox" DockPanel.Dock="Top" Margin="0" Style="{StaticResource $TextBoxStyle}" Height="25"></TextBox>
+            </DockPanel>
+            <DockPanel x:Name="xParallelExecutionPnl" Margin="0 5 0 0">
                 <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Left" Margin="-5,0,0,0">Number of parallel executions :</Label>
                 <Ginger:UCNumberPicker x:Name="xNumberPickerControl" />
             </DockPanel>

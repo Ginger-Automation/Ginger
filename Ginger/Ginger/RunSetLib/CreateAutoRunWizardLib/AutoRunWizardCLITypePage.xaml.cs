@@ -33,8 +33,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     /// </summary>
     public partial class AutoRunWizardCLITypePage : Page, IWizardPage
     {
-        AutoRunWizard mAutoRunWizard;
-        private bool mIsResetCofigContent;
+        private AutoRunWizard mAutoRunWizard;
+        private bool mResetCLIContent;
         private string mTempCLIContent;
 
         public AutoRunWizardCLITypePage()
@@ -53,8 +53,9 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     xConfigurationPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigFileFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);
                     xParametersRadioButton.IsChecked = true;
                     BindingHandler.ObjFieldBinding(xCLIContentTextBox, TextBox.TextProperty, mAutoRunWizard.AutoRunConfiguration, nameof(mAutoRunWizard.AutoRunConfiguration.CLIContent), BindingMode: System.Windows.Data.BindingMode.TwoWay);
+                    mAutoRunWizard.AutoRunConfiguration.CLIContent = mAutoRunWizard.AutoRunConfiguration.GetCLIContent();
                     mTempCLIContent = mAutoRunWizard.AutoRunConfiguration.CLIContent;
-                    mIsResetCofigContent = true;
+                    mResetCLIContent = false;
                     break;
 
                 case EventType.Active:
@@ -62,10 +63,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     {
                         xCLIContentTextBox.AddValidationRule(new ValidateJsonFormat());
                     }
-                    if (mIsResetCofigContent)
-                    {
-                        mAutoRunWizard.AutoRunConfiguration.CLIContent = string.Empty;
-                    }
+                    ResetCLIContent(mResetCLIContent);
                     ShowHelp();
                     ShowContent();
                     break;
@@ -78,8 +76,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     else if(WizardEventArgs.Wizard.GetCurrentPage().Page == this && mTempCLIContent != mAutoRunWizard.AutoRunConfiguration.CLIContent)
                     {
                         WizardEventArgs.CancelEvent = false;
-                        mIsResetCofigContent = true;
-                        mAutoRunWizard.AutoRunConfiguration.CLIContent = string.Empty;
+                        ResetCLIContent(mResetCLIContent = true);
                         mTempCLIContent = mAutoRunWizard.AutoRunConfiguration.CLIContent;
                         ShowContent();
                     }
@@ -89,11 +86,20 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     }
                     break;
                 case EventType.LeavingForNextPage:
-                    mIsResetCofigContent = false;
+                    mResetCLIContent = false;
                     break;
             }
         }
-        
+
+        private void ResetCLIContent(bool resetCLIContent)
+        {
+            if (resetCLIContent)
+            {
+                mAutoRunWizard.AutoRunConfiguration.CLIContent = mAutoRunWizard.AutoRunConfiguration.GetCLIContent();
+                mTempCLIContent = mAutoRunWizard.AutoRunConfiguration.CLIContent;
+            }
+        }
+
         private void ShowContent()
         {
             xCLIContentTextBox.Text = mAutoRunWizard.AutoRunConfiguration.CLIContent;                    
@@ -142,7 +148,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
             if (mAutoRunWizard != null)
             {
-                mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIConfigFile;
+                ResetCLIContent(mResetCLIContent=true);
                 ShowHelp();
                 ShowContent();
             }
@@ -164,7 +170,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIDynamicFile;
                 ShowHelp();
-                mAutoRunWizard.AutoRunConfiguration.CLIContent = string.Empty;
+                ResetCLIContent(mResetCLIContent=true);
                 ShowContent();
             }
             xConfigFileSettingsPnl.Visibility = Visibility.Visible;
@@ -202,7 +208,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIArgs;
                 ShowHelp();
-                mAutoRunWizard.AutoRunConfiguration.CLIContent = string.Empty;
+                ResetCLIContent(mResetCLIContent=true);
                 ShowContent();
             }
 
@@ -225,7 +231,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIRequest;
                 mAutoRunWizard.AutoRunConfiguration.IsRequestAPIExecution = true;
                 ShowHelp();
-                mAutoRunWizard.AutoRunConfiguration.CLIContent = string.Empty;
+                ResetCLIContent(mResetCLIContent=true);
                 ShowContent();
             }
             xConfigFileSettingsPnl.Visibility = Visibility.Collapsed;

@@ -566,7 +566,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return string.Empty;
         }
 
-        public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData)
+        public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData,Guid runSetGuid)
         {
             //Get the latest execution details from LiteDB
             LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
@@ -578,8 +578,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             //Map the data to AccountReportRunset Object
             AccountReportRunSet accountReportRunSet = centralExecutionLogger.MapDataToAccountReportObject(liteDbRunSet);
             SetExecutionId(accountReportRunSet, executionId);
-            
-
+            accountReportRunSet.EntityId = runSetGuid;
+            accountReportRunSet.GingerSolutionGuid = WorkSpace.Instance.Solution.Guid;
+           
             //Publish the Data and screenshots to Central DB
             await centralExecutionLogger.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
             await centralExecutionLogger.SendScreenShotsToCentralDBAsync(executionId, screenshotList);
