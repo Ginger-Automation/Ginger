@@ -169,8 +169,8 @@ namespace GingerCore.Actions.VisualTesting
             //TODO: set the proxy
             // IWebProxy p = WebRequest.DefaultWebProxy; // .GetSystemWebProxy();
 
-            mAppName = mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
-            mTestName = mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamTestName); 
+            mAppName = mAct.ValueExpression.Calculate(mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName));
+            mTestName = mAct.ValueExpression.Calculate(mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamTestName)); 
             mAct.CheckSetAppWindowSize();
             mEyes.ApiKey = ((SeleniumDriver)mDriver).ApplitoolsViewKey; 
             mEyes.ServerUrl = string.IsNullOrEmpty(((SeleniumDriver)mDriver).ApplitoolsServerUrl) ? mEyes.ServerUrl : ((SeleniumDriver)mDriver).ApplitoolsServerUrl;
@@ -238,9 +238,10 @@ namespace GingerCore.Actions.VisualTesting
         {
             runner = new ClassicRunner();
             newmEyes = new Eyes(runner);
+            mAppName = mAct.ValueExpression.Calculate(mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName));
+            mTestName = mAct.ValueExpression.Calculate(mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamTestName));
             SetUp(newmEyes,((SeleniumDriver)mDriver).ApplitoolsServerUrl, ((SeleniumDriver)mDriver).ApplitoolsViewKey, ((SeleniumDriver)mDriver).GetBrowserType());
-            mAppName = mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
-            mTestName = mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
+            
             mAct.CheckSetAppWindowSize();
             List<int> mResolution= mAct.GetWindowResolution();
             newmEyes.Open(((SeleniumDriver)mDriver).GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
@@ -258,7 +259,7 @@ namespace GingerCore.Actions.VisualTesting
 
             NewSetEyesMatchLevel();
             
-            newmEyes.Check(Target.Window().Fully().WithName(mAct.ItemName));
+            newmEyes.Check(Target.Window().Fully().WithName(mAct.ValueExpression.Calculate(mAct.ItemName)));
 
             mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;          
 
@@ -278,7 +279,7 @@ namespace GingerCore.Actions.VisualTesting
                     TestResultContainer[] resultContainer = allTestResults.GetAllResults();
                     TR = resultContainer[0].TestResults;
                 }
-                 
+
                 // Update results info into outputs
                 mAct.ExInfo = "URL to view results: " + TR.Url;
                 mAct.AddOrUpdateReturnParamActual("ResultsURL", TR.Url + "");
@@ -289,15 +290,26 @@ namespace GingerCore.Actions.VisualTesting
                 mAct.AddOrUpdateReturnParamActual("StrictMatches", TR.StrictMatches + "");
                 mAct.AddOrUpdateReturnParamActual("ContentMatches", TR.ContentMatches + "");
                 mAct.AddOrUpdateReturnParamActual("LayoutMatches", TR.LayoutMatches + "");
+                mAct.AddOrUpdateReturnParamActual("Missing", TR.Missing + "");
+
+
+
                 if (!TR.IsNew)
                 {
                     foreach (StepInfo step in TR.StepsInfo)
                     {
-                        mAct.AddOrUpdateReturnParamActual(step.Name, step.IsDifferent ? "Failed" : "Passed" + "");
+                        if (!step.HasCurrentImage)
+                        {
+                            mAct.AddOrUpdateReturnParamActual(step.Name, "Failed with Missing Image" + "");
+                        }
+                        else
+                        {
+                            mAct.AddOrUpdateReturnParamActual(step.Name, step.IsDifferent ? "Failed" : "Passed" + "");
+                        }
                     }
                 }
                 mAct.AddOrUpdateReturnParamActual("IsNew", TR.IsNew + "");
-                if (TR.Mismatches == 0 || TR.IsNew)
+                if ((TR.Mismatches == 0 || TR.IsNew) && TR.Missing == 0)
                 {
                     mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                     if (TR.IsNew)
@@ -306,14 +318,18 @@ namespace GingerCore.Actions.VisualTesting
                     }
                     else
                     {
-                        mAct.ExInfo = TR.Matches + " steps Matched with saved baseline in Applitools."; 
+                        mAct.ExInfo = TR.Matches + " steps Matched with saved baseline in Applitools.";
                     }
-                    
+
                 }
                 else
                 {
                     mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                    mAct.Error = TR.Mismatches + " steps Mismatched with saved baseline image in Applitools.";
+                    mAct.Error = TR.Mismatches + " steps Mismatched with saved baseline image in Applitools. ";
+                    if (TR.Missing != 0)
+                    {
+                        mAct.Error += TR.Missing + " steps missing current images.";
+                    }
                 }
             }
             catch (Exception ex)
