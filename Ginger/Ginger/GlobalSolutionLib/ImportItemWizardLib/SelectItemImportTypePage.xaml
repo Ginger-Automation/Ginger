@@ -21,7 +21,7 @@
         <StackPanel x:Name="ImportFromLocalFolderPanel" Visibility="Visible" Grid.Row="1">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Select Solution folder:</Label>
             <StackPanel Orientation="Horizontal" >
-                <TextBox x:Name="xGlobalSolutionFolderTextBox" Style="{StaticResource @TextBoxStyle}" ToolTip="Solutoin folder full path" Height="25" Width="700" Margin="5,0,0,0"></TextBox>
+                <TextBox x:Name="xGlobalSolutionFolderTextBox" Style="{StaticResource @TextBoxStyle}" ToolTip="Solution folder full path" Height="25" Width="700" Margin="5,0,0,0"></TextBox>
                 <Button x:Name="xSelectolutionFolderButton" Click="SelectSolutionFolderButton_Click" Style="{StaticResource @InputButtonStyle}" Margin="5,0,0,0" VerticalAlignment="Center" Content="Browse"/>
             </StackPanel>
         </StackPanel>
