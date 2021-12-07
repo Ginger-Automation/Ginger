@@ -325,7 +325,10 @@ namespace GingerCore.Actions.VisualTesting
                 else
                 {
                     mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                    mAct.Error = TR.Mismatches + " steps Mismatched with saved baseline image in Applitools. ";
+                    if (TR.Mismatches != 0)
+                    {
+                        mAct.Error = TR.Mismatches + " steps Mismatched with saved baseline image in Applitools. ";
+                    }
                     if (TR.Missing != 0)
                     {
                         mAct.Error += TR.Missing + " steps missing current images.";
