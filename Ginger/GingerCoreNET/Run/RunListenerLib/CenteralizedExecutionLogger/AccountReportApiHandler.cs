@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<LiteDbReportBase, AccountReportBase>().ForMember(dest => dest.ElapsedEndTimeStamp, src => src.MapFrom(x => x.Elapsed)).IncludeAllDerived();
-                cfg.CreateMap<LiteDbRunSet, AccountReportRunSet>().ForMember(dest => dest.ExecutedByUser, src => src.MapFrom(x => x.ExecutedbyUser));
+                cfg.CreateMap<LiteDbRunSet, AccountReportRunSet>().ForMember(dest => dest.ExecutedByUser, src => src.MapFrom(x => x.ExecutedByUser));
                 cfg.CreateMap<LiteDbRunner, AccountReportRunner>();
 
                 cfg.CreateMap<LiteDbBusinessFlow, AccountReportBusinessFlow>();
