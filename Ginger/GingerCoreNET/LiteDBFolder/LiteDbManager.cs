@@ -163,7 +163,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 item.EndTimeStamp = DateTime.Today;
                 item.GingerVersion = "66";
                 item.MachineName = "my machine";
-                item.ExecutedbyUser = "my name";
+                item.ExecutedByUser = "my name";
                 item.RunnersColl = runnersData;
                 data.Add(item);
             }
