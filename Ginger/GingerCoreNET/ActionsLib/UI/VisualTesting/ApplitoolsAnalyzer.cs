@@ -169,8 +169,8 @@ namespace GingerCore.Actions.VisualTesting
             //TODO: set the proxy
             // IWebProxy p = WebRequest.DefaultWebProxy; // .GetSystemWebProxy();
 
-            mAppName = mAct.ValueExpression.Calculate(mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName));
-            mTestName = mAct.ValueExpression.Calculate(mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamTestName)); 
+            mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
+            mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName); 
             mAct.CheckSetAppWindowSize();
             mEyes.ApiKey = ((SeleniumDriver)mDriver).ApplitoolsViewKey; 
             mEyes.ServerUrl = string.IsNullOrEmpty(((SeleniumDriver)mDriver).ApplitoolsServerUrl) ? mEyes.ServerUrl : ((SeleniumDriver)mDriver).ApplitoolsServerUrl;
@@ -238,8 +238,8 @@ namespace GingerCore.Actions.VisualTesting
         {
             runner = new ClassicRunner();
             newmEyes = new Eyes(runner);
-            mAppName = mAct.ValueExpression.Calculate(mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName));
-            mTestName = mAct.ValueExpression.Calculate(mAct.GetInputParamValue(ActVisualTesting.Fields.ApplitoolsParamTestName));
+            mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
+            mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
             SetUp(newmEyes,((SeleniumDriver)mDriver).ApplitoolsServerUrl, ((SeleniumDriver)mDriver).ApplitoolsViewKey, ((SeleniumDriver)mDriver).GetBrowserType());
             
             mAct.CheckSetAppWindowSize();
@@ -259,7 +259,7 @@ namespace GingerCore.Actions.VisualTesting
 
             NewSetEyesMatchLevel();
             
-            newmEyes.Check(Target.Window().Fully().WithName(mAct.ValueExpression.Calculate(mAct.ItemName)));
+            newmEyes.Check(Target.Window().Fully().WithName(mAct.GetInputParamCalculatedValue(mAct.ItemName)));
 
             mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;          
 
