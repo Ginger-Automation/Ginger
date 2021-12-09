@@ -2,18 +2,25 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.GlobalSolutionLib;
 using Amdocs.Ginger.Repository;
+using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.WizardLib;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
@@ -28,8 +35,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
         public List<string> ItemTypesList = Enum.GetNames(typeof(GlobalSolution.eImportItemType)).ToList();
 
         public ObservableList<GlobalSolutionItem> ItemTypeListToImport = null;
-        public ObservableList<GlobalSolutionItem> ItemsListToImport = null;
-        public ObservableList<GlobalSolutionItem> SelectedItemTypeListToImport = null;
+        public ObservableList<GlobalSolutionItem> ItemsListToImport = new ObservableList<GlobalSolutionItem>();
+        public ObservableList<GlobalSolutionItem> SelectedItemsListToImport = new ObservableList<GlobalSolutionItem>();
         public List<VariableBase> VariableListToImport = new List<VariableBase>();
         public List<EnvApplication> EnvAppListToImport = new List<EnvApplication>();
 
@@ -44,7 +51,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
             AddPage(Name: "Select Solution Items", Title: "Select Solution Items", SubTitle: "Select Solution Items...", Page: new SelectItemFromSolutionPage());
 
-            AddPage(Name: "Solution Items Dependancy Validation", Title: "Solution Items Dependancy Validation", SubTitle: "Solution Items Dependancy Validation...", Page: new ItemDependancyPage());
+            AddPage(Name: "Solution Items Dependency Validation", Title: "Solution Items Dependency Validation", SubTitle: "Solution Items Dependency Validation...", Page: new ItemDependancyPage());
 
         }
 
@@ -52,52 +59,79 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 
         public override void Finish()
         {
+            try
+            {
+                ProcessStarted();
+                ValidateAndAddItemToSolution().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+            finally
+            {
+                ProcessEnded();
+            }
+        }
+
+        private async Task ValidateAndAddItemToSolution()
+        {
             if (!string.IsNullOrEmpty(SolutionFolder))
             {
-                foreach (GlobalSolutionItem itemToAdd in SelectedItemTypeListToImport.Where(x => x.Selected).ToList())
+                foreach (GlobalSolutionItem itemToAdd in SelectedItemsListToImport.Where(x => x.Selected).ToList())
                 {
-                    string sourceFile = itemToAdd.ItemFullPath;
-                    string targetFile = string.Empty;
-                    //Get subdirectory path
-                    string path = Path.GetDirectoryName(itemToAdd.ItemFullPath);
-                    string folderPath = path.Replace(SolutionFolder + "\\", "");
-
-                    if (string.IsNullOrEmpty(itemToAdd.ItemNewName))
+                    try
                     {
-                        targetFile = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, folderPath, Path.GetFileName(itemToAdd.ItemExtraInfo));
+                        string sourceFile = itemToAdd.ItemFullPath;
+                        string targetFile = string.Empty;
+                        //Get subdirectory path
+                        string path = Path.GetDirectoryName(itemToAdd.ItemFullPath);
+                        string folderPath = path.Replace(SolutionFolder, "");
+
+                        if (string.IsNullOrEmpty(itemToAdd.ItemNewName))
+                        {
+                            targetFile = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, folderPath, Path.GetFileName(itemToAdd.ItemExtraInfo));
+                        }
+                        else
+                        {
+                            string newFileName = GlobalSolutionUtils.Instance.GetUniqFileName(Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, folderPath, Path.GetFileName(itemToAdd.ItemExtraInfo)));
+                            targetFile = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, folderPath, newFileName);
+                        }
+
+                        switch (itemToAdd.ItemType)
+                        {
+                            case GlobalSolution.eImportItemType.Documents:
+                                AddItemToSolution(sourceFile, targetFile, false, itemToAdd);
+                                break;
+                            case GlobalSolution.eImportItemType.Environments:
+                                GlobalSolutionUtils.Instance.EnvParamsToReEncrypt(sourceFile, itemToAdd);
+                                AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
+                                break;
+                            case GlobalSolution.eImportItemType.BusinessFlows:
+                            case GlobalSolution.eImportItemType.SharedRepositoryActivities:
+                                GlobalSolutionUtils.Instance.VariablesToReEncrypt(sourceFile, itemToAdd);
+                                AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
+                                break;
+
+                            case GlobalSolution.eImportItemType.DataSources:
+                            case GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup:
+                            case GlobalSolution.eImportItemType.SharedRepositoryActions:
+                            case GlobalSolution.eImportItemType.SharedRepositoryVariables:
+                            case GlobalSolution.eImportItemType.APIModels:
+                            case GlobalSolution.eImportItemType.POMModels:
+                            case GlobalSolution.eImportItemType.Agents:
+                            case GlobalSolution.eImportItemType.TargetApplication:
+                            case GlobalSolution.eImportItemType.Variables:
+                                AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
+                                break;
+
+                            default:
+                                break;
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        string newFileName = GlobalSolutionUtils.Instance.GetUniqFileName(Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, folderPath, Path.GetFileName(itemToAdd.ItemExtraInfo)));
-                        targetFile = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, folderPath, newFileName);
-                    }
-
-                    switch (itemToAdd.ItemType)
-                    {
-                        case GlobalSolution.eImportItemType.Documents:
-                            AddItemToSolution(sourceFile, targetFile, false, itemToAdd);
-                            break;
-                        case GlobalSolution.eImportItemType.Environments:
-                            GlobalSolutionUtils.Instance.EnvParamsToReEncrypt(sourceFile, itemToAdd);
-                            AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
-
-                            break;
-                        //case GlobalSolution.eImportItemType.BusinesFlows:
-                        case GlobalSolution.eImportItemType.SharedRepositoryActivities:
-                            GlobalSolutionUtils.Instance.VariablesToReEncrypt(sourceFile, itemToAdd);
-                            AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
-
-                            break;
-                        case GlobalSolution.eImportItemType.DataSources:
-                        case GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup:
-                        case GlobalSolution.eImportItemType.SharedRepositoryActions:
-                        case GlobalSolution.eImportItemType.SharedRepositoryVariables:
-                        case GlobalSolution.eImportItemType.APIModels:
-                        case GlobalSolution.eImportItemType.POMModels:
-                            AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
-                            break;
-                        default:
-                            break;
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
                 }
 
@@ -106,6 +140,15 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 {
                     GlobalSolutionUtils.Instance.AddEnvDependanciesToSolution(EnvAppListToImport);
                 }
+                //Save solution
+                WorkSpace.Instance.Solution.SaveSolution();
+            }
+        }
+
+        void AddItemToSolution(string sourceFile, string targetFile, bool saveAsRepo, GlobalSolutionItem itemToImport)
+        {
+            if (itemToImport.ItemType == GlobalSolution.eImportItemType.Variables)
+            {
                 //Add Global Variables from the list
                 if (VariableListToImport.Count > 0)
                 {
@@ -116,13 +159,22 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                             WorkSpace.Instance.Solution.AddVariable(vb);
                         }
                     }
-                    WorkSpace.Instance.Solution.SaveSolution();
                 }
+                return;
             }
-        }
+            if (itemToImport.ItemType == GlobalSolution.eImportItemType.TargetApplication)
+            {
+                string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.AllDirectories);
+                Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
+                ApplicationPlatform applicationPlatform  = solution.ApplicationPlatforms.Where(x=>x.AppName == itemToImport.ItemName).FirstOrDefault();
 
-        void AddItemToSolution(string sourceFile, string targetFile, bool saveAsRepo, GlobalSolutionItem itemToImport)
-        {
+                ApplicationPlatform appPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == applicationPlatform.AppName && x.Platform == applicationPlatform.Platform).FirstOrDefault();
+                if (appPlatform == null)
+                {
+                    WorkSpace.Instance.Solution.ApplicationPlatforms.Add(applicationPlatform);
+                }
+                return;
+            }
             RepositoryItemBase repoItemToImport = null;
             if (itemToImport.ItemImportSetting == GlobalSolution.eImportSetting.Replace)
             {
@@ -178,8 +230,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     //
                     File.Copy(sourceFile, newFile);
                 }
-                
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(repoItemToImport);
+                //Create repository (sub) folder before adding
+                AddRepositoryItem(itemToImport, repoItemToImport, targetFile);
             }
             else
             {
@@ -190,7 +242,62 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 File.Copy(sourceFile, targetFile);
             }
         }
+        void AddRepositoryItem(GlobalSolutionItem itemToImport, RepositoryItemBase repoItemToImport, string targetFile)
+        {
+            //Get subdirectory path
+            string path = Path.GetDirectoryName(targetFile);
+            RepositoryFolderBase repoFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(path);
+            if (repoFolder != null)
+            {
+                repoFolder.AddRepositoryItem(repoItemToImport);
+                return;
+            }
 
-        
+            string folderPath = string.Empty;
+            RepositoryFolderBase rootFolder = null;
+            RepositoryFolderBase subFolder = null;
+            switch (itemToImport.ItemType)
+            {
+                case GlobalSolution.eImportItemType.Environments:
+                    rootFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ProjEnvironment>();
+                    break;
+                case GlobalSolution.eImportItemType.DataSources:
+                    rootFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
+                    break;
+                case GlobalSolution.eImportItemType.BusinessFlows:
+                    rootFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>();
+                    break;
+                case GlobalSolution.eImportItemType.SharedRepositoryActivities:
+                    rootFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>();
+                    break;
+                case GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup:
+                    rootFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>();
+                    break;
+                case GlobalSolution.eImportItemType.SharedRepositoryActions:
+                    rootFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>();
+                    break;
+                case GlobalSolution.eImportItemType.SharedRepositoryVariables:
+                    rootFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>();
+                    break;
+                case GlobalSolution.eImportItemType.APIModels:
+                    rootFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
+                    break;
+                case GlobalSolution.eImportItemType.POMModels:
+                    rootFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
+                    break;
+                case GlobalSolution.eImportItemType.Agents:
+                    rootFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Agent>();
+                    break;
+
+                default:
+                    break;
+            }
+
+            folderPath = path.Replace(rootFolder.FolderFullPath + "\\", "");
+            subFolder = rootFolder.AddSubFolder(folderPath);
+            subFolder.FolderRelativePath = rootFolder.FolderRelativePath + "\\" + folderPath;
+            subFolder.AddRepositoryItem(repoItemToImport);
+        }
+
     }
 }

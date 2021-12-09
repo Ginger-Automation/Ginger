@@ -1029,6 +1029,14 @@ namespace GingerCore.Actions
             }
         }
 
+        public void AddToOutputValues(Dictionary<string, object> keyValuePairs)
+        {
+            foreach (KeyValuePair<string, object> keyValuePair in keyValuePairs)
+            {
+                AddJsonKeyValueToOutputValue(keyValuePair.Value, keyValuePair.Key, 1);
+            }
+        }
+
         private void AddJsonKeyValueToOutputValue(object Value, string Key, int Path)
         {
             try
@@ -1590,10 +1598,15 @@ namespace GingerCore.Actions
             return updatedAct;
         }
 
-        public void Reset()
+        public void Reset(bool reSetActionErrorHandlerExecutionStatus = false)
         {
             if (this != null)
             {
+                if (reSetActionErrorHandlerExecutionStatus)
+                {
+                    this.ErrorHandlerExecuted = false;
+                }
+                
                 this.ExInfo = string.Empty;
                 this.Error = null;
                 this.Elapsed = null;
@@ -1849,6 +1862,7 @@ namespace GingerCore.Actions
         public Guid ExecutionId { get; set; }
 
         public Guid ParentExecutionId { get; set; }
+        public bool ErrorHandlerExecuted { get; set; }
 
         public virtual void DoNewActionSetup()
         {

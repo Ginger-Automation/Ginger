@@ -158,7 +158,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override bool IsPlatformSupportPOM()
         {
-            return false;
+            return true;
         }
 
         public override string GetPageUrlRadioLabelText()

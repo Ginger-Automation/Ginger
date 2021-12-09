@@ -10,17 +10,15 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}" Margin="10,10,10,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="300*"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="300*" MinHeight="50"/>
         </Grid.RowDefinitions>
-        <StackPanel x:Name="ItemTypeListSelectionPanel">
+        <StackPanel x:Name="ItemTypeListSelectionPanel" Orientation="Vertical">
             <Label x:Name="ItemTypeListLabel" Style="{StaticResource @InputFieldLabelStyle}">Filter List by Item Type:</Label>
             <ComboBox x:Name="ItemTypeListComboBox" SelectionChanged="ItemTypeList_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
-        </StackPanel>
-        <StackPanel Grid.Row="1">
             <Label Style="{StaticResource $LabelStyle}">Select Items To Import:</Label>
-            <Ginger:ucGrid x:Name="xItemsToImportGrid" AutomationProperties.AutomationId="ItemsToImport AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
-
         </StackPanel>
+        <Ginger:ucGrid Grid.Row="1" x:Name="xItemsToImportGrid" AutomationProperties.AutomationId="ItemsToImport AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+
     </Grid>
 </Page>

@@ -195,7 +195,7 @@ namespace Amdocs.Ginger.Repository
 
         public async void RefreshFolderSourceControlStatus()
         {
-            if (mSourceControlStatus != eImageType.Null)
+            if (mSourceControlStatus != eImageType.Null && SourceControl != null)
             {
                 mSourceControlStatus = await SourceControl.GetFileStatusForRepositoryItemPath(FolderFullPath);
                 OnPropertyChanged(nameof(SourceControlStatus));

@@ -214,7 +214,7 @@ namespace GingerCore.ALM
         }
         public override bool IsServerConnected()
         {
-            throw new NotImplementedException();
+            return IsConnectValidationDone;
         }
         public List<BaseResponseItem> GetTreeByCretiria(string type, int releaseId, int revisionId, int parentId)
         {

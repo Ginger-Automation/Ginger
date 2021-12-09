@@ -26,36 +26,30 @@
         <StackPanel Grid.Row="0" Margin="0,0,0,0">
             <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Applitools Action:"/>
             <UserControlsLib:UCComboBox  x:Name="xApplitoolsActionComboBox" HorizontalAlignment="Left" Width="250"/>
-        </StackPanel>
-        
-        <StackPanel Grid.Row="1" x:Name="xApplitoolsKey">
-            <Label Content="Applitools Key:" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" />
-            <Actions:UCValueExpression x:Name="ApplitoolsKeyUCVE"/>
-        </StackPanel>
+        </StackPanel >
 
-
-        <StackPanel Grid.Row="2" x:Name="xApplitoolsApplicationName">
+        <StackPanel Grid.Row="1" x:Name="xApplitoolsApplicationName">
             <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Application Name:"/>
             <Actions:UCValueExpression x:Name="ApplicationNameUCVE"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="3" x:Name="xApplitoolsTestName">
+        <StackPanel Grid.Row="2" x:Name="xApplitoolsTestName">
             <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Test Name:"/>
             <Actions:UCValueExpression x:Name="TestNameUCVE"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="4" HorizontalAlignment="Left" x:Name="xApplitoolsMatchLevel">
+        <StackPanel Grid.Row="3" HorizontalAlignment="Left" x:Name="xApplitoolsMatchLevel">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
                 <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Match Level:"/>
                 <UserControlsLib:UCComboBox HorizontalAlignment="Left" x:Name="SetMatchLevelComboBox" Width="250"/>
             </StackPanel>
         </StackPanel>
 
-        <StackPanel Grid.Row="5" Margin="1,25,0,0" x:Name="xDoNotFailActionOnMismatchPanel">
+        <StackPanel Grid.Row="4" Margin="1,25,0,0" x:Name="xDoNotFailActionOnMismatchPanel">
             <CheckBox x:Name="DoNotFailActionOnMismatch" VerticalAlignment="Center" Style="{StaticResource @InputCheckBoxStyle}" Content="Fail Action on Mismatch" />
         </StackPanel>
 
-        <StackPanel Grid.Row="6" x:Name="xApplitoolsResultsButton" HorizontalAlignment="Left" Margin="0,25,0,0">
+        <StackPanel Grid.Row="5" x:Name="xApplitoolsResultsButton" HorizontalAlignment="Left" Margin="0,25,0,0">
             <Button x:Name="OpenResultsURL" Click="OpenResultsURL_Click" Style="{StaticResource @InputButtonStyle}" Width="250">Open Results URL</Button>
         </StackPanel>
 

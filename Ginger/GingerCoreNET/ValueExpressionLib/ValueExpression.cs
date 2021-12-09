@@ -86,7 +86,7 @@ namespace GingerCore
         //  \A Matches the position before the first character in a string. Not affected by the MultiLine setting  
         //  \Z Matches the position after the last character of a string. Not affected by the MultiLine setting.  
         //  \G Specifies that the matches must be consecutive, without any intervening non-matching characters.  
-        
+
 
         private static string rxVar = "";
         private static string rxVare = "";
@@ -95,7 +95,7 @@ namespace GingerCore
         public static Regex rxVarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
 
         public static Regex rxGlobalParamPattern = new Regex(@"({GlobalAppsModelsParam Name=(\D*\d*\s*)}})|({GlobalAppsModelsParam Name=(\D*\d*\s*)})", RegexOptions.Compiled);
-        
+
         private static Regex rxDSPattern = new Regex(@"{(\bDS Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public static Regex rxEnvParamPattern = new Regex(@"{(\bEnvParam App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public static Regex rxEnvUrlPattern = new Regex(@"{(\bEnvURL App=)\w+\b[^{}]*}", RegexOptions.Compiled);
@@ -125,13 +125,13 @@ namespace GingerCore
         ProjEnvironment Env;
         bool bUpdate;
         string updateValue;
-        bool bDone;        
+        bool bDone;
 
 
         public bool DecryptFlag { get; set; } = false;
         private string mValueCalculated = null;
 
-        
+
         public string Value { get; set; }
 
         public string ValueCalculated
@@ -146,7 +146,7 @@ namespace GingerCore
         public string Calculate(string expression)
         {
             Value = expression;
-            Calculate();            
+            Calculate();
             return mValueCalculated;
         }
 
@@ -163,7 +163,7 @@ namespace GingerCore
             this.bUpdate = bUpdate;
             this.updateValue = UpdateValue;
             this.bDone = bDone;
-            
+
         }
         public ValueExpression(ProjEnvironment Env, Context ObjContext, ObservableList<DataSourceBase> DSList)
         {
@@ -193,8 +193,8 @@ namespace GingerCore
         public Object Obj { get; set; }
         public string ObjAttr { get; set; }
 
-        
-        
+
+
 
         private void Calculate()
         {
@@ -232,7 +232,7 @@ namespace GingerCore
                         mValueCalculated = mValueCalculated.TrimStart(new char[] { '~', '\\', '/' });
                         mValueCalculated = Path.Combine(SolutionFolder, mValueCalculated);
                     }
-             
+
                 }
             }
             if (mValueCalculated.StartsWith(@"\~"))
@@ -242,7 +242,7 @@ namespace GingerCore
             }
         }
 
-#region Flow Details
+        #region Flow Details
 
         private void EvaluateFlowDetails()
         {
@@ -279,7 +279,7 @@ namespace GingerCore
                 }
             }
         }
-        
+
         private void ReplaceExecutionJsonDataDetails(string josnExpression)
         {
             //Select fields from selected template configuration
@@ -294,7 +294,7 @@ namespace GingerCore
                     defaultTemplate = HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault();
                 }
             }
-            else 
+            else
             {
                 defaultTemplate = HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault();
             }
@@ -342,7 +342,7 @@ namespace GingerCore
                 }
                 return new Tuple<eFlowDetailsObjects, string>(objEnum, field);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}' due to wrong format", flowDetailsExpression));
                 return null;
@@ -365,15 +365,15 @@ namespace GingerCore
 
             RunSetConfig runset = null;
             GingerRunner runner = null;
-            if (WorkSpace.Instance.RunsetExecutor!=null)
+            if (WorkSpace.Instance.RunsetExecutor != null)
             {
-                runset = WorkSpace.Instance.RunsetExecutor.RunSetConfig;                
-            }    
-            if(runset!=null)
+                runset = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
+            }
+            if (runset != null)
             {
                 runner = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.BusinessFlows.Contains(this.BF)).FirstOrDefault();
             }
-            
+
             RepositoryItemBase objtoEval = null;
             switch (obj)
             {
@@ -381,7 +381,7 @@ namespace GingerCore
                     objtoEval = this.Env;
                     break;
                 case eFlowDetailsObjects.Runset:
-                    objtoEval = runset;                                   
+                    objtoEval = runset;
                     break;
                 case eFlowDetailsObjects.Runner:
                     objtoEval = runner;
@@ -393,7 +393,7 @@ namespace GingerCore
                     }
                     break;
                 case eFlowDetailsObjects.BusinessFlow:
-                    objtoEval = this.BF;                                    
+                    objtoEval = this.BF;
                     break;
                 case eFlowDetailsObjects.ActivitiesGroup:
                     objtoEval = this.BF.CurrentActivitiesGroup;
@@ -405,14 +405,14 @@ namespace GingerCore
                     }
                     break;
                 case eFlowDetailsObjects.Action:
-                    objtoEval = (RepositoryItemBase)this.BF.CurrentActivity.Acts.CurrentItem;                   
+                    objtoEval = (RepositoryItemBase)this.BF.CurrentActivity.Acts.CurrentItem;
                     break;
                 case eFlowDetailsObjects.PreviousBusinessFlow:
                     if (runner != null)
                     {
                         objtoEval = runner.PreviousBusinessFlow;
                     }
-                   break;           
+                    break;
                 case eFlowDetailsObjects.PreviousActivity:
                     if (this.BF != null)
                     {
@@ -462,7 +462,7 @@ namespace GingerCore
                     }
                     break;
             }
-            if(objtoEval != null)
+            if (objtoEval != null)
             {
                 value = GetValueFromReflection(objtoEval, field);
                 if (value != null)
@@ -480,7 +480,7 @@ namespace GingerCore
             else
             {
                 mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, "N/A");//obj is null so representing as empty field
-            }           
+            }
         }
 
         private string GetValueFromReflection(object obj, string field)
@@ -516,7 +516,7 @@ namespace GingerCore
                 return null;
             }
         }
-#endregion Flow Details
+        #endregion Flow Details
 
         private void EvaluateCSharpFunctions()
         {
@@ -540,7 +540,7 @@ namespace GingerCore
         private void ReplaceGlobalParameter(string p)
         {
             string VarName = p.Replace("{GlobalAppsModelsParam Name=", "");
-            VarName = VarName.Substring(0, VarName.Length -1);
+            VarName = VarName.Substring(0, VarName.Length - 1);
 
             ObservableList<GlobalAppModelParameter> ModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
 
@@ -559,11 +559,11 @@ namespace GingerCore
                 //        mValueCalculated = mValueCalculated.Replace(p, Param.CurrentValue);
                 //}
                 //else
-                    mValueCalculated = mValueCalculated.Replace(p, Param.CurrentValue);
+                mValueCalculated = mValueCalculated.Replace(p, Param.CurrentValue);
             }
             else
             {
-                mValueCalculated = mValueCalculated.Replace(p,string.Format("ERROR: The Global Model Parameter '{0}' was not found",VarName));
+                mValueCalculated = mValueCalculated.Replace(p, string.Format("ERROR: The Global Model Parameter '{0}' was not found", VarName));
             }
         }
 
@@ -860,7 +860,7 @@ namespace GingerCore
                     }
                     if (dt.Rows.Count == 0)
                     {
-                        mValueCalculated = "No Row found with " + Query;
+                        mValueCalculated = "No Row Found";
                         return;
                     }
                     if (dt.Rows.Count > 0 && dt.Columns.Count > 0)
@@ -921,7 +921,7 @@ namespace GingerCore
                     DataSource.RunQuery(updateQuery);
                     mValueCalculated = "";
                 }
-                
+
             }
             else if (DataSource.DSType == DataSourceBase.eDSType.LiteDataBase)
             {
@@ -945,7 +945,7 @@ namespace GingerCore
                         string[] Name = tokens[1].Split(splitchar);
 
                         string[] markasdone = tokens[0].Split(new[] { "MASD=" }, StringSplitOptions.None)[1].Split(splitchar);
-                        if(!bDone)
+                        if (!bDone)
                         {
                             markasdone[0] = "N";
                         }
@@ -996,7 +996,7 @@ namespace GingerCore
                                 nextavail = true;
                             }
 
-                            if (litedbquery != "" )
+                            if (litedbquery != "")
                             {
                                 liteDB.RunQuery(litedbquery, rowNumber, tableName[0], Markasdone, nextavail);
                                 mValueCalculated = "";
@@ -1039,16 +1039,16 @@ namespace GingerCore
                 }
                 catch (Exception e)
                 {
-                    mValueCalculated = pOrg;
+                    mValueCalculated = e.Message.Contains("There is no row at") ? "No Row Found" : pOrg;
                     Console.WriteLine(e.StackTrace);
                 }
             }
         }
 
-        
+
 
         private void CalculateFunctions()
-        {      
+        {
             string value = mValueCalculated;
             MatchCollection matches = rxe.Matches(value);
             MatchCollection ms;
@@ -1102,7 +1102,7 @@ namespace GingerCore
         {
             var mc = rNestedfunc.Matches(mValueCalculated);
 
-            if (mc.Count==0)
+            if (mc.Count == 0)
             {
                 return;
             }
@@ -1120,7 +1120,7 @@ namespace GingerCore
             {
                 return;
             }
-            
+
             foreach (Match match in matches)
             {
                 ReplaceVar(match.Value);
@@ -1128,9 +1128,9 @@ namespace GingerCore
         }
 
         private void ReplaceEnvVars()
-        {            
+        {
             MatchCollection envParamMatches = rxEnvParamPattern.Matches(mValueCalculated);
-            foreach (Match match in envParamMatches)            
+            foreach (Match match in envParamMatches)
                 ReplaceEnvParamWithValue(match.Value, null);
 
             MatchCollection envUrlMatches = rxEnvUrlPattern.Matches(mValueCalculated);
@@ -1152,7 +1152,7 @@ namespace GingerCore
             {
                 vb = (from v1 in WorkSpace.Instance.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
             }
-                
+
             if (vb != null)
             {
                 if (DecryptFlag == true && vb is VariablePasswordString)
@@ -1178,7 +1178,7 @@ namespace GingerCore
             string pc = p.Substring(1, p.Length - 2);
             string[] a = pc.Split(' ');
             string Function = a[0];
-            
+
             switch (Function)
             {
                 case "Var":
@@ -1210,7 +1210,7 @@ namespace GingerCore
         {
             bool FailonUnix = false;
             try
-            {      
+            {
                 string Expr = p.Replace("\r\n", "vbCrLf");
                 Expr = Expr.Substring(1, Expr.Length - 2);
                 Expr = Expr.Replace("VBS Eval=", "");
@@ -1219,7 +1219,7 @@ namespace GingerCore
                 {
 
 
-                     FailonUnix = true;
+                    FailonUnix = true;
                     Expr = DecreaseVBSSplitFunIndexNumber(Expr);
                 }
                 string v = VBS.ExecuteVBSEval(@"" + Expr);
@@ -1290,7 +1290,7 @@ namespace GingerCore
         {
             string AppName = null;
             string GlobalParamName = null;
-            
+
             p = p.Replace("\r\n", "vbCrLf");
             string appStr = " App=";
             string paramStr = " Param=";
@@ -1314,7 +1314,7 @@ namespace GingerCore
                     ParamValue = GP.Value + "";  // Autohandle in case param is null convert to empty string
 
                     if (DecryptFlag == true && GP.Encrypt == true)
-                    {                        
+                    {
                         String strValuetoPass = EncryptionHandler.DecryptwithKey(GP.Value);
                         if (!string.IsNullOrEmpty(strValuetoPass)) { mValueCalculated = mValueCalculated.Replace(p, strValuetoPass); }
                         else mValueCalculated = mValueCalculated.Replace(p, ParamValue);
@@ -1365,11 +1365,11 @@ namespace GingerCore
                             mValueCalculated = mValueCalculated.Replace(p, mi.Invoke(classInstance, null).ToString());
                             break;
                         }
-                        
+
                         Regex paramRegEx = new Regex("(.*{.*.}\\\")|([,]+)", RegexOptions.Compiled | RegexOptions.Singleline);
 
                         //Remove Function name
-                        int firstStringPosition = FunName.IndexOf("(")+1;
+                        int firstStringPosition = FunName.IndexOf("(") + 1;
                         int secondStringPosition = FunName.IndexOf(")");
                         string allParams = FunName.Substring(firstStringPosition, secondStringPosition - firstStringPosition);
 
@@ -1421,8 +1421,8 @@ namespace GingerCore
             string P2 = aa.Length <= 4 ? "" : aa[4].Trim();
             if (string.IsNullOrEmpty(P2) == false)
             {
-                if (P2.Contains("\""))                
-                    P2 = P2.Replace("\"", "");                
+                if (P2.Contains("\""))
+                    P2 = P2.Replace("\"", "");
             }
 
             switch (FunName.Trim().ToLower())
@@ -1471,7 +1471,7 @@ namespace GingerCore
         {
             string VarName = null;
             string tmp = mValueCalculated;
-            
+
             string suba = string.Join(" ", new ArraySegment<string>(a, 1, a.Length - 1));
 
             string[] ParamVal = suba.Split('=');
@@ -1522,10 +1522,10 @@ namespace GingerCore
         /// <param name="BusinessFlow">Business Flow containing the Variables</param>
         /// <param name="Value">the Expression string</param>
         /// <returns></returns>
-        public static string Calculate(ProjEnvironment ProjEnvironment, BusinessFlow BusinessFlow, string Value,ObservableList <DataSourceBase> DSList,bool bUpdate = false, string UpdateValue = "")
+        public static string Calculate(ProjEnvironment ProjEnvironment, BusinessFlow BusinessFlow, string Value, ObservableList<DataSourceBase> DSList, bool bUpdate = false, string UpdateValue = "")
         {
             //TODO: this is static func, we can later on do cache and other stuff for performence if needed
-            ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList, bUpdate,UpdateValue);
+            ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList, bUpdate, UpdateValue);
             VE.Value = Value;
             return VE.ValueCalculated;
         }

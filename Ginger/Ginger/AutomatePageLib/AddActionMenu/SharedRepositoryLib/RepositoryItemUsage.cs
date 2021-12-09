@@ -21,6 +21,9 @@ using System;
 using System.ComponentModel;
 using GingerCore;
 using Amdocs.Ginger.Repository;
+using System.Collections.Generic;
+using System.Collections;
+using GingerCore.GeneralLib;
 
 namespace Ginger.Repository
 {
@@ -36,10 +39,38 @@ namespace Ginger.Repository
             SaveFailed,
         }
 
+        public enum eRepositoryItemPublishType
+        {
+            [EnumValueDescription("Publish Instance")]
+            PublishInstance,
+           // [EnumValueDescription("Publish Linked Instance")]
+           // PublishLinkedInstance
+        }
+
+        public enum ePublishStatus
+        {
+            [EnumValueDescription("Not Published")]
+            NotPublished,
+            Published,
+            [EnumValueDescription("Failed To Publish")]
+            FailedToPublish
+        }
+
+        public enum eInsertRepositoryInsatncePosition
+        {
+            [EnumValueDescription("At End")]
+            AtEnd,
+            [EnumValueDescription("Beginning")]
+            Beginning,
+            [EnumValueDescription("After Specific Activity")]
+            AfterSpecificActivity
+        }
+
         public enum eUsageTypes
         {
             Original,
-            Instance,           
+            Instance,
+            None,
         }
 
         public static class Fields
@@ -53,6 +84,11 @@ namespace Ginger.Repository
             public static string Status = "Status";
             public static string ItemParts = "ItemParts";
             public static string SelectedItemPart = "SelectedItemPart";
+
+            public static string RepositoryItemPublishType = "RepositoryItemPublishType";
+            public static string InsertRepositoryInsatncePosition = "InsertRepositoryInsatncePosition";
+            public static string PublishStatus = "PublishStatus";
+            public static string IndexActivityName = "IndexActivityName";
         }
 
         bool mSelected;
@@ -94,6 +130,80 @@ namespace Ginger.Repository
                 }
             }
         }
+
+        private eRepositoryItemPublishType mRepositoryItemPublishType;
+        public eRepositoryItemPublishType RepositoryItemPublishType
+        {
+            get { return mRepositoryItemPublishType; }
+            set
+            {
+                if (mRepositoryItemPublishType != value)
+                {
+                    mRepositoryItemPublishType = value;
+                    OnPropertyChanged(Fields.RepositoryItemPublishType);
+                }
+            }
+        }
+
+        private string mIndexActivityName;
+        public string IndexActivityName
+        {
+            get { return mIndexActivityName; }
+            set
+            {
+                if (mIndexActivityName != value)
+                {
+                    mIndexActivityName = value;
+                    OnPropertyChanged(Fields.IndexActivityName);
+                }
+            }
+        }
+
+        private  ObservableList<string> mActivityList = new ObservableList<string>();
+       public  ObservableList<string> ActivityNameList
+        {
+            get
+            {
+                return mActivityList;
+            }
+            set
+            {
+                mActivityList = value;
+                OnPropertyChanged(nameof(ActivityNameList));
+            }
+        }
+
+
+        private eInsertRepositoryInsatncePosition mInsertRepositoryInsatncePosition;
+        public eInsertRepositoryInsatncePosition InsertRepositoryInsatncePosition
+        {
+            get { return mInsertRepositoryInsatncePosition; }
+            set
+            {
+                if (mInsertRepositoryInsatncePosition != value)
+                {
+                    mInsertRepositoryInsatncePosition = value;
+
+                    OnPropertyChanged(Fields.InsertRepositoryInsatncePosition);
+                }
+            }
+        }
+
+        private ePublishStatus mPublishStatus;
+        public ePublishStatus PublishStatus
+        {
+            get { return mPublishStatus; }
+            set
+            {
+                if (mPublishStatus != value)
+                {
+                    mPublishStatus = value;
+
+                    OnPropertyChanged(Fields.PublishStatus);
+                }
+            }
+        }
+
 
         ObservableList<string> mItemParts = new ObservableList<string>();
         public ObservableList<string> ItemParts
