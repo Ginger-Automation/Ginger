@@ -59,7 +59,7 @@ namespace GingerATS
             switch (itemType)
             {
                 case (eGingerRepoItemType.ActivitiesGroup):
-                    return "ActivitiesGroups";
+                    return "ActivitiesGroup";
                 case (eGingerRepoItemType.Activity):
                     return "Activities";
                 case (eGingerRepoItemType.Action):
@@ -93,13 +93,13 @@ namespace GingerATS
             switch (itemType)
             {
                 case (eGingerRepoItemType.ActivitiesGroup):
-                    return ".ActivitiesGroup";//GingerCore.Activities.ActivitiesGroup
+                    return "ActivitiesGroup";//GingerCore.Activities.ActivitiesGroup
                 case (eGingerRepoItemType.Activity):
-                    return ".Activity";//GingerCore.Activity
+                    return "Activity";//GingerCore.Activity
                 case (eGingerRepoItemType.Action):
-                    return ".Act";//been changed for each Action type like: GingerCore.Actions.ActTextBox
+                    return "Act";//been changed for each Action type like: GingerCore.Actions.ActTextBox
                 case (eGingerRepoItemType.Variable):
-                    return ".Variable";//been changed for each Variable type like: GingerCore.Variables.VariableString
+                    return "Variable";//been changed for each Variable type like: GingerCore.Variables.VariableString
             }
 
             return string.Empty;
@@ -114,9 +114,9 @@ namespace GingerATS
                 case (eGingerRepoItemType.Activity):
                     return "ActivityName";
                 case (eGingerRepoItemType.Action):
-                    return ".Name";
+                    return "Name";
                 case (eGingerRepoItemType.Variable):
-                    return ".Name";
+                    return "Name";
             }
 
             return string.Empty;
