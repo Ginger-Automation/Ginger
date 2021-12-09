@@ -320,6 +320,10 @@ namespace GingerCore.Actions
         public List<int> GetWindowResolution()
         {
             List<int> Resolution = new List<int>();
+            int Height = 0;
+            int Width = 0;
+            Height = Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowHeight));
+            Width = Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowWidth));
             switch (ChangeAppWindowSize)
             {
                 case eChangeAppWindowSize.None:
@@ -332,6 +336,8 @@ namespace GingerCore.Actions
                     return Resolution;
                 case eChangeAppWindowSize.Custom:
                     //TODO:
+                    Resolution.Add(Width);
+                    Resolution.Add(Height);
                     return Resolution;
                 case eChangeAppWindowSize.Resolution640x480:
                     Resolution.Add(640);
@@ -362,6 +368,8 @@ namespace GingerCore.Actions
                     Resolution.Add(1080);
                     return Resolution;
                 default:
+                    Resolution.Add(0);
+                    Resolution.Add(0);
                     return Resolution;
             }
         }
