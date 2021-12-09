@@ -196,11 +196,11 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         public string MachineName { get; set; }
 
         [FieldParams]
-        [FieldParamsNameCaption("ExecutedByUser")]
+        [FieldParamsNameCaption("ExecutedbyUser")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public string ExecutedByUser { get; set; }
+        public string ExecutedbyUser { get; set; }
 
         [FieldParams]
         [FieldParamsNameCaption("Runners")]
@@ -248,7 +248,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             EndTimeStamp = runSetReport.EndTimeStamp;
             Elapsed = runSetReport.Elapsed;
             MachineName = System.Environment.MachineName.ToString();
-            ExecutedByUser = System.Environment.UserName.ToString();
+            ExecutedbyUser = System.Environment.UserName.ToString();
             GingerVersion = ApplicationInfo.ApplicationVersion;
             RunStatus = (runSetReport.RunSetExecutionStatus == eRunStatus.Automated) ? eRunStatus.Automated.ToString() : SetStatus(RunnersColl);
         }
