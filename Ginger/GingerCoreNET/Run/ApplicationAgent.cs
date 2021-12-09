@@ -82,26 +82,19 @@ namespace GingerCore.Platforms
             get { return mAgent; }
             set
             {
-                bool bTriggerPropertyChange = true;
-                if (mAgent != null) mAgent.PropertyChanged -= Agent_OnPropertyChange;
-                mAgent = (Agent)value;
+                if (mAgent != null)
+                    mAgent.PropertyChanged -= Agent_OnPropertyChange;
+
+                mAgent = value;
                 if (mAgent != null)
                 {
-                    if (mAgent.Name == AgentName)
-                    {
-                        bTriggerPropertyChange = false;
-                    }
-
                     AgentName = mAgent.Name;
                     mAgent.PropertyChanged += Agent_OnPropertyChange;
                 }
-                if (bTriggerPropertyChange)
-                {
-                    OnPropertyChanged(nameof(Agent));
-                    OnPropertyChanged(nameof(AgentName));
-                    OnPropertyChanged(nameof(AgentID));
-                    OnPropertyChanged(nameof(AppAndAgent));
-                }
+                OnPropertyChanged(nameof(Agent));
+                OnPropertyChanged(nameof(AgentName));
+                OnPropertyChanged(nameof(AgentID));
+                OnPropertyChanged(nameof(AppAndAgent));
             }
         }
 

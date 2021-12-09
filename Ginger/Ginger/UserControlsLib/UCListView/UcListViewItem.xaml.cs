@@ -785,8 +785,11 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void XListItemGrid_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            xItemOperationsMainPnl.Visibility = Visibility.Visible;
-            xItemOperationsClm.Width = new GridLength(175);
+            if (xItemOperationsPnl.Children.Count > 0)
+            {
+                xItemOperationsMainPnl.Visibility = Visibility.Visible;
+                xItemOperationsClm.Width = new GridLength(175);
+            }
         }
 
         private void XListItemGrid_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
