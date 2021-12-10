@@ -508,7 +508,43 @@ namespace GingerCore.Drivers
                         {
                             ChService.HideCommandPromptWindow = HideConsoleWindow;
                         }
-                        Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+
+                        try
+                        {
+                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        }
+                        catch (Exception ex)
+                        {
+                            //If the os is alpine linux
+                            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && ex.Message.ToLower().Contains("no such file or directory"))
+                            {
+                                Reporter.ToLog(eLogLevel.INFO, "Chrome binary isn't found at default location, checking for Chromium...");
+
+                                if (Directory.GetFiles(@"/usr/bin", "chromium-browser.*").Length > 0 && Directory.GetFiles(@"/usr/lib/chromium", "chromedriver.*").Length > 0)
+                                {
+                                    options.BinaryLocation = @"/usr/bin/chromium-browser";
+
+                                    //List of Chromium Command Line Switches
+                                    //https://peter.sh/experiments/chromium-command-line-switches/
+                                    options.AddArgument("--headless");
+                                    options.AddArgument("--no-sandbox");
+                                    options.AddArgument("--start-maximized");
+                                    options.AddArgument("--disable-dev-shm-usage");
+                                    options.AddArgument("--remote-debugging-port=9222");
+                                    options.AddArgument("--disable-gpu");
+                                    Driver = new ChromeDriver(@"/usr/lib/chromium", options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
+                            }
+                            else
+                            {
+                                throw ex;
+                            }
+                        }
+                        
                         break;
 
                     #endregion
