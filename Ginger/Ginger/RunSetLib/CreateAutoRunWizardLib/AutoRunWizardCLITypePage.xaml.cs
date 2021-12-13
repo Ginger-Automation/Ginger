@@ -210,12 +210,12 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             ShowContent();
         }
 
-        RemoteExecution mRemoterequest;
+        RemoteExecutionRequestConfig mRemoterequest;
         private void xRequestRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             if (mRemoterequest == null)
             {
-                mRemoterequest = new RemoteExecution();
+                mRemoterequest = new RemoteExecutionRequestConfig();
             }
             if (mAutoRunWizard != null)
             {

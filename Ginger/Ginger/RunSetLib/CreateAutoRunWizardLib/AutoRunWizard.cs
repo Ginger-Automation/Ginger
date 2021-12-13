@@ -103,7 +103,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 {
                     if (AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
                     {
-                        var responseString = new RemoteExecution().ExecuteFromRunsetShortCutWizard(AutoRunConfiguration.ExecutionServiceUrl, AutoRunConfiguration.CLIContent);
+                        var responseString = new RemoteExecutionRequestConfig().ExecuteFromRunsetShortCutWizard(AutoRunConfiguration.ExecutionServiceUrl, AutoRunConfiguration.CLIContent);
 
                         if (responseString == "Created")
                         {

@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
-    public class RemoteExecution : ICLI
+    public class RemoteExecutionRequestConfig : ICLI
     {
         public string Verb => RequestAPIOptions.Verb;
 
