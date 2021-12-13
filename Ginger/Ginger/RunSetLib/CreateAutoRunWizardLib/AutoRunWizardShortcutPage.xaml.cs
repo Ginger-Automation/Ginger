@@ -63,7 +63,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     InitNumberPicker();
 
                     ShowHideCommandPnl();
-                    if (mAutoRunWizard.AutoRunConfiguration.IsRequestAPIExecution)
+                    if (mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
                     {
                         xRequestExecutionYesRadioButton.IsChecked = true;
                         xExecutionServiceUrlTextBox.AddValidationRule(new ValidateURLFormat());
@@ -94,7 +94,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         private void ShowHideCommandPnl()
         {
-            if (mAutoRunWizard.AutoRunConfiguration.IsRequestAPIExecution )
+            if (mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote )
             {
                 xCLICommandPnl.Visibility = Visibility.Collapsed;
                 xShortCutCreationConfigsPnl.Visibility = Visibility.Collapsed;

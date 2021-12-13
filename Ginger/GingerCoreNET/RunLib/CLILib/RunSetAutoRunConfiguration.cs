@@ -25,6 +25,12 @@ using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
+    public enum eAutoRunEexecutorType
+    {
+        Run,
+        DynamicFile,
+        Remote
+    }
     public class RunSetAutoRunConfiguration: INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -42,7 +48,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         CLIHelper mCLIHelper;
         
         public int ParallelExecutionCount;
-        public bool IsRequestAPIExecution;
+        public eAutoRunEexecutorType AutoRunEexecutorType { get; set; }
+
 
         public ICLI SelectedCLI;
 

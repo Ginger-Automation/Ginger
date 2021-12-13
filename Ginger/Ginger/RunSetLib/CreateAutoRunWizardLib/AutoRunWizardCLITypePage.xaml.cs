@@ -34,7 +34,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     public partial class AutoRunWizardCLITypePage : Page, IWizardPage
     {
         private AutoRunWizard mAutoRunWizard;
-        private bool mResetCLIContent;
         private string mTempCLIContent;
 
         public AutoRunWizardCLITypePage()
@@ -52,18 +51,18 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     BindingHandler.ObjFieldBinding(xConfigurationNameTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigName));
                     xConfigurationPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigFileFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);
                     xParametersRadioButton.IsChecked = true;
+                    mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType = eAutoRunEexecutorType.Run;
                     BindingHandler.ObjFieldBinding(xCLIContentTextBox, TextBox.TextProperty, mAutoRunWizard.AutoRunConfiguration, nameof(mAutoRunWizard.AutoRunConfiguration.CLIContent), BindingMode: System.Windows.Data.BindingMode.TwoWay);
                     mAutoRunWizard.AutoRunConfiguration.CLIContent = mAutoRunWizard.AutoRunConfiguration.GetCLIContent();
                     mTempCLIContent = mAutoRunWizard.AutoRunConfiguration.CLIContent;
-                    mResetCLIContent = false;
                     break;
 
                 case EventType.Active:
-                    if (mAutoRunWizard.AutoRunConfiguration.SelectedCLI.Verb != "run")
+                    if (mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType != eAutoRunEexecutorType.Run)
                     {
                         xCLIContentTextBox.AddValidationRule(new ValidateJsonFormat());
                     }
-                    ResetCLIContent(mResetCLIContent);
+                    ResetCLIContent(mAutoRunWizard.ResetCLIContent);
                     ShowHelp();
                     ShowContent();
                     break;
@@ -76,7 +75,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     else if(WizardEventArgs.Wizard.GetCurrentPage().Page == this && mTempCLIContent != mAutoRunWizard.AutoRunConfiguration.CLIContent)
                     {
                         WizardEventArgs.CancelEvent = false;
-                        ResetCLIContent(mResetCLIContent = true);
+                        ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
                         mTempCLIContent = mAutoRunWizard.AutoRunConfiguration.CLIContent;
                         ShowContent();
                     }
@@ -86,7 +85,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     }
                     break;
                 case EventType.LeavingForNextPage:
-                    mResetCLIContent = false;
+                    mAutoRunWizard.ResetCLIContent = false;
                     break;
             }
         }
@@ -108,24 +107,16 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         private void ShowHelp()
         {
             string helpContent = string.Empty;
-            /*
-            if (xConfigRadioButton.IsChecked == true)
-            {
-                helpContent = string.Format("Simple text file which contain the execution configurations." + GetRowDown() + "To be used in case {0} already exist in the Solution and only need to trigger it." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'ConfigFile=%ConfigFilePath%', Example: Ginger.exe ConfigFile=\"C:\\Ginger\\Regression1.Ginger.AutoRunConfigs.Config\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
-            }*/
+
             if (xDynamicRadioButton.IsChecked == true)
             {
                 helpContent = "Execute customized or virtual Run set via configuration file.";
-            }
-            else if (xScriptRadioButton.IsChecked == true)
-            {
-                helpContent = string.Format("Script file written in C# which implement Ginger execution flow." + GetRowDown() + "Enable to create {0} with loops and much more complex execution." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'Script=%ScriptFilePath%', Example: Ginger.exe Script=\"C:\\Ginger\\FeatureBTesting.Ginger.AutoRunConfigs.script\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
             }
             else if (xParametersRadioButton.IsChecked == true)
             {
                 helpContent = "Execute existing Run set as is using simple arguments.";
             }
-            if (xRequestRadioButton.IsChecked == true)
+           else if (xRequestRadioButton.IsChecked == true)
             {
                 helpContent = "Execute customized or virtual Run set on remote/cloud.";
             }
@@ -148,7 +139,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
             if (mAutoRunWizard != null)
             {
-                ResetCLIContent(mResetCLIContent=true);
+                ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
                 ShowHelp();
                 ShowContent();
             }
@@ -170,7 +161,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIDynamicFile;
                 ShowHelp();
-                ResetCLIContent(mResetCLIContent=true);
+                ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
                 ShowContent();
             }
             xConfigFileSettingsPnl.Visibility = Visibility.Visible;
@@ -208,7 +199,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIArgs;
                 ShowHelp();
-                ResetCLIContent(mResetCLIContent=true);
+                ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
                 ShowContent();
             }
 
@@ -219,28 +210,23 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             ShowContent();
         }
 
-        CLIRequestAPI mCLIRequest;
+        RemoteExecution mRemoterequest;
         private void xRequestRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (mCLIRequest == null)
+            if (mRemoterequest == null)
             {
-                mCLIRequest = new CLIRequestAPI();
+                mRemoterequest = new RemoteExecution();
             }
             if (mAutoRunWizard != null)
             {
-                mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIRequest;
-                mAutoRunWizard.AutoRunConfiguration.IsRequestAPIExecution = true;
+                mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mRemoterequest;
+                mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType = eAutoRunEexecutorType.Remote;
                 ShowHelp();
-                ResetCLIContent(mResetCLIContent=true);
+                ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
                 ShowContent();
             }
             xConfigFileSettingsPnl.Visibility = Visibility.Collapsed;
             xCLIContentTextBox.AddValidationRule(new ValidateJsonFormat());
-        }
-
-        private void xRequestRadioButton_Unchecked(object sender, RoutedEventArgs e)
-        {
-            mAutoRunWizard.AutoRunConfiguration.IsRequestAPIExecution = false;
         }
 
         private void xCopyBtn_Click(object sender, RoutedEventArgs e)
@@ -248,17 +234,5 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             Clipboard.SetText(xCLIContentTextBox.Text.ToString());
         }
 
-
-        //CLIExcel mCLIExcel;
-        //private void XExcelRadioButton_Checked(object sender, RoutedEventArgs e)
-        //{
-        //    if (mCLIExcel == null)
-        //    {
-        //        mCLIExcel = new CLIExcel();
-        //    }
-        //    mAutoRunWizard.SelectedCLI = mCLIExcel;
-        //    mCliText = @"Using excel to create and control a runset with data and store information" + Environment.NewLine;                        
-        //    ShowContent();
-        //}
     }
 }

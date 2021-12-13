@@ -255,7 +255,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return;
         }
 
-        public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData,Guid runSetGuid)
+        public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData)
         {
             throw new NotImplementedException();
         }

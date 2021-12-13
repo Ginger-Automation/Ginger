@@ -29,6 +29,7 @@ using System.IO;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
+
     public class AutoRunWizard : WizardBase
     {
         public override string Title { get { return string.Format("Create {0} Auto Run Configuration", GingerDicser.GetTermResValue(eTermResKey.RunSet)); } }
@@ -42,7 +43,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         public RunSetAutoRunConfiguration AutoRunConfiguration;
 
         public RunSetAutoRunShortcut AutoRunShortcut;
-
+        public bool ResetCLIContent;
 
         public AutoRunWizard(RunSetConfig runSetConfig, Context context)
         {
@@ -72,7 +73,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 }
                 
                 // Create windows shortcut
-                if (AutoRunShortcut.CreateShortcut && !AutoRunConfiguration.IsRequestAPIExecution)
+                if (AutoRunShortcut.CreateShortcut && AutoRunConfiguration.AutoRunEexecutorType != eAutoRunEexecutorType.Remote)
                 {
                     userMsg += SaveShortcut();
                 }
@@ -100,9 +101,9 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 try
                 {
-                    if (AutoRunConfiguration.IsRequestAPIExecution)
+                    if (AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
                     {
-                        var responseString = new CLIRequestAPI().ExecuteFromRunsetShortCutWizard(AutoRunConfiguration.ExecutionServiceUrl, AutoRunConfiguration.CLIContent);
+                        var responseString = new RemoteExecution().ExecuteFromRunsetShortCutWizard(AutoRunConfiguration.ExecutionServiceUrl, AutoRunConfiguration.CLIContent);
 
                         if (responseString == "Created")
                         {
@@ -118,7 +119,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     {
                         var args = AutoRunConfiguration.CLIContent;
 
-                        if (AutoRunConfiguration.SelectedCLI.Verb == "dynamic")
+                        if (AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.DynamicFile)
                         {
                             args = "dynamic --filename " + AutoRunConfiguration.ConfigFileFullPath;
                         }

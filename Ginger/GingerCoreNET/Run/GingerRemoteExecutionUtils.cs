@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 using (var httpClient = new HttpClient())
                 {
-                    var endpoint = baseURI + "api/AccountReport/SoluitonRunsetsExecutionInfo/" + soluionGuid;
+                    var endpoint = baseURI + "api/AccountReport/GetRunsetsExecutionInfoBySolutionID/" + soluionGuid;
                     var response = httpClient.GetAsync(endpoint).Result;
                     if (!response.IsSuccessStatusCode)
                     {
@@ -60,7 +60,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 using (var httpClient = new HttpClient())
                 {
-                    var endpoint = baseURI + "api/AccountReport/RunsetsExecutionInfo/" + soluionGuid + "/" + runsetGuid;
+                    var endpoint = baseURI + "api/AccountReport/GetRunsetExecutionInfoByRunsetID/" + soluionGuid + "/" + runsetGuid;
                     var response = httpClient.GetAsync(endpoint).Result;
                     if (!response.IsSuccessStatusCode)
                     {

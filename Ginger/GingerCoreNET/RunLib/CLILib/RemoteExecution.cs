@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
-    public class CLIRequestAPI : ICLI
+    public class RemoteExecution : ICLI
     {
         public string Verb => RequestAPIOptions.Verb;
 
@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public string CreateConfigurationsContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
-            string json = DynamicExecutionManager.CreateDynamicRunSetJSON(solution, runsetExecutor, cliHelper,true);
+            string json = DynamicExecutionManager.CreateRemoteExecutionRequestJSON(solution, runsetExecutor, cliHelper);
             dynamic parsedJson = JsonConvert.DeserializeObject(json);
             return JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
         }
