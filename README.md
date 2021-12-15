@@ -12,7 +12,9 @@ Ginger is an Automation IDE, Drag & Drop automation, Can be used by users with o
 
 
 - ### [Download Ginger](https://github.com/Ginger-Automation/Ginger/releases)
+- ### [Container Images](https://github.com/Ginger-Automation/GingerContainers)
 - ### [Ginger YouTube Channel](http://www.youtube.com/channel/UCQ2TRVoBhYi6zSU9r395EtQ/videos)
+- ### [Online Help](https://ginger-automation.github.io/Ginger-Web-Help)
 
 # Highlights
 - **Record & Playback** - Record user operation on target application and playback 
@@ -110,38 +112,5 @@ Ginger is leveraging on a variety of great open source libraries, like: Selenium
 | Hard disk space | 2GB   |  6GB+  |
 | .NET | 4.6.1 | 4.7.1 |
 
-
-
-## To Execute Runset from source control repository 
-docker run gingerautomation/ginger run -r "RunSetName"   -t SourceControlType --url "RepositoryUrl" --user "UserNameforSourcecontrol" --pass "Password for sourcecontrol" --solution "Foldert to dwonload solution "
-
-### Arguments to Build run command 
--s, --solution             Required. Set solution folder
-
-  -r, --runset               Required. Set runset name
-
-  -e, --env                  (Default: Default) Set environment name
-
-  -d, --do-not-analyze       runAnalyzer
-
-  -i, --showui               (Default: false) Show Auto Run Window UI - Windows
-                             only
-
-  -a, --artifacts-path       Select Artifacts output directory
-
-  -t, --type                 Source Control Management type i.e: GIT, SVN
-
-  -h, --url                  Source Control URL
-
-  -u, --user                 Source Control User
-
-  -p, --pass                 Source Control Pass
-
-  -g, --encrypted            password is encrypted
-
-  -c, --ignoreCertificate    Ignore certificate errors while cloning solution
-
-  -v, --verbose              (Default: normal) Select Verbose level: normal,
-                             debug
 
 
