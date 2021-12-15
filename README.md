@@ -111,14 +111,6 @@ Ginger is leveraging on a variety of great open source libraries, like: Selenium
 | .NET | 4.6.1 | 4.7.1 |
 
 
-# <img src="https://www.docker.com/sites/default/files/d8/2019-07/horizontal-logo-monochromatic-white.png" width="100" />Execution Automation using Ginger Docker Image
-
-### Repo at Docker Hub 
-at <a href=https://hub.docker.com/r/gingerautomation/ginger>https://hub.docker.com/r/gingerautomation/ginger</a>
-## To Download Image 
-docker pull gingerautomation/ginger 
-## To view help  
-docker run gingerautomation/ginger run --help 
 
 ## To Execute Runset from source control repository 
 docker run gingerautomation/ginger run -r "RunSetName"   -t SourceControlType --url "RepositoryUrl" --user "UserNameforSourcecontrol" --pass "Password for sourcecontrol" --solution "Foldert to dwonload solution "
