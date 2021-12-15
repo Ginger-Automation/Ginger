@@ -67,6 +67,7 @@ namespace GingerATS
             {
                 //Logger creation
                 Logger = new GingerATSLog(logsFolderPath);
+                Logger.AddLineToLog(eLogLineType.INFO, "#######################  UPDATED GingerATS version for new XMLs format ########################");
                 Logger.AddLineToLog(eLogLineType.INFO, "####################### GetAutomationStatus Function Called for Solution: '" + sourceConnectionDetails.GingerSolutionName + "'  ########################");
 
                 //Update local repository with solution data from source control
@@ -84,6 +85,7 @@ namespace GingerATS
                     try
                     {
                         GingerATSSVNSourceControl sourceControl = new GingerATSSVNSourceControl(sourceConnectionDetails, solutionFullLocalPath);
+                        sourceControl.Logger = Logger;
 
                         //Check if require to get the full solution data or only update it
                         if (!Directory.Exists(solutionFullLocalPath))

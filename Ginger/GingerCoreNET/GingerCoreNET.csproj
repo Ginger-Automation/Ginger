@@ -9,11 +9,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>4.0.1.0</AssemblyVersion>
-    <FileVersion>4.0.1.0</FileVersion>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <FileVersion>4.1.0.0</FileVersion>
     <RootNamespace>Amdocs.Ginger.CoreNET</RootNamespace>
     <GenerateResourceUsePreserializedResources>True</GenerateResourceUsePreserializedResources>
-    <Version>4.0.1</Version>
+    <Version>4.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -832,10 +832,16 @@
     <None Update="Reports\Ginger-Web-Client\loading.8732a6660b528fadfaeb.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main.0ee51aa14e6f51e3992e.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main.53bcca0065aceb0defb0.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main.5c9395fe36c9ac94e13c.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main.91db0eebf33b3c8a828d.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main.9a7f41ac158394ee2cff.js">
@@ -852,6 +858,9 @@
     </None>
     <None Update="Reports\Ginger-Web-Client\main.e76244f45a5a7b7b107d.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main.fffc10dee05b7289f76b.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\password-meter.d59e6dc2616c53ce8e77.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
