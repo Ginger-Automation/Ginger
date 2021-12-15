@@ -7,14 +7,7 @@ USER root
 RUN apk update
 RUN apk add git
 
-
-RUN apk add chromium
-RUN apk add chromium-chromedriver
-
-ENV CHROME_BIN=/usr/bin/chromium-browser \
-    CHROME_PATH=/usr/lib/chromium/
-
-RUN export PATH=$PATH:/usr/lib/chromium/
+Run apk add firefox
 
 WORKDIR /GingerRuntime
 ENTRYPOINT ["dotnet", "GingerRuntime.dll"]
