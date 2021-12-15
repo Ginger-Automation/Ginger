@@ -1,20 +1,11 @@
 FROM  mcr.microsoft.com/dotnet/aspnet:3.1-alpine
 
-COPY ./bin/Debug/netcoreapp3.1/ ./GingerRuntime
+COPY ./bin/Release/netcoreapp3.1/ ./GingerRuntime
 
 USER root
 
 RUN apk update
 RUN apk add git
-
-
-RUN apk add chromium
-RUN apk add chromium-chromedriver
-
-ENV CHROME_BIN=/usr/bin/chromium-browser \
-    CHROME_PATH=/usr/lib/chromium/
-
-RUN export PATH=$PATH:/usr/lib/chromium/
 
 WORKDIR /GingerRuntime
 ENTRYPOINT ["dotnet", "GingerRuntime.dll"]
