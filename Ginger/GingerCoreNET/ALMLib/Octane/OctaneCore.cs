@@ -322,6 +322,10 @@ namespace GingerCore.ALM
                 //TODO: ToUpdate field is not set to true correctly on fields grid. 
                 // So description is not captured. Setting it explicitly until grid finding is fixed
                 Defect newDefect = new Defect();
+                if (defectForOpening.Value.ContainsKey("name"))
+                {
+                    newDefect.SetValue("name", defectForOpening.Value["description"]);
+                }
                 if (defectForOpening.Value.ContainsKey("description"))
                 {
                     newDefect.SetValue("description", defectForOpening.Value["description"]);
