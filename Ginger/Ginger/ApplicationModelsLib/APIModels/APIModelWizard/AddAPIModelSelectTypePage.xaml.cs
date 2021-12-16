@@ -17,7 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
+using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
@@ -82,7 +85,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
 
 
-        public void WizardEvent(WizardEventArgs WizardEventArgs)
+        public async void WizardEvent(WizardEventArgs WizardEventArgs)
         {
             if (WizardEventArgs.EventType == EventType.Init)
             {
@@ -113,6 +116,10 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
                 {
                     AddAPIModelWizard.APIType = eAPIType.Swagger;
+                    if (!(await ValidateFile(xURLTextBox.Text)))
+                    {
+                        WizardEventArgs.CancelEvent = true;
+                    }
                 }
             }
         }
@@ -129,7 +136,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 string error = string.Empty;
                 if (!ValidateTemplateURL(ref error))
                 {
-                  //  WizardEventArgs.AddError(error);
+                    //  WizardEventArgs.AddError(error);
                 }
             }
         }
@@ -313,7 +320,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
         }
 
-        private void BrowseButtonClicked(object sender, RoutedEventArgs e)
+        private async void BrowseButtonClicked(object sender, RoutedEventArgs e)
         {
             AddAPIModelWizard.IsParsingWasDone = false;
             if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
@@ -327,19 +334,19 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                             Filter = "WSDL Files (*.wsdl)|*.wsdl" + "|XML Files (*.xml)|*.xml" + "|All Files (*.*)|*.*"
                         }, false) is string fileName)
                         {
-                           xURLTextBox.Text = fileName;
-                           LoadFileValidation();
+                            xURLTextBox.Text = fileName;
+                            await ValidateFile(fileName);
                         }
                     }
                     else
                     {
-                        LoadFileValidation();
+                        await ValidateFile();
                     }
 
                 }
                 else
                 {
-                    LoadFileValidation();
+                    await ValidateFile();
                 }
             }
             else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
@@ -355,9 +362,11 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
                     if (result == System.Windows.Forms.DialogResult.OK)
                     {
-                        xURLTextBox.Text = dlg2.FileName;
-                        AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = dlg2.FileName });
-
+                        if (await ValidateFile(dlg2.FileName))
+                        {
+                            xURLTextBox.Text = dlg2.FileName;
+                            AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = dlg2.FileName });
+                        }
                     }
                 }
                 else
@@ -365,7 +374,10 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                     string tempfile = System.IO.Path.GetTempFileName();
                     string filecontent = Amdocs.Ginger.Common.GeneralLib.HttpUtilities.Download(new System.Uri(xURLTextBox.Text));
                     System.IO.File.WriteAllText(tempfile, filecontent);
-                    AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = tempfile });
+                    if (await ValidateFile(tempfile))
+                    {
+                        AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = tempfile });
+                    }
                 }
             }
 
@@ -375,7 +387,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
         }
 
-        private void BrowseForTemplateFiles(string files = null)
+        private async void BrowseForTemplateFiles(string files = null)
         {
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
             dlg.Multiselect = true;
@@ -388,19 +400,169 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 foreach (String file in dlg.FileNames)
                 {
-                    AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = file });
+                    if (await ValidateFile(file))
+                    {
+                        AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = file });
+                    }
                 }
             }
         }
 
-        private async void LoadFileValidation()
+        private async Task<bool> ValidateFile(string fileName = "")
+        {
+            bool bIsFileValid = false;
+            try
+            {
+                if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
+                {
+                    fileName = xURLTextBox.Text;
+                    bIsFileValid = await LoadWSDLFileValidation();
+                }
+                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
+                {
+                    SwaggerParser swagger = new SwaggerParser();
+                    ObservableList<ApplicationAPIModel> swaggerList = new ObservableList<ApplicationAPIModel>();
+                    swaggerList = swagger.ParseDocument(fileName, swaggerList);
+                    if (swaggerList == null || swaggerList.Count == 0)
+                    {
+                        bIsFileValid = false;
+                    }
+                    else
+                    {
+                        bIsFileValid = true;
+                    }
+                }
+                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.JsonTemplate.ToString())
+                {
+                    JSONTemplateParser jsonParser = new JSONTemplateParser();
+                    ObservableList<ApplicationAPIModel> jsonList = new ObservableList<ApplicationAPIModel>();
+
+                    jsonList = jsonParser.ParseDocument(fileName, jsonList);
+                    if (jsonList == null || jsonList.Count == 0)
+                    {
+                        bIsFileValid = false;
+                    }
+                    else
+                    {
+                        bIsFileValid = true;
+                    }
+                }
+                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString())
+                {
+                    XMLTemplateParser xmlParser = new XMLTemplateParser();
+                    ObservableList<ApplicationAPIModel> xmlList = new ObservableList<ApplicationAPIModel>();
+                    xmlList = xmlParser.ParseDocument(fileName, xmlList);
+                    if (xmlList == null || xmlList.Count == 0)
+                    {
+                        bIsFileValid = false;
+                    }
+                    else
+                    {
+                        bIsFileValid = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, ex.Message, ex);
+                bIsFileValid = false;
+            }
+            finally
+            {
+                if (!bIsFileValid)
+                {
+                    CheckForValidParser(fileName);
+                }
+            }
+            return bIsFileValid;
+        }
+
+        private async void CheckForValidParser(string fileName = "")
+        {
+            if (await LoadWSDLFileValidation(bShowMessage: false))
+            {
+                Reporter.ToUser(eUserMsgKey.FileOperationError, "Please use WSDL for this file");
+            }
+            else if (CheckForXmlParser(fileName))
+            {
+                Reporter.ToUser(eUserMsgKey.FileOperationError, "Please use XML for this file");
+            }
+            else if (CheckFoSwaggerParser(fileName))
+            {
+                Reporter.ToUser(eUserMsgKey.FileOperationError, "Please use Swagger for this file");
+            }
+            else if (CheckForJsonParser(fileName))
+            {
+                Reporter.ToUser(eUserMsgKey.FileOperationError, "Please use Json for this file");
+            }
+        }
+
+        private bool CheckForXmlParser(string fileName)
+        {
+            try
+            {
+                XMLTemplateParser xmlParser = new XMLTemplateParser();
+                ObservableList<ApplicationAPIModel> xmlList = new ObservableList<ApplicationAPIModel>();
+                xmlList = xmlParser.ParseDocument(fileName, xmlList);
+                if (xmlList == null || xmlList.Count == 0)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, ex.Message, ex);
+                return false;
+            }
+        }
+
+        private bool CheckFoSwaggerParser(string fileName)
+        {
+            try
+            {
+                SwaggerParser swaggerParser = new SwaggerParser();
+                ObservableList<ApplicationAPIModel> swaggerList = new ObservableList<ApplicationAPIModel>();
+                swaggerList = swaggerParser.ParseDocument(fileName, swaggerList);
+                if (swaggerList == null || swaggerList.Count == 0)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, ex.Message, ex);
+                return false;
+            }
+        }
+
+        private bool CheckForJsonParser(string fileName)
+        {
+            try
+            {
+                JSONTemplateParser jsonParser = new JSONTemplateParser();
+                ObservableList<ApplicationAPIModel> jsonList = new ObservableList<ApplicationAPIModel>();
+                jsonList = jsonParser.ParseDocument(fileName, jsonList);
+                if (jsonList == null || jsonList.Count == 0)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, ex.Message, ex);
+                return false;
+            }
+        }
+
+        private async Task<bool> LoadWSDLFileValidation(bool bShowMessage = true)
         {
             AddAPIModelWizard.ProcessStarted();
             xBrowseLoadButton.IsEnabled = false;
             string error = string.Empty;
             mWSDLParser = new WSDLParser();
-
-
 
             try
             {
@@ -417,20 +579,31 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 xPreviewButton.Visibility = Visibility.Visible;
             }
             catch (Exception ex)
-            {                
-                Reporter.ToUser(eUserMsgKey.FileOperationError, ex.Message);
+            {
+                if (bShowMessage)
+                {
+                    Reporter.ToUser(eUserMsgKey.FileOperationError, ex.Message);
+                }
                 error = error + Environment.NewLine + ex.Message;
                 xPreviewButton.Visibility = Visibility.Collapsed;
                 SourceRviewLable.Visibility = Visibility.Collapsed;
                 XMLViewer.Visibility = Visibility.Collapsed;
+                return false;
             }
             finally
             {
                 AddAPIModelWizard.ProcessEnded();
                 xBrowseLoadButton.IsEnabled = true;
             }
-            if (string.IsNullOrEmpty(error))                
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Success : The File Loaded successfully");
+            if (string.IsNullOrEmpty(error))
+            {
+                if (bShowMessage)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Success : The File Loaded successfully");
+                }
+                return true;
+            }
+            return false;
         }
 
         private XmlDocument PreviewContent = null;
@@ -476,8 +649,8 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 return "JSON Files (*.json)|*.json" + "|TXT Files (*.txt)|*.txt" + "|All Files (*.*)|*.*";
             }
 
-            return string.Empty ;
-        }       
+            return string.Empty;
+        }
     }
 
 }
