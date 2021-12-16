@@ -1,6 +1,11 @@
 FROM  mcr.microsoft.com/dotnet/aspnet:3.1-alpine
 
-COPY ./GingerRuntime ./GingerRuntime
+COPY ./bin/Release/netcoreapp3.1/ ./GingerRuntime
+
+USER root
+
+RUN apk update
+RUN apk add git
 
 WORKDIR /GingerRuntime
 ENTRYPOINT ["dotnet", "GingerRuntime.dll"]
