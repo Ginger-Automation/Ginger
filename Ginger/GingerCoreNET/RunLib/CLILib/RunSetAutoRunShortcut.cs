@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public bool CreateShortcut;
 
-
+        public bool StartExecution;
         public string ShortcutFileName{ get; set; }
 
 

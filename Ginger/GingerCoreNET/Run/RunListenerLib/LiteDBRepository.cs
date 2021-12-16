@@ -578,8 +578,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             //Map the data to AccountReportRunset Object
             AccountReportRunSet accountReportRunSet = centralExecutionLogger.MapDataToAccountReportObject(liteDbRunSet);
             SetExecutionId(accountReportRunSet, executionId);
-            
-
+            accountReportRunSet.EntityId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid;
+            accountReportRunSet.GingerSolutionGuid = WorkSpace.Instance.Solution.Guid;
+           
             //Publish the Data and screenshots to Central DB
             await centralExecutionLogger.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
             await centralExecutionLogger.SendScreenShotsToCentralDBAsync(executionId, screenshotList);
