@@ -838,7 +838,7 @@ namespace Ginger.Run
             throw new NotImplementedException();
         }
 
-        public async System.Threading.Tasks.Task PublishToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId)
+        public async System.Threading.Tasks.Task PublishToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, Guid runsetGuid)
         {
             if(Configuration.PublishLogToCentralDB== ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
             {

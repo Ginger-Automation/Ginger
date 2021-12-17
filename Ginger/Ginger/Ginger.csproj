@@ -526,6 +526,8 @@
     <Compile Include="GlobalSolutionLib\ImportItemWizardLib\SelectItemImportTypePage.xaml.cs">
       <DependentUpon>SelectItemImportTypePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\ValidateJsonFormat.cs" />
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\ValidateURLFormat.cs" />
     <Compile Include="RunSetPageLib\RunsetRunnersConfigPage.xaml.cs">
       <DependentUpon>RunsetRunnersConfigPage.xaml</DependentUpon>
     </Compile>
@@ -630,6 +632,9 @@
     </Compile>
     <Compile Include="UserControlsLib\ucLabel.xaml.cs">
       <DependentUpon>ucLabel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\UCNumberPicker.xaml.cs">
+      <DependentUpon>UCNumberPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\ucShowItemID.xaml.cs">
       <DependentUpon>ucShowItemID.xaml</DependentUpon>
@@ -3048,6 +3053,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\ucLabel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\UCNumberPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

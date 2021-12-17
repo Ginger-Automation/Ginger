@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using Ginger.RunSetLib.CreateAutoRunWizardLib;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
@@ -32,6 +33,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     public partial class AutoRunWizardShortcutPage : Page, IWizardPage
     {
         AutoRunWizard mAutoRunWizard;
+        //int mExecutionCount = 1;
 
         public AutoRunWizardShortcutPage()
         {
@@ -45,17 +47,69 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 case EventType.Init:
                     mAutoRunWizard = (AutoRunWizard)WizardEventArgs.Wizard;
-                    mAutoRunWizard.AutoRunShortcut.CreateShortcut = true;
+                    mAutoRunWizard.AutoRunShortcut.CreateShortcut = false;
                     mAutoRunWizard.AutoRunShortcut.ShortcutFileName = WorkSpace.Instance.Solution.Name + "-" + mAutoRunWizard.RunsetConfig.Name + " Execution";
                     xShortcutPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunShortcut, nameof(RunSetAutoRunShortcut.ShortcutFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);
-                    BindingHandler.ObjFieldBinding(xShortcutDescriptionTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunShortcut, nameof(RunSetAutoRunShortcut.ShortcutFileName));                                       
+                    BindingHandler.ObjFieldBinding(xShortcutDescriptionTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunShortcut, nameof(RunSetAutoRunShortcut.ShortcutFileName));
                     xDesktopRadioButton.IsChecked = true;
                     mAutoRunWizard.CliHelper.ShowAutoRunWindow = false;
+                    mAutoRunWizard.AutoRunConfiguration.ParallelExecutionCount = 1;
                     break;
 
                 case EventType.Active:
                     BindingHandler.ObjFieldBinding(xShortcutContentTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunShortcut, nameof(RunSetAutoRunShortcut.ShortcutContent), BindingMode: System.Windows.Data.BindingMode.OneWay);
+                    BindingHandler.ObjFieldBinding(xExecutionServiceUrlTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ExecutionServiceUrl));
+
+                    InitNumberPicker();
+
+                    ShowHideCommandPnl();
+                    if (mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
+                    {
+                        xRequestExecutionYesRadioButton.IsChecked = true;
+                        xExecutionServiceUrlTextBox.AddValidationRule(new ValidateURLFormat());
+                    }
+                    else
+                    {
+                        xRequestExecutionNoRadioButton.IsChecked = true;
+                        xExecutionServiceUrlTextBox.RemoveValidations(TextBox.TextProperty);
+                    }
                     break;
+            }
+        }
+
+        private void InitNumberPicker()
+        {
+            xNumberPickerControl.PropertyChanged += XNumberPickerControl_PropertyChanged;
+            xNumberPickerControl.MinCount = 1;
+            xNumberPickerControl.MaxCount = 10;
+        }
+
+        private void XNumberPickerControl_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (mAutoRunWizard != null)
+            {
+                mAutoRunWizard.AutoRunConfiguration.ParallelExecutionCount = xNumberPickerControl.SelectedNumber;
+            }
+        }
+
+        private void ShowHideCommandPnl()
+        {
+            if (mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote )
+            {
+                xCLICommandPnl.Visibility = Visibility.Collapsed;
+                xShortCutCreationConfigsPnl.Visibility = Visibility.Collapsed;
+                xCreateShortCutRadioPnl.Visibility = Visibility.Collapsed;
+
+                if (mAutoRunWizard.AutoRunShortcut.StartExecution)
+                {
+                    xRequestSettingsPnl.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                xCreateShortCutRadioPnl.Visibility = Visibility.Visible;
+                xCLICommandPnl.Visibility = Visibility.Visible;
+                xRequestSettingsPnl.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -93,6 +147,36 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 mAutoRunWizard.AutoRunShortcut.ShortcutFolderPath = string.Empty;
                 xShortcutPathTextbox.Visibility = Visibility.Visible;
             }
+        }
+
+
+        private void xRequestExecutionNoRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (mAutoRunWizard != null)
+            {
+                xParallelExecutionPnl.Visibility = Visibility.Collapsed;
+                xRequestSettingsPnl.Visibility = Visibility.Collapsed;
+                mAutoRunWizard.AutoRunShortcut.StartExecution = false;
+
+                ShowHideCommandPnl();
+            }
+        }
+
+        private void xRequestExecutionYesRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (mAutoRunWizard != null)
+            {
+                xParallelExecutionPnl.Visibility = Visibility.Visible;
+                xRequestSettingsPnl.Visibility = Visibility.Visible;
+
+                mAutoRunWizard.AutoRunShortcut.StartExecution = true;
+                ShowHideCommandPnl();
+            }
+        }
+
+        private void xCopyBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(xShortcutContentTextBox.Text.ToString());
         }
     }
 }
