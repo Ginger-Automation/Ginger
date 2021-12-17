@@ -6815,74 +6815,12 @@ namespace GingerCore.Drivers
         // New HandleActUIElement - will replace ActGenElement
         // ----------------------------------------------------------------------------------------------------------------------------------
 
-        //APILauncher sikuliLauncher = new APILauncher();
-
-        APILauncher sikuliLauncher = null;
         public void HandleActUIElement(ActUIElement act)
         {
             IWebElement e = null;
 
             if (Convert.ToBoolean(act.GetInputParamValue(ActUIElement.Fields.IsSikuliElement)))
             {
-                /// Testing
-                if(sikuliLauncher == null)
-                    sikuliLauncher = new APILauncher();
-                else
-                    sikuliLauncher.Start();
-
-                //sikuliLauncher = new APILauncher();
-
-                //Pattern clickImgPattern = new Pattern(@"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture.JPG");
-                //Pattern txtBoxImgPattern = new Pattern(@"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture2.JPG");
-
-                //string clickImg = @"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture.JPG";
-                //string txtBoxImg = @"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture2.JPG";
-
-                string imgPath = act.ElementLocateValue;
-
-                try
-                {
-                    Screen sekuliScreen = new Screen();
-
-                    Pattern sikuliPattern = new Pattern(imgPath);
-                    //Pattern clickImgPattern = new Pattern(@"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture.JPG");
-                    //Pattern txtBoxImgPattern = new Pattern(@"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture2.JPG");
-
-                    switch (act.ElementAction)
-                    {
-                        case ActUIElement.eElementAction.Click:
-                        //case ActUIElement.eElementAction.JavaScriptClick:
-                            sekuliScreen.Click(sikuliPattern);
-                            break;
-
-                        case ActUIElement.eElementAction.SetValue:
-                        case ActUIElement.eElementAction.SetText:
-                        //case ActUIElement.eElementAction.MultiSetValue:
-                            sekuliScreen.Type(sikuliPattern, act.ValueForDriver);
-                            break;
-
-                        case ActUIElement.eElementAction.DoubleClick:
-                            sekuliScreen.DoubleClick(sikuliPattern);
-                            break;
-
-                        case ActUIElement.eElementAction.MouseRightClick:
-                            sekuliScreen.RightClick(sikuliPattern);
-                            break;
-
-                        case ActUIElement.eElementAction.Exist:
-                            sekuliScreen.Exists(sikuliPattern);
-                            break;
-
-                            //default:
-                            //    sekuliScreen.RightClick(sikuliPattern);
-                            //    break;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
-                    sikuliLauncher.Stop();
-                }
             }
             else
             {

@@ -212,7 +212,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             var ActTypes = new List<Type>();
             foreach (Assembly GC in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("GingerCore")))
             {
-                var types = from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) select type;
+                var types = from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) && type != typeof(ActImageCaptureSupport) select type;
                 ActTypes.AddRange(types);
             }
 

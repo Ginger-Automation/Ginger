@@ -35,7 +35,8 @@ namespace GingerCore.Actions.ScreenCapture
     {
         #region Data Members
         private Rect dragRect=new Rect();
-        private ActLowLevelClicks f;
+        //private ActLowLevelClicks f;
+        private ActImageCaptureSupport f;
         /// <summary>
         /// Set to 'true' when the left mouse-button is down.
         /// </summary>
@@ -63,7 +64,7 @@ namespace GingerCore.Actions.ScreenCapture
 
         #endregion Data Members
 
-        public LocatorImageCaptureWindow(ActLowLevelClicks act)
+        public LocatorImageCaptureWindow(ActImageCaptureSupport act)
         {
             InitializeComponent();
             f = act;

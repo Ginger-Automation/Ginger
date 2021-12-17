@@ -254,6 +254,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\ActSikuli.cs" />
     <Compile Include="Actions\RobotFramework\ActRobot.cs" />
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
     <Compile Include="Actions\RobotFramework\GingerParam.cs" />
@@ -737,6 +738,10 @@
     <ProjectReference Include="..\GingerPlugIns\GingerPlugIns.csproj">
       <Project>{d5329d81-7ff0-4af1-b186-a2fd65ef0583}</Project>
       <Name>GingerPlugIns</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GingerSikuliStandard\GingerSikuliStandard.csproj">
+      <Project>{72F4B38B-9900-4A17-A54B-0A7005F0937C}</Project>
+      <Name>GingerSikuliStandard</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

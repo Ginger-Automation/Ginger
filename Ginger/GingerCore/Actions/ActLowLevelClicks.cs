@@ -36,7 +36,7 @@ using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
-    public class ActLowLevelClicks : ActWithoutDriver
+    public class ActLowLevelClicks : ActImageCaptureSupport
     {
         public override string ActionDescription { get { return "Image search and click on screen"; } }
         public override string ActionUserDescription { get { return string.Empty; } }
@@ -71,27 +71,25 @@ namespace GingerCore.Actions
             InputValue=3,
             
         }
-      
+
         [IsSerializedForLocalRepository]
         public string WindowTitle { get; set; }
         [IsSerializedForLocalRepository]
         public eActLowLevelClicksAction ActLowLevelClicksAction { get; set; }
         [IsSerializedForLocalRepository]
-        public int ClickX { get; set; }        
+        public override int ClickX { get; set; }        
         [IsSerializedForLocalRepository]
-        public int ClickY { get; set; }
+        public override int ClickY { get; set; }
         [IsSerializedForLocalRepository]
-        public int StartX { get; set; }
+        public override int StartX { get; set; }
         [IsSerializedForLocalRepository]
-        public int StartY { get; set; }
+        public override int StartY { get; set; }
         [IsSerializedForLocalRepository]
-        public int EndX { get; set; }
+        public override int EndX { get; set; }
         [IsSerializedForLocalRepository]
-        public int EndY { get; set; }
+        public override int EndY { get; set; }
         [IsSerializedForLocalRepository]
-        public string LocatorImgFile { get; set; }               
-
-        public string Coordinates { get { return StartX + ", " + StartY; } }
+        public override string LocatorImgFile { get; set; }               
 
         public override String ActionType
         {

@@ -27,7 +27,7 @@ namespace GingerSikuliStandard.sikuli_UTIL
 			JarReleaseAddress = "http://sourceforge.net/projects/sikulirestapi/files/sikulirestapi-1.0.jar/download";
             WorkingDir = Directory.GetCurrentDirectory();
             APIPath = Path.Combine(WorkingDir, APIJar);
-            if (Windowless == false)
+            if (Windowless)
             {
                 APIProcessStartInfo = new ProcessStartInfo("java", "-jar \"" + APIPath + "\"");
             }
