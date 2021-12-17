@@ -72,6 +72,9 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     xArtifactsPathTextBox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ArtifactsPath), isVENeeded: false, isBrowseNeeded: true, browserType: Activities.UCValueExpression.eBrowserType.Folder);
                     SelfHealingAutoCheckInSetting();
                     break;
+                case EventType.Next:
+                    mAutoRunWizard.ResetCLIContent = true;
+                    break;
             }
         }
 
