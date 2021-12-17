@@ -85,7 +85,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
 
 
-        public async void WizardEvent(WizardEventArgs WizardEventArgs)
+        public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
             if (WizardEventArgs.EventType == EventType.Init)
             {
@@ -102,22 +102,37 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
                 {
                     AddAPIModelWizard.APIType = eAPIType.WSDL;
-                    AddAPIModelWizard.mWSDLParser = mWSDLParser;
+                    WizardEventArgs.CancelEvent = true;
+                    if (ValidateFile(xURLTextBox.Text))
+                    {
+                        WizardEventArgs.CancelEvent = false;
+                        AddAPIModelWizard.mWSDLParser = mWSDLParser;
+                    }
                 }
                 else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString())
                 {
                     AddAPIModelWizard.APIType = eAPIType.XMLTemplates;
-                    ValidateXMLTemplatesInputs(WizardEventArgs);
+                    WizardEventArgs.CancelEvent = true;
+                    if (ValidateFile(xURLTextBox.Text))
+                    {
+                        WizardEventArgs.CancelEvent = false;
+                        ValidateXMLTemplatesInputs(WizardEventArgs);
+                    }
                 }
                 else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.JsonTemplate.ToString())
                 {
                     AddAPIModelWizard.APIType = eAPIType.JsonTemplate;
+                    WizardEventArgs.CancelEvent = true;
+                    if (ValidateFile(xURLTextBox.Text))
+                    {
+                        WizardEventArgs.CancelEvent = false;
+                    }
                 }
                 else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
                 {
                     AddAPIModelWizard.APIType = eAPIType.Swagger;
                     WizardEventArgs.CancelEvent = true;
-                    if (await ValidateFile(xURLTextBox.Text).ConfigureAwait(false))
+                    if (ValidateFile(xURLTextBox.Text))
                     {
                         WizardEventArgs.CancelEvent = false;
                     }
@@ -321,7 +336,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
         }
 
-        private async void BrowseButtonClicked(object sender, RoutedEventArgs e)
+        private void BrowseButtonClicked(object sender, RoutedEventArgs e)
         {
             AddAPIModelWizard.IsParsingWasDone = false;
             if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
@@ -336,18 +351,18 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                         }, false) is string fileName)
                         {
                             xURLTextBox.Text = fileName;
-                            await ValidateFile(fileName).ConfigureAwait(false);
+                            ValidateFile(fileName);
                         }
                     }
                     else
                     {
-                        await ValidateFile().ConfigureAwait(false);
+                        ValidateFile();
                     }
 
                 }
                 else
                 {
-                    await ValidateFile().ConfigureAwait(false);
+                    ValidateFile();
                 }
             }
             else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
@@ -363,7 +378,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
                     if (result == System.Windows.Forms.DialogResult.OK)
                     {
-                        if (await ValidateFile(dlg2.FileName).ConfigureAwait(false))
+                        if (ValidateFile(dlg2.FileName))
                         {
                             xURLTextBox.Text = dlg2.FileName;
                             AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = dlg2.FileName });
@@ -375,7 +390,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                     string tempfile = System.IO.Path.GetTempFileName();
                     string filecontent = Amdocs.Ginger.Common.GeneralLib.HttpUtilities.Download(new System.Uri(xURLTextBox.Text));
                     System.IO.File.WriteAllText(tempfile, filecontent);
-                    if (await ValidateFile(tempfile).ConfigureAwait(false))
+                    if (ValidateFile(tempfile))
                     {
                         AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = tempfile });
                     }
@@ -388,7 +403,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
         }
 
-        private async void BrowseForTemplateFiles(string files = null)
+        private void BrowseForTemplateFiles(string files = null)
         {
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
             dlg.Multiselect = true;
@@ -401,7 +416,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 foreach (String file in dlg.FileNames)
                 {
-                    if (await ValidateFile(file).ConfigureAwait(false))
+                    if (ValidateFile(file))
                     {
                         AddAPIModelWizard.XTFList.Add(new TemplateFile() { FilePath = file });
                     }
@@ -409,7 +424,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
         }
 
-        private async Task<bool> ValidateFile(string fileName = "")
+        private bool ValidateFile(string fileName = "")
         {
             bool bIsFileValid = false;
             try
@@ -417,7 +432,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
                 {
                     fileName = xURLTextBox.Text;
-                    bIsFileValid = await LoadWSDLFileValidation().ConfigureAwait(false);
+                    bIsFileValid = LoadWSDLFileValidation();
                 }
                 else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
                 {
@@ -442,15 +457,15 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 if (!bIsFileValid)
                 {
-                    await CheckForValidParser(fileName);
+                    CheckForValidParser(fileName);
                 }
             }
             return bIsFileValid;
         }
 
-        private async Task CheckForValidParser(string fileName = "")
+        private void CheckForValidParser(string fileName = "")
         {
-            if (await LoadWSDLFileValidation(bShowMessage: false).ConfigureAwait(false))
+            if (LoadWSDLFileValidation(bShowMessage: false))
             {
                 Reporter.ToUser(eUserMsgKey.FileOperationError, "Please use WSDL for this file");
             }
@@ -528,7 +543,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
         }
 
-        private async Task<bool> LoadWSDLFileValidation(bool bShowMessage = true)
+        private bool LoadWSDLFileValidation(bool bShowMessage = true)
         {
             AddAPIModelWizard.ProcessStarted();
             xBrowseLoadButton.IsEnabled = false;
@@ -545,7 +560,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 XmlDocument doc = null;
                 string s = xURLTextBox.Text;
 
-                await Task.Run(() => doc = GetDocumentFromWeb(s));
+                doc = GetDocumentFromWeb(s);
                 PreviewContent = doc;
                 xPreviewButton.Visibility = Visibility.Visible;
             }
