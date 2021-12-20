@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using GingerCore;
@@ -32,7 +33,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     /// </summary>
     public partial class AutoRunWizardCLITypePage : Page, IWizardPage
     {
-        AutoRunWizard mAutoRunWizard;
+        private AutoRunWizard mAutoRunWizard;
+        private string mTempCLIContent;
 
         public AutoRunWizardCLITypePage()
         {
@@ -44,19 +46,59 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mAutoRunWizard = (AutoRunWizard)WizardEventArgs.Wizard;                    
+                    mAutoRunWizard = (AutoRunWizard)WizardEventArgs.Wizard;
+
                     BindingHandler.ObjFieldBinding(xConfigurationNameTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigName));
                     xConfigurationPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigFileFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);
-                    xParametersRadioButton.IsChecked = true;                                    
+                    xParametersRadioButton.IsChecked = true;
+                    mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType = eAutoRunEexecutorType.Run;
+                    BindingHandler.ObjFieldBinding(xCLIContentTextBox, TextBox.TextProperty, mAutoRunWizard.AutoRunConfiguration, nameof(mAutoRunWizard.AutoRunConfiguration.CLIContent), BindingMode: System.Windows.Data.BindingMode.TwoWay);
+                    mAutoRunWizard.AutoRunConfiguration.CLIContent = mAutoRunWizard.AutoRunConfiguration.GetCLIContent();
+                    mTempCLIContent = mAutoRunWizard.AutoRunConfiguration.CLIContent;
                     break;
 
                 case EventType.Active:
+                    if (mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType != eAutoRunEexecutorType.Run)
+                    {
+                        xCLIContentTextBox.AddValidationRule(new ValidateJsonFormat());
+                    }
+                    ResetCLIContent(mAutoRunWizard.ResetCLIContent);
                     ShowHelp();
                     ShowContent();
                     break;
+
+                case EventType.Prev:
+                    if (mTempCLIContent != mAutoRunWizard.AutoRunConfiguration.CLIContent && WizardEventArgs.Wizard.GetCurrentPage().Page == this  && Reporter.ToUser(eUserMsgKey.RunsetAutoConfigBackWarn, "Configuartions customizations will be lost,do you want to go back?") == eUserMsgSelection.No)
+                    {
+                        WizardEventArgs.CancelEvent = true;
+                    }
+                    else if(WizardEventArgs.Wizard.GetCurrentPage().Page == this && mTempCLIContent != mAutoRunWizard.AutoRunConfiguration.CLIContent)
+                    {
+                        WizardEventArgs.CancelEvent = false;
+                        ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
+                        mTempCLIContent = mAutoRunWizard.AutoRunConfiguration.CLIContent;
+                        ShowContent();
+                    }
+                    else
+                    {
+                        WizardEventArgs.CancelEvent = false;
+                    }
+                    break;
+                case EventType.LeavingForNextPage:
+                    mAutoRunWizard.ResetCLIContent = false;
+                    break;
             }
         }
-        
+
+        private void ResetCLIContent(bool resetCLIContent)
+        {
+            if (resetCLIContent)
+            {
+                mAutoRunWizard.AutoRunConfiguration.CLIContent = mAutoRunWizard.AutoRunConfiguration.GetCLIContent();
+                mTempCLIContent = mAutoRunWizard.AutoRunConfiguration.CLIContent;
+            }
+        }
+
         private void ShowContent()
         {
             xCLIContentTextBox.Text = mAutoRunWizard.AutoRunConfiguration.CLIContent;                    
@@ -65,22 +107,18 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         private void ShowHelp()
         {
             string helpContent = string.Empty;
-            /*
-            if (xConfigRadioButton.IsChecked == true)
-            {
-                helpContent = string.Format("Simple text file which contain the execution configurations." + GetRowDown() + "To be used in case {0} already exist in the Solution and only need to trigger it." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'ConfigFile=%ConfigFilePath%', Example: Ginger.exe ConfigFile=\"C:\\Ginger\\Regression1.Ginger.AutoRunConfigs.Config\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
-            }*/
+
             if (xDynamicRadioButton.IsChecked == true)
             {
-                helpContent = string.Format("File (XML/JSON) which describes the {0} to be executed." + GetRowDown() + "To be used in case {0} not exist in the Solution and should be created dynamically for execution purposes only, or in case {0} is exist but need to dynamically customized it input values for specific execution." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'Dynamic -f %FilePath%', Example: Ginger.exe Dynamic -f \"C:\\Ginger\\FeatureATesting.Ginger.AutoRunConfigs.xml\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
-            }
-            else if (xScriptRadioButton.IsChecked == true)
-            {
-                helpContent = string.Format("Script file written in C# which implement Ginger execution flow." + GetRowDown() + "Enable to create {0} with loops and much more complex execution." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'Script=%ScriptFilePath%', Example: Ginger.exe Script=\"C:\\Ginger\\FeatureBTesting.Ginger.AutoRunConfigs.script\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                helpContent = "Execute customized or virtual Run set via configuration file.";
             }
             else if (xParametersRadioButton.IsChecked == true)
             {
-                helpContent = string.Format("Command line arguments only without any file for triggering existing {0} execution" + GetRowDown() + "Executed by triggering Ginger executer with the switchers, Example: Ginger.exe --args --solution \"c:\\ginger\\solutions\\sol1\" --runset Regression", GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                helpContent = "Execute existing Run set as is using simple arguments.";
+            }
+           else if (xRequestRadioButton.IsChecked == true)
+            {
+                helpContent = "Execute customized or virtual Run set on remote/cloud.";
             }
 
             xCLITypeHelpTextBlock.Text = helpContent;
@@ -101,7 +139,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
             if (mAutoRunWizard != null)
             {
-                mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIConfigFile;
+                ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
                 ShowHelp();
                 ShowContent();
             }
@@ -123,10 +161,12 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIDynamicFile;
                 ShowHelp();
+                ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
                 ShowContent();
             }
-
             xConfigFileSettingsPnl.Visibility = Visibility.Visible;
+            xDynamicFileTypeCombo.Visibility = Visibility.Collapsed;
+            xCLIContentTextBox.AddValidationRule(new ValidateJsonFormat());
         }
 
         CLIScriptFile mCLIScriptFile;
@@ -149,6 +189,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         CLIArgs mCLIArgs;
         private void XParametersRadioButton_Checked(object sender, RoutedEventArgs e)
         {
+            xCLIContentTextBox.RemoveValidations(TextBox.TextProperty);
+
             if (mCLIArgs == null)
             {
                 mCLIArgs = new CLIArgs();
@@ -157,10 +199,10 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIArgs;
                 ShowHelp();
+                ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
                 ShowContent();
             }
 
-            xConfigFileSettingsPnl.Visibility = Visibility.Collapsed;
         }
 
         private void xDynamicFileTypeCombo_DropDownClosed(object sender, EventArgs e)
@@ -168,16 +210,29 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             ShowContent();
         }
 
-        //CLIExcel mCLIExcel;
-        //private void XExcelRadioButton_Checked(object sender, RoutedEventArgs e)
-        //{
-        //    if (mCLIExcel == null)
-        //    {
-        //        mCLIExcel = new CLIExcel();
-        //    }
-        //    mAutoRunWizard.SelectedCLI = mCLIExcel;
-        //    mCliText = @"Using excel to create and control a runset with data and store information" + Environment.NewLine;                        
-        //    ShowContent();
-        //}
+        RemoteExecutionRequestConfig mRemoterequest;
+        private void xRequestRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (mRemoterequest == null)
+            {
+                mRemoterequest = new RemoteExecutionRequestConfig();
+            }
+            if (mAutoRunWizard != null)
+            {
+                mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mRemoterequest;
+                mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType = eAutoRunEexecutorType.Remote;
+                ShowHelp();
+                ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
+                ShowContent();
+            }
+            xConfigFileSettingsPnl.Visibility = Visibility.Collapsed;
+            xCLIContentTextBox.AddValidationRule(new ValidateJsonFormat());
+        }
+
+        private void xCopyBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(xCLIContentTextBox.Text.ToString());
+        }
+
     }
 }
