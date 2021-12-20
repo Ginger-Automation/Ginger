@@ -66,10 +66,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 ShowWidgetsElementCheckBox();
             }
-            else if (mPlatform.IsSikuliSupported())
-            {
-                ConfigureSikuliElementCheckBox();
-            }
 
             BindElementTypeComboBox();
 
@@ -98,18 +94,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             xWidgetElementCheckBox.Visibility = Visibility.Visible;
             BindingHandler.ActInputValueBinding(xWidgetElementCheckBox,CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(Fields.IsWidgetsElement, "false"),new InputValueToBoolConverter());           
-        }
-
-        private void ConfigureSikuliElementCheckBox()
-        {
-            ToggleSikuliCheckBoxVisibility(SikuliSupportedOperations.Contains(mAction.ElementAction));
-            BindingHandler.ActInputValueBinding(xSikuliCheckBox, CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(Fields.IsSikuliElement, "false"), new InputValueToBoolConverter());
-        }
-
-        void ToggleSikuliCheckBoxVisibility(bool ShowChkBox = false)
-        {
-            xSikuliCheckBox.Visibility = ShowChkBox ? Visibility.Visible : Visibility.Collapsed;
-            xSikuliElementImage.Visibility = ShowChkBox ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private ePlatformType GetActionPlatform()
@@ -207,8 +191,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 ShowControlSpecificPage();
             }
             mAction.OnPropertyChanged(nameof(Act.ActionType));
-
-            ToggleSikuliCheckBoxVisibility(SikuliSupportedOperations.Contains(mAction.ElementAction));
         }
 
         public Page GetPlatformEditPage()

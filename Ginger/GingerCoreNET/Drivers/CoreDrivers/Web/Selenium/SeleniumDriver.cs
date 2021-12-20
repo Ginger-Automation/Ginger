@@ -405,7 +405,7 @@ namespace GingerCore.Drivers
 
                         if (!(String.IsNullOrEmpty(ApplitoolsServerUrl) && String.IsNullOrWhiteSpace(ApplitoolsServerUrl)))
                             ieoptions.BrowserCommandLineArguments += "," + ApplitoolsServerUrl;
-                        InternetExplorerDriverService IEService  = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
+                        InternetExplorerDriverService IEService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                         IEService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         break;
@@ -423,7 +423,7 @@ namespace GingerCore.Drivers
                         {
                             FirefoxOption.AddArgument("--headless");
                         }
-                        
+
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                         {
                             FirefoxProfile ffProfile2 = new FirefoxProfile();
@@ -544,7 +544,7 @@ namespace GingerCore.Drivers
                                 throw ex;
                             }
                         }
-                        
+
                         break;
 
                     #endregion
@@ -3258,8 +3258,8 @@ namespace GingerCore.Drivers
                         }
 
                         currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
-                       
-                        if(pomExcutionUtil.PriotizeLocatorPosition())
+
+                        if (pomExcutionUtil.PriotizeLocatorPosition())
                         {
                             act.ExInfo += "Locator prioritized during self healing operation";
                         }
@@ -3291,7 +3291,7 @@ namespace GingerCore.Drivers
                 {
                     ValueExpression VE = new ValueExpression(null, null);
                     EI.Path = VE.Calculate(EI.Path);
-                    if(EI.Path  == null)
+                    if (EI.Path == null)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, string.Concat("Expression : ", EI.Path, " evaluated to null value."));
                         return;
@@ -3864,7 +3864,7 @@ namespace GingerCore.Drivers
         /// Else, it'll be skipped - Checking the performance
         /// </summary>
         public bool ExtraLocatorsRequired = true;
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null,List<string> relativeXpathTemplateList=null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null)
         {
             return await Task.Run(() =>
             {
@@ -3894,7 +3894,7 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,List<string> relativeXpathTemplateList = null)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -3940,7 +3940,7 @@ namespace GingerCore.Drivers
                             var xpath = htmlElemNode.XPath;
                             if (htmlElemNode.Name.ToLower().Equals(eElementType.Svg.ToString().ToLower()))
                             {
-                                xpath= string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()=\'svg\']");
+                                xpath = string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()=\'svg\']");
                             }
 
                             webElement = Driver.FindElement(By.XPath(xpath));
@@ -3953,11 +3953,11 @@ namespace GingerCore.Drivers
                             if (!webElement.Displayed || webElement.Size.Width == 0 || webElement.Size.Height == 0)
                             {
                                 //for some element like select tag el.Displayed is false but element is visible in page
-                                if (webElement.GetCssValue("display").Equals("none", StringComparison.OrdinalIgnoreCase) )
+                                if (webElement.GetCssValue("display").Equals("none", StringComparison.OrdinalIgnoreCase))
                                 {
                                     continue;
                                 }
-                                else if(webElement.GetCssValue("width").Equals("auto") || webElement.GetCssValue("height").Equals("auto"))
+                                else if (webElement.GetCssValue("width").Equals("auto") || webElement.GetCssValue("height").Equals("auto"))
                                 {
                                     continue;
                                 }
@@ -4023,8 +4023,8 @@ namespace GingerCore.Drivers
             return foundElementsList;
         }
 
-        Regex AttRegex = new Regex("@[a-zA-Z]*",RegexOptions.Compiled);
-        private void CreateXpathFromUserTemplate(string xPathTemplate,HTMLElementInfo hTMLElement)
+        Regex AttRegex = new Regex("@[a-zA-Z]*", RegexOptions.Compiled);
+        private void CreateXpathFromUserTemplate(string xPathTemplate, HTMLElementInfo hTMLElement)
         {
             try
             {
@@ -4056,7 +4056,7 @@ namespace GingerCore.Drivers
                     hTMLElement.Locators.Add(elementLocator);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Error occured during pom learining", ex);
             }
@@ -4087,7 +4087,7 @@ namespace GingerCore.Drivers
                     var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithExactTextMatch, IsAutoLearned = true };
                     foundElemntInfo.Locators.Add(elementLocator);
                 }
-               
+
                 //relative xpath with Contains Innertext
                 var relXpathwithContainsText = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, false);
                 if (!string.IsNullOrEmpty(relXpathwithContainsText) && CheckElementLocateStatus(relXpathwithContainsText))
@@ -4096,7 +4096,7 @@ namespace GingerCore.Drivers
                     foundElemntInfo.Locators.Add(elementLocator);
                 }
             }
-            
+
             //relative xpath with Sibling Text
             var relXpathwithSiblingText = mXPathHelper.CreateRelativeXpathWithSibling(foundElemntInfo);
             if (!string.IsNullOrEmpty(relXpathwithSiblingText) && CheckElementLocateStatus(relXpathwithSiblingText))
@@ -4251,7 +4251,7 @@ namespace GingerCore.Drivers
             {
                 elementType = eElementType.Text;
             }
-            else if(elementTagName.ToUpper()=="SVG")
+            else if (elementTagName.ToUpper() == "SVG")
             {
                 elementType = eElementType.Svg;
             }
@@ -4784,7 +4784,7 @@ namespace GingerCore.Drivers
             {
                 try
                 {
-                    if(!winHandle.Equals(currentWindow))
+                    if (!winHandle.Equals(currentWindow))
                     {
                         Driver.SwitchTo().Window(winHandle);
                     }
@@ -4851,7 +4851,7 @@ namespace GingerCore.Drivers
                     {
                         ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
                     }
-                    if(!string.IsNullOrEmpty(ElementInfo.XPath))
+                    if (!string.IsNullOrEmpty(ElementInfo.XPath))
                         ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
                 }
                 if ((IWebElement)ElementInfo.ElementObject == null)
@@ -5067,7 +5067,7 @@ namespace GingerCore.Drivers
             {
                 list.Add(new ControlProperty() { Name = ElementProperty.InnerText, Value = htmlElementObject.InnerText.ToString() });
             }
-            
+
         }
 
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
@@ -5268,9 +5268,9 @@ namespace GingerCore.Drivers
                 {
                     mListnerCanBeStarted = false;
                     Reporter.ToLog(eLogLevel.DEBUG, "Spy Listener cannot be started");
-                    
+
                     var url = Driver.Title;
-                    if(CurrentPageURL != url)
+                    if (CurrentPageURL != url)
                     {
                         CurrentPageURL = Driver.Title;
                         Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Failed to start Live Spy Listner.Please click on the desired element to retrieve element details.");
@@ -5338,7 +5338,7 @@ namespace GingerCore.Drivers
                 }
                 return foundElemntInfo;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
             }
             finally
@@ -5574,7 +5574,7 @@ namespace GingerCore.Drivers
             string rc = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLib.AddScript(arguments[0]);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min));
 
             // Inject XPath
-            string rc2 = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLib.AddScript(arguments[0]);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLibXPath, performManifyJS:true));
+            string rc2 = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLib.AddScript(arguments[0]);", JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerLibXPath, performManifyJS: true));
 
 
             // Inject code which can find element by XPath
@@ -6251,11 +6251,11 @@ namespace GingerCore.Drivers
                     waitTime = ((ActSwitchWindow)act).WaitTime;
                 }
             }
-            else if(act is ActUIElement)
+            else if (act is ActUIElement)
             {
                 // adding to support actuielement switch window action synctime
                 var syncTime = Convert.ToInt32(((ActUIElement)act).GetInputParamCalculatedValue(ActUIElement.Fields.SyncTime));
-                if(syncTime >= 0)
+                if (syncTime >= 0)
                 {
                     waitTime = syncTime;
                 }
@@ -6635,15 +6635,15 @@ namespace GingerCore.Drivers
                         Dictionary<string, object> dict = item as Dictionary<string, object>;
                         if (dict != null)
                         {
-                            if(dict.ContainsKey("name"))
+                            if (dict.ContainsKey("name"))
                             {
                                 var urlArray = dict.Where(x => x.Key == "name").FirstOrDefault().Value.ToString().Split('/');
 
                                 var urlString = string.Empty;
-                                if (urlArray.Length>0)
+                                if (urlArray.Length > 0)
                                 {
                                     urlString = urlArray[urlArray.Length - 1];
-                                    if(string.IsNullOrEmpty(urlString) && urlArray.Length>1)
+                                    if (string.IsNullOrEmpty(urlString) && urlArray.Length > 1)
                                     {
                                         urlString = urlArray[urlArray.Length - 2];
                                     }
@@ -6819,432 +6819,396 @@ namespace GingerCore.Drivers
         {
             IWebElement e = null;
 
-            if (Convert.ToBoolean(act.GetInputParamValue(ActUIElement.Fields.IsSikuliElement)))
+            if (act.ElementLocateBy != eLocateBy.NA && (!act.ElementType.Equals(eElementType.Window) && !act.ElementAction.Equals(ActUIElement.eElementAction.Switch)))
             {
-            }
-            else
-            {
-                if (act.ElementLocateBy != eLocateBy.NA && (!act.ElementType.Equals(eElementType.Window) && !act.ElementAction.Equals(ActUIElement.eElementAction.Switch)))
+                if (act.ElementAction.Equals(ActUIElement.eElementAction.IsVisible))
                 {
-                    if (act.ElementAction.Equals(ActUIElement.eElementAction.IsVisible))
+                    e = LocateElement(act, true);
+                }
+                else
+                {
+                    e = LocateElement(act);
+                    if (e == null)
                     {
-                        e = LocateElement(act, true);
-                    }
-                    else
-                    {
-                        e = LocateElement(act);
-                        if (e == null)
-                        {
-                            act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
-                            return;
-                        }
+                        act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                        return;
                     }
                 }
+            }
 
-                try
+            try
+            {
+                switch (act.ElementAction)
                 {
-                    switch (act.ElementAction)
-                    {
-                        case ActUIElement.eElementAction.Click:
-                            /// Original
-                            DoUIElementClick(act.ElementAction, e);
+                    case ActUIElement.eElementAction.Click:
+                        DoUIElementClick(act.ElementAction, e);
+                        break;
 
-                            ///// Testing
+                    case ActUIElement.eElementAction.JavaScriptClick:
+                        DoUIElementClick(act.ElementAction, e);
+                        break;
 
-                            ////sikuliLauncher = new APILauncher();
-                            //sikuliLauncher.Start();
-
-                            ////Pattern clickImgPattern = new Pattern(@"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture.JPG");
-                            ////Pattern txtBoxImgPattern = new Pattern(@"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture2.JPG");
-
-                            //string clickImg = @"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture.JPG";
-                            //string txtBoxImg = @"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture2.JPG";
-
-                            //try
-                            //{
-                            //    //SikuliAction. (clickImg);
-
-
-                            //    Screen sekuliScreen = new Screen();
-
-                            //    Pattern clickImgPattern = new Pattern(@"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture.JPG");
-                            //    Pattern txtBoxImgPattern = new Pattern(@"C:\GingerSourceControl\Solutions\Ginger_Regression_Testing\Documents\ExpectedImages\Capture2.JPG");
-
-                            //    sekuliScreen.Click(clickImgPattern);
-                            //    sekuliScreen.Type(txtBoxImgPattern, "SUCCESS !");
-                            //}
-                            //catch (Exception ex)
-                            //{
-                            //    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
-                            //}
-                            break;
-
-                        case ActUIElement.eElementAction.JavaScriptClick:
-                            DoUIElementClick(act.ElementAction, e);
-                            break;
-
-                        case ActUIElement.eElementAction.GetValue:
-                            if (act.ElementType == eElementType.HyperLink)
-                            {
-                                if (e != null)
-                                    act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("href"));
-                                else
-                                    act.AddOrUpdateReturnParamActual("Actual", "");
-                            }
-                            else
-                            {
-                                act.AddOrUpdateReturnParamActual("Actual", GetElementValue(e));
-                            }
-                            break;
-
-                        case ActUIElement.eElementAction.IsVisible:
+                    case ActUIElement.eElementAction.GetValue:
+                        if (act.ElementType == eElementType.HyperLink)
+                        {
                             if (e != null)
-                            {
-                                act.AddOrUpdateReturnParamActual("Actual", e.Displayed.ToString());
-                            }
+                                act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("href"));
                             else
-                            {
-                                act.ExInfo += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
-                                act.AddOrUpdateReturnParamActual("Actual", "False");
-                            }
-                            break;
+                                act.AddOrUpdateReturnParamActual("Actual", "");
+                        }
+                        else
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", GetElementValue(e));
+                        }
+                        break;
 
-                        case ActUIElement.eElementAction.SetValue:
-                            if (e.TagName == "select")
-                            {
-                                SelectElement combobox = new SelectElement(e);
-                                string val = act.GetInputParamCalculatedValue("Value");
-                                combobox.SelectByText(val);
-                                act.ExInfo += "Selected Value - " + val;
-                                return;
-                            }
-                            if (e.TagName == "input" && e.GetAttribute("type") == "checkbox")
-                            {
-                                ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('checked',arguments[1])", e, act.ValueForDriver);
-                                return;
-                            }
+                    case ActUIElement.eElementAction.IsVisible:
+                        if (e != null)
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", e.Displayed.ToString());
+                        }
+                        else
+                        {
+                            act.ExInfo += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                            act.AddOrUpdateReturnParamActual("Actual", "False");
+                        }
+                        break;
 
-                            //Special case for FF 
-                            if (Driver.GetType() == typeof(FirefoxDriver) && e.TagName == "input" && e.GetAttribute("type") == "text")
-                            {
-                                e.Clear();
-                                try
-                                {
-                                    e.SendKeys(GetKeyName(act.GetInputParamCalculatedValue("Value")));
-                                }
-                                catch (InvalidOperationException ex)
-                                {
-                                    ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
-                                    Reporter.ToLog(eLogLevel.ERROR, "Exception occured when HandleActUIElement");
-                                }
-                            }
-                            else
-                                ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
-                            break;
+                    case ActUIElement.eElementAction.SetValue:
+                        if (e.TagName == "select")
+                        {
+                            SelectElement combobox = new SelectElement(e);
+                            string val = act.GetInputParamCalculatedValue("Value");
+                            combobox.SelectByText(val);
+                            act.ExInfo += "Selected Value - " + val;
+                            return;
+                        }
+                        if (e.TagName == "input" && e.GetAttribute("type") == "checkbox")
+                        {
+                            ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('checked',arguments[1])", e, act.ValueForDriver);
+                            return;
+                        }
 
-                        case ActUIElement.eElementAction.SendKeys:
-                            e.SendKeys(GetKeyName(act.GetInputParamCalculatedValue("Value")));
-                            break;
-
-                        case ActUIElement.eElementAction.Submit:
-                            e.SendKeys("");
-                            e.Submit();
-                            break;
-
-                        case ActUIElement.eElementAction.GetSize:
-                            act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("size").ToString());
-                            break;
-
-                        //case ActUIElement.eElementAction.SelectByIndex:
-                        //    List<IWebElement> els = LocateElements(act.LocateBy, act.LocateValueCalculated);
-                        //    if (els != null)
-                        //    {
-                        //        try
-                        //        {
-                        //            els[Convert.ToInt32(act.GetInputParamCalculatedValue("Value"))].Click();
-                        //        }
-                        //        catch (Exception)
-                        //        {
-                        //            act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
-                        //        }
-                        //    }
-                        //    else
-                        //    {
-                        //        act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
-                        //        return;
-                        //    }
-                        //    break;
-
-                        case ActUIElement.eElementAction.GetText:
-                            OpenQA.Selenium.Interactions.Actions actionGetText = new OpenQA.Selenium.Interactions.Actions(Driver);
-                            actionGetText.MoveToElement(e).Build().Perform();
-                            string text = e.GetAttribute("textContent");
-                            if (String.IsNullOrEmpty(text))
-                            {
-                                text = e.GetAttribute("innerText");
-                            }
-                            if (String.IsNullOrEmpty(text))
-                            {
-                                text = e.GetAttribute("value");
-                            }
-                            act.AddOrUpdateReturnParamActual("Actual", text);
-                            break;
-
-                        case ActUIElement.eElementAction.GetAttrValue:
-                            OpenQA.Selenium.Interactions.Actions actionGetAttrValue = new OpenQA.Selenium.Interactions.Actions(Driver);
-                            actionGetAttrValue.MoveToElement(e).Build().Perform();
-                            act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute(act.ValueForDriver));
-                            break;
-
-                        case ActUIElement.eElementAction.ScrollToElement:
+                        //Special case for FF 
+                        if (Driver.GetType() == typeof(FirefoxDriver) && e.TagName == "input" && e.GetAttribute("type") == "text")
+                        {
+                            e.Clear();
                             try
                             {
-                                ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].scrollIntoView(true);", e);
+                                e.SendKeys(GetKeyName(act.GetInputParamCalculatedValue("Value")));
+                            }
+                            catch (InvalidOperationException ex)
+                            {
+                                ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
+                                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when HandleActUIElement");
+                            }
+                        }
+                        else
+                            ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
+                        break;
+
+                    case ActUIElement.eElementAction.SendKeys:
+                        e.SendKeys(GetKeyName(act.GetInputParamCalculatedValue("Value")));
+                        break;
+
+                    case ActUIElement.eElementAction.Submit:
+                        e.SendKeys("");
+                        e.Submit();
+                        break;
+
+                    case ActUIElement.eElementAction.GetSize:
+                        act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("size").ToString());
+                        break;
+
+                    //case ActUIElement.eElementAction.SelectByIndex:
+                    //    List<IWebElement> els = LocateElements(act.LocateBy, act.LocateValueCalculated);
+                    //    if (els != null)
+                    //    {
+                    //        try
+                    //        {
+                    //            els[Convert.ToInt32(act.GetInputParamCalculatedValue("Value"))].Click();
+                    //        }
+                    //        catch (Exception)
+                    //        {
+                    //            act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValueCalculated;
+                    //        return;
+                    //    }
+                    //    break;
+
+                    case ActUIElement.eElementAction.GetText:
+                        OpenQA.Selenium.Interactions.Actions actionGetText = new OpenQA.Selenium.Interactions.Actions(Driver);
+                        actionGetText.MoveToElement(e).Build().Perform();
+                        string text = e.GetAttribute("textContent");
+                        if (String.IsNullOrEmpty(text))
+                        {
+                            text = e.GetAttribute("innerText");
+                        }
+                        if (String.IsNullOrEmpty(text))
+                        {
+                            text = e.GetAttribute("value");
+                        }
+                        act.AddOrUpdateReturnParamActual("Actual", text);
+                        break;
+
+                    case ActUIElement.eElementAction.GetAttrValue:
+                        OpenQA.Selenium.Interactions.Actions actionGetAttrValue = new OpenQA.Selenium.Interactions.Actions(Driver);
+                        actionGetAttrValue.MoveToElement(e).Build().Perform();
+                        act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute(act.ValueForDriver));
+                        break;
+
+                    case ActUIElement.eElementAction.ScrollToElement:
+                        try
+                        {
+                            ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].scrollIntoView(true);", e);
+                        }
+                        catch (Exception)
+                        {
+                            act.Error = "Error: Failed to scroll to element - " + act.LocateBy + " " + act.LocateValue;
+                        }
+                        break;
+
+                    case ActUIElement.eElementAction.RunJavaScript:
+                        string script = act.GetInputParamCalculatedValue("Value");
+                        try
+                        {
+                            if (string.IsNullOrEmpty(script))
+                            {
+                                act.Error = "Script is empty";
+                            }
+                            else
+                            {
+                                object a = null;
+                                if (!script.ToUpper().StartsWith("RETURN"))
+                                {
+                                    script = "return " + script;
+                                }
+                                if (act.ElementLocateBy != eLocateBy.NA)
+                                {
+                                    if (script.ToLower().Contains("arguments[0]") && e != null)
+                                        a = ((IJavaScriptExecutor)Driver).ExecuteScript(script, e);
+                                }
+                                else
+                                {
+                                    a = ((IJavaScriptExecutor)Driver).ExecuteScript(script);
+                                }
+
+                                if (a != null)
+                                    act.AddOrUpdateReturnParamActual("Actual", a.ToString());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "', if element need to be embedded in the script so make sure you use the 'arguments[0]' place holder for it.";
+                        }
+                        break;
+
+
+                    case ActUIElement.eElementAction.DoubleClick:
+                        OpenQA.Selenium.Interactions.Actions actionDoubleClick = new OpenQA.Selenium.Interactions.Actions(Driver);
+                        actionDoubleClick.Click(e).Click(e).Build().Perform();
+                        break;
+
+                    case ActUIElement.eElementAction.MouseRightClick:
+                        OpenQA.Selenium.Interactions.Actions actionMouseRightClick = new OpenQA.Selenium.Interactions.Actions(Driver);
+                        actionMouseRightClick.ContextClick(e).Build().Perform();
+                        break;
+
+                    case ActUIElement.eElementAction.MultiClicks:
+                        List<IWebElement> eles = LocateElements(act.ElementLocateBy, act.ElementLocateValueForDriver);
+                        if (eles != null)
+                        {
+                            try
+                            {
+                                foreach (IWebElement el in eles)
+                                {
+                                    el.Click();
+                                    Thread.Sleep(2000);
+                                }
                             }
                             catch (Exception)
                             {
-                                act.Error = "Error: Failed to scroll to element - " + act.LocateBy + " " + act.LocateValue;
+                                act.Error = "One or more elements not found - " + act.LocateBy + " " + act.LocateValueCalculated;
                             }
-                            break;
+                        }
+                        else
+                        {
+                            act.Error = "Error: One or more elements not found - " + act.LocateBy + " " + act.LocateValueCalculated;
+                            return;
+                        }
+                        break;
 
-                        case ActUIElement.eElementAction.RunJavaScript:
-                            string script = act.GetInputParamCalculatedValue("Value");
+                    case ActUIElement.eElementAction.MultiSetValue:
+                        List<IWebElement> textels = LocateElements(act.ElementLocateBy, act.ElementLocateValueForDriver);
+                        if (textels != null)
+                        {
                             try
                             {
-                                if (string.IsNullOrEmpty(script))
+                                foreach (IWebElement el in textels)
                                 {
-                                    act.Error = "Script is empty";
-                                }
-                                else
-                                {
-                                    object a = null;
-                                    if (!script.ToUpper().StartsWith("RETURN"))
-                                    {
-                                        script = "return " + script;
-                                    }
-                                    if (act.ElementLocateBy != eLocateBy.NA)
-                                    {
-                                        if (script.ToLower().Contains("arguments[0]") && e != null)
-                                            a = ((IJavaScriptExecutor)Driver).ExecuteScript(script, e);
-                                    }
-                                    else
-                                    {
-                                        a = ((IJavaScriptExecutor)Driver).ExecuteScript(script);
-                                    }
-
-                                    if (a != null)
-                                        act.AddOrUpdateReturnParamActual("Actual", a.ToString());
+                                    el.Clear();
+                                    el.SendKeys(act.GetInputParamCalculatedValue("Value"));
+                                    Thread.Sleep(2000);
                                 }
                             }
-                            catch (Exception ex)
-                            {
-                                act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "', if element need to be embedded in the script so make sure you use the 'arguments[0]' place holder for it.";
-                            }
-                            break;
-
-
-                        case ActUIElement.eElementAction.DoubleClick:
-                            OpenQA.Selenium.Interactions.Actions actionDoubleClick = new OpenQA.Selenium.Interactions.Actions(Driver);
-                            actionDoubleClick.Click(e).Click(e).Build().Perform();
-                            break;
-
-                        case ActUIElement.eElementAction.MouseRightClick:
-                            OpenQA.Selenium.Interactions.Actions actionMouseRightClick = new OpenQA.Selenium.Interactions.Actions(Driver);
-                            actionMouseRightClick.ContextClick(e).Build().Perform();
-                            break;
-
-                        case ActUIElement.eElementAction.MultiClicks:
-                            List<IWebElement> eles = LocateElements(act.ElementLocateBy, act.ElementLocateValueForDriver);
-                            if (eles != null)
-                            {
-                                try
-                                {
-                                    foreach (IWebElement el in eles)
-                                    {
-                                        el.Click();
-                                        Thread.Sleep(2000);
-                                    }
-                                }
-                                catch (Exception)
-                                {
-                                    act.Error = "One or more elements not found - " + act.LocateBy + " " + act.LocateValueCalculated;
-                                }
-                            }
-                            else
-                            {
-                                act.Error = "Error: One or more elements not found - " + act.LocateBy + " " + act.LocateValueCalculated;
-                                return;
-                            }
-                            break;
-
-                        case ActUIElement.eElementAction.MultiSetValue:
-                            List<IWebElement> textels = LocateElements(act.ElementLocateBy, act.ElementLocateValueForDriver);
-                            if (textels != null)
-                            {
-                                try
-                                {
-                                    foreach (IWebElement el in textels)
-                                    {
-                                        el.Clear();
-                                        el.SendKeys(act.GetInputParamCalculatedValue("Value"));
-                                        Thread.Sleep(2000);
-                                    }
-                                }
-                                catch (Exception)
-                                {
-                                    act.Error = "Error: One or more elements not found - " + act.ElementLocateBy + " " + act.ElementLocateValueForDriver;
-                                }
-                            }
-                            else
+                            catch (Exception)
                             {
                                 act.Error = "Error: One or more elements not found - " + act.ElementLocateBy + " " + act.ElementLocateValueForDriver;
-                                return;
                             }
-                            break;
+                        }
+                        else
+                        {
+                            act.Error = "Error: One or more elements not found - " + act.ElementLocateBy + " " + act.ElementLocateValueForDriver;
+                            return;
+                        }
+                        break;
 
-                        case ActUIElement.eElementAction.IsDisabled:
-                            if ((e.Displayed && e.Enabled))
+                    case ActUIElement.eElementAction.IsDisabled:
+                        if ((e.Displayed && e.Enabled))
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", "False");
+                            act.ExInfo = "Element displayed property is " + e.Displayed + "Element Enabled property is:" + e.Enabled;
+                            return;
+                        }
+                        else
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", "true");
+                        }
+                        break;
+
+                    case ActUIElement.eElementAction.GetItemCount:
+                        try
+                        {
+                            List<IWebElement> elements = LocateElements(act.ElementLocateBy, act.ElementLocateValueForDriver);
+                            if (elements != null)
                             {
-                                act.AddOrUpdateReturnParamActual("Actual", "False");
-                                act.ExInfo = "Element displayed property is " + e.Displayed + "Element Enabled property is:" + e.Enabled;
-                                return;
+                                act.AddOrUpdateReturnParamActual("Elements Count", elements.Count.ToString());
                             }
                             else
                             {
-                                act.AddOrUpdateReturnParamActual("Actual", "true");
+                                act.AddOrUpdateReturnParamActual("Elements Count", "0");
                             }
-                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = "Failed to count number of elements for - " + act.ElementLocateBy + " " + act.ElementLocateValueForDriver;
+                            act.ExInfo = ex.Message;
+                        }
+                        break;
 
-                        case ActUIElement.eElementAction.GetItemCount:
-                            try
-                            {
-                                List<IWebElement> elements = LocateElements(act.ElementLocateBy, act.ElementLocateValueForDriver);
-                                if (elements != null)
-                                {
-                                    act.AddOrUpdateReturnParamActual("Elements Count", elements.Count.ToString());
-                                }
-                                else
-                                {
-                                    act.AddOrUpdateReturnParamActual("Elements Count", "0");
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                act.Error = "Failed to count number of elements for - " + act.ElementLocateBy + " " + act.ElementLocateValueForDriver;
-                                act.ExInfo = ex.Message;
-                            }
-                            break;
+                    case ActUIElement.eElementAction.ClickXY:
+                        MoveToElementActions(act);
+                        break;
+                    case ActUIElement.eElementAction.DoubleClickXY:
+                        MoveToElementActions(act);
+                        break;
+                    case ActUIElement.eElementAction.SendKeysXY:
+                        MoveToElementActions(act);
+                        break;
+                    case ActUIElement.eElementAction.IsEnabled:
+                        act.AddOrUpdateReturnParamActual("Enabled", e.Enabled.ToString());
+                        break;
 
-                        case ActUIElement.eElementAction.ClickXY:
-                            MoveToElementActions(act);
-                            break;
-                        case ActUIElement.eElementAction.DoubleClickXY:
-                            MoveToElementActions(act);
-                            break;
-                        case ActUIElement.eElementAction.SendKeysXY:
-                            MoveToElementActions(act);
-                            break;
-                        case ActUIElement.eElementAction.IsEnabled:
-                            act.AddOrUpdateReturnParamActual("Enabled", e.Enabled.ToString());
-                            break;
-
-                        case ActUIElement.eElementAction.MouseClick:
-                            DoUIElementClick(act.ElementAction, e);
-                            break;
-                        case ActUIElement.eElementAction.MousePressRelease:
-                            DoUIElementClick(act.ElementAction, e);
-                            break;
-                        case ActUIElement.eElementAction.ClickAndValidate:
-                            ClickAndValidteHandler(act);
-                            break;
-                        case ActUIElement.eElementAction.SetText:
-                            try
-                            {
-                                ClearText(e);
-                            }
-                            finally
-                            {
-                                e.SendKeys(act.ValueForDriver);
-                            }
-                            break;
-                        case ActUIElement.eElementAction.AsyncClick:
-                            DoUIElementClick(act.ElementAction, e);
-                            break;
-                        case ActUIElement.eElementAction.DragDrop:
-                            DoDragAndDrop(act, e);
-                            break;
-                        case ActUIElement.eElementAction.DrawObject:
-                            DoDrawObject(act, e);
-                            break;
-
-                        case ActUIElement.eElementAction.Select:
-                            SelectElement seSetSelectedValueByValu = new SelectElement(e);
-                            SelectDropDownListOptionByValue(act, act.GetInputParamCalculatedValue(ActUIElement.Fields.ValueToSelect), seSetSelectedValueByValu);
-                            break;
-                        case ActUIElement.eElementAction.GetValidValues:
-                            GetDropDownListOptions(act, e);
-                            break;
-                        case ActUIElement.eElementAction.SelectByText:
-                            SelectDropDownListOptionByText(act, act.GetInputParamCalculatedValue(ActUIElement.Fields.Value), e);
-                            break;
-                        case ActUIElement.eElementAction.SelectByIndex:
-                            SelectElement seSetSelectedValueByIndex = new SelectElement(e);
-                            SelectDropDownListOptionByIndex(act, Int32.Parse(act.GetInputParamCalculatedValue(ActUIElement.Fields.ValueToSelect)), seSetSelectedValueByIndex);
-                            break;
-                        case ActUIElement.eElementAction.GetSelectedValue:
-                            SelectElement seGetSelectedValue = new SelectElement(e);
-                            act.AddOrUpdateReturnParamActual("Actual", seGetSelectedValue.SelectedOption.Text);
-                            break;
-                        case ActUIElement.eElementAction.IsValuePopulated:
-                            switch (act.ElementType)
-                            {
-                                case eElementType.ComboBox:
-                                    SelectElement seIsPrepopulated = new SelectElement(e);
-                                    act.AddOrUpdateReturnParamActual("Actual", (seIsPrepopulated.SelectedOption.ToString().Trim() != "").ToString());
-                                    break;
-                                case eElementType.TextBox:
-                                    act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("value").Trim() != "").ToString());
-                                    break;
-                            }
-                            break;
-                        case ActUIElement.eElementAction.GetFont:
-                            act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("font"));
-                            break;
-                        case ActUIElement.eElementAction.ClearValue:
+                    case ActUIElement.eElementAction.MouseClick:
+                        DoUIElementClick(act.ElementAction, e);
+                        break;
+                    case ActUIElement.eElementAction.MousePressRelease:
+                        DoUIElementClick(act.ElementAction, e);
+                        break;
+                    case ActUIElement.eElementAction.ClickAndValidate:
+                        ClickAndValidteHandler(act);
+                        break;
+                    case ActUIElement.eElementAction.SetText:
+                        try
+                        {
                             ClearText(e);
-                            break;
-                        case ActUIElement.eElementAction.GetHeight:
-                            act.AddOrUpdateReturnParamActual("Actual", e.Size.Height.ToString());
-                            break;
-                        case ActUIElement.eElementAction.GetWidth:
-                            act.AddOrUpdateReturnParamActual("Actual", e.Size.Width.ToString());
-                            break;
-                        case ActUIElement.eElementAction.GetStyle:
-                            try { act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("style")); }
-                            catch { act.AddOrUpdateReturnParamActual("Actual", "no such attribute"); }
-                            break;
-                        case ActUIElement.eElementAction.SetFocus:
-                        case ActUIElement.eElementAction.Hover:
-                            OpenQA.Selenium.Interactions.Actions action = new OpenQA.Selenium.Interactions.Actions(Driver);
-                            action.MoveToElement(e).Build().Perform();
-                            break;
-                        case ActUIElement.eElementAction.GetTextLength:
-                            act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("value").Length).ToString());
-                            break;
-                        case ActUIElement.eElementAction.Switch:
-                            SwitchWindow(act);
-                            break;
-                        default:
-                            act.Error = "Error: Unknown Action: " + act.ElementAction;
-                            break;
-                    }
+                        }
+                        finally
+                        {
+                            e.SendKeys(act.ValueForDriver);
+                        }
+                        break;
+                    case ActUIElement.eElementAction.AsyncClick:
+                        DoUIElementClick(act.ElementAction, e);
+                        break;
+                    case ActUIElement.eElementAction.DragDrop:
+                        DoDragAndDrop(act, e);
+                        break;
+                    case ActUIElement.eElementAction.DrawObject:
+                        DoDrawObject(act, e);
+                        break;
+
+                    case ActUIElement.eElementAction.Select:
+                        SelectElement seSetSelectedValueByValu = new SelectElement(e);
+                        SelectDropDownListOptionByValue(act, act.GetInputParamCalculatedValue(ActUIElement.Fields.ValueToSelect), seSetSelectedValueByValu);
+                        break;
+                    case ActUIElement.eElementAction.GetValidValues:
+                        GetDropDownListOptions(act, e);
+                        break;
+                    case ActUIElement.eElementAction.SelectByText:
+                        SelectDropDownListOptionByText(act, act.GetInputParamCalculatedValue(ActUIElement.Fields.Value), e);
+                        break;
+                    case ActUIElement.eElementAction.SelectByIndex:
+                        SelectElement seSetSelectedValueByIndex = new SelectElement(e);
+                        SelectDropDownListOptionByIndex(act, Int32.Parse(act.GetInputParamCalculatedValue(ActUIElement.Fields.ValueToSelect)), seSetSelectedValueByIndex);
+                        break;
+                    case ActUIElement.eElementAction.GetSelectedValue:
+                        SelectElement seGetSelectedValue = new SelectElement(e);
+                        act.AddOrUpdateReturnParamActual("Actual", seGetSelectedValue.SelectedOption.Text);
+                        break;
+                    case ActUIElement.eElementAction.IsValuePopulated:
+                        switch (act.ElementType)
+                        {
+                            case eElementType.ComboBox:
+                                SelectElement seIsPrepopulated = new SelectElement(e);
+                                act.AddOrUpdateReturnParamActual("Actual", (seIsPrepopulated.SelectedOption.ToString().Trim() != "").ToString());
+                                break;
+                            case eElementType.TextBox:
+                                act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("value").Trim() != "").ToString());
+                                break;
+                        }
+                        break;
+                    case ActUIElement.eElementAction.GetFont:
+                        act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("font"));
+                        break;
+                    case ActUIElement.eElementAction.ClearValue:
+                        ClearText(e);
+                        break;
+                    case ActUIElement.eElementAction.GetHeight:
+                        act.AddOrUpdateReturnParamActual("Actual", e.Size.Height.ToString());
+                        break;
+                    case ActUIElement.eElementAction.GetWidth:
+                        act.AddOrUpdateReturnParamActual("Actual", e.Size.Width.ToString());
+                        break;
+                    case ActUIElement.eElementAction.GetStyle:
+                        try { act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("style")); }
+                        catch { act.AddOrUpdateReturnParamActual("Actual", "no such attribute"); }
+                        break;
+                    case ActUIElement.eElementAction.SetFocus:
+                    case ActUIElement.eElementAction.Hover:
+                        OpenQA.Selenium.Interactions.Actions action = new OpenQA.Selenium.Interactions.Actions(Driver);
+                        action.MoveToElement(e).Build().Perform();
+                        break;
+                    case ActUIElement.eElementAction.GetTextLength:
+                        act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("value").Length).ToString());
+                        break;
+                    case ActUIElement.eElementAction.Switch:
+                        SwitchWindow(act);
+                        break;
+                    default:
+                        act.Error = "Error: Unknown Action: " + act.ElementAction;
+                        break;
                 }
-                finally
+            }
+            finally
+            {
+                if (act.ElementLocateBy == eLocateBy.POMElement && HandelIFramShiftAutomaticallyForPomElement)
                 {
-                    if (act.ElementLocateBy == eLocateBy.POMElement && HandelIFramShiftAutomaticallyForPomElement)
-                    {
-                        Driver.SwitchTo().DefaultContent();
-                    }
+                    Driver.SwitchTo().DefaultContent();
                 }
             }
         }
@@ -7533,7 +7497,7 @@ namespace GingerCore.Drivers
                     break;
                 }
 
-                if(string.IsNullOrEmpty(iframeXPath))
+                if (string.IsNullOrEmpty(iframeXPath))
                 {
                     iframeXPath = elemInfo.XPath;
                 }
@@ -8301,7 +8265,7 @@ namespace GingerCore.Drivers
 
         {
 
-            switch(mBrowserTpe)
+            switch (mBrowserTpe)
             {
 
 

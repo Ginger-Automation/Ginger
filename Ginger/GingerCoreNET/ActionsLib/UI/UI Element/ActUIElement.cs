@@ -115,7 +115,6 @@ namespace GingerCore.Actions.Common
             public static string WaitforIdle = "WaitforIdle";
             public static string IsWidgetsElement = "IsWidgetsElement";
             public static string IsMouseEvent = "IsMouseEvent";
-            public static string IsSikuliElement = "IsSikuliElement";
 
             //used to support switch action sync time
             public static string SyncTime = "SyncTime";
@@ -544,19 +543,6 @@ namespace GingerCore.Actions.Common
             LongClick,
             #endregion NOT TO USE Action Types
         }
-
-        public static List<eElementAction> SikuliSupportedOperations = new List<eElementAction>() 
-        { 
-            eElementAction.Click, 
-            eElementAction.SetText, 
-            eElementAction.SetValue, 
-            //eElementAction.GetValue, 
-            //eElementAction.GetText, 
-            eElementAction.DoubleClick, 
-            eElementAction.MouseRightClick, 
-            //eElementAction.DragDrop, 
-            eElementAction.Exist 
-        };
 
         public enum eElementDragDropType
         {
