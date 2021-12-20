@@ -440,7 +440,6 @@ namespace GingerCore.Actions.VisualTesting
             for (int i = 1; i <= numOfImages; i++)
             {
                 String currImagePath = imagePath + i.ToString() + ".jpg";
-                //String currImageURL = BaseURLForDownloading + i.ToString() + "/diff?ApiKey=" + GetApplitoolsAPIKey();
                 String currImageURL = BaseURLForDownloading + i.ToString() + "/diff?ApiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey; //GetApplitoolsAPIKey();
                 Console.WriteLine(currImageURL);
                 WebClient webClient = new WebClient();
