@@ -261,7 +261,7 @@ namespace GingerCore.Actions
             SeleniumDriver webDriver = ((SeleniumDriver)mDriver);
             CheckSetVisualAnalyzer();
             CheckSetAppWindowSize();
-
+            
             if (mVisualAnalyzer.SupportUniqueExecution())
             {
                 mVisualAnalyzer.SetAction(mDriver, this);
@@ -292,6 +292,7 @@ namespace GingerCore.Actions
                     break;
                 case eChangeAppWindowSize.Custom:
                     //TODO:
+                    mDriver.ChangeAppWindowSize(Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowWidth)), Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowHeight)));
                     break;
                 case eChangeAppWindowSize.Resolution640x480:
                     mDriver.ChangeAppWindowSize(640, 480);
@@ -332,7 +333,7 @@ namespace GingerCore.Actions
                     return Resolution;
                 case eChangeAppWindowSize.Custom:
                     //TODO:
-                    Resolution.Add(Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowHeight)));
+                    Resolution.Add(Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowWidth)));
                     Resolution.Add(Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowHeight)));
                     return Resolution;
                 case eChangeAppWindowSize.Resolution640x480:

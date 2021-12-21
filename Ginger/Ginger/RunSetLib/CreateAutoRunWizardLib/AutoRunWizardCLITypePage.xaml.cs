@@ -160,6 +160,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             if (mAutoRunWizard != null)
             {
                 mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIDynamicFile;
+                mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType = eAutoRunEexecutorType.DynamicFile;
+
                 ShowHelp();
                 ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
                 ShowContent();
@@ -198,6 +200,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             if (mAutoRunWizard != null)
             {
                 mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIArgs;
+                mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType = eAutoRunEexecutorType.Run;
+
                 ShowHelp();
                 ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
                 ShowContent();
