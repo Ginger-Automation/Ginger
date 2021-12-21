@@ -10,11 +10,11 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
             <RowDefinition Height="40"/>
-            <RowDefinition MinHeight="40" Height="Auto" MaxHeight="150"/>
-            <RowDefinition Height="100"/>
+            <RowDefinition MinHeight="51"/>
+            <RowDefinition Height="230"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="51"/>
+            <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0">
@@ -32,14 +32,19 @@
         <StackPanel  Grid.Row="1">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Pattern :</Label>
         </StackPanel>
+        
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="15,0">
             <Actions:UCValueExpression x:Name="xPatternImageLocationTextBox" ToolTip="Element Image Path for Sikuli Operation Pattern" MinWidth="300"/>
-            <Button x:Name="xBrowsePatternButton" Content="Browse" Click="xBrowsePatternButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Style="{StaticResource @InputButtonStyle}" Margin="5,6"/>
+            <Button x:Name="xBrowsePatternButton" Content="Browse" Click="xBrowsePatternButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="5,6"/>
             <usercontrols:ucButton x:Name="xCaptureLocatorImageButton" ButtonType="ImageButton" Click="CaptureLocatorImageButton_Click" ToolTip="Capture Application Element Image" ButtonFontImageSize="15" ButtonImageType="Camera" Foreground="Red" VerticalAlignment="Center" />
         </StackPanel>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal">
-            <Label Style="{StaticResource @InputFieldLabelStyle}">Element Screenshot Preview :</Label>
+        <StackPanel Grid.Row="3" >
+            <StackPanel Orientation="Horizontal">
+                <Label Style="{StaticResource @InputFieldLabelStyle}">Element Screenshot Preview :</Label>
+                <usercontrols:ucButton x:Name="xRefreshPatternImage" ToolTip="Refresh Pattern Image" ButtonImageWidth="15" ButtonImageHeight="15"
+                                       Margin="5,0" ButtonImageType="Reset" Click="xRefreshPatternImage_Click"/>
+            </StackPanel>
             <Canvas x:Name="xElementImageCanvas" Visibility="Collapsed">
                 <Image x:Name="xElementImage" />
             </Canvas>

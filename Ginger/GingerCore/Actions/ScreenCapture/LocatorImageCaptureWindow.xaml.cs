@@ -56,8 +56,39 @@ namespace GingerCore.Actions.ScreenCapture
         private System.Windows.Point clickMousePoint;
         private bool bCapturedOrigCoordinates = false;
         private bool bCapturedTargetCoordinates = false;
-        public string ScreenImageDirectory="";
-        public string ScreenImageName = "";
+        private string mScreenImageDirectory = string.Empty;
+        public string ScreenImageDirectory
+        {
+            get
+            {
+                if(string.IsNullOrEmpty(mScreenImageDirectory))
+                {
+                    //TODO: need to find a way to hold the image in the Act so it will go to shared repo have version and more
+                    // Need to think if good or not
+                    mScreenImageDirectory = Path.Combine("~", actImageCaptureSupport.SolutionFolder + actImageCaptureSupport.ImagePath);
+
+                    if (!Directory.Exists(mScreenImageDirectory))
+                        Directory.CreateDirectory(mScreenImageDirectory);
+
+                    mScreenImageDirectory = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScreenImageDirectory);
+                }
+
+                return mScreenImageDirectory;
+            }
+        }
+
+        public string mScreenImageName;
+        public string ScreenImageName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(mScreenImageName))
+                    mScreenImageName = Guid.NewGuid().ToString() + ".JPG";
+
+                return mScreenImageName;
+            }
+        }
+
         /// <summary>
         /// The threshold distance the mouse-cursor must move before drag-selection begins.
         /// </summary>
@@ -246,13 +277,6 @@ namespace GingerCore.Actions.ScreenCapture
                         g.CopyFromScreen(SourcePoint, System.Drawing.Point.Empty, SelectionRectangle.Size);
                     }
 
-                    ScreenImageDirectory = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScreenImageDirectory);
-
-                    if (!Directory.Exists(ScreenImageDirectory))
-                    {
-                        Directory.CreateDirectory(ScreenImageDirectory);
-                    }
-
                     bitmap.Save(GetPathToExpectedImage(), ImageFormat.Jpeg);
                 }
             }
@@ -264,26 +288,6 @@ namespace GingerCore.Actions.ScreenCapture
 
         }
 
-        public void ValidateScreenImageDirectory()
-        {
-            try
-            {
-                //TODO: need to find a way to hold the image in the Act so it will go to shared repo have version and more
-                // Need to think if good or not
-                ScreenImageDirectory = Path.Combine("~", actImageCaptureSupport.SolutionFolder + actImageCaptureSupport.ImagePath);
-
-                if (!Directory.Exists(ScreenImageDirectory))
-                    Directory.CreateDirectory(ScreenImageDirectory);
-
-                if (string.IsNullOrEmpty(ScreenImageName))
-                    ScreenImageName = Guid.NewGuid().ToString() + ".JPG";
-            }
-            catch (Exception e)
-            {
-                Reporter.ToUser(eUserMsgKey.FolderOperationError, e.Message);
-            }
-        }
-
         public string GetPathToExpectedImage()
         {
             return Path.Combine(ScreenImageDirectory, ScreenImageName); 
@@ -291,8 +295,6 @@ namespace GingerCore.Actions.ScreenCapture
 
         public void SaveSelection(System.Drawing.Point clickdp)
         {
-            ValidateScreenImageDirectory();
-
             if (ScreenImageDirectory != "" )
             {
                 //Allow 250 milliseconds for the screen to repaint itself (we don't want to include this form in the capture)

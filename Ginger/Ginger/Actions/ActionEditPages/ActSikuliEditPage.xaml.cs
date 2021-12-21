@@ -46,6 +46,9 @@ namespace Ginger.Actions
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSikuliOperationComboBox, ComboBox.TextProperty, Act, nameof(ActSikuli.ActSikuliOperation), BindingMode.TwoWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xActiveProcessesTitlesComboBox, ComboBox.TextProperty, Act, nameof(ActSikuli.ProcessNameForSikuliOperation), BindingMode.TwoWay);
+
+            xPatternImageLocationTextBox.ValueTextBox.Text = actSikuli.PatternPath;
+            ElementImageSourceChanged();
         }
 
         private void CaptureLocatorImageButton_Click(object sender, RoutedEventArgs e)
@@ -61,7 +64,11 @@ namespace Ginger.Actions
 
             LocatorImageCaptureWindow sc = new LocatorImageCaptureWindow(actSikuli);
             sc.Show();
-            xPatternImageLocationTextBox.ValueTextBox.Text = sc.ScreenImageDirectory;
+
+            actSikuli.PatternPath = sc.GetPathToExpectedImage();
+            xPatternImageLocationTextBox.ValueTextBox.Text = sc.GetPathToExpectedImage();
+
+            ElementImageSourceChanged();
         }
 
         private void xSikuliOperationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -82,11 +89,11 @@ namespace Ginger.Actions
             {
                 DefaultExt = "*.jpg or .jpeg or .png",
                 Filter = "Image Files (*.jpg, *.jpeg, *.png)|*.jpg;*.jpeg;*.png"
-            }) is string fileName)
+            }, false) is string fileName)
             {
+                actSikuli.PatternPath = fileName;
                 xPatternImageLocationTextBox.ValueTextBox.Text = fileName;
                 ElementImageSourceChanged();
-                //FillSheetCombo();
             }
         }
 
@@ -132,6 +139,18 @@ namespace Ginger.Actions
         void RefreshProcessesCombo()
         {
             GingerCore.General.FillComboFromList(xActiveProcessesTitlesComboBox, actSikuli.ActiveProcessWindows);
+        }
+
+        private void xRefreshPatternImage_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(xPatternImageLocationTextBox.ValueTextBox.Text) 
+                || !File.Exists(xPatternImageLocationTextBox.ValueTextBox.Text))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Valid Image file found. Please enter a valid Image path.");
+                return;
+            }
+
+            ElementImageSourceChanged();
         }
     }
 }
