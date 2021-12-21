@@ -21,7 +21,7 @@
             <Label Style="{StaticResource @InputFieldLabelStyle}">Window :</Label>
             <StackPanel Orientation="Horizontal">
                 <ComboBox x:Name="xActiveProcessesTitlesComboBox" Margin="15,0,10,0" MinWidth="300" MaxWidth="600" Height="25"
-                          SelectionChanged="xActiveProcessesTitlesComboBox_SelectionChanged">
+                          SelectionChanged="xActiveProcessesTitlesComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" >
                 </ComboBox>
                 <usercontrols:ucButton x:Name="xRefreshActiveWindows" ToolTip="Refresh Active Windows List" ButtonImageWidth="15" ButtonImageHeight="15"
                                        Margin="5,0" ButtonImageType="Refresh" Click="xRefreshActiveWindows_Click"/>
@@ -51,7 +51,7 @@
 
         <StackPanel Grid.Row="5" Orientation="Horizontal">
             <ComboBox x:Name="xSikuliOperationComboBox" Margin="15,0" MinWidth="300" Height="25" MaxWidth="450"
-                      SelectionChanged="xSikuliOperationComboBox_SelectionChanged">
+                      SelectionChanged="xSikuliOperationComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" >
             </ComboBox>
         </StackPanel>
         

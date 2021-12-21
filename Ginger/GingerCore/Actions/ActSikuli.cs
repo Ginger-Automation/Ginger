@@ -98,15 +98,18 @@ namespace GingerCore.Actions
             }
         }
 
+        [IsSerializedForLocalRepository]
         public string PatternPath { get; set; }
+        [IsSerializedForLocalRepository]
         public bool ShowSikuliConsole { get; set; }
+        [IsSerializedForLocalRepository]
         public string SetTextValue { get; set; }
-        public int ProcessIDForSikuliOperation 
+        public int ProcessIDForSikuliOperation
         {
             get
             {
                 int procId = -1;
-                if(!string.IsNullOrEmpty(ProcessNameForSikuliOperation))
+                if(!string.IsNullOrEmpty(ProcessNameForSikuliOperation) && ActiveProcessWindowsDict.ContainsValue(ProcessNameForSikuliOperation))
                 {
                     procId = ActiveProcessWindowsDict.Where(d => d.Value == ProcessNameForSikuliOperation).FirstOrDefault().Key;
                 }
@@ -115,13 +118,21 @@ namespace GingerCore.Actions
             }
         }
 
+        [IsSerializedForLocalRepository]
         public string ProcessNameForSikuliOperation { get; set; }
 
         public override eImageType Image { get { return eImageType.BullsEye; } }
 
+        public void SetFocusToSelectedApplicationInstance()
+        {
+            if (ProcessIDForSikuliOperation != -1)
+            {
+                WinAPIAutomation.SetForeGroundWindow(ProcessIDForSikuliOperation);
+            }
+        }
+
         public override void Execute()
         {
-            WinAPIAutomation.SetForeGroundWindow(ProcessIDForSikuliOperation);
             APILauncher sikuliLauncher = new APILauncher(ShowSikuliConsole);
             sikuliLauncher.Start();
 
@@ -130,6 +141,8 @@ namespace GingerCore.Actions
                 Screen sekuliScreen = new Screen();
 
                 Pattern sikuliPattern = new Pattern(PatternPath);
+
+                SetFocusToSelectedApplicationInstance();
 
                 switch (ActSikuliOperation)
                 {
@@ -209,5 +222,12 @@ namespace GingerCore.Actions
         public override int EndY { get; set; }
         [IsSerializedForLocalRepository]
         public override string LocatorImgFile { get; set; }
+        public override string ImagePath
+        {
+            get
+            {
+                return @"Documents\SikuliImages\";
+            }
+        }
     }
 }

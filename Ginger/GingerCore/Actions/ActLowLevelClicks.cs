@@ -89,7 +89,15 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public override int EndY { get; set; }
         [IsSerializedForLocalRepository]
-        public override string LocatorImgFile { get; set; }               
+        public override string LocatorImgFile { get; set; }
+
+        public override string ImagePath
+        {
+            get
+            {
+                return @"Documents\ExpectedImages\";
+            }
+        }
 
         public override String ActionType
         {

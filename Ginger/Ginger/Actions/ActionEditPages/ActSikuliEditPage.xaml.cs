@@ -50,10 +50,18 @@ namespace Ginger.Actions
 
         private void CaptureLocatorImageButton_Click(object sender, RoutedEventArgs e)
         {
+            if (actSikuli.ProcessIDForSikuliOperation == -1)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please select valid application instance to proceed with image capture.");
+                return;
+            }
+
             App.MainWindow.WindowState = WindowState.Minimized;
+            actSikuli.SetFocusToSelectedApplicationInstance();
+
             LocatorImageCaptureWindow sc = new LocatorImageCaptureWindow(actSikuli);
             sc.Show();
-            xPatternImageLocationTextBox.ValueTextBox.Text = sc.GetPathToExpectedImage();
+            xPatternImageLocationTextBox.ValueTextBox.Text = sc.ScreenImageDirectory;
         }
 
         private void xSikuliOperationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

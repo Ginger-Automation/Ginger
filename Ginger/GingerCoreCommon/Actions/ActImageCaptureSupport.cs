@@ -21,6 +21,8 @@ namespace GingerCore.Actions
         public abstract int EndY { get; set; }
         [IsSerializedForLocalRepository]
         public abstract string LocatorImgFile { get; set; }
+        [IsSerializedForLocalRepository]
+        public abstract string ImagePath { get; }
 
         public string Coordinates { get { return StartX + ", " + StartY; } }
     }
