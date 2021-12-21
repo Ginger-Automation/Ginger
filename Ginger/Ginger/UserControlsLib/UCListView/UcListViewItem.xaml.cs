@@ -423,6 +423,10 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     xItemOperationsPnl.Visibility = Visibility.Collapsed;
                 }
+                else
+                {
+                    ShowItemMainOperationsPnl(true);
+                }
             });
         }
 
@@ -513,6 +517,10 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     xItemExtraOperationsMenu.Visibility = Visibility.Collapsed;
                 }
+                else
+                {
+                    ShowItemMainOperationsPnl(true);
+                }
             });
         }
 
@@ -570,6 +578,10 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     xOperationsSplitter.Visibility = Visibility.Collapsed;
                     xItemExecutionOperationsPnl.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    ShowItemMainOperationsPnl(true);
                 }
             });
         }
@@ -785,18 +797,31 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void XListItemGrid_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (xItemOperationsPnl.Children.Count > 0)
+            if (xItemOperationsPnl.Children.Count > 0 || ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items.Count > 0 || xItemExecutionOperationsPnl.Children.Count > 0)
+            {
+                ShowItemMainOperationsPnl(true);
+            }
+        }
+
+
+        private void XListItemGrid_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ShowItemMainOperationsPnl(false);
+        }
+
+        private void ShowItemMainOperationsPnl(bool toShow)
+        {
+            if (toShow)
             {
                 xItemOperationsMainPnl.Visibility = Visibility.Visible;
                 xItemOperationsClm.Width = new GridLength(175);
             }
+            else
+            {
+                xItemOperationsMainPnl.Visibility = Visibility.Collapsed;
+                xItemOperationsClm.Width = new GridLength(0);
+            }
         }
-
-        private void XListItemGrid_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            xItemOperationsMainPnl.Visibility = Visibility.Collapsed;
-            xItemOperationsClm.Width = new GridLength(0);
-        }        
     }
 
     public class ActiveBackgroundColorConverter : IValueConverter

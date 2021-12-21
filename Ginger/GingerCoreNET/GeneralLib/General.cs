@@ -201,9 +201,10 @@ namespace GingerCoreNET.GeneralLib
         //HTML Report related methods added here 
         public static string TimeConvert(string s)
         {
-            double seconds = Convert.ToDouble(s);
-            TimeSpan ts = TimeSpan.FromSeconds(seconds);
-            return ts.ToString(@"hh\:mm\:ss");
+            return Amdocs.Ginger.Common.GeneralLib.General.TimeConvert(s);
+            //double seconds = Convert.ToDouble(s);
+            //TimeSpan ts = TimeSpan.FromSeconds(seconds);
+            //return ts.ToString(@"hh\:mm\:ss");
         }
 
         public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
