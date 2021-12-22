@@ -43,14 +43,6 @@
             </DockPanel>
         </Grid>
 
-        <DockPanel x:Name="xConfigFileSettingsPnl" DockPanel.Dock="Top">
-            <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="-5,2,0,0">File Name:</Label>
-            <TextBox x:Name="xConfigurationNameTextBox" DockPanel.Dock="Top" Margin="0" Style="{StaticResource $TextBoxStyle}" Height="25"></TextBox>
-
-            <Label DockPanel.Dock="Top" Margin="-5,2,0,0" Content="Destination Folder" Style="{StaticResource $LabelStyle}"/>
-            <Actions:UCValueExpression x:Name="xConfigurationPathTextbox" DockPanel.Dock="Top"/>
-        </DockPanel>
-
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="500*"/>
@@ -60,7 +52,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <DockPanel Grid.Column="0" Grid.Row="0">
-                <Label DockPanel.Dock="Left" Margin="-5,5,0,0" HorizontalAlignment="Left" Style="{StaticResource $LabelStyle}">Configurations:</Label>
+                <Label DockPanel.Dock="Left" Margin="-5,5,0,-5" HorizontalAlignment="Left" Style="{StaticResource $LabelStyle}">Configurations:</Label>
                 <usercontrols:ucButton DockPanel.Dock="Right"  x:Name="xCopyBtn" Visibility="Visible" ToolTip="Copy configuration to Clipboard"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonType="ImageButton" ButtonImageType="Copy" Click="xCopyBtn_Click"  Margin="0,0,-6,-5" HorizontalAlignment="Right" VerticalAlignment="Top" />
             </DockPanel>
 

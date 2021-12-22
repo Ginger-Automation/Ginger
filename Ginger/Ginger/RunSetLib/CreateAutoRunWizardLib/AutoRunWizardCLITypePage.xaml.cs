@@ -47,9 +47,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 case EventType.Init:
                     mAutoRunWizard = (AutoRunWizard)WizardEventArgs.Wizard;
-
-                    BindingHandler.ObjFieldBinding(xConfigurationNameTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigName));
-                    xConfigurationPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigFileFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);
                     xParametersRadioButton.IsChecked = true;
                     mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType = eAutoRunEexecutorType.Run;
                     BindingHandler.ObjFieldBinding(xCLIContentTextBox, TextBox.TextProperty, mAutoRunWizard.AutoRunConfiguration, nameof(mAutoRunWizard.AutoRunConfiguration.CLIContent), BindingMode: System.Windows.Data.BindingMode.TwoWay);
@@ -144,7 +141,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 ShowContent();
             }
 
-            xConfigFileSettingsPnl.Visibility = Visibility.Visible;
         }        
 
         CLIDynamicFile mCLIDynamicFile;
@@ -166,7 +162,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
                 ShowContent();
             }
-            xConfigFileSettingsPnl.Visibility = Visibility.Visible;
             xDynamicFileTypeCombo.Visibility = Visibility.Collapsed;
             xCLIContentTextBox.AddValidationRule(new ValidateJsonFormat());
         }
@@ -185,7 +180,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 ShowContent();
             }
 
-            xConfigFileSettingsPnl.Visibility = Visibility.Visible;
         }
 
         CLIArgs mCLIArgs;
@@ -229,7 +223,6 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
                 ShowContent();
             }
-            xConfigFileSettingsPnl.Visibility = Visibility.Collapsed;
             xCLIContentTextBox.AddValidationRule(new ValidateJsonFormat());
         }
 
