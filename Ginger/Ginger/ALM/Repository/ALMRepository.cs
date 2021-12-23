@@ -26,6 +26,8 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using System.Windows.Controls;
+using static Ginger.ALM.ZephyrEnt.ZephyrEntPlanningExplorerPage;
 
 namespace Ginger.ALM.Repository
 {
@@ -64,7 +66,7 @@ namespace Ginger.ALM.Repository
                 mALMFieldsPage = new ALMItemsFieldsConfigurationPage();
                 mALMFieldsPage.ShowAsWindow(false);
             }
-            else 
+            else
             {
                 mALMFieldsPage.ShowAsWindow(true);
             }
@@ -97,6 +99,14 @@ namespace Ginger.ALM.Repository
         }
 
         public virtual bool MappedBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport)
+        {
+            throw new NotImplementedException();
+        }
+        public virtual Page GetALMTestSetPage(string importDestinationPath = "")
+        {
+            throw new NotImplementedException();
+        }
+        public virtual Object GetSelectedImportTestSetData(Page page)
         {
             throw new NotImplementedException();
         }

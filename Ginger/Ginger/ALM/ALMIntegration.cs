@@ -33,6 +33,7 @@ using amdocs.ginger.GingerCoreNET;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 using GingerCoreNET.ALMLib;
 using GingerWPF.WizardLib;
+using System.Windows.Controls;
 
 namespace Ginger.ALM
 {
@@ -261,18 +262,16 @@ namespace Ginger.ALM
             return domainList;
         }
 
-        internal bool MappedBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false)
+        internal bool MapBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false)
         {
-            //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            WizardWindow.ShowWizard(new MappedToALMWizard.AddMappedToALMWizard(businessFlow));
-            Reporter.ToLog(eLogLevel.INFO, ("Exporting " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
+            Reporter.ToLog(eLogLevel.INFO, "Mapping " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM");
             //Passing Solution Folder path to GingerCore
             ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
             bool isExportSucc = false;
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
-                isExportSucc = AlmRepo.MappedBusinessFlowToALM(businessFlow, performSaveAfterExport);
+                WizardWindow.ShowWizard(new MapToALMWizard.AddMapToALMWizard(businessFlow), 1100);
                 DisconnectALMServer();
             }
 
@@ -680,7 +679,15 @@ namespace Ginger.ALM
         }
         public eALMType GetALMType()
         {
-            return ALMCore.AlmConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType;
+            return ALMCore.GetDefaultAlmConfig().AlmType;
+        }
+        public Page GetALMTestSetPage(string importDestinationPath = "")
+        {
+            return AlmRepo.GetALMTestSetPage(importDestinationPath);
+        }
+        public Object GetSelectedImportTestSetData(Page page)
+        {
+            return AlmRepo.GetSelectedImportTestSetData(page);
         }
     }
 }

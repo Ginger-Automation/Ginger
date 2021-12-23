@@ -1,37 +1,43 @@
-﻿using amdocs.ginger.GingerCoreNET;
+﻿#region License
+/*
+Copyright © 2014-2021 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Activities;
 using GingerCore.ALM.QC;
 using GingerWPF.DragDropLib;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace Ginger.ALM.MappedToALMWizard
+namespace Ginger.ALM.MapToALMWizard
 {
     /// <summary>
     /// Interaction logic for TestCasesMappingPage.xaml
     /// </summary>
     public partial class TestCasesMappingPage : Page, IWizardPage
     {
-        AddMappedToALMWizard mWizard;
+        AddMapToALMWizard mWizard;
         private BusinessFlow mapBusinessFlow;
         public TestCasesMappingPage()
         {
@@ -41,33 +47,43 @@ namespace Ginger.ALM.MappedToALMWizard
         public TestCasesMappingPage(BusinessFlow mapBusinessFlow)
         {
             InitializeComponent();
-            var rowStyle = new Style { TargetType = typeof(DataGridRow) };
-            var rowTrigger = new Trigger { Property = DataGridRow.IsMouseOverProperty, Value = true };
-            rowTrigger.Setters.Add(new Setter(ForegroundProperty, Brushes.Red));
-            rowTrigger.Setters.Add(new Setter(BackgroundProperty, Brushes.Black));
-            rowStyle.Triggers.Add(rowTrigger);
-            xMapActivityGroupToTestCaseGrid.grdMain.RowStyle = rowStyle;
             this.mapBusinessFlow = mapBusinessFlow;
             Bind();
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            mWizard = (AddMappedToALMWizard)WizardEventArgs.Wizard;
+            mWizard = (AddMapToALMWizard)WizardEventArgs.Wizard;
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
                     xMapActivityGroupToTestCaseGrid.isSourceEqualTargetDragAndDrop = true;
                     break;
                 case EventType.Active:
-                    Bind2();
+                    BindTestcasesData();
+                    break;
+                case EventType.LeavingForNextPage:
+                    if(mWizard.testCasesMappingList.All(tc => tc.aLMTSTest == null))
+                    {
+                        WizardEventArgs.CancelEvent = true;
+                        return;
+                    }
+                    MapCurrentTestCases();
+                    break;
+                case EventType.Validate:
+                    break;
+                case EventType.Finish:
+                    // Todo check if test step already mapped?
                     break;
             }
         }
-        private void Bind2()
+        #region Binds
+        private void BindTestcasesData()
         {
             xMapActivityGroupToTestCaseGrid.DataSourceList = mWizard.testCasesMappingList;
             xUnMapTestCaseGrid.DataSourceList = mWizard.testCasesUnMappedList;
+            xMapActivityGroupToTestCaseGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, $"Ginger ‘{mWizard.mapBusinessFlow.Name}’ ", "– ALM Test Cases Mapping");
+            xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetDetails.TestSetName}' Test Cases";
         }
         private void Bind()
         {
@@ -75,14 +91,9 @@ namespace Ginger.ALM.MappedToALMWizard
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.ActivityGroupName), Header = "Activity Group", WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.TestCaseName), Header = "Test Case", WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.ActivityGroupName), Header = $"{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Ginger")}", WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ALMTestCaseManualMappingConfig.TestCaseName), Header = "Mapped ALM Test Case", WidthWeight = 25, AllowSorting = true, BindingMode = BindingMode.OneWay });
             GridViewDef mRegularView = new GridViewDef(eGridView.RegularView.ToString());
-            //mRegularView.GridColsView = new ObservableList<GridColView>();
-            //mRegularView.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.StatusIcon), Visible = false });
-            //xMapActivityGroupToTestCaseGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteTestCaseHandler));
-            //xMapActivityGroupToTestCaseGrid.AddToolbarTool(eImageType.MapSigns, "Remove elements from mapped list", new RoutedEventHandler(RemoveElementsToMappedBtnClicked));
-            //xMapActivityGroupTestCaseGrid.AddCustomView(mRegularView);
             xMapActivityGroupToTestCaseGrid.SetAllColumnsDefaultView(view);
             xMapActivityGroupToTestCaseGrid.InitViewItems();
 
@@ -90,26 +101,89 @@ namespace Ginger.ALM.MappedToALMWizard
             GridViewDef view2 = new GridViewDef(GridViewDef.DefaultViewName);
             view2.GridColsView = new ObservableList<GridColView>();
 
-            view2.GridColsView.Add(new GridColView() { Field = nameof(ALMTSTest.TestName), Header = "Test Case", WidthWeight = 25, AllowSorting = true });
+            view2.GridColsView.Add(new GridColView() { Field = nameof(ALMTSTest.TestName), Header = "ALM Test Case", WidthWeight = 25, AllowSorting = true });
             GridViewDef mRegularView2 = new GridViewDef(eGridView.RegularView.ToString());
-            //mRegularView.GridColsView = new ObservableList<GridColView>();
-            //mRegularView.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.StatusIcon), Visible = false });
-            //xMapActivityGroupToTestCaseGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteTestCaseHandler));
-            //xMapActivityGroupToTestCaseGrid.AddToolbarTool(eImageType.MapSigns, "Remove elements from mapped list", new RoutedEventHandler(RemoveElementsToMappedBtnClicked));
-            //xMapActivityGroupTestCaseGrid.AddCustomView(mRegularView);
+            xUnMapTestCaseGrid.AddToolbarTool(eImageType.MapSigns, $"Map selected test case to selected ginger {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}", new RoutedEventHandler(MapTestCaseToolbarHandler));
             xUnMapTestCaseGrid.SetAllColumnsDefaultView(view2);
             xUnMapTestCaseGrid.InitViewItems();
+            xMapActivityGroupToTestCaseGrid.SetbtnDeleteHandler(UnMapSelectedElementRowsHandler);
+            xMapActivityGroupToTestCaseGrid.SetbtnClearAllHandler(UnmapAllRows);
+        }
+        #endregion
+        #region Functions
+        private void MapCurrentTestCases()
+        {
+            foreach (ALMTestCaseManualMappingConfig mappedTc in mWizard.testCasesMappingList)
+            {
+                if (mappedTc.aLMTSTest is not null)
+                {
+                    int actIndex = 0;
+                    foreach (ActivityIdentifiers act in mappedTc.activitiesGroup.ActivitiesIdentifiers)
+                    {
+                        if (mappedTc.testStepsMappingList.Any(ts => ts.activity.ActivityGuid == act.ActivityGuid))
+                        {
+                            continue;
+                        }
+                        actIndex = mappedTc.testStepsMappingList.Count;
+                        mappedTc.testStepsMappingList.Add(new ALMTestStepManualMappingConfig() { activity = act });
+                        if (mappedTc.aLMTSTest.Steps.Count > actIndex)
+                        {
+                            mappedTc.testStepsMappingList[actIndex].almTestStep = mappedTc.aLMTSTest.Steps[actIndex];
+                        }
+                    }
+                }
+            }
+        }
+        private void MapTestCaseToolbarHandler(object sender, RoutedEventArgs e)
+        {
+            if (xUnMapTestCaseGrid.Grid.SelectedItems.Count == 1 && xMapActivityGroupToTestCaseGrid.Grid.SelectedItems.Count == 1)
+            {
+                MapTestCaseHandler((xUnMapTestCaseGrid.Grid.SelectedItem as ALMTSTest)
+                    , (xMapActivityGroupToTestCaseGrid.Grid.SelectedItem as ALMTestCaseManualMappingConfig));
+            }
+
         }
 
+        private void UnmapAllRows(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                foreach (ALMTestCaseManualMappingConfig atc in mWizard.testCasesMappingList)
+                {
+                    UnMapTestCaseHandler(atc);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+            }
+        }
+
+        private void UnMapSelectedElementRowsHandler(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                foreach (ALMTestCaseManualMappingConfig atc in xMapActivityGroupToTestCaseGrid.Grid.SelectedItems)
+                {
+                    UnMapTestCaseHandler(atc);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+            }
+        }
+        #endregion
+        #region Events
         private void xUnMapTestCaseGrid_PreviewDragItem(object sender, EventArgs e)
         {
             if (DragDrop2.DrgInfo.DataIsAssignableToType(typeof(ALMTestCaseManualMappingConfig), true) ||
-                DragDrop2.DrgInfo.DataIsAssignableToType(typeof(ALMTSTest) , true))
+                DragDrop2.DrgInfo.DataIsAssignableToType(typeof(ALMTSTest), true))
             {
                 // OK to drop
                 if (DragDrop2.DrgInfo.Data is ALMTestCaseManualMappingConfig)
                 {
-                    if(DragDrop2.DrgInfo.DragSource == DragDrop2.DrgInfo.DragTarget)
+                    if (DragDrop2.DrgInfo.DragSource == DragDrop2.DrgInfo.DragTarget)
                     {
                         return;
                     }
@@ -128,6 +202,10 @@ namespace Ginger.ALM.MappedToALMWizard
         }
         private void MapTestCaseHandler(ALMTSTest source, ALMTestCaseManualMappingConfig target)
         {
+            if (source is null)
+            {
+                return;
+            }
             // if target already mapped, Add to unmapped list.
             if (target.aLMTSTest is not null)
             {
@@ -140,6 +218,10 @@ namespace Ginger.ALM.MappedToALMWizard
         }
         private void UnMapTestCaseHandler(ALMTestCaseManualMappingConfig source)
         {
+            if (source.aLMTSTest is null)
+            {
+                return;
+            }
             // Add test case to unmapped list
             mWizard.testCasesUnMappedList.Add(source.aLMTSTest);
             // Remove test case from Map row.
@@ -153,14 +235,20 @@ namespace Ginger.ALM.MappedToALMWizard
             // Replace target with source.
             source.UpdateMappedTestCase(targetTemp);
         }
+        // TODO Move to generic class.
         private int GetItemIndex(ucGrid itemGrid, object item)
         {
             return itemGrid.DataSourceList.IndexOf(item);
         }
+
+        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
         private void xUnMapTestCaseGrid_ItemDropped(object sender, EventArgs e)
         {
             object draggedItem = ((DragInfo)sender).Data as object;
-            if(draggedItem == null)
+            if (draggedItem == null)
             {
                 return;
             }
@@ -170,7 +258,7 @@ namespace Ginger.ALM.MappedToALMWizard
             // Drag item from Mapped grid.
             if (draggedItem is ALMTestCaseManualMappingConfig)
             {
-                if((draggedItem as ALMTestCaseManualMappingConfig).aLMTSTest is null)
+                if ((draggedItem as ALMTestCaseManualMappingConfig).aLMTSTest is null)
                 {
                     return;
                 }
@@ -198,38 +286,18 @@ namespace Ginger.ALM.MappedToALMWizard
             }
         }
 
-        private void DroppedItemHandler(object droppedItem, int mouseIndex)
-        {
-            //int lastAddedIndex = -1;
-
-            //lastAddedIndex = ActionsFactory.AddActionsHandler(droppedItem, mContext, mouseIndex);
-
-            //if (lastAddedIndex > mouseIndex)
-            //{
-            //    ListView.xListView.SelectedItems.Clear();
-            //    for (int itemIndex = mouseIndex; itemIndex < lastAddedIndex; itemIndex++)
-            //    {
-            //        RepositoryItemBase repoBaseItem = ListView.DataSourceList[itemIndex] as RepositoryItemBase;
-            //        if (repoBaseItem != null)
-            //        {
-            //            ListView.xListView.SelectedItems.Add(repoBaseItem);
-            //        }
-            //    }
-            //}
-        }
-
         private void xMapActivityGroupToTestCaseGrid_DragOver(object sender, DragEventArgs e)
         {
             ucGrid r = (ucGrid)sender;
             if (sender is ucGrid && (sender as ucGrid).Name == xMapActivityGroupToTestCaseGrid.Name)
             {
                 var obj = DragDrop2.GetGridItemHit(xMapActivityGroupToTestCaseGrid);
-                if(obj is ALMTestCaseManualMappingConfig && (obj as ALMTestCaseManualMappingConfig).activitiesGroup != null)
+                if (obj is ALMTestCaseManualMappingConfig && (obj as ALMTestCaseManualMappingConfig).activitiesGroup != null)
                 {
 
                     int selectedIndex = xMapActivityGroupToTestCaseGrid.DataSourceList.IndexOf((obj as ALMTestCaseManualMappingConfig));
                     xMapActivityGroupToTestCaseGrid.Drop -= xUnMapTestCaseGrid_ItemDropped;
-                    xMapActivityGroupToTestCaseGrid.Drop += XMapActivityGroupToTestCaseGrid_Drop; 
+                    xMapActivityGroupToTestCaseGrid.Drop += XMapActivityGroupToTestCaseGrid_Drop;
                 }
             }
         }
@@ -262,20 +330,6 @@ namespace Ginger.ALM.MappedToALMWizard
             //    }
             //}
         }
-
-        private void xMapActivityGroupToTestCaseGrid_DragEnter(object sender, DragEventArgs e)
-        {
-            if (((ucGrid)sender).Name == xMapActivityGroupToTestCaseGrid.Name)
-            {
-                //DragDrop2.SetDragIcon(true);
-                //DragDrop2.DrgInfo.DragIcon = DragInfo.eDragIcon.Move;
-                //EventHandler handler = xUnMapTestCaseGrid_PreviewDragItem;
-                //if (handler != null)
-                //{
-                //    handler(DragDrop2.DrgInfo, new EventArgs());
-                //}
-            }
-
-        }
+        #endregion
     }
 }

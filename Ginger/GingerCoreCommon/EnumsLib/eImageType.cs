@@ -263,7 +263,7 @@ namespace Amdocs.Ginger.Common.Enums
         MinusSquare,
         Mandatory,
         ALM,
-        MappedALM,
+        MapALM,
         CSV,
         Clipboard,
         ID,

@@ -3222,6 +3222,12 @@
         <Setter Property="BorderBrush" Value="DarkGray"/>
     </Style>
 
+    <Style TargetType="GridSplitter" x:Key="$HorizontalGridSplitterStyle" >
+        <Setter Property="Width" Value="10"/>
+        <Setter Property="Background" Value="{StaticResource $Color_DarkBlue}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
+    </Style>
+    
     <Style TargetType="GridSplitter" x:Key="@VerticalGridSplitterStyle" >
         <Setter Property="Width" Value="10"/>
         <Setter Property="Background">
@@ -3234,7 +3240,13 @@
         </Setter>
         <Setter Property="BorderBrush" Value="DarkGray"/>
     </Style>
-
+    
+    <Style TargetType="GridSplitter" x:Key="$VerticalGridSplitterStyle" >
+        <Setter Property="Width" Value="5"/>
+        <Setter Property="Background" Value="{StaticResource $Color_DarkBlue}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
+    </Style>
+    
     <Style TargetType="Expander" x:Key="@ExpanderLightStyle" >
         <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource $Color_DarkBlue}"/>

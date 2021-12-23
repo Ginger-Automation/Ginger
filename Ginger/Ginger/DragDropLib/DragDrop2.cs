@@ -200,7 +200,7 @@ namespace GingerWPF.DragDropLib
                     FrameworkElement fwElem = htResult.VisualHit as FrameworkElement;
                     if (fwElem != null)
                     {
-                        if (fwElem.DataContext != null && fwElem.DataContext is Ginger.ALM.MappedToALMWizard.ALMTestCaseManualMappingConfig)
+                        if (fwElem.DataContext != null)
                         {
                             return fwElem.DataContext;
                         }
