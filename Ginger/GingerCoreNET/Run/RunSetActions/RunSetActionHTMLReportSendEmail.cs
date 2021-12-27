@@ -352,7 +352,7 @@ namespace Ginger.Run.RunSetActions
                             {
                                 string reportName = "\\GingerExecutionReport.html'";
                                 if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-                                    reportName = "\\index.html'";
+                                    reportName = "\\viewreport.html'";
                                 emailReadyHtml = emailReadyHtml.Replace("<!--FULLREPORTLINK-->", "<a href ='" + reportsResultFolder + reportName + " style ='font-size:16px;color:blue;text-decoration:underline'> Click Here to View Full Report </a>");
                                 emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
                             }
