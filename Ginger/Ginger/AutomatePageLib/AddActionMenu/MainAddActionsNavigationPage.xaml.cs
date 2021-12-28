@@ -312,7 +312,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 SetApplicationModeViewFalse();
                 LoadActionFrame(null);
-                //LoadActionFrame(null, "Application Models", eImageType.ApplicationModel);
             }
             else if (xSelectedItemFrame.Content is null)
             {
