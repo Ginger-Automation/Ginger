@@ -309,6 +309,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Running:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (SolidColorBrush)FindResource("$RunningStatusColor"), 2, "Running");
                     break;
+                case eImageType.Mapped:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle);
+                    break;
+                case eImageType.Partial:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle);
+                    break;
+                case eImageType.UnMapped:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle);
+                    break;
                 #endregion
 
 
@@ -832,6 +841,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.ALM:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Qrcode);//need to find better image type
+                    break;
+                case eImageType.MapALM:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.HandPaperOutline);
                     break;
                 case eImageType.CSV:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.FileText);
