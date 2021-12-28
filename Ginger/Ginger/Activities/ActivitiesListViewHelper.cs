@@ -189,7 +189,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             ListItemOperation addToFlow = new ListItemOperation();
             addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
-            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft;
             addToFlow.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "Add to");
             addToFlow.OperationHandler = AddFromRepository;
             operationsList.Add(addToFlow);

@@ -152,7 +152,9 @@ namespace Amdocs.Ginger.Common
         SaveRunsetChangesWarn,
         PublishRepositoryInfo,
         FailedToPublishRepositoryInfo,
-        MissingErrorString
+        MissingErrorString,
+        RunsetAutoRunResult,
+        RunsetAutoConfigBackWarn
     }
 
     public static class UserMsgsPool
@@ -365,6 +367,10 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.RunsetNoGingerPresentForBusinessFlow, new UserMsg(eUserMsgType.WARN, "No Ginger in " + GingerDicser.GetTermResValue(eTermResKey.RunSet), "Please add at least one Ginger to your " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " before choosing a " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ".", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ResetBusinessFlowRunVariablesFailed, new UserMsg(eUserMsgType.ERROR, GingerDicser.GetTermResValue(eTermResKey.Variables) + " Reset Failed", "Failed to reset the " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " to original configurations." + System.Environment.NewLine + "Error Details: {0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToGenerateAutoRunDescription, new UserMsg(eUserMsgType.QUESTION, "Automatic Description Creation", "Do you want to automatically populate the Run Description?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RunsetAutoRunResult, new UserMsg(eUserMsgType.INFO, "Runset Auto Run Configuration Result", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RunsetAutoConfigBackWarn, new UserMsg(eUserMsgType.WARN, "Runset Auto Run Configuration Changes", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.No));
+
             #endregion Runset Messages
 
             #region Excel Messages

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -15,12 +15,27 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-
+using Newtonsoft.Json.Linq;
 using System;
+using System.Globalization;
+using System.Windows.Controls;
 
-namespace GingerWin64OsSupport
+namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
-    static public class General
+    internal class ValidateJsonFormat : ValidationRule
     {
+        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+        {
+            try
+            {
+                var obj = JToken.Parse(Convert.ToString(value));
+                return  ValidationResult.ValidResult;
+            }
+            catch
+            {
+                return new ValidationResult(false, "InValid JSON Format");
+            }
+
+        }
     }
 }

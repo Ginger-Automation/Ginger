@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -15,12 +15,14 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
+using CommandLine;
 
-using System;
-
-namespace GingerWin64OsSupport
+namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
-    static public class General
+    [Verb("request", HelpText = "execute api")]
+    class RequestAPIOptions : OptionsBase
     {
+        public static string Verb { get { return CLIOptionClassHelper.GetClassVerb<RequestAPIOptions>(); } }
+
     }
 }

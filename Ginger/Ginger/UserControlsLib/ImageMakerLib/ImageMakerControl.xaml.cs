@@ -292,7 +292,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.VideoCamera, new SolidColorBrush(Color.FromRgb(255, 0, 0)), 0, "Recording...", true);
                     break;
                 case eImageType.Processing:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (SolidColorBrush)FindResource("$HighlightColor_Orange"), 2);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (LinearGradientBrush)FindResource("$amdocsLogoLinarGradientBrush_NewAmdocsColors"), 2);
                     break;
                 case eImageType.Ready:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbsOutlineUp, (SolidColorBrush)FindResource("$PendingStatusColor"));
@@ -1017,7 +1017,7 @@ namespace Amdocs.Ginger.UserControls
             this.Background = null;
         }
 
-        private void SetAsFontAwesomeIcon(FontAwesomeIcon fontAwesomeIcon, SolidColorBrush foreground = null, double spinDuration = 0, string toolTip = null, bool blinkingIcon = false)
+        private void SetAsFontAwesomeIcon(FontAwesomeIcon fontAwesomeIcon, Brush foreground = null, double spinDuration = 0, string toolTip = null, bool blinkingIcon = false)
         {
             //set the icon
             xFAFont.Icon = fontAwesomeIcon;
