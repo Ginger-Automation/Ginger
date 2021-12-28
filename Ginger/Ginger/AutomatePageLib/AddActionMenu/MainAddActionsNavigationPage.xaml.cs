@@ -66,7 +66,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         public static bool IsPanelExpanded = false;
 
         public MainAddActionsNavigationPage(Context context)
-        {           
+        {
             InitializeComponent();
 
             mContext = context;
@@ -78,6 +78,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             ToggleApplicatoinModels();
             xApplicationModelsPnl.Visibility = Visibility.Collapsed;
             ToggleRecordLiveSpyAndExplorer();
+            SetApplicationModelButtonDetails();
 
             if (mContext.Activity == null)
             {
@@ -123,9 +124,29 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (e.PropertyName == nameof(BusinessFlow) || e.PropertyName == nameof(mContext.Platform))
                 {
                     ToggleApplicatoinModels();
+                    SetApplicationModelButtonDetails();
                     LoadActionFrame(null);
                 }
             });
+        }
+
+        /// <summary>
+        /// set application model button text and image as per context
+        /// </summary>
+        private void SetApplicationModelButtonDetails()
+        {
+            bool POMCompliantPlatform = ApplicationPOMModel.PomSupportedPlatforms.Contains(mContext.Platform);
+            bool APICompliantPlatform = mContext.Platform == ePlatformType.WebServices;
+            if (POMCompliantPlatform)
+            {
+                xApplicationModelsBtn.ButtonText = "Page Object Models";
+                xApplicationModelsBtn.ButtonImageType = eImageType.ApplicationPOMModel;
+            }
+            else if (APICompliantPlatform)
+            {
+                xApplicationModelsBtn.ButtonText = "      API Models       ";
+                xApplicationModelsBtn.ButtonImageType = eImageType.APIModel;
+            }
         }
 
         void ToggleRecordLiveSpyAndExplorer()
@@ -165,24 +186,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 bool POMCompliantPlatform = ApplicationPOMModel.PomSupportedPlatforms.Contains(mContext.Platform);
                 bool APICompliantPlatform = mContext.Platform == ePlatformType.WebServices;
 
-                if (POMCompliantPlatform)
-                {
-                    xApplicationPOMItemBtn.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    xApplicationPOMItemBtn.Visibility = Visibility.Collapsed;
-                }
-
-                if (APICompliantPlatform)
-                {
-                    xAPIBtn.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    xAPIBtn.Visibility = Visibility.Collapsed;
-                }
-
                 if (APICompliantPlatform || POMCompliantPlatform)
                 {
                     xApplicationModelsBtn.Visibility = Visibility.Visible;
@@ -212,7 +215,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if ((sender as Frame).Content == null)
             {
-                if(applicationModelView)
+                if (applicationModelView)
                 {
                     (sender as Frame).Visibility = Visibility.Collapsed;
                     xNavigationBarPnl.Visibility = Visibility.Visible;
@@ -238,7 +241,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XNavSharedRepo_Click(object sender, RoutedEventArgs e)
         {
-            if(mSharedRepositoryNavPage == null)
+            if (mSharedRepositoryNavPage == null)
             {
                 mSharedRepositoryNavPage = new SharedRepositoryNavPage(mContext);
             }
@@ -247,11 +250,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XNavPOM_Click(object sender, RoutedEventArgs e)
         {
-            if(mPOMNavPage == null)
-            {
-                mPOMNavPage = new POMNavPage(mContext);
-            }
-            LoadActionFrame(mPOMNavPage, "Page Objects Model", eImageType.ApplicationPOMModel);
         }
 
         private void XRecord_Click(object sender, RoutedEventArgs e)
@@ -266,7 +264,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XNavActLib_Click(object sender, RoutedEventArgs e)
         {
-            if(mActionsLibraryNavPage == null)
+            if (mActionsLibraryNavPage == null)
             {
                 mActionsLibraryNavPage = new ActionsLibraryNavPage(mContext);
             }
@@ -293,26 +291,32 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void XAPIBtn_Click(object sender, RoutedEventArgs e)
         {
-            if(mAPINavPage == null)
+            if (mAPINavPage == null)
             {
                 mAPINavPage = new APINavPage(mContext);
             }
             LoadActionFrame(mAPINavPage, "API Models", eImageType.APIModel);
         }
 
+        private void SetApplicationModeViewFalse()
+        {
+            applicationModelView = false;
+            xApplicationModelsPnl.Visibility = Visibility.Collapsed;
+            xNavigationBarPnl.Visibility = Visibility.Collapsed;
+            xAddActionsOptionsPnl.Visibility = Visibility.Visible;
+        }
+
         private void xGoBackBtn_Click(object sender, RoutedEventArgs e)
         {
             if (xSelectedItemFrame.Content is APINavPage || xSelectedItemFrame.Content is POMNavPage)
             {
-                applicationModelView = true;
-                LoadActionFrame(null, "Application Models", eImageType.ApplicationModel);
+                SetApplicationModeViewFalse();
+                LoadActionFrame(null);
+                //LoadActionFrame(null, "Application Models", eImageType.ApplicationModel);
             }
             else if (xSelectedItemFrame.Content is null)
             {
-                applicationModelView = false;
-                xNavigationBarPnl.Visibility = Visibility.Collapsed;
-                xAddActionsOptionsPnl.Visibility = Visibility.Visible;
-                xApplicationModelsPnl.Visibility = Visibility.Collapsed;
+                SetApplicationModeViewFalse();
             }
             else
             {
@@ -351,12 +355,37 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xApplicationModelsPnl.Visibility = Visibility.Visible;
             xAddActionsOptionsPnl.Visibility = Visibility.Collapsed;
 
-            LoadActionFrame(null, "Application Models", eImageType.ApplicationModel);
+            SetNavPage();
+        }
+
+        /// <summary>
+        /// sets nav page depending on context
+        /// </summary>
+        private void SetNavPage()
+        {
+            bool POMCompliantPlatform = ApplicationPOMModel.PomSupportedPlatforms.Contains(mContext.Platform);
+            bool APICompliantPlatform = mContext.Platform == ePlatformType.WebServices;
+            if (POMCompliantPlatform)
+            {
+                if (mPOMNavPage == null)
+                {
+                    mPOMNavPage = new POMNavPage(mContext);
+                }
+                LoadActionFrame(mPOMNavPage, "Page Objects Model", eImageType.ApplicationPOMModel);
+            }
+            else if (APICompliantPlatform)
+            {
+                if (mAPINavPage == null)
+                {
+                    mAPINavPage = new APINavPage(mContext);
+                }
+                LoadActionFrame(mAPINavPage, "API Models", eImageType.APIModel);
+            }
         }
 
         public void ReloadPagesOnExpand()
         {
-            if(mNavPanelPage != null && mContextUpdated)
+            if (mNavPanelPage != null && mContextUpdated)
             {
                 mNavPanelPage.ReLoadPageItems();
                 mContextUpdated = false;

@@ -124,7 +124,7 @@
                             <uclistview:UcItemExecutionStatus x:Name="xExecutionStatusIcon" StatusViewMode="Image" 
                                            DockPanel.Dock="Right" StatusSize="16" VerticalAlignment="Center" Margin="10,0,10,0"/>
 
-                            <UserControls:ucButton x:Name="xAddActBtn" ButtonImageType="Add" ButtonText="Add" ButtonImageHeight="16" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" 
+                            <UserControls:ucButton x:Name="xAddActBtn" ButtonImageType="MoveLeft" ButtonText="Add" ButtonImageHeight="16" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" 
                              ButtonImageForground="{StaticResource $SelectionColor_Pink}" DockPanel.Dock="Right" ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="0" Click="xAddActBtn_Click" />
                         </DockPanel>
                     </StackPanel>
