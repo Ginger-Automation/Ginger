@@ -231,14 +231,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             ListItemOperation addSelected = new ListItemOperation();
             addSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Add };
             addSelected.AutomationID = "addSelected";
-            addSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+            addSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft;
             addSelected.ToolTip = "Add Selected Actions";
             addSelected.OperationHandler = AddActionListView;
             operationsList.Add(addSelected);
 
             ListItemOperation addToFlow = new ListItemOperation();
             addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
-            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft;
             addToFlow.ToolTip = "Add to Flow";
             addToFlow.OperationHandler = AddFromRepository;
             operationsList.Add(addToFlow);
