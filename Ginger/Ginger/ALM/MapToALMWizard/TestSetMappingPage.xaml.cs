@@ -15,14 +15,17 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
+using Amdocs.Ginger.Common;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.ALM.QC;
 using GingerWPF.WizardLib;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using static Ginger.ALM.ZephyrEnt.ZephyrEntPlanningExplorerPage;
+using ZephyrEntStdSDK.Models.Base;
 
 namespace Ginger.ALM.MapToALMWizard
 {
@@ -52,59 +55,59 @@ namespace Ginger.ALM.MapToALMWizard
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    // Add ALM Test Set Tree to Page.
-                    win = ALMIntegration.Instance.GetALMTestSetPage();
-                    load_frame.Content = win;
-                    // Add business flow activities groups to test cases mapping list.
-                    foreach (ActivitiesGroup ag in mWizard.mapBusinessFlow.ActivitiesGroups)
-                    {
-                        mWizard.testCasesMappingList.Add(new ALMTestCaseManualMappingConfig() { activitiesGroup = ag });
-                    }
+                    BindTestSet();
                     break;
                 case EventType.Active:
-                    if(String.IsNullOrEmpty(mWizard.mapBusinessFlow.ExternalID))
+                    // Business Flow Mapped, get mapped test cases and steps to display.
+                    if(!String.IsNullOrEmpty(mWizard.mapBusinessFlow.ExternalID) && String.IsNullOrEmpty(mWizard.AlmTestSetData.TestSetID))
                     {
+                        mWizard.SetMappedALMTestSetData();
+                        mWizard.UpdateMappedTestCasescollections();
+                        mWizard.RemapTestCasesLists();
+                        WizardPage nextPage = mWizard.Pages.Where(p => p.Page is TestCasesMappingPage).FirstOrDefault();
+                        (nextPage.Page as TestCasesMappingPage).xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";
+                        
                         mWizard.Pages.MoveNext();
                     }
                     break;
-                case EventType.Next:
-                    //mWizard.almTestSetDetails = getALMTestSetDetails;
-                    break;
                 case EventType.LeavingForNextPage:
-                    dynamic testSetData = ALMIntegration.Instance.GetSelectedImportTestSetData(win);
-                    if (testSetData is not null)
-                    {
-                        if (mWizard.AlmTestSetDetails.TestSetID == null || mWizard.AlmTestSetDetails.TestSetID != testSetData.Id)
-                        {
-                            mWizard.testCasesUnMappedList.Clear();
-                            mWizard.AlmTestSetDetails.Tests.Clear();
-                            // Clear mapped test cases column
-                            foreach (ALMTestCaseManualMappingConfig testCaseMapping in mWizard.testCasesMappingList)
-                            {
-                                testCaseMapping.aLMTSTest = null;
-                            }
-                            mWizard.AlmTestSetDetails.TestSetID = testSetData.Id;
-                            mWizard.AlmTestSetDetails.TestSetName = testSetData.Name;
-                            mWizard.AlmTestSetDetails.TestSetPath = testSetData.Path;
-                            mWizard.externallID2 = testSetData.TestSetID;
-                            mWizard.AlmTestSetDetails = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(mWizard.AlmTestSetDetails);
-                            foreach (ALMTSTest testCase in mWizard.AlmTestSetDetails.Tests)
-                            {
-                                mWizard.testCasesUnMappedList.Add(testCase);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // Add validation
-                    }
+                    mWizard.SetSelectedTreeTestSetData(win);
                     break;
             }
         }
-        #region Binds
 
+
+
+
+        #region Binds
+        /// <summary>
+        /// Bind ALM Test Set Tree.
+        /// </summary>
+        private void BindTestSet()
+        {
+            load_frame.Content = GetALMTree();
+            mWizard.AddActivitiesGroupsInitialMapping();
+        }
         #endregion
         #region Functions
+        /// <summary>
+        /// GetALMTree:
+        /// Get selected alm test sets tree.
+        /// </summary>
+        /// <returns>ALM Test Sets Tree Page Object</returns>
+        private Page GetALMTree()
+        {
+            try
+            {
+                win = ALMIntegration.Instance.GetALMTestSetsTreePage();
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed get ALM Tree, {System.Reflection.MethodBase.GetCurrentMethod().Name}: {ex.Message}");
+            }
+            return win;
+        }
+        // TODO check if needed , for all type of test sets.
         private ALMEntitiesDetails GetALMEntitiesDetails(string getALMTestSetDetails)
         {
             ALMEntitiesDetails aLMEntitiesDetails = new ALMEntitiesDetails();

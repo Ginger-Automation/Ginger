@@ -24,6 +24,7 @@ using Ginger.ALM.ZephyrEnt.TreeViewItems;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
+using GingerCore.ALM.QC;
 using GingerCore.ALM.ZephyrEnt.Bll;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -577,18 +578,35 @@ namespace Ginger.ALM.Repository
         {
             return; // todo refresh
         }
-
-        public override bool MappedBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport)
-        {
-            return true;
-        }
-        public override Page GetALMTestSetPage(string importDestinationPath = "")
+        public override Page GetALMTestSetsTreePage(string importDestinationPath = "")
         {
             return new ZephyrEntPlanningExplorerPage(eExplorerTestPlanningPageUsageType.Import, importDestinationPath);
         }
         public override Object GetSelectedImportTestSetData(Page page)
         {
             return (page as ZephyrEntPlanningExplorerPage).CurrentSelectedTestSets.FirstOrDefault();
+        }
+        public override void GetALMTestSetData(ALMTestSet almTestSet)
+        {
+            try
+            {
+                //Get Test Set Name
+                List<BaseResponseItem> phase = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntPhaseById(Convert.ToInt32(almTestSet.TestSetInternalID2));
+                if (phase is not null && phase.Count > 0)
+                {
+                    almTestSet.TestSetName = phase[0].TryGetItem("name").ToString();
+                }
+                // Add test cases
+                almTestSet = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(almTestSet);
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to get Test Set data, {System.Reflection.MethodBase.GetCurrentMethod().Name}: Error - {ex.Message} ");
+            }
+        }
+        public override ALMTestSet GetALMTestCasesToTestSetObject(ALMTestSet almTestSet)
+        {
+            return ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(almTestSet);
         }
     }
 }

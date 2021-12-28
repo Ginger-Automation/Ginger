@@ -97,16 +97,19 @@ namespace Ginger.ALM.Repository
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(businessFlow);
             }
         }
-
-        public virtual bool MappedBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport)
-        {
-            throw new NotImplementedException();
-        }
-        public virtual Page GetALMTestSetPage(string importDestinationPath = "")
+        public virtual Page GetALMTestSetsTreePage(string importDestinationPath = "")
         {
             throw new NotImplementedException();
         }
         public virtual Object GetSelectedImportTestSetData(Page page)
+        {
+            throw new NotImplementedException();
+        }
+        public virtual void GetALMTestSetData(ALMTestSet almTestSet)
+        {
+            throw new NotImplementedException();
+        }
+        public virtual ALMTestSet GetALMTestCasesToTestSetObject(ALMTestSet almTestSet)
         {
             throw new NotImplementedException();
         }

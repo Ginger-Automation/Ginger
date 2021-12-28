@@ -27,8 +27,8 @@ namespace Ginger.ALM.MapToALMWizard
     /// </summary>
     public class ALMTestStepManualMappingConfig : INotifyPropertyChanged
     {
-        public ActivityIdentifiers activity = new ActivityIdentifiers();
-        public ALMTSTestStep almTestStep = new ALMTSTestStep();
+        public ActivityIdentifiers activity = null;
+        public ALMTSTestStep almTestStep = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)

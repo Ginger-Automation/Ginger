@@ -98,6 +98,9 @@ namespace Amdocs.Ginger.Common.Enums
         Skipped,
         Stopped,
         Running,
+        Mapped,
+        Partial,
+        UnMapped,
         #endregion
 
         #region Operations Images

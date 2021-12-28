@@ -681,13 +681,21 @@ namespace Ginger.ALM
         {
             return ALMCore.GetDefaultAlmConfig().AlmType;
         }
-        public Page GetALMTestSetPage(string importDestinationPath = "")
+        public Page GetALMTestSetsTreePage(string importDestinationPath = "")
         {
-            return AlmRepo.GetALMTestSetPage(importDestinationPath);
+            return AlmRepo.GetALMTestSetsTreePage(importDestinationPath);
         }
         public Object GetSelectedImportTestSetData(Page page)
         {
             return AlmRepo.GetSelectedImportTestSetData(page);
+        }
+        public void GetALMTestSetData(ALMTestSet almTestSet)
+        {
+            AlmRepo.GetALMTestSetData(almTestSet);
+        }
+        public ALMTestSet GetALMTestCases(ALMTestSet almTestSet)
+        {
+            return AlmRepo.GetALMTestCasesToTestSetObject(almTestSet);
         }
     }
 }

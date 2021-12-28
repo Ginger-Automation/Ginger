@@ -4702,6 +4702,7 @@
     <Resource Include="SourceControlItemNew.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ALM\MapToALMWizard\MapWizardHelper\" />
     <Folder Include="ALM\Octane\" />
     <Folder Include="AutomatePageLib\AddActionMenu\WindowExplorer\InternalBrowser\" />
     <Folder Include="Dictionaries\Languages\" />

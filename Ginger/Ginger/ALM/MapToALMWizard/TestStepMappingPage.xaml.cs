@@ -19,6 +19,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Activities;
 using GingerCore.ALM.QC;
 using GingerWPF.DragDropLib;
 using GingerWPF.WizardLib;
@@ -70,18 +71,19 @@ namespace Ginger.ALM.MapToALMWizard
             }
             xMapTestCasesGrid.DataSourceList = mappedTestCasesList;
             xMapTestStepsGrid.DataSourceList = mappedTestCasesList[testCaseListIndex].testStepsMappingList;
-            mappedTestCasesList.ToList().ForEach(tc =>
+            foreach(ALMTestCaseManualMappingConfig tc in mappedTestCasesList)
             {
-                if (tc.aLMTSTest is not null && !mWizard.testStepsUnMappedList.ContainsKey(tc.aLMTSTest.TestID))
+                if (tc.aLMTSTest is not null && !mWizard.testCaseUnmappedStepsDic.ContainsKey(tc.aLMTSTest.TestID))
                 {
-                    mWizard.testStepsUnMappedList.Add(tc.aLMTSTest.TestID, new ObservableList<ALMTSTestStep>());
+                    mWizard.testCaseUnmappedStepsDic.Add(tc.aLMTSTest.TestID, new ObservableList<ALMTSTestStep>());
                 }
-            });
-            xUnMapTestStepsGrid.DataSourceList = mWizard.testStepsUnMappedList[getCurrentTestCaseId];
+            }
+            xUnMapTestStepsGrid.DataSourceList = mWizard.testCaseUnmappedStepsDic[getCurrentTestCaseId];
             xMapTestCasesGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, "Ginger", "& ALM Test Cases - Steps Mapping Status");
             xMapTestStepsGrid.Title = GingerDicser.GetTermResValue(eTermResKey.Activities, $"Ginger ‘{mappedTestCasesList[testCaseListIndex].ActivityGroupName}’ ", "- ALM Steps Mapping");
             xUnMapTestStepsGrid.Title = $"ALM ‘{mappedTestCasesList[testCaseListIndex].TestCaseName}’ Steps";
         }
+        
         private void Bind()
         {
             BindMapTestCasesGrid();
@@ -169,21 +171,21 @@ namespace Ginger.ALM.MapToALMWizard
             // if target already mapped, Add to unmapped list.
             if (target.almTestStep is not null)
             {
-                mWizard.testStepsUnMappedList[getCurrentTestCaseId].Add(target.almTestStep);
+                mWizard.testCaseUnmappedStepsDic[getCurrentTestCaseId].Add(target.almTestStep);
             }
             // Map test step. 
             target.UpdateMappedTestStep(source);
             // Remove test step from unmapped list. 
-            mWizard.testStepsUnMappedList[getCurrentTestCaseId].Remove(source);
-            mappedTestCasesList[testCaseListIndex].UpdateTestCaseMapStatus(mWizard.testStepsUnMappedList[getCurrentTestCaseId].Count);
+            mWizard.testCaseUnmappedStepsDic[getCurrentTestCaseId].Remove(source);
+            mappedTestCasesList[testCaseListIndex].UpdateTestCaseMapStatus(mWizard.testCaseUnmappedStepsDic[getCurrentTestCaseId].Count);
         }
         private void UnMapTestStepHandler(ALMTestStepManualMappingConfig source)
         {
             // Add test step to unmapped list
-            mWizard.testStepsUnMappedList[getCurrentTestCaseId].Add(source.almTestStep);
+            mWizard.testCaseUnmappedStepsDic[getCurrentTestCaseId].Add(source.almTestStep);
             // Remove test step from Map row.
             source.UpdateMappedTestStep(null);
-            mappedTestCasesList[testCaseListIndex].UpdateTestCaseMapStatus(mWizard.testStepsUnMappedList[getCurrentTestCaseId].Count);
+            mappedTestCasesList[testCaseListIndex].UpdateTestCaseMapStatus(mWizard.testCaseUnmappedStepsDic[getCurrentTestCaseId].Count);
         }
         private void ReplaceMappedTestCaseHandler(ALMTestStepManualMappingConfig source, ALMTestStepManualMappingConfig target)
         {
@@ -220,10 +222,10 @@ namespace Ginger.ALM.MapToALMWizard
             {
                 getCurrentTestCaseId = mappedTestCasesList[testCaseListIndex].aLMTSTest.TestID;
                 xMapTestStepsGrid.DataSourceList = mappedTestCasesList[testCaseListIndex].testStepsMappingList;
-                if (mWizard.testStepsUnMappedList.Count > 0)
+                if (mWizard.testCaseUnmappedStepsDic.Count > 0)
                 {
-                    xUnMapTestStepsGrid.DataSourceList = mWizard.testStepsUnMappedList[getCurrentTestCaseId];
-                    mappedTestCasesList[testCaseListIndex].UpdateTestCaseMapStatus(mWizard.testStepsUnMappedList[getCurrentTestCaseId].Count);
+                    xUnMapTestStepsGrid.DataSourceList = mWizard.testCaseUnmappedStepsDic[getCurrentTestCaseId];
+                    mappedTestCasesList[testCaseListIndex].UpdateTestCaseMapStatus(mWizard.testCaseUnmappedStepsDic[getCurrentTestCaseId].Count);
                 }
                 xMapTestStepsGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, $"Ginger ‘{mappedTestCasesList[testCaseListIndex].ActivityGroupName}’");
                 xUnMapTestStepsGrid.Title = $"ALM ‘{mappedTestCasesList[testCaseListIndex].TestCaseName}’ Steps";

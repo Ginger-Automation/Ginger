@@ -27,14 +27,13 @@ namespace Ginger.ALM.MapToALMWizard
     public enum TestCaseStepsMappingError { Invalid, Error }
     public enum eMappingStatus
     {
-        Complete,
+        Mapped,
         Partial,
-        NoOption,
+        UnMapped,
         Unknown
     }
     /// <summary>
     /// ALMTestCaseManualMappingConfig:
-    /// 
     /// </summary>
     public class ALMTestCaseManualMappingConfig : INotifyPropertyChanged
     {
@@ -53,7 +52,6 @@ namespace Ginger.ALM.MapToALMWizard
         public ObservableList<ALMTestStepManualMappingConfig> testStepsMappingList = new ObservableList<ALMTestStepManualMappingConfig>();
 
         public eMappingStatus TestCaseStepsMappingStatus;
-        public TestCaseStepsMappingError testCaseStepsMappingError;
         public string TestCaseName
         {
             get
@@ -78,18 +76,22 @@ namespace Ginger.ALM.MapToALMWizard
             aLMTSTest = testCase;
             OnPropertyChanged(nameof(TestCaseName));
         }
+        public void Clear()
+        {
+            this.aLMTSTest = null;
+        }
         public void UpdateTestCaseMapStatus(int unmappedTestStepsListCount)
         {
             if (testStepsMappingList.Count == 0 || 
                 testStepsMappingList.All(ts => ts.almTestStep is null || ts.almTestStep.StepName is null))
             {
-                MappingStatus = eMappingStatus.NoOption; 
+                MappingStatus = eMappingStatus.UnMapped; 
                 return;
             }
             if (testStepsMappingList.All(ts => ts.almTestStep is not null && ts.almTestStep.StepName is not null)
                 && unmappedTestStepsListCount == 0)
             {
-                MappingStatus = eMappingStatus.Complete;
+                MappingStatus = eMappingStatus.Mapped;
                 return;
             }
             MappingStatus = eMappingStatus.Partial;
@@ -115,16 +117,17 @@ namespace Ginger.ALM.MapToALMWizard
             {
                 switch (MappingStatus)
                 {
-                    case eMappingStatus.Complete:
-                        return eImageType.Passed;
+                    case eMappingStatus.Mapped:
+                        return eImageType.Mapped;
                     case eMappingStatus.Partial:
-                        return eImageType.Warn;
-                    case eMappingStatus.NoOption:
-                        return eImageType.Error;
+                        return eImageType.Partial;
+                    case eMappingStatus.UnMapped:
+                        return eImageType.UnMapped;
                     default:
                         return eImageType.Unknown;
                 }
             }
         }
+
     }
 }

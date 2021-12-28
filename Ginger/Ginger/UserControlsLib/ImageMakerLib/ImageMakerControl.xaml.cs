@@ -309,6 +309,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Running:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (SolidColorBrush)FindResource("$RunningStatusColor"), 2, "Running");
                     break;
+                case eImageType.Mapped:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle);
+                    break;
+                case eImageType.Partial:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle);
+                    break;
+                case eImageType.UnMapped:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle);
+                    break;
                 #endregion
 
 
