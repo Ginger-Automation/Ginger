@@ -646,6 +646,9 @@
     <Compile Include="UserControlsLib\ucLabel.xaml.cs">
       <DependentUpon>ucLabel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\UCLocateByAndValue.xaml.cs">
+      <DependentUpon>UCLocateByAndValue.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\UCNumberPicker.xaml.cs">
       <DependentUpon>UCNumberPicker.xaml</DependentUpon>
     </Compile>
@@ -3079,6 +3082,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\ucLabel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\UCLocateByAndValue.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

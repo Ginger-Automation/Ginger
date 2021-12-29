@@ -203,6 +203,9 @@ namespace GingerCore.Actions
             public static string BaseLineVisualElementsInfoFileName = "BaseLineVisualElementsInfoFileName";            
             public static string CreateBaselineAction = "CreateBaselineAction";
             public static string ErrorMetric = "ErrorMetric";
+            public static string ActionBy = "ActionBy";
+            public static string LocateBy = "LocateBy";
+            public static string LocateValue = "LocateValue";
         }
         
         public override string ActionEditPage { get { return "VisualTesting.ActVisualTestingEditPage"; } }
