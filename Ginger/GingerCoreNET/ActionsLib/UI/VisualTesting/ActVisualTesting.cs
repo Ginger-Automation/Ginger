@@ -203,6 +203,9 @@ namespace GingerCore.Actions
             public static string BaseLineVisualElementsInfoFileName = "BaseLineVisualElementsInfoFileName";            
             public static string CreateBaselineAction = "CreateBaselineAction";
             public static string ErrorMetric = "ErrorMetric";
+            public const string ActionBy = "ActionBy";
+            public const string LocateBy = "LocateBy";
+            public const string LocateValue = "LocateValue";
         }
         
         public override string ActionEditPage { get { return "VisualTesting.ActVisualTestingEditPage"; } }
@@ -261,7 +264,7 @@ namespace GingerCore.Actions
             SeleniumDriver webDriver = ((SeleniumDriver)mDriver);
             CheckSetVisualAnalyzer();
             CheckSetAppWindowSize();
-            
+
             if (mVisualAnalyzer.SupportUniqueExecution())
             {
                 mVisualAnalyzer.SetAction(mDriver, this);
@@ -292,7 +295,6 @@ namespace GingerCore.Actions
                     break;
                 case eChangeAppWindowSize.Custom:
                     //TODO:
-                    mDriver.ChangeAppWindowSize(Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowWidth)), Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowHeight)));
                     break;
                 case eChangeAppWindowSize.Resolution640x480:
                     mDriver.ChangeAppWindowSize(640, 480);
