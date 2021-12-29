@@ -162,7 +162,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             IWorkbook workbook = null;
             try
             {
-                var fileExtension = Path.GetExtension(fullFilePath);
                 using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
                 {
                     workbook = WorkbookFactory.Create(fs);
@@ -353,6 +352,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 sheets.Add(wb.GetSheetAt(i).SheetName);
             }
             return sheets.OrderBy(itm => itm).ToList();
+        }
+
+        public void Dispose()
+        {
+            mSheet = null;
+            mWorkbook.Close();
+            mWorkbook = null;
+            GC.Collect();
         }
     }
 }
