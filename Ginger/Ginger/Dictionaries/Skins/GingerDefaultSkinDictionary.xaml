@@ -41,6 +41,14 @@
         <GradientStop Color="#FFCD3B82" Offset="1" />
     </LinearGradientBrush>
 
+    <LinearGradientBrush x:Key="$amdocsLogoLinarGradientBrush_NewAmdocsColors"
+		StartPoint="0,0" EndPoint="0.99,1" 
+		SpreadMethod="Pad" ColorInterpolationMode="SRgbLinearInterpolation" >
+        <GradientStop Color="#eda402" Offset="0" />
+        <GradientStop Color="#F2665F" Offset="0.5" />
+        <GradientStop Color="#EC008C" Offset="1" />
+    </LinearGradientBrush>
+
     <RadialGradientBrush x:Key="$amdocsLogoRadialGradientBrush"
 		Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5" 
 		SpreadMethod="Pad" ColorInterpolationMode="SRgbLinearInterpolation" >
@@ -3222,6 +3230,12 @@
         <Setter Property="BorderBrush" Value="DarkGray"/>
     </Style>
 
+    <Style TargetType="GridSplitter" x:Key="$HorizontalGridSplitterStyle" >
+        <Setter Property="Width" Value="10"/>
+        <Setter Property="Background" Value="{StaticResource $Color_DarkBlue}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
+    </Style>
+    
     <Style TargetType="GridSplitter" x:Key="@VerticalGridSplitterStyle" >
         <Setter Property="Width" Value="10"/>
         <Setter Property="Background">
@@ -3234,7 +3248,13 @@
         </Setter>
         <Setter Property="BorderBrush" Value="DarkGray"/>
     </Style>
-
+    
+    <Style TargetType="GridSplitter" x:Key="$VerticalGridSplitterStyle" >
+        <Setter Property="Width" Value="5"/>
+        <Setter Property="Background" Value="{StaticResource $Color_DarkBlue}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
+    </Style>
+    
     <Style TargetType="Expander" x:Key="@ExpanderLightStyle" >
         <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource $Color_DarkBlue}"/>

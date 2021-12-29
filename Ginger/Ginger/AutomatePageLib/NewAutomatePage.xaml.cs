@@ -1661,6 +1661,21 @@ namespace GingerWPF.BusinessFlowsLib
             GingerSelfHealingConfiguration selfHealingConfiguration = new GingerSelfHealingConfiguration();
             selfHealingConfiguration.ShowAsWindow();
         }
+
+        private void xMapToAlmMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (CheckIfExecutionIsInProgress()) return;
+
+            if (ALMIntegration.Instance.MapBusinessFlowToALM(mBusinessFlow))
+            {
+                if (Reporter.ToUser(eUserMsgKey.AskIfToSaveBFAfterExport, mBusinessFlow.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                {
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);
+                    Reporter.HideStatusMessage();
+                }
+            }
+        }
     }
 
     public class ActiveImageTypeConverter : IValueConverter

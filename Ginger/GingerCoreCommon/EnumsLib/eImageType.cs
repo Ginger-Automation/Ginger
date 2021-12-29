@@ -98,6 +98,9 @@ namespace Amdocs.Ginger.Common.Enums
         Skipped,
         Stopped,
         Running,
+        Mapped,
+        Partial,
+        UnMapped,
         #endregion
 
         #region Operations Images
@@ -215,6 +218,7 @@ namespace Amdocs.Ginger.Common.Enums
         Ticket,        
         Pointer,
         Camera,
+        Recording,
         Wrench,
         Eraser,
         Power,
@@ -262,6 +266,7 @@ namespace Amdocs.Ginger.Common.Enums
         MinusSquare,
         Mandatory,
         ALM,
+        MapALM,
         CSV,
         Clipboard,
         ID,

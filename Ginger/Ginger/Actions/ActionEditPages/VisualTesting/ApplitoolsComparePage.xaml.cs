@@ -16,11 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Ginger.Actions._Common.ActUIElementLib;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.GeneralLib;
+using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,10 +47,15 @@ namespace Ginger.Actions.VisualTesting
             InitializeComponent();
             // TODO: Complete member initialization
             this.mAct = mAct;
-
+            
             xApplitoolsActionComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ApplitoolsAction, ApplitoolsAnalyzer.eApplitoolsAction.Checkpoint.ToString()), typeof(ApplitoolsAnalyzer.eApplitoolsAction), false);
             xApplitoolsActionComboBox.ComboBox.SelectionChanged += ChangeApplitoolsAction_Changed;
 
+            xActionByComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ActionBy, ApplitoolsAnalyzer.eActionBy.Window.ToString()), typeof(ApplitoolsAnalyzer.eActionBy), false);
+            xActionByComboBox.ComboBox.SelectionChanged += ChangeActionBy_Changed;
+
+            xElementLocateByComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.LocateBy, ApplitoolsAnalyzer.eLocateBy.ByXpath.ToString()), typeof(ApplitoolsAnalyzer.eLocateBy), false);
+            xElementLocateByComboBox.ComboBox.SelectionChanged += ChangeLocateBy_Changed;
             InitLayout();
 
             ApplicationNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsParamApplicationName, (Context.GetAsContext(mAct.Context)).BusinessFlow.MainApplication), true, false);
@@ -51,38 +63,45 @@ namespace Ginger.Actions.VisualTesting
             TestNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsParamTestName, (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
 
 
-            ApplitoolsKeyUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsKey), true, false);
             SetMatchLevelComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ApplitoolsMatchLevel, ApplitoolsAnalyzer.eMatchLevel.Strict.ToString()), typeof(ApplitoolsAnalyzer.eMatchLevel), false, null);
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotFailActionOnMismatch, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.FailActionOnMistmach, "False"));
-
+           
+            xLocateValueVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(Act.Fields.LocateValue));
             mAct.PropertyChanged += mAct_PropertyChanged;
         }
 
         public void InitLayout()
         {
             ApplitoolsAnalyzer.eApplitoolsAction applitoolsAction = (ApplitoolsAnalyzer.eApplitoolsAction)Enum.Parse(typeof(ApplitoolsAnalyzer.eApplitoolsAction), xApplitoolsActionComboBox.ComboBox.SelectedValue.ToString(), true);
+            ApplitoolsAnalyzer.eActionBy actionBy = (ApplitoolsAnalyzer.eActionBy)Enum.Parse(typeof(ApplitoolsAnalyzer.eActionBy), xActionByComboBox.ComboBox.SelectedValue.ToString(), true);
             switch (applitoolsAction)
             {
                 case ApplitoolsAnalyzer.eApplitoolsAction.OpenEyes:
-                    xApplitoolsKey.Visibility = Visibility.Visible;
                     xApplitoolsApplicationName.Visibility = Visibility.Visible;
                     xApplitoolsTestName.Visibility = Visibility.Visible;
                     xApplitoolsMatchLevel.Visibility = Visibility.Collapsed;
                     xApplitoolsResultsButton.Visibility = Visibility.Collapsed;
                     xDoNotFailActionOnMismatchPanel.Visibility = Visibility.Collapsed;
+                    xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Visible);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetBaselineSectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetTargetSectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetResultsSectionVisibility, eVisualTestingVisibility.Collapsed);
                     break;
-
                 case ApplitoolsAnalyzer.eApplitoolsAction.Checkpoint:
-                    xApplitoolsKey.Visibility = Visibility.Collapsed;
                     xApplitoolsApplicationName.Visibility = Visibility.Collapsed;
                     xApplitoolsTestName.Visibility = Visibility.Collapsed;
                     xApplitoolsMatchLevel.Visibility = Visibility.Visible;
                     xApplitoolsResultsButton.Visibility = Visibility.Collapsed;
-                    xDoNotFailActionOnMismatchPanel.Visibility = Visibility.Visible;
+                    xDoNotFailActionOnMismatchPanel.Visibility = Visibility.Collapsed;
+                    if(actionBy == ApplitoolsAnalyzer.eActionBy.Region)
+                    {
+                        xLocateByAndValuePanel.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
+                    }
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetBaselineSectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetTargetSectionVisibility, eVisualTestingVisibility.Collapsed);
@@ -90,12 +109,12 @@ namespace Ginger.Actions.VisualTesting
                     break;
 
                 case ApplitoolsAnalyzer.eApplitoolsAction.CloseEyes:
-                    xApplitoolsKey.Visibility = Visibility.Collapsed;
                     xApplitoolsApplicationName.Visibility = Visibility.Collapsed;
                     xApplitoolsTestName.Visibility = Visibility.Collapsed;
                     xApplitoolsMatchLevel.Visibility = Visibility.Collapsed;
                     xApplitoolsResultsButton.Visibility = Visibility.Visible;
                     xDoNotFailActionOnMismatchPanel.Visibility = Visibility.Collapsed;
+                    xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetBaselineSectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetTargetSectionVisibility, eVisualTestingVisibility.Collapsed);
@@ -109,6 +128,15 @@ namespace Ginger.Actions.VisualTesting
             InitLayout();
         }
 
+        private void ChangeActionBy_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            InitLayout();
+        }
+
+        private void ChangeLocateBy_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            InitLayout();
+        }
         private void mAct_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == ActVisualTesting.Fields.CompareResult)

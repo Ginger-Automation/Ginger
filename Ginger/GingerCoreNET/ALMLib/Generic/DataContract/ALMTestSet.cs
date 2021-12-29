@@ -29,6 +29,7 @@ namespace GingerCore.ALM.QC
         public string TestSetName { get; set; }
         public string TestSetPath { get; set; }
         public string TestSetID { get; set; }
+        public string TestSetInternalID2 { get; set; }
         public string TestSetVersion { get; set; }
         public string TestSetProject { get; set; }
         public List<ALMTSTest> Tests { get; set; }

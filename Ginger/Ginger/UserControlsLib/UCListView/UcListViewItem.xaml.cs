@@ -152,7 +152,7 @@ namespace Ginger.UserControlsLib.UCListView
                 if (ListHelper.AllowExpandItems == false)
                 {
                     CollapseItem();
-                    xExpandCollapseBtn.Visibility = Visibility.Collapsed;
+                    xExpandCollapseBtn.Visibility = Visibility.Collapsed;                    
                 }
                 else if(ListHelper.ExpandItemOnLoad)
                 {
@@ -227,7 +227,7 @@ namespace Ginger.UserControlsLib.UCListView
         private void SetItemSubView()
         {
             if (!mSubViewWasSet)
-            {
+            {                
                 mItemDescriptionField = ListHelper.GetItemDescriptionField();
                 mItemTagsField = ListHelper.GetItemTagsField();
                 mItemErrorField = ListHelper.GetItemErrorField();
@@ -423,6 +423,10 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     xItemOperationsPnl.Visibility = Visibility.Collapsed;
                 }
+                else
+                {
+                    ShowItemMainOperationsPnl(true);
+                }
             });
         }
 
@@ -513,6 +517,10 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     xItemExtraOperationsMenu.Visibility = Visibility.Collapsed;
                 }
+                else
+                {
+                    ShowItemMainOperationsPnl(true);
+                }
             });
         }
 
@@ -570,6 +578,10 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     xOperationsSplitter.Visibility = Visibility.Collapsed;
                     xItemExecutionOperationsPnl.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    ShowItemMainOperationsPnl(true);
                 }
             });
         }
@@ -785,14 +797,30 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void XListItemGrid_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            xItemOperationsMainPnl.Visibility = Visibility.Visible;
-            xItemOperationsClm.Width = new GridLength(175);
+            if (xItemOperationsPnl.Children.Count > 0 || ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items.Count > 0 || xItemExecutionOperationsPnl.Children.Count > 0)
+            {
+                ShowItemMainOperationsPnl(true);
+            }
         }
+
 
         private void XListItemGrid_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            xItemOperationsMainPnl.Visibility = Visibility.Collapsed;
-            xItemOperationsClm.Width = new GridLength(0);
+            ShowItemMainOperationsPnl(false);
+        }
+
+        private void ShowItemMainOperationsPnl(bool toShow)
+        {
+            if (toShow)
+            {
+                xItemOperationsMainPnl.Visibility = Visibility.Visible;
+                xItemOperationsClm.Width = new GridLength(175);
+            }
+            else
+            {
+                xItemOperationsMainPnl.Visibility = Visibility.Collapsed;
+                xItemOperationsClm.Width = new GridLength(0);
+            }
         }
     }
 

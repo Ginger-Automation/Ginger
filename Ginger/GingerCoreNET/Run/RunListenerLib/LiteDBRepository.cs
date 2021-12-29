@@ -482,7 +482,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 {
                     runner.StartTimeStamp = gingerRunner.BusinessFlows[0].StartTimeStamp;
                     runner.EndTimeStamp = gingerRunner.BusinessFlows[0].EndTimeStamp;
-                    runner.Elapsed = gingerRunner.BusinessFlows[0].Elapsed;
+                    runner.Elapsed = gingerRunner.BusinessFlows[0].ElapsedSecs;
                 }
                 runner.RunStatus = (liteDbBFList.Count > 0) ? liteDbBFList[0].RunStatus : eRunStatus.Automated.ToString();
 
@@ -577,9 +577,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
             //Map the data to AccountReportRunset Object
             AccountReportRunSet accountReportRunSet = centralExecutionLogger.MapDataToAccountReportObject(liteDbRunSet);
-            accountReportRunSet.ExecutionId = executionId;
-            
-
+            SetExecutionId(accountReportRunSet, executionId);
+            accountReportRunSet.EntityId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid;
+            accountReportRunSet.GingerSolutionGuid = WorkSpace.Instance.Solution.Guid;
+           
             //Publish the Data and screenshots to Central DB
             await centralExecutionLogger.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
             await centralExecutionLogger.SendScreenShotsToCentralDBAsync(executionId, screenshotList);
@@ -613,6 +614,37 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
            
 
             return true;
+        }
+
+        private void SetExecutionId(AccountReportRunSet accountReportRunSet, Guid executionId)
+        {
+            accountReportRunSet.ExecutionId = executionId;
+            accountReportRunSet.ElapsedEndTimeStamp = accountReportRunSet.ElapsedEndTimeStamp * 1000;
+            foreach (AccountReportRunner runner in accountReportRunSet.RunnersColl)
+            {
+                runner.ExecutionId = executionId;
+                runner.ElapsedEndTimeStamp = runner.ElapsedEndTimeStamp * 1000;
+                foreach (AccountReportBusinessFlow businessFlow in runner.BusinessFlowsColl)
+                {
+                    businessFlow.ExecutionId = executionId;
+                    businessFlow.ElapsedEndTimeStamp = businessFlow.ElapsedEndTimeStamp * 1000;
+                    foreach (AccountReportActivityGroup accountReportActivityGroup in businessFlow.ActivitiesGroupsColl)
+                    {
+                        accountReportActivityGroup.ExecutionId = executionId;
+                        accountReportActivityGroup.ElapsedEndTimeStamp = accountReportActivityGroup.ElapsedEndTimeStamp * 1000;
+                        foreach (AccountReportActivity accountReportActivity in accountReportActivityGroup.ActivitiesColl)
+                        {
+                            accountReportActivity.ExecutionId = executionId;
+                            accountReportActivity.ElapsedEndTimeStamp = accountReportActivity.ElapsedEndTimeStamp * 1000;
+                            foreach (AccountReportAction accountReportAction in accountReportActivity.ActionsColl)
+                            {
+                                accountReportAction.ElapsedEndTimeStamp = accountReportAction.ElapsedEndTimeStamp * 1000;
+                                accountReportAction.ExecutionId = executionId;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private List<string> PopulateMissingFieldsAndGetScreenshotsList(LiteDbRunSet liteDbRunSet, Guid executionId)

@@ -215,15 +215,20 @@ namespace GingerCore.Drivers
         public string SeleniumUserArguments { get; set; }
 
 
+        //[UserConfigured]
+        //[UserConfiguredDefault("False")]
+        //[UserConfiguredDescription("Applitool - Set to true if you want to use Applitools for visual testing")]
+        //public Boolean UseApplitools { get; set; }
+
         [UserConfigured]
-        [UserConfiguredDefault("False")]
-        [UserConfiguredDescription("Applitool - Set to true if you want to use Applitools for visual testing")]
-        public Boolean UseApplitools { get; set; }
+        [UserConfiguredDefault("W3IBcWNoSAABDt21U3X3XpS2xpeV7Rgt990JwQz8th4A110")]
+        [UserConfiguredDescription("Applitool View Key number")]
+        public String ApplitoolsViewKey { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Applitool View Key number")]
-        public String ApplitoolsViewKey { get; set; }
+        [UserConfiguredDescription("Applitool Server Url")]
+        public String ApplitoolsServerUrl { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("true")]
@@ -301,6 +306,16 @@ namespace GingerCore.Drivers
                 RemotePlatform = agent.GetParamValue(SeleniumDriver.RemotePlatformParam);
                 RemoteVersion = agent.GetParamValue(SeleniumDriver.RemoteVersionParam);
             }
+        }
+
+        public IWebDriver GetWebDriver()
+        {
+            return Driver;
+        }
+
+        public eBrowserType GetBrowserType()
+        {
+            return mBrowserTpe;
         }
 
         public override void StartDriver()
@@ -383,6 +398,11 @@ namespace GingerCore.Drivers
                         if (!(String.IsNullOrEmpty(SeleniumUserArguments) && String.IsNullOrWhiteSpace(SeleniumUserArguments)))
                             ieoptions.BrowserCommandLineArguments += "," + SeleniumUserArguments;
 
+                        if (!(String.IsNullOrEmpty(ApplitoolsViewKey) && String.IsNullOrWhiteSpace(ApplitoolsViewKey)))
+                            ieoptions.BrowserCommandLineArguments += "," + ApplitoolsViewKey;
+
+                        if (!(String.IsNullOrEmpty(ApplitoolsServerUrl) && String.IsNullOrWhiteSpace(ApplitoolsServerUrl)))
+                            ieoptions.BrowserCommandLineArguments += "," + ApplitoolsServerUrl;
                         InternetExplorerDriverService IEService  = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                         IEService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -475,12 +495,54 @@ namespace GingerCore.Drivers
                             options.EnableMobileEmulation(chromeMobileEmulationDevice);
                         }
 
+                        if (!(String.IsNullOrEmpty(ApplitoolsViewKey) && String.IsNullOrWhiteSpace(ApplitoolsViewKey)))
+                            options.AddArgument(ApplitoolsViewKey);
+
+                        if (!(String.IsNullOrEmpty(ApplitoolsServerUrl) && String.IsNullOrWhiteSpace(ApplitoolsServerUrl)))
+                            options.AddArgument(ApplitoolsServerUrl);
+
                         ChromeDriverService ChService = ChromeDriverService.CreateDefaultService(GetDriversPathPerOS());
                         if (HideConsoleWindow)
                         {
                             ChService.HideCommandPromptWindow = HideConsoleWindow;
                         }
-                        Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+
+                        try
+                        {
+                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        }
+                        catch (Exception ex)
+                        {
+                            //If the os is alpine linux
+                            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && ex.Message.ToLower().Contains("no such file or directory"))
+                            {
+                                Reporter.ToLog(eLogLevel.INFO, "Chrome binary isn't found at default location, checking for Chromium...");
+
+                                if (Directory.GetFiles(@"/usr/bin", "chromium-browser.*").Length > 0 && Directory.GetFiles(@"/usr/lib/chromium", "chromedriver.*").Length > 0)
+                                {
+                                    options.BinaryLocation = @"/usr/bin/chromium-browser";
+
+                                    //List of Chromium Command Line Switches
+                                    //https://peter.sh/experiments/chromium-command-line-switches/
+                                    options.AddArgument("--headless");
+                                    options.AddArgument("--no-sandbox");
+                                    options.AddArgument("--start-maximized");
+                                    options.AddArgument("--disable-dev-shm-usage");
+                                    options.AddArgument("--remote-debugging-port=9222");
+                                    options.AddArgument("--disable-gpu");
+                                    Driver = new ChromeDriver(@"/usr/lib/chromium", options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                                }
+                                else
+                                {
+                                    throw ex;
+                                }
+                            }
+                            else
+                            {
+                                throw ex;
+                            }
+                        }
+                        
                         break;
 
                     #endregion
@@ -3870,6 +3932,7 @@ namespace GingerCore.Drivers
                                 learnElement = false;
                         }
 
+                        IWebElement webElement = null;
                         if (learnElement)
                         {
                             var xpath = htmlElemNode.XPath;
@@ -3878,21 +3941,21 @@ namespace GingerCore.Drivers
                                 xpath= string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()=\'svg\']");
                             }
 
-                            IWebElement el = Driver.FindElement(By.XPath(xpath));
-                            if (el == null)
+                            webElement = Driver.FindElement(By.XPath(xpath));
+                            if (webElement == null)
                             {
                                 continue;
                             }
 
                             //filter none visible elements
-                            if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
+                            if (!webElement.Displayed || webElement.Size.Width == 0 || webElement.Size.Height == 0)
                             {
                                 //for some element like select tag el.Displayed is false but element is visible in page
-                                if (el.GetCssValue("display").Equals("none", StringComparison.OrdinalIgnoreCase) )
+                                if (webElement.GetCssValue("display").Equals("none", StringComparison.OrdinalIgnoreCase) )
                                 {
                                     continue;
                                 }
-                                else if(el.GetCssValue("width").Equals("auto") || el.GetCssValue("height").Equals("auto"))
+                                else if(webElement.GetCssValue("width").Equals("auto") || webElement.GetCssValue("height").Equals("auto"))
                                 {
                                     continue;
                                 }
@@ -3901,7 +3964,7 @@ namespace GingerCore.Drivers
                             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
                             foundElemntInfo.ElementType = elementTypeEnum.Item1;
                             foundElemntInfo.ElementTypeEnum = elementTypeEnum.Item2;
-                            foundElemntInfo.ElementObject = el;
+                            foundElemntInfo.ElementObject = webElement;
                             foundElemntInfo.Path = path;
                             //foundElemntInfo.XPath = htmlElemNode.XPath;
                             foundElemntInfo.XPath = xpath;
@@ -3930,7 +3993,11 @@ namespace GingerCore.Drivers
                         if (eElementType.Iframe == elementTypeEnum.Item2)
                         {
                             string xpath = htmlElemNode.XPath;
-                            Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(xpath)));
+                            if (webElement == null)
+                            {
+                                webElement = Driver.FindElement(By.XPath(xpath));
+                            }
+                            Driver.SwitchTo().Frame(webElement);
                             string newPath = string.Empty;
                             if (path == string.Empty)
                             {

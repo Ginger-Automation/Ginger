@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2021 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
@@ -37,6 +55,7 @@ namespace Ginger.Drivers.DriversWindows
         public BusinessFlow mBF;
         eAutoScreenshotRefreshMode mDeviceAutoScreenshotRefreshMode;
         bool mWindowIsOpen = true;
+        bool IsRecording = false;
 
         public MobileDriverWindow(DriverBase driver, Agent agent)
         {
@@ -105,6 +124,17 @@ namespace Ginger.Drivers.DriversWindows
             xHighlighterBorder.Visibility = Visibility.Collapsed;
         }
 
+        public void UpdateRecordingImage(bool ShowRecordIcon)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if(ShowRecordIcon)
+                    xRecordingImage.Visibility = Visibility.Visible;
+                else
+                    xRecordingImage.Visibility = Visibility.Collapsed;
+            });
+        }
+
         #region Events
         private async void MobileDriverWindow_DriverMessageEvent(object sender, DriverMessageEventArgs e)
         {
@@ -137,6 +167,13 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         await RefreshDeviceScreenshotAsync(100);
                     }
+                    break;
+
+                case DriverBase.eDriverMessageType.RecordingEvent:
+                    IsRecording = (sender == null) ? false : (bool)sender;
+                    
+                    UpdateRecordingImage(IsRecording);
+
                     break;
 
                 case DriverBase.eDriverMessageType.HighlightElement:
@@ -1016,5 +1053,10 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
         #endregion Functions
+
+        private void xRecordingImage_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

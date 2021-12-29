@@ -53,7 +53,9 @@ using System.Windows.Input;
 
 namespace Ginger.Actions
 {
-    enum eGridView { All, NonSimulation }
+    enum eGridView { All, NonSimulation,
+        RegularView
+    }
 
     public partial class ActionEditPage : Page
     {

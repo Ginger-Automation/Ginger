@@ -192,12 +192,14 @@ namespace GingerWPF.WizardLib
             WizardEventArgs WizardEventArgs = new WizardEventArgs(this, EventType.Prev);
             foreach (WizardPage wp in Pages)
             {
-                wp.Page.WizardEvent(WizardEventArgs);                
+                wp.Page.WizardEvent(WizardEventArgs);
             }
-
-            Pages.MovePrev();
-
-            GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));            
+            if (!WizardEventArgs.CancelEvent)
+            {
+                Pages.MovePrev();
+                GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));
+            }
+           
         }
 
         public virtual void Cancel()

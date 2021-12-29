@@ -22,17 +22,15 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
-using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowPages.AddActionMenu;
+using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.BusinessFlowWindows;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
-using Ginger.UserControls;
 using GingerCore;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using static Ginger.ApplicationModelsLib.POMModels.PomElementsPage;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -46,8 +44,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         Context mContext;
         ITreeViewItem mItemTypeRootNode;
         SingleItemTreeViewSelectionPage mPOMPage;
+        ElementInfoListViewHelper mPOMListHelper;
 
         private Agent mAgent;
+
         IWindowExplorer mWinExplorer
         {
             get
@@ -71,9 +71,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             get
             {
-                if (xMainElementsGrid.Grid.SelectedItem != null)
+                if (xPomElementsListView.List.SelectedItem != null)
                 {
-                    return (ElementInfo)xMainElementsGrid.Grid.SelectedItem;
+                    return (ElementInfo)xPomElementsListView.List.SelectedItem;
                 }
                 else
                 {
@@ -86,7 +86,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             InitializeComponent();
 
+            App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEventAsync;
+            App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEventAsync;
+
             mContext = context;
+
+            xPomElementsListView.ListTitleVisibility = Visibility.Hidden;
+            mPOMListHelper = new ElementInfoListViewHelper(mContext, General.eRIPageViewMode.AddFromModel);
+            xPomElementsListView.SetDefaultListDataTemplate(mPOMListHelper);
+            xPomElementsListView.ListSelectionMode = SelectionMode.Extended;
+            mPOMListHelper.ListView = xPomElementsListView;
 
             ApplicationPOMsTreeItem mPOMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
             mItemTypeRootNode = mPOMsRoot;
@@ -97,7 +106,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mPOMPage.xTreeView.SetTopToolBarTools(mPOMsRoot.SaveAllTreeFolderItemsHandler, mPOMsRoot.AddPOM, RefreshTreeItems);
             mContext.PropertyChanged += MContext_PropertyChanged;
             mPOMPage.OnSelect += MainTreeView_ItemSelected;
-            SetElementsGridView();
+            //SetElementsGridView();
+            mPOMPage.HorizontalAlignment = HorizontalAlignment.Stretch;
+            mPOMPage.xTreeView.HorizontalAlignment = HorizontalAlignment.Stretch;
+            mPOMPage.xTreeView.SetAddButtonToArrow();
+            mPOMPage.Width = Double.NaN;
             xPOMFrame.Content = mPOMPage;
         }
 
@@ -112,6 +125,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (e.PropertyName is nameof(mContext.Agent) || e.PropertyName is nameof(mContext.AgentStatus))
                 {
                     mAgent = mContext.Agent;
+                    mPOMListHelper.Context.Agent = mContext.Agent;
                 }
             }
         }
@@ -140,16 +154,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     mPOM.StartDirtyTracking();
                     xPOMDetails.Height = xPOMItems.Height;
-                    xMainElementsGrid.DataSourceList = mPOM.MappedUIElements;
-                    xMainElementsGrid.Visibility = Visibility.Visible;
+                    xPomElementsListView.DataSourceList = mPOM.MappedUIElements;
+                    xPomElementsListView.Visibility = Visibility.Visible;
                     xPOMSplitter.IsEnabled = true;
                 }
             }
             else
             {
                 xPOMDetails.Height = new GridLength(0, GridUnitType.Star);
-                xMainElementsGrid.DataSourceList = null;
-                xMainElementsGrid.Visibility = Visibility.Hidden;
+                xPomElementsListView.DataSourceList = null;
+                xPomElementsListView.Visibility = Visibility.Hidden;
                 xPOMSplitter.IsEnabled = false;
             }
         }
@@ -159,41 +173,26 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             UpdatePOMTree();
         }
 
-        private void SetElementsGridView()
+        public void ReLoadPageItems()
         {
-            xMainElementsGrid.SetTitleLightStyle = true;
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 25, AllowSorting = true });
-
-            List<GingerCore.GeneralLib.ComboEnumItem> ElementTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(eElementType));
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnum), Header = "Type", WidthWeight = 15, AllowSorting = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ElementTypeList });
-
-            view.GridColsView.Add(new GridColView() { Field = "", Header = "Highlight", WidthWeight = 10, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xHighlightButtonTemplate"] });
-            //view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, ReadOnly = true });
-            xMainElementsGrid.SetAllColumnsDefaultView(view);
-            xMainElementsGrid.InitViewItems();
-            xMainElementsGrid.ChangeGridView(eGridView.RegularView.ToString());
-
-            xMainElementsGrid.AddToolbarTool(eImageType.GoBack, "Add to Actions", new RoutedEventHandler(AddFromPOMNavPage));
+            UpdatePOMTree();
+            mAgent = mContext.Agent;
         }
 
-        private void AddFromPOMNavPage(object sender, RoutedEventArgs e)
+        private async void App_AutomateBusinessFlowEventAsync(AutomateEventArgs args)
         {
-            if (xMainElementsGrid.Grid.SelectedItems != null && xMainElementsGrid.Grid.SelectedItems.Count > 0)
+            switch (args.EventType)
             {
-                foreach (ElementInfo elemInfo in xMainElementsGrid.Grid.SelectedItems)
-                {
-                    ActionsFactory.AddActionsHandler(elemInfo, mContext);
-                }
+                case AutomateEventArgs.eEventType.HighlightElement:
+                    HighlightElementClicked();
+                    break;
+                default:
+                    //Avoid other operations
+                    break;
             }
-            else
-                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
         }
 
-        private void HighlightElementClicked(object sender, RoutedEventArgs e)
+        private void HighlightElementClicked()
         {
             if (!ValidateDriverAvalability())
             {
@@ -231,12 +230,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 return false;
             }
-        }
-
-        public void ReLoadPageItems()
-        {
-            UpdatePOMTree();
-            mAgent = mContext.Agent;
         }
     }
 }
