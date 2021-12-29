@@ -45,8 +45,8 @@ namespace GingerCore.Actions.VisualTesting
         public static string ApplitoolsEyesOpen = "ApplitoolsEyesOpen";
         public static string ApplitoolsMatchLevel = "ApplitoolsMatchLevel";
         public static string FailActionOnMistmach = "FailActionOnMistmach";
-        public static string ActionBy = "ActionBy";
-        public static string LocateBy = "LocateBy";
+        public const string ActionBy = "ActionBy";
+        public const string LocateBy = "LocateBy";
 
         // We keep one static eyes so we can reuse across action and close when done, to support applitools behaviour
         static Applitools.Images.Eyes mEyes = null;
@@ -272,7 +272,9 @@ namespace GingerCore.Actions.VisualTesting
             {
                 runner = new ClassicRunner();
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any() && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners[0].ExecutedFrom == eExecutedFrom.Run)
+                {
                     runner.DontCloseBatches = true;
+                }
                 newmEyes = new Eyes(runner);
                 mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
                 mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
@@ -306,21 +308,31 @@ namespace GingerCore.Actions.VisualTesting
             }
 
             NewSetEyesMatchLevel();
-            string ActionBy = GetActionBy();
+            string ActionTakenBy = GetActionBy();
             try
             {
-                if (ActionBy == "Window")
+                if (ActionTakenBy == "Window")
+                {
                     newmEyes.Check(Target.Window().Fully().WithName(mAct.ItemName));
+                } 
                 else
+                {
                     newmEyes.Check(Target.Region(By.XPath(GetLocateValue())).Fully().WithName(mAct.ItemName));
+                }
+                    
                 
             }
             catch (Exception ex) 
             {
-                if (ActionBy == "Region")
+                if (ActionTakenBy == "Region") 
+                {
                     mAct.Error += "Not Able to locate XPath, Error: " + ex.Message;
+                }
                 else
+                {
                     mAct.Error += ex.Message;
+                }
+                    
             }
             finally
             {

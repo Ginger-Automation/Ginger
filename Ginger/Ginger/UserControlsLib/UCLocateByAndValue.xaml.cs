@@ -140,8 +140,6 @@ namespace Ginger.UserControlsLib
 
             if (isVENeeded)
             {
-                //Col.Width = new GridLength(22);
-                //VEButton.Visibility = Visibility.Visible;
                 xElementLocateByComboBox.IsEditable = true;
                 if (obj.GetType() == typeof(ActInputValue))
                 {
@@ -166,29 +164,6 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        //private void SetLocateValueControls()
-        //{
-        //    if (xElementLocateByComboBox.SelectedItem == null)
-        //    {
-        //        xLocateValueVE.Visibility = System.Windows.Visibility.Visible;
-        //        xLocateValueEditFrame.Visibility = System.Windows.Visibility.Collapsed;
-        //        return;
-        //    }
 
-        //    eLocateBy SelectedLocType = (eLocateBy)((ComboEnumItem)xElementLocateByComboBox.SelectedItem).Value;
-        //    switch (SelectedLocType)
-        //    {
-        //        case eLocateBy.POMElement:
-        //            xLocateValueVE.Visibility = System.Windows.Visibility.Collapsed;
-        //            xLocateValueEditFrame.Visibility = System.Windows.Visibility.Visible;
-        //            //Page p = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), null, null, mAct, nameof(ActBrowserElement.LocateValue));
-        //            //xLocateValueEditFrame.Content = p;
-        //            break;
-        //        default:
-        //            xLocateValueVE.Visibility = System.Windows.Visibility.Visible;
-        //            xLocateValueEditFrame.Visibility = System.Windows.Visibility.Collapsed;
-        //            break;
-        //    }
-        //}
     }
 }
