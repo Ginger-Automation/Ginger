@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2021 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
@@ -710,9 +728,14 @@ namespace Ginger.SolutionWindows
                                 if (!string.IsNullOrEmpty(db.Pass))
                                 {
                                     //if Pass is stored in the form of variable, encryption not required at this stage
-                                    if (!db.Pass.Contains("{Var Name"))
+                                    if (!db.Pass.Contains("{Var Name") && !db.Pass.Contains("{EnvParam"))
                                     {
-                                        db.Pass = EncryptionHandler.ReEncryptString(db.Pass, oldKey);
+                                        string encryptedPassWord = EncryptionHandler.ReEncryptString(db.Pass, oldKey);
+                                        if (string.IsNullOrEmpty(encryptedPassWord))
+                                        {
+                                            encryptedPassWord = EncryptionHandler.EncryptwithKey(db.Pass);
+                                        }
+                                        db.Pass = encryptedPassWord;
                                     }
                                     isSaveRequired = true;
                                     varReencryptedCount++;

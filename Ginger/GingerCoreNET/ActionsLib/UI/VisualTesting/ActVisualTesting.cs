@@ -203,6 +203,9 @@ namespace GingerCore.Actions
             public static string BaseLineVisualElementsInfoFileName = "BaseLineVisualElementsInfoFileName";            
             public static string CreateBaselineAction = "CreateBaselineAction";
             public static string ErrorMetric = "ErrorMetric";
+            public const string ActionBy = "ActionBy";
+            public const string LocateBy = "LocateBy";
+            public const string LocateValue = "LocateValue";
         }
         
         public override string ActionEditPage { get { return "VisualTesting.ActVisualTestingEditPage"; } }
@@ -332,6 +335,8 @@ namespace GingerCore.Actions
                     return Resolution;
                 case eChangeAppWindowSize.Custom:
                     //TODO:
+                    Resolution.Add(Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowWidth)));
+                    Resolution.Add(Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowHeight)));
                     return Resolution;
                 case eChangeAppWindowSize.Resolution640x480:
                     Resolution.Add(640);
@@ -362,6 +367,8 @@ namespace GingerCore.Actions
                     Resolution.Add(1080);
                     return Resolution;
                 default:
+                    Resolution.Add(0);
+                    Resolution.Add(0);
                     return Resolution;
             }
         }

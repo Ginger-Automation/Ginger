@@ -231,14 +231,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             ListItemOperation addSelected = new ListItemOperation();
             addSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Add };
             addSelected.AutomationID = "addSelected";
-            addSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+            addSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft;
             addSelected.ToolTip = "Add Selected Actions";
             addSelected.OperationHandler = AddActionListView;
             operationsList.Add(addSelected);
 
             ListItemOperation addToFlow = new ListItemOperation();
             addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
-            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft;
             addToFlow.ToolTip = "Add to Flow";
             addToFlow.OperationHandler = AddFromRepository;
             operationsList.Add(addToFlow);
@@ -398,89 +398,96 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public List<ListItemNotification> GetItemNotificationsList(object item)
         {
-            SetItem(item);
-            List<ListItemNotification> notificationsList = new List<ListItemNotification>();
-
-            ListItemNotification simulationInd = new ListItemNotification();
-            simulationInd.AutomationID = "simulationInd";
-            simulationInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Simulate;
-            simulationInd.ToolTip = "Action support Simulation mode";
-            simulationInd.ImageSize = 14;
-            simulationInd.BindingObject = mAction;
-            simulationInd.BindingFieldName = nameof(Act.SupportSimulation);
-            simulationInd.BindingConverter = new BoolVisibilityConverter();
-            notificationsList.Add(simulationInd);
-
-            ListItemNotification flowControlInd = new ListItemNotification();
-            flowControlInd.AutomationID = "flowControlInd";
-            flowControlInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            flowControlInd.ToolTip = "Action contains Flow Control conditions";
-            flowControlInd.ImageSize = 14;
-            flowControlInd.BindingObject = mAction;
-            flowControlInd.BindingFieldName = nameof(Act.FlowControlsInfo);
-            flowControlInd.BindingConverter = new StringVisibilityConverter();
-            notificationsList.Add(flowControlInd);
-
-            ListItemNotification actionsVarsDepInd = new ListItemNotification();
-            actionsVarsDepInd.AutomationID = "actionsVarsDepInd";
-            actionsVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            actionsVarsDepInd.ToolTip = string.Format("{0} Actions-{1} dependency is enabled", GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables));
-            actionsVarsDepInd.ImageSize = 14;
-            actionsVarsDepInd.BindingObject = mContext.Activity;
-            actionsVarsDepInd.BindingFieldName = nameof(Activity.EnableActionsVariablesDependenciesControl);
-            actionsVarsDepInd.BindingConverter = new BoolVisibilityConverter();
-            notificationsList.Add(actionsVarsDepInd);
-
-            ListItemNotification outputValuesInd = new ListItemNotification();
-            outputValuesInd.AutomationID = "outputValuesInd";
-            outputValuesInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Output;
-            outputValuesInd.ToolTip = "Action contains Output Values";
-            outputValuesInd.BindingObject = mAction;
-            outputValuesInd.BindingFieldName = nameof(Act.ReturnValuesCount);
-            outputValuesInd.BindingConverter = new OutPutValuesCountConverter();
-            notificationsList.Add(outputValuesInd);
-
-            ListItemNotification waitInd = new ListItemNotification();
-            waitInd.AutomationID = "waitInd";
-            waitInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Clock;
-            waitInd.ToolTip = "Action contains Wait time before execution starts";
-            waitInd.BindingObject = mAction;
-            waitInd.BindingFieldName = nameof(Act.WaitVE);
-            waitInd.BindingConverter = new WaitVisibilityConverter();
-            notificationsList.Add(waitInd);
-
-            ListItemNotification retryInd = new ListItemNotification();
-            retryInd.AutomationID = "retryInd";
-            retryInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Retry;
-            retryInd.ToolTip = "Action configured to Rerun in case of failure";            
-            retryInd.BindingObject = mAction;
-            retryInd.BindingFieldName = nameof(Act.EnableRetryMechanism);
-            retryInd.BindingConverter = new BoolVisibilityConverter();
-            notificationsList.Add(retryInd);
-
-            ListItemNotification screenshotInd = new ListItemNotification();
-            screenshotInd.AutomationID = "screenshotInd";
-            screenshotInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Image;
-            screenshotInd.ToolTip = "Action configured to take Screenshot";
-            screenshotInd.BindingObject = mAction;
-            screenshotInd.BindingFieldName = nameof(Act.TakeScreenShot);
-            screenshotInd.BindingConverter = new BoolVisibilityConverter();
-            notificationsList.Add(screenshotInd);
-
-            if (PageViewMode != General.eRIPageViewMode.AddFromShardRepository)
+            if (PageViewMode != General.eRIPageViewMode.Add)
             {
-                ListItemNotification sharedRepoInd = new ListItemNotification();
-                sharedRepoInd.AutomationID = "sharedRepoInd";
-                sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-                sharedRepoInd.ToolTip = "Action source is from Shared Repository";
-                sharedRepoInd.ImageForeground = Brushes.Orange;
-                sharedRepoInd.BindingObject = mAction;
-                sharedRepoInd.BindingFieldName = nameof(Act.IsSharedRepositoryInstance);
-                sharedRepoInd.BindingConverter = new BoolVisibilityConverter();
-                notificationsList.Add(sharedRepoInd);
-            }
+                SetItem(item);
+                List<ListItemNotification> notificationsList = new List<ListItemNotification>();
 
-            return notificationsList;
+                ListItemNotification simulationInd = new ListItemNotification();
+                simulationInd.AutomationID = "simulationInd";
+                simulationInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Simulate;
+                simulationInd.ToolTip = "Action support Simulation mode";
+                simulationInd.ImageSize = 14;
+                simulationInd.BindingObject = mAction;
+                simulationInd.BindingFieldName = nameof(Act.SupportSimulation);
+                simulationInd.BindingConverter = new BoolVisibilityConverter();
+                notificationsList.Add(simulationInd);
+
+                ListItemNotification flowControlInd = new ListItemNotification();
+                flowControlInd.AutomationID = "flowControlInd";
+                flowControlInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
+                flowControlInd.ToolTip = "Action contains Flow Control conditions";
+                flowControlInd.ImageSize = 14;
+                flowControlInd.BindingObject = mAction;
+                flowControlInd.BindingFieldName = nameof(Act.FlowControlsInfo);
+                flowControlInd.BindingConverter = new StringVisibilityConverter();
+                notificationsList.Add(flowControlInd);
+
+                ListItemNotification actionsVarsDepInd = new ListItemNotification();
+                actionsVarsDepInd.AutomationID = "actionsVarsDepInd";
+                actionsVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
+                actionsVarsDepInd.ToolTip = string.Format("{0} Actions-{1} dependency is enabled", GingerDicser.GetTermResValue(eTermResKey.Activity), GingerDicser.GetTermResValue(eTermResKey.Variables));
+                actionsVarsDepInd.ImageSize = 14;
+                actionsVarsDepInd.BindingObject = mContext.Activity;
+                actionsVarsDepInd.BindingFieldName = nameof(Activity.EnableActionsVariablesDependenciesControl);
+                actionsVarsDepInd.BindingConverter = new BoolVisibilityConverter();
+                notificationsList.Add(actionsVarsDepInd);
+
+                ListItemNotification outputValuesInd = new ListItemNotification();
+                outputValuesInd.AutomationID = "outputValuesInd";
+                outputValuesInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Output;
+                outputValuesInd.ToolTip = "Action contains Output Values";
+                outputValuesInd.BindingObject = mAction;
+                outputValuesInd.BindingFieldName = nameof(Act.ReturnValuesCount);
+                outputValuesInd.BindingConverter = new OutPutValuesCountConverter();
+                notificationsList.Add(outputValuesInd);
+
+                ListItemNotification waitInd = new ListItemNotification();
+                waitInd.AutomationID = "waitInd";
+                waitInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Clock;
+                waitInd.ToolTip = "Action contains Wait time before execution starts";
+                waitInd.BindingObject = mAction;
+                waitInd.BindingFieldName = nameof(Act.WaitVE);
+                waitInd.BindingConverter = new WaitVisibilityConverter();
+                notificationsList.Add(waitInd);
+
+                ListItemNotification retryInd = new ListItemNotification();
+                retryInd.AutomationID = "retryInd";
+                retryInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Retry;
+                retryInd.ToolTip = "Action configured to Rerun in case of failure";
+                retryInd.BindingObject = mAction;
+                retryInd.BindingFieldName = nameof(Act.EnableRetryMechanism);
+                retryInd.BindingConverter = new BoolVisibilityConverter();
+                notificationsList.Add(retryInd);
+
+                ListItemNotification screenshotInd = new ListItemNotification();
+                screenshotInd.AutomationID = "screenshotInd";
+                screenshotInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Image;
+                screenshotInd.ToolTip = "Action configured to take Screenshot";
+                screenshotInd.BindingObject = mAction;
+                screenshotInd.BindingFieldName = nameof(Act.TakeScreenShot);
+                screenshotInd.BindingConverter = new BoolVisibilityConverter();
+                notificationsList.Add(screenshotInd);
+
+                if (PageViewMode != General.eRIPageViewMode.AddFromShardRepository)
+                {
+                    ListItemNotification sharedRepoInd = new ListItemNotification();
+                    sharedRepoInd.AutomationID = "sharedRepoInd";
+                    sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+                    sharedRepoInd.ToolTip = "Action source is from Shared Repository";
+                    sharedRepoInd.ImageForeground = Brushes.Orange;
+                    sharedRepoInd.BindingObject = mAction;
+                    sharedRepoInd.BindingFieldName = nameof(Act.IsSharedRepositoryInstance);
+                    sharedRepoInd.BindingConverter = new BoolVisibilityConverter();
+                    notificationsList.Add(sharedRepoInd);
+                }
+
+                return notificationsList;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public List<ListItemOperation> GetItemOperationsList(object item)

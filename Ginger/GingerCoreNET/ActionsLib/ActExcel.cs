@@ -102,7 +102,7 @@ namespace GingerCore.Actions
                 return WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(file);
             }
         }
-        
+
         private string CalculatedColMappingRules
         {
             get
@@ -212,25 +212,27 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
-            if(!CheckMandatoryFieldsExists(new List<string>() { nameof(CalculatedFileName), nameof(CalculatedSheetName) }))
+            if (!CheckMandatoryFieldsExists(new List<string>() { nameof(CalculatedFileName), nameof(CalculatedSheetName) }))
             {
                 return;
             }
-            excelOperator = new ExcelNPOIOperations();
-            switch (ExcelActionType)
+            using (excelOperator = new ExcelNPOIOperations())
             {
-                case eExcelActionType.ReadData:
-                    ReadData();
-                    break;
-                case eExcelActionType.WriteData:
-                    WriteData();
-                    break;
-                case eExcelActionType.ReadCellData:
-                    ReadCellData();
-                    break;
-                default:
-                    Reporter.ToLog(eLogLevel.INFO, "Only action type can be selected");
-                    break;
+                switch (ExcelActionType)
+                {
+                    case eExcelActionType.ReadData:
+                        ReadData();
+                        break;
+                    case eExcelActionType.WriteData:
+                        WriteData();
+                        break;
+                    case eExcelActionType.ReadCellData:
+                        ReadCellData();
+                        break;
+                    default:
+                        Reporter.ToLog(eLogLevel.INFO, "Only action type can be selected");
+                        break;
+                }
             }
         }
         public object this[string propertyName]
@@ -240,7 +242,7 @@ namespace GingerCore.Actions
 
         public bool CheckMandatoryFieldsExists(List<string> fields)
         {
-            foreach(string field in fields)
+            foreach (string field in fields)
             {
                 if (String.IsNullOrWhiteSpace((string)this[field]))
                 {
@@ -295,7 +297,7 @@ namespace GingerCore.Actions
                             if (SelectAllRows)
                             {
                                 AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, ((object)r[i]).ToString(), "" + (j + 1).ToString());
-                                
+
                             }
                             else
                             {
@@ -317,16 +319,20 @@ namespace GingerCore.Actions
                         {
                             if (string.IsNullOrWhiteSpace(PrimaryKeyColumn))
                             {
-                                Error += "Missing or Invalid Primary Key"; 
-                                return; 
+                                Error += "Missing or Invalid Primary Key";
+                                return;
                             }
                             isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, FieldsValueToTupleList(CalculatedSetDataUsed), CalculatedPrimaryKeyFilter(excelDataTable.Rows[0]));
                         }
                     }
-                    if(!isUpdated)
+                    if (!isUpdated)
                     {
                         Error = "Failed updated excel data: " + CalculatedSetDataUsed;
                     }
+                }
+                else
+                {
+                    Error = SelectAllRows ? "No Rows Found" : "No Rows Found with given filter";
                 }
             }
             catch (Exception ex)
@@ -343,7 +349,7 @@ namespace GingerCore.Actions
                 cellValuesToUpdateList.AddRange(FieldsValueToTupleList(CalculatedSetDataUsed));
                 cellValuesToUpdateList.AddRange(FieldsValueToTupleList(CalculatedColMappingRules));
                 DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
-                if(excelDataTable == null)
+                if (excelDataTable == null)
                 {
                     Error = "Table return no Rows with given filter";
                     return;
@@ -355,14 +361,14 @@ namespace GingerCore.Actions
                     this.ExInfo = "Write action done";
                     if (cellValuesToUpdateList.Count > 0)
                     {
-                        bool isUpdated = string.IsNullOrEmpty(CalculatedPrimaryKeyFilter(r)) ? excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList) : 
+                        bool isUpdated = string.IsNullOrEmpty(CalculatedPrimaryKeyFilter(r)) ? excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList) :
                             excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList, CalculatedPrimaryKeyFilter(r));
                     }
                 }
                 else if (excelDataTable.Rows.Count > 0 && SelectAllRows)
                 {
                     bool isUpdated = excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList);
-                    
+
                     this.ExInfo += "write action done";
                 }
                 else if (excelDataTable.Rows.Count == 0)
@@ -390,7 +396,7 @@ namespace GingerCore.Actions
             {
                 result = System.Text.RegularExpressions.Regex.Replace(c, @"=(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-EQUAL-REPLACE^~");
                 string[] setData = result.Split('=');
-                
+
                 if (setData.Length == 2)
                 {
                     string rowToSet = setData[0].Replace("[", "").Replace("]", "");
