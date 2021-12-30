@@ -26,6 +26,7 @@ using GingerWPF.WizardLib;
 using IWshRuntimeLibrary;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
@@ -61,91 +62,111 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         public override void Finish()
         {
-            try
-            {
-                var userMsg = "";
-
-                // Write Configuration file
-                if (AutoRunConfiguration.SelectedCLI.IsFileBasedConfig)
-                {
-                    AutoRunConfiguration.CreateContentFile();
-                    userMsg += "Configuration file created successfully." + Environment.NewLine;
-                }
-                
-                // Create windows shortcut
-                if (AutoRunShortcut.CreateShortcut && AutoRunConfiguration.AutoRunEexecutorType != eAutoRunEexecutorType.Remote)
-                {
-                    userMsg += SaveShortcut();
-                }
-                if (AutoRunShortcut.StartExecution)
-                {
-                    userMsg = ExecuteCommand(userMsg);
-                }
-                if (!string.IsNullOrEmpty(userMsg))
-                {
-                    Reporter.ToUser(eUserMsgKey.RunsetAutoRunResult, "Please find auto run wizard outcomes:" + Environment.NewLine + userMsg);
-                }
-            }
-            catch(Exception ex)
-            {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error occurred while creating the Auto Run Configuration/Shortcut/Execution." + Environment.NewLine + "Error: " + ex.Message);
-            }
-        }
-
-        private string ExecuteCommand(string userMsg)
-        {
-            var count = 1;
-            var successCount = 0;
-            var failCount = 0;
-            while (count <= AutoRunConfiguration.ParallelExecutionCount)
+            _ = Task.Run(() =>
             {
                 try
                 {
-                    if (AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
-                    {
-                        var responseString = new RemoteExecutionRequestConfig().ExecuteFromRunsetShortCutWizard(AutoRunConfiguration.ExecutionServiceUrl, AutoRunConfiguration.CLIContent);
+                    var userMsg = "";
 
-                        if (responseString == "Created")
-                        {
-                            successCount++;
-                        }
-                        else
-                        {
-                            failCount++;
-                            userMsg += "Failed to start remote execution, error: " + responseString + Environment.NewLine;
-                        }
+                    // Write Configuration file
+                    if (AutoRunConfiguration.SelectedCLI.IsFileBasedConfig)
+                    {
+                        AutoRunConfiguration.CreateContentFile();
+                        userMsg += "Configuration file created successfully." + Environment.NewLine;
                     }
-                    else
-                    {
-                        var args = AutoRunConfiguration.CLIContent;
 
-                        if (AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.DynamicFile)
-                        {
-                            args = "dynamic --filename " + AutoRunConfiguration.ConfigFileFullPath;
-                        }
-                        System.Diagnostics.Process.Start(AutoRunShortcut.ExecuterFullPath, args);
-                        successCount++;
+                    // Create windows shortcut
+                    if (AutoRunShortcut.CreateShortcut && AutoRunConfiguration.AutoRunEexecutorType != eAutoRunEexecutorType.Remote)
+                    {
+                        userMsg += SaveShortcut();
+                    }
+                    if (AutoRunShortcut.StartExecution)
+                    {
+                        userMsg = ExecuteCommand(userMsg);
+                    }
+                    if (!string.IsNullOrEmpty(userMsg))
+                    {
+                        Reporter.ToUser(eUserMsgKey.RunsetAutoRunResult, "Please find auto run wizard outcomes:" + Environment.NewLine + userMsg);
                     }
                 }
                 catch (Exception ex)
                 {
-                    userMsg += "Execution process failed to start, error: " + ex.Message + Environment.NewLine;
-                    Reporter.ToLog(eLogLevel.ERROR, "Execution process starting failed.", ex);
-                    failCount++;
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error occurred while creating the Auto Run Configuration/Shortcut/Execution." + Environment.NewLine + "Error: " + ex.Message);
+                }
+            });
+            
+        }
+
+        private string ExecuteCommand(string userMsg)
+        {
+            try
+            {
+                var count = 1;
+                var successCount = 0;
+                var failCount = 0;
+                if(AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
+                {
+                    Reporter.ToStatus(eStatusMsgKey.StaticStatusMessage, null, "Sending the execution requests is in progress...");
+                }
+                else
+                {
+                    Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Starting execution process is in progress...");
+                }
+                while (count <= AutoRunConfiguration.ParallelExecutionCount)
+                {
+                    try
+                    {
+                        if (AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
+                        {
+                            var responseString = new RemoteExecutionRequestConfig().ExecuteFromRunsetShortCutWizard(AutoRunConfiguration.ExecutionServiceUrl, AutoRunConfiguration.CLIContent);
+
+                            if (responseString == "Created")
+                            {
+                                successCount++;
+                            }
+                            else
+                            {
+                                failCount++;
+                                userMsg += "Failed to start remote execution, error: " + responseString + Environment.NewLine;
+                            }
+                        }
+                        else
+                        {
+                            var args = AutoRunConfiguration.CLIContent;
+
+                            if (AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.DynamicFile)
+                            {
+                                args = "dynamic --filename " + AutoRunConfiguration.ConfigFileFullPath;
+                            }
+                            System.Diagnostics.Process.Start(AutoRunShortcut.ExecuterFullPath, args);
+                            successCount++;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        userMsg += "Execution process failed to start, error: " + ex.Message + Environment.NewLine;
+                        Reporter.ToLog(eLogLevel.ERROR, "Execution process starting failed.", ex);
+                        failCount++;
+                    }
+
+                    count++;
+                }
+                if (failCount == 0 && successCount > 0)
+                {
+                    userMsg += "Total " + successCount + " proces/s started successfully." + Environment.NewLine;
+                }
+                else if (failCount > 0)
+                {
+                    userMsg += "Total " + successCount + " proces/s started successfully." + Environment.NewLine + "Total " + failCount + " process failed to start." + Environment.NewLine;
                 }
 
-                count++;
+                return userMsg;
             }
-            if (failCount == 0 && successCount > 0)
+            finally
             {
-                userMsg += "Total "+ successCount + " proces/s started successfully." + Environment.NewLine;
+                Reporter.HideStatusMessage();
             }
-            else if(failCount > 0)
-            {
-                userMsg += "Total " + successCount + " proces/s started successfully." + Environment.NewLine + "Total "+ failCount + " process failed to start." + Environment.NewLine;
-            }
-
-            return userMsg;
+           
         }
 
         public string SaveShortcut()
