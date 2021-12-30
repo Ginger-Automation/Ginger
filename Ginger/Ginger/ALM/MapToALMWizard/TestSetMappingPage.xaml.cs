@@ -16,16 +16,11 @@ limitations under the License.
 */
 #endregion
 using Amdocs.Ginger.Common;
-using GingerCore.Activities;
-using GingerCore.ALM;
-using GingerCore.ALM.QC;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using ZephyrEntStdSDK.Models.Base;
 
 namespace Ginger.ALM.MapToALMWizard
 {
@@ -36,6 +31,7 @@ namespace Ginger.ALM.MapToALMWizard
     {
         AddMapToALMWizard mWizard;
         Page win;
+        bool mIsBusinessFlowMapped = false;
         struct ALMEntitiesDetails
         {
             internal string bfEntityType;
@@ -43,7 +39,7 @@ namespace Ginger.ALM.MapToALMWizard
             internal string moduleParentId;
             internal string folderCycleId;
         }
-        
+
         public TestSetMappingPage()
         {
             InitializeComponent();
@@ -59,25 +55,37 @@ namespace Ginger.ALM.MapToALMWizard
                     break;
                 case EventType.Active:
                     // Business Flow Mapped, get mapped test cases and steps to display.
-                    if(!String.IsNullOrEmpty(mWizard.mapBusinessFlow.ExternalID) && String.IsNullOrEmpty(mWizard.AlmTestSetData.TestSetID))
+                    if (!String.IsNullOrEmpty(mWizard.mapBusinessFlow.ExternalID) && String.IsNullOrEmpty(mWizard.AlmTestSetData.TestSetID))
                     {
                         mWizard.SetMappedALMTestSetData();
-                        mWizard.UpdateMappedTestCasescollections();
+                        ChangeTestSetPageVisibility();
+                        mWizard.UpdateMappedTestCasesCollections();
                         mWizard.RemapTestCasesLists();
                         WizardPage nextPage = mWizard.Pages.Where(p => p.Page is TestCasesMappingPage).FirstOrDefault();
                         (nextPage.Page as TestCasesMappingPage).xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";
-                        
+
                         mWizard.Pages.MoveNext();
                     }
                     break;
                 case EventType.LeavingForNextPage:
-                    mWizard.SetSelectedTreeTestSetData(win);
+                    if(mIsBusinessFlowMapped)
+                    {
+                        return;
+                    }
+                    dynamic SelectedTestSetData = ALMIntegration.Instance.GetSelectedImportTestSetData(win);
+                    if (SelectedTestSetData is not null)
+                    {
+                        mWizard.SetSelectedTreeTestSetData(SelectedTestSetData);
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select ALM Test Set.");
+                        WizardEventArgs.CancelEvent = true;
+                        return;
+                    }
                     break;
             }
         }
-
-
-
 
         #region Binds
         /// <summary>
@@ -101,7 +109,7 @@ namespace Ginger.ALM.MapToALMWizard
             {
                 win = ALMIntegration.Instance.GetALMTestSetsTreePage();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Failed get ALM Tree, {System.Reflection.MethodBase.GetCurrentMethod().Name}: {ex.Message}");
             }
@@ -118,6 +126,16 @@ namespace Ginger.ALM.MapToALMWizard
             aLMEntitiesDetails.folderCycleId = getTypeAndId[3];
             return aLMEntitiesDetails;
         }
+        /// <summary>
+        /// change to mapped test set visibility
+        /// </summary>
+        private void ChangeTestSetPageVisibility()
+        {
+            load_frame.Visibility = Visibility.Collapsed;
+            xMappedTestSetBox.Text = mWizard.AlmTestSetData.TestSetName;
+            xMappedTestSetPanel.Visibility = Visibility.Visible;
+            mIsBusinessFlowMapped = true;
+        }
         #endregion
         #region Events
         private void load_frame_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -128,9 +146,15 @@ namespace Ginger.ALM.MapToALMWizard
                 win.Height = ActualHeight;
             }
         }
+        public void xChangeTestSetBtn_Click(object sender, RoutedEventArgs e)
+        {
+            xMappedTestSetPanel.Visibility = Visibility.Collapsed;
+            load_frame.Visibility = Visibility.Visible;
+            mIsBusinessFlowMapped = false;
+        }
         #endregion
-        
 
-        
+
+
     }
 }

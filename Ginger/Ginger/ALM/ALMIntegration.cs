@@ -268,15 +268,23 @@ namespace Ginger.ALM
             //Passing Solution Folder path to GingerCore
             ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
-            bool isExportSucc = false;
+            bool isMapSucc = false;
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
-                WizardWindow.ShowWizard(new MapToALMWizard.AddMapToALMWizard(businessFlow), 1100);
-                DisconnectALMServer();
+                if (GetALMType().Equals(eALMType.ZephyrEnterprise))
+                {
+                    WizardWindow.ShowWizard(new MapToALMWizard.AddMapToALMWizard(businessFlow), 1100);
+                    isMapSucc = true;
+                    DisconnectALMServer();
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "'Map To ALM' - Support Zephyr Entreprise only.");
+                }
             }
 
             Mouse.OverrideCursor = null;
-            return isExportSucc;
+            return isMapSucc;
         }
 
         public List<string> GetJiraTestingALMs()

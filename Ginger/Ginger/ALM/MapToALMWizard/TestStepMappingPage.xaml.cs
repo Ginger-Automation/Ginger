@@ -19,7 +19,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.UserControls;
 using GingerCore;
-using GingerCore.Activities;
 using GingerCore.ALM.QC;
 using GingerWPF.DragDropLib;
 using GingerWPF.WizardLib;
@@ -76,6 +75,7 @@ namespace Ginger.ALM.MapToALMWizard
                 if (tc.aLMTSTest is not null && !mWizard.testCaseUnmappedStepsDic.ContainsKey(tc.aLMTSTest.TestID))
                 {
                     mWizard.testCaseUnmappedStepsDic.Add(tc.aLMTSTest.TestID, new ObservableList<ALMTSTestStep>());
+                    tc.UpdateTestCaseMapStatus(mWizard.testCaseUnmappedStepsDic[tc.aLMTSTest.TestID].Count);
                 }
             }
             xUnMapTestStepsGrid.DataSourceList = mWizard.testCaseUnmappedStepsDic[getCurrentTestCaseId];
@@ -222,7 +222,7 @@ namespace Ginger.ALM.MapToALMWizard
             {
                 getCurrentTestCaseId = mappedTestCasesList[testCaseListIndex].aLMTSTest.TestID;
                 xMapTestStepsGrid.DataSourceList = mappedTestCasesList[testCaseListIndex].testStepsMappingList;
-                if (mWizard.testCaseUnmappedStepsDic.Count > 0)
+                if (mWizard.testCaseUnmappedStepsDic.Count > 0 && mWizard.testCaseUnmappedStepsDic.ContainsKey(getCurrentTestCaseId))
                 {
                     xUnMapTestStepsGrid.DataSourceList = mWizard.testCaseUnmappedStepsDic[getCurrentTestCaseId];
                     mappedTestCasesList[testCaseListIndex].UpdateTestCaseMapStatus(mWizard.testCaseUnmappedStepsDic[getCurrentTestCaseId].Count);
