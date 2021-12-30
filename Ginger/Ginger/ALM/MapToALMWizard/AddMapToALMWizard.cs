@@ -141,6 +141,11 @@ namespace Ginger.ALM.MapToALMWizard
         {
             try
             {
+                // Validate before saving mapped data
+                if(!ValidateMappingDone())
+                {
+                    return;
+                }
                 // Map Test Set
                 mapBusinessFlow.ExternalID = AlmTestSetData.TestSetID;
                 mapBusinessFlow.ExternalID2 = AlmTestSetData.TestSetInternalID2;
@@ -152,9 +157,25 @@ namespace Ginger.ALM.MapToALMWizard
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Test Set Id's Failed mapping to ");
+                Reporter.ToLog(eLogLevel.ERROR, $"Test Set Id's Failed mapping to {mapBusinessFlow.Name}");
             }
         }
+
+        private bool ValidateMappingDone()
+        {
+            if(AlmTestSetData is null || AlmTestSetData.TestSetID is null)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business Flow failed Mapping - Test Set not mapped"); 
+                return false;
+            }
+            if(testCasesMappingList.All(tc => tc.aLMTSTest is null))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business Flow failed Mapping - Test Cases not mapped");
+                return false;
+            }
+            return true;
+        }
+
         /// <summary>
         /// Map Activities Groups/Activities externals ids Respectively Test Cases/Test Steps ids. 
         /// </summary>

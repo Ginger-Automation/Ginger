@@ -69,19 +69,23 @@ namespace Ginger.ALM.MapToALMWizard
                 }
             }
             xMapTestCasesGrid.DataSourceList = mappedTestCasesList;
-            xMapTestStepsGrid.DataSourceList = mappedTestCasesList[testCaseListIndex].testStepsMappingList;
-            foreach(ALMTestCaseManualMappingConfig tc in mappedTestCasesList)
+            if (mappedTestCasesList.Count > 0)
             {
-                if (tc.aLMTSTest is not null && !mWizard.testCaseUnmappedStepsDic.ContainsKey(tc.aLMTSTest.TestID))
+                xMapTestStepsGrid.DataSourceList = mappedTestCasesList[testCaseListIndex].testStepsMappingList;
+
+                foreach (ALMTestCaseManualMappingConfig tc in mappedTestCasesList)
                 {
-                    mWizard.testCaseUnmappedStepsDic.Add(tc.aLMTSTest.TestID, new ObservableList<ALMTSTestStep>());
-                    tc.UpdateTestCaseMapStatus(mWizard.testCaseUnmappedStepsDic[tc.aLMTSTest.TestID].Count);
+                    if (tc.aLMTSTest is not null && !mWizard.testCaseUnmappedStepsDic.ContainsKey(tc.aLMTSTest.TestID))
+                    {
+                        mWizard.testCaseUnmappedStepsDic.Add(tc.aLMTSTest.TestID, new ObservableList<ALMTSTestStep>());
+                        tc.UpdateTestCaseMapStatus(mWizard.testCaseUnmappedStepsDic[tc.aLMTSTest.TestID].Count);
+                    }
                 }
+                xUnMapTestStepsGrid.DataSourceList = mWizard.testCaseUnmappedStepsDic[getCurrentTestCaseId];
+                xMapTestCasesGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, "Ginger", "& ALM Test Cases - Steps Mapping Status");
+                xMapTestStepsGrid.Title = GingerDicser.GetTermResValue(eTermResKey.Activities, $"Ginger ‘{mappedTestCasesList[testCaseListIndex].ActivityGroupName}’ ", "- ALM Steps Mapping");
+                xUnMapTestStepsGrid.Title = $"ALM ‘{mappedTestCasesList[testCaseListIndex].TestCaseName}’ Steps";
             }
-            xUnMapTestStepsGrid.DataSourceList = mWizard.testCaseUnmappedStepsDic[getCurrentTestCaseId];
-            xMapTestCasesGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, "Ginger", "& ALM Test Cases - Steps Mapping Status");
-            xMapTestStepsGrid.Title = GingerDicser.GetTermResValue(eTermResKey.Activities, $"Ginger ‘{mappedTestCasesList[testCaseListIndex].ActivityGroupName}’ ", "- ALM Steps Mapping");
-            xUnMapTestStepsGrid.Title = $"ALM ‘{mappedTestCasesList[testCaseListIndex].TestCaseName}’ Steps";
         }
         
         private void Bind()
