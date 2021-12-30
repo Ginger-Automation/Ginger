@@ -112,7 +112,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivity.Description = activity.Description;
             accountReportActivity.RunDescription = GetCalculatedValue(context, activity.RunDescription);
             accountReportActivity.StartTimeStamp = activity.StartTimeStamp;
-            accountReportActivity.VariablesBeforeExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
+            accountReportActivity.VariablesBeforeExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description + "_:_" + a.Guid + "_:_" + a.SetAsInputValue + "_:_" + a.SetAsOutputValue + "_:_" + a.Publish).ToList();
             accountReportActivity.ActivityGroupName = activity.ActivitiesGroupID;
             accountReportActivity.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active == true);
             accountReportActivity.RunStatus = _InProgressStatus;
@@ -129,7 +129,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivity.EndTimeStamp = activity.EndTimeStamp;
             accountReportActivity.ElapsedEndTimeStamp = activity.Elapsed;
             accountReportActivity.RunStatus = activity.Status.ToString();
-            accountReportActivity.VariablesAfterExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
+            accountReportActivity.VariablesAfterExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description + "_:_" + a.Guid + "_:_" + a.SetAsInputValue + "_:_" + a.SetAsOutputValue + "_:_" + a.Publish).ToList();
 
             accountReportActivity.ChildExecutedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Stopped || x.Status == eRunStatus.Completed);
             accountReportActivity.ChildPassedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed);
@@ -191,7 +191,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportBusinessFlow.RunDescription = GetCalculatedValue(context, businessFlow.RunDescription);
             accountReportBusinessFlow.Environment = businessFlow.Environment;
             accountReportBusinessFlow.StartTimeStamp = businessFlow.StartTimeStamp;
-            accountReportBusinessFlow.VariablesBeforeExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
+            accountReportBusinessFlow.VariablesBeforeExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description + "_:_" + a.Guid + "_:_" + a.SetAsInputValue + "_:_" + a.SetAsOutputValue + "_:_" + a.Publish).ToList();
             accountReportBusinessFlow.SolutionVariablesBeforeExec = businessFlow.GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
             accountReportBusinessFlow.RunStatus = _InProgressStatus;
 
@@ -222,7 +222,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportBusinessFlow.EndTimeStamp = businessFlow.EndTimeStamp;
             accountReportBusinessFlow.ElapsedEndTimeStamp = businessFlow.Elapsed;
             accountReportBusinessFlow.RunStatus = businessFlow.RunStatus.ToString();
-            accountReportBusinessFlow.VariablesAfterExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
+            accountReportBusinessFlow.VariablesAfterExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description + "_:_" + a.Guid + "_:_" + a.SetAsInputValue + "_:_" + a.SetAsOutputValue + "_:_" + a.Publish).ToList();
             accountReportBusinessFlow.SolutionVariablesAfterExec = businessFlow.GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList(); ;
             accountReportBusinessFlow.BFFlowControlDT = businessFlow.BFFlowControls.Select(a => a.Condition + "_:_" + a.ConditionCalculated + "_:_" + a.BusinessFlowControlAction + "_:_" + a.Status).ToList(); ;
             accountReportBusinessFlow.AutomationPercent = businessFlow.AutomationPrecentage;
