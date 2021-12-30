@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -23,7 +23,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.Common.InterfacesLib
 {
-    public interface IExcelOperations
+    public interface IExcelOperations : IDisposable
     {
         /// <summary>
         /// Read excel sheet data from file with selected filters 
