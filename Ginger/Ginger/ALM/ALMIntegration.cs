@@ -279,7 +279,7 @@ namespace Ginger.ALM
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "'Map To ALM' - Support Zephyr Entreprise only.");
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"'Map To ALM' - not Supporting {GetALMType()}.");
                 }
             }
 

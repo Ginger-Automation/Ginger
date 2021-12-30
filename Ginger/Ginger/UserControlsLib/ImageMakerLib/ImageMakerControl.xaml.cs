@@ -843,7 +843,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Qrcode);//need to find better image type
                     break;
                 case eImageType.MapALM:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.HandPaperOutline);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MapSigns);
                     break;
                 case eImageType.CSV:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.FileText);
