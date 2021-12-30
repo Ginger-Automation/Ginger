@@ -63,8 +63,6 @@ namespace Ginger.ALM.MapToALMWizard
                         mWizard.RemapTestCasesLists();
                         WizardPage nextPage = mWizard.Pages.Where(p => p.Page is TestCasesMappingPage).FirstOrDefault();
                         (nextPage.Page as TestCasesMappingPage).xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";
-
-                        mWizard.Pages.MoveNext();
                     }
                     break;
                 case EventType.LeavingForNextPage:
