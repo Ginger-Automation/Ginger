@@ -25,6 +25,7 @@ using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace Ginger.ALM.MapToALMWizard
@@ -140,6 +141,11 @@ namespace Ginger.ALM.MapToALMWizard
         {
             try
             {
+                // Validate before saving mapped data
+                if(!ValidateMappingDone())
+                {
+                    return;
+                }
                 // Map Test Set
                 mapBusinessFlow.ExternalID = AlmTestSetData.TestSetID;
                 mapBusinessFlow.ExternalID2 = AlmTestSetData.TestSetInternalID2;
@@ -151,9 +157,25 @@ namespace Ginger.ALM.MapToALMWizard
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Test Set Id's Failed mapping to ");
+                Reporter.ToLog(eLogLevel.ERROR, $"Test Set Id's Failed mapping to {mapBusinessFlow.Name}");
             }
         }
+
+        private bool ValidateMappingDone()
+        {
+            if(AlmTestSetData is null || AlmTestSetData.TestSetID is null)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business Flow failed Mapping - Test Set not mapped"); 
+                return false;
+            }
+            if(testCasesMappingList.All(tc => tc.aLMTSTest is null))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business Flow failed Mapping - Test Cases not mapped");
+                return false;
+            }
+            return true;
+        }
+
         /// <summary>
         /// Map Activities Groups/Activities externals ids Respectively Test Cases/Test Steps ids. 
         /// </summary>
@@ -165,12 +187,17 @@ namespace Ginger.ALM.MapToALMWizard
                 {
                     mappedTestCase.activitiesGroup.ExternalID = mappedTestCase.aLMTSTest.TestID;
                     mappedTestCase.activitiesGroup.ExternalID2 = mappedTestCase.aLMTSTest.LinkedTestID;
+                    Activity tempAct; 
                     // Map Test Step
                     foreach (ALMTestStepManualMappingConfig mappedTestStep in mappedTestCase.testStepsMappingList)
                     {
                         if (mappedTestStep.almTestStep != null)
                         {
                             mappedTestStep.activity.ActivityExternalID = mappedTestStep.almTestStep.StepID;
+                            tempAct = mapBusinessFlow.Activities.Where(bAct => bAct.ActivityName == mappedTestStep.activity.ActivityName && bAct.Guid == mappedTestStep.activity.ActivityGuid).FirstOrDefault();
+                            {
+                                tempAct.ExternalID = mappedTestStep.activity.ActivityExternalID;
+                            }
                         }
                     }
                 }
@@ -184,10 +211,14 @@ namespace Ginger.ALM.MapToALMWizard
         {
             foreach (ActivitiesGroup ag in mapBusinessFlow.ActivitiesGroups)
             {
+                Activity tempAct;
                 foreach (ActivityIdentifiers act in ag.ActivitiesIdentifiers)
                 {
-                    act.ExternalID = null;
                     act.ActivityExternalID = null;
+                    tempAct = mapBusinessFlow.Activities.Where(bAct => bAct.ActivityName == act.ActivityName && bAct.Guid == act.ActivityGuid).FirstOrDefault();
+                    {
+                        tempAct.ExternalID = null;
+                    }
                 }
                 ag.ExternalID = null;
                 ag.ExternalID2 = null;
@@ -197,7 +228,7 @@ namespace Ginger.ALM.MapToALMWizard
         /// 1. Update Mapped test cases dictionary.
         /// 2. Update testCases UnMapped List.
         /// </summary>
-        internal void UpdateMappedTestCasescollections()
+        internal void UpdateMappedTestCasesCollections()
         {
             foreach (ALMTSTest testCase in AlmTestSetData.Tests)
             {
@@ -258,31 +289,33 @@ namespace Ginger.ALM.MapToALMWizard
                 testCaseUnmappedStepsDic[tc.activitiesGroup.ExternalID].Add(unmappedTStep);
             }
         }
-        internal void SetSelectedTreeTestSetData(Page win)
+        internal void SetSelectedTreeTestSetData(dynamic SelectedTestSetData)
         {
-            dynamic SelectedTestSetData = ALMIntegration.Instance.GetSelectedImportTestSetData(win);
-            if (SelectedTestSetData is not null)
+            if (AlmTestSetData.TestSetID == null || AlmTestSetData.TestSetID != SelectedTestSetData.Id)
             {
-                if (AlmTestSetData.TestSetID == null || AlmTestSetData.TestSetID != SelectedTestSetData.Id)
+                testCasesUnMappedList.Clear();
+                AlmTestSetData.Tests.Clear();
+                foreach (ALMTestCaseManualMappingConfig testCaseMapping in testCasesMappingList)
                 {
-                    testCasesUnMappedList.Clear();
-                    AlmTestSetData.Tests.Clear();
-                    foreach (ALMTestCaseManualMappingConfig testCaseMapping in testCasesMappingList)
-                    {
-                        testCaseMapping.Clear();
-                    }
-                    SetSelectedALMTestSetData(SelectedTestSetData);
-                    foreach (ALMTSTest testCase in AlmTestSetData.Tests)
-                    {
-                        testCasesUnMappedList.Add(testCase);
-                    }
+                    testCaseMapping.Clear();
+                }
+                SetSelectedALMTestSetData(SelectedTestSetData);
+                foreach (ALMTSTest testCase in AlmTestSetData.Tests)
+                {
+                    testCasesUnMappedList.Add(testCase);
                 }
             }
-            else
+        }
+
+        internal void ClearStepsLists(ALMTestCaseManualMappingConfig manualTC)
+        {
+            manualTC.testStepsMappingList.Clear();
+            if(manualTC.aLMTSTest is not null && testCaseUnmappedStepsDic.ContainsKey(manualTC.aLMTSTest.TestID))
             {
-                // Add validation
+                testCaseUnmappedStepsDic.Remove(manualTC.aLMTSTest.TestID);
             }
         }
+
         /// <summary>
         /// Set new selected ALM Test Set data.
         /// </summary>
