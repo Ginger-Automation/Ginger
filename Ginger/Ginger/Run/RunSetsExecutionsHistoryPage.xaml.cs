@@ -46,6 +46,7 @@ namespace Ginger.Run
     {
         ObservableList<RunSetReport> mExecutionsHistoryList = new ObservableList<RunSetReport>();
         ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
+        public bool AutoLoadExecutionData = false;
         public ObservableList<RunSetReport> ExecutionsHistoryList
         {
             get { return mExecutionsHistoryList; }
@@ -104,6 +105,23 @@ namespace Ginger.Run
             grdExecutionsHistory.AddToolbarTool("@Delete_16x16.png", "Delete Selected Execution Results", new RoutedEventHandler(DeleteSelectedExecutionResults));
             grdExecutionsHistory.AddToolbarTool("@Trash_16x16.png", "Delete All Execution Results", new RoutedEventHandler(DeleteAllSelectedExecutionResults));
             grdExecutionsHistory.RowDoubleClick += OpenExecutionResultsFolder;
+
+            if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
+            {
+                grdExecutionsHistory.AddCheckBox("Auto Load Execution History", new RoutedEventHandler(AutoLoadExecutionHistory));
+            }
+        }
+
+        private void AutoLoadExecutionHistory(object sender, RoutedEventArgs e)
+        {
+            if (((System.Windows.Controls.Primitives.ToggleButton)sender).IsChecked == true)
+            {
+                AutoLoadExecutionData = true;
+            }
+            else
+            {
+                AutoLoadExecutionData = false;
+            }
         }
 
         public string NameInDb<T>()

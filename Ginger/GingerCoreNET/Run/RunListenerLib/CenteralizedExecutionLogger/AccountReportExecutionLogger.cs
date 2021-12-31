@@ -32,7 +32,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 {
     public class AccountReportExecutionLogger : RunListenerBase
     {
-        public Context mContext;
+        public Context mContext; 
 
         private AccountReportApiHandler mAccountReportApiHandler;
         public AccountReportApiHandler AccountReportApiHandler
@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         }
 
         #region RunSet
-        public void RunSetStart(RunSetConfig runsetConfig)
+        public async Task RunSetStart(RunSetConfig runsetConfig)
         {
             Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Publishing Execution data to central DB");
             if (WorkSpace.Instance.RunsetExecutor != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null
@@ -61,7 +61,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 runsetConfig.ExecutionID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
             }
-            Task.Run(() => SendRunsetExecutionDataToCentralDbTaskAsync(runsetConfig));
+            await SendRunsetExecutionDataToCentralDbTaskAsync(runsetConfig);
         }
 
         public async Task SendRunsetExecutionDataToCentralDbTaskAsync(RunSetConfig runsetConfig)
@@ -70,9 +70,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
         }
 
-        public void RunSetEnd(RunSetConfig runsetConfig)
+        public async Task RunSetEnd(RunSetConfig runsetConfig)
         {
-            Task.Run(() => SendRunsetEndDataToCentralDbTaskAsync(runsetConfig));
+            await SendRunsetEndDataToCentralDbTaskAsync(runsetConfig);
             Reporter.HideStatusMessage();
         }
 

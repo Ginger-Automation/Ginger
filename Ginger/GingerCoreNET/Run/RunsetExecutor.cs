@@ -442,7 +442,7 @@ namespace Ginger.Run
 
                 if (mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
                 {
-                    Runners[0].Centeralized_Logger.RunSetStart(RunSetConfig);
+                    await Runners[0].Centeralized_Logger.RunSetStart(RunSetConfig);
                 }
 
                 //Start Run 
@@ -549,7 +549,7 @@ namespace Ginger.Run
                 Runners[0].ExecutionLoggerManager.RunSetEnd();
                 if (mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
                 {
-                    Runners[0].Centeralized_Logger.RunSetEnd(RunSetConfig);
+                   await Runners[0].Centeralized_Logger.RunSetEnd(RunSetConfig);
                 }
                 if (mStopRun == false)
                 {
@@ -567,7 +567,6 @@ namespace Ginger.Run
                 {
                     await Runners[0].ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
                 }
-
             }
             finally
             {
