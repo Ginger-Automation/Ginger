@@ -73,6 +73,13 @@ namespace Ginger.ALM.MapToALMWizard
                     dynamic SelectedTestSetData = ALMIntegration.Instance.GetSelectedImportTestSetData(win);
                     if (SelectedTestSetData is not null)
                     {
+                        if(SelectedTestSetData.AlreadyImported)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"Selected ALM Test Set already mapped to Ginger Business Flow: '{SelectedTestSetData.MappedBusinessFlow}'.\n" +
+                                $"Please delete the Business Flow before remapping.\n Business Flow Path: '{SelectedTestSetData.MappedBusinessFlowPath}'");
+                            WizardEventArgs.CancelEvent = true;
+                            return;
+                        }
                         mWizard.SetSelectedTreeTestSetData(SelectedTestSetData);
                     }
                     else
@@ -130,7 +137,7 @@ namespace Ginger.ALM.MapToALMWizard
         private void ChangeTestSetPageVisibility()
         {
             load_frame.Visibility = Visibility.Collapsed;
-            xMappedTestSetBox.Text = mWizard.AlmTestSetData.TestSetName;
+            xMappedTestSetBox.Text = $"Test Set Name: {mWizard.AlmTestSetData.TestSetName} , Test Set ID: {mWizard.AlmTestSetData.TestSetID}";
             xMappedTestSetPanel.Visibility = Visibility.Visible;
             mIsBusinessFlowMapped = true;
         }

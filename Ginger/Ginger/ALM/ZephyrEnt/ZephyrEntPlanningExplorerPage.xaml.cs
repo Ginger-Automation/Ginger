@@ -31,6 +31,7 @@ using ZephyrEntStdSDK.Models.Base;
 using Ginger.ALM.ZephyrEnt.TreeViewItems;
 using Newtonsoft.Json.Linq;
 using GingerCore.ALM.ZephyrEnt.Bll;
+using System.IO;
 
 namespace Ginger.ALM.ZephyrEnt
 {
@@ -346,11 +347,11 @@ namespace Ginger.ALM.ZephyrEnt
 
         private void UpdateIfAlreadyImported(ZephyrEntPhaseTreeItem ts)
         {
-            if (bfsExternalIds.ContainsKey(ts.TestSetID))
+            if (bfsExternalIds.ContainsKey(ts.Id))
             {
                 ts.AlreadyImported = true;
-                ts.MappedBusinessFlow = bfsExternalIds[ts.TestSetID];
-                ts.MappedBusinessFlowPath = bfsExternalIds[ts.TestSetID].ContainingFolder + '\\' + bfsExternalIds[ts.TestSetID].Name;
+                ts.MappedBusinessFlow = bfsExternalIds[ts.Id];
+                ts.MappedBusinessFlowPath = Path.Combine(bfsExternalIds[ts.Id].ContainingFolder, bfsExternalIds[ts.Id].Name);
             }
         }
 
