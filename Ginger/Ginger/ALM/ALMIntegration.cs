@@ -273,7 +273,7 @@ namespace Ginger.ALM
             {
                 if (GetALMType().Equals(eALMType.ZephyrEnterprise))
                 {
-                    WizardWindow.ShowWizard(new MapToALMWizard.AddMapToALMWizard(businessFlow), 1100);
+                    WizardWindow.ShowWizard(new MapToALMWizard.AddMapToALMWizard(businessFlow), 1200);
                     isMapSucc = true;
                     DisconnectALMServer();
                 }
