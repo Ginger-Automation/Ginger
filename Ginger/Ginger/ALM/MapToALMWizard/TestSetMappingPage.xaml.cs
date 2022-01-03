@@ -52,8 +52,6 @@ namespace Ginger.ALM.MapToALMWizard
             {
                 case EventType.Init:
                     BindTestSet();
-                    break;
-                case EventType.Active:
                     // Business Flow Mapped, get mapped test cases and steps to display.
                     if (!String.IsNullOrEmpty(mWizard.mapBusinessFlow.ExternalID) && String.IsNullOrEmpty(mWizard.AlmTestSetData.TestSetID))
                     {
