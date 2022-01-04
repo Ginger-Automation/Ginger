@@ -42,20 +42,17 @@ namespace Ginger.Actions.VisualTesting
         private GingerCore.Actions.ActVisualTesting mAct;
         public VisualCompareAnalyzerIntegration visualCompareAnalyzerIntegration = new VisualCompareAnalyzerIntegration();
 
+        
         public ApplitoolsComparePage(GingerCore.Actions.ActVisualTesting mAct)
         {
             InitializeComponent();
             // TODO: Complete member initialization
             this.mAct = mAct;
-            
-            xApplitoolsActionComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ApplitoolsAction, ApplitoolsAnalyzer.eApplitoolsAction.Checkpoint.ToString()), typeof(ApplitoolsAnalyzer.eApplitoolsAction), false);
+        xApplitoolsActionComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ApplitoolsAction, ApplitoolsAnalyzer.eApplitoolsAction.Checkpoint.ToString()), typeof(ApplitoolsAnalyzer.eApplitoolsAction), false);
             xApplitoolsActionComboBox.ComboBox.SelectionChanged += ChangeApplitoolsAction_Changed;
 
             xActionByComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ActionBy, ApplitoolsAnalyzer.eActionBy.Window.ToString()), typeof(ApplitoolsAnalyzer.eActionBy), false);
             xActionByComboBox.ComboBox.SelectionChanged += ChangeActionBy_Changed;
-
-            xElementLocateByComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.LocateBy, ApplitoolsAnalyzer.eLocateBy.ByXpath.ToString()), typeof(ApplitoolsAnalyzer.eLocateBy), false);
-            xElementLocateByComboBox.ComboBox.SelectionChanged += ChangeLocateBy_Changed;
             InitLayout();
 
             ApplicationNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsParamApplicationName, (Context.GetAsContext(mAct.Context)).BusinessFlow.MainApplication), true, false);
@@ -65,15 +62,17 @@ namespace Ginger.Actions.VisualTesting
 
             SetMatchLevelComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ApplitoolsMatchLevel, ApplitoolsAnalyzer.eMatchLevel.Strict.ToString()), typeof(ApplitoolsAnalyzer.eMatchLevel), false, null);
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotFailActionOnMismatch, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.FailActionOnMistmach, "False"));
-           
+            xElementLocateByComboBox.BindControl(mAct,Act.Fields.LocateBy);
             xLocateValueVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(Act.Fields.LocateValue));
             mAct.PropertyChanged += mAct_PropertyChanged;
+            SetLocateValueControls();
         }
 
         public void InitLayout()
         {
             ApplitoolsAnalyzer.eApplitoolsAction applitoolsAction = (ApplitoolsAnalyzer.eApplitoolsAction)Enum.Parse(typeof(ApplitoolsAnalyzer.eApplitoolsAction), xApplitoolsActionComboBox.ComboBox.SelectedValue.ToString(), true);
             ApplitoolsAnalyzer.eActionBy actionBy = (ApplitoolsAnalyzer.eActionBy)Enum.Parse(typeof(ApplitoolsAnalyzer.eActionBy), xActionByComboBox.ComboBox.SelectedValue.ToString(), true);
+            
             switch (applitoolsAction)
             {
                 case ApplitoolsAnalyzer.eApplitoolsAction.OpenEyes:
@@ -97,6 +96,7 @@ namespace Ginger.Actions.VisualTesting
                     if(actionBy == ApplitoolsAnalyzer.eActionBy.Region)
                     {
                         xLocateByAndValuePanel.Visibility = Visibility.Visible;
+                        SetLocateValueControls();
                     }
                     else
                     {
@@ -200,6 +200,41 @@ namespace Ginger.Actions.VisualTesting
         private void EyesCloseCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ApplitoolsEyesClose).BoolValue = false;
+        }
+
+        private void ElementLocateByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SetLocateValueControls();
+        }
+
+        private void SetLocateValueControls()
+        {
+            if (xElementLocateByComboBox.SelectedItem == null)
+            {
+                xLocateValueVE.Visibility = System.Windows.Visibility.Visible;
+                xLocateValueEditFrame.Visibility = System.Windows.Visibility.Collapsed;
+                return;
+            }
+            else
+            {
+                mAct.LocateBy = (eLocateBy)((ComboEnumItem)xElementLocateByComboBox.SelectedItem).Value;
+            }
+
+            eLocateBy SelectedLocType = (eLocateBy)((ComboEnumItem)xElementLocateByComboBox.SelectedItem).Value;
+            
+            switch (SelectedLocType)
+            {
+                case eLocateBy.POMElement:
+                    xLocateValueVE.Visibility = System.Windows.Visibility.Collapsed;
+                    xLocateValueEditFrame.Visibility = System.Windows.Visibility.Visible;
+                    Page p = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), null, null, mAct, nameof(ActBrowserElement.LocateValue));
+                    xLocateValueEditFrame.Content = p;
+                    break;
+                default:
+                    xLocateValueVE.Visibility = System.Windows.Visibility.Visible;
+                    xLocateValueEditFrame.Visibility = System.Windows.Visibility.Collapsed;
+                    break;
+            }
         }
     }
 }
