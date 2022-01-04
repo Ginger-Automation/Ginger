@@ -91,7 +91,7 @@ namespace Amdocs.Ginger.CoreNET
 
             foreach (var runsetHLInfo in runsetHLInfoResponses)
             {
-                Enum.TryParse("Active", out Execution.eRunStatus runStatus);
+                Enum.TryParse(runsetHLInfo.Status, out Execution.eRunStatus runStatus);
                 runSetReports.Add(new RunSetReport()
                 {
                     GUID = runsetHLInfo.ExecutionID.ToString(),
