@@ -33,7 +33,8 @@ namespace Ginger.ALM.MapToALMWizard
         Unknown
     }
     /// <summary>
-    /// ALMTestCaseManualMappingConfig:
+    /// Hold Test Case and Steps Mapping data.
+    /// Manage changes and user setup.
     /// </summary>
     public class ALMTestCaseManualMappingConfig : INotifyPropertyChanged
     {
@@ -51,7 +52,6 @@ namespace Ginger.ALM.MapToALMWizard
         public ALMTSTest aLMTSTest;
         public ObservableList<ALMTestStepManualMappingConfig> testStepsMappingList = new ObservableList<ALMTestStepManualMappingConfig>();
 
-        public eMappingStatus TestCaseStepsMappingStatus;
         public string TestCaseName
         {
             get

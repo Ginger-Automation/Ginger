@@ -87,7 +87,7 @@ namespace Ginger.ALM.MapToALMWizard
         public ObservableList<ALMTestCaseManualMappingConfig> testCasesMappingList = new ObservableList<ALMTestCaseManualMappingConfig>();
 
         public ObservableList<ALMTSTest> testCasesUnMappedList = new ObservableList<ALMTSTest>();
-
+        internal ObservableList<ALMTestCaseManualMappingConfig> mappedTestCasesStepPageList = new ObservableList<ALMTestCaseManualMappingConfig>();
         public Dictionary<String, ObservableList<ALMTSTestStep>> testCaseUnmappedStepsDic = new Dictionary<string, ObservableList<ALMTSTestStep>>();
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
@@ -160,7 +160,10 @@ namespace Ginger.ALM.MapToALMWizard
                 Reporter.ToLog(eLogLevel.ERROR, $"Test Set Id's Failed mapping to {mapBusinessFlow.Name}");
             }
         }
-
+        /// <summary>
+        /// Validate if Business Flow mapped and if at least one Test Case mapped.
+        /// </summary>
+        /// <returns>validation pass</returns>
         private bool ValidateMappingDone()
         {
             if(AlmTestSetData is null || AlmTestSetData.TestSetID is null)
@@ -297,6 +300,10 @@ namespace Ginger.ALM.MapToALMWizard
                 AlmTestSetData.Tests.Clear();
                 foreach (ALMTestCaseManualMappingConfig testCaseMapping in testCasesMappingList)
                 {
+                    if(mappedTestCasesStepPageList.Contains(testCaseMapping))
+                    {
+                        ClearStepsLists(testCaseMapping);
+                    }
                     testCaseMapping.Clear();
                 }
                 SetSelectedALMTestSetData(SelectedTestSetData);
@@ -306,16 +313,20 @@ namespace Ginger.ALM.MapToALMWizard
                 }
             }
         }
-
+        /// <summary>
+        /// Clear selected Test Case steps.
+        /// </summary>
+        /// <param name="manualTC"></param>
         internal void ClearStepsLists(ALMTestCaseManualMappingConfig manualTC)
         {
-            manualTC.testStepsMappingList.Clear();
-            if(manualTC.aLMTSTest is not null && testCaseUnmappedStepsDic.ContainsKey(manualTC.aLMTSTest.TestID))
+            if (manualTC.aLMTSTest is not null && testCaseUnmappedStepsDic.ContainsKey(manualTC.aLMTSTest.TestID))
             {
+                testCaseUnmappedStepsDic[manualTC.aLMTSTest.TestID].Clear();
                 testCaseUnmappedStepsDic.Remove(manualTC.aLMTSTest.TestID);
             }
+            manualTC.testStepsMappingList.Clear();
+            mappedTestCasesStepPageList.Remove(manualTC);
         }
-
         /// <summary>
         /// Set new selected ALM Test Set data.
         /// </summary>
