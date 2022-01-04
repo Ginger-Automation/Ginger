@@ -1743,7 +1743,11 @@ namespace Ginger.Run
                 else if (((TabItem)RunTab.SelectedItem).Name == xExecution_SummaryTab.Name)
                 {
                     ExecutionBorder.BorderBrush = FindResource("$amdocsLogoLinarGradientBrush") as Brush;
-                    InitExecutionHistorySection();
+
+                    if (mRunSetsExecutionsPage.AutoLoadExecutionData)
+                    {
+                        InitExecutionHistorySection();
+                    }
                 }
             }
         }
