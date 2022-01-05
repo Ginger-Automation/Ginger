@@ -125,9 +125,16 @@ namespace Amdocs.Ginger.CoreNET
         {
             var baseURI = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().CentralizedHtmlReportServiceURL;
 
-            if (!string.IsNullOrEmpty(baseURI) &&  !baseURI.EndsWith("/"))
+            if (!string.IsNullOrEmpty(baseURI))
             {
-                baseURI += "/";
+                if (!baseURI.EndsWith("/"))
+                {
+                    baseURI += "/";
+                }
+                if (!baseURI.EndsWith("#/"))
+                {
+                    baseURI += "#/";
+                }
             }
             return baseURI;
         }
