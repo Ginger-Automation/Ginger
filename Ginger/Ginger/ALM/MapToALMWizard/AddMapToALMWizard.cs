@@ -296,16 +296,7 @@ namespace Ginger.ALM.MapToALMWizard
         {
             if (AlmTestSetData.TestSetID == null || AlmTestSetData.TestSetID != SelectedTestSetData.Id)
             {
-                testCasesUnMappedList.Clear();
-                AlmTestSetData.Tests.Clear();
-                foreach (ALMTestCaseManualMappingConfig testCaseMapping in testCasesMappingList)
-                {
-                    if(mappedTestCasesStepPageList.Contains(testCaseMapping))
-                    {
-                        ClearStepsLists(testCaseMapping);
-                    }
-                    testCaseMapping.Clear();
-                }
+                ClearTestSetCollections();
                 SetSelectedALMTestSetData(SelectedTestSetData);
                 foreach (ALMTSTest testCase in AlmTestSetData.Tests)
                 {
@@ -313,6 +304,26 @@ namespace Ginger.ALM.MapToALMWizard
                 }
             }
         }
+        /// <summary>
+        /// Clear all collections before mapping new Test Set.
+        /// </summary>
+        private void ClearTestSetCollections()
+        {
+            testCasesUnMappedList.Clear();
+            AlmTestSetData.Tests.Clear();
+            foreach (ALMTestCaseManualMappingConfig testCaseMapping in testCasesMappingList)
+            {
+                testCaseMapping.testStepsMappingList.Clear();
+                testCaseMapping.Clear();
+            }
+            foreach (var unmappedStep in testCaseUnmappedStepsDic)
+            {
+                unmappedStep.Value.Clear();
+            }
+            testCaseUnmappedStepsDic.Clear();
+            mappedTestCasesStepPageList.Clear();
+        }
+
         /// <summary>
         /// Clear selected Test Case steps.
         /// </summary>
