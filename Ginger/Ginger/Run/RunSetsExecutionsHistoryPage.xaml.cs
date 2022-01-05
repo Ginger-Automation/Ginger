@@ -351,7 +351,7 @@ namespace Ginger.Run
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
                 webReporterRunner.RunNewHtmlReport(string.Empty, selectedGuid);
             }
-            if (((RunSetReport)grdExecutionsHistory.CurrentItem).DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote)
+            else if (((RunSetReport)grdExecutionsHistory.CurrentItem).DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote)
             {
                 var executionGuid = ((RunSetReport)grdExecutionsHistory.CurrentItem).GUID;
                 new GingerRemoteExecutionUtils().GenerateHTMLReport(executionGuid);
