@@ -169,6 +169,7 @@ namespace Ginger.Reports
             {
                 elapsed += item.Elapsed;
             }
+            //Need to add check
             startedAt = activityList.Select(x => x.StartTimeStamp).FirstOrDefault();
             finishedAt = activityList.Select(x => x.EndTimeStamp).LastOrDefault();
 
