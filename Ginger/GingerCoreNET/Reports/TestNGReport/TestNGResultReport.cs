@@ -25,6 +25,7 @@ using System;
 using Amdocs.Ginger.Common;
 using Ginger.Run.RunSetActions;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.CoreNET.Execution;
 
 namespace Ginger.Reports
 {
@@ -120,7 +121,7 @@ namespace Ginger.Reports
                     if (item.ActivitiesIdentifiers.Count > 0)
                     {
                         List<Activity> acts = item.ActivitiesIdentifiers.Select(a => a.IdentifiedActivity).ToList();
-                        Amdocs.Ginger.CoreNET.Execution.eRunStatus status = getGroupActivityStatus(acts, ref elapsed, ref startedAt, ref finishedAt);
+                        eRunStatus status = getGroupActivityStatus(acts, ref elapsed, ref startedAt, ref finishedAt);
                         BFResults += buildXml(status, ref passCount, ref failedCount, ref blockedCount, General.ConvertInvalidXMLCharacters(BF.Name), General.ConvertInvalidXMLCharacters(item.Name), General.ConvertInvalidXMLCharacters(item.Description), elapsed,startedAt,finishedAt);
                     }
                 }
@@ -136,32 +137,32 @@ namespace Ginger.Reports
                 }
                 if (unGroupedAct.Count > 0)
                 {
-                    Amdocs.Ginger.CoreNET.Execution.eRunStatus status = getGroupActivityStatus(unGroupedAct, ref elapsed, ref startedAt, ref finishedAt);
+                    eRunStatus status = getGroupActivityStatus(unGroupedAct, ref elapsed, ref startedAt, ref finishedAt);
                     BFResults += buildXml(status, ref passCount, ref failedCount, ref blockedCount, General.ConvertInvalidXMLCharacters(BF.Name), "Ungrouped", "Ungrouped", elapsed, startedAt, finishedAt);
                 }
             }
             else//if there are no groups create default group
             {
-                Amdocs.Ginger.CoreNET.Execution.eRunStatus status = getGroupActivityStatus(BF.Activities.ToList(), ref elapsed, ref startedAt, ref finishedAt);
+                eRunStatus status = getGroupActivityStatus(BF.Activities.ToList(), ref elapsed, ref startedAt, ref finishedAt);
                 BFResults += buildXml(status, ref passCount, ref failedCount, ref blockedCount, General.ConvertInvalidXMLCharacters(BF.Name), "Ungrouped", "Ungrouped", elapsed, startedAt, finishedAt);
             }          
 
             return BFResults;
         }
 
-        private Amdocs.Ginger.CoreNET.Execution.eRunStatus getGroupActivityStatus(List<Activity> activityList, ref long? elapsed, ref DateTime startedAt, ref DateTime finishedAt)
+        private eRunStatus getGroupActivityStatus(List<Activity> activityList, ref long? elapsed, ref DateTime startedAt, ref DateTime finishedAt)
         {
-            Amdocs.Ginger.CoreNET.Execution.eRunStatus status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+            eRunStatus status = eRunStatus.Skipped;
 
             //if there is one fail then Activity status is fail
-            if (activityList.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).FirstOrDefault() != null)
-                status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+            if (activityList.Where(x => x.Status == eRunStatus.Failed).FirstOrDefault() != null)
+                status = eRunStatus.Failed;
             else
             {
                 // If we have at least 1 pass then it passed, otherwise will remain Skipped
-                if (activityList.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed).FirstOrDefault() != null)
+                if (activityList.Where(x => x.Status == eRunStatus.Passed).FirstOrDefault() != null)
                 {
-                    status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                    status = eRunStatus.Passed;
                 }
             }
 
@@ -169,8 +170,11 @@ namespace Ginger.Reports
             {
                 elapsed += item.Elapsed;
             }
-            startedAt = activityList.Select(x => x.StartTimeStamp).FirstOrDefault();
-            finishedAt = activityList.Select(x => x.EndTimeStamp).LastOrDefault();
+            if (activityList.Where(x => (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed)).Any())
+            {
+                startedAt = activityList.Where(x => (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed)).FirstOrDefault().StartTimeStamp;
+                finishedAt = activityList.Where(x => (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed)).LastOrDefault().EndTimeStamp;
+            }
 
             return status;
         }
@@ -186,10 +190,10 @@ namespace Ginger.Reports
             return BFResults;
         }
 
-        private string buildXml(Amdocs.Ginger.CoreNET.Execution.eRunStatus? status, ref int passCount, ref int failedCount, ref int blockedCount, string BFName, string activityName, string description, long? elapsed, DateTime startedAt, DateTime finishedAt)
+        private string buildXml(eRunStatus? status, ref int passCount, ref int failedCount, ref int blockedCount, string BFName, string activityName, string description, long? elapsed, DateTime startedAt, DateTime finishedAt)
         {
             string BFResults = string.Empty;
-            if (status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
+            if (status == eRunStatus.Passed)
             {
                 passCount++;
                 BFResults = BFResults + @"
@@ -197,7 +201,7 @@ namespace Ginger.Reports
                  @""" duration-ms=""" + elapsed + @""" started-at=""" + startedAt + @""" description=""" + description + @""" finished-at=""" + finishedAt + @""">
                  </test-method>";
             }
-            else if (status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+            else if (status == eRunStatus.Failed)
             {
                 failedCount++;
                 BFResults = BFResults + @"
@@ -205,7 +209,7 @@ namespace Ginger.Reports
                  @""" duration-ms=""" + elapsed + @""" started-at=""" + startedAt + @""" description=""" + description + @""" finished-at=""" + finishedAt + @""">
                  </test-method>";
             }
-            else if (status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked || status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
+            else if (status == eRunStatus.Blocked || status == eRunStatus.Pending || status == eRunStatus.Skipped)
             {
                 blockedCount++;
                 BFResults = BFResults + @"

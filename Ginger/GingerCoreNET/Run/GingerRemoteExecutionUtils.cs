@@ -91,7 +91,7 @@ namespace Amdocs.Ginger.CoreNET
 
             foreach (var runsetHLInfo in runsetHLInfoResponses)
             {
-                Enum.TryParse("Active", out Execution.eRunStatus runStatus);
+                Enum.TryParse(runsetHLInfo.Status, out Execution.eRunStatus runStatus);
                 runSetReports.Add(new RunSetReport()
                 {
                     GUID = runsetHLInfo.ExecutionID.ToString(),
@@ -125,9 +125,16 @@ namespace Amdocs.Ginger.CoreNET
         {
             var baseURI = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().CentralizedHtmlReportServiceURL;
 
-            if (!string.IsNullOrEmpty(baseURI) &&  !baseURI.EndsWith("/"))
+            if (!string.IsNullOrEmpty(baseURI))
             {
-                baseURI += "/";
+                if (!baseURI.EndsWith("/"))
+                {
+                    baseURI += "/";
+                }
+                if (!baseURI.EndsWith("#/"))
+                {
+                    baseURI += "#/";
+                }
             }
             return baseURI;
         }

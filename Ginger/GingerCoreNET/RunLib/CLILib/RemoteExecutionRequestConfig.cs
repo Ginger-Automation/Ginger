@@ -62,6 +62,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     return response.Result.ReasonPhrase;
                 }
                 Reporter.ToLog(eLogLevel.DEBUG, responseString);
+
+                Reporter.ToLog(eLogLevel.INFO,"Remote execution request created with "+ response.Result.Headers.Location.ToString().Split('?')[1]);
+
                 return response.Result.StatusCode.ToString();
             }
         }

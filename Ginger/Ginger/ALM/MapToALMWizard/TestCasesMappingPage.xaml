@@ -17,8 +17,7 @@
             <ColumnDefinition Width="150*"/>
         </Grid.ColumnDefinitions>
         <Ginger:ucGrid x:Name="xMapActivityGroupToTestCaseGrid" Margin="0,0,5,0" HorizontalAlignment="Stretch" PreviewDragItem="xUnMapTestCaseGrid_PreviewDragItem" DragOver="xMapActivityGroupToTestCaseGrid_DragOver" 
-                       Drop="XMapActivityGroupToTestCaseGrid_Drop" ItemDropped="xUnMapTestCaseGrid_ItemDropped"
-                       IsReadOnly="True" ShowAdd="Collapsed" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed"/>
+                       ItemDropped="xUnMapTestCaseGrid_ItemDropped" IsReadOnly="True" ShowAdd="Collapsed" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed"/>
         <GridSplitter x:Name="xMapGridSplitter" ResizeDirection="Columns" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="5" Style="{StaticResource $VerticalGridSplitterStyle}" />
         <Ginger:ucGrid x:Name="xUnMapTestCaseGrid" Grid.Column="1" HorizontalAlignment="Stretch" PreviewDragItem="xUnMapTestCaseGrid_PreviewDragItem" ItemDropped="xUnMapTestCaseGrid_ItemDropped" 
                        IsReadOnly="True" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" />

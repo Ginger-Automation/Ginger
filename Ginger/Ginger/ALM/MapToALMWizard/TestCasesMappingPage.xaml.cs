@@ -64,15 +64,13 @@ namespace Ginger.ALM.MapToALMWizard
                 case EventType.LeavingForNextPage:
                     if(mWizard.testCasesMappingList.All(tc => tc.aLMTSTest == null))
                     {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please Map At least one Test Case.");
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
                     MapCurrentTestCases();
                     break;
                 case EventType.Validate:
-                    break;
-                case EventType.Finish:
-                    // Todo check if test step already mapped?
                     break;
             }
         }
@@ -136,22 +134,18 @@ namespace Ginger.ALM.MapToALMWizard
                             mappedTc.testStepsMappingList[actIndex].almTestStep = mappedTc.aLMTSTest.Steps[actIndex];
                         }
                     }
-                    if (mWizard.testCaseUnmappedStepsDic.ContainsKey(mappedTc.aLMTSTest.TestID))
-                    {
-                        mappedTc.UpdateTestCaseMapStatus(mWizard.testCaseUnmappedStepsDic[mappedTc.aLMTSTest.TestID].Count);
-                    }
                     // Create unmapped test steps list
-                    //if (!mWizard.testCaseUnmappedStepsDic.ContainsKey(mappedTc.aLMTSTest.TestID))
-                    //{
-                    //    mWizard.testCaseUnmappedStepsDic.Add(mappedTc.aLMTSTest.TestID, new ObservableList<ALMTSTestStep>());
-                    //}
-                    //if (mappedTc.aLMTSTest.Steps.Count > mappedTc.activitiesGroup.ActivitiesIdentifiers.Count)
-                    //{
-                    //    for(int i = mappedTc.activitiesGroup.ActivitiesIdentifiers.Count; i < mappedTc.aLMTSTest.Steps.Count; i++)
-                    //    {
-                    //        mWizard.testCaseUnmappedStepsDic[mappedTc.aLMTSTest.TestID].Add(mappedTc.aLMTSTest.Steps[i]);
-                    //    }
-                    //}
+                    if (!mWizard.testCaseUnmappedStepsDic.ContainsKey(mappedTc.aLMTSTest.TestID))
+                    {
+                        mWizard.testCaseUnmappedStepsDic.Add(mappedTc.aLMTSTest.TestID, new ObservableList<ALMTSTestStep>());
+                        if (mappedTc.aLMTSTest.Steps.Count > mappedTc.activitiesGroup.ActivitiesIdentifiers.Count)
+                        {
+                            for (int i = mappedTc.activitiesGroup.ActivitiesIdentifiers.Count; i < mappedTc.aLMTSTest.Steps.Count; i++)
+                            {
+                                mWizard.testCaseUnmappedStepsDic[mappedTc.aLMTSTest.TestID].Add(mappedTc.aLMTSTest.Steps[i]);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -231,6 +225,7 @@ namespace Ginger.ALM.MapToALMWizard
             // if target already mapped, Add to unmapped list.
             if (target.aLMTSTest is not null)
             {
+                mWizard.ClearStepsLists(target);
                 mWizard.testCasesUnMappedList.Add(target.aLMTSTest);
             }
             // Map test case. 
@@ -244,6 +239,7 @@ namespace Ginger.ALM.MapToALMWizard
             {
                 return;
             }
+            mWizard.ClearStepsLists(source);
             // Add test case to unmapped list
             mWizard.testCasesUnMappedList.Add(source.aLMTSTest);
             // Remove test case from Map row.
@@ -251,6 +247,8 @@ namespace Ginger.ALM.MapToALMWizard
         }
         private void ReplaceMappedTestCaseHandler(ALMTestCaseManualMappingConfig source, ALMTestCaseManualMappingConfig target)
         {
+            mWizard.ClearStepsLists(source);
+            mWizard.ClearStepsLists(target);
             ALMTSTest targetTemp = target.aLMTSTest;
             // Map test case to Map row.
             target.UpdateMappedTestCase(source.aLMTSTest);
@@ -315,38 +313,8 @@ namespace Ginger.ALM.MapToALMWizard
 
                     int selectedIndex = xMapActivityGroupToTestCaseGrid.DataSourceList.IndexOf((obj as ALMTestCaseManualMappingConfig));
                     xMapActivityGroupToTestCaseGrid.Drop -= xUnMapTestCaseGrid_ItemDropped;
-                    xMapActivityGroupToTestCaseGrid.Drop += XMapActivityGroupToTestCaseGrid_Drop;
                 }
             }
-        }
-
-        private void XMapActivityGroupToTestCaseGrid_Drop(object sender, DragEventArgs e)
-        {
-            //object droppedItem = ((DragInfo)sender).Data as object;
-            //if (droppedItem is ALMTestCaseManualMappingConfig)
-            //{
-            //    // Drag Source is Mapped Grid.
-            //    if (((System.Windows.FrameworkElement)((DragInfo)sender).DragSource).Name == xMapActivityGroupToTestCaseGrid.Name)
-            //    {
-            //        // Test Case in Mapped Grid --- TODO if not in mapped grid and then don't need the if
-            //        if ((droppedItem as ALMTestCaseManualMappingConfig).aLMTSTest != null)
-            //        {
-            //            if (((System.Windows.FrameworkElement)((DragInfo)sender).DragSource).Name == ((System.Windows.FrameworkElement)((DragInfo)sender).DragTarget).Name)
-            //            {
-            //                int selectedIndexSource = xMapActivityGroupToTestCaseGrid.DataSourceList.IndexOf(droppedItem);
-
-            //                return;
-            //            }
-            //            ALMTestCaseManualMappingConfig dragedItem2 = (ALMTestCaseManualMappingConfig)((DragInfo)sender).Data;
-            //            ALMTSTest draggedTestCase = dragedItem2.aLMTSTest;
-            //            //Add Item to Unmapped Grid - to add it in separate function
-            //            xUnMapTestCaseGrid.DataSourceList.Add(draggedTestCase);
-            //            //Remove Item  from Mapped Grid - to add it in separate function
-            //            dragedItem2.aLMTSTest = null;
-            //            xMapActivityGroupToTestCaseGrid.Grid.Items.Refresh();
-            //        }
-            //    }
-            //}
         }
         #endregion
     }

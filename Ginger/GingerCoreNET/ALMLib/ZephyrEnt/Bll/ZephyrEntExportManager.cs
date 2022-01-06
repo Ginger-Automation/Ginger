@@ -149,6 +149,11 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                 {
                     executions = zephyrEntRepository.GetModuleExecutionData(Convert.ToInt32(bizFlow.ExternalID));
                 }
+                // Create new Executions Ids for selected Activities Groups
+                if(executions == null || executions.Count == 0)
+                {
+
+                }
                 if (executions != null && executions.Count > 0)
                 {
                     long scheduleId = 0;
