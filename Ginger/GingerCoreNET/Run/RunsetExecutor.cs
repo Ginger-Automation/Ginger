@@ -549,6 +549,7 @@ namespace Ginger.Run
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 //ExecutionLoggerManager.RunSetEnd();
                 Runners[0].ExecutionLoggerManager.RunSetEnd();
+
                 if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
                 {
                    await Runners[0].Centeralized_Logger.RunSetEnd(RunSetConfig);
