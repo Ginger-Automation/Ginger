@@ -522,7 +522,7 @@ namespace GingerCore.Actions.VisualTesting
                     {
                         var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None);
                         response.Content.CopyToAsync(fs).ContinueWith(
-                        (IDisposable) =>
+                        (Discard) =>
                         {
                             fs.Close();
                         });
