@@ -31,6 +31,9 @@ using System.Windows.Controls;
 using Ginger.UserControlsLib.TextEditor.Gherkin;
 using GingerWPF.WizardLib;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
+using Ginger.PlugInsWindows;
+using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -176,6 +179,30 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create VBS Document", CreateNewDocument, ".vbs", eImageType.Add);
             TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create Gherkin Feature Document", CreateGherkinFeatureFile, null, eImageType.Add);
             TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Add Other File Type", CreateNewDocument, "", eImageType.Add);
+            AddSolutionPlugInEditorsOptions(ImportDocumentMenu, CreateDocumentMenu);
+        }
+
+        private void AddSolutionPlugInEditorsOptions(MenuItem ImportDocumentMenu, MenuItem CreateDocumentMenu)
+        {
+
+            ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+
+            foreach (PluginPackage pluginPackage in Plugins)
+            {
+                if (string.IsNullOrEmpty(pluginPackage.PluginPackageInfo.UIDLL)) continue;
+
+                foreach (ITextEditor TE in PluginTextEditorHelper.GetTextFileEditors(pluginPackage))
+                {
+
+                    foreach (string extension in TE.Extensions)
+                    {
+                        String DocumentName = extension.Substring(1).ToUpper();
+                        TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create " + DocumentName + " Document", CreateNewDocument, extension, "@Add_16x16.png");
+                        TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import " + DocumentName + " Document", ImportNewDocument, extension, "@Import_16x16.png");
+                    }
+                   
+                }
+            }
         }
 
         private void CreateNewDocument(object sender, RoutedEventArgs e)
@@ -194,7 +221,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 FileContent = Properties.Resources.VBSTemplate;
             }
-
+        
             string NewFileName = string.Empty;
             string FullFilePath = string.Empty;
             string headerToShow;
