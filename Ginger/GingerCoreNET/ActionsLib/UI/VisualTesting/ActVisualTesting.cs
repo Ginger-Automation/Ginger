@@ -50,14 +50,14 @@ namespace GingerCore.Actions
             BitmapPixelsComparison,
             [EnumValueDescription("UI Elements Analyzer")]
             UIElementsComparison,
-            [EnumValueDescription("OCR Analyzer - Not Implemented")]
-            OCRComparison,
+            //[EnumValueDescription("OCR Analyzer - Not Implemented")]
+            //OCRComparison,
             [EnumValueDescription("Applitools  Analyzer")]
             Applitools,
-            [EnumValueDescription("Blink Diff - Not Implemented")]
-            BlinkDiff,
-            [EnumValueDescription("Spell Check Analyzer - Not Implemented")]
-            Spellcheck,
+            //[EnumValueDescription("Blink Diff - Not Implemented")]
+            //BlinkDiff,
+            //[EnumValueDescription("Spell Check Analyzer - Not Implemented")]
+            //Spellcheck,
         }
 
         public enum eChangeAppWindowSize

@@ -509,11 +509,9 @@ namespace GingerCore.Actions.VisualTesting
 
         private void DownloadImages(int numOfImages, TestResults testResults)
         {
-
-            String imagePath = mAct.GetScreenShotFilePath(); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIXME - add to the action
             for (int i = 1; i <= numOfImages; i++)
             {
-                String currImagePath = imagePath;
+                String currImagePath = Act.GetScreenShotRandomFileName(); ;
                 String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + i.ToString() + "/images/diff?ApiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
                 try
                 {
