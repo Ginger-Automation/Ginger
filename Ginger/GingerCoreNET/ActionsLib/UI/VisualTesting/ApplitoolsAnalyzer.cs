@@ -511,7 +511,7 @@ namespace GingerCore.Actions.VisualTesting
         {
             for (int i = 1; i <= numOfImages; i++)
             {
-                String currImagePath = Act.GetScreenShotRandomFileName(); ;
+                String currImagePath = Act.GetScreenShotRandomFileName();
                 String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + i.ToString() + "/images/diff?ApiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
                 try
                 {
