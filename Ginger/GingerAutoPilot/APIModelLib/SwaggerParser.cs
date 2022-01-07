@@ -236,9 +236,9 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                     {
 
                         ApplicationAPIModel JsonResponseModel = new ApplicationAPIModel();
-                        var i = GenerateXMLBody(JsonResponseModel, response.Schema);
+                        var i = GenerateXMLBody(JsonResponseModel, schemaObj);
 
-                        foreach (AppModelParameter currModel in GenerateJsonBody(JsonResponseModel, response.Schema))
+                        foreach (AppModelParameter currModel in GenerateJsonBody(JsonResponseModel, schemaObj))
                         {
                             ActReturnValue arv = new ActReturnValue();
                             arv.ItemName = currModel.ItemName;
@@ -250,9 +250,9 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                     else if (basicModal.ContentType == ApplicationAPIUtils.eContentType.JSon)
                     {
                         ApplicationAPIModel JsonResponseModel = new ApplicationAPIModel();
-                        var i = GenerateJsonBody(JsonResponseModel, response.Schema);
+                        var i = GenerateJsonBody(JsonResponseModel, schemaObj);
 
-                        foreach (AppModelParameter currModel in GenerateJsonBody(JsonResponseModel, response.Schema))
+                        foreach (AppModelParameter currModel in GenerateJsonBody(JsonResponseModel, schemaObj))
                         {
                             ActReturnValue arv = new ActReturnValue();
                             arv.ItemName = currModel.ItemName;
@@ -265,9 +265,9 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                     else if (basicModal.ContentType == ApplicationAPIUtils.eContentType.FormData)
                     {
                         ApplicationAPIModel JsonResponseModel = new ApplicationAPIModel();
-                        var i = GenerateJsonBody(JsonResponseModel, response.Schema);
+                        var i = GenerateJsonBody(JsonResponseModel, schemaObj);
 
-                        foreach (AppModelParameter currModel in GenerateJsonBody(JsonResponseModel, response.Schema))
+                        foreach (AppModelParameter currModel in GenerateJsonBody(JsonResponseModel, schemaObj))
                         {
                             ActReturnValue arv = new ActReturnValue();
                             arv.ItemName = currModel.ItemName;
@@ -277,10 +277,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                         }
 
                     }
-                }
-                else
-                {
-
                 }
             }
         }
