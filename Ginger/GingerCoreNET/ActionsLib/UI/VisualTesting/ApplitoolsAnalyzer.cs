@@ -502,7 +502,6 @@ namespace GingerCore.Actions.VisualTesting
         {
             //Edit URL and prepare it to download images from report
             String bakedURL = sessionURL.Replace("/app/", "/api/");
-            //bakedURL = bakedURL.Insert(bakedURL.IndexOf("sessions") + 9, "batches/");
             bakedURL = bakedURL.Substring(0, bakedURL.IndexOf("?accountId"));
             bakedURL += "/steps/";
             return bakedURL;
@@ -516,23 +515,31 @@ namespace GingerCore.Actions.VisualTesting
             {
                 String currImagePath = imagePath;
                 String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + i.ToString() + "/images/diff?ApiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
-                Console.WriteLine(currImageURL);
-                HttpResponseMessage response = runLongRequest(currImageURL);
-                if(response.StatusCode == HttpStatusCode.OK)
+                try
                 {
-                    var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None);
-                    response.Content.CopyToAsync(fs).ContinueWith(
-                    (copyTask) =>
+                    HttpResponseMessage response = runLongRequest(currImageURL);
+                    if (response.StatusCode == HttpStatusCode.OK)
                     {
-                        fs.Close();
-                    });
-                    mAct.ScreenShots.Add(currImagePath);
-                    mAct.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
+                        var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                        response.Content.CopyToAsync(fs).ContinueWith(
+                        (IDisposable) =>
+                        {
+                            fs.Close();
+                        });
+                        mAct.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
+                        mAct.ScreenShots.Add(currImagePath);
+                        
+                    }
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        mAct.Error = mAct.Error + " File Not Found";
+                    }
                 }
-                else if(response.StatusCode == HttpStatusCode.NotFound)
+                catch(Exception ex)
                 {
-                    mAct.Error = mAct.Error + "File Not Found";
+                    mAct.Error = mAct.Error + ex.Message;
                 }
+                
                 
             }
         }
@@ -608,8 +615,7 @@ namespace GingerCore.Actions.VisualTesting
             catch (Exception e)
             {
                 String errorMessage = "error message: " + e.Message;
-                Console.Write(errorMessage);
-
+                
                 if (retry > 0)
                 {
                     if (delayBeforeRetry)
@@ -649,19 +655,22 @@ namespace GingerCore.Actions.VisualTesting
                     request = new HttpRequestMessage(HttpMethod.Delete, URI);
                     return sendRequest(request, 1, false);
 
+                case HttpStatusCode.NotFound:
+                    mAct.Error = mAct.Error + "Unknown error during long request: " + status;
+                    return responseReceived;
+
                 case HttpStatusCode.Gone:
                     throw new ThreadInterruptedException("The server task is gone");
 
                 default:
                     throw new ThreadInterruptedException("Unknown error during long request: " + status);
+                    
             }
         }
 
         public HttpResponseMessage longRequestLoop(HttpRequestMessage request, int delay)
         {
             delay = (int)Math.Min(MAX_LONG_REQUEST_DELAY_MS, Math.Floor(delay * LONG_REQUEST_DELAY_MULTIPLICATIVE_INCREASE_FACTOR));
-            Console.Write("Still running... Retrying in " + delay);
-
             Thread.Sleep(delay);
 
             HttpResponseMessage response = sendRequest(request, 1, false);
