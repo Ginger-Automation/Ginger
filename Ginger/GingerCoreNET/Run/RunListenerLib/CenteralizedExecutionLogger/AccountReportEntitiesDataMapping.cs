@@ -317,7 +317,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunSet.Id = (Guid)runSetConfig.ExecutionID;
             accountReportRunSet.ExecutionId = (Guid)runSetConfig.ExecutionID;
             accountReportRunSet.EntityId = runSetConfig.Guid;
-           // accountReportRunSet.GingerSolutionGuid = WorkSpace.Instance.Solution.Guid;
+            accountReportRunSet.GingerSolutionGuid = WorkSpace.Instance.Solution.Guid;
             accountReportRunSet.Seq = 1;
             accountReportRunSet.Name = runSetConfig.Name;
             accountReportRunSet.Description = runSetConfig.Description;

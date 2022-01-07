@@ -89,6 +89,10 @@ namespace Ginger.UserControlsLib
                 SelectedNumber = number;
                 SetExecutionCount();
             }
+            else if (number > MaxCount)
+            {
+                SetExecutionCount();
+            }
         }
     }
 }

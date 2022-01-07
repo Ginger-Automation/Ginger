@@ -31,6 +31,7 @@ using static GingerCore.Agent;
 using static GingerCore.Drivers.SeleniumDriver;
 using System.Linq;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -91,7 +92,7 @@ namespace GingerCore.Actions.VisualTesting
             Region
         }
 
-        public enum eLocateBy
+        public enum eLocateByElement
         {
             ByXpath
         }
@@ -317,7 +318,11 @@ namespace GingerCore.Actions.VisualTesting
                 } 
                 else
                 {
-                    newmEyes.Check(Target.Region(By.XPath(GetLocateValue())).Fully().WithName(mAct.ItemName));
+                    ElementLocator locator = new ElementLocator();
+                    locator.LocateBy = GetLocateBy();
+                    locator.LocateValue = GetLocateValue();
+                    IWebElement webElement = ((SeleniumDriver)mDriver).LocateElementByLocator(locator, true);
+                    newmEyes.Check(Target.Region(webElement).Fully().WithName(mAct.ItemName));
                 }
                     
                 
@@ -510,9 +515,13 @@ namespace GingerCore.Actions.VisualTesting
             return mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ActionBy).Value;
         }
 
-        private string GetLocateBy()
+        private eLocateBy GetLocateBy()
         {
-            return mAct.GetOrCreateInputParam(ActVisualTesting.Fields.LocateBy).Value;
+            eLocateBy eVal = eLocateBy.ByXPath;
+            if (Enum.TryParse<eLocateBy>(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.LocateBy).Value, out eVal))
+                return eVal;
+            else
+                return eLocateBy.ByXPath;
         }
 
         private string GetLocateValue()

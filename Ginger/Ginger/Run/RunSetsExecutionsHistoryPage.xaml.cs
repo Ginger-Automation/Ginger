@@ -46,6 +46,7 @@ namespace Ginger.Run
     {
         ObservableList<RunSetReport> mExecutionsHistoryList = new ObservableList<RunSetReport>();
         ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
+        public bool AutoLoadExecutionData = false;
         public ObservableList<RunSetReport> ExecutionsHistoryList
         {
             get { return mExecutionsHistoryList; }
@@ -91,7 +92,7 @@ namespace Ginger.Run
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.Description, WidthWeight = 20, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.StartTimeStamp, Header = "Execution Start Time", WidthWeight = 10, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.EndTimeStamp, Header = "Execution End Time", WidthWeight = 10, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.ExecutionDurationHHMMSS, Header = "Execution Duration (HH:MM:SS.MS)", WidthWeight = 10, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.ExecutionDurationHHMMSS, Header = "Execution Duration", WidthWeight = 10, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.RunSetExecutionStatus, Header = "Execution Status", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.DataRepMethod, Header = "Type", Visible = true, ReadOnly = true, WidthWeight = 5, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = "Generate Report", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"] });
@@ -104,6 +105,23 @@ namespace Ginger.Run
             grdExecutionsHistory.AddToolbarTool("@Delete_16x16.png", "Delete Selected Execution Results", new RoutedEventHandler(DeleteSelectedExecutionResults));
             grdExecutionsHistory.AddToolbarTool("@Trash_16x16.png", "Delete All Execution Results", new RoutedEventHandler(DeleteAllSelectedExecutionResults));
             grdExecutionsHistory.RowDoubleClick += OpenExecutionResultsFolder;
+
+            if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
+            {
+                grdExecutionsHistory.AddCheckBox("Auto Load Execution History", new RoutedEventHandler(AutoLoadExecutionHistory));
+            }
+        }
+
+        private void AutoLoadExecutionHistory(object sender, RoutedEventArgs e)
+        {
+            if (((System.Windows.Controls.Primitives.ToggleButton)sender).IsChecked == true)
+            {
+                AutoLoadExecutionData = true;
+            }
+            else
+            {
+                AutoLoadExecutionData = false;
+            }
         }
 
         public string NameInDb<T>()
@@ -333,7 +351,7 @@ namespace Ginger.Run
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
                 webReporterRunner.RunNewHtmlReport(string.Empty, selectedGuid);
             }
-            if (((RunSetReport)grdExecutionsHistory.CurrentItem).DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote)
+            else if (((RunSetReport)grdExecutionsHistory.CurrentItem).DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote)
             {
                 var executionGuid = ((RunSetReport)grdExecutionsHistory.CurrentItem).GUID;
                 new GingerRemoteExecutionUtils().GenerateHTMLReport(executionGuid);
