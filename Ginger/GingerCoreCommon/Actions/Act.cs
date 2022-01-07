@@ -994,6 +994,11 @@ namespace GingerCore.Actions
             return filePath;
         }
 
+        public string GetScreenShotFilePath()
+        {
+            return GetScreenShotRandomFileName();
+        }
+
         //public override string GetNameForFileName() { return Description; }
         public override string GetNameForFileName()
         {
