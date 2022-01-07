@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
 using Applitools.Selenium;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
@@ -95,6 +96,37 @@ namespace GingerCore.Actions
             InternetExplorer = 2
         }
 
+        //TODO: For ActComparepage ObjectLocatrosConfigNeeded is false 
+        //But still for Switch frame , intialize browser etc the locate by and locate value is binded with Act.cs LocateBy and LocateValue fields
+        //We override this field to ignore ObjectConfigNeeded check only for this action
+        //Need to remove all of this once restructring Act.cs
+        public override eLocateBy LocateBy
+        {
+            get
+            {
+                return GetOrCreateInputParam<eLocateBy>(Act.Fields.LocateBy, eLocateBy.NA);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(Act.Fields.LocateBy, value.ToString());
+                OnPropertyChanged(Act.Fields.LocateBy);
+                OnPropertyChanged(Act.Fields.Details);
+            }
+        }
+
+        public override string LocateValue
+        {
+            get
+            {
+                return GetOrCreateInputParam(Act.Fields.LocateValue).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(Act.Fields.LocateValue, value);
+                OnPropertyChanged(Act.Fields.LocateValue);
+                OnPropertyChanged(Act.Fields.Details);
+            }
+        }
         IVisualTestingDriver mDriver;
         public eVisualTestingAnalyzer VisualTestingAnalyzer
         {

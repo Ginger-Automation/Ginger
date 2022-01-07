@@ -115,6 +115,11 @@ namespace Ginger.ALM.Repository
 
                 Reporter.ToLog(eLogLevel.INFO, "Starting export to Zephyr Ent");
                 currentTC = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).CreateTestCase(Convert.ToInt64(uploadPath), activtiesGroup, testInstanceFields);
+                // Check if BF already exist and Mapped new TC to Zephyr TS
+                if (!String.IsNullOrEmpty(businessFlow.ExternalID))
+                {
+                    ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).AssigningTestCasesToCyclePhase(new List<long>() { currentTC.id }, Convert.ToInt64(businessFlow.ExternalID2), Convert.ToInt64(businessFlow.ExternalID));
+                }
             }
             else
             {

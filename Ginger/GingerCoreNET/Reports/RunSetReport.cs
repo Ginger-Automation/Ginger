@@ -228,7 +228,7 @@ namespace Ginger.Reports
         {
             get
             {
-                if (DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                if (DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB || DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote)
                 {
                     return runSetExecutionStatus;
                 }
