@@ -262,21 +262,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                         }
 
                     }
-                    else if (basicModal.ContentType == ApplicationAPIUtils.eContentType.FormData)
-                    {
-                        ApplicationAPIModel JsonResponseModel = new ApplicationAPIModel();
-                        var i = GenerateJsonBody(JsonResponseModel, schemaObj);
-
-                        foreach (AppModelParameter currModel in GenerateJsonBody(JsonResponseModel, schemaObj))
-                        {
-                            ActReturnValue arv = new ActReturnValue();
-                            arv.ItemName = currModel.ItemName;
-                            arv.Path = currModel.XPath;
-                            arv.DoNotConsiderAsTemp = true;
-                            basicModal.ReturnValues.Add(arv);
-                        }
-
-                    }
                 }
             }
         }
