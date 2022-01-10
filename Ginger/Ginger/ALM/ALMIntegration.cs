@@ -32,6 +32,8 @@ using GingerCore.ALM.QC;
 using amdocs.ginger.GingerCoreNET;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 using GingerCoreNET.ALMLib;
+using GingerWPF.WizardLib;
+using System.Windows.Controls;
 
 namespace Ginger.ALM
 {
@@ -258,6 +260,31 @@ namespace Ginger.ALM
 
             Mouse.OverrideCursor = null;
             return domainList;
+        }
+
+        internal bool MapBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false)
+        {
+            Reporter.ToLog(eLogLevel.INFO, "Mapping " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM");
+            //Passing Solution Folder path to GingerCore
+            ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+
+            bool isMapSucc = false;
+            if (AutoALMProjectConnect(eALMConnectType.Auto))
+            {
+                if (GetALMType().Equals(eALMType.ZephyrEnterprise))
+                {
+                    WizardWindow.ShowWizard(new MapToALMWizard.AddMapToALMWizard(businessFlow), 1200);
+                    isMapSucc = true;
+                    DisconnectALMServer();
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"'Map To ALM' - not Supporting {GetALMType()}.");
+                }
+            }
+
+            Mouse.OverrideCursor = null;
+            return isMapSucc;
         }
 
         public List<string> GetJiraTestingALMs()
@@ -660,7 +687,23 @@ namespace Ginger.ALM
         }
         public eALMType GetALMType()
         {
-            return ALMCore.AlmConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType;
+            return ALMCore.GetDefaultAlmConfig().AlmType;
+        }
+        public Page GetALMTestSetsTreePage(string importDestinationPath = "")
+        {
+            return AlmRepo.GetALMTestSetsTreePage(importDestinationPath);
+        }
+        public Object GetSelectedImportTestSetData(Page page)
+        {
+            return AlmRepo.GetSelectedImportTestSetData(page);
+        }
+        public void GetALMTestSetData(ALMTestSet almTestSet)
+        {
+            AlmRepo.GetALMTestSetData(almTestSet);
+        }
+        public ALMTestSet GetALMTestCases(ALMTestSet almTestSet)
+        {
+            return AlmRepo.GetALMTestCasesToTestSetObject(almTestSet);
         }
     }
 }

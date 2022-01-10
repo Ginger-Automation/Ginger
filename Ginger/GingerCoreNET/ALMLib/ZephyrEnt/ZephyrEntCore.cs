@@ -151,9 +151,39 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
+            bool IsExecute = zephyrEntExportManager.ExportExceutionDetailsToALM(bizFlow, ref result, null, exectutedFromAutomateTab, publishToALMConfig);
+            if(!IsExecute)
+            {
+                CreateActivitiesGroupsExecution(bizFlow);
+            }
             return zephyrEntExportManager.ExportExceutionDetailsToALM(bizFlow, ref result, null, exectutedFromAutomateTab, publishToALMConfig);
         }
-
+        public void CreateActivitiesGroupsExecution(BusinessFlow bizFlow)
+        {
+            try
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Create mapped activities Groups Zephyr Ent. Execution Ids for publish run status.");
+                long testerId = GetCurrentUser();
+                List<TestCaseResource> tcsPlanningList = GetTestCasesByAssignmentTree(Convert.ToInt32(bizFlow.ExternalID));
+                List<Execution> assignsList = AssigningTestCasesToTesterForExecution(tcsPlanningList.Select(z => z.tct.id).ToList(), Convert.ToInt64(bizFlow.ExternalID2), testerId, Convert.ToInt64(bizFlow.ExternalID));
+                ObservableList<ActivitiesGroup> mappedAG = new ObservableList<ActivitiesGroup>();
+                foreach (ActivitiesGroup ag in bizFlow.ActivitiesGroups)
+                {
+                    if (String.IsNullOrEmpty(ag.ExternalID))
+                    {
+                        mappedAG.Add(ag);
+                    }
+                }
+                if (mappedAG.Count > 0)
+                {
+                    ExecuteTestCases(assignsList, testerId, bizFlow.ActivitiesGroups);
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Failed Create mapped activities Groups Zephyr Ent. Execution Ids. Error: {ex.Message}");
+            }
+        }
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
         {
             AlmResponseWithData<AlmDomainColl> domains = Task.Run(() =>

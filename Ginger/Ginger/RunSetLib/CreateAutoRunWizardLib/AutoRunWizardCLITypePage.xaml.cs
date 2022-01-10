@@ -206,6 +206,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
                 ShowContent();
             }
+            xConfigFileSettingsPnl.Visibility = Visibility.Collapsed;
 
         }
 

@@ -728,9 +728,14 @@ namespace Ginger.SolutionWindows
                                 if (!string.IsNullOrEmpty(db.Pass))
                                 {
                                     //if Pass is stored in the form of variable, encryption not required at this stage
-                                    if (!db.Pass.Contains("{Var Name"))
+                                    if (!db.Pass.Contains("{Var Name") && !db.Pass.Contains("{EnvParam"))
                                     {
-                                        db.Pass = EncryptionHandler.ReEncryptString(db.Pass, oldKey);
+                                        string encryptedPassWord = EncryptionHandler.ReEncryptString(db.Pass, oldKey);
+                                        if (string.IsNullOrEmpty(encryptedPassWord))
+                                        {
+                                            encryptedPassWord = EncryptionHandler.EncryptwithKey(db.Pass);
+                                        }
+                                        db.Pass = encryptedPassWord;
                                     }
                                     isSaveRequired = true;
                                     varReencryptedCount++;

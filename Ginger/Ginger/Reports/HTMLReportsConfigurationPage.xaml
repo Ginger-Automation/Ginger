@@ -55,11 +55,11 @@
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Content="Centralized Report Data Settings" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
                 <DockPanel Grid.Row="1" Margin="5 0 5 5">
-                    <Label  Style="{StaticResource @LabelStyle}" Content="Centralized Report Data Service URL  "/>
+                    <Label  Style="{StaticResource @LabelStyle}" Content="Centralized Report Data Service URL:  "/>
                     <TextBox x:Name="xCentralizedReportDataServiceURLTextBox" Style="{StaticResource @TextBoxStyle}"  />
                 </DockPanel>
                 <DockPanel Grid.Row="2" Margin="5 0 5 5">
-                    <Label  Style="{StaticResource @LabelStyle}" Content="Centralized HTML Report Service URL"/>
+                    <Label  Style="{StaticResource @LabelStyle}" Content="Centralized HTML Report Service URL:"/>
                     <TextBox x:Name="xCentralizedHtmlReportServiceURLTextBox" Style="{StaticResource @TextBoxStyle}"  />
                 </DockPanel>
             </Grid>

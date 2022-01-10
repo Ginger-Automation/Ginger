@@ -138,7 +138,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
             ListItemOperation addToFlow = new ListItemOperation();
             addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromModel };
-            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Add;
+            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft;
             addToFlow.ToolTip = "Add to Actions";
             addToFlow.OperationHandler = AddFromPOMNavPage;
             operationsList.Add(addToFlow);

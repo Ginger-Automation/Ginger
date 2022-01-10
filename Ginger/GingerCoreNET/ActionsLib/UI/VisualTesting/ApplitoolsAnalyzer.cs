@@ -30,6 +30,8 @@ using System.Net;
 using static GingerCore.Agent;
 using static GingerCore.Drivers.SeleniumDriver;
 using System.Linq;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -44,6 +46,8 @@ namespace GingerCore.Actions.VisualTesting
         public static string ApplitoolsEyesOpen = "ApplitoolsEyesOpen";
         public static string ApplitoolsMatchLevel = "ApplitoolsMatchLevel";
         public static string FailActionOnMistmach = "FailActionOnMistmach";
+        public const string ActionBy = "ActionBy";
+        public const string LocateBy = "LocateBy";
 
         // We keep one static eyes so we can reuse across action and close when done, to support applitools behaviour
         static Applitools.Images.Eyes mEyes = null;
@@ -80,6 +84,17 @@ namespace GingerCore.Actions.VisualTesting
             Strict,
             Content,
             Layout
+        }
+
+        public enum eActionBy
+        {
+            Window,
+            Region
+        }
+
+        public enum eLocateByElement
+        {
+            ByXpath
         }
 
         private void SetEyesMatchLevel()
@@ -179,8 +194,8 @@ namespace GingerCore.Actions.VisualTesting
                 mEyes.ServerUrl = string.IsNullOrEmpty(((SeleniumDriver)mDriver).ApplitoolsServerUrl) ? mEyes.ServerUrl : ((SeleniumDriver)mDriver).ApplitoolsServerUrl;
                 OperatingSystem Os_info = System.Environment.OSVersion;
                 mEyes.HostOS = Os_info.VersionString;
-                mEyes.BranchName = ((SeleniumDriver)mDriver).BusinessFlow.Environment;
                 mEyes.HostApp = ((SeleniumDriver)mDriver).GetBrowserType().ToString();
+                mEyes.AddProperty("Environment ID", ((SeleniumDriver)mDriver).BusinessFlow.Environment);
                 mResolution = mAct.GetWindowResolution();
                 mEyes.Open(mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
             }
@@ -257,15 +272,18 @@ namespace GingerCore.Actions.VisualTesting
             try
             {
                 runner = new ClassicRunner();
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any() && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners[0].ExecutedFrom == eExecutedFrom.Run)
+                {
+                    runner.DontCloseBatches = true;
+                }
                 newmEyes = new Eyes(runner);
                 mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
                 mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
-
+                
                 SetUp(newmEyes, ((SeleniumDriver)mDriver).ApplitoolsServerUrl, ((SeleniumDriver)mDriver).ApplitoolsViewKey, ((SeleniumDriver)mDriver).GetBrowserType(), ((SeleniumDriver)mDriver).BusinessFlow.Environment);
                 mAct.CheckSetAppWindowSize();
                 mResolution = mAct.GetWindowResolution();
                 newmEyes.Open(((SeleniumDriver)mDriver).GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
-
             }
             catch (Exception ex)
             {
@@ -291,9 +309,43 @@ namespace GingerCore.Actions.VisualTesting
             }
 
             NewSetEyesMatchLevel();
+            string ActionTakenBy = GetActionBy();
+            try
+            {
+                if (ActionTakenBy == "Window")
+                {
+                    newmEyes.Check(Target.Window().Fully().WithName(mAct.ItemName));
+                } 
+                else
+                {
+                    ElementLocator locator = new ElementLocator();
+                    locator.LocateBy = GetLocateBy();
+                    locator.LocateValue = GetLocateValue();
+                    IWebElement webElement = ((SeleniumDriver)mDriver).LocateElementByLocator(locator, true);
+                    newmEyes.Check(Target.Region(webElement).Fully().WithName(mAct.ItemName));
+                }
+                    
+                
+            }
+            catch (Exception ex) 
+            {
+                if (ActionTakenBy == "Region") 
+                {
+                    mAct.Error += "Not Able to locate XPath, Error: " + ex.Message;
+                }
+                else
+                {
+                    mAct.Error += ex.Message;
+                }
+                    
+            }
+            finally
+            {
+                mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+            }
+             
+
             
-            newmEyes.Check(Target.Window().Fully().WithName(mAct.ItemName));
-            mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
             
         }
         private void NewCloseEyes()
@@ -379,13 +431,20 @@ namespace GingerCore.Actions.VisualTesting
         private void SetUp(Eyes eyes,string AppilToolServerUrl,string AppilToolsApiKey, eBrowserType BrowserType,string Environment)
         {
             Applitools.Selenium.Configuration config = new Applitools.Selenium.Configuration();
-            
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any() && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners[0].ExecutedFrom == eExecutedFrom.Run)
+            {
+                BatchInfo batchInfo = new BatchInfo(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ItemName);
+
+                batchInfo.Id = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString();
+                config.SetBatch(batchInfo);
+            }
+
             config.SetApiKey(AppilToolsApiKey);
             config.SetServerUrl(AppilToolServerUrl);
             OperatingSystem Os_info = System.Environment.OSVersion;
             config.SetHostOS(Os_info.VersionString);
-            config.SetBranchName(Environment);
             config.SetHostApp(BrowserType.ToString());
+            eyes.AddProperty("Environment ID", !String.IsNullOrEmpty(Environment) ? Environment : "Default");
             eyes.SetConfiguration(config);
 
         }
@@ -440,7 +499,7 @@ namespace GingerCore.Actions.VisualTesting
             for (int i = 1; i <= numOfImages; i++)
             {
                 String currImagePath = imagePath + i.ToString() + ".jpg";
-                String currImageURL = BaseURLForDownloading + i.ToString() + "/diff?ApiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey; //GetApplitoolsAPIKey();
+                String currImageURL = BaseURLForDownloading + i.ToString() + "/diff?ApiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
                 Console.WriteLine(currImageURL);
                 WebClient webClient = new WebClient();
                 webClient.DownloadFile(currImageURL, currImagePath);
@@ -450,6 +509,24 @@ namespace GingerCore.Actions.VisualTesting
         private string GetServerUrl()
         {
             return mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ServerUrl).ValueForDriver;
+        }
+        private string GetActionBy()
+        {
+            return mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ActionBy).Value;
+        }
+
+        private eLocateBy GetLocateBy()
+        {
+            eLocateBy eVal = eLocateBy.ByXPath;
+            if (Enum.TryParse<eLocateBy>(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.LocateBy).Value, out eVal))
+                return eVal;
+            else
+                return eLocateBy.ByXPath;
+        }
+
+        private string GetLocateValue()
+        {
+            return mAct.GetOrCreateInputParam(ActVisualTesting.Fields.LocateValue).Value;
         }
     }
 }
