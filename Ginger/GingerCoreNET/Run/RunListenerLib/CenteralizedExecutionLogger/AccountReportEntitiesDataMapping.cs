@@ -69,7 +69,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportAction.Wait = Convert.ToInt32(action.Wait);
             accountReportAction.TimeOut = action.Timeout;
             accountReportAction.RunStatus = _InProgressStatus;
-
+            
             return accountReportAction;
         }
         public static AccountReportAction MapActionEndData(GingerCore.Actions.Act action, Context context)
@@ -116,6 +116,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivity.ActivityGroupName = activity.ActivitiesGroupID;
             accountReportActivity.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active == true);
             accountReportActivity.RunStatus = _InProgressStatus;
+            accountReportActivity.IsPublished = activity.Publish;
             return accountReportActivity;
         }
         public static AccountReportActivity MapActivityEndData(Activity activity, Context context)
@@ -157,6 +158,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivityGroup.StartTimeStamp = activitiesGroup.StartTimeStamp;
             accountReportActivityGroup.ExecutedActivitiesGUID = activitiesGroup.ExecutedActivities.Select(x => x.Key).ToList();
             accountReportActivityGroup.RunStatus = _InProgressStatus;
+            accountReportActivityGroup.IsPublished = activitiesGroup.Publish;
             return accountReportActivityGroup;
         }
 
@@ -190,11 +192,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportBusinessFlow.Description = businessFlow.Description;
             accountReportBusinessFlow.RunDescription = GetCalculatedValue(context, businessFlow.RunDescription);
             accountReportBusinessFlow.Environment = businessFlow.Environment;
+            accountReportBusinessFlow.EnvironmentId = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Guid;
             accountReportBusinessFlow.StartTimeStamp = businessFlow.StartTimeStamp;
             accountReportBusinessFlow.VariablesBeforeExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description + "_:_" + a.Guid + "_:_" + a.SetAsInputValue + "_:_" + a.SetAsOutputValue + "_:_" + a.Publish).ToList();
             accountReportBusinessFlow.SolutionVariablesBeforeExec = businessFlow.GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
             accountReportBusinessFlow.RunStatus = _InProgressStatus;
-
+            accountReportBusinessFlow.IsPublished = businessFlow.Publish;
             int ChildExecutableItemsCountAction = 0;
             string Actions = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString();
             string Actvities = HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString();
@@ -282,10 +285,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunner.Name = gingerRunner.Name;
             //accountReportRunner.Description = gingerRunner.Description;
             accountReportRunner.Environment = gingerRunner.ProjEnvironment.Name.ToString();
+            accountReportRunner.EnvironmentId = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Guid;
             accountReportRunner.StartTimeStamp = gingerRunner.StartTimeStamp;
             accountReportRunner.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
             SetRunnerChildCounts(gingerRunner, accountReportRunner);
             accountReportRunner.RunStatus = _InProgressStatus;
+            accountReportRunner.IsPublished = gingerRunner.Publish;
             return accountReportRunner;
         }
 
@@ -322,6 +327,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunSet.Name = runSetConfig.Name;
             accountReportRunSet.Description = runSetConfig.Description;
             accountReportRunSet.Environment = runSetConfig.GingerRunners[0].ProjEnvironment.ToString();
+            accountReportRunSet.EnvironmentId = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Guid;
             accountReportRunSet.StartTimeStamp = runSetConfig.StartTimeStamp;
             accountReportRunSet.MachineName = System.Environment.MachineName.ToString();
             accountReportRunSet.ExecutedByUser = System.Environment.UserName.ToString();
@@ -335,6 +341,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunSet.UserCategory2 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory2).FirstOrDefault());
             accountReportRunSet.UserCategory3 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory3).FirstOrDefault());
             accountReportRunSet.RunStatus = _InProgressStatus;
+            accountReportRunSet.IsPublished = runSetConfig.Publish;
             SetRunSetChildCounts(runSetConfig, accountReportRunSet);
             return accountReportRunSet;
         }
