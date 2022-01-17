@@ -48,7 +48,6 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             try
             {
                 Console.WriteLine("Listening for clients...");
-                Console.WriteLine("Listening for clients...");
                 Socket msg = sck.Accept();
 
                 while (true)

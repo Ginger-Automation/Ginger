@@ -88,7 +88,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             if (result != 0)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
-                Reporter.ToLog(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
                 Environment.ExitCode = 1; // error
             }
         }
