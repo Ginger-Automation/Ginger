@@ -80,7 +80,7 @@ namespace Ginger.Run
         BusinessFlow
     }
 
-    public class GingerRunner : RepositoryItemBase
+    public class GingerExecutionEngine : RepositoryItemBase
     {
 
 
@@ -257,7 +257,7 @@ namespace Ginger.Run
             set
             {
                 mRunOption = value;
-                OnPropertyChanged(nameof(GingerRunner.RunOption));
+                OnPropertyChanged(nameof(GingerExecutionEngine.RunOption));
             }
         }
 
@@ -329,7 +329,7 @@ namespace Ginger.Run
                 if (mActive != value)
                 {
                     mActive = value;
-                    OnPropertyChanged(nameof(GingerRunner.Active));
+                    OnPropertyChanged(nameof(GingerExecutionEngine.Active));
                 }
             }
         }
@@ -401,7 +401,7 @@ namespace Ginger.Run
             set
             {
                 mRunInSimulationMode = value;
-                OnPropertyChanged(nameof(GingerRunner.RunInSimulationMode));
+                OnPropertyChanged(nameof(GingerExecutionEngine.RunInSimulationMode));
             }
         }
 
@@ -415,7 +415,7 @@ namespace Ginger.Run
         public Guid ParentExecutionId { get; set; }
         public int ExecutionLogBusinessFlowsCounter { get; set; }
 
-        public GingerRunner()
+        public GingerExecutionEngine()
         {
             ExecutedFrom = eExecutedFrom.Run;
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
@@ -435,7 +435,7 @@ namespace Ginger.Run
 
         }
 
-        public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
+        public GingerExecutionEngine(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             ExecutedFrom = executedFrom;
 

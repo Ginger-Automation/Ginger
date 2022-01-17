@@ -341,7 +341,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             bf.ActivitiesGroups.ToList().ForEach(acg => this.MapAcgToLiteDb(acg, bf));
         }
 
-        public override void SetReportRunner(GingerRunner gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
+        public override void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
             base.SetReportRunner(gingerRunner, gingerReport, gingerData, mContext, filename, runnerCount);
             LiteDbRunner runner = new LiteDbRunner();
@@ -466,7 +466,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSet.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), ChildExecutedItemsCountAction);
             runSet.ChildPassedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), ChildPassedItemsCountAction);
         }
-        public override void RunSetUpdate(ObjectId runSetLiteDbId, ObjectId runnerLiteDbId, GingerRunner gingerRunner)
+        public override void RunSetUpdate(ObjectId runSetLiteDbId, ObjectId runnerLiteDbId, GingerExecutionEngine gingerRunner)
         {
             try
             {

@@ -53,7 +53,7 @@ namespace Ginger.AnalyzerLib
             if (RSC.RunModeParallel)
             {
                 List<Guid> Agents = new List<Guid>();
-                foreach (GingerRunner GR in RSC.GingerRunners)
+                foreach (GingerExecutionEngine GR in RSC.GingerRunners)
                 {
                     foreach (ApplicationAgent AA in GR.ApplicationAgents)
                     {
@@ -84,7 +84,7 @@ namespace Ginger.AnalyzerLib
             }
 
             //check all configured mapped data still valid
-            foreach (GingerRunner GR in RSC.GingerRunners)
+            foreach (GingerExecutionEngine GR in RSC.GingerRunners)
             {
                 foreach (BusinessFlow bf in GR.BusinessFlows)
                 {

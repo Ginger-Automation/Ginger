@@ -17,7 +17,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
     [TestClass]
     public class ActScriptTests
     {
-        GingerRunner mGR;
+        GingerExecutionEngine mGR;
         bool isOSWindows = true;
         
         [TestInitialize]
@@ -32,7 +32,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
 
-            mGR = new GingerRunner();
+            mGR = new GingerExecutionEngine();
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             mGR.CurrentBusinessFlow = mBF;
             mGR.BusinessFlows.Add(mBF);

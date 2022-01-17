@@ -156,7 +156,7 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<GingerExecutionEngine> Gingers)
         {
             throw new NotImplementedException();
         }

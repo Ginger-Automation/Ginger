@@ -85,18 +85,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
 
         #region Runner
-        public override async void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
+        public override async void RunnerRunStart(uint eventTime, GingerExecutionEngine gingerRunner, bool offlineMode = false)
         {
             await RunnerRunStartTask(gingerRunner);
         }
 
-        private async Task RunnerRunStartTask(GingerRunner gingerRunner)
+        private async Task RunnerRunStartTask(GingerExecutionEngine gingerRunner)
         {
             AccountReportRunner accountReportRunner = AccountReportEntitiesDataMapping.MapRunnerStartData(gingerRunner, mContext);
             await AccountReportApiHandler.SendRunnerExecutionDataToCentralDBAsync(accountReportRunner);
         }
 
-        public override async void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
+        public override async void RunnerRunEnd(uint eventTime, GingerExecutionEngine gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
             if (!gingerRunner.Active || gingerRunner.ExecutionId == Guid.Empty || gingerRunner.Status == Execution.eRunStatus.Blocked)
             {
@@ -105,7 +105,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             await RunnerRunEndTask(gingerRunner);
         }
 
-        private async Task RunnerRunEndTask(GingerRunner gingerRunner)
+        private async Task RunnerRunEndTask(GingerExecutionEngine gingerRunner)
         {
             AccountReportRunner accountReportRunner = AccountReportEntitiesDataMapping.MapRunnerEndData(gingerRunner, mContext);
             await AccountReportApiHandler.SendRunnerExecutionDataToCentralDBAsync(accountReportRunner, true);

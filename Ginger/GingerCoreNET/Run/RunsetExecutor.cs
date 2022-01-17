@@ -90,7 +90,7 @@ namespace Ginger.Run
         }
 
 
-        public ObservableList<GingerRunner> Runners
+        public ObservableList<GingerExecutionEngine> Runners
         {
             get
             {
@@ -125,7 +125,7 @@ namespace Ginger.Run
 
         public void ConfigureAllRunnersForExecution()
         {
-            foreach (GingerRunner runner in Runners)
+            foreach (GingerExecutionEngine runner in Runners)
             {
                 ConfigureRunnerForExecution(runner);
             }
@@ -137,7 +137,7 @@ namespace Ginger.Run
             set { mDefectSuggestionsList = value; }
         }
 
-        public void ConfigureRunnerForExecution(GingerRunner runner)
+        public void ConfigureRunnerForExecution(GingerExecutionEngine runner)
         {
             runner.SetExecutionEnvironment(RunsetExecutionEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
             runner.CurrentSolution = WorkSpace.Instance.Solution;
@@ -151,13 +151,13 @@ namespace Ginger.Run
         public void InitRunners()
         {
             AllPreviousBusinessFlowRuns.Clear();
-            foreach (GingerRunner gingerRunner in Runners)
+            foreach (GingerExecutionEngine gingerRunner in Runners)
             {
                 InitRunner(gingerRunner);
             }
         }
 
-        public void InitRunner(GingerRunner runner)
+        public void InitRunner(GingerExecutionEngine runner)
         {
             //Configure Runner for execution
             runner.Status = eRunStatus.Pending;
@@ -315,7 +315,7 @@ namespace Ginger.Run
         public ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false)
         {
             ObservableList<BusinessFlowExecutionSummary> BFESs = new ObservableList<BusinessFlowExecutionSummary>();
-            foreach (GingerRunner ARC in Runners)
+            foreach (GingerExecutionEngine ARC in Runners)
             {
                 BFESs.Append(ARC.GetAllBusinessFlowsExecutionSummary(GetSummaryOnlyForExecutedFlow, ARC.Name));
             }
@@ -324,7 +324,7 @@ namespace Ginger.Run
 
         internal void CloseAllEnvironments()
         {
-            foreach (GingerRunner gr in Runners)
+            foreach (GingerExecutionEngine gr in Runners)
             {
                 if (gr.UseSpecificEnvironment)
                 {
@@ -344,7 +344,7 @@ namespace Ginger.Run
 
         public void SetRunnersEnv(ProjEnvironment defualtEnv, ObservableList<ProjEnvironment> allEnvs)
         {
-            foreach (GingerRunner GR in Runners)
+            foreach (GingerExecutionEngine GR in Runners)
             {
                 GR.SetExecutionEnvironment(defualtEnv, allEnvs);
             }
@@ -463,7 +463,7 @@ namespace Ginger.Run
                 List<Task> runnersTasks = new List<Task>();
                 if (RunSetConfig.RunModeParallel)
                 {
-                    foreach (GingerRunner GR in Runners)
+                    foreach (GingerExecutionEngine GR in Runners)
                     {
                         if (mStopRun)
                         {
@@ -495,7 +495,7 @@ namespace Ginger.Run
                     //running sequentially 
                     Task t = new Task(() =>
                     {
-                        foreach (GingerRunner GR in Runners)
+                        foreach (GingerExecutionEngine GR in Runners)
                         {
                             if (mStopRun)
                             {
@@ -599,7 +599,7 @@ namespace Ginger.Run
 
         public void ResetRunnersExecutionDetails()
         {
-            foreach (GingerRunner runner in Runners)
+            foreach (GingerExecutionEngine runner in Runners)
             {
                 runner.ResetRunnerExecutionDetails();
                 runner.CloseAgents();
@@ -609,7 +609,7 @@ namespace Ginger.Run
         public void StopRun()
         {
             mStopRun = true;
-            foreach (GingerRunner runner in Runners)
+            foreach (GingerExecutionEngine runner in Runners)
             {
                 if (runner.IsRunning)
                 {
@@ -722,7 +722,7 @@ namespace Ginger.Run
 
 
         static volatile object locker = new Object();
-        public static void ClearAndResetVirtualAgents(RunSetConfig runset, GingerRunner runner)
+        public static void ClearAndResetVirtualAgents(RunSetConfig runset, GingerExecutionEngine runner)
         {
             lock (locker)
             {

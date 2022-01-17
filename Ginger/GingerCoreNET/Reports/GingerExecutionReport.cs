@@ -2870,7 +2870,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 string exec_folder = string.Empty;
                 Context context = new Context();
                 context.BusinessFlow = BF;
-                context.Runner = new Run.GingerRunner(); //Why to create new runner ? 
+                context.Runner = new Run.GingerExecutionEngine(); //Why to create new runner ? 
                 context.Environment = environment;
                 Run.ExecutionLoggerManager executionLoggerManager = new Run.ExecutionLoggerManager(context);
                 exec_folder = executionLoggerManager.GenerateBusinessflowOfflineExecutionLogger(context);

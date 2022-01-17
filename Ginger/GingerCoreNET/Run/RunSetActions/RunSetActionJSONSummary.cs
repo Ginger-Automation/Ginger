@@ -63,7 +63,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
             return list;
         }
 
-        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<GingerExecutionEngine> Gingers)
         {
             
         }

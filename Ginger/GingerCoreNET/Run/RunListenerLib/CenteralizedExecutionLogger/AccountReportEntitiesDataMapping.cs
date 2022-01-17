@@ -266,7 +266,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             return accountReportBusinessFlow;
         }
 
-        public static AccountReportRunner MapRunnerStartData(GingerRunner gingerRunner, Context context)
+        public static AccountReportRunner MapRunnerStartData(GingerExecutionEngine gingerRunner, Context context)
         {
             gingerRunner.ExecutionId = Guid.NewGuid();
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID != null)
@@ -289,7 +289,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             return accountReportRunner;
         }
 
-        public static AccountReportRunner MapRunnerEndData(GingerRunner gingerRunner, Context context)
+        public static AccountReportRunner MapRunnerEndData(GingerExecutionEngine gingerRunner, Context context)
         {
             AccountReportRunner accountReportRunner = new AccountReportRunner();
             accountReportRunner.Id = gingerRunner.ExecutionId;
@@ -359,7 +359,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             return accountReportRunSet;
         }
 
-        public static Amdocs.Ginger.CoreNET.Execution.eRunStatus GetRunnerStatus(GingerRunner gingerRunner)
+        public static Amdocs.Ginger.CoreNET.Execution.eRunStatus GetRunnerStatus(GingerExecutionEngine gingerRunner)
         {
 
             if (gingerRunner.BusinessFlows != null && gingerRunner.BusinessFlows.Count > 0)
@@ -398,7 +398,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             }
         }
 
-        private static void SetRunnerChildCounts(GingerRunner runner, AccountReportRunner accountReportRunner)
+        private static void SetRunnerChildCounts(GingerExecutionEngine runner, AccountReportRunner accountReportRunner)
         {
             int ChildExecutableItemsCountActivity = 0;
             int ChildExecutedItemsCountActivity = 0;
@@ -460,7 +460,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             int ChildPassedItemsCountAction = 0;
             string Actvities = HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString();
             string Actions = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString();
-            foreach (GingerRunner runner in runSet.GingerRunners)
+            foreach (GingerExecutionEngine runner in runSet.GingerRunners)
             {
                 int count = 0;
                 foreach (BusinessFlow businessFlow in runner.BusinessFlows)

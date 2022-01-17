@@ -41,7 +41,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
     public class ValueExpressionTest
     {
         RunSetConfig runset;
-        GingerRunner runner;
+        GingerExecutionEngine runner;
         BusinessFlow mBF;
         ProjEnvironment mEnv;
         GingerCore.Activity mActivity;
@@ -68,7 +68,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             runset = new RunSetConfig();
             runset.Name = "NewRunset1";
             WorkSpace.Instance.RunsetExecutor.RunSetConfig = runset;
-            runner = new GingerRunner();
+            runner = new GingerExecutionEngine();
             runner.Name = "Runner1";
             runner.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             WorkSpace.Instance.RunsetExecutor.Runners.Add(runner);            

@@ -345,16 +345,16 @@ namespace Ginger.Run
         {
             this.Dispatcher.Invoke(() =>
             {
-                if (e.PropertyName == nameof(GingerRunner.Status))
+                if (e.PropertyName == nameof(GingerExecutionEngine.Status))
                 {
                     if (IsSelectedItemSyncWithExecution && mRunSetConfig.RunModeParallel == false
-                                && ((GingerRunner)sender).Status == eRunStatus.Running)
+                                && ((GingerExecutionEngine)sender).Status == eRunStatus.Running)
                     {
                         List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
                         foreach (FlowElement f in fe)
                         {
                             RunnerPage rp = (RunnerPage)f.GetCustomeShape().Content;
-                            if (rp != null && rp.Runner.Guid.Equals(((GingerRunner)sender).Guid))
+                            if (rp != null && rp.Runner.Guid.Equals(((GingerExecutionEngine)sender).Guid))
                             {
                                 GingerRunnerHighlight(rp);
                             }
@@ -470,7 +470,7 @@ namespace Ginger.Run
 
         private async void RunnerItem_RunnerItemEvent(RunnerItemEventArgs EventArgs)
         {
-            Run.GingerRunner currentSelectedRunner = mCurrentSelectedRunner.Runner;
+            Run.GingerExecutionEngine currentSelectedRunner = mCurrentSelectedRunner.Runner;
 
             switch (EventArgs.EventType)
             {
@@ -564,12 +564,12 @@ namespace Ginger.Run
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                RunnerPage runnerPage = InitRunnerFlowElement((GingerRunner)e.NewItems[0], e.NewStartingIndex);
+                RunnerPage runnerPage = InitRunnerFlowElement((GingerExecutionEngine)e.NewItems[0], e.NewStartingIndex);
                 GingerRunnerHighlight(runnerPage);
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                mFlowDiagram.RemoveFlowElem(((GingerRunner)e.OldItems[0]).Guid.ToString(), mRunSetConfig.RunModeParallel);
+                mFlowDiagram.RemoveFlowElem(((GingerExecutionEngine)e.OldItems[0]).Guid.ToString(), mRunSetConfig.RunModeParallel);
             }
             else if (e.Action == NotifyCollectionChangedAction.Move)
             {
@@ -725,7 +725,7 @@ namespace Ginger.Run
         {
             if (CheckIfExecutionIsInProgress()) return;
 
-            Run.GingerRunner CGR = mCurrentSelectedRunner.Runner;
+            Run.GingerExecutionEngine CGR = mCurrentSelectedRunner.Runner;
             int Indx = mRunSetConfig.GingerRunners.IndexOf(CGR);
 
             if (Indx > 0)
@@ -738,7 +738,7 @@ namespace Ginger.Run
         {
             if (CheckIfExecutionIsInProgress()) return;
 
-            Run.GingerRunner CGR = mCurrentSelectedRunner.Runner;
+            Run.GingerExecutionEngine CGR = mCurrentSelectedRunner.Runner;
             int Indx = mRunSetConfig.GingerRunners.IndexOf(CGR);
             if (Indx < (mRunSetConfig.GingerRunners.Count - 1))
                 mRunSetConfig.GingerRunners.Move(Indx, Indx + 1);
@@ -810,7 +810,7 @@ namespace Ginger.Run
                 mCurrentSelectedRunner.xBorder.Visibility = System.Windows.Visibility.Collapsed;
                 mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_DarkBlue") as Brush;
                 mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Height = 1;
-                if (!((GingerRunner)mCurrentSelectedRunner.Runner).Active)
+                if (!((GingerExecutionEngine)mCurrentSelectedRunner.Runner).Active)
                 {
                     mCurrentSelectedRunner.xRunnerNameTxtBlock.Foreground = Brushes.Gray;
                 }
@@ -824,7 +824,7 @@ namespace Ginger.Run
             GRP.xBorder.Visibility = System.Windows.Visibility.Visible;
             GRP.xRunnerInfoSplitterBorder.Background = FindResource("$amdocsLogoLinarGradientBrush") as Brush;
             GRP.xRunnerInfoSplitterBorder.Height = 4;
-            if (!((GingerRunner)GRP.Runner).Active)
+            if (!((GingerExecutionEngine)GRP.Runner).Active)
             {
                 GRP.xRunnerNameTxtBlock.Foreground = Brushes.Gray;
             }
@@ -903,7 +903,7 @@ namespace Ginger.Run
         {
             try
             {
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunnerNamelbl, Label.ContentProperty, mCurrentSelectedRunner.Runner, nameof(GingerRunner.Name));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunnerNamelbl, Label.ContentProperty, mCurrentSelectedRunner.Runner, nameof(GingerExecutionEngine.Name));
 
                 xBusinessflowsRunnerItemsLoadingIcon.Visibility = Visibility.Visible;
                 xBusinessflowsRunnerItemsListView.Visibility = Visibility.Collapsed;
@@ -929,7 +929,7 @@ namespace Ginger.Run
                 mCurrentSelectedRunner.Runner.BusinessFlows.CollectionChanged += BusinessFlows_CollectionChanged;
 
 
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mCurrentSelectedRunner.Runner, nameof(GingerRunner.Status), BindingMode.OneWay);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mCurrentSelectedRunner.Runner, nameof(GingerExecutionEngine.Status), BindingMode.OneWay);
             }
             finally
             {
@@ -951,22 +951,22 @@ namespace Ginger.Run
             switch (EventArgs.EventType)
             {
                 case RunnerPageEventArgs.eEventType.RemoveRunner:
-                    removeRunner((GingerRunner)EventArgs.Object);
+                    removeRunner((GingerExecutionEngine)EventArgs.Object);
                     break;
                 case RunnerPageEventArgs.eEventType.DuplicateRunner:
-                    duplicateRunner((GingerRunner)EventArgs.Object);
+                    duplicateRunner((GingerExecutionEngine)EventArgs.Object);
                     break;
                 case RunnerPageEventArgs.eEventType.ResetRunnerStatus:
-                    ResetRunnerStatus((GingerRunner)EventArgs.Object);
+                    ResetRunnerStatus((GingerExecutionEngine)EventArgs.Object);
                     break;
             }
         }
-        private void ResetRunnerStatus(GingerRunner runner)
+        private void ResetRunnerStatus(GingerExecutionEngine runner)
         {
             ResetRunset(runner);
         }
 
-        private void ResetRunset(GingerRunner runner)
+        private void ResetRunset(GingerExecutionEngine runner)
         {
             if (runner.Status == eRunStatus.Running)
                 return;
@@ -995,7 +995,7 @@ namespace Ginger.Run
                 mFlowDiagram.ClearAllFlowElement();
             }
         }
-        internal RunnerPage InitRunnerFlowElement(GingerRunner runner, int index = -1, bool ViewMode = false)
+        internal RunnerPage InitRunnerFlowElement(GingerExecutionEngine runner, int index = -1, bool ViewMode = false)
         {
             RunnerPage GRP = new RunnerPage(runner, mContext, ViewMode);
             GRP.Tag = runner.Guid;
@@ -1073,7 +1073,7 @@ namespace Ginger.Run
                 }
             }
             RunnerPage firstRunnerPage = null;
-            foreach (GingerRunner GR in mRunSetConfig.GingerRunners.ToList())
+            foreach (GingerExecutionEngine GR in mRunSetConfig.GingerRunners.ToList())
             {
                 if (runAsync)
                 {
@@ -1233,10 +1233,10 @@ namespace Ginger.Run
             if (WorkSpace.Instance.Solution != null)
             {
                 xRunnersCombo.ItemsSource = mRunSetConfig.GingerRunners;
-                xRunnersCombo.DisplayMemberPath = nameof(GingerRunner.Name);
-                xRunnersCombo.SelectedValuePath = nameof(GingerRunner.Guid);
+                xRunnersCombo.DisplayMemberPath = nameof(GingerExecutionEngine.Name);
+                xRunnersCombo.SelectedValuePath = nameof(GingerExecutionEngine.Guid);
 
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunnersCombo, ComboBox.SelectedItemProperty, mRunSetConfig.GingerRunners, nameof(GingerRunner.Guid));
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunnersCombo, ComboBox.SelectedItemProperty, mRunSetConfig.GingerRunners, nameof(GingerExecutionEngine.Guid));
             }
         }
         public async void LoadRunSetConfig(RunSetConfig runSetConfig, bool runAsync = true, bool ViewMode = false)
@@ -1390,7 +1390,7 @@ namespace Ginger.Run
             }
         }
 
-        internal void AddRunner(GingerRunner gingerRunner = null)
+        internal void AddRunner(GingerExecutionEngine gingerRunner = null)
         {
             if (mRunSetConfig.GingerRunners.Count < 12)
             {
@@ -1398,7 +1398,7 @@ namespace Ginger.Run
                 int Count = mRunSetConfig.GingerRunners.Count;
                 if (mCurrentSelectedRunner != null && mCurrentSelectedRunner.Runner != null)
                     index = mRunSetConfig.GingerRunners.IndexOf(mCurrentSelectedRunner.Runner) + 1;
-                GingerRunner newRunner = new GingerRunner();
+                GingerExecutionEngine newRunner = new GingerExecutionEngine();
                 if (gingerRunner != null)
                 {
                     newRunner = gingerRunner;
@@ -1632,7 +1632,7 @@ namespace Ginger.Run
         {
             ResetALMDefectsSuggestions();
 
-            foreach (GingerRunner runner in mRunSetConfig.GingerRunners)
+            foreach (GingerExecutionEngine runner in mRunSetConfig.GingerRunners)
             {
                 if (runner.IsRunning == false)
                 {
@@ -1804,7 +1804,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    GingerRunner gr = new GingerRunner();
+                    GingerExecutionEngine gr = new GingerExecutionEngine();
                     gr.ExecutionLoggerManager.GenerateRunSetOfflineReport();
                 }
 
@@ -2207,7 +2207,7 @@ namespace Ginger.Run
             }
         }
 
-        private void removeRunner(GingerRunner runner)
+        private void removeRunner(GingerExecutionEngine runner)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
@@ -2376,14 +2376,14 @@ namespace Ginger.Run
         }
 
 
-        private void duplicateRunner(GingerRunner runner)
+        private void duplicateRunner(GingerExecutionEngine runner)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
             if (runner != null)
             {
-                GingerRunner GR = (GingerRunner)runner;
-                GingerRunner GRCopy = (GingerRunner)GR.CreateCopy(false);
+                GingerExecutionEngine GR = (GingerExecutionEngine)runner;
+                GingerExecutionEngine GRCopy = (GingerExecutionEngine)GR.CreateCopy(false);
                 GRCopy.Guid = Guid.NewGuid();
                 GRCopy.ParentGuid = GR.Guid;
                 List<string> runnerNamesList = (from grs in RunSetConfig.GingerRunners select grs.Name).ToList<string>();
@@ -2436,7 +2436,7 @@ namespace Ginger.Run
                 return;
             if (mCurrentSelectedRunner.Runner.Guid == (Guid)xRunnersCombo.SelectedValue)
                 return;
-            GingerRunner SelectedRunner = (GingerRunner)mRunSetConfig.GingerRunners.Where(x => x.Guid.ToString() == xRunnersCombo.SelectedValue.ToString()).FirstOrDefault();
+            GingerExecutionEngine SelectedRunner = (GingerExecutionEngine)mRunSetConfig.GingerRunners.Where(x => x.Guid.ToString() == xRunnersCombo.SelectedValue.ToString()).FirstOrDefault();
             int index = mRunSetConfig.GingerRunners.IndexOf(SelectedRunner);
             List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
             GingerRunnerHighlight(((RunnerPage)fe[index].GetCustomeShape().Content));
@@ -2573,12 +2573,12 @@ namespace Ginger.Run
             List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
             if (fe.Count > 0)
             {
-                GingerRunner grr = (GingerRunner)((RunnerPage)fe[0].GetCustomeShape().Content).Runner;
+                GingerExecutionEngine grr = (GingerExecutionEngine)((RunnerPage)fe[0].GetCustomeShape().Content).Runner;
                 SetRunnerActive = !grr.Active;
             }
             foreach (FlowElement rp in fe)
             {
-                GingerRunner gr = (GingerRunner)((RunnerPage)rp.GetCustomeShape().Content).Runner;
+                GingerExecutionEngine gr = (GingerExecutionEngine)((RunnerPage)rp.GetCustomeShape().Content).Runner;
                 gr.Active = SetRunnerActive;
                 if (SetRunnerActive)
                 {
@@ -2607,7 +2607,7 @@ namespace Ginger.Run
         {
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
 
-            foreach (GingerRunner GR in WorkSpace.Instance.RunsetExecutor.Runners)
+            foreach (GingerExecutionEngine GR in WorkSpace.Instance.RunsetExecutor.Runners)
             {
                 bfs.Append(GR.BusinessFlows);
             }

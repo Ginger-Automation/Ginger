@@ -73,7 +73,7 @@ namespace GingerWPF.BusinessFlowsLib
     /// </summary>
     public partial class NewAutomatePage : Page, INotifyPropertyChanged
     {
-        GingerRunner mRunner;
+        GingerExecutionEngine mRunner;
         ProjEnvironment mEnvironment = null;
         BusinessFlow mBusinessFlow;
         Activity mActivity = null;
@@ -342,7 +342,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void InitAutomatePageRunner()
         {
-            mRunner = new GingerRunner(eExecutedFrom.Automation);
+            mRunner = new GingerExecutionEngine(eExecutedFrom.Automation);
             mRunner.PropertyChanged += MRunner_PropertyChanged;
 
             // Add Listener so we can do GiveUserFeedback            
@@ -356,7 +356,7 @@ namespace GingerWPF.BusinessFlowsLib
       
         private void MRunner_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(GingerRunner.SpecificEnvironmentName))
+            if (e.PropertyName == nameof(GingerExecutionEngine.SpecificEnvironmentName))
             {
                 if (!string.IsNullOrEmpty(mRunner.SpecificEnvironmentName))
                 {
@@ -377,7 +377,7 @@ namespace GingerWPF.BusinessFlowsLib
             //    }
             //    SetUIElementsBehaverDuringExecution();
             //}
-            else if (e.PropertyName == nameof(GingerRunner.IsRunning))
+            else if (e.PropertyName == nameof(GingerExecutionEngine.IsRunning))
             {
                 mExecutionIsInProgress = mRunner.IsRunning;
                 SetUIElementsBehaverDuringExecution();

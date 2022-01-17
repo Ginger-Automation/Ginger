@@ -198,7 +198,7 @@ namespace Ginger.Run.RunSetActions
                 {
                     if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                     {
-                        GingerRunner gr = new GingerRunner();
+                        GingerExecutionEngine gr = new GingerExecutionEngine();
                         runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
                     }
 
@@ -1944,7 +1944,7 @@ namespace Ginger.Run.RunSetActions
         }
 
 
-        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<GingerExecutionEngine> Gingers)
         {
             throw new NotImplementedException();
         }

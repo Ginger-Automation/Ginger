@@ -155,7 +155,7 @@ namespace Ginger.BusinessFlowWindows
         private void ShowStatus()
         {
             // Why we create new GR? !!!
-            GingerRunner Gr = new GingerRunner();           
+            GingerExecutionEngine Gr = new GingerExecutionEngine();           
             foreach (Activity activity in mContext.BusinessFlow.Activities)
             {
                 Gr.CalculateActivityFinalStatus(activity);

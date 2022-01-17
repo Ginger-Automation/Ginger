@@ -96,7 +96,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             addRunset.RunAnalyzer = cliHelper.RunAnalyzer;
             addRunset.RunInParallel = runsetExecutor.RunSetConfig.RunModeParallel;
 
-            foreach (GingerRunner gingerRunner in runsetExecutor.RunSetConfig.GingerRunners)
+            foreach (GingerExecutionEngine gingerRunner in runsetExecutor.RunSetConfig.GingerRunnersColl)
             {
                 AddRunner addRunner = new AddRunner();
                 addRunner.Name = gingerRunner.Name;
@@ -104,7 +104,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 {
                     addRunner.Environment = gingerRunner.SpecificEnvironmentName;
                 }
-                if (gingerRunner.RunOption != GingerRunner.eRunOptions.ContinueToRunall)
+                if (gingerRunner.RunOption != GingerExecutionEngine.eRunOptions.ContinueToRunall)
                 {
                     addRunner.RunMode = gingerRunner.RunOption.ToString();
                 }
@@ -227,7 +227,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public static void CreateRunSetFromXML(RunsetExecutor runsetExecutor, AddRunset dynamicRunsetConfigs)
         {
-            RunSetConfig runSetConfig = new RunSetConfig();
+            RunSetConfigOperations runSetConfig = new RunSetConfigOperations();
             runSetConfig.Name = dynamicRunsetConfigs.Name;
             runSetConfig.RunWithAnalyzer = dynamicRunsetConfigs.RunAnalyzer;
             runSetConfig.RunModeParallel = dynamicRunsetConfigs.RunInParallel;
@@ -235,12 +235,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             // Add runners
             foreach (AddRunner addRunner in dynamicRunsetConfigs.AddRunners)
             {
-                GingerRunner gingerRunner = new GingerRunner();
+                GingerExecutionEngine gingerRunner = new GingerExecutionEngine();
                 gingerRunner.Name = addRunner.Name;
 
                 if (!string.IsNullOrEmpty(addRunner.RunMode))
                 {
-                    gingerRunner.RunOption = (GingerRunner.eRunOptions)Enum.Parse(typeof(GingerRunner.eRunOptions), addRunner.RunMode, true);
+                    gingerRunner.RunOption = (GingerExecutionEngine.eRunOptions)Enum.Parse(typeof(GingerExecutionEngine.eRunOptions), addRunner.RunMode, true);
                 }
 
                 if (!string.IsNullOrEmpty(addRunner.Environment))
@@ -275,7 +275,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     }
                     gingerRunner.BusinessFlowsRunList.Add(businessFlowRun);
                 }
-                runSetConfig.GingerRunners.Add(gingerRunner);
+                runSetConfig.GingerRunnersColl.Add(gingerRunner);
             }
 
             //Add mail Report handling
@@ -534,11 +534,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             runset.SelfHealingConfiguration = selfHealingConfiguration;
 
 
-            if (runsetExecutor.RunSetConfig.GingerRunners.Count > 0)
+            if (runsetExecutor.RunSetConfig.GingerRunnersColl.Count > 0)
             {
                 runset.Runners = new List<RunnerExecConfig>();
             }
-            foreach (GingerRunner gingerRunner in runsetExecutor.RunSetConfig.GingerRunners)
+            foreach (GingerExecutionEngine gingerRunner in runsetExecutor.RunSetConfig.GingerRunnersColl)
             {
                 RunnerExecConfig runner = new RunnerExecConfig();
                 runner.Name = gingerRunner.Name;
@@ -820,17 +820,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 foreach (RunnerExecConfig runnerConfig in dynamicRunsetConfigs.Runners)
                 {
-                    GingerRunner gingerRunner = null;
+                    GingerExecutionEngine gingerRunner = null;
                     if (dynamicRunsetConfigs.Exist)
                     {
-                        gingerRunner = FindItemByIDAndName<GingerRunner>(
-                            new Tuple<string, Guid?>(nameof(GingerRunner.Guid), runnerConfig.ID),
-                            new Tuple<string, string>(nameof(GingerRunner.Name), runnerConfig.Name),
-                            runSetConfig.GingerRunners);
+                        gingerRunner = FindItemByIDAndName<GingerExecutionEngine>(
+                            new Tuple<string, Guid?>(nameof(GingerExecutionEngine.Guid), runnerConfig.ID),
+                            new Tuple<string, string>(nameof(GingerExecutionEngine.Name), runnerConfig.Name),
+                            ((RunSetConfigOperations)runSetConfig).GingerRunnersColl);
                     }
                     else
                     {
-                        gingerRunner = new GingerRunner();
+                        gingerRunner = new GingerExecutionEngine();
                         gingerRunner.Name = runnerConfig.Name;
                     }
 
@@ -849,7 +849,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                     if (runnerConfig.OnFailureRunOption != null)
                     {
-                        gingerRunner.RunOption = (GingerRunner.eRunOptions)Enum.Parse(typeof(GingerRunner.eRunOptions), runnerConfig.OnFailureRunOption.ToString(), true);
+                        gingerRunner.RunOption = (GingerExecutionEngine.eRunOptions)Enum.Parse(typeof(GingerExecutionEngine.eRunOptions), runnerConfig.OnFailureRunOption.ToString(), true);
                     }
 
                     //Add or Update Agents mapping
@@ -1041,7 +1041,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
                         if (!dynamicRunsetConfigs.Exist)
                         {
-                            runSetConfig.GingerRunners.Add(gingerRunner);
+                            ((RunSetConfigOperations)runSetConfig).GingerRunnersColl.Add(gingerRunner);
                         }
                     }
                 }
@@ -1287,7 +1287,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators = dynamicRunsetConfigs.SelfHealingConfiguration.ReprioritizePOMLocators;
             }
             // Set config
-            runsetExecutor.RunSetConfig = runSetConfig;
+            runsetExecutor.RunSetConfig = ((RunSetConfigOperations)runSetConfig);
         }
 
         public static T FindItemByIDAndName<T>(Tuple<string, Guid?> id, Tuple<string, string> name, ObservableList<T> repoLibrary)

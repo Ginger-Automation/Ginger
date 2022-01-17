@@ -35,7 +35,7 @@ namespace GingerCoreNET
         /// <param name="runner"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static ApplicationAgent GetAppAgent(Activity activity, GingerRunner runner, Context context)
+        public static ApplicationAgent GetAppAgent(Activity activity, GingerExecutionEngine runner, Context context)
         {
             ApplicationAgent appAgent = null;
             if (context != null && activity != null)
@@ -50,7 +50,7 @@ namespace GingerCoreNET
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static bool CheckIfAgentIsRunning(Activity activity, GingerRunner runner, Context context, out IWindowExplorer windowExplorerDriver)
+        public static bool CheckIfAgentIsRunning(Activity activity, GingerExecutionEngine runner, Context context, out IWindowExplorer windowExplorerDriver)
         {
             bool isRunning = false;
             windowExplorerDriver = null;
@@ -71,7 +71,7 @@ namespace GingerCoreNET
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static Agent GetDriverAgent(Activity activity, GingerRunner runner, Context context)
+        public static Agent GetDriverAgent(Activity activity, GingerExecutionEngine runner, Context context)
         {
             Agent agent = null;
             ApplicationAgent appAgent = GetAppAgent(activity, runner, context);
@@ -85,7 +85,7 @@ namespace GingerCoreNET
         /// <summary>
         /// This method is used to Start the agent
         /// </summary>
-        public static bool StartAgent(Activity activity, GingerRunner runner, Context context, out IWindowExplorer windowExplorerDriver)
+        public static bool StartAgent(Activity activity, GingerExecutionEngine runner, Context context, out IWindowExplorer windowExplorerDriver)
         {
             bool isAgentStarted = false;
             windowExplorerDriver = null;

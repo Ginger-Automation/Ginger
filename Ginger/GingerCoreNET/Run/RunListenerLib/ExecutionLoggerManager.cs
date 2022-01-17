@@ -176,7 +176,7 @@ namespace Ginger.Run
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), string.Format("{0} (ID:{1}, ParentID:{2})", activityGroup.Name, activityGroup.Guid, activityGroup.ExecutionParentGuid), AGR);
         }
 
-        public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
+        public override void RunnerRunStart(uint eventTime, GingerExecutionEngine gingerRunner, bool offlineMode = false)
         {
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
@@ -204,7 +204,7 @@ namespace Ginger.Run
 
 
 
-        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
+        public override void RunnerRunEnd(uint eventTime, GingerExecutionEngine gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
             gingerRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationIsEnabled = Configuration.ExecutionLoggerConfigurationIsEnabled;
             mExecutionLogger.SetReportRunner(gingerRunner, gingerReport, GingerData, mContext, filename, runnerCount);
@@ -607,7 +607,7 @@ namespace Ginger.Run
                 int RunnerCount = 1;
                 RunSetStart(exec_folder, _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, CurrentExecutionDateTime, true);
 
-                foreach (GingerRunner gingerrunner in WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners)
+                foreach (GingerExecutionEngine gingerrunner in WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners)
                 {
                     string folder = Path.Combine(exec_folder,RunnerCount.ToString() + " " + gingerrunner.Name);
                     if (System.IO.Directory.Exists(folder))
@@ -721,7 +721,7 @@ namespace Ginger.Run
             context.Runner.SetBFOfflineData(context.BusinessFlow, (context.Runner.RunListeners[0] as ExecutionLoggerManager), exec_folder);
             return exec_folder;
         }
-        public bool OfflineRunnerExecutionLog(GingerRunner runner, string logFolderPath, int runnerCount = 0)
+        public bool OfflineRunnerExecutionLog(GingerExecutionEngine runner, string logFolderPath, int runnerCount = 0)
         {
             try
             {
@@ -773,7 +773,7 @@ namespace Ginger.Run
                     executionLoggerHelper.CleanDirectory(logFolderPath);
                 else
                     Directory.CreateDirectory(logFolderPath);
-                GingerRunner Gr = new GingerRunner();
+                GingerExecutionEngine Gr = new GingerExecutionEngine();
                 mCurrentBusinessFlow = businessFlow;
                 businessFlow.OffilinePropertiesPrep(logFolderPath);
                 System.IO.Directory.CreateDirectory(businessFlow.ExecutionLogFolder);

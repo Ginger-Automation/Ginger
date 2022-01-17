@@ -47,7 +47,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
         }
 
-        public override void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerRunner gingerRunner)
+        public override void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerExecutionEngine gingerRunner)
         {
             return;
         }
@@ -200,7 +200,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return BFR;
         }
 
-        public override void SetReportRunner(GingerRunner gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
+        public override void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
             if (gingerRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {

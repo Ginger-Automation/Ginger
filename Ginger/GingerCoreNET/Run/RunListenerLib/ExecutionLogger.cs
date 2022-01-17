@@ -186,7 +186,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public abstract object SetReportBusinessFlow(Context context, bool offlineMode = false, Amdocs.Ginger.Common.eExecutedFrom executedFrom = eExecutedFrom.Run, bool isConfEnable = false);
         public abstract object SetReportActivityGroup(ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false);
-        public virtual void SetReportRunner(GingerRunner gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
+        public virtual void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
             if (gingerRunner == null)
             {
@@ -232,7 +232,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSetReport.ExecutedbyUser = Environment.UserName;
             runSetReport.GingerVersion = ApplicationInfo.ApplicationVersion;
         }
-        public abstract void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerRunner gingerRunner);
+        public abstract void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerExecutionEngine gingerRunner);
         internal abstract void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline);
         internal abstract void StartRunSet();
         internal abstract void EndRunSet();

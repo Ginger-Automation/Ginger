@@ -42,7 +42,7 @@ namespace WorkspaceHold
         
         static DummyDriver mDummyDriver;
         static GingerGrid mGingerGrid;
-        static GingerRunner mGingerRunner;
+        static GingerExecutionEngine mGingerRunner;
 
         const string cWebApp = "Web";
         static string mPluginId = "DummyPlugin";
@@ -145,7 +145,7 @@ namespace WorkspaceHold
             agent.PluginId = mPluginId;
             agent.ServiceId = mServiceId;
 
-            mGingerRunner = new GingerRunner();
+            mGingerRunner = new GingerExecutionEngine();
             mGingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = cWebApp, Agent = agent });
 
             return agent;

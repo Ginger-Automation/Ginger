@@ -28,7 +28,7 @@ namespace Ginger.AnalyzerLib
     public class AnalyzeRunnerBusinessFlow : AnalyzerItemBase
     {
         public BusinessFlow mBusinessFlow { get; set; }
-        public static List<AnalyzerItemBase> Analyze(GingerRunner GR, BusinessFlow BusinessFlow)
+        public static List<AnalyzerItemBase> Analyze(GingerExecutionEngine GR, BusinessFlow BusinessFlow)
         {
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
 
@@ -106,7 +106,7 @@ namespace Ginger.AnalyzerLib
             return IssuesList;
         }
 
-        private static AnalyzeRunnerBusinessFlow CreateNewIssue(List<AnalyzerItemBase> IssuesList, GingerRunner gr, BusinessFlow BusinessFlow)
+        private static AnalyzeRunnerBusinessFlow CreateNewIssue(List<AnalyzerItemBase> IssuesList, GingerExecutionEngine gr, BusinessFlow BusinessFlow)
         {
             AnalyzeRunnerBusinessFlow ABF = new AnalyzeRunnerBusinessFlow();
             ABF.Status = AnalyzerItemBase.eStatus.NeedFix;

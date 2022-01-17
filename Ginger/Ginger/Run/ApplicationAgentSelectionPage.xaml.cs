@@ -35,9 +35,9 @@ namespace Ginger.Run
     {
         GenericWindow _pageGenericWin = null;
         ApplicationAgent mApplicationAgent;
-        GingerRunner mGingerRunner;
+        GingerExecutionEngine mGingerRunner;
 
-        public ApplicationAgentSelectionPage(GingerRunner gingerRunner, ApplicationAgent applicationAgent)
+        public ApplicationAgentSelectionPage(GingerExecutionEngine gingerRunner, ApplicationAgent applicationAgent)
         {
             InitializeComponent();
 

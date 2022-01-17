@@ -21,9 +21,9 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
     [TestClass]
     public class RunSetActionGenerateTestNGReportTests
     {
-        static GingerRunner mGingerRunner;
+        static GingerExecutionEngine mGingerRunner;
         static BusinessFlow mBF;
-        static GingerRunner mGR;
+        static GingerExecutionEngine mGR;
         static SolutionRepository SR;
         static Solution solution;
         static ProjEnvironment environment;
@@ -51,7 +51,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };
             mBF.AddVariable(v1);
 
-            mGR = new GingerRunner();
+            mGR = new GingerExecutionEngine();
             mGR.Name = "Test Runner";
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
@@ -93,7 +93,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             BusinessFlow BF1 = bfList[0];
             ObservableList<Activity> activityList = BF1.Activities;
             BF1.Active = true;
-            GingerRunner mGRForRunset = new GingerRunner();
+            GingerExecutionEngine mGRForRunset = new GingerExecutionEngine();
             mGRForRunset.Name = "Test Runner";
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
@@ -133,7 +133,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             BusinessFlow BF1 = bfList[0];
             ObservableList<Activity> activityList = BF1.Activities;
             BF1.Active = true;
-            GingerRunner mGRForRunset = new GingerRunner();
+            GingerExecutionEngine mGRForRunset = new GingerExecutionEngine();
             mGRForRunset.Name = "Test Runner";
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
