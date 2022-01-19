@@ -88,7 +88,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
 
 
             mGR = new GingerRunner();
-            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Java Driver";
@@ -99,7 +99,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             activity.TargetApplication = "JavaTestApp";
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
-            mGR.CurrentBusinessFlow = mBF;
+            mGR.Executor.CurrentBusinessFlow = mBF;
 
 
             ApplicationAgent AA = new ApplicationAgent();
@@ -107,7 +107,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             AA.Agent = agent;
 
             mGR.ApplicationAgents.Add(AA);
-            mGR.SetCurrentActivityAgent();
+            mGR.Executor.SetCurrentActivityAgent();
         }
 
 
@@ -160,7 +160,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             mBF.CurrentActivity.Acts.CurrentItem = actBrowserElement;
 
             //ACT
-            mGR.RunAction(actBrowserElement, false);
+            mGR.Executor.RunAction(actBrowserElement, false);
 
             //Assert            
             Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");            
@@ -226,7 +226,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             mBF.CurrentActivity.Acts.CurrentItem = actUIElement;
 
             //ACT
-            mGR.RunAction(actUIElement, false);
+            mGR.Executor.RunAction(actUIElement, false);
 
        
 
@@ -252,7 +252,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             mBF.CurrentActivity.Acts.CurrentItem = actUIElement;
 
             //ACT
-            mGR.RunAction(actUIElement, false);
+            mGR.Executor.RunAction(actUIElement, false);
             //Assert                        
             Assert.IsTrue(actUIElement.Error.Contains("Element not found"), "actUIElement.Error");            
         }
@@ -285,9 +285,9 @@ namespace GingerPluginCoreTest.CommunicationProtocol
 
             //ACT
             mBF.CurrentActivity.Acts.CurrentItem = setTextBoxAction;
-            mGR.RunAction(setTextBoxAction, false);
+            mGR.Executor.RunAction(setTextBoxAction, false);
             mBF.CurrentActivity.Acts.CurrentItem = getTextBoxAction;
-            mGR.RunAction(getTextBoxAction, false);
+            mGR.Executor.RunAction(getTextBoxAction, false);
             string textBoxValue = getTextBoxAction.GetReturnParam("Actual");
 
 

@@ -177,20 +177,20 @@ namespace Ginger.Run
             }
         }
 
-        private ObservableList<GingerExecutionEngine> mGingerRunners;
+        private ObservableList<GingerRunner> mGingerRunners;
         /// <summary>
         /// Been used to identify if Activity Variables were lazy loaded already or not
         /// </summary>
         public bool GingerRunnersLazyLoad { get { return (mGingerRunners != null) ? mGingerRunners.LazyLoad : false; } }
         [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
-        public ObservableList<GingerExecutionEngine> GingerRunners
+        public ObservableList<GingerRunner> GingerRunners
         {
             get
             {
                 if (mGingerRunners == null)
                 {
-                    mGingerRunners = new ObservableList<GingerExecutionEngine>();
+                    mGingerRunners = new ObservableList<GingerRunner>();
                 }
                 if (mGingerRunners.LazyLoad)
                 {
@@ -322,11 +322,11 @@ namespace Ginger.Run
 
         public void UpdateRunnersBusinessFlowRunsList()
         {
-            foreach (GingerExecutionEngine GR in GingerRunners)
+            foreach (GingerRunner GR in GingerRunners)
             {
-                if (GR.IsUpdateBusinessFlowRunList)
+                if (GR.Executor.IsUpdateBusinessFlowRunList)
                 {
-                    GR.UpdateBusinessFlowsRunList();
+                    GR.Executor.UpdateBusinessFlowsRunList();
                 }
             }
         }

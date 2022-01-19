@@ -200,7 +200,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return BFR;
         }
 
-        public override void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
+        public override void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
             if (gingerRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
@@ -224,12 +224,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
         }
 
-        internal override void CreateNewDirectory(string logFolder)
+        public override void CreateNewDirectory(string logFolder)
         {
             System.IO.Directory.CreateDirectory(logFolder);
         }
 
-        internal override void EndRunSet()
+        public override void EndRunSet()
         {
             return;
         }
@@ -239,7 +239,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return folder;
         }
 
-        internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
+        public override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
         {
             if (!offline)
                 ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(Path.Combine(execResultsFolder,executionLoggerHelper.folderNameNormalazing(ExecutionLoggerManager.RunSetReport.Name.ToString()) + "_" + currentExecutionDateTime.ToString("MMddyyyy_HHmmssfff")));
@@ -250,7 +250,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             executionLoggerHelper.CreateTempDirectory();
         }
 
-        internal override void StartRunSet()
+        public override void StartRunSet()
         {
             return;
         }
@@ -263,7 +263,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             throw new NotImplementedException();
         }
-        internal override void ResetLastRunSetDetails()
+        public override void ResetLastRunSetDetails()
         {
             return;
         }

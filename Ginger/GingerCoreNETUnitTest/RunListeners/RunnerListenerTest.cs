@@ -24,7 +24,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             mGingerRunner = new GingerRunner();
             mGingerRunnerTimeLine = new GingerRunnerTimeLine();
-            mGingerRunner.RunListeners.Add(mGingerRunnerTimeLine);
+            ((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.Add(mGingerRunnerTimeLine);
             RunListenerBase.Start();
             Thread.Sleep(10);
         }
@@ -63,11 +63,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             ActDummy action1 = new ActDummy() { Description = "Dummy action 1", Active = true };
             activitiy1.Acts.Add(action1);
-            mGingerRunner.BusinessFlows.Add(mBF);
+            mGingerRunner.Executor.BusinessFlows.Add(mBF);
 
 
             //Act            
-            mGingerRunner.RunBusinessFlow(mBF);
+            mGingerRunner.Executor.RunBusinessFlow(mBF);
 
             List<TimeLineEvent> events = mGingerRunnerTimeLine.timeLineEvents.EventList;
 

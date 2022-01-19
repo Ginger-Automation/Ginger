@@ -62,7 +62,7 @@ namespace UnitTests.NonUITests
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
           
-            mGR.CurrentBusinessFlow = mBF;          
+            mGR.Executor.CurrentBusinessFlow = mBF;          
         }
 
         [Ignore]
@@ -248,7 +248,7 @@ namespace UnitTests.NonUITests
             projEnvironment.Applications.Add(envApplication);
             mGR.ProjEnvironment = projEnvironment;
 
-            mGR.RunAction(actDB, false);
+            mGR.Executor.RunAction(actDB, false);
 
             Assert.AreEqual(eRunStatus.Passed, actDB.Status, "Action Status");
 
@@ -283,7 +283,7 @@ namespace UnitTests.NonUITests
             projEnvironment.Applications.Add(envApplication);
             mGR.ProjEnvironment = projEnvironment;
 
-            mGR.RunAction(actDB, false);
+            mGR.Executor.RunAction(actDB, false);
 
             Assert.AreEqual(eRunStatus.Passed, actDB.Status, "Action Status");
 
@@ -318,7 +318,7 @@ namespace UnitTests.NonUITests
             projEnvironment.Applications.Add(envApplication);
             mGR.ProjEnvironment = projEnvironment;
 
-            mGR.RunAction(actDB, false);
+            mGR.Executor.RunAction(actDB, false);
 
             Assert.AreEqual(eRunStatus.Passed, actDB.Status, "Action Status");
 

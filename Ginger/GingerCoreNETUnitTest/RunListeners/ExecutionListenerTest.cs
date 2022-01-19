@@ -32,7 +32,7 @@ namespace GingerCoreNETUnitTest.RunListeners
             //mExecutionLogger.ExecutionLogfolder = @"c:\temp\koko1";
             //mExecutionLogger.Configuration.ExecutionLoggerConfigurationIsEnabled = true; // !!!!!!!!!!!!!!!!!!!!! remove this flag            
             //mGingerRunner.RunListeners.Add(mExecutionLogger);
-            mExecutionLogger = (ExecutionLoggerManager)mGingerRunner.RunListeners.Where(x=>x.GetType()==typeof(ExecutionLoggerManager)).FirstOrDefault();   // !!!!!!!!!!!!!!!!
+            mExecutionLogger = (ExecutionLoggerManager)((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.Where(x=>x.GetType()==typeof(ExecutionLoggerManager)).FirstOrDefault();   // !!!!!!!!!!!!!!!!
         }
 
         [ClassCleanup]
@@ -69,12 +69,12 @@ namespace GingerCoreNETUnitTest.RunListeners
 
             ActDummy action1 = new ActDummy() { Description = "Dummay action 1", Active = true };
             activitiy1.Acts.Add(action1);
-            mGingerRunner.BusinessFlows.Add(mBF);
+            mGingerRunner.Executor.BusinessFlows.Add(mBF);
 
 
             //Act
             RunListenerBase.Start();
-            mGingerRunner.RunBusinessFlow(mBF);
+            mGingerRunner.Executor.RunBusinessFlow(mBF);
 
             mExecutionLogger.ExecutionLogBusinessFlowsCounter = 1;
 

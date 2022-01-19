@@ -85,29 +85,29 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
 
         #region Runner
-        public override async void RunnerRunStart(uint eventTime, GingerExecutionEngine gingerRunner, bool offlineMode = false)
+        public override async void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
             await RunnerRunStartTask(gingerRunner);
         }
 
-        private async Task RunnerRunStartTask(GingerExecutionEngine gingerRunner)
+        private async Task RunnerRunStartTask(GingerRunner gingerRunner)
         {
             AccountReportRunner accountReportRunner = AccountReportEntitiesDataMapping.MapRunnerStartData(gingerRunner, mContext);
             await AccountReportApiHandler.SendRunnerExecutionDataToCentralDBAsync(accountReportRunner);
         }
 
-        public override async void RunnerRunEnd(uint eventTime, GingerExecutionEngine gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
+        public override async void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
-            if (!gingerRunner.Active || gingerRunner.ExecutionId == Guid.Empty || gingerRunner.Status == Execution.eRunStatus.Blocked)
+            if (!gingerRunner.Active || gingerRunner.Executor.ExecutionId == Guid.Empty || gingerRunner.Status == Execution.eRunStatus.Blocked)
             {
                 return;
             }
-            await RunnerRunEndTask(gingerRunner);
+            await RunnerRunEndTask((GingerExecutionEngine)gingerRunner.Executor);
         }
 
         private async Task RunnerRunEndTask(GingerExecutionEngine gingerRunner)
         {
-            AccountReportRunner accountReportRunner = AccountReportEntitiesDataMapping.MapRunnerEndData(gingerRunner, mContext);
+            AccountReportRunner accountReportRunner = AccountReportEntitiesDataMapping.MapRunnerEndData(gingerRunner.GingerRunner, mContext);
             await AccountReportApiHandler.SendRunnerExecutionDataToCentralDBAsync(accountReportRunner, true);
         }
 

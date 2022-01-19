@@ -66,7 +66,7 @@ namespace UnitTests.UITests.PBDriverTest
             }
 
             mGR = new GingerRunner();
-            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test PB Driver";
@@ -85,15 +85,15 @@ namespace UnitTests.UITests.PBDriverTest
             a.Driver = mDriver;
             a.DriverType = Agent.eDriverType.PowerBuilder;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
 
             ApplicationAgent AA = new ApplicationAgent();
             AA.AppName = "PBTestApp";
             AA.Agent = a;
             mGR.ApplicationAgents.Add(AA);
-            mGR.CurrentBusinessFlow = mBF;
-            mGR.SetCurrentActivityAgent();
+            mGR.Executor.CurrentBusinessFlow = mBF;
+            mGR.Executor.SetCurrentActivityAgent();
             // Do Switch Window, to be ready for actions
             ActSwitchWindow c = new ActSwitchWindow();
             c.LocateBy = eLocateBy.ByTitle;
@@ -122,7 +122,7 @@ namespace UnitTests.UITests.PBDriverTest
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             action = new ActPBControl();
             action.LocateBy = eLocateBy.ByName;
@@ -133,7 +133,7 @@ namespace UnitTests.UITests.PBDriverTest
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             c = new ActSwitchWindow();
             c.LocateBy = eLocateBy.ByTitle;
@@ -157,7 +157,7 @@ namespace UnitTests.UITests.PBDriverTest
                 mBF.CurrentActivity.Acts.Add(action);
                 mBF.CurrentActivity.Acts.CurrentItem = action;
                 //Act
-                mGR.RunAction(action, false);
+                mGR.Executor.RunAction(action, false);
 
                 Assert.AreEqual(action.Status, eRunStatus.Passed, "Action Status");
                 actual = action.GetReturnParam("Actual");
@@ -170,7 +170,7 @@ namespace UnitTests.UITests.PBDriverTest
                     PbAct.Active = true;                    
                     mBF.CurrentActivity.Acts.Add(PbAct);
                     mBF.CurrentActivity.Acts.CurrentItem = PbAct;
-                    mGR.RunAction(PbAct, false);
+                    mGR.Executor.RunAction(PbAct, false);
                 }
             } while (actual.Equals("True"));
 
@@ -195,7 +195,7 @@ namespace UnitTests.UITests.PBDriverTest
                 actBrowser.Active = true;
                 mBF.CurrentActivity.Acts.Add(actBrowser);
                 mBF.CurrentActivity.Acts.CurrentItem = actBrowser;
-                mGR.RunAction(actBrowser, false);                
+                mGR.Executor.RunAction(actBrowser, false);                
                 count--;
             } while (actBrowser.Status.Equals(eRunStatus.Failed) && count > 0);
             if(actBrowser.Status.Equals(eRunStatus.Failed))
@@ -209,7 +209,7 @@ namespace UnitTests.UITests.PBDriverTest
         [ClassCleanup()]
         public static void ClassCleanup()
         {
-            mGR.StopAgents();
+            mGR.Executor.StopAgents();
             mDriver = null;
             mGR = null;
             try
@@ -235,7 +235,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
             
             act = new ActGenElement();
             act.LocateBy = eLocateBy.ByName;
@@ -245,7 +245,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
@@ -266,7 +266,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             act = new ActGenElement();
             act.LocateBy = eLocateBy.ByName;
@@ -276,7 +276,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
@@ -296,7 +296,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             act = new ActGenElement();
             act.LocateBy = eLocateBy.ByName;
@@ -307,7 +307,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             act = new ActGenElement();
             act.LocateBy = eLocateBy.ByName;
@@ -318,7 +318,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
@@ -339,7 +339,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             act = new ActGenElement();
             act.LocateBy = eLocateBy.ByID;
@@ -349,7 +349,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
@@ -369,7 +369,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
             
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
@@ -389,7 +389,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
@@ -409,7 +409,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
@@ -429,7 +429,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
@@ -449,7 +449,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
@@ -468,7 +468,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.AddNewReturnParams = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
@@ -479,7 +479,7 @@ namespace UnitTests.UITests.PBDriverTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -496,7 +496,7 @@ namespace UnitTests.UITests.PBDriverTest
                 mBF.CurrentActivity.Acts.Add(c);
                 mBF.CurrentActivity.Acts.CurrentItem = c;
                 //Act
-                mGR.RunAction(c, false);
+                mGR.Executor.RunAction(c, false);
             }
             else
             {
@@ -517,7 +517,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.AddNewReturnParams = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
@@ -528,7 +528,7 @@ namespace UnitTests.UITests.PBDriverTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -545,7 +545,7 @@ namespace UnitTests.UITests.PBDriverTest
                 mBF.CurrentActivity.Acts.Add(c);
                 mBF.CurrentActivity.Acts.CurrentItem = c;
                 //Act
-                mGR.RunAction(c, false);
+                mGR.Executor.RunAction(c, false);
             }
             else
             {
@@ -564,7 +564,7 @@ namespace UnitTests.UITests.PBDriverTest
             //act.Active = true;
             //mBF.CurrentActivity.Acts.Add(act);
             //mBF.CurrentActivity.Acts.CurrentItem = act;
-            //mGR.RunAction(act, false);
+            //mGR.Executor.RunAction(act, false);
 
             act = new ActGenElement();
             act.LocateBy = eLocateBy.ByName;
@@ -574,7 +574,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
              act = new ActGenElement();
             act.LocateBy = eLocateBy.ByName;
@@ -584,7 +584,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             act = new ActGenElement();
             act.LocateBy = eLocateBy.ByName;
@@ -593,7 +593,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             act = new ActGenElement();
             act.LocateBy = eLocateBy.ByXPath;
@@ -604,7 +604,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             act = new ActGenElement();
             act.LocateBy = eLocateBy.ByName;
@@ -614,7 +614,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
@@ -636,7 +636,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
@@ -655,7 +655,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
@@ -675,7 +675,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
             ActPBControl action = new ActPBControl();
 
 
@@ -690,7 +690,7 @@ namespace UnitTests.UITests.PBDriverTest
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
 
             Assert.AreEqual(action.Status, eRunStatus.Passed, "Action Status");
@@ -709,7 +709,7 @@ namespace UnitTests.UITests.PBDriverTest
                     PbAct.AddNewReturnParams = true;
                     mBF.CurrentActivity.Acts.Add(PbAct);
                     mBF.CurrentActivity.Acts.CurrentItem = PbAct;
-                    mGR.RunAction(PbAct, false);
+                    mGR.Executor.RunAction(PbAct, false);
 
 
                     action = new ActPBControl();
@@ -722,7 +722,7 @@ namespace UnitTests.UITests.PBDriverTest
                     mBF.CurrentActivity.Acts.Add(action);
                     mBF.CurrentActivity.Acts.CurrentItem = action;
                     //Act
-                    mGR.RunAction(action, false);
+                    mGR.Executor.RunAction(action, false);
                     actual = PbAct.GetReturnParam("Actual");
                 }
             }
@@ -738,7 +738,7 @@ namespace UnitTests.UITests.PBDriverTest
             actGen.Active = true;
             mBF.CurrentActivity.Acts.Add(actGen);
             mBF.CurrentActivity.Acts.CurrentItem = actGen;
-            mGR.RunAction(actGen, false);
+            mGR.Executor.RunAction(actGen, false);
         }
 
         //[Ignore]
@@ -752,7 +752,7 @@ namespace UnitTests.UITests.PBDriverTest
         //    act.Active = true;
         //    mBF.CurrentActivity.Acts.Add(act);
         //    mBF.CurrentActivity.Acts.CurrentItem = act;
-        //    mGR.RunAction(act, false);
+        //    mGR.Executor.RunAction(act, false);
 
         //    Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
         //    string actual = act.GetReturnParam("Actual");
@@ -774,7 +774,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
@@ -790,7 +790,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
@@ -807,7 +807,7 @@ namespace UnitTests.UITests.PBDriverTest
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");

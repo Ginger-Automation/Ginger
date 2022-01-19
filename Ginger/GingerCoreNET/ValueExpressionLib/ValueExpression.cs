@@ -313,7 +313,7 @@ namespace GingerCore
                 return;
             }
 
-            string json = WorkSpace.Instance.RunsetExecutor.Runners[0].ExecutionLoggerManager.mExecutionLogger.CalculateExecutionJsonData(liteDbRunSet, defaultTemplate);
+            string json = ((ExecutionLogger)WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.ExecutionLoggerManager.mExecutionLogger).CalculateExecutionJsonData(liteDbRunSet, defaultTemplate);
 
             mValueCalculated = mValueCalculated.Replace(josnExpression, json);
         }
@@ -371,7 +371,7 @@ namespace GingerCore
             }
             if (runset != null)
             {
-                runner = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.BusinessFlows.Contains(this.BF)).FirstOrDefault();
+                runner = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.Executor.BusinessFlows.Contains(this.BF)).FirstOrDefault();
             }
 
             RepositoryItemBase objtoEval = null;
@@ -389,7 +389,7 @@ namespace GingerCore
                 case eFlowDetailsObjects.LastFailedBusinessFlow:
                     if (runner != null)
                     {
-                        objtoEval = runner.LastFailedBusinessFlow;
+                        objtoEval = ((GingerExecutionEngine)runner.Executor).LastFailedBusinessFlow;
                     }
                     break;
                 case eFlowDetailsObjects.BusinessFlow:
@@ -410,7 +410,7 @@ namespace GingerCore
                 case eFlowDetailsObjects.PreviousBusinessFlow:
                     if (runner != null)
                     {
-                        objtoEval = runner.PreviousBusinessFlow;
+                        objtoEval = ((GingerExecutionEngine)runner.Executor).PreviousBusinessFlow;
                     }
                     break;
                 case eFlowDetailsObjects.PreviousActivity:

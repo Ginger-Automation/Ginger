@@ -29,6 +29,7 @@ using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.BusinessFlowWindows;
 using Ginger.Help;
 using Ginger.Repository;
+using Ginger.Run;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
@@ -1270,7 +1271,7 @@ namespace Ginger.Actions
         private void HighLightElementButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: fixme - Currently working with first agent
-            ApplicationAgent aa = (ApplicationAgent)mContext.Runner.ApplicationAgents[0];
+            ApplicationAgent aa = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents[0];
             if (aa != null)
             {
                 DriverBase driver = ((Agent)aa.Agent).Driver;
@@ -1288,7 +1289,7 @@ namespace Ginger.Actions
 
         private void ControlSelectorButton_Click(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent aa = (ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent aa = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
             if (aa != null)
             {
                 if (((Agent)aa.Agent).Driver == null)

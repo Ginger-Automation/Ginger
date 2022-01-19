@@ -92,7 +92,7 @@ namespace Ginger.Run.RunSetActions
             return "RunSetActionScriptEditPage";
         }
 
-        public override void PrepareDuringExecAction(ObservableList<GingerExecutionEngine> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
         {
             throw new NotImplementedException();
         }

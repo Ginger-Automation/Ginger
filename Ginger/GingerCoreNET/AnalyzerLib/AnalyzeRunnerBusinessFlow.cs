@@ -70,7 +70,7 @@ namespace Ginger.AnalyzerLib
                             {
                                 AnalyzeRunnerBusinessFlow ABF = CreateNewIssue(IssuesList, GR, BusinessFlow);
                                 ABF.Description = "Flow control is mapped to " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " which does not exist";
-                                ABF.Details = "'" + GoToBusinessFlow + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " does not exist in the '" + GR.Name + " ' " + GingerDicser.GetTermResValue(eTermResKey.RunSet);
+                                ABF.Details = "'" + GoToBusinessFlow + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " does not exist in the '" + GR.GingerRunner.Name + " ' " + GingerDicser.GetTermResValue(eTermResKey.RunSet);
                                 ABF.HowToFix = "Remap the Flow Control Action";
                                 ABF.IssueType = eType.Error;
                                 ABF.CanAutoFix = AnalyzerItemBase.eCanFix.No;
@@ -112,7 +112,7 @@ namespace Ginger.AnalyzerLib
             ABF.Status = AnalyzerItemBase.eStatus.NeedFix;
             ABF.mBusinessFlow = BusinessFlow;
             ABF.ItemName = BusinessFlow.Description;
-            ABF.ItemParent = gr.Name + " > " + BusinessFlow.Name;
+            ABF.ItemParent = gr.GingerRunner.Name + " > " + BusinessFlow.Name;
             ABF.mBusinessFlow = BusinessFlow;
             ABF.ItemClass = "BusinessFlow";
             IssuesList.Add(ABF);

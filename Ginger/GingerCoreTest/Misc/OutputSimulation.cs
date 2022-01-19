@@ -57,10 +57,10 @@ namespace UnitTests.NonUITests
             mAG.Agent = wsAgent;
 
             mGR = new GingerRunner();
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(wsAgent);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
 
-            mGR.BusinessFlows.Add(mBF);
+            mGR.Executor.BusinessFlows.Add(mBF);
 
           
 
@@ -103,7 +103,7 @@ namespace UnitTests.NonUITests
             mGR.RunInSimulationMode = true;
 
             mDriver.StartDriver();
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
 
             if (restAct.ReturnValues.Count > 0)
@@ -152,7 +152,7 @@ namespace UnitTests.NonUITests
             
 
             mDriver.StartDriver();
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
 
             if (restAct.ReturnValues.Count > 0)
@@ -203,7 +203,7 @@ namespace UnitTests.NonUITests
 
 
             mDriver.StartDriver();
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
 
             if (restAct.ReturnValues.Count > 0)
@@ -258,7 +258,7 @@ namespace UnitTests.NonUITests
             mGR.RunInSimulationMode = true;
 
 
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             if (restAct.ReturnValues[0].SimulatedActual == restAct.ReturnValues[0].Actual)
                 Assert.AreEqual(restAct.ReturnValues[0].Actual, restAct.ReturnValues[0].ExpectedCalculated);

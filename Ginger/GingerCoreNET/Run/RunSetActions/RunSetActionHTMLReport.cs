@@ -109,7 +109,7 @@ namespace Ginger.Run.RunSetActions
                 else
                 {
                     GingerRunner gr = new GingerRunner();
-                    runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();                    
+                    runSetFolder = gr.Executor.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();                    
                 }
 
                 string currentHTMLFolderName = string.Empty;

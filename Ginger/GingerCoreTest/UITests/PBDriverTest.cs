@@ -66,7 +66,7 @@ namespace UnitTest
             }
             
                 mGR = new GingerRunner();
-                mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+                mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
                 mBF = new BusinessFlow();
                 mBF.Activities = new ObservableList<Activity>();
                 mBF.Name = "BF Test PB Driver";
@@ -85,27 +85,27 @@ namespace UnitTest
                 a.Driver = mDriver;
                 a.DriverType = Agent.eDriverType.PowerBuilder;
 
-                mGR.SolutionAgents = new ObservableList<Agent>();
-                mGR.SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
 
                 ApplicationAgent AA = new ApplicationAgent();
                 AA.AppName = "PBTestApp";                
                 AA.Agent = a;
                 mGR.ApplicationAgents.Add(AA);
-                mGR.CurrentBusinessFlow = mBF;
-                mGR.SetCurrentActivityAgent();
+                mGR.Executor.CurrentBusinessFlow = mBF;
+                mGR.Executor.SetCurrentActivityAgent();
                 // Do Switch Window, to be ready for actions
                 ActSwitchWindow c = new ActSwitchWindow();
                 c.LocateBy = eLocateBy.ByTitle;                
                 c.LocateValue = "Simple Page";
                 c.WaitTime = 10;
-                mGR.RunAction(c,false);
+                mGR.Executor.RunAction(c,false);
         }
 
         [ClassCleanup()]
         public static void ClassCleanup()
         {
-            mGR.StopAgents();
+            mGR.Executor.StopAgents();
             mDriver = null;
             mGR = null;
             try
@@ -141,7 +141,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c,false);
+            mGR.Executor.RunAction(c,false);
 
 
             ActPBControl act = new ActPBControl();
@@ -154,7 +154,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             //Act
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
@@ -177,7 +177,7 @@ namespace UnitTest
             c.ControlAction = ActPBControl.eControlAction.SetValue;
             c.LocateValue = "sle_acc_text";            
             c.Value = "ABCDEF";
-            mGR.RunAction(c);
+            mGR.Executor.RunAction(c);
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -191,7 +191,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             //Act
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             //Assert
            Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
@@ -214,7 +214,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
 
             ActPBControl act = new ActPBControl();
@@ -227,7 +227,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             //Act
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
@@ -253,7 +253,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -279,7 +279,7 @@ namespace UnitTest
             
             mBF.CurrentActivity.Acts.Add(actWinMax);
             mBF.CurrentActivity.Acts.CurrentItem = actWinMax;
-            mGR.RunAction(actWinMax, false);
+            mGR.Executor.RunAction(actWinMax, false);
 
             //Assert
             Assert.AreEqual(actWinMax.Status, eRunStatus.Passed, "Action Status");
@@ -294,7 +294,7 @@ namespace UnitTest
 
             mBF.CurrentActivity.Acts.Add(actWinMin);
             mBF.CurrentActivity.Acts.CurrentItem = actWinMin;
-            mGR.RunAction(actWinMin, false);
+            mGR.Executor.RunAction(actWinMin, false);
 
             //Assert
             Assert.AreEqual(actWinMin.Status, eRunStatus.Passed, "Action Status");
@@ -309,7 +309,7 @@ namespace UnitTest
 
             mBF.CurrentActivity.Acts.Add(actWinRes);
             mBF.CurrentActivity.Acts.CurrentItem = actWinRes;
-            mGR.RunAction(actWinRes, false);
+            mGR.Executor.RunAction(actWinRes, false);
 
             //Assert
             Assert.AreEqual(actWinRes.Status, eRunStatus.Passed, "Action Status");
@@ -342,7 +342,7 @@ namespace UnitTest
 
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
          
             //Assert
            Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
@@ -351,7 +351,7 @@ namespace UnitTest
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
            Assert.AreEqual(c.Status, eRunStatus.Passed, "c.Status");
            Assert.AreEqual(c.Error, null, "c.Error");
@@ -381,7 +381,7 @@ namespace UnitTest
 
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             //Assert
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
@@ -390,7 +390,7 @@ namespace UnitTest
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             Assert.AreEqual(c.Status, eRunStatus.Passed, "c.Status");
             Assert.AreEqual(c.Error, null, "c.Error");
@@ -419,7 +419,7 @@ namespace UnitTest
 
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             //Assert
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
@@ -428,7 +428,7 @@ namespace UnitTest
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             Assert.AreEqual(c.Status, eRunStatus.Passed, "c.Status");
             Assert.AreEqual(c.Error, null, "c.Error");
@@ -447,7 +447,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -470,7 +470,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -493,7 +493,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -515,7 +515,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -534,7 +534,7 @@ namespace UnitTest
             act.Active = true;            
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             //Assert
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
@@ -559,7 +559,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
 
             ActPBControl act = new ActPBControl();
@@ -572,7 +572,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             //Act
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             //Assert
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
@@ -601,7 +601,7 @@ namespace UnitTest
             c.AddNewReturnParams = true;
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c,false);
+            mGR.Executor.RunAction(c,false);
 
             // Prep Get Value Action
             ActPBControl act = new ActPBControl();
@@ -614,7 +614,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             //Act
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             //Assert
            Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
@@ -637,7 +637,7 @@ namespace UnitTest
             c.AddNewReturnParams = true;
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c,false);  
+            mGR.Executor.RunAction(c,false);  
 
             //toggle
             ActPBControl c1 = new ActPBControl();
@@ -652,7 +652,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.CurrentItem = c1;
 
             //Act
-            mGR.RunAction(c1, false);
+            mGR.Executor.RunAction(c1, false);
 
 
             // Prep Get Value Action
@@ -667,7 +667,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             //Assert
            Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
@@ -691,7 +691,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.CurrentItem = c;
 
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
@@ -711,7 +711,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             //Act
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             //Assert
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
@@ -730,7 +730,7 @@ namespace UnitTest
                 mBF.CurrentActivity.Acts.Add(act);
                 mBF.CurrentActivity.Acts.CurrentItem = act;
                 //Act
-                mGR.RunAction(act, false);
+                mGR.Executor.RunAction(act, false);
 
             }            
         }
@@ -751,7 +751,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
@@ -763,7 +763,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             //Act
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
@@ -787,7 +787,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c1);
             mBF.CurrentActivity.Acts.CurrentItem = c1;
             //Act
-            mGR.RunAction(c1, false);
+            mGR.Executor.RunAction(c1, false);
             
             //Select the radio button
             ActPBControl c = new ActPBControl();
@@ -800,7 +800,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             string actual = c.GetReturnParam("Actual");
@@ -822,7 +822,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.CurrentItem = c;
 
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
 
             c.LocateBy = eLocateBy.ByName;
@@ -830,7 +830,7 @@ namespace UnitTest
             c.LocateValue = "Masters";
             c.Active = true;
 
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
             //Assert
            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
            Assert.AreEqual(c.Error, null, "Act.Error");
@@ -855,7 +855,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.CurrentItem = c;
 
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
@@ -874,7 +874,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
@@ -898,7 +898,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
@@ -911,7 +911,7 @@ namespace UnitTest
             c.AddNewReturnParams = true;
             c.Active = true;
 
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             string actual = c.GetReturnParam("Selected Item");
@@ -935,7 +935,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
@@ -944,7 +944,7 @@ namespace UnitTest
             c.AddNewReturnParams = true;
             c.Active = true;
 
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
             //Assert
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             string actual = c.GetReturnParam("Selected Item");
@@ -964,7 +964,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
@@ -985,7 +985,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             ActPBControl act= new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
@@ -997,7 +997,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             //Act
-            mGR.RunAction(act, false);
+            mGR.Executor.RunAction(act, false);
 
             //Assert
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
@@ -1018,7 +1018,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
              
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
@@ -1028,7 +1028,7 @@ namespace UnitTest
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
             //Assert
 
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
@@ -1051,7 +1051,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             string actual = c.GetReturnParam("Actual");
@@ -1072,7 +1072,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -1095,7 +1095,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -1118,7 +1118,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -1141,7 +1141,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -1164,7 +1164,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -1187,7 +1187,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -1210,7 +1210,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -1233,7 +1233,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -1257,7 +1257,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
@@ -1268,7 +1268,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             string actual = c.GetReturnParam("Dialog Title");
@@ -1280,7 +1280,7 @@ namespace UnitTest
             c.LocateValue = "OK";
             c.Active = true;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -1294,7 +1294,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
@@ -1305,7 +1305,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
@@ -1319,7 +1319,7 @@ namespace UnitTest
             c.LocateValue = "OK";
             c.Active = true;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
         }
         #endregion
 
@@ -1336,7 +1336,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             string actual = c.GetReturnParam("Actual");
@@ -1357,7 +1357,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             Assert.AreEqual(c.Status, eRunStatus.Passed, "c.Status");
             Assert.AreEqual(c.Error, null, "c.Error");
@@ -1371,7 +1371,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(pbAct);
             mBF.CurrentActivity.Acts.CurrentItem = pbAct;
-            mGR.RunAction(pbAct, false);
+            mGR.Executor.RunAction(pbAct, false);
 
             Assert.AreEqual(pbAct.Status, eRunStatus.Passed, "c.Status");
             Assert.AreEqual(pbAct.Error, null, "c.Error");
@@ -1392,7 +1392,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             Assert.AreEqual(c.Status, eRunStatus.Passed, "c.Status");
             Assert.AreEqual(c.Error, null, "c.Error");
@@ -1407,7 +1407,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(pbAct);
             mBF.CurrentActivity.Acts.CurrentItem = pbAct;
-            mGR.RunAction(pbAct, false);
+            mGR.Executor.RunAction(pbAct, false);
 
             Assert.AreEqual(pbAct.Status, eRunStatus.Passed, "Action Status");
             string actual = pbAct.GetReturnParam("Actual");
@@ -1431,7 +1431,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
@@ -1442,7 +1442,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             string actual = c.GetReturnParam("Actual");
@@ -1462,7 +1462,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
@@ -1473,7 +1473,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
@@ -1494,7 +1494,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
@@ -1505,7 +1505,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
@@ -1527,7 +1527,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             c = new ActPBControl();
 
@@ -1539,7 +1539,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             string actual = c.GetReturnParam("Selected Item");
@@ -1571,7 +1571,7 @@ namespace UnitTest
             actGrid.Active = true;
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;            
-            mGR.RunAction(actGrid, false);
+            mGR.Executor.RunAction(actGrid, false);
            Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");            
             string actual = actGrid.GetReturnParam("Actual");
            Assert.AreEqual(actual, "2109 Fox Dr, Champaign IL ", "Ret Param Actual");
@@ -1608,7 +1608,7 @@ namespace UnitTest
 
             mBF.CurrentActivity.Acts.CurrentItem = actGrid1;
             //Act
-            mGR.RunAction(actGrid1, false);
+            mGR.Executor.RunAction(actGrid1, false);
 
             //Assert
             ActTableElement actGrid = new ActTableElement();
@@ -1638,7 +1638,7 @@ namespace UnitTest
 
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
             //Act
-            mGR.RunAction(actGrid, false);
+            mGR.Executor.RunAction(actGrid, false);
 
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
@@ -1677,7 +1677,7 @@ namespace UnitTest
 
              mBF.CurrentActivity.Acts.CurrentItem = actGrid;
              //Act
-             mGR.RunAction(actGrid, false);
+             mGR.Executor.RunAction(actGrid, false);
             //Assert
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
@@ -1713,7 +1713,7 @@ namespace UnitTest
 
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
             //Act
-            mGR.RunAction(actGrid, false);
+            mGR.Executor.RunAction(actGrid, false);
             //Assert
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
@@ -1750,7 +1750,7 @@ namespace UnitTest
 
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
             //Act
-            mGR.RunAction(actGrid, false);
+            mGR.Executor.RunAction(actGrid, false);
             //Assert
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
@@ -1787,7 +1787,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
 
-            mGR.RunAction(actGrid, false);
+            mGR.Executor.RunAction(actGrid, false);
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
             Assert.AreEqual("Ravi",actual, "Ret Param Actual");
@@ -1822,7 +1822,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
 
-            mGR.RunAction(actGrid, false);
+            mGR.Executor.RunAction(actGrid, false);
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
             Assert.AreEqual(actual, "Ravi", "Ret Param Actual");
@@ -1856,7 +1856,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
 
-            mGR.RunAction(actGrid, false);
+            mGR.Executor.RunAction(actGrid, false);
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
             if(actual!=null)
@@ -1895,7 +1895,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
 
-            mGR.RunAction(actGrid, false);
+            mGR.Executor.RunAction(actGrid, false);
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
             if (actual != null)
@@ -1931,7 +1931,7 @@ namespace UnitTest
             actGrid.Active = true;
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
-            mGR.RunAction(actGrid, false);
+            mGR.Executor.RunAction(actGrid, false);
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
             Assert.AreEqual(actual, "2109 Fox Dr, Champaign IL ", "Ret Param Actual");
@@ -1963,7 +1963,7 @@ namespace UnitTest
             actGrid.Active = true;
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
-            mGR.RunAction(actGrid, false);
+            mGR.Executor.RunAction(actGrid, false);
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
             Assert.AreEqual(actual, "2109 Fox Dr, Champaign IL ", "Ret Param Actual");
@@ -1994,7 +1994,7 @@ namespace UnitTest
             actGrid.Active = true;
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
-            mGR.RunAction(actGrid, false);
+            mGR.Executor.RunAction(actGrid, false);
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
             Assert.AreEqual(actual, "2109 Fox Dr, Champaign IL ", "Ret Param Actual");
@@ -2025,7 +2025,7 @@ namespace UnitTest
             actGrid.Active = true;
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
-            mGR.RunAction(actGrid, false);
+            mGR.Executor.RunAction(actGrid, false);
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
             Assert.AreEqual(actual, "2109 Fox Dr, Champaign IL ", "Ret Param Actual");
@@ -2060,7 +2060,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(actGrid);
             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
 
-            mGR.RunAction(actGrid, false);
+            mGR.Executor.RunAction(actGrid, false);
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
             Assert.AreEqual(actual, "3", "Ret Param Actual");
@@ -2129,7 +2129,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(actUI);
             mBF.CurrentActivity.Acts.CurrentItem = actUI;
 
-            mGR.RunAction(actUI, false);
+            mGR.Executor.RunAction(actUI, false);
             Assert.AreEqual(actUI.Status, eRunStatus.Passed, "Action Status");
             string actual = actUI.GetReturnParam("Actual");
             Assert.AreEqual(actual, "Clicked Successfully using Invoke Pattern", "Ret Param Actual");
@@ -2147,7 +2147,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             ActUIElement actUI = new ActUIElement();
             actUI.Active = true;
@@ -2203,7 +2203,7 @@ namespace UnitTest
             
             mBF.CurrentActivity.Acts.Add(actUI);
             mBF.CurrentActivity.Acts.CurrentItem = actUI;
-            mGR.RunAction(actUI, false);
+            mGR.Executor.RunAction(actUI, false);
             Assert.AreEqual(actUI.Status, eRunStatus.Passed, "Action Status");
             string actual = actUI.GetReturnParam("Actual");
             Assert.AreEqual(actual, "Clicked Successfully using Invoke Pattern", "Ret Param Actual");
@@ -2268,7 +2268,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(actUI);
             mBF.CurrentActivity.Acts.CurrentItem = actUI;
 
-            mGR.RunAction(actUI, false);
+            mGR.Executor.RunAction(actUI, false);
 
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
@@ -2278,7 +2278,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
 
             Assert.AreEqual(actUI.Status, eRunStatus.Passed, "Action Status");
@@ -2298,7 +2298,7 @@ namespace UnitTest
             //Act
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             ActUIElement actUI = new ActUIElement();
             actUI.Active = true;
@@ -2356,7 +2356,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(actUI);
             mBF.CurrentActivity.Acts.CurrentItem = actUI;
 
-            mGR.RunAction(actUI, false);
+            mGR.Executor.RunAction(actUI, false);
             Assert.AreEqual(actUI.Status, eRunStatus.Passed, "Action Status");
             string actual = actUI.GetReturnParam("Actual");
             Assert.AreEqual(actual, "Clicked Successfully using Invoke Pattern", "Ret Param Actual");
@@ -2378,7 +2378,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -2400,7 +2400,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             //Assert
 
@@ -2424,7 +2424,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
 
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
@@ -2435,7 +2435,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.RunAction(c, false);
+            mGR.Executor.RunAction(c, false);
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             string actual = c.GetReturnParam("Actual");
 
@@ -2451,7 +2451,7 @@ namespace UnitTest
                 mBF.CurrentActivity.Acts.Add(c);
                 mBF.CurrentActivity.Acts.CurrentItem = c;
                 //Act
-                mGR.RunAction(c, false);
+                mGR.Executor.RunAction(c, false);
 
                 c = new ActPBControl();
                 c.LocateBy = eLocateBy.ByName;
@@ -2462,7 +2462,7 @@ namespace UnitTest
                 mBF.CurrentActivity.Acts.Add(c);
                 mBF.CurrentActivity.Acts.CurrentItem = c;
                 //Act
-                mGR.RunAction(c, false);
+                mGR.Executor.RunAction(c, false);
                 Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
                 actual = c.GetReturnParam("Actual");
                 Assert.AreEqual(actual, "True", "True");                
@@ -2480,7 +2480,7 @@ namespace UnitTest
             c1.Active = true;
             mBF.CurrentActivity.Acts.Add(c1);
             mBF.CurrentActivity.Acts.CurrentItem = c1;            
-            mGR.RunAction(c1, false);
+            mGR.Executor.RunAction(c1, false);
 
         }
 

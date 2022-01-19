@@ -24,9 +24,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public static void ClassInitialize(TestContext TestContext)
         {            
             mGingerRunner = new GingerRunner();
-            mGingerRunner.RunListeners.Clear(); // temp as long as GR auto start with some listener, remove when fixed
+            ((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.Clear(); // temp as long as GR auto start with some listener, remove when fixed
             mExecutionDumperListener = new ExecutionDumperListener(mDumpFolder);
-            mGingerRunner.RunListeners.Add(mExecutionDumperListener);
+            ((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.Add(mExecutionDumperListener);
  }
 
         [ClassCleanup]
@@ -41,10 +41,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
             // We lock Ginger runner so we will not run 2 flows at the same time on same GR
             lock (mGingerRunner)
             {
-                mGingerRunner.BusinessFlows.Clear();
-                mGingerRunner.BusinessFlows.Add(businessFlow);
-                mGingerRunner.CurrentBusinessFlow = businessFlow;                
-                mGingerRunner.RunRunner();
+                mGingerRunner.Executor.BusinessFlows.Clear();
+                mGingerRunner.Executor.BusinessFlows.Add(businessFlow);
+                mGingerRunner.Executor.CurrentBusinessFlow = businessFlow;                
+                mGingerRunner.Executor.RunRunner();
             }
         }
 

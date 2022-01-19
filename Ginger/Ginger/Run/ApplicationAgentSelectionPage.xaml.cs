@@ -77,7 +77,7 @@ namespace Ginger.Run
                     if (optionalAgentsList != null && mGingerRunner != null)
                     {
                         //remove already mapped agents
-                        List<IApplicationAgent> mappedApps = mGingerRunner.ApplicationAgents.Where(x => x.Agent != null).ToList();
+                        List<IApplicationAgent> mappedApps = mGingerRunner.GingerRunner.ApplicationAgents.Where(x => x.Agent != null).ToList();
                         foreach (ApplicationAgent mappedApp in mappedApps)
                         {
                             if (mappedApp.Agent.Platform == appPlatform && mappedApp != mApplicationAgent)

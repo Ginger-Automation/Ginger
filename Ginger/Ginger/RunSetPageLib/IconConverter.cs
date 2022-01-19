@@ -23,6 +23,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using static Ginger.Run.GingerExecutionEngine;
+using static Ginger.Run.GingerRunner;
 
 namespace Ginger.MoveToGingerWPF.Run_Set_Pages
 {

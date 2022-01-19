@@ -81,10 +81,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             mGR = new GingerRunner();
             mGR.Name = "Test Runner";
-            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
-            mGR.CurrentBusinessFlow = mBF;
-            mGR.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
+            mGR.Executor.CurrentBusinessFlow = mBF;
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
 
             environment = new ProjEnvironment();
             environment.Name = "Default";
@@ -95,14 +95,14 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //a.DriverType = Agent.eDriverType.SeleniumFireFox;//have known firefox issues with selenium 3
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
             // p2.Agent = a;
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
-            mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
-            mGR.BusinessFlows.Add(mBF);
+            mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
+            mGR.Executor.BusinessFlows.Add(mBF);
             mGR.SpecificEnvironmentName = environment.Name;
             mGR.UseSpecificEnvironment = false;
 
@@ -282,7 +282,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             BF1.Active = true;
 
-            mGR.BusinessFlows.Add(BF1);
+            mGR.Executor.BusinessFlows.Add(BF1);
 
             //Adding Same Business Flow Again to GingerRunner
             BusinessFlow bfToAdd = (BusinessFlow)BF1.CreateCopy(false);
@@ -290,16 +290,16 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             bfToAdd.Active = true;
             bfToAdd.Reset();
             bfToAdd.InstanceGuid = Guid.NewGuid();
-            mGR.BusinessFlows.Add(bfToAdd);
+            mGR.Executor.BusinessFlows.Add(bfToAdd);
 
             WorkSpace.Instance.SolutionRepository = SR;
 
             //Act
             //Changing initial value of 2nd BF from BusinessFlow Config 
-            mGR.BusinessFlows[2].Variables[2].Value = "bbb";
-            mGR.BusinessFlows[2].Variables[2].DiffrentFromOrigin = true;
+            mGR.Executor.BusinessFlows[2].Variables[2].Value = "bbb";
+            mGR.Executor.BusinessFlows[2].Variables[2].DiffrentFromOrigin = true;
 
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             //Assert
             Assert.AreEqual(BF1.RunStatus, eRunStatus.Passed);
@@ -307,8 +307,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             Assert.AreEqual(bfToAdd.RunStatus, eRunStatus.Passed);
 
-            Assert.AreEqual(mGR.BusinessFlows[1].Variables[2].Value, "aaa");
-            Assert.AreEqual(mGR.BusinessFlows[2].Variables[2].Value, "bbb");
+            Assert.AreEqual(mGR.Executor.BusinessFlows[1].Variables[2].Value, "aaa");
+            Assert.AreEqual(mGR.Executor.BusinessFlows[2].Variables[2].Value, "bbb");
 
         }
 
@@ -377,21 +377,21 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
-            mGRForRunset.SolutionAgents = new ObservableList<Agent>();
-            mGRForRunset.SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGRForRunset.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGRForRunset.Executor).SolutionAgents.Add(a);
 
             mGRForRunset.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
-            mGRForRunset.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGRForRunset.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
+            mGRForRunset.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGRForRunset.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
 
-            mGRForRunset.BusinessFlows.Add(BF1);
+            mGRForRunset.Executor.BusinessFlows.Add(BF1);
             WorkSpace.Instance.SolutionRepository = SR;
 
             mGRForRunset.SpecificEnvironmentName = environment.Name;
             mGRForRunset.UseSpecificEnvironment = false;
 
             RunSetConfig runSetConfig1 = new RunSetConfig();
-            mGRForRunset.IsUpdateBusinessFlowRunList = true;
+            mGRForRunset.Executor.IsUpdateBusinessFlowRunList = true;
             runSetConfig1.GingerRunners.Add(mGRForRunset);
 
             runSetConfig1.UpdateRunnersBusinessFlowRunsList();
@@ -480,7 +480,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Activity activity = GetActivityFromRepository();
 
             //Act
-            mGR.RunActivity(activity);
+            mGR.Executor.RunActivity(activity);
 
             //Assert
             Assert.AreEqual(activity.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped);
@@ -499,7 +499,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             //Act
 
-            mGR.RunAction(action);
+            mGR.Executor.RunAction(action);
 
             //Assert
             Assert.AreEqual(action.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped);
@@ -531,11 +531,11 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             action.FlowControls.Add(flowControl);
 
             //Act
-            mGR.RunAction(action);
+            mGR.Executor.RunAction(action);
 
             //Assert
             Assert.AreEqual(action.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
-            Assert.AreEqual(mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem, mGR.CurrentBusinessFlow.CurrentActivity.Acts[2]);
+            Assert.AreEqual(mGR.Executor.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem, mGR.Executor.CurrentBusinessFlow.CurrentActivity.Acts[2]);
         }
 
         [TestMethod]
@@ -553,14 +553,14 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Act action = (Act)actionList[0];
             action.Active = true;
 
-            mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = action;
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action);
+            mGR.Executor.RunAction(action);
 
             //Assert
             Assert.AreEqual(action.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
-            Assert.AreEqual(mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem, mGR.CurrentBusinessFlow.CurrentActivity.Acts[1]);
+            Assert.AreEqual(mGR.Executor.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem, mGR.Executor.CurrentBusinessFlow.CurrentActivity.Acts[1]);
         }
       
         public Activity GetActivityFromRepository()
@@ -576,9 +576,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             context.BusinessFlow = BF1;
             context.Activity = activity;
-            mGR.CurrentBusinessFlow = BF1;
-            mGR.CurrentBusinessFlow.CurrentActivity = activity;
-            mGR.Context = context;
+            mGR.Executor.CurrentBusinessFlow = BF1;
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity = activity;
+            mGR.Executor.Context = context;
 
             return activity;
         }

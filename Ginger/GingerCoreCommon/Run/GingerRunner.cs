@@ -27,7 +27,7 @@ namespace Ginger.Run
         Runner,
         BusinessFlow
     }
-  public  class GingerRunner : RepositoryItemBase
+    public  class GingerRunner : RepositoryItemBase
     {
         public enum eActionExecutorType
         {
@@ -192,6 +192,9 @@ namespace Ginger.Run
                 OnPropertyChanged(nameof(GingerRunner.RunInSimulationMode));
             }
         }
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<BusinessFlowRun> BusinessFlowsRunList { get; set; } = new ObservableList<BusinessFlowRun>();
 
         public override string ItemName
         {

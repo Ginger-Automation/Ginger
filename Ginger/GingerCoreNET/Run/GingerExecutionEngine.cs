@@ -63,7 +63,7 @@ namespace Ginger.Run
 {
 
 
-    public class GingerExecutionEngine : RepositoryItemBase, IGingerExecutionEngine
+    public class GingerExecutionEngine : IGingerExecutionEngine
     {
         IContext IGingerExecutionEngine.Context { get => mContext; set => mContext = (Context)value; }
 
@@ -81,17 +81,7 @@ namespace Ginger.Run
             }
         }
 
-        public override string ItemName
-        {
-            get
-            {
-                return string.Empty;
-            }
-            set
-            {
-                return;
-            }
-        }
+        
 
         public PublishToALMConfig PublishToALMConfig = null;
 
@@ -182,7 +172,7 @@ namespace Ginger.Run
             set
             {
                 mIsRunning = value;
-                OnPropertyChanged(nameof(IsRunning));
+                GingerRunner.OnPropertyChanged(nameof(IsRunning));
             }
         }
 
@@ -210,7 +200,7 @@ namespace Ginger.Run
             set
             {
                 mTotalBusinessflow = value;
-                OnPropertyChanged("TotalBusinessflow");
+                GingerRunner.OnPropertyChanged("TotalBusinessflow");
             }
         }
 
@@ -240,7 +230,7 @@ namespace Ginger.Run
             }
         }
 
-        private eRunStatus Status
+        public eRunStatus Status
         {
             get { return mGingerRunner.Status; }
             set
@@ -249,7 +239,7 @@ namespace Ginger.Run
             }
         }
 
-        public bool IsUpdateBusinessFlowRunList;
+        public bool IsUpdateBusinessFlowRunList { get; set; }
 
         /// <summary>
         /// ID which been provided for each execution instance on the Activity
@@ -259,9 +249,12 @@ namespace Ginger.Run
         public Guid ParentExecutionId { get; set; }
         public int ExecutionLogBusinessFlowsCounter { get; set; }
         private GingerRunner mGingerRunner;
+
+        public GingerRunner GingerRunner { get { return mGingerRunner; } }
         public GingerExecutionEngine(GingerRunner GingerRunner)
         {
             mGingerRunner = GingerRunner;
+            GingerRunner.Executor = this;
             ExecutedFrom = eExecutedFrom.Run;
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
@@ -327,8 +320,7 @@ namespace Ginger.Run
 
         public ISolution CurrentSolution { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public ObservableList<BusinessFlowRun> BusinessFlowsRunList { get; set; } = new ObservableList<BusinessFlowRun>();
+        
 
         public Amdocs.Ginger.CoreNET.Execution.eRunStatus RunsetStatus
         {
@@ -366,7 +358,7 @@ namespace Ginger.Run
         }
         public void UpdateBusinessFlowsRunList()
         {
-            BusinessFlowsRunList.Clear();
+            GingerRunner.BusinessFlowsRunList.Clear();
             foreach (BusinessFlow bf in BusinessFlows)
             {
                 BusinessFlowRun BFR = new BusinessFlowRun();
@@ -386,7 +378,7 @@ namespace Ginger.Run
                 }
                 BFR.BusinessFlowRunDescription = bf.RunDescription;
                 BFR.BFFlowControls = bf.BFFlowControls;
-                BusinessFlowsRunList.Add(BFR);
+                GingerRunner.BusinessFlowsRunList.Add(BFR);
             }
         }
 
@@ -797,17 +789,17 @@ namespace Ginger.Run
             }
 
             //Previous Runners Business Flows Output Variabels
-            if (includePrevRunnersVars && runSetConfig.RunModeParallel == false && runSetConfig.GingerRunners.IndexOf(this) > 0)
+            if (includePrevRunnersVars && runSetConfig.RunModeParallel == false && runSetConfig.GingerRunners.IndexOf(GingerRunner) > 0)
             {
-                for (int j = runSetConfig.GingerRunners.IndexOf(this) - 1; j >= 0; j--)//doing in reverse for sorting by latest value in case having the same var more than once
+                for (int j = runSetConfig.GingerRunners.IndexOf(GingerRunner) - 1; j >= 0; j--)//doing in reverse for sorting by latest value in case having the same var more than once
                 {
-                    int i = runSetConfig.GingerRunners[j].BusinessFlows.Count - 1;
-                    foreach (BusinessFlow bf in runSetConfig.GingerRunners[j].BusinessFlows.Reverse())
+                    int i = runSetConfig.GingerRunners[j].Executor.BusinessFlows.Count - 1;
+                    foreach (BusinessFlow bf in runSetConfig.GingerRunners[j].Executor.BusinessFlows.Reverse())
                     {
                         foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(false, false, true))
                         {
 
-                            var.Path = var.Name + " [" + runSetConfig.GingerRunners[j].mGingerRunner.Name + ": " + bf.Name + "]";
+                            var.Path = var.Name + " [" + runSetConfig.GingerRunners[j].Name + ": " + bf.Name + "]";
                             if (variablePaths.ContainsKey(var.Path))
                             {
                                 variablePaths[var.Path] += 1;
@@ -844,11 +836,11 @@ namespace Ginger.Run
 
         private BusinessFlowRun GetCurrenrtBusinessFlowRun()
         {
-            BusinessFlowRun businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowInstanceGuid == CurrentBusinessFlow?.InstanceGuid select x).FirstOrDefault();
+            BusinessFlowRun businessFlowRun = (from x in GingerRunner.BusinessFlowsRunList where x.BusinessFlowInstanceGuid == CurrentBusinessFlow?.InstanceGuid select x).FirstOrDefault();
 
             if (businessFlowRun == null)
             {
-                businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowGuid == CurrentBusinessFlow?.Guid select x).FirstOrDefault();
+                businessFlowRun = (from x in GingerRunner.BusinessFlowsRunList where x.BusinessFlowGuid == CurrentBusinessFlow?.Guid select x).FirstOrDefault();
             }
             return businessFlowRun;
         }
@@ -3615,7 +3607,7 @@ namespace Ginger.Run
                 //set the BF to execute
                 if (businessFlow != null)
                 {
-                    businessFlow.ExecutionParentGuid = this.Guid;
+                    businessFlow.ExecutionParentGuid = this.GingerRunner.Guid;
                 }
                 if (doContinueRun == false)
                 {
@@ -4359,7 +4351,7 @@ namespace Ginger.Run
             }
             if (bTargetAppListModified)
             {
-                this.OnPropertyChanged(nameof(GingerRunner.ApplicationAgents));//to notify who shows this list
+                this.GingerRunner.OnPropertyChanged(nameof(GingerRunner.ApplicationAgents));//to notify who shows this list
             }
         }
 
@@ -4420,6 +4412,9 @@ namespace Ginger.Run
             }
         }
 
+        IExecutionLoggerManager IGingerExecutionEngine.ExecutionLoggerManager => ExecutionLoggerManager;
+
+        //List<IRunListenerBase> IGingerExecutionEngine.RunListeners => mRunListeners;
 
         private bool CheckIfActivityTagsMatch()
         {
@@ -4648,7 +4643,7 @@ namespace Ginger.Run
                 {
                     try
                     {
-                        runnerListener.RunnerRunStart(evetTime, this);
+                        runnerListener.RunnerRunStart(evetTime, this.GingerRunner);
                     }
                     catch (Exception ex)
                     {
@@ -4664,7 +4659,7 @@ namespace Ginger.Run
             this.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.RunnerRunEnd(evetTime, this, ExecutionLogFolder);
+                runnerListener.RunnerRunEnd(evetTime, this.GingerRunner, ExecutionLogFolder);
             }
         }
 

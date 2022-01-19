@@ -145,8 +145,8 @@ namespace WorkspaceHold
             agent.PluginId = mPluginId;
             agent.ServiceId = mServiceId;
 
-            mGingerRunner = new GingerExecutionEngine();
-            mGingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = cWebApp, Agent = agent });
+            mGingerRunner = new GingerExecutionEngine(new GingerRunner());
+            mGingerRunner.GingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = cWebApp, Agent = agent });
 
             return agent;
         }

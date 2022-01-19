@@ -1,6 +1,6 @@
 ﻿using Amdocs.Ginger.Common.Repository;
 using Ginger.Run;
-using Ginger.Run.RunSetActions;
+//using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -11,14 +11,14 @@ namespace Amdocs.Ginger.Common
     public interface IContext
     {
         Activity Activity { get; set; }
-        Agent Agent { get; set; }
+        //IAgent Agent { get; set; }
         string AgentStatus { get; set; }
         BusinessFlow BusinessFlow { get; set; }
         ProjEnvironment Environment { get; set; }
         eExecutedFrom ExecutedFrom { get; set; }
         ePlatformType Platform { get; set; }
-        GingerExecutionEngine Runner { get; set; }
-        RunSetActionBase RunsetAction { get; set; }
+        IGingerExecutionEngine Runner { get; set; }
+        //RunSetActionBase RunsetAction { get; set; }
         TargetBase Target { get; set; }
 
         event PropertyChangedEventHandler PropertyChanged;

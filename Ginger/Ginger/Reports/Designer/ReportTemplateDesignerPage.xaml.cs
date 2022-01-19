@@ -130,11 +130,11 @@ namespace Ginger.Reports.Designer
 
             //cretae dummy GR, GMR
             RunsetExecutor GMR = new RunsetExecutor();
-            GingerExecutionEngine GR = new GingerExecutionEngine();
+            GingerExecutionEngine GR = new GingerExecutionEngine(new GingerRunner());
             GR.BusinessFlows.Add(BF1);
             GR.BusinessFlows.Add(BF2);
             GR.CurrentSolution =  WorkSpace.Instance.Solution;
-            GMR.Runners.Add(GR);
+            GMR.Runners.Add(GR.GingerRunner);
             ReportInfo RI = new ReportInfo(env, GMR);
             ReportPage RP = new ReportPage(RI, Xaml);
             return RP;

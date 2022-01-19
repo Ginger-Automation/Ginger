@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowPages.AddActionMenu;
+using Ginger.Run;
 using Ginger.WindowExplorer;
 using GingerCore.Platforms;
 using GingerCoreNET;
@@ -133,7 +134,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                 if (!isLoaded)
                 {
-                    ApplicationAgent appAgent = AgentHelper.GetAppAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
+                    ApplicationAgent appAgent = AgentHelper.GetAppAgent(mContext.BusinessFlow.CurrentActivity, (GingerExecutionEngine)mContext.Runner, mContext);
                     if (appAgent != null)
                     {
                         mCurrentLoadedPage = new WindowExplorerPage(appAgent, mContext);

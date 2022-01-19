@@ -3,6 +3,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 //using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Run;
 //using Amdocs.Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -19,7 +20,7 @@ namespace Ginger.Run
     public interface IGingerExecutionEngine
     {
         ObservableList<BusinessFlow> BusinessFlows { get; set; }
-        ObservableList<BusinessFlowRun> BusinessFlowsRunList { get; set; }
+        //ObservableList<BusinessFlowRun> BusinessFlowsRunList { get; set; }
        // AccountReportExecutionLogger Centeralized_Logger { get; }
         IContext Context { get; set; }
         BusinessFlow CurrentBusinessFlow { get; set; }
@@ -29,15 +30,15 @@ namespace Ginger.Run
         Guid ExecutionId { get; set; }
         int ExecutionLogBusinessFlowsCounter { get; set; }
         string ExecutionLogFolder { get; set; }
-      //  ExecutionLoggerManager ExecutionLoggerManager { get; }
+        IExecutionLoggerManager ExecutionLoggerManager { get; }
         bool HighLightElement { get; set; }
         bool IsRunning { get; set; }
-        string ItemName { get; set; }
+        //string ItemName { get; set; }
         BusinessFlow LastFailedBusinessFlow { get; set; }
         Guid ParentExecutionId { get; set; }
         BusinessFlow PreviousBusinessFlow { get; set; }
         eRunLevel RunLevel { get; set; }
-        //List<RunListenerBase> RunListeners { get; }
+        //List<IRunListenerBase> RunListeners { get; }
         eRunStatus RunsetStatus { get; }
         //ObservableList<Agent> SolutionAgents { get; set; }
         ObservableList<ApplicationPlatform> SolutionApplications { get; set; }
@@ -60,7 +61,7 @@ namespace Ginger.Run
         void GiveUserFeedback();
         bool GotoNextAction();
         void HighlightActElement(Act act);
-
+        bool IsUpdateBusinessFlowRunList { get; set; }
         void NotifyEnvironmentChanged();
         void PrepActionValueExpression(Act act, BusinessFlow businessflow = null);
         void ProcessInputValueForDriver(Act act);
@@ -77,7 +78,7 @@ namespace Ginger.Run
         void RunRunner(bool doContinueRun = false);
         Task<int> RunRunnerAsync();
         //void SetActivityGroupsExecutionStatus(BusinessFlow automateTab = null, bool offlineMode = false, ExecutionLoggerManager ExecutionLoggerManager = null);
-        //bool SetBFOfflineData(BusinessFlow BF, ExecutionLoggerManager executionLoggerManager, string logFolderPath);
+        //bool SetBFOfflineData(BusinessFlow BF, IExecutionLoggerManager executionLoggerManager, string logFolderPath);
         void SetBusinessFlowActivitiesAndActionsSkipStatus(BusinessFlow businessFlow = null, bool avoidCurrentStatus = false);
         void SetCurrentActivityAgent();
         void SetExecutionEnvironment(ProjEnvironment defaultEnv, ObservableList<ProjEnvironment> allEnvs);

@@ -92,10 +92,10 @@ namespace UnitTests.NonUITests
             mAG.Agent = wsAgent;
 
             mGR = new GingerRunner();
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(wsAgent);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
 
-            mGR.BusinessFlows.Add(mBF);
+            mGR.Executor.BusinessFlows.Add(mBF);
 
           
 
@@ -142,7 +142,7 @@ namespace UnitTests.NonUITests
             mDriver.StartDriver();
 
             //Act            
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
            
             //Assert
@@ -293,7 +293,7 @@ namespace UnitTests.NonUITests
             mBF.Activities[0].Acts.Add(soapAct);
 
             mDriver.StartDriver();
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             if (soapAct.ReturnValues.Count > 0)
             {
@@ -317,10 +317,10 @@ namespace UnitTests.NonUITests
             mAG.Agent = wsAgent;
 
             mGR = new GingerRunner();
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(wsAgent);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
 
-            mGR.BusinessFlows.Add(mBF);
+            mGR.Executor.BusinessFlows.Add(mBF);
 
             Activity Activity2 = new Activity();
             Activity2.Active = true;
@@ -343,7 +343,7 @@ namespace UnitTests.NonUITests
             mBF.Activities[0].Acts.Add(restAct);
 
             mDriver.StartDriver();
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
 
             if (restAct.ReturnValues.Count > 0)
@@ -438,11 +438,11 @@ namespace UnitTests.NonUITests
             mAG.Agent = wsAgent;
 
             mGR = new GingerRunner();
-            mGR.SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
 
-            mGR.SolutionAgents.Add(wsAgent);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
 
-            mGR.BusinessFlows.Add(mBF);
+            mGR.Executor.BusinessFlows.Add(mBF);
 
             Activity Activity2 = new Activity();
             Activity2.Active = true;
@@ -516,7 +516,7 @@ namespace UnitTests.NonUITests
            
             mBF.Activities[0].Acts.Add(actLegacyWebService);
             mDriver.StartDriver();
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             Assert.AreNotEqual(0, actLegacyWebService.ReturnValues.Count);
             Assert.AreEqual("Åland Islands", actLegacyWebService.ReturnValues.FirstOrDefault(x =>x.Param == @"m:sName").Actual);
@@ -539,7 +539,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual("Åland Islands", newAction.ReturnValues.FirstOrDefault(x => x.Param == @"m:sName").Actual);
 
             //Run newAction
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
             
             //assert newaction
             Assert.AreNotEqual(0, newAction.ReturnValues.Count);
@@ -571,7 +571,7 @@ namespace UnitTests.NonUITests
 
             mBF.Activities[0].Acts.Add(actLegacyRestService);
             mDriver.StartDriver();
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             //Assert old action
             Assert.AreNotEqual(0, actLegacyRestService.ReturnValues.Count);
@@ -597,7 +597,7 @@ namespace UnitTests.NonUITests
             Assert.AreNotEqual(null, expected1);
 
             //Run newAction
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             //assert newaction
             Assert.AreNotEqual(0, newAction.ReturnValues.Count);

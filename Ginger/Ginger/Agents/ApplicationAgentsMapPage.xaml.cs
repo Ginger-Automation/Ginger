@@ -42,7 +42,7 @@ namespace Ginger.Agents
     public partial class ApplicationAgentsMapPage : Page
     {        
         public ObservableList<ApplicationAgent> ApplicationAgents;
-        GingerRunner mRunner;
+        GingerExecutionEngine mRunner;
         Context mContext;
 
         bool AllowAgentsManipulation;
@@ -52,21 +52,21 @@ namespace Ginger.Agents
             get { return xAppAgentsListBox; }
         }
 
-        public ApplicationAgentsMapPage(GingerRunner runner, Context context, bool allowAgentsManipulation=true)
+        public ApplicationAgentsMapPage(GingerExecutionEngine runner, Context context, bool allowAgentsManipulation=true)
         {
             InitializeComponent();
             mRunner = runner;
             mContext = context;
             AllowAgentsManipulation = allowAgentsManipulation;
             xAppAgentsListBox.Tag = AllowAgentsManipulation;//Placed here for binding with list dataTemplate- need better place
-            mRunner.PropertyChanged += MGR_PropertyChanged;
+            mRunner.GingerRunner.PropertyChanged += MGR_PropertyChanged;
             
             RefreshApplicationAgentsList();
         }
 
         private void MGR_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(mRunner.ApplicationAgents))
+            if (e.PropertyName == nameof(mRunner.GingerRunner.ApplicationAgents))
             {
                 RefreshApplicationAgentsList();
             }
@@ -78,7 +78,7 @@ namespace Ginger.Agents
             {
                 ApplicationAgents = new ObservableList<ApplicationAgent>();
 
-                foreach (ApplicationAgent Apag in mRunner.ApplicationAgents)
+                foreach (ApplicationAgent Apag in mRunner.GingerRunner.ApplicationAgents)
                 {
                     if (mRunner.SolutionApplications.Where(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() == null)
                     {

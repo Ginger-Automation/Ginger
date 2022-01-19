@@ -54,7 +54,7 @@ namespace UnitTests.UITests
         {
             SeleniumDriver mDriver = null;
             mGR = new GingerRunner();
-            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
@@ -79,16 +79,16 @@ namespace UnitTests.UITests
             a.Driver = mDriver;
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
 
             ApplicationAgent AA = new ApplicationAgent();
             AA.AppName = "WebApp";
             AA.Agent = a;
 
             mGR.ApplicationAgents.Add(AA);
-            mGR.CurrentBusinessFlow = mBF;
-            mGR.SetCurrentActivityAgent();
+            mGR.Executor.CurrentBusinessFlow = mBF;
+            mGR.Executor.SetCurrentActivityAgent();
 
             // use helper !!!!
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");            
@@ -129,7 +129,7 @@ namespace UnitTests.UITests
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -164,7 +164,7 @@ namespace UnitTests.UITests
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
             //Act
-            mGR.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
@@ -182,14 +182,14 @@ namespace UnitTests.UITests
             actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
             actBrowser.GetOrCreateInputParam("Value", "www.facebook.com");
 
-            mGR.CurrentBusinessFlow.CurrentActivity.Acts.Add(actBrowser);
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity.Acts.Add(actBrowser);
 
             ActBrowserElement actBrowser2 = new ActBrowserElement() { Active = true, AddNewReturnParams=true};
             actBrowser2.ControlAction = ActBrowserElement.eControlAction.GetBrowserLog;
-            mGR.CurrentBusinessFlow.CurrentActivity.Acts.Add(actBrowser2);
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity.Acts.Add(actBrowser2);
 
             //act
-            mGR.RunActivity(mGR.CurrentBusinessFlow.CurrentActivity);
+            mGR.Executor.RunActivity(mGR.Executor.CurrentBusinessFlow.CurrentActivity);
 
             //assert
             Assert.AreNotEqual(0, actBrowser2.ReturnValues.Count);
@@ -203,7 +203,7 @@ namespace UnitTests.UITests
             actBrowser.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser, false);
 
             return actBrowser;
 
@@ -220,7 +220,7 @@ namespace UnitTests.UITests
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewTab.ToString());
 
             //Act
-            mGR.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
@@ -242,7 +242,7 @@ namespace UnitTests.UITests
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.NewWindow.ToString());
 
             //Act
-            mGR.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
@@ -274,9 +274,9 @@ namespace UnitTests.UITests
             actBrowser2.ControlAction = ActBrowserElement.eControlAction.CloseAll;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
-            mGR.RunAction(actBrowser2, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser2, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser2.Status, "Action Status");
@@ -309,9 +309,9 @@ namespace UnitTests.UITests
             actBrowser2.LocateValue = "https://opensource-demo.orangehrmlive.com/";
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
-            mGR.RunAction(actBrowser2, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser2, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser2.Status, "Action Status");
@@ -344,9 +344,9 @@ namespace UnitTests.UITests
             actBrowser2.LocateValue = "OrangeHRM";
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
-            mGR.RunAction(actBrowser2, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser2, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser2.Status, "Action Status");
@@ -364,7 +364,7 @@ namespace UnitTests.UITests
             actBrowser.ControlAction = ActBrowserElement.eControlAction.GetPageSource;
             actBrowser.AddNewReturnParams = true;
             //Act
-            mGR.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
@@ -380,7 +380,7 @@ namespace UnitTests.UITests
             actBrowser.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
@@ -402,8 +402,8 @@ namespace UnitTests.UITests
             actBrowser1.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser1.Status, "Action Status");
@@ -423,8 +423,8 @@ namespace UnitTests.UITests
             actBrowser1.ControlAction = ActBrowserElement.eControlAction.Maximize;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser1.Status, "Action Status");
@@ -449,9 +449,9 @@ namespace UnitTests.UITests
             actBrowser2.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
-            mGR.RunAction(actBrowser2, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser2, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser2.Status, "Action Status");
@@ -467,7 +467,7 @@ namespace UnitTests.UITests
             actBrowser.GetOrCreateInputParam("Value", "www.gmail.com");
 
             //Act
-            mGR.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
@@ -485,7 +485,7 @@ namespace UnitTests.UITests
             actBrowser.ControlAction = ActBrowserElement.eControlAction.Refresh;
 
             //Act
-            mGR.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
@@ -507,8 +507,8 @@ namespace UnitTests.UITests
             actBrowser1.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser1.Status, "Action Status");
@@ -532,8 +532,8 @@ namespace UnitTests.UITests
             actBrowser1.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser1.Status, "Action Status");
@@ -559,9 +559,9 @@ namespace UnitTests.UITests
             actBrowser2.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
-            mGR.RunAction(actBrowser2, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser2, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser2.Status, "Action Status");
@@ -588,9 +588,9 @@ namespace UnitTests.UITests
             actBrowser2.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
-            mGR.RunAction(actBrowser2, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser2, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser1.Status, "Action Status");
@@ -625,10 +625,10 @@ namespace UnitTests.UITests
             actBrowser3.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
-            mGR.RunAction(actBrowser2, false);
-            mGR.RunAction(actBrowser3, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser2, false);
+            mGR.Executor.RunAction(actBrowser3, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser2.Status, "Action Status");
@@ -655,9 +655,9 @@ namespace UnitTests.UITests
             actBrowser1.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actSwitchWindow, false);
-            mGR.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actSwitchWindow, false);
+            mGR.Executor.RunAction(actBrowser1, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actSwitchWindow.Status, "Action Status");
@@ -695,11 +695,11 @@ namespace UnitTests.UITests
             actUIElement.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
-            mGR.RunAction(actBrowser2, false);
-            mGR.RunAction(actBrowser3, false);
-            mGR.RunAction(actUIElement, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser2, false);
+            mGR.Executor.RunAction(actBrowser3, false);
+            mGR.Executor.RunAction(actUIElement, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actUIElement.Status, "Action Status");
@@ -725,9 +725,9 @@ namespace UnitTests.UITests
             actBrowser2.LocateValue = "//*[@id='iframeResult']";
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
-            mGR.RunAction(actBrowser2, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser2, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser2.Status, "Action Status");
@@ -767,12 +767,12 @@ namespace UnitTests.UITests
             actUIElement.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actBrowser1, false);
-            mGR.RunAction(actBrowser2, false);
-            mGR.RunAction(actBrowser3, false);
-            mGR.RunAction(actBrowser4, false);
-            mGR.RunAction(actUIElement, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser1, false);
+            mGR.Executor.RunAction(actBrowser2, false);
+            mGR.Executor.RunAction(actBrowser3, false);
+            mGR.Executor.RunAction(actBrowser4, false);
+            mGR.Executor.RunAction(actUIElement, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actUIElement.Status, "Action Status");
@@ -801,9 +801,9 @@ namespace UnitTests.UITests
             actSmartSync.SmartSyncAction = GingerCore.Actions.ActSmartSync.eSmartSyncAction.WaitUntilDisapear;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actUIElement, false);
-            mGR.RunAction(actSmartSync, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actUIElement, false);
+            mGR.Executor.RunAction(actSmartSync, false);
                 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actSmartSync.Status, "Action Status");
@@ -832,8 +832,8 @@ namespace UnitTests.UITests
             actSmartSync1.WaitTime = 2;
 
             //Act
-            mGR.RunAction(actGenElement, false);
-            mGR.RunAction(actSmartSync1, false);
+            mGR.Executor.RunAction(actGenElement, false);
+            mGR.Executor.RunAction(actSmartSync1, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actSmartSync1.Status, "Action Status");
@@ -863,9 +863,9 @@ namespace UnitTests.UITests
             actGenElement.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(actBrowser, false);
-            mGR.RunAction(actPWL, false);
-            mGR.RunAction(actGenElement, false);
+            mGR.Executor.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actPWL, false);
+            mGR.Executor.RunAction(actGenElement, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actGenElement.Status, "Action Status");
@@ -881,7 +881,7 @@ namespace UnitTests.UITests
             actBrowser.ControlAction = ActBrowserElement.eControlAction.SetAlertBoxText;
 
             //Act
-            mGR.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
@@ -896,7 +896,7 @@ namespace UnitTests.UITests
             actBrowser.ControlAction = ActBrowserElement.eControlAction.DeleteAllCookies;
 
             //Act
-            mGR.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
@@ -911,7 +911,7 @@ namespace UnitTests.UITests
             actBrowser.ControlAction = ActBrowserElement.eControlAction.DismissMessageBox;
 
             //Act
-            mGR.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
@@ -927,7 +927,7 @@ namespace UnitTests.UITests
             actBrowser.ControlAction = ActBrowserElement.eControlAction.AcceptMessageBox;
 
             //Act
-            mGR.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
@@ -942,7 +942,7 @@ namespace UnitTests.UITests
             actBrowser.ControlAction = ActBrowserElement.eControlAction.GetMessageBoxText;
 
             //Act
-            mGR.RunAction(actBrowser, false);
+            mGR.Executor.RunAction(actBrowser, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
@@ -972,17 +972,17 @@ namespace UnitTests.UITests
             agent.Active = true;
             agent.Driver = mDriver;
             agent.DriverType = Agent.eDriverType.SeleniumChrome;
-            mGR.SolutionAgents.Add(agent);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(agent);
 
             ApplicationAgent AA = new ApplicationAgent();
             AA.AppName = "DeviceEmulation";
             AA.Agent = agent;
 
             mGR.ApplicationAgents.Add(AA);
-            mGR.CurrentBusinessFlow = mBF;
-            mGR.CurrentBusinessFlow.CurrentActivity = activity;
+            mGR.Executor.CurrentBusinessFlow = mBF;
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity = activity;
 
-            mGR.SetCurrentActivityAgent();
+            mGR.Executor.SetCurrentActivityAgent();
 
             ActBrowserElement actBrowser = new ActBrowserElement();
             actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
@@ -998,7 +998,7 @@ namespace UnitTests.UITests
             actBrowser2.AddNewReturnParams = true;
             activity.Acts.Add(actBrowser2);
 
-            mGR.RunActivity(activity);
+            mGR.Executor.RunActivity(activity);
 
             //assert
             Assert.AreEqual(true,actBrowser2.ReturnValues.FirstOrDefault().Actual.Contains("iPad"));
@@ -1031,17 +1031,17 @@ namespace UnitTests.UITests
             agent.Active = true;
             agent.Driver = mDriver;
             agent.DriverType = Agent.eDriverType.SeleniumChrome;
-            mGR.SolutionAgents.Add(agent);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(agent);
 
             ApplicationAgent AA = new ApplicationAgent();
             AA.AppName = "DeviceEmulationUserAgent";
             AA.Agent = agent;
 
             mGR.ApplicationAgents.Add(AA);
-            mGR.CurrentBusinessFlow = mBF;
-            mGR.CurrentBusinessFlow.CurrentActivity = activity;
+            mGR.Executor.CurrentBusinessFlow = mBF;
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity = activity;
 
-            mGR.SetCurrentActivityAgent();
+            mGR.Executor.SetCurrentActivityAgent();
 
             ActBrowserElement actBrowser = new ActBrowserElement();
             actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
@@ -1059,7 +1059,7 @@ namespace UnitTests.UITests
             actBrowser2.AddNewReturnParams = true;
             activity.Acts.Add(actBrowser2);
 
-            mGR.RunActivity(activity);
+            mGR.Executor.RunActivity(activity);
 
             //assert
             Assert.AreEqual(true, actBrowser2.ReturnValues.FirstOrDefault().Actual.Contains("iPad"));

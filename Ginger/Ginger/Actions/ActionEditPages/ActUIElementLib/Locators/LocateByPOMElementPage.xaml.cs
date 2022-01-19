@@ -35,6 +35,7 @@ using System.Linq;
 using GingerCore.Platforms;
 using GingerCore.Actions;
 using Ginger.ApplicationModelsLib.POMModels;
+using Ginger.Run;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -315,7 +316,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void HighlightElementClicked(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent currentAgent = (ApplicationAgent)mContext.Runner.ApplicationAgents.Where(z => z.AppName == mTargetApplication).FirstOrDefault();
+            ApplicationAgent currentAgent = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.Where(z => z.AppName == mTargetApplication).FirstOrDefault();
             if ((currentAgent == null) || !(((Agent)currentAgent.Agent).Driver is IWindowExplorer) || (((Agent)currentAgent.Agent).Status != Agent.eStatus.Running))
             {
                 Reporter.ToUser(eUserMsgKey.NoRelevantAgentInRunningStatus);

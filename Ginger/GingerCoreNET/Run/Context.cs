@@ -33,8 +33,8 @@ namespace Amdocs.Ginger.Common
 {
     public class Context : INotifyPropertyChanged, IContext
     {
-        private GingerExecutionEngine mRunner;
-        public GingerExecutionEngine Runner
+        private IGingerExecutionEngine mRunner;
+        public IGingerExecutionEngine Runner
         {
             get
             {

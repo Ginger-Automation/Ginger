@@ -51,8 +51,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };
             mBF.AddVariable(v1);
 
-            mGR = new GingerExecutionEngine();
-            mGR.Name = "Test Runner";
+            mGR = new GingerExecutionEngine(new GingerRunner());
+            mGR.GingerRunner.Name = "Test Runner";
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
             mGR.CurrentBusinessFlow = mBF;
@@ -61,19 +61,19 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             environment = new ProjEnvironment();
             environment.Name = "Default";
             mBF.Environment = environment.Name;
-            mGR.ProjEnvironment = environment;
+            mGR.GingerRunner.ProjEnvironment = environment;
 
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
             mGR.SolutionAgents = new ObservableList<Agent>();
             mGR.SolutionAgents.Add(a);
-            mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
+            mGR.GingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
             mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGR.BusinessFlows.Add(mBF);
-            mGR.SpecificEnvironmentName = environment.Name;
-            mGR.UseSpecificEnvironment = false;
+            mGR.GingerRunner.SpecificEnvironmentName = environment.Name;
+            mGR.GingerRunner.UseSpecificEnvironment = false;
 
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple"));
             string solutionFile = System.IO.Path.Combine(path, @"Ginger.Solution.xml");
@@ -93,22 +93,22 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             BusinessFlow BF1 = bfList[0];
             ObservableList<Activity> activityList = BF1.Activities;
             BF1.Active = true;
-            GingerExecutionEngine mGRForRunset = new GingerExecutionEngine();
-            mGRForRunset.Name = "Test Runner";
+            GingerExecutionEngine mGRForRunset = new GingerExecutionEngine(new GingerRunner());
+            mGRForRunset.GingerRunner.Name = "Test Runner";
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
             mGRForRunset.SolutionAgents = new ObservableList<Agent>();
             mGRForRunset.SolutionAgents.Add(a);
-            mGRForRunset.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
+            mGRForRunset.GingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
             mGRForRunset.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGRForRunset.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGRForRunset.BusinessFlows.Add(BF1);
             WorkSpace.Instance.SolutionRepository = SR;
-            mGRForRunset.SpecificEnvironmentName = environment.Name;
-            mGRForRunset.UseSpecificEnvironment = false;
+            mGRForRunset.GingerRunner.SpecificEnvironmentName = environment.Name;
+            mGRForRunset.GingerRunner.UseSpecificEnvironment = false;
             RunSetConfig runSetConfig1 = new RunSetConfig();
             mGRForRunset.IsUpdateBusinessFlowRunList = true;
-            runSetConfig1.GingerRunners.Add(mGRForRunset);
+            runSetConfig1.GingerRunners.Add(mGRForRunset.GingerRunner);
             runSetConfig1.UpdateRunnersBusinessFlowRunsList();
             runSetConfig1.mRunModeParallel = false;
             RunSetActionJSONSummary jsonAction = CreateJsonOperation();
@@ -133,22 +133,22 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             BusinessFlow BF1 = bfList[0];
             ObservableList<Activity> activityList = BF1.Activities;
             BF1.Active = true;
-            GingerExecutionEngine mGRForRunset = new GingerExecutionEngine();
-            mGRForRunset.Name = "Test Runner";
+            GingerExecutionEngine mGRForRunset = new GingerExecutionEngine(new GingerRunner());
+            mGRForRunset.GingerRunner.Name = "Test Runner";
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
             mGRForRunset.SolutionAgents = new ObservableList<Agent>();
             mGRForRunset.SolutionAgents.Add(a);
-            mGRForRunset.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
+            mGRForRunset.GingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
             mGRForRunset.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGRForRunset.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGRForRunset.BusinessFlows.Add(BF1);
             WorkSpace.Instance.SolutionRepository = SR;
-            mGRForRunset.SpecificEnvironmentName = environment.Name;
-            mGRForRunset.UseSpecificEnvironment = false;
+            mGRForRunset.GingerRunner.SpecificEnvironmentName = environment.Name;
+            mGRForRunset.GingerRunner.UseSpecificEnvironment = false;
             RunSetConfig runSetConfig1 = new RunSetConfig();
             mGRForRunset.IsUpdateBusinessFlowRunList = true;
-            runSetConfig1.GingerRunners.Add(mGRForRunset);
+            runSetConfig1.GingerRunners.Add(mGRForRunset.GingerRunner);
             runSetConfig1.UpdateRunnersBusinessFlowRunsList();
             runSetConfig1.mRunModeParallel = false;
             RunSetActionGenerateTestNGReport testNGAction = CreateTestNGOperation();

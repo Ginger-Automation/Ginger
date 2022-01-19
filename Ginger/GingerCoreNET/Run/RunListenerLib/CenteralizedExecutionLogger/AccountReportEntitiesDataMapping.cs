@@ -266,43 +266,43 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             return accountReportBusinessFlow;
         }
 
-        public static AccountReportRunner MapRunnerStartData(GingerExecutionEngine gingerRunner, Context context)
+        public static AccountReportRunner MapRunnerStartData(GingerRunner gingerRunner, Context context)
         {
-            gingerRunner.ExecutionId = Guid.NewGuid();
+            gingerRunner.Executor.ExecutionId = Guid.NewGuid();
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID != null)
             {
-                gingerRunner.ParentExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
+                gingerRunner.Executor.ParentExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
             }
             AccountReportRunner accountReportRunner = new AccountReportRunner();
-            accountReportRunner.Id = gingerRunner.ExecutionId;
+            accountReportRunner.Id = gingerRunner.Executor.ExecutionId;
             accountReportRunner.EntityId = gingerRunner.Guid;
-            accountReportRunner.AccountReportDbRunSetId = gingerRunner.ParentExecutionId;
+            accountReportRunner.AccountReportDbRunSetId = gingerRunner.Executor.ParentExecutionId;
             accountReportRunner.ExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
-            accountReportRunner.Seq = gingerRunner.ExecutionLoggerManager.GingerData.Seq;
+            accountReportRunner.Seq = gingerRunner.Executor.ExecutionLoggerManager.GingerData.Seq;
             accountReportRunner.Name = gingerRunner.Name;
             //accountReportRunner.Description = gingerRunner.Description;
             accountReportRunner.Environment = gingerRunner.ProjEnvironment.Name.ToString();
-            accountReportRunner.StartTimeStamp = gingerRunner.StartTimeStamp;
+            accountReportRunner.StartTimeStamp = gingerRunner.Executor.StartTimeStamp;
             accountReportRunner.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
-            SetRunnerChildCounts(gingerRunner, accountReportRunner);
+            SetRunnerChildCounts((GingerExecutionEngine)gingerRunner.Executor, accountReportRunner);
             accountReportRunner.RunStatus = _InProgressStatus;
             return accountReportRunner;
         }
 
-        public static AccountReportRunner MapRunnerEndData(GingerExecutionEngine gingerRunner, Context context)
+        public static AccountReportRunner MapRunnerEndData(GingerRunner gingerRunner, Context context)
         {
             AccountReportRunner accountReportRunner = new AccountReportRunner();
-            accountReportRunner.Id = gingerRunner.ExecutionId;
+            accountReportRunner.Id = gingerRunner.Executor.ExecutionId;
             accountReportRunner.Name = gingerRunner.Name;
             accountReportRunner.EntityId = gingerRunner.Guid;
-            accountReportRunner.AccountReportDbRunSetId = gingerRunner.ParentExecutionId;
+            accountReportRunner.AccountReportDbRunSetId = gingerRunner.Executor.ParentExecutionId;
             accountReportRunner.ExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
             accountReportRunner.Name = gingerRunner.Name;
-            accountReportRunner.ElapsedEndTimeStamp = gingerRunner.Elapsed;
-            accountReportRunner.EndTimeStamp = gingerRunner.EndTimeStamp;
+            accountReportRunner.ElapsedEndTimeStamp = gingerRunner.Executor.Elapsed;
+            accountReportRunner.EndTimeStamp = gingerRunner.Executor.EndTimeStamp;
             //accountReportRunner.RunStatus = gingerRunner.Status.ToString();//SetStatus(BusinessFlowsColl); // check if need to calculate based on businessflows status data
-            accountReportRunner.RunStatus = GetRunnerStatus(gingerRunner).ToString();
-            SetRunnerChildCounts(gingerRunner, accountReportRunner);
+            accountReportRunner.RunStatus = GetRunnerStatus((GingerExecutionEngine)gingerRunner.Executor).ToString();
+            SetRunnerChildCounts((GingerExecutionEngine)gingerRunner.Executor, accountReportRunner);
 
             accountReportRunner.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(accountReportRunner.ChildExecutedItemsCount[(int)_HTMLReportConfig.ExecutionStatisticsCountBy].Value, accountReportRunner.ChildExecutableItemsCount[(int)_HTMLReportConfig.ExecutionStatisticsCountBy].Value));
 
@@ -460,10 +460,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             int ChildPassedItemsCountAction = 0;
             string Actvities = HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString();
             string Actions = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString();
-            foreach (GingerExecutionEngine runner in runSet.GingerRunners)
+            foreach (GingerRunner runner in runSet.GingerRunners)
             {
                 int count = 0;
-                foreach (BusinessFlow businessFlow in runner.BusinessFlows)
+                foreach (BusinessFlow businessFlow in runner.Executor.BusinessFlows)
                 {
                     ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + businessFlow.Activities.Count(x => x.Active == true);
 

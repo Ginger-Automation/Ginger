@@ -53,7 +53,7 @@ namespace Ginger.AnalyzerLib
             if (RSC.RunModeParallel)
             {
                 List<Guid> Agents = new List<Guid>();
-                foreach (GingerExecutionEngine GR in RSC.GingerRunners)
+                foreach (GingerRunner GR in RSC.GingerRunners)
                 {
                     foreach (ApplicationAgent AA in GR.ApplicationAgents)
                     {
@@ -84,9 +84,9 @@ namespace Ginger.AnalyzerLib
             }
 
             //check all configured mapped data still valid
-            foreach (GingerExecutionEngine GR in RSC.GingerRunners)
+            foreach (GingerRunner GR in RSC.GingerRunners)
             {
-                foreach (BusinessFlow bf in GR.BusinessFlows)
+                foreach (BusinessFlow bf in GR.Executor.BusinessFlows)
                 {
                     List<VariableBase> inputVars = bf.GetBFandActivitiesVariabeles(true).ToList();
                     List<VariableBase> optionalVariables = null;
@@ -100,14 +100,14 @@ namespace Ginger.AnalyzerLib
                             case VariableBase.eOutputType.Variable:
                                 if (optionalVariables == null)
                                 {
-                                    optionalVariables = GR.GetPossibleOutputVariables(RSC, bf, includeGlobalVars: true, includePrevRunnersVars: false);
+                                    optionalVariables = ((GingerExecutionEngine)GR.Executor).GetPossibleOutputVariables(RSC, bf, includeGlobalVars: true, includePrevRunnersVars: false);
                                 }
                                 issueExist = optionalVariables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault() == null;
                                 break;
                             case VariableBase.eOutputType.OutputVariable:
                                 if (optionalOutputVariables == null)
                                 {
-                                    optionalOutputVariables = GR.GetPossibleOutputVariables(RSC, bf, includeGlobalVars: false, includePrevRunnersVars: true);
+                                    optionalOutputVariables = ((GingerExecutionEngine)GR.Executor).GetPossibleOutputVariables(RSC, bf, includeGlobalVars: false, includePrevRunnersVars: true);
                                 }                              
                                 issueExist = optionalOutputVariables.Where(x => x.VariableInstanceInfo == inputVar.MappedOutputValue).FirstOrDefault() == null;
                                 break;

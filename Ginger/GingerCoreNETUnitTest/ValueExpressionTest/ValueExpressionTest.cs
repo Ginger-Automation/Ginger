@@ -68,10 +68,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             runset = new RunSetConfig();
             runset.Name = "NewRunset1";
             WorkSpace.Instance.RunsetExecutor.RunSetConfig = runset;
-            runner = new GingerExecutionEngine();
-            runner.Name = "Runner1";
+            runner = new GingerExecutionEngine(new GingerRunner());
+            runner.GingerRunner.Name = "Runner1";
             runner.CurrentSolution = new Ginger.SolutionGeneral.Solution();
-            WorkSpace.Instance.RunsetExecutor.Runners.Add(runner);            
+            WorkSpace.Instance.RunsetExecutor.Runners.Add(runner.GingerRunner);            
             mEnv = new ProjEnvironment();
             mEnv.Name = "Environment1";
             EnvApplication app1 = new EnvApplication();

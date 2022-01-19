@@ -32,7 +32,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
 
-            mGR = new GingerExecutionEngine();
+            mGR = new GingerExecutionEngine(new GingerRunner());
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             mGR.CurrentBusinessFlow = mBF;
             mGR.BusinessFlows.Add(mBF);

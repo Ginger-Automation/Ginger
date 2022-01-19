@@ -213,7 +213,7 @@ namespace Ginger.Run.RunSetActions
             return "RunSetActionSendEmailEditPage";
         }
 
-        public override void PrepareDuringExecAction(ObservableList<GingerExecutionEngine> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
         {
             throw new NotImplementedException();
         }

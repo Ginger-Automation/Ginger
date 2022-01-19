@@ -76,13 +76,13 @@ namespace Ginger.Run.RunSetActions
             get { return false; }
         }
 
-        public override void PrepareDuringExecAction(ObservableList<GingerExecutionEngine> Gingers)
+        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
         {
             //Set flag for each BF to execute runset when BF execute finish
             SetExportToALMConfig();
-            foreach (GingerExecutionEngine GR in WorkSpace.Instance.RunsetExecutor.Runners)
+            foreach (GingerRunner GR in WorkSpace.Instance.RunsetExecutor.Runners)
             {
-                GR.PublishToALMConfig = PublishToALMConfig;
+                ((GingerExecutionEngine)GR.Executor).PublishToALMConfig = PublishToALMConfig;
             }               
         }
         private void SetExportToALMConfig()
