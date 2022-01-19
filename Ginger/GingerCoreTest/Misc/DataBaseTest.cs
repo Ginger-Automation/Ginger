@@ -51,7 +51,8 @@ namespace UnitTests.NonUITests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {           
-            mGR = new GingerRunner();            
+            mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
 
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();

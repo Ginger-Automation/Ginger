@@ -66,7 +66,9 @@ namespace UnitTest
             }
             
                 mGR = new GingerRunner();
-                mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGR.Executor = new GingerExecutionEngine(mGR);
+
+            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
                 mBF = new BusinessFlow();
                 mBF.Activities = new ObservableList<Activity>();
                 mBF.Name = "BF Test PB Driver";

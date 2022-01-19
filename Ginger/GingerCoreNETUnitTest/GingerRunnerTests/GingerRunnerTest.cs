@@ -80,6 +80,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.AddVariable(v1);
 
             mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
+
             mGR.Name = "Test Runner";
             mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
@@ -372,6 +374,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             BF1.Active = true;
 
             GingerRunner mGRForRunset = new GingerRunner();
+            mGRForRunset.Executor = new GingerExecutionEngine(mGRForRunset);
+
             mGRForRunset.Name = "Test Runner";
 
             Agent a = new Agent();

@@ -28,6 +28,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
             act.AddNewReturnParams = true;
             act.SupportSimulation = true;
             mGingerRunner = new GingerRunner();
+            mGingerRunner.Executor = new GingerExecutionEngine(mGingerRunner);
+
             mGingerRunner.RunInSimulationMode = true;
             BF.Activities[0].Acts.Add(act);
 

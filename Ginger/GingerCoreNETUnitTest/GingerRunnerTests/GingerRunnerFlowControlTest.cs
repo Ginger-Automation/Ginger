@@ -44,6 +44,8 @@ namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
             // RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();                        
 
             mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
+
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.WindowsAutomation; // just a dummy driver not really for use
 

@@ -44,6 +44,8 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
 
             mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
+
             mGR.Name = "Test Runner";
             mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 

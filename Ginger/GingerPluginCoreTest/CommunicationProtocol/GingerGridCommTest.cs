@@ -88,6 +88,8 @@ namespace GingerPluginCoreTest.CommunicationProtocol
 
 
             mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
+
             mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();

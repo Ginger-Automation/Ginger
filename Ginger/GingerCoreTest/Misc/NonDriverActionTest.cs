@@ -61,6 +61,8 @@ namespace UnitTests.NonUITests
             mBF.CurrentActivity = activity;
 
             mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
+
             mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             mGR.Executor.CurrentBusinessFlow = mBF;
             mGR.Executor.BusinessFlows.Add(mBF);

@@ -66,6 +66,8 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             mAG.Agent = wsAgent;
 
             mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
+
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
 

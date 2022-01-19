@@ -23,6 +23,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public static void ClassInitialize(TestContext TestContext)
         {
             mGingerRunner = new GingerRunner();
+            mGingerRunner.Executor = new GingerExecutionEngine(mGingerRunner);
+
             mGingerRunnerTimeLine = new GingerRunnerTimeLine();
             ((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.Add(mGingerRunnerTimeLine);
             RunListenerBase.Start();

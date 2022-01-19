@@ -24,6 +24,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public static void ClassInitialize(TestContext TestContext)
         {            
             mGingerRunner = new GingerRunner();
+            mGingerRunner.Executor = new GingerExecutionEngine(mGingerRunner);
+
             ((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.Clear(); // temp as long as GR auto start with some listener, remove when fixed
             mExecutionDumperListener = new ExecutionDumperListener(mDumpFolder);
             ((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.Add(mExecutionDumperListener);

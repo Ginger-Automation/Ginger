@@ -25,6 +25,7 @@ namespace GingerCoreNETUnitTest.RunListeners
         public static void ClassInitialize(TestContext TestContext)
         {
             mGingerRunner = new GingerRunner();
+            mGingerRunner.Executor = new GingerExecutionEngine(mGingerRunner);
 
             // Add listener
             //ProjEnvironment projEnvironment = new ProjEnvironment();   // !!!!!!!!!!!!!!!!!!!!!!!remove the need for proj env
