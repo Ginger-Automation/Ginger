@@ -12,7 +12,28 @@
 	Title="RunSetActionPublishToQCEditPage">
 
     <Grid>
-        <StackPanel Margin="0,5,0,0" Orientation="Vertical">
+        <StackPanel Orientation="Vertical">
+            <DockPanel>
+                <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">ALM Type:</Label>
+                <ComboBox x:Name="xALMTypeCbx"  ContextMenu="{x:Null}" Width="250" HorizontalAlignment="Left" Margin="5 10 0 0" Style="{DynamicResource @InputComboBoxStyle}"></ComboBox>
+                <usercontrols:ucButton x:Name="xChangeTestSetBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" Margin="20 10 0 0" ButtonText="Set Selected ALM Fields" ButtonImageType="ALM" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+            </DockPanel>
+            <DockPanel>
+                <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">ALM Test Set Level:</Label>
+                <ComboBox x:Name="xALMTestSetLevelCbx"  ContextMenu="{x:Null}" Width="250" HorizontalAlignment="Left" Margin="5 10 0 0" Style="{DynamicResource @InputComboBoxStyle}"></ComboBox>
+            </DockPanel>
+            <DockPanel>
+                <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Export Type:</Label>
+                <ComboBox x:Name="xExportTypeCbx"  ContextMenu="{x:Null}" Width="250" HorizontalAlignment="Left" Margin="5 10 0 0" Style="{DynamicResource @InputComboBoxStyle}"></ComboBox>
+            </DockPanel>
+            <DockPanel>
+                <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Export Test Set Destination Folder:</Label>
+                <Actions:UCValueExpression x:Name="xTestSetFolderDestination" />
+            </DockPanel>
+            <DockPanel>
+                <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Export Test Cases Destination Folder:</Label>
+                <Actions:UCValueExpression x:Name="xTestCaseFolderDestination" />
+            </DockPanel>
             <DockPanel>
                 <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Test Cases Results to Export : </Label>
                 <ComboBox x:Name="xFilterByStatusDroplist"  ContextMenu="{x:Null}" Width="250" HorizontalAlignment="Left" Margin="5 10 0 0" Style="{DynamicResource @InputComboBoxStyle}"></ComboBox>
