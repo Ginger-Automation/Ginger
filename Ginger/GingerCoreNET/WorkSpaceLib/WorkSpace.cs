@@ -524,14 +524,20 @@ namespace amdocs.ginger.GingerCoreNET
         {
             if (SolutionRepository != null)
             {
-                List<Agent> runningAgents = SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Status == Agent.eStatus.Running).ToList();
+                List<Agent> Agents = SolutionRepository.GetAllRepositoryItems<Agent>().ToList();
+                foreach (Agent agent in Agents)
+                {
+                    AgentOperations agentOperations = new AgentOperations(agent);
+                    agent.AgentOperations = agentOperations;
+                }
+                List<Agent> runningAgents = Agents.Where(x => ((AgentOperations)x.AgentOperations).Status == Agent.eStatus.Running).ToList();
                 if (runningAgents != null && runningAgents.Count > 0)
                 {
                     foreach (Agent agent in runningAgents)
                     {
                         try
                         {
-                            agent.Close();
+                            agent.AgentOperations.Close();
                         }
                         catch (Exception ex)
                         {
@@ -540,7 +546,7 @@ namespace amdocs.ginger.GingerCoreNET
                             else
                                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
                         }
-                        agent.IsFailedToStart = false;
+                        ((AgentOperations)agent.AgentOperations).IsFailedToStart = false;
                     }
                 }
             }

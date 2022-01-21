@@ -93,12 +93,12 @@ namespace Ginger.Run.RunSetActions
             PublishToALMConfig.CalculateTCRunName(mVE);
             PublishToALMConfig.FilterStatus = FilterStatus;
         }
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
             string result = string.Empty;
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             SetExportToALMConfig();
-            foreach (BusinessFlowReport BFR in RI.BusinessFlows)
+            foreach (BusinessFlowReport BFR in ((ReportInfo)RI).BusinessFlows)
             {
                 bfs.Add((BusinessFlow)BFR.GetBusinessFlow());
             }

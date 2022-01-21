@@ -48,7 +48,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             if (mContext.Agent != null)
             {
-                mDriver = mContext.Agent.Driver as IWindowExplorer;
+                mDriver = ((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer;
             }
             else
             {
@@ -62,7 +62,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mContext.Agent != null)
             {
-                mDriver = mContext.Agent.Driver as IWindowExplorer;
+                mDriver = ((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer;
                 LoadLiveSpyPage(mContext);
             }
             else
@@ -86,7 +86,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     if (mContext.Agent != null)
                     {
-                        mDriver = mContext.Agent.Driver as IWindowExplorer;
+                        mDriver = ((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer;
                     }
                     else
                     {

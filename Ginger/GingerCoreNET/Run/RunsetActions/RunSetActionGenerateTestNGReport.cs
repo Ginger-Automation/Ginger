@@ -69,7 +69,7 @@ namespace Ginger.Run.RunSetActions
             set { isStatusByActivity = value; }
         }
 
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
             string testNGReportPath = "";
             try
@@ -97,7 +97,7 @@ namespace Ginger.Run.RunSetActions
                         testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                     }
                 }
-                SaveBFResults(RI, testNGReportPath, IsStatusByActivitiesGroup);
+                SaveBFResults((ReportInfo)RI, testNGReportPath, IsStatusByActivitiesGroup);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -25,14 +25,6 @@ namespace Ginger.Run.RunSetActions
 {
     public class EmailHtmlReportAttachment : EmailAttachment
     {
-        public new static class Fields
-        {
-
-            public static string IsAlternameFolderUsed = "IsAlternameFolderUsed";
-            public static string SelectedHTMLReportTemplateID = "SelectedHTMLReportTemplateID";
-            public static string IsLinkEnabled = "IsLinkEnabled";
-        }
-
         [IsSerializedForLocalRepository]
         public int SelectedHTMLReportTemplateID { get; set; }
 
@@ -47,7 +39,7 @@ namespace Ginger.Run.RunSetActions
             set
             {
                 mIsLinkEnabled = value;
-                OnPropertyChanged(Fields.IsLinkEnabled);
+                OnPropertyChanged(nameof(IsLinkEnabled));
             }
         }
 

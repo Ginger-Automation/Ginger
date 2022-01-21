@@ -46,104 +46,15 @@ using System.Threading.Tasks;
 namespace GingerCore
 {
 
-    public class Agent : RepositoryItemBase, IAgent
+    public class AgentOperations : IAgentOperations
     {
-
-        public enum eAgentType
+        public Agent Agent;
+        public AgentOperations(Agent Agent)
         {
-            Driver,  // old legacy drivers - default
-            Service // new Plugin Service driver with session
+            this.Agent = Agent;
+            this.Agent.AgentOperations = this;
         }
-
-        [IsSerializedForLocalRepository]
-        public eAgentType AgentType { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public string PluginId { get; set; }   // only for AgentType plugin
-
-        [IsSerializedForLocalRepository]
-        public string ServiceId { get; set; }   // only for AgentType plugin
-
         public DriverInfo DriverInfo { get; set; }
-        public enum eDriverType
-        {
-            //Web
-            [Description("Internal Browser")]
-            InternalBrowser,
-            [Description("Internet Explorer Browser(Selenium)")]
-            SeleniumIE,
-            [Description("Fire Fox Browser(Selenium)")]
-            SeleniumFireFox,
-            [Description("Chrome Browser(Selenium)")]
-            SeleniumChrome,
-            [Description("Remote Browser(Selenium)")]
-            SeleniumRemoteWebDriver,
-            [Description("Edge Browser(Selenium)")]
-            SeleniumEdge,
-            [Description("PhantomJS Browser(Selenium)")]
-            SeleniumPhantomJS,//Not been used any more, leaving here to avoid exception on solution load
-
-            //Java
-            [Description("Amdocs Smart Client Framework(ASCF)")]
-            ASCF,
-            [Description("Java")]
-            JavaDriver,
-
-            //Console
-            [Description("DOS Console")]
-            DOSConsole,
-            [Description("Unix Shell")]
-            UnixShell,
-
-            //Web Service
-            [Description("Web Services")]
-            WebServices,
-
-            //Windows
-            [Description("Windows (UIAutomation)")]           
-            WindowsAutomation,
-           
-            //PowerBuilder          
-            [Description("Power Builder")]
-            PowerBuilder,
-
-            //Mobile           
-            [Description("Appium")]
-            Appium,
-
-            //MF
-            [Description("MainFrame 3270")]
-            MainFrame3270,
-
-            NA
-        }
-
-        public enum eStatus
-        {
-            [EnumValueDescription("Not Started")]
-            NotStarted,
-            Starting,
-            Ready,
-            Running,
-            Completed,
-            FailedToStart
-        }
-
-        public static class Fields
-        {
-            public static string Guid = "Guid";
-            public static string Active = "Active";
-            public static string Name = "Name";
-            public static string Host = "Host";
-            public static string Port = "Port";
-            public static string Status = "Status";
-            public static string DriverType = "DriverType";
-            public static string Remote = "Remote";
-            public static string Notes = "Notes";
-            public static string Platform = "Platform";
-            public static string IsWindowExplorerSupportReady = "IsWindowExplorerSupportReady";
-            public static string DriverInfo = "DriverInfo";
-        }
 
         public bool IsWindowExplorerSupportReady
         {
@@ -165,89 +76,34 @@ namespace GingerCore
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public bool Active { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public ObservableList<DriverConfigParam> AdvanceAgentConfigurations = new ObservableList<DriverConfigParam>();
-
-        public bool mIsStarting = false;
-
-        private string mName;
-        [IsSerializedForLocalRepository]
-        public string Name
-        {
-            get { return mName; }
-            set
-            {
-                if (mName != value)
-                {
-                    mName = value;
-                    OnPropertyChanged(Fields.Name);
-                }
-            }
-        }
-
-        [IsSerializedForLocalRepository]
-        public ObservableList<Guid> Tags = new ObservableList<Guid>();
-
-        public override bool FilterBy(eFilterBy filterType, object obj)
-        {
-            switch (filterType)
-            {
-                case eFilterBy.Tags:
-                    foreach (Guid tagGuid in Tags)
-                    {
-                        Guid guid = ((List<Guid>)obj).Where(x => tagGuid.Equals(x) == true).FirstOrDefault();
-                        if (!guid.Equals(Guid.Empty))
-                            return true;
-                    }
-                    break;
-            }
-            return false;
-        }
-
-        #region Remote Agent
-        //Used for Remote Agent - if this is remote agent then the Host and Port should be specified
-        // DO NOT USE this is old, need to use new plugin in on remote grid
-        [IsSerializedForLocalRepository]
-        public bool Remote { get; set; }
-
-
-        [IsSerializedForLocalRepository]
-        public string Host { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public int Port { get; set; }
-
-        #endregion
 
         public bool IsFailedToStart = false;
         private static Object thisLock = new Object();
 
-        public eStatus Status
+        public Agent.eStatus Status
         {
             get
             {
-                if (IsFailedToStart) return eStatus.FailedToStart;
+                if (IsFailedToStart) return Agent.eStatus.FailedToStart;
 
-                if (mIsStarting) return eStatus.Starting;
+                if (Agent.mIsStarting) return Agent.eStatus.Starting;
 
-                if (AgentType == eAgentType.Service)
+                if (Agent.AgentType == Agent.eAgentType.Service)
                 {
                     if (gingerNodeInfo != null || GingerNodeProxy != null)
                     {
                         // TODO: verify the correct status from above
-                        return eStatus.Running;
+                        return Agent.eStatus.Running;
                     }
                     else
                     {
-                        return eStatus.NotStarted;
+                        return Agent.eStatus.NotStarted;
                     }
                 }
 
 
-                if (Driver == null) return eStatus.NotStarted;
+                if (Driver == null) return Agent.eStatus.NotStarted;
                 //TODO: fixme  running called too many - and get stuck
                 bool DriverIsRunning = false;
                 lock (thisLock)
@@ -255,78 +111,9 @@ namespace GingerCore
                     DriverIsRunning = Driver.IsRunning();
                     //Reporter.ToLog(eAppReporterLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {DriverIsRunning}"); //TODO: if needed so need to be more informative including Agent type & name and to be written only in Debug mode of Log
                 }
-                if (DriverIsRunning) return eStatus.Running;
+                if (DriverIsRunning) return Agent.eStatus.Running;
 
-                return eStatus.NotStarted;
-            }
-        }
-        
-        private eDriverType mDriverType;
-        [IsSerializedForLocalRepository]
-        public eDriverType DriverType
-        {
-            get
-            {
-                return mDriverType;
-            }
-            set
-            {
-                if (mDriverType != value)
-                {
-                    mDriverType = value;
-                    OnPropertyChanged(nameof(DriverType));
-                }
-            }
-        }
-
-        /// <summary>
-        /// This method is used to check if the paltform supports POM
-        /// </summary>
-        /// <returns></returns>
-        public bool IsSupportRecording()
-        {
-            bool isSupport = false;
-            switch (DriverType)
-            {
-                case eDriverType.SeleniumFireFox:
-                case eDriverType.SeleniumChrome:
-                case eDriverType.SeleniumIE:
-                case eDriverType.SeleniumRemoteWebDriver:
-                case eDriverType.SeleniumEdge:
-                case eDriverType.ASCF:
-                case eDriverType.Appium:
-                case eDriverType.JavaDriver:
-                    isSupport = true;
-                    break;
-            }
-            return isSupport;
-        }
-
-        private string mNotes;
-        [IsSerializedForLocalRepository]
-        public string Notes { get { return mNotes; } set { if (mNotes != value) { mNotes = value; OnPropertyChanged(nameof(Notes)); } } }
-
-        [IsSerializedForLocalRepository]
-        public ObservableList<DriverConfigParam> DriverConfiguration { get; set; }
-
-        public ProjEnvironment ProjEnvironment { get; set; }
-
-        public string SolutionFolder { get; set; }
-
-        public ObservableList<DataSourceBase> DSList { get; set; }
-
-
-
-        private BusinessFlow mBusinessFlow;
-        public BusinessFlow BusinessFlow
-        {
-            get { return mBusinessFlow; }
-            set
-            {
-                if (!object.ReferenceEquals(mBusinessFlow, value))
-                {
-                    mBusinessFlow = value;
-                }
+                return Agent.eStatus.NotStarted;
             }
         }
 
@@ -351,45 +138,45 @@ namespace GingerCore
 
         public void StartDriver()
         {
-            WorkSpace.Instance.Telemetry.Add("startagent", new { AgentType = AgentType.ToString(), DriverType = DriverType.ToString() });
+            WorkSpace.Instance.Telemetry.Add("startagent", new { AgentType = Agent.AgentType.ToString(), DriverType = Agent.DriverType.ToString() });
 
-            if (AgentType == eAgentType.Service)
+            if (Agent.AgentType == Agent.eAgentType.Service)
             {
                 StartPluginService();
                 GingerNodeProxy.StartDriver();
-                OnPropertyChanged(Fields.Status);
+                Agent.OnPropertyChanged(nameof(Status));
             }
             else
             {
                 try
                 {
-                    mIsStarting = true;
-                    OnPropertyChanged(nameof(Agent.Status));
+                    Agent.mIsStarting = true;
+                    Agent.OnPropertyChanged(nameof(Status));
                     try
                     {
-                        if (Remote)
+                        if (Agent.Remote)
                         {
                             throw new Exception("Remote is Obsolete, use GingerGrid");
                         }
                         else
                         {
-                            Driver = (DriverBase)TargetFrameworkHelper.Helper.GetDriverObject(this);
+                            Driver = (DriverBase)TargetFrameworkHelper.Helper.GetDriverObject(Agent);
                         }
                     }
                     catch (Exception e)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to set Agent Driver", e);
-                       return;
+                        return;
                     }
 
-                    if (AgentType == Agent.eAgentType.Service)
+                    if (Agent.AgentType == Agent.eAgentType.Service)
                     {
                         throw new Exception("Error - Agent type is service and trying to launch from Ginger.exe"); // we should never get here with service
                     }
                     else
                     {
-                        Driver.InitDriver(this);
-                        Driver.BusinessFlow = BusinessFlow;
+                        Driver.InitDriver(Agent);
+                        Driver.BusinessFlow = Agent.BusinessFlow;
                         SetDriverConfiguration();
 
                         IVirtualDriver VirtualDriver = null;
@@ -412,9 +199,9 @@ namespace GingerCore
                         else if (Driver.IsSTAThread())
                         {
                             CTS = new CancellationTokenSource();
-                            MSTATask = new Task(() => 
+                            MSTATask = new Task(() =>
                             {
-                                Driver.StartDriver(); 
+                                Driver.StartDriver();
                             }
                             , CTS.Token, TaskCreationOptions.LongRunning);
                             MSTATask.Start();
@@ -425,15 +212,15 @@ namespace GingerCore
                         }
                         if (VirtualDriver != null)
                         {
-                            VirtualDriver.DriverStarted(this.Guid.ToString());
+                            VirtualDriver.DriverStarted(Agent.Guid.ToString());
                         }
                     }
                 }
                 finally
                 {
-                    if (AgentType == Agent.eAgentType.Service)
+                    if (Agent.AgentType == Agent.eAgentType.Service)
                     {
-                        mIsStarting = false;
+                        Agent.mIsStarting = false;
                     }
                     else
                     {
@@ -445,9 +232,9 @@ namespace GingerCore
                             Driver.DriverMessageEvent += driverMessageEventHandler;
                         }
 
-                        mIsStarting = false;
-                        OnPropertyChanged(nameof(Agent.Status));
-                        OnPropertyChanged(nameof(Agent.IsWindowExplorerSupportReady));
+                        Agent.mIsStarting = false;
+                        Agent.OnPropertyChanged(nameof(Status));
+                        Agent.OnPropertyChanged(nameof(IsWindowExplorerSupportReady));
                     }
                 }
             }
@@ -463,15 +250,15 @@ namespace GingerCore
                 // Enable to start one plugin each time so will let the plugin reserve and avoid race condition
                 // TODO: consider using lock
                 mutex.WaitOne();
-                
+
                 // First we try on local Ginger Grid
-                gingerNodeInfo = FindFreeNode(ServiceId);
-                
+                gingerNodeInfo = FindFreeNode(Agent.ServiceId);
+
                 if (gingerNodeInfo == null)
                 {
                     // Try to find service on Remote Grid                    
-                    ObservableList<RemoteServiceGrid> remoteServiceGrids = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();                                        
-                    GingerNodeProxy = GingerNodeProxy.FindRemoteNode(ServiceId, remoteServiceGrids);
+                    ObservableList<RemoteServiceGrid> remoteServiceGrids = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
+                    GingerNodeProxy = GingerNodeProxy.FindRemoteNode(Agent.ServiceId, remoteServiceGrids);
                     if (GingerNodeProxy != null)
                     {
                         // We found the service on remote grid
@@ -484,20 +271,20 @@ namespace GingerCore
                 if (gingerNodeInfo == null)
                 {
                     // Dup with GR consolidate with timeout
-                    mProcess = WorkSpace.Instance.PlugInsManager.StartService(PluginId, ServiceId);
+                    mProcess = WorkSpace.Instance.PlugInsManager.StartService(Agent.PluginId, Agent.ServiceId);
                 }
 
                 Stopwatch st = Stopwatch.StartNew();
                 while (gingerNodeInfo == null && st.ElapsedMilliseconds < 30000) // max 30 seconds to wait
                 {
-                    gingerNodeInfo = FindFreeNode(ServiceId);
+                    gingerNodeInfo = FindFreeNode(Agent.ServiceId);
                     if (gingerNodeInfo != null) break;
                     Thread.Sleep(100);
                 }
 
                 if (gingerNodeInfo == null)
                 {
-                    throw new Exception("Plugin not started " + PluginId);
+                    throw new Exception("Plugin not started " + Agent.PluginId);
                 }
 
 
@@ -506,11 +293,11 @@ namespace GingerCore
 
                 // Keep GNP on agent
                 GingerNodeProxy = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo);
- 
- //TODO: Ginger Grid  CHeck if required                GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
-                GingerNodeProxy.StartDriver(DriverConfiguration);
+
+                //TODO: Ginger Grid  CHeck if required                GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
+                GingerNodeProxy.StartDriver(Agent.DriverConfiguration);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -518,17 +305,17 @@ namespace GingerCore
             {
                 mutex.ReleaseMutex();
             }
-            
+
         }
 
-        
+
 
         private GingerNodeInfo FindFreeNode(string serviceId)
         {
             // TODO: add more filters from agent config like OS, machine id ,plugin version and more
 
             // Find the first free service which match and Ready (not reserved)
-            gingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x.ServiceId == ServiceId && x.Status == GingerNodeInfo.eStatus.Ready select x).FirstOrDefault();  // Keep First!!!
+            gingerNodeInfo = (from x in WorkSpace.Instance.LocalGingerGrid.NodeList where x.ServiceId == Agent.ServiceId && x.Status == GingerNodeInfo.eStatus.Ready select x).FirstOrDefault();  // Keep First!!!
             return gingerNodeInfo;
         }
 
@@ -536,7 +323,7 @@ namespace GingerCore
         {
             if (e.DriverMessageType == DriverBase.eDriverMessageType.DriverStatusChanged)
             {
-                OnPropertyChanged(Fields.Status);
+                Agent.OnPropertyChanged(nameof(AgentOperations.Status));
             }
         }
         /// <summary>
@@ -549,57 +336,57 @@ namespace GingerCore
             {
 
                 if (DriverClass == null)
-            {
-                DriverClass = TargetFrameworkHelper.Helper.GetDriverType(this);
+                {
+                    DriverClass = TargetFrameworkHelper.Helper.GetDriverType(Agent);
                     if (DriverClass == null)
                     {
                         return false;
                     }
-            }
+                }
 
- 
+
                 if (DriverClass.GetInterfaces().Contains(typeof(IVirtualDriver)))
                 {
                     return true;
                 }
             }
             //if the exceptions are throws we consider it to be not supportable for virtual agents
-            catch(Exception e)
+            catch (Exception e)
             {
-                
+
 
             }
             return false;
         }
         public void SetDriverConfiguration()
         {
-            if (DriverConfiguration == null)
+            if (Agent.DriverConfiguration == null)
             {
                 return;
             }
 
-            if (ProjEnvironment == null)
+            if (Agent.ProjEnvironment == null)
             {
-                ProjEnvironment = new Environments.ProjEnvironment();//to avoid value expertion exception
+                Agent.ProjEnvironment = new Environments.ProjEnvironment();//to avoid value expertion exception
             }
-            if (BusinessFlow == null)
+            if (Agent.BusinessFlow == null)
             {
-                BusinessFlow = new GingerCore.BusinessFlow();//to avoid value expertion exception
+                Agent.BusinessFlow = new GingerCore.BusinessFlow();//to avoid value expertion exception
             }
-            ValueExpression ve = new ValueExpression(ProjEnvironment, BusinessFlow, DSList);
+            ValueExpression ve = new ValueExpression(Agent.ProjEnvironment, Agent.BusinessFlow, Agent.DSList);
 
-            if (AgentType == eAgentType.Service)
+            if (Agent.AgentType == Agent.eAgentType.Service)
             {
                 SetServiceConfiguration();
             }
             else
             {
-                DriverClass = TargetFrameworkHelper.Helper.GetDriverType(this);
+                DriverClass = TargetFrameworkHelper.Helper.GetDriverType(Agent);
 
                 SetDriverMissingParams(DriverClass);
-                
 
-                foreach (DriverConfigParam DCP in DriverConfiguration)
+
+                foreach (DriverConfigParam DCP in Agent.DriverConfiguration)
                 {
                     string value = null;
                     ObservableList<DriverConfigParam> multiValues = null;
@@ -629,7 +416,7 @@ namespace GingerCore
                             Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, multiValues);
                             continue;
                         }
-                        
+
                         //set eNum prop
                         UserConfiguredEnumTypeAttribute enumTypeConfig = null;
                         try
@@ -682,29 +469,29 @@ namespace GingerCore
                     }
                 }
 
-                Driver.AdvanceDriverConfigurations = this.AdvanceAgentConfigurations;
+                Driver.AdvanceDriverConfigurations = Agent.AdvanceAgentConfigurations;
             }
         }
 
-        
+
 
         public void InitDriverConfigs()
         {
-            if (DriverConfiguration == null)
+            if (Agent.DriverConfiguration == null)
             {
-                DriverConfiguration = new ObservableList<DriverConfigParam>();
+                Agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
             }
             else
             {
-                DriverConfiguration.Clear();
+                Agent.DriverConfiguration.Clear();
             }
 
-            if (AgentType == eAgentType.Driver)
+            if (Agent.AgentType == Agent.eAgentType.Driver)
             {
-                Type driverType = TargetFrameworkHelper.Helper.GetDriverType(this);
+                Type driverType = TargetFrameworkHelper.Helper.GetDriverType(Agent);
                 SetDriverDefualtParams(driverType);
             }
-            else if (AgentType == eAgentType.Service)
+            else if (Agent.AgentType == Agent.eAgentType.Service)
             {
                 SetServiceConfiguration();
             }
@@ -712,8 +499,8 @@ namespace GingerCore
 
         private void SetServiceConfiguration()
         {
-            DriverConfiguration.Clear();
-            SetServiceMissingParams();           
+            Agent.DriverConfiguration.Clear();
+            SetServiceMissingParams();
         }
 
         private void SetServiceMissingParams()
@@ -721,15 +508,15 @@ namespace GingerCore
 
             ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
             IEnumerable<PluginServiceInfo> Services = Plugins.SelectMany(x => x.Services);
-            PluginServiceInfo PSI = Services.Where(x => x.ServiceId == ServiceId).FirstOrDefault();
+            PluginServiceInfo PSI = Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
 
             PluginPackage PP = Plugins.Where(x => x.Services.Contains(PSI)).First();
             PP.LoadServicesFromJSON();
-            PSI = PP.Services.Where(x => x.ServiceId == ServiceId).FirstOrDefault();
+            PSI = PP.Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
 
             foreach (var config in PSI.Configs)
             {
-                if (DriverConfiguration.Where(x => x.Parameter == config.Name).Count() == 0)
+                if (Agent.DriverConfiguration.Where(x => x.Parameter == config.Name).Count() == 0)
                 {
                     DriverConfigParam DI = new DriverConfigParam();
                     DI.Parameter = config.Name;
@@ -737,7 +524,7 @@ namespace GingerCore
                     DI.Description = config.Description;
                     DI.OptionalValues = config.OptionalValues;
                     DI.Type = config.Type;
-                    DriverConfiguration.Add(DI);
+                    Agent.DriverConfiguration.Add(DI);
                 }
             }
 
@@ -756,10 +543,10 @@ namespace GingerCore
                 DI.Parameter = "Max Agent Load Time";
                 DI.Value = "30";
                 DI.Description = "Max Time allowed in seconds to start the agent0";
-             
+
                 DI.IsPlatformParameter = true;
-          
-                DriverConfiguration.Add(DI);
+
+                Agent.DriverConfiguration.Add(DI);
 
 
                 DriverConfigParam DI2 = new DriverConfigParam();
@@ -769,7 +556,7 @@ namespace GingerCore
 
                 DI2.IsPlatformParameter = true;
 
-                DriverConfiguration.Add(DI2);
+                Agent.DriverConfiguration.Add(DI2);
 
 
             }
@@ -782,7 +569,7 @@ namespace GingerCore
 
                 DI.IsPlatformParameter = true;
 
-                DriverConfiguration.Add(DI);
+                Agent.DriverConfiguration.Add(DI);
 
 
                 DriverConfigParam DI2 = new DriverConfigParam();
@@ -792,7 +579,7 @@ namespace GingerCore
 
                 DI2.IsPlatformParameter = true;
 
-                DriverConfiguration.Add(DI2);
+                Agent.DriverConfiguration.Add(DI2);
 
 
                 DriverConfigParam DI3 = new DriverConfigParam();
@@ -802,11 +589,11 @@ namespace GingerCore
 
                 DI3.IsPlatformParameter = true;
 
-                DriverConfiguration.Add(DI3);
+                Agent.DriverConfiguration.Add(DI3);
 
 
-            
-       
+
+
             }
         }
         private void SetDriverDefualtParams(Type t)
@@ -822,7 +609,7 @@ namespace GingerCore
                     continue;
                 DriverConfigParam configParam = GetDriverConfigParam(mi);
 
-                DriverConfiguration.Add(configParam);
+                Agent.DriverConfiguration.Add(configParam);
             }
         }
         /// <summary>
@@ -831,7 +618,7 @@ namespace GingerCore
         /// <param name="driverType"> Type of the driver</param>
         private void SetDriverMissingParams(Type driverType)
         {
-            
+
             MemberInfo[] members = driverType.GetMembers();
             UserConfiguredAttribute token = null;
 
@@ -843,9 +630,9 @@ namespace GingerCore
                     continue;
                 DriverConfigParam configParam = GetDriverConfigParam(mi);
 
-                if (DriverConfiguration.Where(x => x.Parameter == configParam.Parameter).FirstOrDefault() == null)
+                if (Agent.DriverConfiguration.Where(x => x.Parameter == configParam.Parameter).FirstOrDefault() == null)
                 {
-                    DriverConfiguration.Add(configParam);
+                    Agent.DriverConfiguration.Add(configParam);
                 }
 
             }
@@ -908,30 +695,27 @@ namespace GingerCore
             }
         }
 
-        public override string GetNameForFileName()
-        {
-            return Name;
-        }
+
 
         public void Close()
         {
             try
             {
-                if (AgentType == eAgentType.Service)
+                if (Agent.AgentType == Agent.eAgentType.Service)
                 {
-                    if (gingerNodeInfo != null)  
+                    if (gingerNodeInfo != null)
                     {
                         // this is plugin driver on local machine
 
                         GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
-                        GingerNodeProxy.CloseDriver();                        
+                        GingerNodeProxy.CloseDriver();
 
 
                         gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;
-                      
-                   
+
+
                         if (mProcess != null) // it means a new plugin process was started for this agent - so we close it
-                        {                            
+                        {
                             // Remove the node from the grid
                             WorkSpace.Instance.LocalGingerGrid.NodeList.Remove(gingerNodeInfo);
 
@@ -941,7 +725,7 @@ namespace GingerCore
 
                         GingerNodeProxy = null;
                         gingerNodeInfo = null;
-                        
+
                         return;
                     }
                     else
@@ -971,7 +755,7 @@ namespace GingerCore
                        Thread.Sleep(1000);
                    });
                 }
-                else 
+                else
                 {
                     Driver.CloseDriver();
                 }
@@ -979,7 +763,7 @@ namespace GingerCore
                 {
                     // Using cancellation token source to cancel 
                     CancelTask = new BackgroundWorker();
-                    CancelTask.DoWork += new DoWorkEventHandler(CancelTMSTATask);
+                    CancelTask.DoWork += new DoWorkEventHandler(Agent.CancelTMSTATask);
                     CancelTask.RunWorkerAsync();
                 }
 
@@ -987,216 +771,40 @@ namespace GingerCore
             }
             finally
             {
-                OnPropertyChanged(Fields.Status);
-                OnPropertyChanged(Fields.IsWindowExplorerSupportReady);
+                Agent.OnPropertyChanged(nameof(AgentOperations.Status));
+                Agent.OnPropertyChanged(nameof(AgentOperations.IsWindowExplorerSupportReady));
             }
         }
 
-        public void ResetAgentStatus(eStatus status)
+        public void ResetAgentStatus(Agent.eStatus status)
         {
-            if (status == eStatus.FailedToStart)
+            if (status == Agent.eStatus.FailedToStart)
             {
                 IsFailedToStart = false;
             }
         }
-        private void CancelTMSTATask(object sender, DoWorkEventArgs e)
-        {
-            if (MSTATask == null)
-                return;
-            
-                // Using cancellation token source to cancel  getting exceptions when trying to close agent and task is in running condition
+        //private void CancelTMSTATask(object sender, DoWorkEventArgs e)
+        //{
+        //    if (MSTATask == null)
+        //        return;
 
-                while(MSTATask!=null &&   !(MSTATask.Status==TaskStatus.RanToCompletion ||MSTATask.Status== TaskStatus.Faulted ||MSTATask.Status== TaskStatus.Canceled))
-                {
-                   
-                       CTS.Cancel();
-                    Thread.Sleep(100);
-                }
-               CTS.Dispose();
-                MSTATask = null;
-        }
+        //    // Using cancellation token source to cancel  getting exceptions when trying to close agent and task is in running condition
+
+        //    while (MSTATask != null && !(MSTATask.Status == TaskStatus.RanToCompletion || MSTATask.Status == TaskStatus.Faulted || MSTATask.Status == TaskStatus.Canceled))
+        //    {
+
+        //        CTS.Cancel();
+        //        Thread.Sleep(100);
+        //    }
+        //    CTS.Dispose();
+        //    MSTATask = null;
+        //}
         public void HighLightElement(Act act)
         {
-            if(Driver!=null)
-            Driver.HighlightActElement(act);
+            if (Driver != null)
+                Driver.HighlightActElement(act);
         }
 
-        private ePlatformType? mPlatform;
-
-        [IsSerializedForLocalRepository]
-        public ePlatformType Platform
-        {
-            get
-            {
-                if (mPlatform != null)
-                {
-                    return mPlatform.Value;
-                }
-                else
-                {
-                    if (AgentType == eAgentType.Service)
-                    {
-                        return ePlatformType.NA;
-                    }
-                    else
-                    {
-                        return GetDriverPlatformType(DriverType);
-                    }
-                }
-            }
-            set
-            {
-
-                mPlatform = value;
-            }
-        }
-
-        public static ePlatformType GetDriverPlatformType(eDriverType driver)
-        {
-            switch (driver)
-            {
-                case eDriverType.InternalBrowser:
-                case eDriverType.SeleniumFireFox:
-                case eDriverType.SeleniumChrome:
-                case eDriverType.SeleniumIE:
-                case eDriverType.SeleniumRemoteWebDriver:
-                case eDriverType.SeleniumEdge:
-                    return ePlatformType.Web;               
-                case eDriverType.ASCF:
-                    return ePlatformType.ASCF;
-                case eDriverType.DOSConsole:
-                    return ePlatformType.DOS;
-                case eDriverType.UnixShell:
-                    return ePlatformType.Unix;
-                case eDriverType.WebServices:
-                    return ePlatformType.WebServices;
-                case eDriverType.WindowsAutomation:
-                    return ePlatformType.Windows;             
-                case eDriverType.Appium:
-                    return ePlatformType.Mobile;
-                case eDriverType.PowerBuilder:
-                    return ePlatformType.PowerBuilder;
-                case eDriverType.JavaDriver:
-                    return ePlatformType.Java;
-                case eDriverType.MainFrame3270:
-                    return ePlatformType.MainFrame;
-                //case eDriverType.AndroidADB:
-                //    return ePlatformType.AndroidDevice;               
-                default:
-                    return ePlatformType.NA;
-            }                
-        }
-
-       public List<object> GetDriverTypesByPlatfrom(string platformType)
-        {
-            List<object> driverTypes = new List<object>();
-
-            if (platformType == ePlatformType.Web.ToString())
-            {
-                driverTypes.Add(Agent.eDriverType.InternalBrowser);
-                driverTypes.Add(Agent.eDriverType.SeleniumChrome);
-                driverTypes.Add(Agent.eDriverType.SeleniumFireFox);
-                driverTypes.Add(Agent.eDriverType.SeleniumIE);
-                driverTypes.Add(Agent.eDriverType.SeleniumRemoteWebDriver);
-                driverTypes.Add(Agent.eDriverType.SeleniumEdge);                     
-            }
-            else if (platformType == ePlatformType.Java.ToString())
-            {
-                driverTypes.Add(Agent.eDriverType.JavaDriver);
-            }
-            else if (platformType == ePlatformType.Mobile.ToString())
-            {
-                driverTypes.Add(Agent.eDriverType.Appium);
-            }
-            else if (platformType == ePlatformType.Windows.ToString())
-            {
-                driverTypes.Add(Agent.eDriverType.WindowsAutomation);                
-            }
-            else if (platformType == ePlatformType.PowerBuilder.ToString())
-            {
-                driverTypes.Add(Agent.eDriverType.PowerBuilder);                
-            }
-
-            else if (platformType == ePlatformType.Unix.ToString())
-            {
-                driverTypes.Add(Agent.eDriverType.UnixShell);
-
-            }
-            else if (platformType == ePlatformType.DOS.ToString())
-            {
-                driverTypes.Add(Agent.eDriverType.DOSConsole);
-            }
-
-            else if (platformType == ePlatformType.WebServices.ToString())
-            {
-                driverTypes.Add(Agent.eDriverType.WebServices);
-            }
-
-            //else if (platformType == ePlatformType.AndroidDevice.ToString())
-            //{
-            //    driverTypes.Add(Agent.eDriverType.AndroidADB);
-            //}
-            else if (platformType == ePlatformType.ASCF.ToString())
-            {
-                driverTypes.Add(Agent.eDriverType.ASCF);
-            }
-
-            else if (platformType == ePlatformType.MainFrame.ToString())
-            {
-                driverTypes.Add(Agent.eDriverType.MainFrame3270);
-            }           
-            else
-            {
-                driverTypes.Add(Agent.eDriverType.NA);
-            }
-
-            return driverTypes;
-        }
-
-        public override string ItemName
-        {
-            get
-            {
-                return this.Name;
-            }
-            set
-            {
-                this.Name = value;
-            }
-        }
-
-        public override string GetItemType()
-        {
-            return nameof(Agent);
-        }
-
-        public DriverConfigParam GetOrCreateParam(string parameter, string defaultValue = null)
-        {
-            DriverConfigParam configParam = DriverConfiguration.Where(x => x.Parameter == parameter).FirstOrDefault();
-            if (configParam != null)
-            {
-                return configParam;
-            }
-            else
-            {
-                configParam = new DriverConfigParam() { Parameter = parameter, Value = defaultValue };
-                DriverConfiguration.Add(configParam);
-                return configParam;
-            }
-        }
-
-        public string GetParamValue(string Parameter)
-        {
-            foreach (DriverConfigParam DCP1 in DriverConfiguration)
-            {
-                if (DCP1.Parameter == Parameter)
-                {
-                    return DCP1.Value;
-                }
-            }
-
-            return null;
-        }
 
 
         public void WaitForAgentToBeReady()
@@ -1207,7 +815,7 @@ namespace GingerCore
             {
                 // TODO: run on another thread?? !!!!!!!!!!!!!!!!!!!!
                 //GingerCore.General.DoEvents ();
-                Thread.Sleep (100);
+                Thread.Sleep(100);
                 Counter++;
 
                 int waitingTime = 30;// 30 seconds
@@ -1215,16 +823,16 @@ namespace GingerCore
                     waitingTime = Driver.DriverLoadWaitingTime;
                 Double waitingTimeInMilliseconds = waitingTime * 10;
                 if (Counter > waitingTimeInMilliseconds)
-                {                   
-                    if(Driver!=null && string.IsNullOrEmpty(Driver.ErrorMessageFromDriver))
+                {
+                    if (Driver != null && string.IsNullOrEmpty(Driver.ErrorMessageFromDriver))
                     {
-                        Driver.ErrorMessageFromDriver = "Failed to start the agent after waiting for " + waitingTime + " seconds"; 
+                        Driver.ErrorMessageFromDriver = "Failed to start the agent after waiting for " + waitingTime + " seconds";
                     }
                     return;
                 }
-            }         
+            }
         }
-        public bool UsedForAutoMapping { get; set; } = false;
+        //public bool UsedForAutoMapping { get; set; } = false;
 
 
         public void Test()
@@ -1234,7 +842,7 @@ namespace GingerCore
                 Close();
             }
 
-            SolutionFolder = WorkSpace.Instance.SolutionRepository.SolutionFolder;
+            Agent.SolutionFolder = WorkSpace.Instance.SolutionRepository.SolutionFolder;
             try
             {
                 StartDriver();
@@ -1244,17 +852,17 @@ namespace GingerCore
                 }
 
                 if (Status == Agent.eStatus.Running)
-                {                    
+                {
                     Reporter.ToUser(eUserMsgKey.TestagentSucceed);
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, "Please confirm Agent configurations are valid");
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Please confirm Agent configurations are valid");
                 }
             }
             catch (Exception AgentStartException)
-            {                
-                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, AgentStartException.Message);
+            {
+                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, AgentStartException.Message);
             }
             finally
             {
@@ -1262,68 +870,20 @@ namespace GingerCore
             }
         }
 
-        
-
-        public object Tag;
-       
-        public override eImageType ItemImageType
-        {
-            get
-            {
-                return eImageType.Agent;
-            }
-        }
-
-        public override string ItemNameField
-        {
-            get
-            {
-                return nameof(this.Name);
-            }
-        }
-
-        public bool IsVirtual { get; internal set; }
 
         public List<DriverBase> VirtualAgentsStarted()
         {
             List<DriverBase> CurrentDrivers = new List<DriverBase>();
 
-            foreach (var drv in DriverBase.VirtualDrivers.Where(x => x.Key == this.Guid.ToString()||x.Key==this.ParentGuid.ToString()))
+            foreach (var drv in DriverBase.VirtualDrivers.Where(x => x.Key == Agent.Guid.ToString() || x.Key == Agent.ParentGuid.ToString()))
             {
                 CurrentDrivers.Add(drv.Value);
             }
-    
+
 
 
 
             return CurrentDrivers;
-        }
-
-
-        public override void PostDeserialization()
-        {
-
-            if(DriverType == eDriverType.WindowsAutomation)
-            {
-                //Upgrading Action timeout for windows driver from default 10 secs to 30 secs
-                DriverConfigParam actionTimeoutParameter = DriverConfiguration.Where(x => x.Parameter == nameof(DriverBase.ActionTimeout)).FirstOrDefault();
-
-                if (actionTimeoutParameter!=null && actionTimeoutParameter.Value== "10" && actionTimeoutParameter.Description.Contains("10"))
-                {
-                    actionTimeoutParameter.Value = "30";
-                    actionTimeoutParameter.Description=actionTimeoutParameter.Description.Replace("10", "30");
-                }
-            }          
-        }
-
-        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
-        {           
-            if (new GenericAppiumDriver(null).SerializationError(this, errorType,name,value))
-            {
-                return true;
-            }
-
-            return false;
         }
 
     }

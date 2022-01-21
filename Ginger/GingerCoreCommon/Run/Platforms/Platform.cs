@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -20,20 +20,12 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
 using System.Linq;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.Platforms
 {
     public class Platform : RepositoryItemBase
     {
-        public  static partial class Fields
-        {            
-            public static string Active = "Active";
-            public static string PlatformType = "PlatformType";
-            public static string AgentName = "AgentName";
-            public static string Agent = "Agent";
-            public static string App = "App";
-        }
-
         private bool mActive;
         [IsSerializedForLocalRepository]
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
@@ -63,13 +55,13 @@ namespace GingerCore.Platforms
         }
        
         // Used when running after mapping done and user click run
-        private Agent mAgent;
+        private IAgent mAgent;
 
-        public Agent Agent { get { return mAgent; } set 
+        public IAgent Agent { get { return mAgent; } set 
         { 
             mAgent = value;
-            OnPropertyChanged(Fields.Agent); 
-            OnPropertyChanged(Fields.AgentName);            
+            OnPropertyChanged(nameof(Agent)); 
+            OnPropertyChanged(nameof(AgentName));            
         } }
 
         public string Description {
@@ -80,17 +72,17 @@ namespace GingerCore.Platforms
             } 
         }
 
-        public void SetDefualtAgent(ObservableList<Agent> Agents)
-        {
-            if (Agents == null) return;
+        //public void SetDefualtAgent(ObservableList<Agent> Agents)
+        //{
+        //    if (Agents == null) return;
 
-            // set the first agent matching the platform                        
-            Agent a = (from x in Agents where x.Platform == PlatformType select x).FirstOrDefault();
-            if (a != null)
-            {
-                this.Agent = (Agent)a.CreateCopy(false);
-            }
-        }
+        //    // set the first agent matching the platform                        
+        //    Agent a = (from x in Agents where x.Platform == PlatformType select x).FirstOrDefault();
+        //    if (a != null)
+        //    {
+        //        this.Agent = (Agent)a.CreateCopy(false);
+        //    }
+        //}
 
         public override string ItemName
         {

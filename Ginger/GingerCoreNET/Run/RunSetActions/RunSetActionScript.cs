@@ -50,7 +50,7 @@ namespace Ginger.Run.RunSetActions
             get { return true; }
         }
 
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
             try
             {

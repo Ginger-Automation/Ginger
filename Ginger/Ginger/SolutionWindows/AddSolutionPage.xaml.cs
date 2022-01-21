@@ -189,7 +189,7 @@ namespace Ginger.SolutionWindows
                     break;
             }
 
-            agent.InitDriverConfigs();
+            agent.AgentOperations.InitDriverConfigs();
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(agent);
         }
 

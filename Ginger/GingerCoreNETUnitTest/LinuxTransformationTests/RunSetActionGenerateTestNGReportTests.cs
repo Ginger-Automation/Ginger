@@ -119,7 +119,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             WorkSpace.Instance.RunsetExecutor = GMR1;
 
             //Act
-            GMR1.RunSetConfig.RunSetActions[0].ExecuteWithRunPageBFES();
+            GMR1.RunSetConfig.RunSetActions[0].runSetActionBaseOperations.ExecuteWithRunPageBFES();
 
             //Assert
             Assert.AreEqual(GMR1.RunSetConfig.RunSetActions[0].Status, RunSetActionBase.eRunSetActionStatus.Completed);
@@ -159,7 +159,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             WorkSpace.Instance.RunsetExecutor = GMR1;
 
             //Act
-            GMR1.RunSetConfig.RunSetActions[0].ExecuteWithRunPageBFES();
+            GMR1.RunSetConfig.RunSetActions[0].runSetActionBaseOperations.ExecuteWithRunPageBFES();
 
             //Assert
             Assert.AreEqual(GMR1.RunSetConfig.RunSetActions[0].Status, RunSetActionBase.eRunSetActionStatus.Completed);
@@ -172,6 +172,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             jsonReportOperation.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             jsonReportOperation.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
             jsonReportOperation.Active = true;
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(jsonReportOperation);
+            jsonReportOperation.runSetActionBaseOperations = runSetActionBaseOperations;
             return jsonReportOperation;
         }
         public RunSetActionGenerateTestNGReport CreateTestNGOperation()
@@ -182,6 +184,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             testNGReportOperation.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             testNGReportOperation.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
             testNGReportOperation.Active = true;
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(testNGReportOperation);
+            testNGReportOperation.runSetActionBaseOperations = runSetActionBaseOperations;
             return testNGReportOperation;
         }
     }

@@ -108,7 +108,7 @@ namespace UnitTests.UITests.JavaDriverTest
                 a.DriverType = Agent.eDriverType.JavaDriver;
 
                 a.Name = "Java Agent";
-                a.Driver = mDriver;
+                ((AgentOperations)a.AgentOperations).Driver = mDriver;
 
                 ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
                 ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);

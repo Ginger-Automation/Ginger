@@ -31,7 +31,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Reports
 {
-    public class ReportInfo
+    public class ReportInfo : IReportInfo
     {
         /// <summary>
         /// Should be deleted after switch will be fully done to serialized objects 
@@ -41,7 +41,7 @@ namespace Ginger.Reports
         /// <summary>
         /// Should be deleted after switch will be fully done to serialized objects
         /// </summary>                                                                                            
-        public List<BusinessFlowReport> BusinessFlowReports { get; set; }          
+        public List<BusinessFlowReport> BusinessFlowReports { get; set; }
 
         public enum ReportInfoLevel
         {
@@ -54,20 +54,20 @@ namespace Ginger.Reports
             ActionLevel
         }
         public ReportInfoLevel reportInfoLevel = ReportInfoLevel.Unknown;
-        
+
         private ObservableList<BusinessFlowExecutionSummary> mBFESs;
         private ProjEnvironment mProjEnvironment;
-        private RunsetExecutor mGingersMultiRun;        
+        private RunsetExecutor mGingersMultiRun;
 
         public string DateCreatedShort { get; set; }
         public string DateCreated { get; set; }
         public string ExecutionEnv { get; set; }
         public TimeSpan ExecutionElapsedTime { get; set; }
-        
+
         /// <summary>
         /// The root item of the report which can be RunSet, Runner, BF
         /// </summary>
-        public Object ReportInfoRootObject;   
+        public Object ReportInfoRootObject;
 
         public EnvironmentReport Environment { get; set; }
 
@@ -80,13 +80,13 @@ namespace Ginger.Reports
         {
             mProjEnvironment = Env;
             mBFESs = GMR.GetAllBusinessFlowsExecutionSummary(ReportOnlyExecuted);
-            
+
             mGingersMultiRun = GMR;
             // Set all General info            
             TotalExecutionTime = mGingersMultiRun.Elapsed;
 
             DateCreated = DateTime.Now.ToString();
-            DateCreatedShort = DateTime.Now.ToString("MM/dd");  
+            DateCreatedShort = DateTime.Now.ToString("MM/dd");
             ExecutionEnv = mProjEnvironment.Name;
             ExecutionElapsedTime = mGingersMultiRun.Elapsed;
         }
@@ -110,10 +110,10 @@ namespace Ginger.Reports
         /// <summary>
         /// Should be deleted after switch will be fully done to serialized objects 
         /// </summary> 
-        public ReportInfo(ProjEnvironment Env, BusinessFlow BF, GingerExecutionEngine GR=null) // to remove after discussion !!!
+        public ReportInfo(ProjEnvironment Env, BusinessFlow BF, GingerExecutionEngine GR = null) // to remove after discussion !!!
         {
             mProjEnvironment = Env;
-            mBFESs=new ObservableList<BusinessFlowExecutionSummary>();
+            mBFESs = new ObservableList<BusinessFlowExecutionSummary>();
             BusinessFlowExecutionSummary BFES = new BusinessFlowExecutionSummary();
 
             BFES.BusinessFlowName = BF.Name;
@@ -125,10 +125,10 @@ namespace Ginger.Reports
             BFES.ExecutionVariabeles = BF.GetBFandActivitiesVariabeles(true);
             BFES.BusinessFlow = BF;
             BFES.Selected = true;
-            if(GR!=null)
-            BFES.BusinessFlowExecLoggerFolder = Path.Combine(GR.ExecutionLoggerManager.ExecutionLogfolder,BF.ExecutionLogFolder);
+            if (GR != null)
+                BFES.BusinessFlowExecLoggerFolder = Path.Combine(GR.ExecutionLoggerManager.ExecutionLogfolder, BF.ExecutionLogFolder);
 
-            if (mBFESs!=null)  mBFESs.Clear();
+            if (mBFESs != null) mBFESs.Clear();
             mBFESs.Add(BFES);
 
             mGingersMultiRun = null;
@@ -137,8 +137,8 @@ namespace Ginger.Reports
                 TotalExecutionTime = TimeSpan.FromSeconds((long)BF.ElapsedSecs);
             else
                 TotalExecutionTime = new TimeSpan(0);
-            
-            ExecutionElapsedTime = TotalExecutionTime; 
+
+            ExecutionElapsedTime = TotalExecutionTime;
             DateCreated = DateTime.Now.ToString();
             ExecutionEnv = mProjEnvironment.Name;
             DateCreatedShort = DateTime.Now.ToString("MM/dd");
@@ -172,7 +172,7 @@ namespace Ginger.Reports
                 switch (txtFileName)
                 {
                     case "RunSet.txt":
-                        curFileWithPath = Path.Combine(folder,"RunSet.txt");
+                        curFileWithPath = Path.Combine(folder, "RunSet.txt");
                         ReportInfoRootObject = (RunSetReport)JsonLib.LoadObjFromJSonFile(curFileWithPath, typeof(RunSetReport));
                         ((RunSetReport)ReportInfoRootObject).LogFolder = folder;
                         reportInfoLevel = ReportInfo.ReportInfoLevel.RunSetLevel;
@@ -329,17 +329,17 @@ namespace Ginger.Reports
         }
 
 
-        public int TotalBusinessFlowsStopped 
-        { 
-            get 
-            { 
+        public int TotalBusinessFlowsStopped
+        {
+            get
+            {
                 int count = (from f1 in BusinessFlows where f1.IsStopped == true select f1).Count();
                 return count;
-            } 
+            }
         }
 
 
-        IEnumerable<ActivityReport> mAllActivitiesForReport  = null;
+        IEnumerable<ActivityReport> mAllActivitiesForReport = null;
         public IEnumerable<ActivityReport> AllActivitiesForReport
         {
             // We get all Active Activities which are not error handler
@@ -351,8 +351,8 @@ namespace Ginger.Reports
                     mAllActivitiesForReport = BusinessFlows.SelectMany(b => b.Activities).Where(z => z.Active == true && z.GetType() != typeof(IErrorHandler));
                 }
 
-                return mAllActivitiesForReport;                
-            }            
+                return mAllActivitiesForReport;
+            }
         }
 
         IEnumerable<ActionReport> mAllActionsForReport = null;
@@ -388,21 +388,21 @@ namespace Ginger.Reports
         }
 
         //Activities Info
-        public int TotalActivitiesCount 
-        { 
-            get 
+        public int TotalActivitiesCount
+        {
+            get
             {
                 int count = AllActivitiesForReport.Count();
-                return count; 
-            } 
+                return count;
+            }
         }
 
         public int TotalActivitiesByRunStatus(Amdocs.Ginger.CoreNET.Execution.eRunStatus RunStatus)
         {
             //TODO: fix me to use the same enum on activity add GetActivity on ActivityReport
             string sStatus = RunStatus.ToString();
-            int count = AllActivitiesForReport.Where(activity => activity.Status == sStatus).Count();            
-            return count;          
+            int count = AllActivitiesForReport.Where(activity => activity.Status == sStatus).Count();
+            return count;
         }
 
         public int TotalActionsCount()
@@ -420,7 +420,7 @@ namespace Ginger.Reports
         }
 
         public int TotalValidationsCount()
-        {                        
+        {
             int count = AllValidationsForReport.Count();
             return count;
         }

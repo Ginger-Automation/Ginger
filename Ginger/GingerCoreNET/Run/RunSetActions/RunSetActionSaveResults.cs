@@ -73,9 +73,9 @@ namespace Ginger.Run.RunSetActions
         public bool SaveindividualBFReport { get; set; }
 
         ReportInfo mRI;
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
-            mRI = RI;
+            mRI = (ReportInfo)RI;
             try
             {
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
@@ -86,14 +86,14 @@ namespace Ginger.Run.RunSetActions
                     {
                         Directory.CreateDirectory(folder);
                     }
-                    SaveBFResults(RI, folder);
+                    SaveBFResults(mRI, folder);
                     Reporter.HideStatusMessage();
                 }
 
                 if (!string.IsNullOrEmpty(SaveResultstoFolderName))
                 {
                     Reporter.ToStatus(eStatusMsgKey.SaveItem, null, SaveResultstoFolderName, "Execution Summary");
-                    SaveBFResults(RI, SaveResultstoFolderName);
+                    SaveBFResults(mRI, SaveResultstoFolderName);
                     Reporter.HideStatusMessage();
                 }
 

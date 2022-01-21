@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
 
         public override string Type { get { return "Produce JSON Summary Report"; } }
 
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
             string json = WorkSpace.Instance.RunsetExecutor.CreateSummary();
             string timestamp = DateTime.Now.ToString("MMddyyyy_HHmmss");

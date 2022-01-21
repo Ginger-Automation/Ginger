@@ -164,7 +164,7 @@ namespace GingerCore.Platforms
 
         private void Agent_OnPropertyChange(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == GingerCore.Agent.Fields.Name)
+            if (e.PropertyName == nameof(Agent.Name))
             {
                 OnPropertyChanged(nameof(AgentName));
             }

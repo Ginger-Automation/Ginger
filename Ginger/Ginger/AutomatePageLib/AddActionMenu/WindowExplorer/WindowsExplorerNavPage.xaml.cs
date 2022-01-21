@@ -22,6 +22,7 @@ using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.Run;
 using Ginger.WindowExplorer;
+using GingerCore;
 using GingerCore.Platforms;
 using GingerCoreNET;
 using System.Collections.Generic;
@@ -61,7 +62,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             if (mContext.Agent != null)
             {
-                WindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
+                WindowExplorerDriver = ((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer;
             }
             else
             {
@@ -84,7 +85,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     if (mContext.Agent != null)
                     {
-                        WindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
+                        WindowExplorerDriver = ((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer;
                     }
                     else
                     {
@@ -155,7 +156,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mContext.Agent != null)
             {
-                WindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
+                WindowExplorerDriver = ((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer;
                 LoadWindowExplorerPage();
             }
             else

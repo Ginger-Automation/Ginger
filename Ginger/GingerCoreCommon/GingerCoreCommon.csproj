@@ -54,6 +54,7 @@
   <ItemGroup>
     <Folder Include="Repository\ExecLib\" />
     <Folder Include="Repository\ReportsLib\" />
+    <Folder Include="RunLib\Common\" />
   </ItemGroup>
 
   <ItemGroup>

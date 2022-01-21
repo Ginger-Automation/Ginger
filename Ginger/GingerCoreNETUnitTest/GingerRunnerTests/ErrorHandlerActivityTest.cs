@@ -61,7 +61,7 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             mDriver.SecurityType = @"None";
 
             wsAgent.DriverType = Agent.eDriverType.WebServices;
-            wsAgent.Driver = mDriver;
+            ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
             ApplicationAgent mAG = new ApplicationAgent();
             mAG.Agent = wsAgent;
 

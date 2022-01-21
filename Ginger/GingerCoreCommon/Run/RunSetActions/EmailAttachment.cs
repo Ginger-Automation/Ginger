@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -35,16 +35,6 @@ namespace Ginger.Run.RunSetActions
             File
         }
 
-        public  static class Fields
-        {
-            public static string AttachmentType = "AttachmentType";
-            public static string Name = "Name";
-            public static string CalculatedName = "CalculatedName";
-            public static string ExtraInformation = "ExtraInformation";
-            public static string CalculatedExtraInformation = "CalculatedExtraInformation";
-            public static string ZipIt = "ZipIt";
-        }
-
         [IsSerializedForLocalRepository]
         public eAttachmentType AttachmentType { get; set; }
 
@@ -59,7 +49,7 @@ namespace Ginger.Run.RunSetActions
             set
             {
                 mName = value;
-                OnPropertyChanged(Fields.Name);
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -78,7 +68,7 @@ namespace Ginger.Run.RunSetActions
             set
             {
                 mExtraInformation = value;
-                OnPropertyChanged(Fields.ExtraInformation);
+                OnPropertyChanged(nameof(ExtraInformation));
             }
         }
 
@@ -98,7 +88,7 @@ namespace Ginger.Run.RunSetActions
                 if (mZipit != value)
                 {
                     mZipit = value;
-                    OnPropertyChanged(Fields.ZipIt);
+                    OnPropertyChanged(nameof(ZipIt));
                 }
             }
         }

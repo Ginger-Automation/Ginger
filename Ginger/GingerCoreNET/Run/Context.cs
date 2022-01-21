@@ -123,6 +123,8 @@ namespace Amdocs.Ginger.Common
         {
             get
             {
+                //AgentOperations agentOperations = new AgentOperations(mAgent);
+                //mAgent.AgentOperations = agentOperations;
                 return mAgent;
             }
             set

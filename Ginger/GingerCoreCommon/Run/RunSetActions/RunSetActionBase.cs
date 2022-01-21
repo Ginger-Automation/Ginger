@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -24,7 +24,7 @@ using Amdocs.Ginger.Common;
 using System.Diagnostics;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.Reports;
-using amdocs.ginger.GingerCoreNET;
+//using amdocs.ginger.GingerCoreNET;
 using GingerCore;
 
 namespace Ginger.Run.RunSetActions
@@ -40,12 +40,6 @@ namespace Ginger.Run.RunSetActions
             [EnumValueDescription("During Execution")]
             DuringExecution,
         }
-
-        public abstract List<eRunAt> GetRunOptions();
-
-        public abstract bool SupportRunOnConfig { get; }
-
-        public abstract void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers);
 
         public enum eRunSetActionStatus
         {
@@ -65,18 +59,7 @@ namespace Ginger.Run.RunSetActions
             OneOrMoreBusinessFlowsFailed,
         }
 
-        public  static class Fields
-        {
-            public static string Name = "Name";
-            public static string Type = "Type";
-            public static string Active = "Active";
-            public static string RunAt = "RunAt";
-            public static string Elapsed = "Elapsed";
-            public static string ElapsedSecs = "ElapsedSecs";
-            public static string Status = "Status";
-            public static string Condition = "Condition";
-            public static string Errors = "Errors";
-        }
+        public IRunSetActionBaseOperations runSetActionBaseOperations;
 
         public RunSetActionBase()
         {
@@ -87,7 +70,7 @@ namespace Ginger.Run.RunSetActions
 
         private bool mActive = true;
         [IsSerializedForLocalRepository(true)]
-        public Boolean Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(Fields.Active); } } }
+        public Boolean Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         private string mName;
         [IsSerializedForLocalRepository]
@@ -99,7 +82,7 @@ namespace Ginger.Run.RunSetActions
                 if (mName != value)
                 {
                     mName = value;
-                    OnPropertyChanged(Fields.Name);
+                    OnPropertyChanged(nameof(Name));
                 }
             }
         }
@@ -114,7 +97,7 @@ namespace Ginger.Run.RunSetActions
                 if (mRunAt != value)
                 {
                     mRunAt = value;
-                    OnPropertyChanged(Fields.RunAt);
+                    OnPropertyChanged(nameof(RunAt));
                 }
             }
         }
@@ -128,7 +111,7 @@ namespace Ginger.Run.RunSetActions
                 if (mStatus != value)
                 {
                     mStatus = value;
-                    OnPropertyChanged(Fields.Status);
+                    OnPropertyChanged(nameof(Status));
                 }
             }
         }
@@ -140,8 +123,8 @@ namespace Ginger.Run.RunSetActions
             set
             {
                 mElapsed = value;
-                OnPropertyChanged(Fields.Elapsed);
-                OnPropertyChanged(Fields.ElapsedSecs);
+                OnPropertyChanged(nameof(Elapsed));
+                OnPropertyChanged(nameof(ElapsedSecs));
             }
         }
 
@@ -166,7 +149,7 @@ namespace Ginger.Run.RunSetActions
 
         private eRunSetActionCondition mCondition;
         [IsSerializedForLocalRepository]
-        public eRunSetActionCondition Condition { get { return mCondition; } set { if (mCondition != value) { mCondition = value; OnPropertyChanged(Fields.Condition); } } }
+        public eRunSetActionCondition Condition { get { return mCondition; } set { if (mCondition != value) { mCondition = value; OnPropertyChanged(nameof(Condition)); } } }
 
 
         private string mErrors;
@@ -179,59 +162,69 @@ namespace Ginger.Run.RunSetActions
                 if (mErrors != value)
                 {
                     mErrors = value;
-                    OnPropertyChanged(Fields.Errors);
+                    OnPropertyChanged(nameof(Errors));
                 }
             }
         }
 
-        public abstract void Execute(ReportInfo RI);
+        public abstract List<eRunAt> GetRunOptions();
+
+        public abstract bool SupportRunOnConfig { get; }
+
+        public abstract void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers);
 
         public abstract string GetEditPage();
 
-        public void ExecuteWithRunPageBFES()
-        {
-            ReportInfo RI = new ReportInfo(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, WorkSpace.Instance.RunsetExecutor);
-            RunAction(RI);
-        }
+        public abstract void Execute(IReportInfo RI);
 
-        internal void RunAction(ReportInfo RI)
-        {
-            Reporter.ToStatus(eStatusMsgKey.ExecutingRunSetAction, null, this.Name);
-            try
-            {
-                Reporter.ToLog(eLogLevel.INFO, string.Format("--> Execution Started for {0} Operation from Type '{1}', Operation Name= '{2}', Operation ID= '{3}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name, this.Guid));
-                Status = RunSetActionBase.eRunSetActionStatus.Running;
-                Errors = null;
+        public abstract String Type { get; }
 
-                Stopwatch st = new Stopwatch();
-                st.Reset();
-                st.Start();
-                Execute(RI);
-                st.Stop();
-                Elapsed = st.ElapsedMilliseconds;
 
-                // we change to completed only if still running and not changed to fail or soemthing else            
-                if (Status == eRunSetActionStatus.Running)
-                {
-                    Status = RunSetActionBase.eRunSetActionStatus.Completed;
-                }
 
-                Reporter.ToLog(eLogLevel.INFO, string.Format("<-- Execution Ended for {0} Operation from Type '{1}' and Name '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name) + Environment.NewLine
-                                                                + "Details:" + Environment.NewLine
-                                                                + string.Format("Status= {0}", Status) + Environment.NewLine
-                                                                + string.Format("Errors= {0}", Errors) + Environment.NewLine
-                                                                + string.Format("Elapsed= {0}", Elapsed));
-            }
-            catch(Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("<-- Execution Failed with exception for {0} Operation from Type '{1}' and Name '{2}' Exception: " +ex.Message, GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name), ex);
-                Status = RunSetActionBase.eRunSetActionStatus.Failed;
-            }
-            finally
-            {
-                Reporter.HideStatusMessage();
-            }
-        }
+        //public void ExecuteWithRunPageBFES()
+        //{
+        //    ReportInfo RI = new ReportInfo(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, WorkSpace.Instance.RunsetExecutor);
+        //    RunAction(RI);
+        //}
+
+        //internal void RunAction(ReportInfo RI)
+        //{
+        //    Reporter.ToStatus(eStatusMsgKey.ExecutingRunSetAction, null, this.Name);
+        //    try
+        //    {
+        //        Reporter.ToLog(eLogLevel.INFO, string.Format("--> Execution Started for {0} Operation from Type '{1}', Operation Name= '{2}', Operation ID= '{3}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name, this.Guid));
+        //        Status = RunSetActionBase.eRunSetActionStatus.Running;
+        //        Errors = null;
+
+        //        Stopwatch st = new Stopwatch();
+        //        st.Reset();
+        //        st.Start();
+        //        Execute(RI);
+        //        st.Stop();
+        //        Elapsed = st.ElapsedMilliseconds;
+
+        //        // we change to completed only if still running and not changed to fail or soemthing else            
+        //        if (Status == eRunSetActionStatus.Running)
+        //        {
+        //            Status = RunSetActionBase.eRunSetActionStatus.Completed;
+        //        }
+
+        //        Reporter.ToLog(eLogLevel.INFO, string.Format("<-- Execution Ended for {0} Operation from Type '{1}' and Name '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name) + Environment.NewLine
+        //                                                        + "Details:" + Environment.NewLine
+        //                                                        + string.Format("Status= {0}", Status) + Environment.NewLine
+        //                                                        + string.Format("Errors= {0}", Errors) + Environment.NewLine
+        //                                                        + string.Format("Elapsed= {0}", Elapsed));
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        Reporter.ToLog(eLogLevel.ERROR, string.Format("<-- Execution Failed with exception for {0} Operation from Type '{1}' and Name '{2}' Exception: " +ex.Message, GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name), ex);
+        //        Status = RunSetActionBase.eRunSetActionStatus.Failed;
+        //    }
+        //    finally
+        //    {
+        //        Reporter.HideStatusMessage();
+        //    }
+        //}
 
         public override string ItemName
         {
@@ -245,7 +238,6 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        public abstract String Type { get; }
     }
 }
 

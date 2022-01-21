@@ -45,7 +45,7 @@ namespace Ginger.Agents.AddAgentWizardLib
         public override void Finish()
         {
             // TODO: do it in the page where user select the type
-            if(Agent.DriverInfo.isDriverPlugin)
+            if(((AgentOperations)Agent.AgentOperations).DriverInfo.isDriverPlugin)
             {
                 Agent.AgentType = Agent.eAgentType.Service;
             }

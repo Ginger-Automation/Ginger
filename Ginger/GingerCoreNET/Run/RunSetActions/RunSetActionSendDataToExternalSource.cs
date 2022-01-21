@@ -63,7 +63,7 @@ namespace Ginger.Run.RunSetActions
 
         private ValueExpression mValueExpression = null;
 
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
             Context mContext = new Context();
             mContext.RunsetAction = this;

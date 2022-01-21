@@ -127,16 +127,16 @@ namespace Ginger.Run
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
 
-            viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-            viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.Name, WidthWeight = 150 });
-            viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.Type, Header = "Type", WidthWeight = 150, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly=true });
+            viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.Active), WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.Name), WidthWeight = 150 });
+            viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.Type), Header = "Type", WidthWeight = 150, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly=true });
             List<ComboEnumItem> runAtOptionList = GingerCore.General.GetEnumValuesForCombo(typeof(RunSetActionBase.eRunAt));
-            viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.RunAt, Header = "Run At", WidthWeight = 100, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = runAtOptionList });
+            viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.RunAt), Header = "Run At", WidthWeight = 100, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = runAtOptionList });
             List<ComboEnumItem> conditionOptionList = GingerCore.General.GetEnumValuesForCombo(typeof(RunSetActionBase.eRunSetActionCondition));
-            viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.Condition, WidthWeight = 100, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = conditionOptionList });
-            viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.Status, WidthWeight = 80, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly = true });
-            viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.Errors, WidthWeight = 80, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly = true });
-            viewCols.Add(new GridColView() { Field = RunSetActionBase.Fields.ElapsedSecs, Header = "Execution Duration (Seconds)", WidthWeight = 50, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly = true });
+            viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.Condition), WidthWeight = 100, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = conditionOptionList });
+            viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.Status), WidthWeight = 80, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly = true });
+            viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.Errors), WidthWeight = 80, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly = true });
+            viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.ElapsedSecs), Header = "Execution Duration (Seconds)", WidthWeight = 50, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly = true });
             
             RunSetActionsGrid.SetAllColumnsDefaultView(view);
             RunSetActionsGrid.InitViewItems();
@@ -152,14 +152,14 @@ namespace Ginger.Run
         }
         private void RunSelected(object sender, RoutedEventArgs e)
         {
-            ((RunSetActionBase)RunSetActionsGrid.CurrentItem).ExecuteWithRunPageBFES();
+            ((RunSetActionBase)RunSetActionsGrid.CurrentItem).runSetActionBaseOperations.ExecuteWithRunPageBFES();
         }
         private void RunAll(object sender, RoutedEventArgs e)
         {
             foreach (RunSetActionBase a in mRunSetConfig.RunSetActions)
             {
                 mRunSetConfig.RunSetActions.CurrentItem = a;
-                a.ExecuteWithRunPageBFES();
+                a.runSetActionBaseOperations.ExecuteWithRunPageBFES();
             }
         }
 
@@ -170,6 +170,9 @@ namespace Ginger.Run
             RSASS.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(RSASS);
             RunSetActionsGrid.Grid.SelectedItem = RSASS;
+
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSASS);
+            RSASS.runSetActionBaseOperations = runSetActionBaseOperations;
         }
 
         private void AddSaveResults(object sender, RoutedEventArgs e)
@@ -179,6 +182,9 @@ namespace Ginger.Run
             RSASR.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(RSASR);
             RunSetActionsGrid.Grid.SelectedItem = RSASR;
+
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSASR);
+            RSASR.runSetActionBaseOperations = runSetActionBaseOperations;
         }
         private void AddPublishtoALMAction(object sender, RoutedEventArgs e)
         {
@@ -187,6 +193,9 @@ namespace Ginger.Run
             RSAPTAC.RunAt = RunSetActionBase.eRunAt.DuringExecution;
             mRunSetConfig.RunSetActions.Add(RSAPTAC);
             RunSetActionsGrid.Grid.SelectedItem = RSAPTAC;
+
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSAPTAC);
+            RSAPTAC.runSetActionBaseOperations = runSetActionBaseOperations;
         }
 
         private void AddSendHTMLReportEmailAction(object sender, RoutedEventArgs e)
@@ -196,6 +205,9 @@ namespace Ginger.Run
             RSASR.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(RSASR);
             RunSetActionsGrid.Grid.SelectedItem = RSASR;
+
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSASR);
+            RSASR.runSetActionBaseOperations = runSetActionBaseOperations;
         }
 
         private void AddSendFreeEmailAction(object sender, RoutedEventArgs e)
@@ -204,6 +216,9 @@ namespace Ginger.Run
             RSAFTE.Name = RSAFTE.Type;
             mRunSetConfig.RunSetActions.Add(RSAFTE);
             RunSetActionsGrid.Grid.SelectedItem = RSAFTE;
+
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSAFTE);
+            RSAFTE.runSetActionBaseOperations = runSetActionBaseOperations;
         }
 
         private void AddSendEmailAction(object sender, RoutedEventArgs e)
@@ -213,6 +228,9 @@ namespace Ginger.Run
             RSASR.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(RSASR);
             RunSetActionsGrid.Grid.SelectedItem = RSASR;
+
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSASR);
+            RSASR.runSetActionBaseOperations = runSetActionBaseOperations;
         }
         private void AddGenerateTestNGReportAction(object sender, RoutedEventArgs e)
         {
@@ -221,6 +239,9 @@ namespace Ginger.Run
             TNGRPT.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(TNGRPT);
             RunSetActionsGrid.Grid.SelectedItem = TNGRPT;
+
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(TNGRPT);
+            TNGRPT.runSetActionBaseOperations = runSetActionBaseOperations;
         }
         private void AddHTMLReport(object sender, RoutedEventArgs e)
         {
@@ -235,6 +256,9 @@ namespace Ginger.Run
             RSAHR.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(RSAHR);
             RunSetActionsGrid.Grid.SelectedItem = RSAHR;
+
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSAHR);
+            RSAHR.runSetActionBaseOperations = runSetActionBaseOperations;
         }
 
         private void AddAutomatedALMDefectsOperation(object sender, RoutedEventArgs e)
@@ -252,6 +276,9 @@ namespace Ginger.Run
             RSAAAD.DefectsOpeningModeForAll = true;
             mRunSetConfig.RunSetActions.Add(RSAAAD);
             RunSetActionsGrid.Grid.SelectedItem = RSAAAD;
+
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSAAAD);
+            RSAAAD.runSetActionBaseOperations = runSetActionBaseOperations;
         }
 
         private void AddJSONSummary(object sender, RoutedEventArgs e)
@@ -261,6 +288,9 @@ namespace Ginger.Run
             runSetActionJSONSummary.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(runSetActionJSONSummary);
             RunSetActionsGrid.Grid.SelectedItem = runSetActionJSONSummary;
+
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(runSetActionJSONSummary);
+            runSetActionJSONSummary.runSetActionBaseOperations = runSetActionBaseOperations;
         }
         private void AddSendExecutionDataToExternalSourceAction(object sender, RoutedEventArgs e)
         {
@@ -269,6 +299,9 @@ namespace Ginger.Run
             runSetActionSendDataToExternalSource.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(runSetActionSendDataToExternalSource);
             RunSetActionsGrid.Grid.SelectedItem = runSetActionSendDataToExternalSource;
+
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(runSetActionSendDataToExternalSource);
+            runSetActionSendDataToExternalSource.runSetActionBaseOperations = runSetActionBaseOperations;
         }
 
     }

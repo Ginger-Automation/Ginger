@@ -96,7 +96,7 @@ namespace Ginger.Agents
             {
                 ApplicationAgent AG = (ApplicationAgent)((ucButton)sender).DataContext;
                 Agent agent = ((Agent)AG.Agent);
-                if (agent.Status != Agent.eStatus.Running)
+                if (((AgentOperations)agent.AgentOperations).Status != Agent.eStatus.Running)
                 {
                     //start Agent
                     Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
@@ -104,13 +104,13 @@ namespace Ginger.Agents
                     ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
                     ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
                     ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-                    ((Agent)AG.Agent).StartDriver();
+                    ((Agent)AG.Agent).AgentOperations.StartDriver();
                     Reporter.HideStatusMessage();
                 }
                 else
                 {
                     //close Agent
-                    agent.Close();
+                    agent.AgentOperations.Close();
                 }
             }
         }

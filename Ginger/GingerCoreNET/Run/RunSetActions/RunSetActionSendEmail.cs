@@ -78,7 +78,7 @@ namespace Ginger.Run.RunSetActions
         [IsSerializedForLocalRepository]
         public string CustomHTMLReportTemplate { get; set; }
 
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
             //Make sure we clear in case use open the edit page twice
             Email.Attachments.Clear();
@@ -86,7 +86,7 @@ namespace Ginger.Run.RunSetActions
             //for compatibility with old HTML report sent by email
             if (HTMLReportTemplate != RunSetActionSendEmail.eHTMLReportTemplate.FreeText)
             {
-                SetBodyFromHTMLReport(RI);
+                SetBodyFromHTMLReport((ReportInfo)RI);
             }
 
             if (EmailAttachments != null)

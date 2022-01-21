@@ -1274,7 +1274,7 @@ namespace Ginger.Actions
             ApplicationAgent aa = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents[0];
             if (aa != null)
             {
-                DriverBase driver = ((Agent)aa.Agent).Driver;
+                DriverBase driver = ((AgentOperations)((Agent)aa.Agent).AgentOperations).Driver;
                 mContext.Runner.PrepActionValueExpression(mAction);
                 if (driver != null)
                 {
@@ -1292,12 +1292,12 @@ namespace Ginger.Actions
             ApplicationAgent aa = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
             if (aa != null)
             {
-                if (((Agent)aa.Agent).Driver == null)
+                if (((AgentOperations)((Agent)aa.Agent).AgentOperations).Driver == null)
                 {
                     ((Agent)aa.Agent).DSList = mDSList;
-                    ((Agent)aa.Agent).StartDriver();
+                    ((Agent)aa.Agent).AgentOperations.StartDriver();
                 }
-                DriverBase driver = ((Agent)aa.Agent).Driver;
+                DriverBase driver = ((AgentOperations)((Agent)aa.Agent).AgentOperations).Driver;
                 //Instead of check make it disabled ?
                 if (driver is IWindowExplorer)
                 {

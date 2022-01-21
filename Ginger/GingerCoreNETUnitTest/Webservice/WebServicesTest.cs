@@ -87,7 +87,7 @@ namespace UnitTests.NonUITests
             mDriver.SecurityType = @"None";
 
             wsAgent.DriverType = Agent.eDriverType.WebServices;
-            wsAgent.Driver = mDriver;
+            ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
             ApplicationAgent mAG = new ApplicationAgent();
             mAG.Agent = wsAgent;
 
@@ -314,7 +314,7 @@ namespace UnitTests.NonUITests
 
             Agent wsAgent = new Agent();
             wsAgent.DriverType = Agent.eDriverType.WebServices;
-            wsAgent.Driver = mDriver;
+            ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
             ApplicationAgent mAG = new ApplicationAgent();
             mAG.Agent = wsAgent;
 
@@ -437,7 +437,7 @@ namespace UnitTests.NonUITests
 
             Agent wsAgent = new Agent();
             wsAgent.DriverType = Agent.eDriverType.WebServices;
-            wsAgent.Driver = mDriver;
+            ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
             ApplicationAgent mAG = new ApplicationAgent();
             mAG.Agent = wsAgent;
 

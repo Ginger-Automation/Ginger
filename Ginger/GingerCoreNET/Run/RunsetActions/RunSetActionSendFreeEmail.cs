@@ -117,7 +117,7 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
             Email.Attachments.Clear();
             Email.alternateView = null;

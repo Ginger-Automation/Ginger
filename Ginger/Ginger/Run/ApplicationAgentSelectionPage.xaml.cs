@@ -52,7 +52,7 @@ namespace Ginger.Run
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = Agent.Fields.Name, Header = "Agent Name", WidthWeight = 100, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Agent.Name), Header = "Agent Name", WidthWeight = 100, ReadOnly = true });
             grdPossibleAgents.SetAllColumnsDefaultView(defView);
             grdPossibleAgents.InitViewItems();
 

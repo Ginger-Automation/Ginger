@@ -84,7 +84,7 @@ namespace UnitTest
                 mDriver.StartDriver();
                 Agent a = new Agent();
                 a.Active = true;
-                a.Driver = mDriver;
+            ((AgentOperations)a.AgentOperations).Driver = mDriver;
                 a.DriverType = Agent.eDriverType.PowerBuilder;
 
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();

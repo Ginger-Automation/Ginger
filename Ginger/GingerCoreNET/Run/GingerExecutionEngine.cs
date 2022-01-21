@@ -254,7 +254,8 @@ namespace Ginger.Run
         public GingerExecutionEngine(GingerRunner GingerRunner)
         {
             mGingerRunner = GingerRunner;
-            GingerRunner.Executor = this;
+            mGingerRunner.Executor = this;
+
             ExecutedFrom = eExecutedFrom.Run;
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
@@ -270,13 +271,13 @@ namespace Ginger.Run
             {
                 RunListeners.Add(new TelemetryRunListener());
             }
-            mGingerRunner.Executor = this;
 
         }
 
         public GingerExecutionEngine(GingerRunner GingerRunner, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             mGingerRunner = GingerRunner;
+            mGingerRunner.Executor = this;
 
             ExecutedFrom = executedFrom;
 
@@ -291,7 +292,6 @@ namespace Ginger.Run
             {
                 RunListeners.Add(new TelemetryRunListener());
             }
-            mGingerRunner.Executor = this;
 
         }
 
@@ -568,14 +568,14 @@ namespace Ginger.Run
                             var agent = (from a in agents where a.Name == applicationAgent.AgentName select a).FirstOrDefault();
 
                             //logic for if need to assign virtual agent
-                            if (agent != null && agent.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Where(x => x.Guid == agent.Guid || (x.ParentGuid != null && x.ParentGuid == agent.Guid)).Count() > 0)
+                            if (agent != null && agent.AgentOperations.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Where(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)).Count() > 0)
                             {
 
                                 var virtualagent = agent.CreateCopy(true) as Agent;
                                 virtualagent.ParentGuid = agent.Guid;
                                 virtualagent.Name = agent.Name + " Virtual";
                                 virtualagent.IsVirtual = true;
-                                virtualagent.DriverClass = agent.DriverClass;
+                                ((AgentOperations)virtualagent.AgentOperations).DriverClass = ((AgentOperations)agent.AgentOperations).DriverClass;
                                 virtualagent.DriverType = agent.DriverType;
                                 applicationAgent.Agent = virtualagent;
                                 virtualagent.DriverConfiguration = agent.DriverConfiguration;
@@ -853,16 +853,16 @@ namespace Ginger.Run
                 Agent.BusinessFlow = CurrentBusinessFlow;
                 Agent.SolutionFolder = SolutionFolder;
                 Agent.DSList = mGingerRunner.DSList;
-                Agent.StartDriver();
-                Agent.WaitForAgentToBeReady();
-                if (Agent.Status == Agent.eStatus.NotStarted)
+                Agent.AgentOperations.StartDriver();
+                Agent.AgentOperations.WaitForAgentToBeReady();
+                if (((AgentOperations)Agent.AgentOperations).Status == Agent.eStatus.NotStarted)
                 {
-                    Agent.IsFailedToStart = true;
+                    ((AgentOperations)Agent.AgentOperations).IsFailedToStart = true;
                 }
             }
             catch (Exception e)
             {
-                Agent.IsFailedToStart = true;
+                ((AgentOperations)Agent.AgentOperations).IsFailedToStart = true;
                 Reporter.ToLog(eLogLevel.ERROR, e.Message);
             }
         }
@@ -873,7 +873,7 @@ namespace Ginger.Run
             {
                 if (((Agent)AA.Agent) != null)
                 {
-                    ((Agent)AA.Agent).Close();
+                    ((Agent)AA.Agent).AgentOperations.Close();
                 }
             }
             AgentsRunning = false;
@@ -1861,7 +1861,7 @@ namespace Ginger.Run
 
 
 
-                            else if (a.Status != Agent.eStatus.Running)
+                            else if (((AgentOperations)a.AgentOperations).Status != Agent.eStatus.Running)
                             {
                                 msg = "Screen shot not captured because agent is not running for the action:'" + act.Description + "'";
                                 Reporter.ToLog(eLogLevel.WARN, msg);
@@ -1871,7 +1871,7 @@ namespace Ginger.Run
                             {
                                 if (a.AgentType == Agent.eAgentType.Driver)
                                 {
-                                    a.RunAction(screenShotAction);//TODO: Use IVisual driver to get screen shot instead of running action                         
+                                    a.AgentOperations.RunAction(screenShotAction);//TODO: Use IVisual driver to get screen shot instead of running action                         
                                     if (string.IsNullOrEmpty(screenShotAction.Error))//make sure the screen shot succeed
                                     {
                                         foreach (string screenShot in screenShotAction.ScreenShots)
@@ -1973,7 +1973,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    GingerCore.Drivers.DriverBase driver = ((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).Driver;
+                    GingerCore.Drivers.DriverBase driver = ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver;
                     if (act.Timeout == null)
                     {
                         if (driver != null && driver.ActionTimeout != -1)
@@ -2014,13 +2014,13 @@ namespace Ginger.Run
                                 {
                                     if (((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentType == Agent.eAgentType.Driver)
                                     {
-                                        if (currentAgent.Status != Agent.eStatus.Running)
+                                        if (((AgentOperations)currentAgent.AgentOperations).Status != Agent.eStatus.Running)
                                         {
                                             if (string.IsNullOrEmpty(act.Error))
                                             {
-                                                if (currentAgent.Driver != null && !string.IsNullOrEmpty(currentAgent.Driver.ErrorMessageFromDriver))
+                                                if (((AgentOperations)currentAgent.AgentOperations).Driver != null && !string.IsNullOrEmpty(((AgentOperations)currentAgent.AgentOperations).Driver.ErrorMessageFromDriver))
                                                 {
-                                                    act.Error = currentAgent.Driver.ErrorMessageFromDriver;
+                                                    act.Error = ((AgentOperations)currentAgent.AgentOperations).Driver.ErrorMessageFromDriver;
                                                 }
                                                 else
                                                 {
@@ -2032,7 +2032,7 @@ namespace Ginger.Run
                                         }
                                         else
                                         {
-                                            ((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).RunAction(act);
+                                            ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).RunAction(act);
                                         }
                                     }
                                     else
@@ -2089,9 +2089,9 @@ namespace Ginger.Run
                     GiveUserFeedback();
                 }
 
-                if (currentAgent != null && currentAgent.Driver != null)
+                if (currentAgent != null && ((AgentOperations)currentAgent.AgentOperations).Driver != null)
                 {
-                    currentAgent.Driver.ActionCompleted(act);
+                    ((AgentOperations)currentAgent.AgentOperations).Driver.ActionCompleted(act);
                 }
 
             }
@@ -2207,7 +2207,7 @@ namespace Ginger.Run
             ((Agent)AA.Agent).BusinessFlow = CurrentBusinessFlow;
             ((Agent)AA.Agent).ProjEnvironment = mGingerRunner.ProjEnvironment;
             // Verify the Agent for the action is running 
-            Agent.eStatus agentStatus = ((Agent)AA.Agent).Status;
+            Agent.eStatus agentStatus = ((AgentOperations)((Agent)AA.Agent).AgentOperations).Status;
             if (agentStatus != Agent.eStatus.Running && agentStatus != Agent.eStatus.Starting && agentStatus != Agent.eStatus.FailedToStart)
             {
                 // start the agent if one of the action s is not subclass of  ActWithoutDriver = driver action
@@ -4172,9 +4172,12 @@ namespace Ginger.Run
             {
                 if (p.Agent != null)
                 {
+                    AgentOperations agentOperations = new AgentOperations(p.Agent);
+                    p.Agent.AgentOperations = agentOperations;
+
                     try
                     {
-                        ((Agent)p.Agent).Close();
+                        ((Agent)p.Agent).AgentOperations.Close();
                     }
                     catch (Exception ex)
                     {
@@ -4183,7 +4186,7 @@ namespace Ginger.Run
                         else
                             Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
                     }
-                    ((Agent)p.Agent).IsFailedToStart = false;
+                    ((AgentOperations)((Agent)p.Agent).AgentOperations).IsFailedToStart = false;
                 }
             }
             AgentsRunning = false;
@@ -4195,7 +4198,7 @@ namespace Ginger.Run
             {
                 if (p.Agent != null)
                 {
-                    ((Agent)p.Agent).IsFailedToStart = false;
+                    ((AgentOperations)((Agent)p.Agent).AgentOperations).IsFailedToStart = false;
                 }
             }
         }
@@ -4209,7 +4212,7 @@ namespace Ginger.Run
                     SetCurrentActivityAgent();
                     Agent a = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
                     if (a != null)
-                        a.HighLightElement(act);
+                        a.AgentOperations.HighLightElement(act);
                 }
             }
         }
@@ -4439,8 +4442,8 @@ namespace Ginger.Run
 
         private void SetDriverPreviousRunStoppedFlag(bool flagValue)
         {
-            if (CurrentBusinessFlow.CurrentActivity.CurrentAgent != null && ((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).Driver != null)
-                ((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).Driver.PreviousRunStopped = flagValue;
+            if (CurrentBusinessFlow.CurrentActivity.CurrentAgent != null && ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver != null)
+                ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver.PreviousRunStopped = flagValue;
         }
 
         //Function to Do Flow Control on Business Flow in RunSet

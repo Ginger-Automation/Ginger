@@ -76,7 +76,7 @@ namespace UnitTests.UITests
 
             Agent a = new Agent();
             a.Active = true;
-            a.Driver = mDriver;
+            ((AgentOperations)a.AgentOperations).Driver = mDriver;
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
@@ -970,7 +970,7 @@ namespace UnitTests.UITests
 
             Agent agent = new Agent();
             agent.Active = true;
-            agent.Driver = mDriver;
+            ((AgentOperations)agent.AgentOperations).Driver = mDriver;
             agent.DriverType = Agent.eDriverType.SeleniumChrome;
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(agent);
 
@@ -1029,7 +1029,7 @@ namespace UnitTests.UITests
 
             Agent agent = new Agent();
             agent.Active = true;
-            agent.Driver = mDriver;
+            ((AgentOperations)agent.AgentOperations).Driver = mDriver;
             agent.DriverType = Agent.eDriverType.SeleniumChrome;
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(agent);
 

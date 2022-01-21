@@ -89,7 +89,7 @@ namespace Ginger.Run.RunSetActions
         [IsSerializedForLocalRepository]
         public bool isHTMLReportPermanentFolderNameUsed { get; set; }
 
-        public override void Execute(ReportInfo RI)
+        public override void Execute(IReportInfo RI)
         {
             string reportsResultFolder = string.Empty;
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();

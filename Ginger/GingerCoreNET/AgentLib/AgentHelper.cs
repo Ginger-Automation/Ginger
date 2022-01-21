@@ -55,11 +55,11 @@ namespace GingerCoreNET
             bool isRunning = false;
             windowExplorerDriver = null;
             ApplicationAgent appAgent = GetAppAgent(activity, runner, context);
-            if (appAgent != null && appAgent.Agent != null && appAgent.Agent.Driver != null && appAgent.Agent.Driver.IsRunning())
+            if (appAgent != null && appAgent.Agent != null && ((AgentOperations)appAgent.Agent.AgentOperations).Driver != null && ((AgentOperations)appAgent.Agent.AgentOperations).Driver.IsRunning())
             {
-                if (appAgent.Agent.Driver is IWindowExplorer)
+                if (((AgentOperations)appAgent.Agent.AgentOperations).Driver is IWindowExplorer)
                 {
-                    windowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
+                    windowExplorerDriver = (IWindowExplorer)((AgentOperations)appAgent.Agent.AgentOperations).Driver;
                 }
                 isRunning = true;
             }
@@ -92,16 +92,16 @@ namespace GingerCoreNET
             ApplicationAgent appAgent = GetAppAgent(activity, runner, context);
             if (appAgent != null)
             {
-                if (appAgent.Agent.Driver == null)
+                if (((AgentOperations)appAgent.Agent.AgentOperations).Driver == null)
                 {
-                    appAgent.Agent.StartDriver();
+                    appAgent.Agent.AgentOperations.StartDriver();
                     isAgentStarted = true;
                 }
-                else if (!appAgent.Agent.Driver.IsRunning())
+                else if (!((AgentOperations)appAgent.Agent.AgentOperations).Driver.IsRunning())
                 {
                     if (Reporter.ToUser(eUserMsgKey.PleaseStartAgent, eUserMsgOption.OKCancel, eUserMsgSelection.OK) == eUserMsgSelection.OK)
                     {
-                        appAgent.Agent.StartDriver();
+                        appAgent.Agent.AgentOperations.StartDriver();
                         isAgentStarted = true;
                     }
                     else
@@ -109,10 +109,10 @@ namespace GingerCoreNET
                         isAgentStarted = false;
                     }
                 }
-                DriverBase driver = appAgent.Agent.Driver;
+                DriverBase driver = ((AgentOperations)appAgent.Agent.AgentOperations).Driver;
                 if (driver is IWindowExplorer)
                 {
-                    windowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
+                    windowExplorerDriver = (IWindowExplorer)((AgentOperations)appAgent.Agent.AgentOperations).Driver;
                 }
             }
             else

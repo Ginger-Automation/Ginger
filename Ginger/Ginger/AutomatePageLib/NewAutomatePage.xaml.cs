@@ -234,11 +234,11 @@ namespace GingerWPF.BusinessFlowsLib
         /// <param name="e"></param>
         private void Agent_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Agent.Status))
+            if (e.PropertyName == nameof(AgentOperations.Status))
             {
                 if ((sender as Agent) != null && (sender as Agent) == mContext.Agent)
                 {
-                    mContext.AgentStatus = Convert.ToString(((Agent)sender).Status);
+                    mContext.AgentStatus = Convert.ToString(((AgentOperations)((Agent)sender).AgentOperations).Status);
                 }
             }
         }
@@ -537,9 +537,11 @@ namespace GingerWPF.BusinessFlowsLib
         {
             foreach (ApplicationAgent appAgent in mExecutionEngine.GingerRunner.ApplicationAgents)
             {
-                if (appAgent.Agent != null && appAgent.Agent.Status == Agent.eStatus.Running)
+                AgentOperations agentOperations = new AgentOperations(appAgent.Agent);
+                appAgent.Agent.AgentOperations = agentOperations;
+                if (appAgent.Agent != null && ((AgentOperations)appAgent.Agent.AgentOperations).Status == Agent.eStatus.Running)
                 {
-                    ((DriverBase)appAgent.Agent.Driver).UpdateContext(mContext);
+                    ((DriverBase)((AgentOperations)appAgent.Agent.AgentOperations).Driver).UpdateContext(mContext);
                 }
             }
         }
@@ -941,7 +943,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 if (activity.CurrentAgent != null)
                 {
-                    ((Agent)activity.CurrentAgent).IsFailedToStart = false;
+                    ((AgentOperations)((Agent)activity.CurrentAgent).AgentOperations).IsFailedToStart = false;
                 }
             }
         }
@@ -1023,7 +1025,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 if (mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
                 {
-                    ((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).IsFailedToStart = false;
+                    ((AgentOperations)((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).IsFailedToStart = false;
                 }
             }
 

@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.Common.SelfHealingLib;
@@ -42,7 +43,7 @@ namespace Ginger.Run
             get { return mName; }
             set
             {
-             //
+                //
                 if (mName != value)
                 {
                     mName = value;
@@ -53,7 +54,7 @@ namespace Ginger.Run
         /// <summary>
         /// List of all the agents and the Virtual ones mapped during run 
         /// </summary>
-        public List<Agent> ActiveAgentList = new List<Agent>();
+        public List<IAgent> ActiveAgentList = new List<IAgent>();
         private bool mIsRunning;
         public bool IsRunning
         {
@@ -148,7 +149,7 @@ namespace Ginger.Run
         {
             get
             {
-                
+
                 if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed select x).Count() > 0)
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -161,8 +162,10 @@ namespace Ginger.Run
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                 }
-                else if ((from x in GingerRunners.ToList() where (x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed ||
-                          x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped) select x).Count() == GingerRunners.Count)
+                else if ((from x in GingerRunners.ToList()
+                          where (x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed ||
+x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
+                          select x).Count() == GingerRunners.Count)
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                 }
@@ -236,11 +239,11 @@ namespace Ginger.Run
         /// <summary>
         /// DO_NOT_USE
         /// </summary>
-        public bool SendEmail { get; set; }
+        //public bool SendEmail { get; set; }
         /// <summary>
         /// DO_NOT_USE
         /// </summary>
-        public Email Email { get; set; }
+        //public Email Email { get; set; }
 
         public bool mRunModeParallel = true;
         [IsSerializedForLocalRepository(true)]

@@ -92,7 +92,7 @@ namespace WorkspaceHold
                 //Act            
                 mGingerRunner.RunBusinessFlow(BF);
                 Console.WriteLine("a1.Error = " + a1.Error);
-                agent.Close();
+                agent.AgentOperations.Close();
 
                 //Assert
                 Assert.IsTrue(string.IsNullOrEmpty(a1.Error), "Action.Error=null");

@@ -243,7 +243,7 @@ namespace Ginger.WindowExplorer
             if (ag != null)
             {
                 mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-               ((Agent) ag.Agent).RunAction(act);
+               ((Agent) ag.Agent).AgentOperations.RunAction(act);
             }
             
             TestStatusTextBlock.Text = string.Empty;

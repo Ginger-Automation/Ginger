@@ -629,6 +629,9 @@ namespace Ginger.Run
 
             foreach (RunSetActionBase RSA in RunSetConfig.RunSetActions)
             {
+                RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSA);
+                RSA.runSetActionBaseOperations = runSetActionBaseOperations;
+
                 if (RSA.Active == true && runAtList.Contains(RSA.RunAt))
                 {
                     switch (RSA.RunAt)
@@ -643,7 +646,7 @@ namespace Ginger.Run
                             bool b = CheckRSACondition(RI, RSA);
                             if (b)
                             {
-                                RSA.RunAction(RI);
+                                RSA.runSetActionBaseOperations.RunAction(RI);
                             }
                             break;
                     }
@@ -737,11 +740,11 @@ namespace Ginger.Run
                     {
                         var virtualAgent = (Agent)appAgents[i].Agent;
 
-                        var realAgent = runset.ActiveAgentList.Where(x => x.Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
+                        var realAgent = runset.ActiveAgentList.Where(x => ((Agent)x).Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
 
                         if (realAgent != null)
                         {
-                            var runsetVirtualAgent = runset.ActiveAgentList.Where(x => x.Guid == ((Agent)virtualAgent).Guid).FirstOrDefault();
+                            var runsetVirtualAgent = runset.ActiveAgentList.Where(x => ((Agent)x).Guid == ((Agent)virtualAgent).Guid).FirstOrDefault();
                             appAgents[i].Agent = realAgent;
 
                             if (runsetVirtualAgent != null)
