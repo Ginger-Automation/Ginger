@@ -83,7 +83,7 @@ namespace Ginger.ALM.MapToALMWizard
         /// 2. if Business Flow already mapped load mapped Test Set name and id. 
         /// </summary>
         /// <returns>async function</returns>
-        private async void LoadInitialTestSetData()
+        private async Task LoadInitialTestSetData()
         {
             mWizard.ProcessStarted();
             try
@@ -115,7 +115,7 @@ namespace Ginger.ALM.MapToALMWizard
         /// </summary>
         /// <param name="WizardEventArgs"></param>
         /// <returns>async function</returns>
-        private async void GetSelectedALMTestSetData(WizardEventArgs WizardEventArgs)
+        private async Task GetSelectedALMTestSetData(WizardEventArgs WizardEventArgs)
         {
             await Task.Run(() =>
             {
