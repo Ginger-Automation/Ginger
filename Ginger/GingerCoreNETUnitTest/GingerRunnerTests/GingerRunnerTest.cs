@@ -110,7 +110,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" +Path.DirectorySeparatorChar + "BasicSimple"));
             string solutionFile = System.IO.Path.Combine(path, @"Ginger.Solution.xml");
-            solution = Solution.LoadSolution(solutionFile);
+            solution = SolutionOperations.LoadSolution(solutionFile);
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(path);
             WorkSpace.Instance.Solution = solution;

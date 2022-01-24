@@ -40,6 +40,8 @@ namespace Ginger.SolutionGeneral
 {
     public class Solution : RepositoryItemBase, ISolution
     {
+        public ISolutionOperations SolutionOperations;
+
         public SourceControlBase SourceControl { get; set; }
 
         [IsSerializedForLocalRepository]
@@ -51,160 +53,160 @@ namespace Ginger.SolutionGeneral
             Tags = new ObservableList<RepositoryItemTag>();
         }
 
-        public static Solution LoadSolution(string solutionFileName, bool startDirtyTracking = true, string encryptionKey = null)
-        {
-            string txt = File.ReadAllText(solutionFileName);
-            Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
-            solution.FilePath = solutionFileName;
-            solution.Folder = Path.GetDirectoryName(solutionFileName);
-            solution.EncryptionKey = encryptionKey ?? GetEncryptionKey(solution.Guid.ToString());
-            if (startDirtyTracking)
-            {
-                solution.StartDirtyTracking();
-            }
-            return solution;
-        }
+        //public static Solution LoadSolution(string solutionFileName, bool startDirtyTracking = true, string encryptionKey = null)
+        //{
+        //    string txt = File.ReadAllText(solutionFileName);
+        //    Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
+        //    solution.FilePath = solutionFileName;
+        //    solution.Folder = Path.GetDirectoryName(solutionFileName);
+        //    solution.EncryptionKey = encryptionKey ?? GetEncryptionKey(solution.Guid.ToString());
+        //    if (startDirtyTracking)
+        //    {
+        //        solution.StartDirtyTracking();
+        //    }
+        //    return solution;
+        //}
 
         public enum eSolutionItemToSave { GeneralDetails, TargetApplications, GlobalVariabels, Tags, ALMSettings, SourceControlSettings, LoggerConfiguration, ReportConfiguration }
-        public void SaveSolution(bool showWarning = true, eSolutionItemToSave solutionItemToSave = eSolutionItemToSave.GeneralDetails)
-        {
-            bool doSave = false;
+        //public void SaveSolution(bool showWarning = true, eSolutionItemToSave solutionItemToSave = eSolutionItemToSave.GeneralDetails)
+        //{
+        //    bool doSave = false;
 
-            if (!showWarning)
-            {
-                doSave = true;
-            }
-            else
-            {
-                Solution lastSavedSolution = LoadSolution(FilePath, false);
-                string extraChangedItems = "";
-                StringBuilder bldExtraChangedItems = new StringBuilder();
+        //    if (!showWarning)
+        //    {
+        //        doSave = true;
+        //    }
+        //    else
+        //    {
+        //        Solution lastSavedSolution = LoadSolution(FilePath, false);
+        //        string extraChangedItems = "";
+        //        StringBuilder bldExtraChangedItems = new StringBuilder();
 
-                if (solutionItemToSave != eSolutionItemToSave.GeneralDetails)
-                {
-                    if (this.Name != lastSavedSolution.Name || this.Account != lastSavedSolution.Account)
-                    {
-                        bldExtraChangedItems.Append("Solution General Details, ");
-                    }
-                }
-                if (solutionItemToSave != eSolutionItemToSave.ALMSettings)
-                {
-                    if (!this.ALMConfigs.Equals(lastSavedSolution.ALMConfigs))
-                    {
-                        bldExtraChangedItems.Append("ALM Details, ");
-                    }
-                }
-                if (solutionItemToSave != eSolutionItemToSave.SourceControlSettings)
-                {
-                    if (this.SourceControl != lastSavedSolution.SourceControl)
-                    {
-                        bldExtraChangedItems.Append("Source Control Details, ");
-                    }
-                }
-                if (solutionItemToSave != eSolutionItemToSave.LoggerConfiguration)
-                {
-                    if (LoggerConfigurations != null)
-                    {
-                        if (LoggerConfigurations.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || LoggerConfigurations.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-                        {
-                            bldExtraChangedItems.Append("Execution Logger configuration, ");
-                        }
-                    }
-                }
-                if (solutionItemToSave != eSolutionItemToSave.ReportConfiguration)
-                {
-                    if (HTMLReportsConfigurationSetList != null && lastSavedSolution.HTMLReportsConfigurationSetList.Count != 0)
-                    {
-                        foreach (HTMLReportsConfiguration config in HTMLReportsConfigurationSetList)
-                        {
-                            if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-                            {
+        //        if (solutionItemToSave != eSolutionItemToSave.GeneralDetails)
+        //        {
+        //            if (this.Name != lastSavedSolution.Name || this.Account != lastSavedSolution.Account)
+        //            {
+        //                bldExtraChangedItems.Append("Solution General Details, ");
+        //            }
+        //        }
+        //        if (solutionItemToSave != eSolutionItemToSave.ALMSettings)
+        //        {
+        //            if (!this.ALMConfigs.Equals(lastSavedSolution.ALMConfigs))
+        //            {
+        //                bldExtraChangedItems.Append("ALM Details, ");
+        //            }
+        //        }
+        //        if (solutionItemToSave != eSolutionItemToSave.SourceControlSettings)
+        //        {
+        //            if (this.SourceControl != lastSavedSolution.SourceControl)
+        //            {
+        //                bldExtraChangedItems.Append("Source Control Details, ");
+        //            }
+        //        }
+        //        if (solutionItemToSave != eSolutionItemToSave.LoggerConfiguration)
+        //        {
+        //            if (LoggerConfigurations != null)
+        //            {
+        //                if (LoggerConfigurations.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || LoggerConfigurations.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+        //                {
+        //                    bldExtraChangedItems.Append("Execution Logger configuration, ");
+        //                }
+        //            }
+        //        }
+        //        if (solutionItemToSave != eSolutionItemToSave.ReportConfiguration)
+        //        {
+        //            if (HTMLReportsConfigurationSetList != null && lastSavedSolution.HTMLReportsConfigurationSetList.Count != 0)
+        //            {
+        //                foreach (HTMLReportsConfiguration config in HTMLReportsConfigurationSetList)
+        //                {
+        //                    if (config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || config.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+        //                    {
 
-                                bldExtraChangedItems.Append("Report configuration");
-                                break;
-                            }
-                        }
-                    }
-                }
+        //                        bldExtraChangedItems.Append("Report configuration");
+        //                        break;
+        //                    }
+        //                }
+        //            }
+        //        }
 
-                if (solutionItemToSave != eSolutionItemToSave.GlobalVariabels)
-                {
-                    if (Variables.Count != lastSavedSolution.Variables.Count)
-                    {
-                        bldExtraChangedItems.Append(GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ", ", "));
-                    }
-                    else
-                    {
-                        foreach (VariableBase var in Variables)
-                        {
-                            if (var.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || var.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-                            {
-                                bldExtraChangedItems.Append(GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ", ", "));
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (solutionItemToSave != eSolutionItemToSave.TargetApplications)
-                {
-                    if (ApplicationPlatforms.Count != lastSavedSolution.ApplicationPlatforms.Count)
-                    {
-                        bldExtraChangedItems.Append("Target Applications, ");
-                    }
-                    else
-                    {
-                        foreach (ApplicationPlatform app in ApplicationPlatforms)
-                        {
-                            if (app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-                            {
-                                bldExtraChangedItems.Append("Target Applications, ");
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (solutionItemToSave != eSolutionItemToSave.Tags)
-                {
-                    if (Tags.Count != lastSavedSolution.Tags.Count)
-                    {
-                        bldExtraChangedItems.Append("Tags, ");
-                    }
-                    else
-                    {
-                        foreach (RepositoryItemTag tag in Tags)
-                        {
-                            if (tag.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || tag.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
-                            {
-                                bldExtraChangedItems.Append("Tags, ");
-                                break;
-                            }
-                        }
-                    }
-                }
-                extraChangedItems = bldExtraChangedItems.ToString();
-                if (string.IsNullOrEmpty(extraChangedItems))
-                {
-                    doSave = true;
-                }
-                else
-                {
-                    extraChangedItems = extraChangedItems.TrimEnd();
-                    extraChangedItems = extraChangedItems.TrimEnd(new char[] { ',' });
-                    if (Reporter.ToUser(eUserMsgKey.SolutionSaveWarning, extraChangedItems) == eUserMsgSelection.Yes)
-                    {
-                        doSave = true;
-                    }
-                }
-            }
+        //        if (solutionItemToSave != eSolutionItemToSave.GlobalVariabels)
+        //        {
+        //            if (Variables.Count != lastSavedSolution.Variables.Count)
+        //            {
+        //                bldExtraChangedItems.Append(GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ", ", "));
+        //            }
+        //            else
+        //            {
+        //                foreach (VariableBase var in Variables)
+        //                {
+        //                    if (var.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || var.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+        //                    {
+        //                        bldExtraChangedItems.Append(GingerDicser.GetTermResValue(eTermResKey.Variables, "Global ", ", "));
+        //                        break;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        if (solutionItemToSave != eSolutionItemToSave.TargetApplications)
+        //        {
+        //            if (ApplicationPlatforms.Count != lastSavedSolution.ApplicationPlatforms.Count)
+        //            {
+        //                bldExtraChangedItems.Append("Target Applications, ");
+        //            }
+        //            else
+        //            {
+        //                foreach (ApplicationPlatform app in ApplicationPlatforms)
+        //                {
+        //                    if (app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+        //                    {
+        //                        bldExtraChangedItems.Append("Target Applications, ");
+        //                        break;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        if (solutionItemToSave != eSolutionItemToSave.Tags)
+        //        {
+        //            if (Tags.Count != lastSavedSolution.Tags.Count)
+        //            {
+        //                bldExtraChangedItems.Append("Tags, ");
+        //            }
+        //            else
+        //            {
+        //                foreach (RepositoryItemTag tag in Tags)
+        //                {
+        //                    if (tag.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || tag.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
+        //                    {
+        //                        bldExtraChangedItems.Append("Tags, ");
+        //                        break;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        extraChangedItems = bldExtraChangedItems.ToString();
+        //        if (string.IsNullOrEmpty(extraChangedItems))
+        //        {
+        //            doSave = true;
+        //        }
+        //        else
+        //        {
+        //            extraChangedItems = extraChangedItems.TrimEnd();
+        //            extraChangedItems = extraChangedItems.TrimEnd(new char[] { ',' });
+        //            if (Reporter.ToUser(eUserMsgKey.SolutionSaveWarning, extraChangedItems) == eUserMsgSelection.Yes)
+        //            {
+        //                doSave = true;
+        //            }
+        //        }
+        //    }
 
-            if (doSave)
-            {
-                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, "Solution Configurations", "item");
-                RepositorySerializer.SaveToFile(this, FilePath);
-                this.SetDirtyStatusToNoChange();
-                Reporter.HideStatusMessage();
-            }
-        }
+        //    if (doSave)
+        //    {
+        //        Reporter.ToStatus(eStatusMsgKey.SaveItem, null, "Solution Configurations", "item");
+        //        RepositorySerializer.SaveToFile(this, FilePath);
+        //        this.SetDirtyStatusToNoChange();
+        //        Reporter.HideStatusMessage();
+        //    }
+        //}
 
         string mName;
         [IsSerializedForLocalRepository]
@@ -238,87 +240,87 @@ namespace Ginger.SolutionGeneral
 
         public bool NeedVariablesReEncryption { get; set; } = false;
 
-        public bool ValidateKey(string encryptionKey = null)
-        {
-            try
-            {
-                bool isDecrypted = EncryptionHandler.DecryptwithKey(EncryptedValidationString, encryptionKey ?? EncryptionKey).Equals("valid");
-                if (isDecrypted)
-                {
-                    EncryptionKey = encryptionKey ?? (EncryptionKey ?? EncryptionHandler.GetDefaultKey());
-                }
-                return isDecrypted;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
-            }
-            return false;
-        }
+        //public bool ValidateKey(string encryptionKey = null)
+        //{
+        //    try
+        //    {
+        //        bool isDecrypted = EncryptionHandler.DecryptwithKey(EncryptedValidationString, encryptionKey ?? EncryptionKey).Equals("valid");
+        //        if (isDecrypted)
+        //        {
+        //            EncryptionKey = encryptionKey ?? (EncryptionKey ?? EncryptionHandler.GetDefaultKey());
+        //        }
+        //        return isDecrypted;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+        //    }
+        //    return false;
+        //}
 
-        public bool AddValidationString()
-        {
-            try
-            {
-                EncryptedValidationString = EncryptionHandler.EncryptwithKey("valid");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
-            }
-            return false;
-        }
+        //public bool AddValidationString()
+        //{
+        //    try
+        //    {
+        //        EncryptedValidationString = EncryptionHandler.EncryptwithKey("valid");
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+        //    }
+        //    return false;
+        //}
 
-        public static string GetEncryptionKey(string guid)
-        {
-            try
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
-                }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.WARN, "Encryption Key was not found in OS passwords store");
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.WARN, "Failed to get Solution Encryption Key", ex);
-            }
-            return null;
-        }
+        //public static string GetEncryptionKey(string guid)
+        //{
+        //    try
+        //    {
+        //        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        //        {
+        //            return GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + guid);
+        //        }
+        //        else
+        //        {
+        //            Reporter.ToLog(eLogLevel.WARN, "Encryption Key was not found in OS passwords store");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Reporter.ToLog(eLogLevel.WARN, "Failed to get Solution Encryption Key", ex);
+        //    }
+        //    return null;
+        //}
 
-        public bool FetchEncryptionKey()
-        {
-            try
-            {
-                EncryptionKey = GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + Guid);
-                return string.IsNullOrEmpty(EncryptionKey);
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
-            }
-            return false;
-        }
+        //public bool FetchEncryptionKey()
+        //{
+        //    try
+        //    {
+        //        EncryptionKey = GingerCore.GeneralLib.WinCredentialUtil.GetCredential("Ginger_Sol_" + Guid);
+        //        return string.IsNullOrEmpty(EncryptionKey);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+        //    }
+        //    return false;
+        //}
 
-        public bool SaveEncryptionKey()
-        {
-            try
-            {
-                GingerCore.GeneralLib.WinCredentialUtil.SetCredentials("Ginger_Sol_" + Guid, mName, EncryptionKey);
-                EncryptionHandler.SetCustomKey(EncryptionKey);
-                AddValidationString();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
-            }
-            return false;
-        }
+        //public bool SaveEncryptionKey()
+        //{
+        //    try
+        //    {
+        //        GingerCore.GeneralLib.WinCredentialUtil.SetCredentials("Ginger_Sol_" + Guid, mName, EncryptionKey);
+        //        EncryptionHandler.SetCustomKey(EncryptionKey);
+        //        AddValidationString();
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+        //    }
+        //    return false;
+        //}
 
         [IsSerializedForLocalRepository]
         public string Account
@@ -355,45 +357,45 @@ namespace Ginger.SolutionGeneral
             set;
         } = new ObservableList<ALMConfig>();
 
-        public void SetReportsConfigurations()
-        {
-            try
-            {
-                if (this.LoggerConfigurations == null || LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder == null)
-                {
-                    this.LoggerConfigurations = new ExecutionLoggerConfiguration();
-                    LoggerConfigurations.IsSelected = true;
-                    LoggerConfigurations.ExecutionLoggerConfigurationIsEnabled = true;
-                    LoggerConfigurations.ExecutionLoggerConfigurationMaximalFolderSize = 250;
-                    LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = SolutionRepository.cSolutionRootFolderSign + "ExecutionResults";
-                }
+        //public void SetReportsConfigurations()
+        //{
+        //    try
+        //    {
+        //        if (this.LoggerConfigurations == null || LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder == null)
+        //        {
+        //            this.LoggerConfigurations = new ExecutionLoggerConfiguration();
+        //            LoggerConfigurations.IsSelected = true;
+        //            LoggerConfigurations.ExecutionLoggerConfigurationIsEnabled = true;
+        //            LoggerConfigurations.ExecutionLoggerConfigurationMaximalFolderSize = 250;
+        //            LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = SolutionRepository.cSolutionRootFolderSign + "ExecutionResults";
+        //        }
 
-                if ((this.HTMLReportsConfigurationSetList == null) || (this.HTMLReportsConfigurationSetList.Count == 0))
-                {
-                    this.HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
-                    HTMLReportsConfiguration HTMLReportsConfiguration = new HTMLReportsConfiguration();
-                    HTMLReportsConfiguration.IsSelected = true;
-                    HTMLReportsConfiguration.HTMLReportTemplatesSeq = 1;
-                    HTMLReportsConfiguration.HTMLReportsFolder = SolutionRepository.cSolutionRootFolderSign + "HTMLReports";
-                    HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
-                    HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
-                }
+        //        if ((this.HTMLReportsConfigurationSetList == null) || (this.HTMLReportsConfigurationSetList.Count == 0))
+        //        {
+        //            this.HTMLReportsConfigurationSetList = new ObservableList<HTMLReportsConfiguration>();
+        //            HTMLReportsConfiguration HTMLReportsConfiguration = new HTMLReportsConfiguration();
+        //            HTMLReportsConfiguration.IsSelected = true;
+        //            HTMLReportsConfiguration.HTMLReportTemplatesSeq = 1;
+        //            HTMLReportsConfiguration.HTMLReportsFolder = SolutionRepository.cSolutionRootFolderSign + "HTMLReports";
+        //            HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
+        //            HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
+        //        }
 
-                LoggerConfigurations.CalculatedLoggerFolder = LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder;
-                Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
-                ExecutionLoggerConfiguration executionLoggerConfiguration = this.LoggerConfigurations;
+        //        LoggerConfigurations.CalculatedLoggerFolder = LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder;
+        //        Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
+        //        ExecutionLoggerConfiguration executionLoggerConfiguration = this.LoggerConfigurations;
 
 
-                // !!!!!!!!!!!!! FIXME
-                // ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
-                // executionLogger.Configuration = executionLoggerConfiguration;
+        //        // !!!!!!!!!!!!! FIXME
+        //        // ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
+        //        // executionLogger.Configuration = executionLoggerConfiguration;
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.Message);
+        //    }
+        //}
 
         [IsSerializedForLocalRepository]
         public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
@@ -669,68 +671,68 @@ namespace Ginger.SolutionGeneral
 
         // overriding this SerializationError here because previously we were supporting only one ALMConfig 
         // Now we changed this to support MultiALM Connection, so serializing those values to ALMConfigs List
-        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
-        {
-            if (errorType == SerializationErrorType.PropertyNotFound)
-            {
-                if (name.ToLower().Contains("alm") || name.ToLower().Contains("userest") || name.ToLower().Contains("configpackagefolderpath"))
-                {
-                    ALMConfig AlmConfig = ALMConfigs.FirstOrDefault();
-                    if (AlmConfig == null)
-                    {
-                        AlmConfig = new ALMConfig();
-                        AlmConfig.DefaultAlm = true;
-                        ALMConfigs.Add(AlmConfig);
-                    }
-                    if (name == "ALMServerURL")
-                    {
-                        AlmConfig.ALMServerURL = value;
-                        return true;
-                    }
-                    if (name == "AlmType")
-                    {
-                        AlmConfig.AlmType = (ALMIntegrationEnums.eALMType)Enum.Parse(typeof(ALMIntegrationEnums.eALMType), value);
+        //public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        //{
+        //    if (errorType == SerializationErrorType.PropertyNotFound)
+        //    {
+        //        if (name.ToLower().Contains("alm") || name.ToLower().Contains("userest") || name.ToLower().Contains("configpackagefolderpath"))
+        //        {
+        //            ALMConfig AlmConfig = ALMConfigs.FirstOrDefault();
+        //            if (AlmConfig == null)
+        //            {
+        //                AlmConfig = new ALMConfig();
+        //                AlmConfig.DefaultAlm = true;
+        //                ALMConfigs.Add(AlmConfig);
+        //            }
+        //            if (name == "ALMServerURL")
+        //            {
+        //                AlmConfig.ALMServerURL = value;
+        //                return true;
+        //            }
+        //            if (name == "AlmType")
+        //            {
+        //                AlmConfig.AlmType = (ALMIntegrationEnums.eALMType)Enum.Parse(typeof(ALMIntegrationEnums.eALMType), value);
 
-                        //Add the AlmType to user profile as well
-                        ALMUserConfig AlmUserConfig = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault();
-                        if (AlmUserConfig == null)
-                        {
-                            AlmUserConfig = new ALMUserConfig();
-                            amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
-                        }
-                        AlmUserConfig.AlmType = AlmConfig.AlmType;
-                        return true;
-                    }
-                    if (name == "ALMDomain")
-                    {
-                        AlmConfig.ALMDomain = value;
-                        return true;
-                    }
-                    if (name == "ALMProject")
-                    {
-                        AlmConfig.ALMProjectName = value;
-                        return true;
-                    }
-                    if (name == "ALMProjectKey")
-                    {
-                        AlmConfig.ALMProjectKey = value;
-                        return true;
-                    }
-                    if (name == "UseRest")
-                    {
-                        bool.TryParse(value, out bool res);
-                        AlmConfig.UseRest = res;
-                        return true;
-                    }
-                    if (name == "ConfigPackageFolderPath")
-                    {
-                        AlmConfig.ALMConfigPackageFolderPath = value;
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
+        //                //Add the AlmType to user profile as well
+        //                ALMUserConfig AlmUserConfig = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault();
+        //                if (AlmUserConfig == null)
+        //                {
+        //                    AlmUserConfig = new ALMUserConfig();
+        //                    amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
+        //                }
+        //                AlmUserConfig.AlmType = AlmConfig.AlmType;
+        //                return true;
+        //            }
+        //            if (name == "ALMDomain")
+        //            {
+        //                AlmConfig.ALMDomain = value;
+        //                return true;
+        //            }
+        //            if (name == "ALMProject")
+        //            {
+        //                AlmConfig.ALMProjectName = value;
+        //                return true;
+        //            }
+        //            if (name == "ALMProjectKey")
+        //            {
+        //                AlmConfig.ALMProjectKey = value;
+        //                return true;
+        //            }
+        //            if (name == "UseRest")
+        //            {
+        //                bool.TryParse(value, out bool res);
+        //                AlmConfig.UseRest = res;
+        //                return true;
+        //            }
+        //            if (name == "ConfigPackageFolderPath")
+        //            {
+        //                AlmConfig.ALMConfigPackageFolderPath = value;
+        //                return true;
+        //            }
+        //        }
+        //    }
+        //    return false;
+        //}
 
         [IsSerializedForLocalRepository]
         public ObservableList<SolutionCategory> SolutionCategories = new ObservableList<SolutionCategory>();

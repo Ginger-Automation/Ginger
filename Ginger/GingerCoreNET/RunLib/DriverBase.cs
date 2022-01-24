@@ -234,19 +234,6 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        /// <summary>
-        /// Used for handling serialization adjustments for legacy properties or values
-        /// </summary>
-        /// <param name="agent"></param>
-        /// <param name="errorType"></param>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        //public virtual bool SerializationError(Agent agent, SerializationErrorType errorType, string name, string value)
-        //{
-        //    return false;
-        //}
-
         public virtual Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
         {
             Point pointOnAppScreen = new Point();

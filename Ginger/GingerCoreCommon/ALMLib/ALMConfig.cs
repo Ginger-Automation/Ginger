@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -171,14 +171,6 @@ namespace GingerCoreNET.ALMLib
                     mALMConfigPackageFolderPath = value;
                     OnPropertyChanged(nameof(ALMConfigPackageFolderPath));
                 }
-            }
-        }
-
-        public string ALMConfigPackageFolderPathCalculated
-        {
-            get
-            {
-                return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mALMConfigPackageFolderPath);
             }
         }
 

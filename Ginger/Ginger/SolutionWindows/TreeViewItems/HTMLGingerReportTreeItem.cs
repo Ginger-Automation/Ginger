@@ -133,7 +133,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 if (copiedItem != null)
                 {
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(copiedItem);
-                    WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+                    WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
                 }
             }
         }

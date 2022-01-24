@@ -109,8 +109,8 @@ namespace Ginger.SolutionWindows
                 if (System.IO.File.Exists(System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml")) == false)
                 {
                     mSolution.FilePath = System.IO.Path.Combine(mSolution.Folder, @"Ginger.Solution.xml");
-                    mSolution.SaveEncryptionKey();
-                    mSolution.SaveSolution(false);
+                    mSolution.SolutionOperations.SaveEncryptionKey();
+                    mSolution.SolutionOperations.SaveSolution(false);
                 }
                 else
                 {
@@ -129,10 +129,10 @@ namespace Ginger.SolutionWindows
                 AddDeafultReportTemplate();
                 GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment();
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(WorkSpace.Instance.GetNewBusinessFlow("Flow 1", true));
-                mSolution.SetReportsConfigurations();
+                mSolution.SolutionOperations.SetReportsConfigurations();
 
                 //Save again to keep all defualt configurations setup
-                mSolution.SaveSolution(false);
+                mSolution.SolutionOperations.SaveSolution(false);
                 //show success message to user
                 Mouse.OverrideCursor = null;
                 Reporter.ToUser(eUserMsgKey.AddSolutionSucceed);
@@ -154,6 +154,9 @@ namespace Ginger.SolutionWindows
         void AddFirstAgentForSolutionForApplicationPlatfrom(ApplicationPlatform MainApplicationPlatform)
         {
             Agent agent = new Agent();
+            AgentOperations agentOperations = new AgentOperations(agent);
+            agent.AgentOperations = agentOperations;
+
             agent.Name = MainApplicationPlatform.AppName + " - Agent 1";
             switch (MainApplicationPlatform.Platform)
             {

@@ -2740,46 +2740,6 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        //public override bool SerializationError(Agent agent, SerializationErrorType errorType, string name, string value)
-        //{
-        //    if (errorType == SerializationErrorType.SetValueException)
-        //    {
-        //        if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid" || value == "MobileAppiumIOS" || value == "PerfectoMobileIOS"
-        //               || value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb" || value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
-        //        {
-        //            agent.DriverType = Agent.eDriverType.Appium;
-        //            agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-        //            //agent.GetOrCreateParam(nameof(AppiumServer), @"http://127.0.0.1:4723/wd/hub");
-        //            agent.GetOrCreateParam(nameof(LoadDeviceWindow), "true");
-        //            agent.GetOrCreateParam(nameof(DeviceAutoScreenshotRefreshMode), eAutoScreenshotRefreshMode.Live.ToString());
-        //            agent.DirtyStatus = Common.Enums.eDirtyStatus.Modified;
-
-        //            if (value == "MobileAppiumAndroid" || value == "PerfectoMobileAndroid")
-        //            {
-        //                agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
-        //                agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
-        //            }
-        //            else if (value == "MobileAppiumIOS" || value == "PerfectoMobileIOS")
-        //            {
-        //                agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
-        //                agent.GetOrCreateParam(nameof(AppType), eAppType.NativeHybride.ToString());
-        //            }
-        //            else if (value == "MobileAppiumAndroidBrowser" || value == "PerfectoMobileAndroidWeb")
-        //            {
-        //                agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.Android.ToString());
-        //                agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
-        //            }
-        //            else if (value == "MobileAppiumIOSBrowser" || value == "PerfectoMobileIOSWeb")
-        //            {
-        //                agent.GetOrCreateParam(nameof(DevicePlatformType), eDevicePlatformType.iOS.ToString());
-        //                agent.GetOrCreateParam(nameof(AppType), eAppType.Web.ToString());
-        //            }
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
-
         public void PerformScreenSwipe(eSwipeSide swipeSide, double impact = 1)
         {
             SwipeScreen(swipeSide, impact);

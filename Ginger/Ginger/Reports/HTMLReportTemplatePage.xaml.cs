@@ -520,7 +520,7 @@ namespace Ginger.Reports
             _HTMLReportConfiguration.Description = TemplateDescriptionTextBox.Text.ToString();
             _newHTMLReportConfiguration = _HTMLReportConfiguration;
             _pageGenericWin.Hide();
-            WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
 
             if (_existingTemplatePage)
             {
