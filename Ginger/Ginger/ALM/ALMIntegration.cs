@@ -528,50 +528,12 @@ namespace Ginger.ALM
 
         public void RefreshALMItemFields(ObservableList<ExternalItemFieldBase> exitingFields, bool online, BackgroundWorker bw = null)
         {
-            ObservableList<ExternalItemFieldBase> mergedFields = new ObservableList<ExternalItemFieldBase>();
             if (ALMIntegration.Instance.AutoALMProjectConnect())
             {
                 //Get latestALMFields from ALMCore with Online flag
                 ObservableList<ExternalItemFieldBase> latestALMFields = AlmCore.GetALMItemFields(bw, online);
-                foreach (ExternalItemFieldBase latestField in latestALMFields)
-                {
-                    ExternalItemFieldBase currentField = exitingFields.Where(x => x.ID == latestField.ID && x.ItemType == latestField.ItemType).FirstOrDefault();
-                    if (currentField != null)
-                    {
-                        currentField.Name = latestField.Name;
-                        currentField.ItemType = latestField.ItemType;
-                        currentField.Mandatory = latestField.Mandatory;
-                        currentField.ExternalID = latestField.ExternalID;
-                        currentField.PossibleValues = latestField.PossibleValues;
-                        currentField.ToUpdate = false;
-                        if (string.IsNullOrEmpty(currentField.SelectedValue) == false)
-                        {
-                            if ((latestField.PossibleValues.Count == 0 && currentField.SelectedValue != latestField.SelectedValue) || (latestField.PossibleValues.Count > 0 && latestField.PossibleValues.Contains(currentField.SelectedValue) && currentField.SelectedValue != latestField.PossibleValues[0]))
-                            {
-                                currentField.ToUpdate = true;
-                            }
-                            else
-                            {
-                                currentField.SelectedValue = latestField.SelectedValue;
-                                currentField.ToUpdate = false;
-                            }
-                        }
-                        else
-                        {
-                            currentField.SelectedValue = latestField.SelectedValue;
-                            currentField.ToUpdate = false;
-                        }
-                        mergedFields.Add(currentField);
-                    }
-                    else
-                    {
-                        mergedFields.Add(latestField);
-                    }
-                }
-                exitingFields.ClearAll();
-                exitingFields.Append(mergedFields);
+                ObservableList<ExternalItemFieldBase> mergedFields = AlmCore.RefreshALMItemFields(exitingFields, latestALMFields);
             }
-
         }
         internal ObservableList<ExternalItemFieldBase> GetUpdatedFields(ObservableList<ExternalItemFieldBase> mItemsFields, bool online, BackgroundWorker bw = null)
         {

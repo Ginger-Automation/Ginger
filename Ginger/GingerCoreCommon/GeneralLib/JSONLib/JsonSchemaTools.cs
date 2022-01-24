@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.Common
             }
 
 
-      
+
 
             if (schema.HasReference)
             {
@@ -59,7 +59,7 @@ namespace Amdocs.Ginger.Common
                 }
                 else
                 {
-                    
+
                     return JsonSchemaFaker(schema.Reference, ReferenceStack, UseXMlNames);
                 }
 
@@ -103,7 +103,7 @@ namespace Amdocs.Ginger.Common
 
             }
 
-                ReferenceStack.Remove(schema);
+            ReferenceStack.Remove(schema);
 
             string output = JsonConvert.SerializeObject(JsonBody);
             CachedValues.Add(schema, output);
@@ -114,10 +114,10 @@ namespace Amdocs.Ginger.Common
         private static object GenerateJsonObjectFromJsonSchema4(JsonProperty value, List<object> ReferenceStack, bool UseXMlNames)
         {
 
-            if(CachedValues.ContainsKey(value))
+            if (CachedValues.ContainsKey(value))
             {
                 object returnValue;
-                CachedValues.TryGetValue(value,out returnValue);
+                CachedValues.TryGetValue(value, out returnValue);
                 return returnValue;
             }
             if (ReferenceStack == null)
@@ -143,7 +143,7 @@ namespace Amdocs.Ginger.Common
                         PrivateStack.Add(jkp.Value);
                         object JObject = GenerateJsonObjectFromJsonSchema4(jkp.Value, ReferenceStack, UseXMlNames);
                         JsonBody.Add(key, JsonConvert.SerializeObject(JObject));
-                    
+
                     }
                     output = JsonBody;
                     break;
@@ -163,7 +163,7 @@ namespace Amdocs.Ginger.Common
                         PrivateStack.Add(item.Value);
                         object JsonObject = GenerateJsonObjectFromJsonSchema4(item.Value, ReferenceStack, UseXMlNames);
                         jb.Add(key, JsonConvert.SerializeObject(JsonObject));
-                       
+
                     }
                     if (value.Item.HasReference)
                     {
@@ -206,7 +206,7 @@ namespace Amdocs.Ginger.Common
                     break;
 
                 case JsonObjectType.String:
-                    output = new JValue("sample");
+                    output = new JValue("<name>");
                     break;
                 case JsonObjectType.Number:
                     output = new JValue(1);
@@ -227,7 +227,7 @@ namespace Amdocs.Ginger.Common
 
             }
 
-            foreach(object obj in PrivateStack)
+            foreach (object obj in PrivateStack)
             {
                 ReferenceStack.Remove(obj);
             }
