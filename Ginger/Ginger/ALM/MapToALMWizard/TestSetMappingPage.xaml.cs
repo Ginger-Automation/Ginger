@@ -19,6 +19,7 @@ using Amdocs.Ginger.Common;
 using GingerWPF.WizardLib;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -50,17 +51,10 @@ namespace Ginger.ALM.MapToALMWizard
             mWizard = (AddMapToALMWizard)WizardEventArgs.Wizard;
             switch (WizardEventArgs.EventType)
             {
-                case EventType.Init:
-                    BindTestSet();
-                    // Business Flow Mapped, get mapped test cases and steps to display.
-                    if (!String.IsNullOrEmpty(mWizard.mapBusinessFlow.ExternalID) && String.IsNullOrEmpty(mWizard.AlmTestSetData.TestSetID))
+                case EventType.Active:
+                    if (load_frame.Content == null)
                     {
-                        mWizard.SetMappedALMTestSetData();
-                        ChangeTestSetPageVisibility();
-                        mWizard.UpdateMappedTestCasesCollections();
-                        mWizard.RemapTestCasesLists();
-                        WizardPage nextPage = mWizard.Pages.Where(p => p.Page is TestCasesMappingPage).FirstOrDefault();
-                        (nextPage.Page as TestCasesMappingPage).xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";
+                        LoadInitialTestSetData();
                     }
                     break;
                 case EventType.LeavingForNextPage:
@@ -68,39 +62,83 @@ namespace Ginger.ALM.MapToALMWizard
                     {
                         return;
                     }
-                    dynamic SelectedTestSetData = ALMIntegration.Instance.GetSelectedImportTestSetData(win);
-                    if (SelectedTestSetData is not null)
-                    {
-                        if(SelectedTestSetData.AlreadyImported)
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"Selected ALM Test Set already mapped to Ginger Business Flow: '{SelectedTestSetData.MappedBusinessFlow}'.\n" +
-                                $"Please delete the Business Flow before remapping.\n Business Flow Path: '{SelectedTestSetData.MappedBusinessFlowPath}'");
-                            WizardEventArgs.CancelEvent = true;
-                            return;
-                        }
-                        mWizard.SetSelectedTreeTestSetData(SelectedTestSetData);
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select ALM Test Set.");
-                        WizardEventArgs.CancelEvent = true;
-                        return;
-                    }
+                    GetSelectedALMTestSetData(WizardEventArgs);
                     break;
             }
         }
-
+        
         #region Binds
         /// <summary>
         /// Bind ALM Test Set Tree.
         /// </summary>
         private void BindTestSet()
         {
-            load_frame.Content = GetALMTree();
-            mWizard.AddActivitiesGroupsInitialMapping();
+                load_frame.Content = GetALMTree();
+                mWizard.AddActivitiesGroupsInitialMapping();
         }
         #endregion
         #region Functions
+        /// <summary>
+        /// 1. Load Test Set tree.
+        /// 2. if Business Flow already mapped load mapped Test Set name and id. 
+        /// </summary>
+        /// <returns>async function</returns>
+        private async Task LoadInitialTestSetData()
+        {
+            mWizard.ProcessStarted();
+            try
+            {
+                // Business Flow Mapped, get mapped test cases and steps to display.
+                if (!String.IsNullOrEmpty(mWizard.mapBusinessFlow.ExternalID) && String.IsNullOrEmpty(mWizard.AlmTestSetData.TestSetID))
+                {
+                    await Task.Run(() => mWizard.SetMappedALMTestSetData());
+                    ChangeTestSetPageVisibility();
+                    mWizard.UpdateMappedTestCasesCollections();
+                    mWizard.RemapTestCasesLists();
+                    WizardPage nextPage = mWizard.Pages.Where(p => p.Page is TestCasesMappingPage).FirstOrDefault();
+                    (nextPage.Page as TestCasesMappingPage).xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";
+                }
+                BindTestSet();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed Get Test Set data, Error: {ex.Message}");
+            }
+            finally
+            {
+                xTestSetGrid.IsVisibleChanged -= xTestSetGrid_IsVisibleChanged;
+                mWizard.ProcessEnded();
+            }
+        }
+        /// <summary>
+        /// Get selected Test Set data
+        /// </summary>
+        /// <param name="WizardEventArgs"></param>
+        /// <returns>async function</returns>
+        private async Task GetSelectedALMTestSetData(WizardEventArgs WizardEventArgs)
+        {
+            await Task.Run(() =>
+            {
+                dynamic SelectedTestSetData = ALMIntegration.Instance.GetSelectedImportTestSetData(win);
+                if (SelectedTestSetData is not null)
+                {
+                    if (SelectedTestSetData.AlreadyImported)
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"Selected ALM Test Set already mapped to Ginger Business Flow: '{SelectedTestSetData.MappedBusinessFlow}'.\n" +
+                            $"Please delete the Business Flow before remapping.\n Business Flow Path: '{SelectedTestSetData.MappedBusinessFlowPath}'");
+                        WizardEventArgs.CancelEvent = true;
+                        return;
+                    }
+                    mWizard.SetSelectedTreeTestSetData(SelectedTestSetData);
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select ALM Test Set.");
+                    WizardEventArgs.CancelEvent = true;
+                    return;
+                }
+            });
+        }
         /// <summary>
         /// GetALMTree:
         /// Get selected alm test sets tree.
@@ -110,7 +148,7 @@ namespace Ginger.ALM.MapToALMWizard
         {
             try
             {
-                win = ALMIntegration.Instance.GetALMTestSetsTreePage();
+                win = Dispatcher.Invoke(() => ALMIntegration.Instance.GetALMTestSetsTreePage());
             }
             catch (Exception ex)
             {
@@ -155,6 +193,17 @@ namespace Ginger.ALM.MapToALMWizard
             load_frame.Visibility = Visibility.Visible;
             mIsBusinessFlowMapped = false;
         }
+
+        private void xTestSetGrid_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (load_frame.Content == null)
+            {
+                mWizard.ProcessStarted();
+                mWizard.GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this.mWizard, EventType.Active));
+                return;
+            }
+        }
+
         #endregion
 
 

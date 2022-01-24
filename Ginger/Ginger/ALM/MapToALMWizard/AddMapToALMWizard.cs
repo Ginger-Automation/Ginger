@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.ALM.MapToALMWizard
@@ -106,7 +107,7 @@ namespace Ginger.ALM.MapToALMWizard
             mapBusinessFlow = businessFlow;
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Map To ALM Introduction", Page: new WizardIntroPage("/ALM/MapToALMWizard/MappedToALMIntro.md"));
             AddPage(Name: "Test Set Mapping", Title: "Test Set Mapping", SubTitle: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, $"Select matching ALM Test Set to Ginger ‘{mapBusinessFlow.Name}’"), Page: new TestSetMappingPage());
-            AddPage(Name: "Test Cases Mapping", Title: "Test Cases Mapping", SubTitle: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Select matching ALM Test Case foreach Ginger"), Page: new TestCasesMappingPage(mapBusinessFlow));
+            AddPage(Name: "Test Cases Mapping", Title: "Test Cases Mapping", SubTitle: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Select matching ALM Test Case foreach Ginger"), Page: new TestCasesMappingPage());
             AddPage(Name: "Test Steps Mapping", Title: "Test Steps Mapping", SubTitle: GingerDicser.GetTermResValue(eTermResKey.Activity, $"Select matching ALM Steps foreach Ginger"), Page: new TestStepMappingPage());
         }
         /// <summary>
@@ -268,9 +269,12 @@ namespace Ginger.ALM.MapToALMWizard
         private void ReMapTestSteps(ALMTestCaseManualMappingConfig tc)
         {
             Dictionary<string, ALMTSTestStep> almStepsDic = new Dictionary<string, ALMTSTestStep>();
-            foreach (ALMTSTestStep tStep in tc.aLMTSTest.Steps)
+            if (tc.aLMTSTest is not null)
             {
-                almStepsDic.Add(tStep.StepID, tStep);
+                foreach (ALMTSTestStep tStep in tc.aLMTSTest.Steps)
+                {
+                    almStepsDic.Add(tStep.StepID, tStep);
+                }
             }
             // Remap test steps
             foreach (ActivityIdentifiers act in tc.activitiesGroup.ActivitiesIdentifiers)
@@ -344,11 +348,26 @@ namespace Ginger.ALM.MapToALMWizard
         /// <param name="SelectedTestSetData">ALM selected Test Set object</param>
         private void SetSelectedALMTestSetData(dynamic SelectedTestSetData)
         {
-            AlmTestSetData.TestSetID = SelectedTestSetData.Id;
-            AlmTestSetData.TestSetName = SelectedTestSetData.Name;
-            AlmTestSetData.TestSetPath = SelectedTestSetData.Path;
-            AlmTestSetData.TestSetInternalID2 = SelectedTestSetData.TestSetID;
-            AlmTestSetData = ALMIntegration.Instance.GetALMTestCases(AlmTestSetData);
+            try
+            {
+                ProcessStarted();
+                AlmTestSetData.TestSetID = SelectedTestSetData.Id;
+                AlmTestSetData.TestSetName = SelectedTestSetData.Name;
+                AlmTestSetData.TestSetPath = SelectedTestSetData.Path;
+                AlmTestSetData.TestSetInternalID2 = SelectedTestSetData.TestSetID;
+                AlmTestSetData = Task.Run(() =>
+                {
+                    return ALMIntegration.Instance.GetALMTestCases(AlmTestSetData);
+                }).Result;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed set Test Set data, Error: {ex.Message}");
+            }
+            finally
+            {
+                ProcessEnded();
+            }
         }
     }
 }

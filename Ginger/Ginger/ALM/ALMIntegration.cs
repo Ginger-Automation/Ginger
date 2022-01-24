@@ -34,6 +34,7 @@ using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 using GingerCoreNET.ALMLib;
 using GingerWPF.WizardLib;
 using System.Windows.Controls;
+using System.Threading.Tasks;
 
 namespace Ginger.ALM
 {
@@ -262,28 +263,41 @@ namespace Ginger.ALM
             return domainList;
         }
 
-        internal bool MapBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false)
+        internal async Task<bool> MapBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false)
         {
             Reporter.ToLog(eLogLevel.INFO, "Mapping " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM");
             //Passing Solution Folder path to GingerCore
             ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
             bool isMapSucc = false;
-            if (AutoALMProjectConnect(eALMConnectType.Auto))
-            {
-                if (GetALMType().Equals(eALMType.ZephyrEnterprise))
-                {
-                    WizardWindow.ShowWizard(new MapToALMWizard.AddMapToALMWizard(businessFlow), 1200);
-                    isMapSucc = true;
-                    DisconnectALMServer();
-                }
-                else
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"'Map To ALM' - not Supporting {GetALMType()}.");
-                }
-            }
 
-            Mouse.OverrideCursor = null;
+            try
+            {
+                Reporter.ToStatus(eStatusMsgKey.ALMTestSetMap);
+                bool isConnected = false;
+                await Task.Run(() =>
+                {
+                    isConnected = AutoALMProjectConnect(eALMConnectType.Auto);
+                });
+                if (isConnected)
+                    {
+                        if (GetALMType().Equals(eALMType.ZephyrEnterprise))
+                        {
+                            WizardWindow.ShowWizard(new MapToALMWizard.AddMapToALMWizard(businessFlow), 1200);
+                            isMapSucc = true;
+                            DisconnectALMServer();
+                        }
+                        else
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"'Map To ALM' - not Supporting {GetALMType()}.");
+                        }
+                    }
+                
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
             return isMapSucc;
         }
 
