@@ -83,7 +83,7 @@ namespace Ginger.ALM.MapToALMWizard
         /// 2. if Business Flow already mapped load mapped Test Set name and id. 
         /// </summary>
         /// <returns>async function</returns>
-        private async Task LoadInitialTestSetData()
+        private async void LoadInitialTestSetData()
         {
             mWizard.ProcessStarted();
             try
@@ -91,7 +91,7 @@ namespace Ginger.ALM.MapToALMWizard
                 // Business Flow Mapped, get mapped test cases and steps to display.
                 if (!String.IsNullOrEmpty(mWizard.mapBusinessFlow.ExternalID) && String.IsNullOrEmpty(mWizard.AlmTestSetData.TestSetID))
                 {
-                    await Task.Run(() => mWizard.SetMappedALMTestSetData());
+                    await Task.Run(() => mWizard.SetMappedALMTestSetData()).ConfigureAwait(true);
                     ChangeTestSetPageVisibility();
                     mWizard.UpdateMappedTestCasesCollections();
                     mWizard.RemapTestCasesLists();
@@ -115,7 +115,7 @@ namespace Ginger.ALM.MapToALMWizard
         /// </summary>
         /// <param name="WizardEventArgs"></param>
         /// <returns>async function</returns>
-        private async Task GetSelectedALMTestSetData(WizardEventArgs WizardEventArgs)
+        private async void GetSelectedALMTestSetData(WizardEventArgs WizardEventArgs)
         {
             await Task.Run(() =>
             {
