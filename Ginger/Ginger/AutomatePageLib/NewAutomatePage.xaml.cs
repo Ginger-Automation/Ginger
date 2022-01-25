@@ -537,11 +537,14 @@ namespace GingerWPF.BusinessFlowsLib
         {
             foreach (ApplicationAgent appAgent in mExecutionEngine.GingerRunner.ApplicationAgents)
             {
-                AgentOperations agentOperations = new AgentOperations(appAgent.Agent);
-                appAgent.Agent.AgentOperations = agentOperations;
-                if (appAgent.Agent != null && ((AgentOperations)appAgent.Agent.AgentOperations).Status == Agent.eStatus.Running)
+                if (appAgent.Agent != null)
                 {
-                    ((DriverBase)((AgentOperations)appAgent.Agent.AgentOperations).Driver).UpdateContext(mContext);
+                    AgentOperations agentOperations = new AgentOperations(appAgent.Agent);
+                    appAgent.Agent.AgentOperations = agentOperations;
+                    if (((AgentOperations)appAgent.Agent.AgentOperations).Status == Agent.eStatus.Running)
+                    {
+                        ((DriverBase)((AgentOperations)appAgent.Agent.AgentOperations).Driver).UpdateContext(mContext);
+                    }
                 }
             }
         }

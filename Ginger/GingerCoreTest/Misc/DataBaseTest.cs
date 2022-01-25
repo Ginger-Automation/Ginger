@@ -25,11 +25,13 @@ using System.Threading.Tasks;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Environments;
 using GingerTestHelper;
+using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests.NonUITests
 {
@@ -63,7 +65,11 @@ namespace UnitTests.NonUITests
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
           
-            mGR.Executor.CurrentBusinessFlow = mBF;          
+            mGR.Executor.CurrentBusinessFlow = mBF;
+
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH);
+            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
         }
 
         [Ignore]
@@ -71,19 +77,21 @@ namespace UnitTests.NonUITests
         public void TestOracleDBConnectionAndReadAllTables()
         {
             Database db = new Database();
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
             db.DBType = Database.eDBTypes.Oracle;
             //ATT LS DB            
             db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];          
-            Boolean b =  db.Connect();
+            Boolean b =  db.DatabaseOperations.Connect();
             //List<string> recs = new List<string>();
             List<object> recs = new List<object>();
             if (b)
             {
 
                 string sqlQuery = "SELECT TNAME FROM TAB";
-                recs = db.FreeSQL(sqlQuery);
+                recs = db.DatabaseOperations.FreeSQL(sqlQuery);
 
-                db.CloseConnection();
+                db.DatabaseOperations.CloseConnection();
             }
            Assert.AreEqual(b, true);
             //Assert.IsNotNull(recs.Count, 0);
@@ -95,16 +103,18 @@ namespace UnitTests.NonUITests
         public void TestMSAccessDB()
         {
             Database db = new Database();
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
             db.DBType = Database.eDBTypes.MSAccess;
             //    db.ConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\SVN\GingerSolutions\SCM\Documents\MassData\MAIN_DB.mdb";          
             db.ConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source="+ TestResources.GetTestResourcesFile(@"Database\GingerUnitTest.mdb");
             string dbstr = db.ConnectionString;
 
-            Boolean b = db.Connect();
+            Boolean b = db.DatabaseOperations.Connect();
             if (b)
             {
-                List<string> tables = db.GetTablesList();
-                db.CloseConnection();
+                List<string> tables = db.DatabaseOperations.GetTablesList();
+                db.DatabaseOperations.CloseConnection();
             }            
             
            Assert.AreEqual(b, true);    
@@ -114,16 +124,18 @@ namespace UnitTests.NonUITests
         public void TestMSSQL()
         {
             Database db = new Database();
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
             db.DBType = Database.eDBTypes.MSSQL;
 
            
             db.ConnectionString = ConfigurationManager.AppSettings["MSSQLString"]; 
 
-            Boolean b = db.Connect();
+            Boolean b = db.DatabaseOperations.Connect();
             if (b)
             {
-                List<string> tables = db.GetTablesList();
-                db.CloseConnection();
+                List<string> tables = db.DatabaseOperations.GetTablesList();
+                db.DatabaseOperations.CloseConnection();
             }
 
            Assert.AreEqual(b, true);    
@@ -134,16 +146,18 @@ namespace UnitTests.NonUITests
         public void OracleFreeSQL()
         {
             Database db = new Database();
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
             db.DBType = Database.eDBTypes.Oracle;
             //ATT LS DB
           
             db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];    
-            Boolean b = db.Connect();
+            Boolean b = db.DatabaseOperations.Connect();
             if (b)
             {
-                List<object> recs = db.FreeSQL("SELECT TNAME FROM TAB");
+                List<object> recs = db.DatabaseOperations.FreeSQL("SELECT TNAME FROM TAB");
                 Assert.IsNotNull(recs.Count);
-                db.CloseConnection();
+                db.DatabaseOperations.CloseConnection();
             }
            Assert.AreEqual(b, true);
            
@@ -154,17 +168,19 @@ namespace UnitTests.NonUITests
         public void OracleUpdateDB1InsertQuery()
         {
             Database db = new Database();
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
             db.DBType = Database.eDBTypes.Oracle;
             db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];    
             string impactedlines = "";
-            Boolean b = db.Connect();
+            Boolean b = db.DatabaseOperations.Connect();
             if (b)
             {
                 Random randGenerator = new Random();
                 int testId = randGenerator.Next();
-                impactedlines = db.fUpdateDB("INSERT INTO GINGER_DB_UNIT_TEST (TEST_ID, TEST_NAME) VALUES ('" + testId + "', 'InsertValues_" + testId + "')", true);
+                impactedlines = db.DatabaseOperations.fUpdateDB("INSERT INTO GINGER_DB_UNIT_TEST (TEST_ID, TEST_NAME) VALUES ('" + testId + "', 'InsertValues_" + testId + "')", true);
 
-                db.CloseConnection();
+                db.DatabaseOperations.CloseConnection();
             }
             Assert.AreEqual(impactedlines, "1");
         }
@@ -173,16 +189,18 @@ namespace UnitTests.NonUITests
         public void OracleUpdateDBUpdateQuery()
         {
             Database db = new Database();
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
             db.DBType = Database.eDBTypes.Oracle;           
             db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];    
             string impactedlines = null;
-            Boolean b = db.Connect();
+            Boolean b = db.DatabaseOperations.Connect();
             if (b)
             {
                 string updateStamp = DateTime.Now.ToString();
                 string updateQuery = "UPDATE GINGER_DB_UNIT_TEST SET COMMENTS='"+DateTime.UtcNow.ToString()+"' where TEST_ID=(select max(test_id) AS TEST_ID from GINGER_DB_UNIT_TEST)";                
-                impactedlines = db.fUpdateDB(updateQuery, true);                
-                db.CloseConnection();
+                impactedlines = db.DatabaseOperations.fUpdateDB(updateQuery, true);                
+                db.DatabaseOperations.CloseConnection();
             }
            Assert.AreEqual(impactedlines, "1");
         }
@@ -193,14 +211,16 @@ namespace UnitTests.NonUITests
         public void OracleUpdateDBDeleteQuery()
         {
             Database db = new Database();
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
             db.DBType = Database.eDBTypes.Oracle;            
             db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];    
             string impactedlines = null;
-            Boolean b = db.Connect();
+            Boolean b = db.DatabaseOperations.Connect();
             if (b)
             {
-                impactedlines = db.fUpdateDB("delete from GINGER_DB_UNIT_TEST where TEST_ID=(select min(test_id) AS TEST_ID from GINGER_DB_UNIT_TEST) ", true);
-                db.CloseConnection();
+                impactedlines = db.DatabaseOperations.fUpdateDB("delete from GINGER_DB_UNIT_TEST where TEST_ID=(select min(test_id) AS TEST_ID from GINGER_DB_UNIT_TEST) ", true);
+                db.DatabaseOperations.CloseConnection();
             }
            Assert.IsNotNull(impactedlines);
         }
@@ -210,12 +230,14 @@ namespace UnitTests.NonUITests
         public void MongoDbTestConnection()
         {
             Database db = new Database();
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
             db.DBType = Database.eDBTypes.MongoDb;
             db.ConnectionString = ConfigurationManager.AppSettings["MongoDbConnectionString"];
-            Boolean b = db.Connect();
+            Boolean b = db.DatabaseOperations.Connect();
             if (b)
             {
-                db.CloseConnection();
+                db.DatabaseOperations.CloseConnection();
             }
             Assert.AreEqual(b, true);
         }
@@ -241,6 +263,8 @@ namespace UnitTests.NonUITests
             envApplication.Name = "DB";
 
             Database db = new Database();
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
             db.Name = "MongoDb";
             db.DBType = Database.eDBTypes.MongoDb;
             db.ConnectionString = ConfigurationManager.AppSettings["MongoDbConnectionString"];
@@ -276,6 +300,8 @@ namespace UnitTests.NonUITests
             envApplication.Name = "DB";
 
             Database db = new Database();
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
             db.Name = "MongoDb";
             db.DBType = Database.eDBTypes.MongoDb;
             db.ConnectionString = ConfigurationManager.AppSettings["MongoDbConnectionString"];
@@ -311,6 +337,8 @@ namespace UnitTests.NonUITests
             envApplication.Name = "DB";
 
             Database db = new Database();
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
             db.Name = "MongoDb";
             db.DBType = Database.eDBTypes.MongoDb;
             db.ConnectionString = ConfigurationManager.AppSettings["MongoDbConnectionString"];
@@ -338,6 +366,8 @@ namespace UnitTests.NonUITests
             envApplication.Name = "DB";
 
             Database db = new Database();
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
             db.Name = "MongoDb";
             db.DBType = Database.eDBTypes.MongoDb;
 
@@ -355,7 +385,7 @@ namespace UnitTests.NonUITests
             mBF.CurrentActivity.Acts.CurrentItem = actDB;
             
             //Act            
-            db.NameBeforeEdit = actDB.DBName;
+            ((DatabaseOperations)db.DatabaseOperations).NameBeforeEdit = actDB.DBName;
             db.Name = "MongoDBNew";
             //Database.UpdateDatabaseNameChangeInItem(actDB, db.NameBeforeEdit, db.Name);
             

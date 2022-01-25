@@ -36,106 +36,21 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.Actions;
 using System.Runtime.InteropServices;
 using amdocs.ginger.GingerCoreNET;
+using static GingerCore.Environments.Database;
 
 namespace GingerCore.Environments
 {
-    public class Database : RepositoryItemBase, IDatabase
+    public class DatabaseOperations : IDatabaseOperations
     {
+        public Database Database;
 
-        public enum eDBTypes
+        public DatabaseOperations(Database database)
         {
-            Oracle,
-            MSSQL,
-            MSAccess,
-            DB2,
-            Cassandra,
-            PostgreSQL,
-            MySQL,
-            Couchbase,
-            MongoDb,
+            this.Database = database;
+            this.Database.DatabaseOperations = this;
         }
-
-        public enum eConfigType
-        {
-            Manual = 0,
-            ConnectionString = 1,
-        }
-
-        public ProjEnvironment ProjEnvironment { get; set; }
-
-        private BusinessFlow mBusinessFlow;
-        public BusinessFlow BusinessFlow
-        {
-            get { return mBusinessFlow; }
-            set
-            {
-                if (!object.ReferenceEquals(mBusinessFlow, value))
-                {
-                    mBusinessFlow = value;
-                }
-            }
-        }
-
-        public static class Fields
-        {
-            public static string Name = "Name";
-            public static string Description = "Description";
-            public static string Type = "DBType";
-            public static string ConnectionString = "ConnectionString";
-            public static string TNS = "TNS";
-            public static string User = "User";
-            public static string Pass = "Pass";
-            public static string KeepConnectionOpen = "KeepConnectionOpen";
-            public static string DBVer = "DBVer";
-        }
-
         private DbConnection oConn = null;
         private DbTransaction tran = null;
-
-        public ObservableList<DataSourceBase> DSList { get; set; }
-        public bool mKeepConnectionOpen;
-        [IsSerializedForLocalRepository(true)]
-        public bool KeepConnectionOpen
-        {
-            get
-            {
-
-                return mKeepConnectionOpen;
-            }
-            set
-            {
-                mKeepConnectionOpen = value;
-                OnPropertyChanged(Fields.KeepConnectionOpen);
-            }
-        }
-
-
-        private string mName;
-        [IsSerializedForLocalRepository]
-        public string Name { get { return mName; } set { mName = value; OnPropertyChanged(Fields.Name); } }
-
-        [IsSerializedForLocalRepository]
-        public string Description { get; set; }
-        public eDBTypes mDBType;
-        [IsSerializedForLocalRepository]
-        public eDBTypes DBType
-        {
-            get { return mDBType; }
-            set
-            {
-                mDBType = value;
-                OnPropertyChanged(Fields.Type);
-                if (DBType == eDBTypes.Cassandra)
-                {
-                    DBVer = "2.2";
-                }
-                else
-                {
-                    DBVer = "";
-                }
-            }
-        }
-
 
         ValueExpression mVE = null;
         ValueExpression VE
@@ -144,17 +59,17 @@ namespace GingerCore.Environments
             {
                 if (mVE == null)
                 {
-                    if (ProjEnvironment == null)
+                    if (Database.ProjEnvironment == null)
                     {
-                        ProjEnvironment = new Environments.ProjEnvironment();
+                        Database.ProjEnvironment = new Environments.ProjEnvironment();
                     }
 
-                    if (BusinessFlow == null)
+                    if (Database.BusinessFlow == null)
                     {
-                        BusinessFlow = new GingerCore.BusinessFlow();
+                        Database.BusinessFlow = new GingerCore.BusinessFlow();
                     }
 
-                    mVE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList);
+                    mVE = new ValueExpression(Database.ProjEnvironment, Database.BusinessFlow, Database.DSList);
                 }
                 return mVE;
             }
@@ -164,64 +79,33 @@ namespace GingerCore.Environments
             }
         }
 
-        private string mConnectionString;
-        [IsSerializedForLocalRepository]
-        public string ConnectionString { get { return mConnectionString; } set { mConnectionString = value; OnPropertyChanged(Fields.ConnectionString); } }
         public string ConnectionStringCalculated
         {
             get
             {
-                return GetCalculatedWithDecryptTrue(ConnectionString);
+                return GetCalculatedWithDecryptTrue(Database.ConnectionString);
             }
         }
 
-        private string mTNS;
-        [IsSerializedForLocalRepository]
-        public string TNS { get { return mTNS; } set { mTNS = value; OnPropertyChanged(Fields.TNS); } }
         public string TNSCalculated
         {
             get
             {
-                return GetCalculatedWithDecryptTrue(TNS);
+                return GetCalculatedWithDecryptTrue(Database.TNS);
             }
         }
-
-        private string mDBVer;
-        [IsSerializedForLocalRepository]
-        public string DBVer { get { return mDBVer; } set { mDBVer = value; OnPropertyChanged(Fields.DBVer); } }
-
-        private string mUser;
-        [IsSerializedForLocalRepository]
-        public string User { get { return mUser; } set { mUser = value; OnPropertyChanged(Fields.User); } }
         public string UserCalculated
         {
             get
             {
-                return GetCalculatedWithDecryptTrue(User);
+                return GetCalculatedWithDecryptTrue(Database.User);
             }
         }
-
-        private string mPass;
-        [IsSerializedForLocalRepository]
-        public string Pass { get { return mPass; } set { mPass = value; OnPropertyChanged(Fields.Pass); } }
         public string PassCalculated
         {
             get
             {
-                return GetCalculatedWithDecryptTrue(Pass);
-            }
-        }
-
-        //TODO: Why it is needed?!
-        public static List<string> DbTypes
-        {
-            get
-            {
-                return Enum.GetNames(typeof(eDBTypes)).ToList();
-            }
-            set
-            {
-                //DbTypes = value;
+                return GetCalculatedWithDecryptTrue(Database.Pass);
             }
         }
 
@@ -248,11 +132,11 @@ namespace GingerCore.Environments
         public void SplitUserIdPassFromTNS()
         {
             SqlConnectionStringBuilder scSB = new SqlConnectionStringBuilder();
-            scSB.ConnectionString = TNS;
-            TNS = scSB.DataSource;
-            User = scSB.UserID;
-            Pass = scSB.Password;
-            ConnectionString = scSB.ConnectionString;
+            scSB.ConnectionString = Database.TNS;
+            Database.TNS = scSB.DataSource;
+            Database.User = scSB.UserID;
+            Database.Pass = scSB.Password;
+            Database.ConnectionString = scSB.ConnectionString;
         }
         public string GetConnectionString()
         {
@@ -277,10 +161,10 @@ namespace GingerCore.Environments
         public string CreateConnectionString()
         {
             //Default ConnectionString format
-            ConnectionString = "Data Source=" + TNS + ";User Id={USER};Password={PASS};";
+            Database.ConnectionString = "Data Source=" + Database.TNS + ";User Id={USER};Password={PASS};";
 
             //Change ConnectionString according to DBType
-            if (DBType == eDBTypes.MSAccess)
+            if (Database.DBType == eDBTypes.MSAccess)
             {
                 string strProvider;
                 if (TNSCalculated.Contains(".accdb"))
@@ -291,32 +175,32 @@ namespace GingerCore.Environments
                 {
                     strProvider = "Provider=Microsoft.Jet.OLEDB.4.0;";
                 }
-                ConnectionString = strProvider + ConnectionString;
+                Database.ConnectionString = strProvider + Database.ConnectionString;
             }
-            else if (DBType == eDBTypes.DB2)
+            else if (Database.DBType == eDBTypes.DB2)
             {
-                ConnectionString = "Server=" + TNS + ";Database=" + Name + ";UID={USER};PWD={PASS}";
+                Database.ConnectionString = "Server=" + Database.TNS + ";Database=" + Database.Name + ";UID={USER};PWD={PASS}";
             }
-            else if (DBType == eDBTypes.PostgreSQL)
+            else if (Database.DBType == eDBTypes.PostgreSQL)
             {
                 string[] host = TNSCalculated.Split(':');
                 if (host.Length == 2)
                 {
-                    ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Name + ";";
+                    Database.ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
                 }
                 else
                 {
                     //    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + deCryptValue;
-                    ConnectionString = "Server=" + TNS + ";User Id={USER}; Password={PASS};Database=" + Name + ";";
+                    Database.ConnectionString = "Server=" + Database.TNS + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
                 }
             }
-            else if (DBType == eDBTypes.MySQL)
+            else if (Database.DBType == eDBTypes.MySQL)
             {
-                ConnectionString = "Server=" + TNS + ";Database=" + Name + ";UID={USER};PWD={PASS}";
+                Database.ConnectionString = "Server=" + Database.TNS + ";Database=" + Database.Name + ";UID={USER};PWD={PASS}";
             }
             return ConnectionStringCalculated;
         }
-        //private CancellationTokenSource CTS = null;
+
         private DateTime LastConnectionUsedTime;
 
 
@@ -350,14 +234,14 @@ namespace GingerCore.Environments
         {
             DbProviderFactory factory;
             string connectConnectionString = string.Empty;
-            if (DBType != eDBTypes.Cassandra && DBType != eDBTypes.Couchbase && DBType != eDBTypes.MongoDb)
+            if (Database.DBType != eDBTypes.Cassandra && Database.DBType != eDBTypes.Couchbase && Database.DBType != eDBTypes.MongoDb)
             {
                 connectConnectionString = GetConnectionString();
             }
             try
             {
 
-                switch (DBType)
+                switch (Database.DBType)
                 {
                     case eDBTypes.MSSQL:
                         oConn = new SqlConnection();
@@ -436,7 +320,7 @@ namespace GingerCore.Environments
                         break;
 
                     case eDBTypes.Cassandra:
-                        GingerCassandra CassandraDriver = new GingerCassandra(this);
+                        GingerCassandra CassandraDriver = new GingerCassandra(Database);
                         bool isConnection;
                         isConnection = CassandraDriver.Connect();
                         if (isConnection == true)
@@ -449,7 +333,7 @@ namespace GingerCore.Environments
                             return false;
                         }
                     case eDBTypes.Couchbase:
-                        GingerCouchbase CouchbaseDriver = new GingerCouchbase(this);
+                        GingerCouchbase CouchbaseDriver = new GingerCouchbase(Database);
                         bool isConnectionCB;
                         isConnectionCB = CouchbaseDriver.Connect();
                         if (isConnectionCB == true)
@@ -470,7 +354,7 @@ namespace GingerCore.Environments
                         break;
                     case eDBTypes.MongoDb:
                         bool isConnectionMDB;
-                        GingerMongoDb MongoDriver = new GingerMongoDb(this);
+                        GingerMongoDb MongoDriver = new GingerMongoDb(Database);
                         isConnectionMDB = MongoDriver.Connect();
                         if (isConnectionMDB == true)
                         {
@@ -492,10 +376,51 @@ namespace GingerCore.Environments
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + HidePasswordFromString(connectConnectionString), e);
+                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + Database.DBType.ToString() + "; Connection String =" + HidePasswordFromString(connectConnectionString), e);
                 throw (e);
             }
             return false;
+        }
+        public static string HidePasswordFromString(string dataString)
+        {
+            string passwordValue = dataString.Replace(" ", "");//remove spaces
+            string passwordString = string.Empty;
+            //Matching string
+            if (dataString.ToLower().Contains("pwd="))
+            {
+                passwordString = "pwd=";
+            }
+            else if (dataString.ToLower().Contains("password="))
+            {
+                passwordString = "password=";
+            }
+            else
+            {
+                //returning origional as it does not conatain matching string
+                return dataString;
+            }
+            //get the password value based on start and end index
+            passwordValue = passwordValue.Substring(passwordValue.ToLower().IndexOf(passwordString));
+            int startIndex = passwordValue.ToLower().IndexOf(passwordString) + passwordString.Length;
+            int endIndex = -1;
+            if (passwordValue.Contains(";"))
+            {
+                endIndex = passwordValue.ToLower().IndexOf(";");
+            }
+            if (endIndex == -1)
+            {
+                passwordValue = passwordValue.Substring(startIndex);
+            }
+            else
+            {
+                passwordValue = passwordValue.Substring(startIndex, endIndex - startIndex);
+            }
+
+            if (!string.IsNullOrEmpty(passwordValue))
+            {
+                dataString = dataString.Replace(passwordValue, "*****");
+            }
+            return dataString;
         }
 
         public void CloseConnection()
@@ -518,24 +443,6 @@ namespace GingerCore.Environments
             }
         }
 
-        //prep for Db edit page
-        public static List<eConfigType> GetSupportedConfigurations(eDBTypes CurrentDbType)
-        {
-            List<eConfigType> SupportedConfigs = new List<eConfigType>();
-
-            switch (CurrentDbType)
-            {
-                case eDBTypes.Cassandra:
-                    SupportedConfigs.Add(eConfigType.Manual);
-                    break;
-                default:
-                    SupportedConfigs.Add(eConfigType.ConnectionString);
-                    break;
-            }
-
-            return SupportedConfigs;
-        }
-
         public List<string> GetTablesList(string Keyspace = null)
         {
 
@@ -545,22 +452,22 @@ namespace GingerCore.Environments
                 try
                 {
                     //if (oConn == null || oConn.State == ConnectionState.Closed) Connect();
-                    if (DBType == Database.eDBTypes.Cassandra)
+                    if (Database.DBType == Database.eDBTypes.Cassandra)
                     {
                         NoSqlBase.NoSqlBase NoSqlDriver = null;
-                        NoSqlDriver = new GingerCassandra(this);
+                        NoSqlDriver = new GingerCassandra(Database);
                         rc = NoSqlDriver.GetTableList(Keyspace);
                     }
-                    else if (DBType == Database.eDBTypes.Couchbase)
+                    else if (Database.DBType == Database.eDBTypes.Couchbase)
                     {
                         NoSqlBase.NoSqlBase NoSqlDriver = null;
-                        NoSqlDriver = new GingerCouchbase(this);
+                        NoSqlDriver = new GingerCouchbase(Database);
                         rc = NoSqlDriver.GetTableList(Keyspace);
                     }
-                    else if (DBType == Database.eDBTypes.MongoDb)
+                    else if (Database.DBType == Database.eDBTypes.MongoDb)
                     {
                         NoSqlBase.NoSqlBase NoSqlDriver = null;
-                        NoSqlDriver = new GingerMongoDb(this);
+                        NoSqlDriver = new GingerMongoDb(Database);
                         rc = NoSqlDriver.GetTableList(Keyspace);
                     }
                     else
@@ -569,7 +476,7 @@ namespace GingerCore.Environments
                         string tableName = "";
                         foreach (DataRow row in table.Rows)
                         {
-                            switch (DBType)
+                            switch (Database.DBType)
                             {
                                 case eDBTypes.MSSQL:
                                     tableName = (string)row[2];
@@ -597,7 +504,7 @@ namespace GingerCore.Environments
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list for DB:" + DBType.ToString(), e);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get table list for DB:" + Database.DBType.ToString(), e);
                     throw (e);
                 }
             }
@@ -609,26 +516,26 @@ namespace GingerCore.Environments
         {
             DbDataReader reader = null;
             List<string> rc = new List<string>() { "" };
-            if ((oConn == null || string.IsNullOrEmpty(table)) && (DBType != Database.eDBTypes.Cassandra) && (DBType != Database.eDBTypes.MongoDb))
+            if ((oConn == null || string.IsNullOrEmpty(table)) && (Database.DBType != Database.eDBTypes.Cassandra) && (Database.DBType != Database.eDBTypes.MongoDb))
             {
                 return rc;
             }
-            if (DBType == Database.eDBTypes.Cassandra)
+            if (Database.DBType == Database.eDBTypes.Cassandra)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
-                NoSqlDriver = new GingerCassandra(this);
+                NoSqlDriver = new GingerCassandra(Database);
                 rc = NoSqlDriver.GetColumnList(table);
             }
-            else if (DBType == Database.eDBTypes.Couchbase)
+            else if (Database.DBType == Database.eDBTypes.Couchbase)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
-                NoSqlDriver = new GingerCouchbase(this);
+                NoSqlDriver = new GingerCouchbase(Database);
                 rc = NoSqlDriver.GetColumnList(table);
             }
-            else if (DBType == Database.eDBTypes.MongoDb)
+            else if (Database.DBType == Database.eDBTypes.MongoDb)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
-                NoSqlDriver = new GingerMongoDb(this);
+                NoSqlDriver = new GingerMongoDb(Database);
                 rc = NoSqlDriver.GetColumnList(table);
             }
             else
@@ -637,7 +544,7 @@ namespace GingerCore.Environments
                 {
                     DbCommand command = oConn.CreateCommand();
                     // Do select with zero records
-                    switch (DBType)
+                    switch (Database.DBType)
                     {
                         case eDBTypes.PostgreSQL:
                             command.CommandText = "select * from public.\"" + table + "\" where 1 = 0";
@@ -810,7 +717,7 @@ namespace GingerCore.Environments
         }
 
 
-        internal string GetRecordCount(string SQL)
+        public string GetRecordCount(string SQL)
         {
 
             string sql = "SELECT COUNT(1) FROM " + SQL;
@@ -850,57 +757,5 @@ namespace GingerCore.Environments
             return rc;
         }
 
-        public static string HidePasswordFromString(string dataString)
-        {
-            string passwordValue = dataString.Replace(" ", "");//remove spaces
-            string passwordString = string.Empty;
-            //Matching string
-            if (dataString.ToLower().Contains("pwd="))
-            {
-                passwordString = "pwd=";
-            }
-            else if (dataString.ToLower().Contains("password="))
-            {
-                passwordString = "password=";
-            }
-            else
-            {
-                //returning origional as it does not conatain matching string
-                return dataString;
-            }
-            //get the password value based on start and end index
-            passwordValue = passwordValue.Substring(passwordValue.ToLower().IndexOf(passwordString));
-            int startIndex = passwordValue.ToLower().IndexOf(passwordString) + passwordString.Length;
-            int endIndex = -1;
-            if (passwordValue.Contains(";"))
-            {
-                endIndex = passwordValue.ToLower().IndexOf(";");
-            }
-            if (endIndex == -1)
-            {
-                passwordValue = passwordValue.Substring(startIndex);
-            }
-            else
-            {
-                passwordValue = passwordValue.Substring(startIndex, endIndex - startIndex);
-            }
-
-            if (!string.IsNullOrEmpty(passwordValue))
-            {
-                dataString = dataString.Replace(passwordValue, "*****");
-            }
-            return dataString;
-        }
-        public override string ItemName
-        {
-            get
-            {
-                return this.Name;
-            }
-            set
-            {
-                this.Name = value;
-            }
-        }
     }
 }

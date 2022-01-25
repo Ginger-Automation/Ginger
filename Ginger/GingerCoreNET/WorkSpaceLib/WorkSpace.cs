@@ -566,6 +566,14 @@ namespace amdocs.ginger.GingerCoreNET
             {
                 foreach (ProjEnvironment env in SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
                 {
+                    foreach (EnvApplication ea in env.Applications)
+                    {
+                        foreach (Database db in ea.Dbs)
+                        {
+                            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+                            db.DatabaseOperations = databaseOperations;
+                        }
+                    }
                     env.CloseEnvironment();
                 }
             }
