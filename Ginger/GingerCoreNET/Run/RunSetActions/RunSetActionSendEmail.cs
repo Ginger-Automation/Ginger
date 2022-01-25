@@ -80,6 +80,9 @@ namespace Ginger.Run.RunSetActions
 
         public override void Execute(IReportInfo RI)
         {
+            EmailOperations emailOperations = new EmailOperations(Email);
+            Email.EmailOperations = emailOperations;
+
             //Make sure we clear in case use open the edit page twice
             Email.Attachments.Clear();
 
@@ -121,7 +124,7 @@ namespace Ginger.Run.RunSetActions
                     }
                 }
             }
-            Email.Send();
+            Email.EmailOperations.Send();
         }
 
         public void SetBodyFromHTMLReport(ReportInfo RI)

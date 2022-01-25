@@ -221,18 +221,21 @@ namespace GingerCore.Actions.Communication
 
         public override void Execute()
         {
-            Email e = new Email();
+            Email email = new Email();
+            EmailOperations emailOperations = new EmailOperations(email);
+            email.EmailOperations = emailOperations;
+
             bool isSuccess;
             if (!string.IsNullOrEmpty(Host))
-                e.SMTPMailHost = Host;
-            try { e.SMTPPort = Convert.ToInt32(this.GetInputParamCalculatedValue(nameof(Port))); }
-            catch { e.SMTPPort = 25; }
+                email.SMTPMailHost = Host;
+            try { email.SMTPPort = Convert.ToInt32(this.GetInputParamCalculatedValue(nameof(Port))); }
+            catch { email.SMTPPort = 25; }
 
-            e.Subject = this.GetInputParamCalculatedValue(nameof(Subject));
-            e.Body = this.GetInputParamCalculatedValue(nameof(Body));
-            e.MailFrom = this.GetInputParamCalculatedValue(nameof(MailFrom));
-            e.MailTo = this.GetInputParamCalculatedValue(nameof(Mailto));
-            e.MailCC = this.GetInputParamCalculatedValue(nameof(Mailcc));
+            email.Subject = this.GetInputParamCalculatedValue(nameof(Subject));
+            email.Body = this.GetInputParamCalculatedValue(nameof(Body));
+            email.MailFrom = this.GetInputParamCalculatedValue(nameof(MailFrom));
+            email.MailTo = this.GetInputParamCalculatedValue(nameof(Mailto));
+            email.MailCC = this.GetInputParamCalculatedValue(nameof(Mailcc));
 
             //add multi attachment files
             if (!string.IsNullOrEmpty(this.GetInputParamCalculatedValue(nameof(AttachmentFileName))))
@@ -240,20 +243,20 @@ namespace GingerCore.Actions.Communication
                 String[] fileslist = this.GetInputParamCalculatedValue(nameof(AttachmentFileName)).Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (String filePath in fileslist)
                 {
-                    e.Attachments.Add(filePath);
+                    email.Attachments.Add(filePath);
                 }
             }
 
-            e.EnableSSL = (bool)this.GetInputParamValue<bool>(Fields.EnableSSL);
-            e.ConfigureCredential = (bool)this.GetInputParamValue<bool>(Fields.ConfigureCredential);
-            e.SMTPUser = this.GetInputParamCalculatedValue(nameof(User));
-            e.SMTPPass = this.GetInputParamCalculatedValue(nameof(Pass));
+            email.EnableSSL = (bool)this.GetInputParamValue<bool>(Fields.EnableSSL);
+            email.ConfigureCredential = (bool)this.GetInputParamValue<bool>(Fields.ConfigureCredential);
+            email.SMTPUser = this.GetInputParamCalculatedValue(nameof(User));
+            email.SMTPPass = this.GetInputParamCalculatedValue(nameof(Pass));
 
-            if (e.EmailMethod == Email.eEmailMethod.SMTP)
+            if (email.EmailMethod == Email.eEmailMethod.SMTP)
             {
-                e.MailFromDisplayName = this.GetInputParamCalculatedValue(nameof(MailFromDisplayName));
+                email.MailFromDisplayName = this.GetInputParamCalculatedValue(nameof(MailFromDisplayName));
             }
-            if (string.IsNullOrEmpty(e.MailTo))
+            if (string.IsNullOrEmpty(email.MailTo))
             {
                 Error = "Failed: Please provide TO email address.";
                 return;
@@ -265,28 +268,28 @@ namespace GingerCore.Actions.Communication
             }
             if (this.GetInputParamCalculatedValue(nameof(MailOption)) == Email.eEmailMethod.OUTLOOK.ToString())
             {
-                e.EmailMethod = Email.eEmailMethod.OUTLOOK;
+                email.EmailMethod = Email.eEmailMethod.OUTLOOK;
             }
             else
             {
-                e.EmailMethod = Email.eEmailMethod.SMTP;
-                e.MailFromDisplayName = this.GetInputParamCalculatedValue(nameof(MailFromDisplayName));
-                if (string.IsNullOrEmpty(e.MailFrom))
+                email.EmailMethod = Email.eEmailMethod.SMTP;
+                email.MailFromDisplayName = this.GetInputParamCalculatedValue(nameof(MailFromDisplayName));
+                if (string.IsNullOrEmpty(email.MailFrom))
                 {
                     Error = "Failed: Please provide FROM email address.";
                     return;
                 }
             }
 
-            isSuccess = e.Send();
+            isSuccess = email.EmailOperations.Send();
             if (isSuccess == false)
             {
-                Error = e.Event;
+                Error = email.Event;
                 Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
 
-            if (e.Event != null && e.Event.IndexOf("Failed") >= 0)
-                Error = e.Event;
+            if (email.Event != null && email.Event.IndexOf("Failed") >= 0)
+                Error = email.Event;
         }
     }
 }

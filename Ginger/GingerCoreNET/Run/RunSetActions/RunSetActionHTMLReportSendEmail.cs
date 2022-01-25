@@ -163,6 +163,9 @@ namespace Ginger.Run.RunSetActions
         {
             try
             {
+                EmailOperations emailOperations = new EmailOperations(Email);
+                Email.EmailOperations = emailOperations;
+
                 HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
                 //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email Staring execute");
                 mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
@@ -170,7 +173,7 @@ namespace Ginger.Run.RunSetActions
                 string calculatedName = string.Empty;
                 //Make sure we clear in case use open the edit page twice
                 Email.Attachments.Clear();
-                Email.alternateView = null;
+                Email.EmailOperations.alternateView = null;
                 LiteDbRunSet liteDbRunSet = null;
                 var loggerMode = WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod;
 
@@ -417,7 +420,7 @@ namespace Ginger.Run.RunSetActions
                             if (File.Exists(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg")))
                                 alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg")), "Businessflow" + reportTimeStamp));
                         }
-                        Email.alternateView = alternativeView;
+                        Email.EmailOperations.alternateView = alternativeView;
                     }
                     else
                     {
@@ -481,7 +484,7 @@ namespace Ginger.Run.RunSetActions
                 try
                 {
                     //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Before send email");                    
-                    isSuccess = Email.Send();
+                    isSuccess = Email.EmailOperations.Send();
                     //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: After send email result = " + isSuccess);
                 }
                 catch (Exception ex)

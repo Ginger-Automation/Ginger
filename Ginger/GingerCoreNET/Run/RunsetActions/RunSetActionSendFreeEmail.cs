@@ -119,8 +119,11 @@ namespace Ginger.Run.RunSetActions
 
         public override void Execute(IReportInfo RI)
         {
+            EmailOperations emailOperations = new EmailOperations(Email);
+            Email.EmailOperations = emailOperations;
+
             Email.Attachments.Clear();
-            Email.alternateView = null;
+            Email.EmailOperations.alternateView = null;
 
             mVE.Value = MailFrom;
             Email.MailFrom = mVE.ValueCalculated;
@@ -141,7 +144,7 @@ namespace Ginger.Run.RunSetActions
             mVE.Value = MailUser;
             Email.SMTPUser = mVE.ValueCalculated;
             bool isSuccess;
-            isSuccess = Email.Send();
+            isSuccess = Email.EmailOperations.Send();
             if (isSuccess == false)
             {
                 Errors = Email.Event;

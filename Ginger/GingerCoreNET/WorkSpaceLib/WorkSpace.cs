@@ -570,8 +570,11 @@ namespace amdocs.ginger.GingerCoreNET
                     {
                         foreach (Database db in ea.Dbs)
                         {
-                            DatabaseOperations databaseOperations = new DatabaseOperations(db);
-                            db.DatabaseOperations = databaseOperations;
+                            if (db.DatabaseOperations == null)
+                            {
+                                DatabaseOperations databaseOperations = new DatabaseOperations(db);
+                                db.DatabaseOperations = databaseOperations;
+                            }
                         }
                     }
                     env.CloseEnvironment();

@@ -333,6 +333,17 @@ namespace Ginger.Run
                 {
                     if (gr.ProjEnvironment != null)
                     {
+                        foreach (EnvApplication ea in gr.ProjEnvironment.Applications)
+                        {
+                            foreach (Database db in ea.Dbs)
+                            {
+                                if (db.DatabaseOperations == null)
+                                {
+                                    DatabaseOperations databaseOperations = new DatabaseOperations(db);
+                                    db.DatabaseOperations = databaseOperations;
+                                }
+                            }
+                        }
                         gr.ProjEnvironment.CloseEnvironment();
                     }
                 }
@@ -340,6 +351,17 @@ namespace Ginger.Run
 
             if (RunsetExecutionEnvironment != null)
             {
+                foreach (EnvApplication ea in RunsetExecutionEnvironment.Applications)
+                {
+                    foreach (Database db in ea.Dbs)
+                    {
+                        if (db.DatabaseOperations == null)
+                        {
+                            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+                            db.DatabaseOperations = databaseOperations;
+                        }
+                    }
+                }
                 RunsetExecutionEnvironment.CloseEnvironment();
             }
         }

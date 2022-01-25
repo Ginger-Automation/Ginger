@@ -45,11 +45,14 @@ namespace Ginger.Run.RunSetActions
       
         public override void Execute(IReportInfo RI)
         {
+            EmailOperations emailOperations = new EmailOperations(SMSEmail);
+            SMSEmail.EmailOperations = emailOperations;
+
             //TODO: check number of chars and show err if more or update Errors field           
             SMSEmail.IsBodyHTML = false;
 
             bool isSuccess;
-            isSuccess = SMSEmail.Send();
+            isSuccess = SMSEmail.EmailOperations.Send();
             if (isSuccess == false)
             {
                 Errors = SMSEmail.Event;
