@@ -49,7 +49,12 @@ namespace GingerWPF.WizardLib
             {
                 wizardWindow.Width = width;
                 wizardWindow.Height = height;
-
+                if (!wizard.IsNavigationListEnabled)
+                {
+                    SetterBaseCollection sbc = wizardWindow.NavigationList.ItemContainerStyle.Setters;
+                    sbc.Add(new Setter(ListBoxItem.IsEnabledProperty, wizard.IsNavigationListEnabled));
+                    ((System.Windows.Setter)sbc[sbc.Count - 1]).Value = wizard.IsNavigationListEnabled;
+                }
                 if (DoNotShowAsDialog)
                 {
                     wizardWindow.Owner = App.MainWindow;//adding owner so it will come on top
@@ -111,7 +116,7 @@ namespace GingerWPF.WizardLib
             CurrentWizardWindow = null;
         }
 
-
+       
         void RefreshCurrentPage()
         {
             WizardPage page = mWizard.GetCurrentPage();
@@ -414,7 +419,7 @@ namespace GingerWPF.WizardLib
         {
             xNextButton.IsEnabled = isEnabled;
         }
-
+        
         bool WindowCloseWasHandled = false;
 
         private void CloseWindowClicked(object sender, System.ComponentModel.CancelEventArgs e)
@@ -426,7 +431,5 @@ namespace GingerWPF.WizardLib
             }
 
         }
-
-
     }
 }

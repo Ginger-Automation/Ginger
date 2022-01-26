@@ -33,14 +33,6 @@ namespace Ginger.ALM.MapToALMWizard
         AddMapToALMWizard mWizard;
         Page win;
         bool mIsBusinessFlowMapped = false;
-        struct ALMEntitiesDetails
-        {
-            internal string bfEntityType;
-            internal string testLabUploadPath;
-            internal string moduleParentId;
-            internal string folderCycleId;
-        }
-
         public TestSetMappingPage()
         {
             InitializeComponent();
@@ -51,8 +43,11 @@ namespace Ginger.ALM.MapToALMWizard
             mWizard = (AddMapToALMWizard)WizardEventArgs.Wizard;
             switch (WizardEventArgs.EventType)
             {
+                case EventType.Init:
+                    LoadInitialMappedTestSetData();
+                    break;
                 case EventType.Active:
-                    if (load_frame.Content == null)
+                    if (load_frame.Content == null && String.IsNullOrEmpty(xMappedTestSetBox.Text))
                     {
                         LoadInitialTestSetData();
                     }
@@ -74,20 +69,20 @@ namespace Ginger.ALM.MapToALMWizard
         private void BindTestSet()
         {
                 load_frame.Content = GetALMTree();
-                mWizard.AddActivitiesGroupsInitialMapping();
         }
         #endregion
         #region Functions
         /// <summary>
-        /// 1. Load Test Set tree.
-        /// 2. if Business Flow already mapped load mapped Test Set name and id. 
+        /// Get Mapped Business Flow Test Set details.
+        /// Change visibility to mapped Business Flow
         /// </summary>
-        /// <returns>async function</returns>
-        private async Task LoadInitialTestSetData()
+        /// <returns>async</returns>
+        private async Task LoadInitialMappedTestSetData()
         {
             mWizard.ProcessStarted();
             try
             {
+                mWizard.AddActivitiesGroupsInitialMapping();
                 // Business Flow Mapped, get mapped test cases and steps to display.
                 if (!String.IsNullOrEmpty(mWizard.mapBusinessFlow.ExternalID) && String.IsNullOrEmpty(mWizard.AlmTestSetData.TestSetID))
                 {
@@ -98,7 +93,6 @@ namespace Ginger.ALM.MapToALMWizard
                     WizardPage nextPage = mWizard.Pages.Where(p => p.Page is TestCasesMappingPage).FirstOrDefault();
                     (nextPage.Page as TestCasesMappingPage).xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";
                 }
-                BindTestSet();
             }
             catch (Exception ex)
             {
@@ -106,7 +100,32 @@ namespace Ginger.ALM.MapToALMWizard
             }
             finally
             {
-                xTestSetGrid.IsVisibleChanged -= xTestSetGrid_IsVisibleChanged;
+                mWizard.ProcessEnded();
+            }
+        }
+        /// <summary>
+        /// 1. Load Test Set tree.
+        /// 2. if Business Flow already mapped load mapped Test Set name and id. 
+        /// </summary>
+        /// <returns>async function</returns>
+        private async Task LoadInitialTestSetData()
+        {
+            mWizard.ProcessStarted();
+            try
+            {
+                mWizard.AddActivitiesGroupsInitialMapping();
+                if (String.IsNullOrEmpty(mWizard.AlmTestSetData.TestSetID))
+                {
+                    BindTestSet();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed Get Test Set data, Error: {ex.Message}");
+            }
+            finally
+            {
+                //xTestSetGrid.IsVisibleChanged -= xTestSetGrid_IsVisibleChanged;
                 mWizard.ProcessEnded();
             }
         }
@@ -115,9 +134,9 @@ namespace Ginger.ALM.MapToALMWizard
         /// </summary>
         /// <param name="WizardEventArgs"></param>
         /// <returns>async function</returns>
-        private async Task GetSelectedALMTestSetData(WizardEventArgs WizardEventArgs)
+        private void GetSelectedALMTestSetData(WizardEventArgs WizardEventArgs)
         {
-            await Task.Run(() =>
+            if (win is not null)
             {
                 dynamic SelectedTestSetData = ALMIntegration.Instance.GetSelectedImportTestSetData(win);
                 if (SelectedTestSetData is not null)
@@ -137,7 +156,7 @@ namespace Ginger.ALM.MapToALMWizard
                     WizardEventArgs.CancelEvent = true;
                     return;
                 }
-            });
+            }
         }
         /// <summary>
         /// GetALMTree:
@@ -149,23 +168,13 @@ namespace Ginger.ALM.MapToALMWizard
             try
             {
                 win = Dispatcher.Invoke(() => ALMIntegration.Instance.GetALMTestSetsTreePage());
+                load_frame_SizeChanged(this.load_frame, null);
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Failed get ALM Tree, {System.Reflection.MethodBase.GetCurrentMethod().Name}: {ex.Message}");
             }
             return win;
-        }
-        // TODO check if needed , for all type of test sets.
-        private ALMEntitiesDetails GetALMEntitiesDetails(string getALMTestSetDetails)
-        {
-            ALMEntitiesDetails aLMEntitiesDetails = new ALMEntitiesDetails();
-            string[] getTypeAndId = getALMTestSetDetails.Split('#');
-            aLMEntitiesDetails.testLabUploadPath = getTypeAndId[1];
-            aLMEntitiesDetails.bfEntityType = getTypeAndId[0];
-            aLMEntitiesDetails.moduleParentId = getTypeAndId[2] == null ? string.Empty : getTypeAndId[2];
-            aLMEntitiesDetails.folderCycleId = getTypeAndId[3];
-            return aLMEntitiesDetails;
         }
         /// <summary>
         /// change to mapped test set visibility
@@ -179,6 +188,11 @@ namespace Ginger.ALM.MapToALMWizard
         }
         #endregion
         #region Events
+        /// <summary>
+        /// Adjust Test Sets Tree to frame.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void load_frame_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (win is not null)
@@ -187,23 +201,18 @@ namespace Ginger.ALM.MapToALMWizard
                 win.Height = ActualHeight;
             }
         }
+        /// <summary>
+        /// Change mapped test set button, will load Test Sets tree.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void xChangeTestSetBtn_Click(object sender, RoutedEventArgs e)
         {
             xMappedTestSetPanel.Visibility = Visibility.Collapsed;
             load_frame.Visibility = Visibility.Visible;
+            BindTestSet();
             mIsBusinessFlowMapped = false;
         }
-
-        private void xTestSetGrid_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (load_frame.Content == null)
-            {
-                mWizard.ProcessStarted();
-                mWizard.GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this.mWizard, EventType.Active));
-                return;
-            }
-        }
-
         #endregion
 
 
