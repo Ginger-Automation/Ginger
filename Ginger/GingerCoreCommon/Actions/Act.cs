@@ -983,7 +983,7 @@ namespace GingerCore.Actions
             return filePath;
         }
 
-        static string GetScreenShotRandomFileName()
+        public static string GetScreenShotRandomFileName()
         {
             string filename = Path.GetRandomFileName();            
             string filePath = Path.Combine(ScreenshotTempFolder, filename);
@@ -993,6 +993,8 @@ namespace GingerCore.Actions
             }
             return filePath;
         }
+
+        
 
         //public override string GetNameForFileName() { return Description; }
         public override string GetNameForFileName()

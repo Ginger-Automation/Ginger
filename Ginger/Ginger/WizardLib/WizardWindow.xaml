@@ -58,12 +58,15 @@
                                     <SolidColorBrush Color="SteelBlue" Opacity="1" />
                                 </Polygon.Fill>
                             </Polygon>
-                            <TextBlock Grid.Column="1" FontSize="14" Text="{Binding Title}" VerticalAlignment="Center" />
+                            <TextBlock x:Name="xTitleTextBlock" Grid.Column="1" FontSize="14" Text="{Binding Title}" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
                         </Grid>
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="false">
                                 <Setter TargetName="SelectionArrow" Property="Opacity" Value="0" />
                             </DataTrigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="xTitleTextBlock" Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
+                            </Trigger>
                         </DataTemplate.Triggers>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

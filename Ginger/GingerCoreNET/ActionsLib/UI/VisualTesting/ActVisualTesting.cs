@@ -22,9 +22,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Applitools.Selenium;
 using GingerCore.Actions.VisualTesting;
-using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -235,9 +233,9 @@ namespace GingerCore.Actions
             public static string BaseLineVisualElementsInfoFileName = "BaseLineVisualElementsInfoFileName";            
             public static string CreateBaselineAction = "CreateBaselineAction";
             public static string ErrorMetric = "ErrorMetric";
-            public const string ActionBy = "ActionBy";
-            public const string LocateBy = "LocateBy";
-            public const string LocateValue = "LocateValue";
+            public static readonly string ActionBy = "ActionBy";
+            public static readonly string LocateBy = "LocateBy";
+            public static readonly string LocateValue ="LocateValue";
         }
         
         public override string ActionEditPage { get { return "VisualTesting.ActVisualTestingEditPage"; } }
@@ -293,7 +291,6 @@ namespace GingerCore.Actions
         public void Execute(IVisualTestingDriver driver)
         {
             mDriver = driver;
-            SeleniumDriver webDriver = ((SeleniumDriver)mDriver);
             CheckSetVisualAnalyzer();
             CheckSetAppWindowSize();
 
@@ -301,7 +298,6 @@ namespace GingerCore.Actions
             {
                 mVisualAnalyzer.SetAction(mDriver, this);
                 mVisualAnalyzer.Execute();
-                
             }
             else
             {
@@ -542,6 +538,5 @@ namespace GingerCore.Actions
 
             return relativePath;
         }
-
     }
 }
