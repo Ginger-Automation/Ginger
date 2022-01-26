@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.ALM.MapToALMWizard
@@ -38,37 +39,11 @@ namespace Ginger.ALM.MapToALMWizard
     /// </summary>
     class AddMapToALMWizard : WizardBase, INotifyPropertyChanged
     {
-        internal BusinessFlow mapBusinessFlow { get; private set; }
-        private ALMTestSet almTestSetDetails;
-        private Dictionary<string, ALMTSTest> reMapActivitiesGroupsDic = new Dictionary<string, ALMTSTest>();
+        internal BusinessFlow mapBusinessFlow { get; private set; } // Business Flow to Map
+        private ALMTestSet almTestSetDetails; // ALM Test Set Data
+        private Dictionary<string, ALMTSTest> reMapActivitiesGroupsDic = new Dictionary<string, ALMTSTest>(); // Get mapped AG's when remap BF: key - AG ExternalID, Value - Mapped Test Case
 
-        public void SetReMapAGSDic(string key, ALMTSTest value)
-        {
-            if (reMapActivitiesGroupsDic.ContainsKey(key))
-            {
-                reMapActivitiesGroupsDic[key] = value;
-            }
-            else
-            {
-                reMapActivitiesGroupsDic.Add(key, value);
-            }
-        }
-
-        public ALMTSTest GetReMapAGSDic(string key)
-        {
-            ALMTSTest result = null;
-
-            if (reMapActivitiesGroupsDic.ContainsKey(key))
-            {
-                result = reMapActivitiesGroupsDic[key];
-            }
-
-            return result;
-        }
-        public bool IsReMapAGSDicContainsKey(string key)
-        {
-            return reMapActivitiesGroupsDic.ContainsKey(key);
-        }
+        
         public ALMTestSet AlmTestSetData
         {
             get
@@ -84,9 +59,9 @@ namespace Ginger.ALM.MapToALMWizard
                 almTestSetDetails = value;
             }
         }
-        public ObservableList<ALMTestCaseManualMappingConfig> testCasesMappingList = new ObservableList<ALMTestCaseManualMappingConfig>();
+        public ObservableList<ALMTestCaseManualMappingConfig> testCasesMappingList = new ObservableList<ALMTestCaseManualMappingConfig>(); // List for Manage map TC to AG.
 
-        public ObservableList<ALMTSTest> testCasesUnMappedList = new ObservableList<ALMTSTest>();
+        public ObservableList<ALMTSTest> testCasesUnMappedList = new ObservableList<ALMTSTest>(); // List for Manage Test Set unmapped TC's
         internal ObservableList<ALMTestCaseManualMappingConfig> mappedTestCasesStepPageList = new ObservableList<ALMTestCaseManualMappingConfig>();
         public Dictionary<String, ObservableList<ALMTSTestStep>> testCaseUnmappedStepsDic = new Dictionary<string, ObservableList<ALMTSTestStep>>();
         public event PropertyChangedEventHandler PropertyChanged;
@@ -99,15 +74,16 @@ namespace Ginger.ALM.MapToALMWizard
             }
         }
         public override string Title { get { return String.Format("Map To {0} Wizard.", ALMIntegration.Instance.GetALMType()); } }
-
+               
         public AddMapToALMWizard(BusinessFlow businessFlow)
         {
             ALMIntegration.Instance.GetDefaultAlmConfig();
             mapBusinessFlow = businessFlow;
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Map To ALM Introduction", Page: new WizardIntroPage("/ALM/MapToALMWizard/MappedToALMIntro.md"));
             AddPage(Name: "Test Set Mapping", Title: "Test Set Mapping", SubTitle: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, $"Select matching ALM Test Set to Ginger ‘{mapBusinessFlow.Name}’"), Page: new TestSetMappingPage());
-            AddPage(Name: "Test Cases Mapping", Title: "Test Cases Mapping", SubTitle: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Select matching ALM Test Case foreach Ginger"), Page: new TestCasesMappingPage(mapBusinessFlow));
+            AddPage(Name: "Test Cases Mapping", Title: "Test Cases Mapping", SubTitle: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Select matching ALM Test Case foreach Ginger"), Page: new TestCasesMappingPage());
             AddPage(Name: "Test Steps Mapping", Title: "Test Steps Mapping", SubTitle: GingerDicser.GetTermResValue(eTermResKey.Activity, $"Select matching ALM Steps foreach Ginger"), Page: new TestStepMappingPage());
+            DisableNavigationList();
         }
         /// <summary>
         /// 1. Add business Flow activities groups to testCasesMappingList.
@@ -268,9 +244,12 @@ namespace Ginger.ALM.MapToALMWizard
         private void ReMapTestSteps(ALMTestCaseManualMappingConfig tc)
         {
             Dictionary<string, ALMTSTestStep> almStepsDic = new Dictionary<string, ALMTSTestStep>();
-            foreach (ALMTSTestStep tStep in tc.aLMTSTest.Steps)
+            if (tc.aLMTSTest is not null)
             {
-                almStepsDic.Add(tStep.StepID, tStep);
+                foreach (ALMTSTestStep tStep in tc.aLMTSTest.Steps)
+                {
+                    almStepsDic.Add(tStep.StepID, tStep);
+                }
             }
             // Remap test steps
             foreach (ActivityIdentifiers act in tc.activitiesGroup.ActivitiesIdentifiers)
@@ -298,10 +277,6 @@ namespace Ginger.ALM.MapToALMWizard
             {
                 ClearTestSetCollections();
                 SetSelectedALMTestSetData(SelectedTestSetData);
-                foreach (ALMTSTest testCase in AlmTestSetData.Tests)
-                {
-                    testCasesUnMappedList.Add(testCase);
-                }
             }
         }
         /// <summary>
@@ -342,13 +317,68 @@ namespace Ginger.ALM.MapToALMWizard
         /// Set new selected ALM Test Set data.
         /// </summary>
         /// <param name="SelectedTestSetData">ALM selected Test Set object</param>
-        private void SetSelectedALMTestSetData(dynamic SelectedTestSetData)
+        private async Task SetSelectedALMTestSetData(dynamic SelectedTestSetData)
         {
-            AlmTestSetData.TestSetID = SelectedTestSetData.Id;
-            AlmTestSetData.TestSetName = SelectedTestSetData.Name;
-            AlmTestSetData.TestSetPath = SelectedTestSetData.Path;
-            AlmTestSetData.TestSetInternalID2 = SelectedTestSetData.TestSetID;
-            AlmTestSetData = ALMIntegration.Instance.GetALMTestCases(AlmTestSetData);
+            try
+            {
+                ProcessStarted();
+                AlmTestSetData.TestSetID = SelectedTestSetData.Id;
+                AlmTestSetData.TestSetName = SelectedTestSetData.Name;
+                AlmTestSetData.TestSetPath = SelectedTestSetData.Path;
+                AlmTestSetData.TestSetInternalID2 = SelectedTestSetData.TestSetID;
+                AlmTestSetData = await Task.Run(() =>
+                {
+                    return ALMIntegration.Instance.GetALMTestCases(AlmTestSetData);
+                });
+                foreach (ALMTSTest testCase in AlmTestSetData.Tests)
+                {
+                    testCasesUnMappedList.Add(testCase);
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed set Test Set data, Error: {ex.Message}");
+            }
+            finally
+            {
+                ProcessEnded();
+            }
+        }
+        /// <summary>
+        /// Set Mapped Activities Groups dictionary, 
+        /// </summary>
+        /// <param name="key">AG ExternalID</param>
+        /// <param name="value">Mapped Test Case with ExternalID equal TC id</param>
+        public void SetReMapAGSDic(string key, ALMTSTest value)
+        {
+            if (IsReMapAGSDicContainsKey(key))
+            {
+                reMapActivitiesGroupsDic[key] = value;
+            }
+            else
+            {
+                reMapActivitiesGroupsDic.Add(key, value);
+            }
+        }
+        /// <summary>
+        /// Get Test Case from Activities Group ExternalId.
+        /// </summary>
+        /// <param name="key">Activities Group ExternalId</param>
+        /// <returns>Mapped Test Case</returns>
+        public ALMTSTest GetReMapAGSDic(string key)
+        {
+            ALMTSTest result = null;
+
+            if (IsReMapAGSDicContainsKey(key))
+            {
+                result = reMapActivitiesGroupsDic[key];
+            }
+
+            return result;
+        }
+        public bool IsReMapAGSDicContainsKey(string key)
+        {
+            return reMapActivitiesGroupsDic.ContainsKey(key);
         }
     }
 }
