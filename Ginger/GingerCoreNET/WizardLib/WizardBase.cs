@@ -34,7 +34,7 @@ namespace GingerWPF.WizardLib
 
         // Each wizard must set the title window
         public abstract string Title { get; }
-        public virtual bool IsNavigationListEnabled { get; set; } = true;
+        public bool IsNavigationListEnabled { get; set; } = true;
         public abstract void Finish();
 
         //public bool FinishVisible
@@ -83,7 +83,10 @@ namespace GingerWPF.WizardLib
         //}
 
 
-
+        public void DisableNavigationList()
+        {
+            IsNavigationListEnabled = false;
+        }
 
         public void ProcessStarted()
         {        

@@ -74,7 +74,7 @@ namespace Ginger.ALM.MapToALMWizard
             }
         }
         public override string Title { get { return String.Format("Map To {0} Wizard.", ALMIntegration.Instance.GetALMType()); } }
-        public override bool IsNavigationListEnabled { get { return false; } }
+               
         public AddMapToALMWizard(BusinessFlow businessFlow)
         {
             ALMIntegration.Instance.GetDefaultAlmConfig();
@@ -83,6 +83,7 @@ namespace Ginger.ALM.MapToALMWizard
             AddPage(Name: "Test Set Mapping", Title: "Test Set Mapping", SubTitle: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, $"Select matching ALM Test Set to Ginger ‘{mapBusinessFlow.Name}’"), Page: new TestSetMappingPage());
             AddPage(Name: "Test Cases Mapping", Title: "Test Cases Mapping", SubTitle: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Select matching ALM Test Case foreach Ginger"), Page: new TestCasesMappingPage());
             AddPage(Name: "Test Steps Mapping", Title: "Test Steps Mapping", SubTitle: GingerDicser.GetTermResValue(eTermResKey.Activity, $"Select matching ALM Steps foreach Ginger"), Page: new TestStepMappingPage());
+            DisableNavigationList();
         }
         /// <summary>
         /// 1. Add business Flow activities groups to testCasesMappingList.
