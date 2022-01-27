@@ -31,6 +31,10 @@ using static GingerCore.Agent;
 using static GingerCore.Drivers.SeleniumDriver;
 using System.Linq;
 using amdocs.ginger.GingerCoreNET;
+using System.Text.RegularExpressions;
+using System.Net.Http;
+using System.Threading;
+using System.IO;
 using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Actions.VisualTesting
@@ -48,6 +52,15 @@ namespace GingerCore.Actions.VisualTesting
         public static string FailActionOnMistmach = "FailActionOnMistmach";
         public const string ActionBy = "ActionBy";
         public const string LocateBy = "LocateBy";
+
+        private const int RETRY_REQUEST_INTERVAL = 500; //ms
+        private const int LONG_REQUEST_DELAY_MS = 2000; // ms
+        private const int MAX_LONG_REQUEST_DELAY_MS = 10000; // ms
+        private const double LONG_REQUEST_DELAY_MULTIPLICATIVE_INCREASE_FACTOR = 1.5;
+
+        private string ServerURL;
+        private string batchID;
+        private string sessionID;
 
         // We keep one static eyes so we can reuse across action and close when done, to support applitools behaviour
         static Applitools.Images.Eyes mEyes = null;
@@ -363,7 +376,7 @@ namespace GingerCore.Actions.VisualTesting
                     TestResultContainer[] resultContainer = allTestResults.GetAllResults();
                     TR = resultContainer[0].TestResults;
                 }
-
+                SaveApplitoolsImages(TR);
                 // Update results info into outputs
                 mAct.ExInfo = "URL to view results: " + TR.Url;
                 mAct.AddOrUpdateReturnParamActual("ResultsURL", TR.Url + "");
@@ -477,32 +490,55 @@ namespace GingerCore.Actions.VisualTesting
 
         private void SaveApplitoolsImages(TestResults testResult)
         {
+            setServerURL(testResult);
+            setbatchID(testResult);
+            setsessionID(testResult);
             String sessionURL = testResult.Url;
-            String URLforDownloading = BakeURL(sessionURL);
             int numOfSteps = testResult.Steps;
-            DownloadImages(URLforDownloading, numOfSteps);
+            DownloadImages(numOfSteps, testResult);
         }
 
         private String BakeURL(String sessionURL)
         {
             //Edit URL and prepare it to download images from report
             String bakedURL = sessionURL.Replace("/app/", "/api/");
-            bakedURL = bakedURL.Insert(bakedURL.IndexOf("sessions") + 9, "batches/");
             bakedURL = bakedURL.Substring(0, bakedURL.IndexOf("?accountId"));
             bakedURL += "/steps/";
             return bakedURL;
         }
 
-        private void DownloadImages(String BaseURLForDownloading, int numOfImages)
+        private void DownloadImages(int numOfImages, TestResults testResults)
         {
-            String imagePath = @"C:\test\Applitools\image";  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIXME - add to the action
             for (int i = 1; i <= numOfImages; i++)
             {
-                String currImagePath = imagePath + i.ToString() + ".jpg";
-                String currImageURL = BaseURLForDownloading + i.ToString() + "/diff?ApiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
-                Console.WriteLine(currImageURL);
-                WebClient webClient = new WebClient();
-                webClient.DownloadFile(currImageURL, currImagePath);
+                String currImagePath = Act.GetScreenShotRandomFileName();
+                String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + i.ToString() + "/images/diff?ApiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
+                try
+                {
+                    HttpResponseMessage response = runLongRequest(currImageURL);
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                        response.Content.CopyToAsync(fs).ContinueWith(
+                        (discard) =>
+                        {
+                            fs.Close();
+                        });
+                        mAct.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
+                        mAct.ScreenShots.Add(currImagePath);
+                        
+                    }
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        mAct.Error = mAct.Error + " File Not Found";
+                    }
+                }
+                catch(Exception ex)
+                {
+                    mAct.Error = mAct.Error + ex.Message;
+                }
+                
+                
             }
         }
 
@@ -527,6 +563,120 @@ namespace GingerCore.Actions.VisualTesting
         private string GetLocateValue()
         {
             return mAct.GetOrCreateInputParam(ActVisualTesting.Fields.LocateValue).Value;
+        }
+
+        private void setServerURL(TestResults testresult)
+        {
+            int endOfServerUrlLocation = testresult.Url.IndexOf("/app/session");
+            if (endOfServerUrlLocation < 1)
+            {
+                endOfServerUrlLocation = testresult.Url.IndexOf("/app/batches");
+            }
+            this.ServerURL = testresult.Url.Substring(0, endOfServerUrlLocation);
+
+        }
+
+        private void setbatchID(TestResults testresult)
+        {
+            string URL = testresult.Url;
+            string temp = "^" + this.ServerURL + @"/app/sessions/(?<batchId>\d+).*$";
+            Match match = Regex.Match(URL, "^" + this.ServerURL + @"/app/batches/(?<batchId>\d+).*$");
+            this.batchID = match.Groups[1].Value;
+        }
+
+        private void setsessionID(TestResults testresult)
+        {
+            string URL = testresult.Url;
+            Match match = Regex.Match(URL, "^" + this.ServerURL + @"/app/batches/\d+/(?<sessionId>\d+).*$");
+            this.sessionID = match.Groups[1].Value;
+        }
+
+
+        private HttpResponseMessage runLongRequest(string URL)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, URL);
+
+            HttpResponseMessage response = sendRequest(request, 1, false);
+
+            return longRequestCheckStatus(response);
+        }
+
+        private HttpResponseMessage sendRequest(HttpRequestMessage request, int retry, Boolean delayBeforeRetry)
+        {
+            HttpClient client = new HttpClient();
+
+            try
+            {
+                HttpResponseMessage response = client.SendAsync(request).Result;
+                return response;
+            }
+            catch (Exception e)
+            {
+                String errorMessage = "error message: " + e.Message;
+                
+                if (retry > 0)
+                {
+                    if (delayBeforeRetry)
+                    {
+                        Thread.Sleep(RETRY_REQUEST_INTERVAL);
+                    }
+                    return sendRequest(request, retry - 1, delayBeforeRetry);
+                }
+                throw new ThreadInterruptedException(errorMessage);
+            }
+        }
+
+        public HttpResponseMessage longRequestCheckStatus(HttpResponseMessage responseReceived)
+        {
+            HttpStatusCode status = responseReceived.StatusCode;
+
+
+            HttpRequestMessage request = null;
+            String URI;
+
+            switch (status)
+            {
+                case HttpStatusCode.OK:
+                    return responseReceived;
+
+                case HttpStatusCode.Accepted:
+                    var location = responseReceived.Headers.GetValues("Location");
+                    URI = location.First() + "?apiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
+
+                    request = new HttpRequestMessage(HttpMethod.Get, URI);
+                    HttpResponseMessage response = longRequestLoop(request, LONG_REQUEST_DELAY_MS);
+                    return longRequestCheckStatus(response);
+
+                case HttpStatusCode.Created:
+                    var location2 = responseReceived.Headers.GetValues("Location");
+                    URI = location2.First() + "?apiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
+                    request = new HttpRequestMessage(HttpMethod.Delete, URI);
+                    return sendRequest(request, 1, false);
+
+                case HttpStatusCode.NotFound:
+                    mAct.Error = mAct.Error + "Unknown error during long request: " + status;
+                    return responseReceived;
+
+                case HttpStatusCode.Gone:
+                    throw new ThreadInterruptedException("The server task is gone");
+
+                default:
+                    throw new ThreadInterruptedException("Unknown error during long request: " + status);
+                    
+            }
+        }
+
+        public HttpResponseMessage longRequestLoop(HttpRequestMessage request, int delay)
+        {
+            delay = (int)Math.Min(MAX_LONG_REQUEST_DELAY_MS, Math.Floor(delay * LONG_REQUEST_DELAY_MULTIPLICATIVE_INCREASE_FACTOR));
+            Thread.Sleep(delay);
+
+            HttpResponseMessage response = sendRequest(request, 1, false);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return longRequestLoop(request, delay);
+            }
+            return response;
         }
     }
 }
