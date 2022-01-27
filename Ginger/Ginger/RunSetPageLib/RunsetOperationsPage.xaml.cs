@@ -149,6 +149,12 @@ namespace Ginger.Run
             RSAS.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(RSAS);
             RunSetActionsGrid.Grid.SelectedItem = RSAS;
+
+            RunSetActionScriptOperations runSetActionScript = new RunSetActionScriptOperations(RSAS);
+            RSAS.RunSetActionScriptOperations = runSetActionScript;
+
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSAS);
+            RSAS.runSetActionBaseOperations = runSetActionBaseOperations;
         }
         private void RunSelected(object sender, RoutedEventArgs e)
         {
@@ -171,6 +177,9 @@ namespace Ginger.Run
             mRunSetConfig.RunSetActions.Add(RSASS);
             RunSetActionsGrid.Grid.SelectedItem = RSASS;
 
+            RunSetActionSendSMSOperations runSetActionSendSMS = new RunSetActionSendSMSOperations(RSASS);
+            RSASS.RunSetActionSendSMSOperations = runSetActionSendSMS;
+
             RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSASS);
             RSASS.runSetActionBaseOperations = runSetActionBaseOperations;
         }
@@ -183,6 +192,9 @@ namespace Ginger.Run
             mRunSetConfig.RunSetActions.Add(RSASR);
             RunSetActionsGrid.Grid.SelectedItem = RSASR;
 
+            RunSetActionSaveResultsOperations runSetActionSaveResults = new RunSetActionSaveResultsOperations(RSASR);
+            RSASR.RunSetActionSaveResultsOperations = runSetActionSaveResults;
+
             RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSASR);
             RSASR.runSetActionBaseOperations = runSetActionBaseOperations;
         }
@@ -193,6 +205,9 @@ namespace Ginger.Run
             RSAPTAC.RunAt = RunSetActionBase.eRunAt.DuringExecution;
             mRunSetConfig.RunSetActions.Add(RSAPTAC);
             RunSetActionsGrid.Grid.SelectedItem = RSAPTAC;
+
+            RunSetActionPublishToQCOperations runSetActionPublishToQC = new RunSetActionPublishToQCOperations(RSAPTAC);
+            RSAPTAC.RunSetActionPublishToQCOperations = runSetActionPublishToQC;
 
             RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSAPTAC);
             RSAPTAC.runSetActionBaseOperations = runSetActionBaseOperations;
@@ -206,6 +221,9 @@ namespace Ginger.Run
             mRunSetConfig.RunSetActions.Add(RSASR);
             RunSetActionsGrid.Grid.SelectedItem = RSASR;
 
+            RunSetActionHTMLReportSendEmailOperations runSetActionHTMLReportSendEmail = new RunSetActionHTMLReportSendEmailOperations(RSASR);
+            RSASR.RunSetActionHTMLReportSendEmailOperations = runSetActionHTMLReportSendEmail;
+
             RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSASR);
             RSASR.runSetActionBaseOperations = runSetActionBaseOperations;
         }
@@ -216,6 +234,9 @@ namespace Ginger.Run
             RSAFTE.Name = RSAFTE.Type;
             mRunSetConfig.RunSetActions.Add(RSAFTE);
             RunSetActionsGrid.Grid.SelectedItem = RSAFTE;
+
+            RunSetActionSendFreeEmailOperations runSetActionSendFreeEmail = new RunSetActionSendFreeEmailOperations(RSAFTE);
+            RSAFTE.RunSetActionSendFreeEmailOperations = runSetActionSendFreeEmail;
 
             RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSAFTE);
             RSAFTE.runSetActionBaseOperations = runSetActionBaseOperations;
@@ -229,6 +250,9 @@ namespace Ginger.Run
             mRunSetConfig.RunSetActions.Add(RSASR);
             RunSetActionsGrid.Grid.SelectedItem = RSASR;
 
+            RunSetActionSendEmailOperations runSetActionSendEmail = new RunSetActionSendEmailOperations(RSASR);
+            RSASR.RunSetActionSendEmailOperations = runSetActionSendEmail;
+
             RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSASR);
             RSASR.runSetActionBaseOperations = runSetActionBaseOperations;
         }
@@ -239,6 +263,9 @@ namespace Ginger.Run
             TNGRPT.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(TNGRPT);
             RunSetActionsGrid.Grid.SelectedItem = TNGRPT;
+
+            RunSetActionGenerateTestNGReportOperations runSetActionGenerateTestNGReport = new RunSetActionGenerateTestNGReportOperations(TNGRPT);
+            TNGRPT.RunSetActionGenerateTestNGReportOperations = runSetActionGenerateTestNGReport;
 
             RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(TNGRPT);
             TNGRPT.runSetActionBaseOperations = runSetActionBaseOperations;
@@ -256,6 +283,9 @@ namespace Ginger.Run
             RSAHR.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(RSAHR);
             RunSetActionsGrid.Grid.SelectedItem = RSAHR;
+
+            RunSetActionHTMLReportOperations runSetActionHTMLReport = new RunSetActionHTMLReportOperations(RSAHR);
+            RSAHR.RunSetActionHTMLReportOperations = runSetActionHTMLReport;
 
             RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSAHR);
             RSAHR.runSetActionBaseOperations = runSetActionBaseOperations;
@@ -277,6 +307,9 @@ namespace Ginger.Run
             mRunSetConfig.RunSetActions.Add(RSAAAD);
             RunSetActionsGrid.Grid.SelectedItem = RSAAAD;
 
+            RunSetActionAutomatedALMDefectsOperations runSetActionAutomatedALMDefects = new RunSetActionAutomatedALMDefectsOperations(RSAAAD);
+            RSAAAD.RunSetActionAutomatedALMDefectsOperations = runSetActionAutomatedALMDefects;
+
             RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSAAAD);
             RSAAAD.runSetActionBaseOperations = runSetActionBaseOperations;
         }
@@ -289,6 +322,9 @@ namespace Ginger.Run
             mRunSetConfig.RunSetActions.Add(runSetActionJSONSummary);
             RunSetActionsGrid.Grid.SelectedItem = runSetActionJSONSummary;
 
+            RunSetActionJSONSummaryOperations runSetActionJSONSummaryOperations = new RunSetActionJSONSummaryOperations(runSetActionJSONSummary);
+            runSetActionJSONSummary.RunSetActionJSONSummaryOperations = runSetActionJSONSummaryOperations;
+
             RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(runSetActionJSONSummary);
             runSetActionJSONSummary.runSetActionBaseOperations = runSetActionBaseOperations;
         }
@@ -299,6 +335,9 @@ namespace Ginger.Run
             runSetActionSendDataToExternalSource.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(runSetActionSendDataToExternalSource);
             RunSetActionsGrid.Grid.SelectedItem = runSetActionSendDataToExternalSource;
+
+            RunSetActionSendDataToExternalSourceOperations runSetActionSendDataToExternalSourceOperations = new RunSetActionSendDataToExternalSourceOperations(runSetActionSendDataToExternalSource);
+            runSetActionSendDataToExternalSource.RunSetActionSendDataToExternalSourceOperations = runSetActionSendDataToExternalSourceOperations;
 
             RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(runSetActionSendDataToExternalSource);
             runSetActionSendDataToExternalSource.runSetActionBaseOperations = runSetActionBaseOperations;

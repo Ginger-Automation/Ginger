@@ -29,51 +29,17 @@ namespace Ginger.Run.RunSetActions
 {
     //Name of the class should be RunSetActionPublishToQC 
     //If we change the name, run set xml fails to find it because it look for name RunSetActionPublishToQC
-    public class RunSetActionAutomatedALMDefects : RunSetActionBase
+    public class RunSetActionAutomatedALMDefectsOperations : IRunSetActionAutomatedALMDefectsOperations
     {
-        public enum eDefectsOpeningMode
+        public RunSetActionAutomatedALMDefects RunSetActionAutomatedALMDefects;
+
+        public RunSetActionAutomatedALMDefectsOperations(RunSetActionAutomatedALMDefects runSetActionAutomatedALMDefects)
         {
-            HTMLReport,
-            FreeText
+            this.RunSetActionAutomatedALMDefects = runSetActionAutomatedALMDefects;
+            this.RunSetActionAutomatedALMDefects.RunSetActionAutomatedALMDefectsOperations = this;
         }
 
-        public new static class Fields
-        {
-            public const string SelectedDefectsProfileID = "SelectedDefectsProfileID";
-            public const string DefectsOpeningModeForAll = "DefectsOpeningModeForAll";
-            public const string DefectsOpeningModeForMarked = "DefectsOpeningModeForMarked";
-            public const string DefectsOpeningModeReviewOnly = "DefectsOpeningModeReviewOnly";
-        }
-
-        private int mSelectedDefectsProfileID;
-        [IsSerializedForLocalRepository]
-        public int SelectedDefectsProfileID { get { return mSelectedDefectsProfileID; } set { if (mSelectedDefectsProfileID != value) { mSelectedDefectsProfileID = value; OnPropertyChanged(Fields.SelectedDefectsProfileID); } } }
-
-        private bool mDefectsOpeningModeForAll;
-        [IsSerializedForLocalRepository]
-        public bool DefectsOpeningModeForAll { get { return mDefectsOpeningModeForAll; } set { if (mDefectsOpeningModeForAll != value) { mDefectsOpeningModeForAll = value; OnPropertyChanged(Fields.DefectsOpeningModeForAll); } } }
-
-        private bool mDefectsOpeningModeForMarked;
-        [IsSerializedForLocalRepository]
-        public bool DefectsOpeningModeForMarked { get { return mDefectsOpeningModeForMarked; } set { if (mDefectsOpeningModeForMarked != value) { mDefectsOpeningModeForMarked = value; OnPropertyChanged(Fields.DefectsOpeningModeForMarked); } } }
-
-        private bool mDefectsOpeningModeReviewOnly;
-        [IsSerializedForLocalRepository]
-        public bool DefectsOpeningModeReviewOnly { get { return mDefectsOpeningModeReviewOnly; } set { if (mDefectsOpeningModeReviewOnly != value) { mDefectsOpeningModeReviewOnly = value; OnPropertyChanged(Fields.DefectsOpeningModeReviewOnly); } } }
-
-        public override List<RunSetActionBase.eRunAt> GetRunOptions()
-        {
-            List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
-            list.Add(RunSetActionBase.eRunAt.ExecutionEnd);
-            return list;
-        }
-
-        public override bool SupportRunOnConfig
-        {
-            get { return false; }
-        }
-
-        public override void Execute(IReportInfo RI)
+        public void Execute(IReportInfo RI)
         {
             if ((WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null) && (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0))
             {
@@ -83,7 +49,7 @@ namespace Ginger.Run.RunSetActions
                 ALMDefectProfile defaultALMDefectProfile = new ALMDefectProfile();
                 if ((ALMDefectProfiles != null) && (ALMDefectProfiles.Count > 0))
                 {
-                    defaultALMDefectProfile = ALMDefectProfiles.Where(z => z.ID == SelectedDefectsProfileID).ToList().FirstOrDefault();
+                    defaultALMDefectProfile = ALMDefectProfiles.Where(z => z.ID == RunSetActionAutomatedALMDefects.SelectedDefectsProfileID).ToList().FirstOrDefault();
                     if (defaultALMDefectProfile == null)
                     {
                         defaultALMDefectProfile = ALMDefectProfiles.Where(z => z.IsDefault).ToList().FirstOrDefault();
@@ -94,7 +60,7 @@ namespace Ginger.Run.RunSetActions
                     }
                 }
 
-                if (DefectsOpeningModeForMarked)
+                if (RunSetActionAutomatedALMDefects.DefectsOpeningModeForMarked)
                 {
                     foreach (DefectSuggestion defectSuggestion in WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.AutomatedOpeningFlag == true).ToList())
                     {
@@ -112,7 +78,7 @@ namespace Ginger.Run.RunSetActions
                             currentALMDefectFieldsValues.Add("Summary", defectSuggestion.Summary);
                             currentALMDefectFieldsValues.Add("description", defectSuggestion.ErrorDetails);
                         }
-                        
+
                         currentALMDefectFieldsValues.Add("screenshots", String.Join(",", defectSuggestion.ScreenshotFileNames));
                         currentALMDefectFieldsValues.Add("ActivityGroupExternalID", defectSuggestion.ActivityGroupExternalID);
                         currentALMDefectFieldsValues.Add("ActivityExternalID", defectSuggestion.ActivityExternalID);
@@ -121,7 +87,7 @@ namespace Ginger.Run.RunSetActions
                         defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                     }
                 }
-                else if (DefectsOpeningModeForAll)
+                else if (RunSetActionAutomatedALMDefects.DefectsOpeningModeForAll)
                 {
                     foreach (DefectSuggestion defectSuggestion in WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList)
                     {
@@ -156,16 +122,5 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string GetEditPage()
-        {
-            //return new RunSetActionAutomatedALMDefectsEditPage(this);
-            return  "RunSetActionAutomatedALMDefectsEditPage";
-        }
-        public override string Type { get { return "Open ALM Defects"; } }
     }
 }

@@ -34,41 +34,14 @@ using Amdocs.Ginger.CoreNET.Utility;
 
 namespace Ginger.Run.RunSetActions
 {
-    public class RunSetActionHTMLReport : RunSetActionBase
+    public class RunSetActionHTMLReportOperations : IRunSetActionHTMLReportOperations
     {
-        public new static class Fields
+        public RunSetActionHTMLReport RunSetActionHTMLReport;
+        public RunSetActionHTMLReportOperations(RunSetActionHTMLReport runSetActionHTMLReport)
         {
-            public static string HTMLReportFolderName = "HTMLReportFolderName";
-            public static string isHTMLReportFolderNameUsed = "isHTMLReportFolderNameUsed";
-            public static string isHTMLReportPermanentFolderNameUsed = "isHTMLReportPermanentFolderNameUsed";
-            public static string selectedHTMLReportTemplateID = "selectedHTMLReportTemplateID";
-        }
+            RunSetActionHTMLReport = runSetActionHTMLReport;
+            runSetActionHTMLReport.RunSetActionHTMLReportOperations = this;
 
-        public override List<RunSetActionBase.eRunAt> GetRunOptions()
-        {
-            List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
-            list.Add(RunSetActionBase.eRunAt.ExecutionEnd);
-            return list;
-        }
-
-        public override bool SupportRunOnConfig
-        {
-            get { return true; }
-        }
-
-        private string mHTMLReportFolderName;
-        [IsSerializedForLocalRepository]
-        public string HTMLReportFolderName
-        {
-            get
-            {
-                return mHTMLReportFolderName;
-            }
-            set
-            {
-                mHTMLReportFolderName = value;
-                OnPropertyChanged(nameof(HTMLReportFolderName));
-            }
         }
         private string mHTMLReportFolderNameCalculated;
         public string HTMLReportFolderNameCalculated
@@ -76,24 +49,16 @@ namespace Ginger.Run.RunSetActions
             get
             {
                 ValueExpression mVE = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
-                mVE.Value = HTMLReportFolderName;
+                mVE.Value = RunSetActionHTMLReport.HTMLReportFolderName;
                 return mHTMLReportFolderNameCalculated = mVE.ValueCalculated;
             }
         }
-        [IsSerializedForLocalRepository]
-        public int selectedHTMLReportTemplateID { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public bool isHTMLReportFolderNameUsed { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public bool isHTMLReportPermanentFolderNameUsed { get; set; }
-
-        public override void Execute(IReportInfo RI)
+        public void Execute(IReportInfo RI)
         {
             string reportsResultFolder = string.Empty;
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            if(WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 ProduceLiteDBReportFolder(currentConf);
                 return;
@@ -103,19 +68,19 @@ namespace Ginger.Run.RunSetActions
             {
                 string runSetFolder = string.Empty;
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
-                { 
-                    runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;                    
+                {
+                    runSetFolder = WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder;
                 }
                 else
                 {
                     GingerRunner gr = new GingerRunner();
-                    runSetFolder = gr.Executor.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();                    
+                    runSetFolder = gr.Executor.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
                 }
 
                 string currentHTMLFolderName = string.Empty;
-                if (isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(HTMLReportFolderName))
+                if (RunSetActionHTMLReport.isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(RunSetActionHTMLReport.HTMLReportFolderName))
                 {
-                    if (!isHTMLReportPermanentFolderNameUsed)
+                    if (!RunSetActionHTMLReport.isHTMLReportPermanentFolderNameUsed)
                     {
                         currentHTMLFolderName = Path.Combine(HTMLReportFolderNameCalculated, System.IO.Path.GetFileName(runSetFolder));
                     }
@@ -132,15 +97,15 @@ namespace Ginger.Run.RunSetActions
                     }
                 }
 
-                if (!string.IsNullOrEmpty(selectedHTMLReportTemplateID.ToString()))
+                if (!string.IsNullOrEmpty(RunSetActionHTMLReport.selectedHTMLReportTemplateID.ToString()))
                 {
                     ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-                        
+
                     reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                                 false,
-                                                                                                                                HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault(),
+                                                                                                                                HTMLReportConfigurations.Where(x => (x.ID == RunSetActionHTMLReport.selectedHTMLReportTemplateID)).FirstOrDefault(),
                                                                                                                                 currentHTMLFolderName,
-                                                                                                                                isHTMLReportPermanentFolderNameUsed, currentConf.HTMLReportConfigurationMaximalFolderSize);
+                                                                                                                                RunSetActionHTMLReport.isHTMLReportPermanentFolderNameUsed, currentConf.HTMLReportConfigurationMaximalFolderSize);
                 }
                 else
                 {
@@ -148,14 +113,14 @@ namespace Ginger.Run.RunSetActions
                                                                                                                                 false,
                                                                                                                                 null,
                                                                                                                                 currentHTMLFolderName,
-                                                                                                                                isHTMLReportPermanentFolderNameUsed);
+                                                                                                                                RunSetActionHTMLReport.isHTMLReportPermanentFolderNameUsed);
                 }
             }
             else
             {
-                Errors = "In order to get HTML report, please, perform executions before";
+                RunSetActionHTMLReport.Errors = "In order to get HTML report, please, perform executions before";
                 Reporter.HideStatusMessage();
-                Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
+                RunSetActionHTMLReport.Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
                 return;
             }
         }
@@ -165,37 +130,24 @@ namespace Ginger.Run.RunSetActions
             string reportsResultFolder;
             WebReportGenerator webReporterRunner = new WebReportGenerator();
             string reportName = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
-            if (isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(HTMLReportFolderName))
+            if (RunSetActionHTMLReport.isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(RunSetActionHTMLReport.HTMLReportFolderName))
             {
-                reportsResultFolder = Path.Combine(HTMLReportFolderName, "Reports");
+                reportsResultFolder = Path.Combine(RunSetActionHTMLReport.HTMLReportFolderName, "Reports");
             }
             else
             {
                 reportsResultFolder = Path.Combine(Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports");
             }
-            if (isHTMLReportPermanentFolderNameUsed)
+            if (RunSetActionHTMLReport.isHTMLReportPermanentFolderNameUsed)
             {
                 webReporterRunner.RunNewHtmlReport(Path.Combine(reportsResultFolder, "Ginger-Web-Client"), null, null, false);
             }
-            else 
+            else
             {
                 webReporterRunner.RunNewHtmlReport(Path.Combine(reportsResultFolder, $"{reportName}_{DateTime.UtcNow.ToString("yyyymmddhhmmssfff")}"), null, null, false);
             }
         }
 
-        public override string GetEditPage()
-        {
-           // RunSetActionHTMLReportEditPage p = new RunSetActionHTMLReportEditPage(this);
-            return "RunSetActionHTMLReportEditPage";
-        }
 
-        
-
-        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string Type { get { return "Produce HTML Report"; } }
     }
 }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -26,18 +26,13 @@ using System.Text;
 using Ginger.Reports;
 using Amdocs.Ginger.Common;
 using GingerCore;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Run.RunSetActions
 {
     public class RunSetActionGenerateTestNGReport : RunSetActionBase
     {
-        public new static class Fields
-        {
-            public static string SaveResultstoFolderName = "SaveResultstoFolderName";
-            public static string OpenExecutionResultsFolder = "OpenExecutionResultsFolder";
-            public static string SaveindividualBFReport = "SaveindividualBFReport";
-        }
+        public IRunSetActionGenerateTestNGReportOperations RunSetActionGenerateTestNGReportOperations;
+        
         [IsSerializedForLocalRepository(false)]
         public bool ConfiguerDynamicParameters { get; set; }
 
@@ -71,57 +66,7 @@ namespace Ginger.Run.RunSetActions
 
         public override void Execute(IReportInfo RI)
         {
-            string testNGReportPath = "";
-            try
-            {
-                if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
-                {
-                    testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SaveResultsInSolutionFolderName);
-                }
-                else if(!string.IsNullOrEmpty(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder))
-                {
-                    testNGReportPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder;
-                }
-                else
-                {
-                    testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
-                }
-                if (!Directory.Exists(testNGReportPath))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(testNGReportPath);
-                    }
-                    catch (Exception ex)
-                    {
-                        testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
-                    }
-                }
-                SaveBFResults((ReportInfo)RI, testNGReportPath, IsStatusByActivitiesGroup);
-            }
-            catch (Exception ex)
-            {
-                Errors = ex.Message.ToString();
-                Status = eRunSetActionStatus.Failed;
-            }
-        }
-
-        //TODO: move to Run SetAction
-        private void SaveBFResults(ReportInfo RI, string folder, bool statusByGroupActivity)
-        {
-            if (DynamicParameters.Count > 0)
-            {
-                ValueExpression VE = new ValueExpression(RI.Environment, null);
-                for(int i = 0;i< DynamicParameters.Count ; i++)
-                {
-                    DynamicParameters[i].ValueForDriver = VE.Calculate(DynamicParameters[i].Value);
-                }
-            }
-            TestNGResultReport TNGReport = new TestNGResultReport();
-            string xml = TNGReport.CreateReport(RI, statusByGroupActivity, DynamicParameters);
-
-            System.IO.File.WriteAllLines(Path.Combine(folder,"testng-results.xml"), new string[] { xml });
-        //TODO: let the user select file prefix
+            RunSetActionGenerateTestNGReportOperations.Execute(RI);
         }
 
         public override string GetEditPage()

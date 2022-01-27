@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -19,7 +19,6 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Text;
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -33,7 +32,8 @@ using GingerCore;
 namespace Ginger.Run.RunSetActions
 {
     public class RunSetActionSendFreeEmail : RunSetActionBase
-    {   
+    {
+        public IRunSetActionSendFreeEmailOperations RunSetActionSendFreeEmailOperations;
         public override bool SupportRunOnConfig
         {
             get { return true; }
@@ -49,19 +49,6 @@ namespace Ginger.Run.RunSetActions
 
         [IsSerializedForLocalRepository]
         public Email Email = new Email();
-
-        ValueExpression mValueExpression = null;
-        ValueExpression mVE
-        {
-            get
-            {
-                if (mValueExpression == null)
-                {
-                    mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
-                }
-                return mValueExpression;
-            }
-        }
 
         private string mBodytext;
         [IsSerializedForLocalRepository]
@@ -119,54 +106,13 @@ namespace Ginger.Run.RunSetActions
 
         public override void Execute(IReportInfo RI)
         {
-            EmailOperations emailOperations = new EmailOperations(Email);
-            Email.EmailOperations = emailOperations;
-
-            Email.Attachments.Clear();
-            Email.EmailOperations.alternateView = null;
-
-            mVE.Value = MailFrom;
-            Email.MailFrom = mVE.ValueCalculated;
-
-            mVE.Value = MailFromDisplayName;
-            Email.MailFromDisplayName = mVE.ValueCalculated;
-
-            mVE.Value = MailTo;
-            Email.MailTo = mVE.ValueCalculated;
-            mVE.Value = MailCC;
-            Email.MailCC = mVE.ValueCalculated;
-            mVE.Value = Subject;
-            Email.Subject = mVE.ValueCalculated;
-            mVE.Value = Bodytext;
-            Email.Body = mVE.ValueCalculated;
-            mVE.Value = MailHost;
-            Email.SMTPMailHost = mVE.ValueCalculated;
-            mVE.Value = MailUser;
-            Email.SMTPUser = mVE.ValueCalculated;
-            bool isSuccess;
-            isSuccess = Email.EmailOperations.Send();
-            if (isSuccess == false)
-            {
-                Errors = Email.Event;
-                Reporter.HideStatusMessage();
-                Status = RunSetActionBase.eRunSetActionStatus.Failed;
-            }
+            RunSetActionSendFreeEmailOperations.Execute(RI);
         }
 
         public override string GetEditPage()
         {
             //RunSetActionSendFreeEmailEditPage RSAEREP = new RunSetActionSendFreeEmailEditPage(this);
             return "RunSetActionSendFreeEmailEditPage";
-        }
-
-        public static string OverrideHTMLRelatedCharacters(string text)
-        {
-            text = text.Replace(@"<", "&#60;");
-            text = text.Replace(@">", "&#62;");
-            text = text.Replace(@"$", "&#36;");
-            text = text.Replace(@"%", "&#37;");
-
-            return text;
         }
 
         public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)

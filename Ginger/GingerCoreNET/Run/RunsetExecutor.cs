@@ -40,6 +40,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
+using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 
 namespace Ginger.Run
 {
@@ -651,6 +652,69 @@ namespace Ginger.Run
 
             foreach (RunSetActionBase RSA in RunSetConfig.RunSetActions)
             {
+                //set Operations object to call execute, specific to runsetAtion 
+                if (RSA is RunSetActionHTMLReport)
+                {
+                    RunSetActionHTMLReportOperations runSetActionHTMLReport = new RunSetActionHTMLReportOperations((RunSetActionHTMLReport)RSA);
+                    ((RunSetActionHTMLReport)RSA).RunSetActionHTMLReportOperations = runSetActionHTMLReport;
+                }
+                if (RSA is RunSetActionAutomatedALMDefects)
+                {
+                    RunSetActionAutomatedALMDefectsOperations runSetActionAutomatedALMDefects = new RunSetActionAutomatedALMDefectsOperations((RunSetActionAutomatedALMDefects)RSA);
+                    ((RunSetActionAutomatedALMDefects)RSA).RunSetActionAutomatedALMDefectsOperations = runSetActionAutomatedALMDefects;
+                }
+                if (RSA is RunSetActionGenerateTestNGReport)
+                {
+                    RunSetActionGenerateTestNGReportOperations runSetActionGenerateTestNGReport = new RunSetActionGenerateTestNGReportOperations((RunSetActionGenerateTestNGReport)RSA);
+                    ((RunSetActionGenerateTestNGReport)RSA).RunSetActionGenerateTestNGReportOperations = runSetActionGenerateTestNGReport;
+                }
+                if (RSA is RunSetActionHTMLReportSendEmail)
+                {
+                    RunSetActionHTMLReportSendEmailOperations runSetActionHTMLReportSendEmail = new RunSetActionHTMLReportSendEmailOperations((RunSetActionHTMLReportSendEmail)RSA);
+                    ((RunSetActionHTMLReportSendEmail)RSA).RunSetActionHTMLReportSendEmailOperations = runSetActionHTMLReportSendEmail;
+                }
+                if (RSA is RunSetActionPublishToQC)
+                {
+                    RunSetActionPublishToQCOperations runSetActionPublishToQC = new RunSetActionPublishToQCOperations((RunSetActionPublishToQC)RSA);
+                    ((RunSetActionPublishToQC)RSA).RunSetActionPublishToQCOperations = runSetActionPublishToQC;
+                }
+                if (RSA is RunSetActionSaveResults)
+                {
+                    RunSetActionSaveResultsOperations runSetActionSaveResults = new RunSetActionSaveResultsOperations((RunSetActionSaveResults)RSA);
+                    ((RunSetActionSaveResults)RSA).RunSetActionSaveResultsOperations = runSetActionSaveResults;
+                }
+                if (RSA is RunSetActionScript)
+                {
+                    RunSetActionScriptOperations runSetActionScript = new RunSetActionScriptOperations((RunSetActionScript)RSA);
+                    ((RunSetActionScript)RSA).RunSetActionScriptOperations = runSetActionScript;
+                }
+                if (RSA is RunSetActionJSONSummary)
+                {
+                    RunSetActionJSONSummaryOperations runSetActionJSONSummary = new RunSetActionJSONSummaryOperations((RunSetActionJSONSummary)RSA);
+                    ((RunSetActionJSONSummary)RSA).RunSetActionJSONSummaryOperations = runSetActionJSONSummary;
+                }
+                if (RSA is RunSetActionSendDataToExternalSource)
+                {
+                    RunSetActionSendDataToExternalSourceOperations runSetActionSendDataToExternalSource = new RunSetActionSendDataToExternalSourceOperations((RunSetActionSendDataToExternalSource)RSA);
+                    ((RunSetActionSendDataToExternalSource)RSA).RunSetActionSendDataToExternalSourceOperations = runSetActionSendDataToExternalSource;
+                }
+                if (RSA is RunSetActionSendEmail)
+                {
+                    RunSetActionSendEmailOperations runSetActionSendEmail = new RunSetActionSendEmailOperations((RunSetActionSendEmail)RSA);
+                    ((RunSetActionSendEmail)RSA).RunSetActionSendEmailOperations = runSetActionSendEmail;
+                }
+                if (RSA is RunSetActionSendFreeEmail)
+                {
+                    RunSetActionSendFreeEmailOperations runSetActionSendFreeEmail = new RunSetActionSendFreeEmailOperations((RunSetActionSendFreeEmail)RSA);
+                    ((RunSetActionSendFreeEmail)RSA).RunSetActionSendFreeEmailOperations = runSetActionSendFreeEmail;
+                }
+                if (RSA is RunSetActionSendSMS)
+                {
+                    RunSetActionSendSMSOperations runSetActionSendSMS = new RunSetActionSendSMSOperations((RunSetActionSendSMS)RSA);
+                    ((RunSetActionSendSMS)RSA).RunSetActionSendSMSOperations = runSetActionSendSMS;
+                }
+
+
                 RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSA);
                 RSA.runSetActionBaseOperations = runSetActionBaseOperations;
 

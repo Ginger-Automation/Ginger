@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -17,19 +17,32 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Text;
 
 namespace Ginger.Run.RunSetActions
 {
-    public class RunSetActionSendSMS : RunSetActionBase
+    public class RunSetActionSendEmail : RunSetActionBase
     {
-        [IsSerializedForLocalRepository]
-        public Email SMSEmail = new Email();
-      
+        public IRunSetActionSendEmailOperations RunSetActionSendEmailOperations;
+        public enum eHTMLReportTemplate
+        {
+            [EnumValueDescription("Free Text")]
+            FreeText,
+            Summary,
+            Detailed,
+            Plain,
+            Custom
+        }
+
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
             List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
@@ -42,29 +55,30 @@ namespace Ginger.Run.RunSetActions
         {
             get { return true; }
         }
-      
+
+        [IsSerializedForLocalRepository]
+        public Email Email = new Email();
+
+        //User can attach several templates to the email
+        // Attach template + RI
+        // Attach its own file
+        [IsSerializedForLocalRepository]
+        public ObservableList<EmailAttachment> EmailAttachments = new ObservableList<EmailAttachment>();
+
+        [IsSerializedForLocalRepository]
+        public eHTMLReportTemplate HTMLReportTemplate { get; set; }
+        [IsSerializedForLocalRepository]
+        public string CustomHTMLReportTemplate { get; set; }
+
         public override void Execute(IReportInfo RI)
         {
-            EmailOperations emailOperations = new EmailOperations(SMSEmail);
-            SMSEmail.EmailOperations = emailOperations;
-
-            //TODO: check number of chars and show err if more or update Errors field           
-            SMSEmail.IsBodyHTML = false;
-
-            bool isSuccess;
-            isSuccess = SMSEmail.EmailOperations.Send();
-            if (isSuccess == false)
-            {
-                Errors = SMSEmail.Event;
-                Reporter.HideStatusMessage();
-                Status = RunSetActionBase.eRunSetActionStatus.Failed;
-            }            
+            RunSetActionSendEmailOperations.Execute(RI);
         }
 
         public override string GetEditPage()
         {
-            // RunSetActionSendSMSEditPage p = new RunSetActionSendSMSEditPage(this);
-            return "RunSetActionSendSMSEditPage";
+            //RunSetActionSendEmailEditPage RSAEREP = new RunSetActionSendEmailEditPage(this);
+            return "RunSetActionSendEmailEditPage";
         }
 
         public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
@@ -72,6 +86,6 @@ namespace Ginger.Run.RunSetActions
             throw new NotImplementedException();
         }
 
-        public override string Type { get { return "Send SMS"; } }
+        public override string Type { get { return "Send Email"; } }
     }
 }

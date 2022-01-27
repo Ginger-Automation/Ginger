@@ -29,83 +29,47 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using static Ginger.Run.RunSetActions.RunSetActionSendEmail;
 
 namespace Ginger.Run.RunSetActions
 {
-    public class RunSetActionSendEmail : RunSetActionBase
+    public class RunSetActionSendEmailOperations : IRunSetActionSendEmailOperations
     {
-        public enum eHTMLReportTemplate
+        public RunSetActionSendEmail RunSetActionSendEmail;
+
+        public RunSetActionSendEmailOperations(RunSetActionSendEmail runSetActionSendEmail)
         {
-            [EnumValueDescription("Free Text")]
-            FreeText,
-            Summary,
-            Detailed,
-            Plain,
-            Custom
+            this.RunSetActionSendEmail = runSetActionSendEmail;
+            this.RunSetActionSendEmail.RunSetActionSendEmailOperations = this;
         }
-
-        public override List<RunSetActionBase.eRunAt> GetRunOptions()
+        public void Execute(IReportInfo RI)
         {
-            List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
-            list.Add(RunSetActionBase.eRunAt.ExecutionStart);
-            list.Add(RunSetActionBase.eRunAt.ExecutionEnd);
-            return list;
-        }
-
-        public override bool SupportRunOnConfig
-        {
-            get { return true; }
-        }
-
-        public new static class Fields
-        {
-            public static string HTMLReportTemplate = "HTMLReportTemplate";
-            public static string CustomHTMLReportTemplate = "CustomHTMLReportTemplate";
-
-        }
-
-        [IsSerializedForLocalRepository]
-        public Email Email = new Email();
-
-        //User can attach several templates to the email
-        // Attach template + RI
-        // Attach its own file
-        [IsSerializedForLocalRepository]
-        public ObservableList<EmailAttachment> EmailAttachments = new ObservableList<EmailAttachment>();
-
-        [IsSerializedForLocalRepository]
-        public eHTMLReportTemplate HTMLReportTemplate { get; set; }
-        [IsSerializedForLocalRepository]
-        public string CustomHTMLReportTemplate { get; set; }
-
-        public override void Execute(IReportInfo RI)
-        {
-            EmailOperations emailOperations = new EmailOperations(Email);
-            Email.EmailOperations = emailOperations;
+            EmailOperations emailOperations = new EmailOperations(RunSetActionSendEmail.Email);
+            RunSetActionSendEmail.Email.EmailOperations = emailOperations;
 
             //Make sure we clear in case use open the edit page twice
-            Email.Attachments.Clear();
+            RunSetActionSendEmail.Email.Attachments.Clear();
 
             //for compatibility with old HTML report sent by email
-            if (HTMLReportTemplate != RunSetActionSendEmail.eHTMLReportTemplate.FreeText)
+            if (RunSetActionSendEmail.HTMLReportTemplate != RunSetActionSendEmail.eHTMLReportTemplate.FreeText)
             {
                 SetBodyFromHTMLReport((ReportInfo)RI);
             }
 
-            if (EmailAttachments != null)
+            if (RunSetActionSendEmail.EmailAttachments != null)
             {
-                foreach (EmailAttachment r in EmailAttachments)
+                foreach (EmailAttachment r in RunSetActionSendEmail.EmailAttachments)
                 {
                     //attach simple file
                     if (r.AttachmentType == EmailAttachment.eAttachmentType.File)
                     {
                         if (System.IO.File.Exists(r.Name))
                         {
-                            AddAttachmentToEmail(Email, r.Name, r.ZipIt);
+                            AddAttachmentToEmail(RunSetActionSendEmail.Email, r.Name, r.ZipIt);
                         }
                         else
                         {
-                            Email.Body = "ERROR: File not found: " + r.Name + Environment.NewLine + Email.Body;
+                            RunSetActionSendEmail.Email.Body = "ERROR: File not found: " + r.Name + Environment.NewLine + RunSetActionSendEmail.Email.Body;
                         }
                     }
 
@@ -115,23 +79,23 @@ namespace Ginger.Run.RunSetActions
                         string repFileName = null;// ReportTemplate.GenerateReport(r.Name, RI);
                         if (repFileName != null)
                         {
-                            AddAttachmentToEmail(Email, repFileName, r.ZipIt);
+                            AddAttachmentToEmail(RunSetActionSendEmail.Email, repFileName, r.ZipIt);
                         }
                         else
                         {
-                            Email.Body = "ERROR: Report Template not found: " + r + Environment.NewLine + Email.Body;
+                            RunSetActionSendEmail.Email.Body = "ERROR: Report Template not found: " + r + Environment.NewLine + RunSetActionSendEmail.Email.Body;
                         }
                     }
                 }
             }
-            Email.EmailOperations.Send();
+            RunSetActionSendEmail.Email.EmailOperations.Send();
         }
 
         public void SetBodyFromHTMLReport(ReportInfo RI)
         {
             HTMLReportBase HRB = null;
 
-            switch (HTMLReportTemplate)
+            switch (RunSetActionSendEmail.HTMLReportTemplate)
             {
                 case eHTMLReportTemplate.Detailed:
                     HRB = new HTMLDetailedReport();
@@ -151,7 +115,7 @@ namespace Ginger.Run.RunSetActions
                     ObservableList<HTMLReportTemplate> HTMLReports = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>();
                     foreach (HTMLReportTemplate HT in HTMLReports)
                     {
-                        if (HT.Name == CustomHTMLReportTemplate)
+                        if (HT.Name == RunSetActionSendEmail.CustomHTMLReportTemplate)
                         {
                             html = HT.HTML;
                             HTMLR = HT;
@@ -168,12 +132,12 @@ namespace Ginger.Run.RunSetActions
 
             if (HRB != null)
             {
-                Email.Body = HRB.CreateReport(RI);
-                CustomHTMLReportTemplate = String.Empty;
+                RunSetActionSendEmail.Email.Body = HRB.CreateReport(RI);
+                RunSetActionSendEmail.CustomHTMLReportTemplate = String.Empty;
             }
             else
             {
-                throw new Exception("Unknown HTML Report type - " + HTMLReportTemplate.ToString());
+                throw new Exception("Unknown HTML Report type - " + RunSetActionSendEmail.HTMLReportTemplate.ToString());
             }
         }
 
@@ -210,17 +174,6 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        public override string GetEditPage()
-        {
-            //RunSetActionSendEmailEditPage RSAEREP = new RunSetActionSendEmailEditPage(this);
-            return "RunSetActionSendEmailEditPage";
-        }
 
-        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string Type { get { return "Send Email"; } }
     }
 }

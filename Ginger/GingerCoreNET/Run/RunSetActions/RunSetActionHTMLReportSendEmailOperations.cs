@@ -39,110 +39,21 @@ using System.Net.Mime;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using static Ginger.Run.RunSetActions.RunSetActionBase;
 
 namespace Ginger.Run.RunSetActions
 {
-    public class RunSetActionHTMLReportSendEmail : RunSetActionBase
+    public class RunSetActionHTMLReportSendEmailOperations : IRunSetActionHTMLReportSendEmailOperations
     {
+        public RunSetActionHTMLReportSendEmail RunSetActionHTMLReportSendEmail;
+        public RunSetActionHTMLReportSendEmailOperations(RunSetActionHTMLReportSendEmail runSetActionHTMLReportSendEmail)
+        {
+            this.RunSetActionHTMLReportSendEmail = runSetActionHTMLReportSendEmail;
+            this.RunSetActionHTMLReportSendEmail.RunSetActionHTMLReportSendEmailOperations = this;
+        }
         private static readonly Object thisObj = new object();
-        public enum eHTMLReportTemplate
-        {
-            HTMLReport,
-            [EnumValueDescription("Free Text")]
-            FreeText
-        }
-
-        public override bool SupportRunOnConfig
-        {
-            get { return true; }
-        }
-        public override string Type { get { return "Send HTML Report Email"; } }
-
-        public override List<RunSetActionBase.eRunAt> GetRunOptions()
-        {
-            List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
-            list.Add(RunSetActionBase.eRunAt.ExecutionEnd);
-            return list;
-        }
-
-        [IsSerializedForLocalRepository]
-        public Email Email = new Email();
 
         ValueExpression mValueExpression = null;
-
-        //User can attach several templates to the email
-        // attach template + RI
-        // attach its own file
-        [IsSerializedForLocalRepository]
-        public ObservableList<EmailAttachment> EmailAttachments = new ObservableList<EmailAttachment>();
-
-        private eHTMLReportTemplate mHTMLReportTemplate;
-        [IsSerializedForLocalRepository]
-        public eHTMLReportTemplate HTMLReportTemplate { get { return mHTMLReportTemplate; } set { if (mHTMLReportTemplate != value) { mHTMLReportTemplate = value; OnPropertyChanged(nameof(HTMLReportTemplate)); } } }
-
-        [IsSerializedForLocalRepository]
-        public int selectedHTMLReportTemplateID { get; set; }
-
-        private string mComments;
-        [IsSerializedForLocalRepository]
-        public string Comments { get { return mComments; } set { if (mComments != value) { mComments = value; OnPropertyChanged(nameof(Comments)); } } }
-
-        private string mBodytext;
-        [IsSerializedForLocalRepository]
-        public string Bodytext { get { return mBodytext; } set { if (mBodytext != value) { mBodytext = value; OnPropertyChanged(nameof(Bodytext)); } } }
-
-        //
-        private string mMailFrom;
-        [IsSerializedForLocalRepository]
-        public string MailFrom { get { return mMailFrom; } set { if (mMailFrom != value) { mMailFrom = value; OnPropertyChanged(nameof(MailFrom)); } } }
-
-        private string mMailFromDisplayName;
-        [IsSerializedForLocalRepository]
-        [UserConfiguredDefault("_Amdocs Ginger Automation")]
-        public string MailFromDisplayName { get { return mMailFromDisplayName; } set { if (mMailFromDisplayName != value) { mMailFromDisplayName = value; OnPropertyChanged(nameof(MailFromDisplayName)); } } }
-
-        private string mMailCC;
-        [IsSerializedForLocalRepository]
-        public string MailCC { get { return mMailCC; } set { if (mMailCC != value) { mMailCC = value; OnPropertyChanged(nameof(MailCC)); } } }
-
-        private string mSubject;
-        [IsSerializedForLocalRepository]
-        public string Subject { get { return mSubject; } set { if (mSubject != value) { mSubject = value; OnPropertyChanged(nameof(Subject)); } } }
-
-        private string mMailTo;
-        [IsSerializedForLocalRepository]
-        public string MailTo { get { return mMailTo; } set { if (mMailTo != value) { mMailTo = value; OnPropertyChanged(nameof(MailTo)); } } }
-
-        public string MailHost
-        {
-            get
-            {
-                return Email.SMTPMailHost;
-            }
-            set
-            {
-                if (Email.SMTPMailHost != value)
-                {
-                    Email.SMTPMailHost = value;
-                }
-            }
-        }
-
-        public string MailUser
-        {
-            get
-            {
-                return Email.SMTPUser;
-            }
-            set
-            {
-                if (Email.SMTPUser != value)
-                {
-                    Email.SMTPUser = value;
-                }
-            }
-        }
-
 
         private string emailReadyHtml = string.Empty;
 
@@ -157,14 +68,12 @@ namespace Ginger.Run.RunSetActions
         public string ReportPath = string.Empty;
         private string reportTimeStamp = string.Empty;
 
-
-
-        public override void Execute(IReportInfo RI)
+        public void Execute(IReportInfo RI)
         {
             try
             {
-                EmailOperations emailOperations = new EmailOperations(Email);
-                Email.EmailOperations = emailOperations;
+                EmailOperations emailOperations = new EmailOperations(RunSetActionHTMLReportSendEmail.Email);
+                RunSetActionHTMLReportSendEmail.Email.EmailOperations = emailOperations;
 
                 HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
                 //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email Staring execute");
@@ -172,8 +81,8 @@ namespace Ginger.Run.RunSetActions
                 string extraInformationCalculated = string.Empty;
                 string calculatedName = string.Empty;
                 //Make sure we clear in case use open the edit page twice
-                Email.Attachments.Clear();
-                Email.EmailOperations.alternateView = null;
+                RunSetActionHTMLReportSendEmail.Email.Attachments.Clear();
+                RunSetActionHTMLReportSendEmail.Email.EmailOperations.alternateView = null;
                 LiteDbRunSet liteDbRunSet = null;
                 var loggerMode = WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod;
 
@@ -209,15 +118,15 @@ namespace Ginger.Run.RunSetActions
 
                 //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: runSetFolder=" + runSetFolder);
 
-                var ReportItem = EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault();
+                var ReportItem = RunSetActionHTMLReportSendEmail.EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault();
 
-                if (HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport)
+                if (RunSetActionHTMLReportSendEmail.HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport)
                 {
                     if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                     {
                         if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                         {
-                            if (selectedHTMLReportTemplateID > -1)
+                            if (RunSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID > -1)
                             {
                                 int totalRunners = WorkSpace.Instance.RunsetExecutor.Runners.Count;
                                 int totalPassed = WorkSpace.Instance.RunsetExecutor.Runners.Where(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed).Count();
@@ -229,17 +138,17 @@ namespace Ginger.Run.RunSetActions
                             }
                             else
                             {
-                                Errors = "Default Template is not available, add Report Template in Configuration.";
+                                RunSetActionHTMLReportSendEmail.Errors = "Default Template is not available, add Report Template in Configuration.";
                                 Reporter.HideStatusMessage();
-                                Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
+                                RunSetActionHTMLReportSendEmail.Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
                                 return;
                             }
                         }
                         else
                         {
-                            Errors = "In order to get HTML report, please, perform executions before";
+                            RunSetActionHTMLReportSendEmail.Errors = "In order to get HTML report, please, perform executions before";
                             Reporter.HideStatusMessage();
-                            Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
+                            RunSetActionHTMLReportSendEmail.Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
                             return;
                         }
                     }
@@ -258,9 +167,9 @@ namespace Ginger.Run.RunSetActions
                     }
                 }
 
-                if (EmailAttachments != null)
+                if (RunSetActionHTMLReportSendEmail.EmailAttachments != null)
                 {
-                    foreach (EmailAttachment r in EmailAttachments)
+                    foreach (EmailAttachment r in RunSetActionHTMLReportSendEmail.EmailAttachments)
                     {
                         //attach simple file
                         if (r.AttachmentType == EmailAttachment.eAttachmentType.File)
@@ -286,7 +195,7 @@ namespace Ginger.Run.RunSetActions
                                 {
                                     TargetFileName = calculatedName;
                                 }
-                                AddAttachmentToEmail(Email, TargetFileName, r.ZipIt, EmailAttachment.eAttachmentType.File);
+                                AddAttachmentToEmail(RunSetActionHTMLReportSendEmail.Email, TargetFileName, r.ZipIt, EmailAttachment.eAttachmentType.File);
                             }
                             else
                             {
@@ -332,11 +241,11 @@ namespace Ginger.Run.RunSetActions
                             }
                             if (!string.IsNullOrEmpty(reportsResultFolder))
                             {
-                                AddAttachmentToEmail(Email, reportsResultFolder, r.ZipIt, EmailAttachment.eAttachmentType.Report);
+                                AddAttachmentToEmail(RunSetActionHTMLReportSendEmail.Email, reportsResultFolder, r.ZipIt, EmailAttachment.eAttachmentType.Report);
                             }
                         }
                     }
-                    long emailSize = CalculateAttachmentsSize(Email);
+                    long emailSize = CalculateAttachmentsSize(RunSetActionHTMLReportSendEmail.Email);
 
                     if (ReportItem != null)
                     {
@@ -344,11 +253,11 @@ namespace Ginger.Run.RunSetActions
                         {
                             // TODO: add warning or something !!!!
 
-                            if (EmailAttachments.IndexOf(ReportItem) > -1)
+                            if (RunSetActionHTMLReportSendEmail.EmailAttachments.IndexOf(ReportItem) > -1)
                             {
-                                if (Email.Attachments.Count > 0)
+                                if (RunSetActionHTMLReportSendEmail.Email.Attachments.Count > 0)
                                 {
-                                    Email.Attachments.RemoveAt(EmailAttachments.IndexOf(ReportItem));
+                                    RunSetActionHTMLReportSendEmail.Email.Attachments.RemoveAt(RunSetActionHTMLReportSendEmail.EmailAttachments.IndexOf(ReportItem));
                                 }
                             }
                             if (!string.IsNullOrEmpty(reportsResultFolder))
@@ -382,15 +291,15 @@ namespace Ginger.Run.RunSetActions
                     emailReadyHtml = emailReadyHtml.Replace("<!--FULLREPORTLINK-->", string.Empty);
                     emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
                 }
-                if (HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport)
+                if (RunSetActionHTMLReportSendEmail.HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport)
                 {
-                    Email.EmbededAttachment.Clear();
+                    RunSetActionHTMLReportSendEmail.Email.EmbededAttachment.Clear();
                     emailReadyHtml = emailReadyHtml.Replace("cid:gingerRunner", "cid:gingerRunner" + reportTimeStamp);
                     emailReadyHtml = emailReadyHtml.Replace("cid:Businessflow", "cid:Businessflow" + reportTimeStamp);
                     emailReadyHtml = emailReadyHtml.Replace("cid:Activity", "cid:Activity" + reportTimeStamp);
                     emailReadyHtml = emailReadyHtml.Replace("cid:Action", "cid:Action" + reportTimeStamp);
 
-                    if (Email.EmailMethod.ToString() == "SMTP")
+                    if (RunSetActionHTMLReportSendEmail.Email.EmailMethod.ToString() == "SMTP")
                     {
                         AlternateView alternativeView = AlternateView.CreateAlternateViewFromString(emailReadyHtml, null, MediaTypeNames.Text.Html);
                         alternativeView.ContentId = "htmlView";
@@ -405,7 +314,7 @@ namespace Ginger.Run.RunSetActions
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(gingerLogoPath), "ginger"));
                         if (File.Exists(customerLogoPath))
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(customerLogoPath), "customer"));
-                        if (!string.IsNullOrEmpty(Comments))
+                        if (!string.IsNullOrEmpty(RunSetActionHTMLReportSendEmail.Comments))
                         {
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(TemplatesFolder, "assets", "img", "comments-icon.jpg")), "comment"));
                         }
@@ -420,23 +329,23 @@ namespace Ginger.Run.RunSetActions
                             if (File.Exists(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg")))
                                 alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg")), "Businessflow" + reportTimeStamp));
                         }
-                        Email.EmailOperations.alternateView = alternativeView;
+                        RunSetActionHTMLReportSendEmail.Email.EmailOperations.alternateView = alternativeView;
                     }
                     else
                     {
-                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder, "assets", "img", "@BeatLogo.png"), "beat"));
-                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png"), "ginger"));
-                        Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, "CustomerLogo.png"), "customer"));
-                        if (!string.IsNullOrEmpty(Comments))
+                        RunSetActionHTMLReportSendEmail.Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder, "assets", "img", "@BeatLogo.png"), "beat"));
+                        RunSetActionHTMLReportSendEmail.Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png"), "ginger"));
+                        RunSetActionHTMLReportSendEmail.Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, "CustomerLogo.png"), "customer"));
+                        if (!string.IsNullOrEmpty(RunSetActionHTMLReportSendEmail.Comments))
                         {
-                            Email.EmbededAttachment.Add(new KeyValuePair<string, string>(TemplatesFolder + @"\assets\\img\comments-icon.jpg", "comment"));
+                            RunSetActionHTMLReportSendEmail.Email.EmbededAttachment.Add(new KeyValuePair<string, string>(TemplatesFolder + @"\assets\\img\comments-icon.jpg", "comment"));
                         }
                         if (IsExecutionStatistic)
                         {
-                            Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, $"GingerRunner{reportTimeStamp}.jpeg"), "gingerRunner" + reportTimeStamp));
-                            Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, $"Action{reportTimeStamp}.jpeg"), "Action" + reportTimeStamp));
-                            Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, $"Activity{reportTimeStamp}.jpeg"), "Activity" + reportTimeStamp));
-                            Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg"), "Businessflow" + reportTimeStamp));
+                            RunSetActionHTMLReportSendEmail.Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, $"GingerRunner{reportTimeStamp}.jpeg"), "gingerRunner" + reportTimeStamp));
+                            RunSetActionHTMLReportSendEmail.Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, $"Action{reportTimeStamp}.jpeg"), "Action" + reportTimeStamp));
+                            RunSetActionHTMLReportSendEmail.Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, $"Activity{reportTimeStamp}.jpeg"), "Activity" + reportTimeStamp));
+                            RunSetActionHTMLReportSendEmail.Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg"), "Businessflow" + reportTimeStamp));
                         }
                     }
                 }
@@ -446,13 +355,13 @@ namespace Ginger.Run.RunSetActions
                     {
                         if (ReportItem != null && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
                         {
-                            Errors = "In order to get HTML report, please, perform executions before";
+                            RunSetActionHTMLReportSendEmail.Errors = "In order to get HTML report, please, perform executions before";
                             Reporter.HideStatusMessage();
-                            Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
+                            RunSetActionHTMLReportSendEmail.Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
                             return;
                         }
                     }
-                    mValueExpression.Value = Bodytext;
+                    mValueExpression.Value = RunSetActionHTMLReportSendEmail.Bodytext;
                     if (ReportItem != null)
                     {
                         emailReadyHtml = "Full Report Shared Path =>" + reportsResultFolder + System.Environment.NewLine;
@@ -460,31 +369,31 @@ namespace Ginger.Run.RunSetActions
                     emailReadyHtml += mValueExpression.ValueCalculated;
                 }
                 //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Preparing email");
-                mValueExpression.Value = MailFrom;
-                Email.MailFrom = mValueExpression.ValueCalculated;
-                mValueExpression.Value = MailTo;
-                Email.MailTo = mValueExpression.ValueCalculated;
-                mValueExpression.Value = MailCC;
-                Email.MailCC = mValueExpression.ValueCalculated;
-                mValueExpression.Value = Subject;
-                Email.Subject = mValueExpression.ValueCalculated;
-                mValueExpression.Value = MailHost;
-                Email.SMTPMailHost = mValueExpression.ValueCalculated;
-                mValueExpression.Value = MailUser;
-                Email.SMTPUser = mValueExpression.ValueCalculated;
-                Email.Body = emailReadyHtml;
+                mValueExpression.Value = RunSetActionHTMLReportSendEmail.MailFrom;
+                RunSetActionHTMLReportSendEmail.Email.MailFrom = mValueExpression.ValueCalculated;
+                mValueExpression.Value = RunSetActionHTMLReportSendEmail.MailTo;
+                RunSetActionHTMLReportSendEmail.Email.MailTo = mValueExpression.ValueCalculated;
+                mValueExpression.Value = RunSetActionHTMLReportSendEmail.MailCC;
+                RunSetActionHTMLReportSendEmail.Email.MailCC = mValueExpression.ValueCalculated;
+                mValueExpression.Value = RunSetActionHTMLReportSendEmail.Subject;
+                RunSetActionHTMLReportSendEmail.Email.Subject = mValueExpression.ValueCalculated;
+                mValueExpression.Value = RunSetActionHTMLReportSendEmail.MailHost;
+                RunSetActionHTMLReportSendEmail.Email.SMTPMailHost = mValueExpression.ValueCalculated;
+                mValueExpression.Value = RunSetActionHTMLReportSendEmail.MailUser;
+                RunSetActionHTMLReportSendEmail.Email.SMTPUser = mValueExpression.ValueCalculated;
+                RunSetActionHTMLReportSendEmail.Email.Body = emailReadyHtml;
                 emailReadyHtml = string.Empty;
 
-                if(Email.EmailMethod == Email.eEmailMethod.SMTP)
+                if (RunSetActionHTMLReportSendEmail.Email.EmailMethod == Email.eEmailMethod.SMTP)
                 {
-                    mValueExpression.Value = MailFromDisplayName;
-                    Email.MailFromDisplayName = mValueExpression.ValueCalculated;
+                    mValueExpression.Value = RunSetActionHTMLReportSendEmail.MailFromDisplayName;
+                    RunSetActionHTMLReportSendEmail.Email.MailFromDisplayName = mValueExpression.ValueCalculated;
                 }
                 bool isSuccess = false;
                 try
                 {
                     //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Before send email");                    
-                    isSuccess = Email.EmailOperations.Send();
+                    isSuccess = RunSetActionHTMLReportSendEmail.Email.EmailOperations.Send();
                     //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: After send email result = " + isSuccess);
                 }
                 catch (Exception ex)
@@ -494,9 +403,9 @@ namespace Ginger.Run.RunSetActions
                 }
                 if (isSuccess == false)
                 {
-                    Errors = Email.Event;
+                    RunSetActionHTMLReportSendEmail.Errors = RunSetActionHTMLReportSendEmail.Email.Event;
                     Reporter.HideStatusMessage();
-                    Status = eRunSetActionStatus.Failed;
+                    RunSetActionHTMLReportSendEmail.Status = eRunSetActionStatus.Failed;
                 }
             }
             finally
@@ -507,7 +416,7 @@ namespace Ginger.Run.RunSetActions
                     {
                         Directory.Delete(tempFolder, true);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to delete the eMail Report Temp Folder '{0}', Issue: '{1}'", tempFolder, ex.Message));
                     }
@@ -520,8 +429,8 @@ namespace Ginger.Run.RunSetActions
             reportTimeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
             HTMLReportConfiguration currentTemplate = new HTMLReportConfiguration();
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault();
-            if (currentTemplate == null && selectedHTMLReportTemplateID == 100)// for supporting dynamic runset report
+            currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == RunSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID)).FirstOrDefault();
+            if (currentTemplate == null && RunSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID == 100)// for supporting dynamic runset report
             {
                 currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
@@ -536,7 +445,7 @@ namespace Ginger.Run.RunSetActions
             }
 
             string ReportHTML;
-         
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 ReportHTML = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetHTMLTemplate("EmailExecutionReport.html", TemplatesFolder);
@@ -640,9 +549,9 @@ namespace Ginger.Run.RunSetActions
                     }
                 }
             }
-            if (!string.IsNullOrEmpty(Comments))
+            if (!string.IsNullOrEmpty(RunSetActionHTMLReportSendEmail.Comments))
             {
-                mValueExpression.Value = Comments;
+                mValueExpression.Value = RunSetActionHTMLReportSendEmail.Comments;
                 ReportHTML = ReportHTML.Replace("{COMMENT}", "<img src='cid:comment'/>" + mValueExpression.ValueCalculated);
             }
             else
@@ -771,7 +680,7 @@ namespace Ginger.Run.RunSetActions
                                     {
                                         fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
                                     }
-                          
+
                                     fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(Convert.ToString(act.GetType().GetProperty(fieldName).GetValue(act))) + "</td>");
                                 }
                             }
@@ -1103,11 +1012,11 @@ namespace Ginger.Run.RunSetActions
                     columnValue = fieldsValuesHTMLTableCellsRowTwo;
                 }
                 string fieldName = EmailToObjectFieldName(selectedField.FieldKey);
-                columnHeaderName.Append(string.Concat(tableColor,selectedField.FieldName,"</td>"));
+                columnHeaderName.Append(string.Concat(tableColor, selectedField.FieldName, "</td>"));
 
                 if (liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet) == null)
                 {
-                    columnValue.Append(string.Concat(tableStyle , " N/A </td>"));
+                    columnValue.Append(string.Concat(tableStyle, " N/A </td>"));
                 }
                 else
                 {
@@ -1117,8 +1026,8 @@ namespace Ginger.Run.RunSetActions
                     {
                         StringBuilder environmentNames_str = new StringBuilder();
                         liteDbRunSet.RunnersColl.Where(x => x.Environment != null && x.Environment != string.Empty).GroupBy(q => q.Environment).Select(q => q.First()).ToList().ForEach(x => environmentNames_str.Append(x.Environment + ", "));
-                        
-                        columnValue.Append(string.Concat(tableStyle, environmentNames_str.ToString().TrimEnd(',', ' ') , "</td>"));
+
+                        columnValue.Append(string.Concat(tableStyle, environmentNames_str.ToString().TrimEnd(',', ' '), "</td>"));
                         environmentNames_str.Remove(0, environmentNames_str.Length);
                     }
                     else if (selectedField.FieldKey == RunSetReport.Fields.ExecutionDuration)
@@ -1127,11 +1036,11 @@ namespace Ginger.Run.RunSetActions
                     }
                     else if (selectedField.FieldKey == RunSetReport.Fields.RunSetExecutionRate || selectedField.FieldKey == RunSetReport.Fields.GingerRunnersPassRate)
                     {
-                        columnValue.Append(string.Concat(tableStyle,columnDbValue, '%' , "</td>"));
+                        columnValue.Append(string.Concat(tableStyle, columnDbValue, '%', "</td>"));
                     }
                     else
                     {
-                        columnValue.Append(string.Concat(tableStyle, columnDbValue , "</td>"));
+                        columnValue.Append(string.Concat(tableStyle, columnDbValue, "</td>"));
                     }
                 }
             }
@@ -1155,8 +1064,8 @@ namespace Ginger.Run.RunSetActions
             reportTimeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
             HTMLReportConfiguration currentTemplate = new HTMLReportConfiguration();
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault();
-            if (currentTemplate == null && selectedHTMLReportTemplateID == 100)// for supporting dynamic runset report
+            currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == RunSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID)).FirstOrDefault();
+            if (currentTemplate == null && RunSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID == 100)// for supporting dynamic runset report
             {
                 currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
@@ -1622,9 +1531,9 @@ namespace Ginger.Run.RunSetActions
                     }
                 }
             }
-            if (!string.IsNullOrEmpty(Comments))
+            if (!string.IsNullOrEmpty(RunSetActionHTMLReportSendEmail.Comments))
             {
-                mValueExpression.Value = Comments;
+                mValueExpression.Value = RunSetActionHTMLReportSendEmail.Comments;
                 ReportHTML = ReportHTML.Replace("{COMMENT}", "<img src='cid:comment'/>" + mValueExpression.ValueCalculated);
             }
             else
@@ -1890,7 +1799,7 @@ namespace Ginger.Run.RunSetActions
                     //Create the Zip file if file not exists otherwise delete existing one and then create new.
                     try
                     {
-                        if(!Directory.Exists(tempFolder))
+                        if (!Directory.Exists(tempFolder))
                         {
                             Directory.CreateDirectory(tempFolder);
 
@@ -1925,11 +1834,7 @@ namespace Ginger.Run.RunSetActions
             }
             return size;
         }
-        public override string GetEditPage()
-        {
-            // RunSetActionHTMLReportSendEmailEditPage RSAEREP = new RunSetActionHTMLReportSendEmailEditPage(this);
-            return "RunSetActionHTMLReportSendEmailEditPage";
-        }
+
         public static string OverrideHTMLRelatedCharacters(string text)
         {
             if (!string.IsNullOrEmpty(text))
@@ -1946,11 +1851,6 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-
-        public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
 

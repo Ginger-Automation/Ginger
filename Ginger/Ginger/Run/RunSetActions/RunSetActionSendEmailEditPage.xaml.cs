@@ -142,7 +142,7 @@ namespace Ginger.Run.RunSetActions
                 BodyTextBox.Visibility = System.Windows.Visibility.Collapsed;
 
                 ReportInfo RI = new ReportInfo(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, WorkSpace.Instance.RunsetExecutor);
-                runSetActionEmailReport.SetBodyFromHTMLReport(RI);
+                ((RunSetActionSendEmailOperations)runSetActionEmailReport.RunSetActionSendEmailOperations).SetBodyFromHTMLReport(RI);
 
                 BodyWebBrowser.NavigateToString(runSetActionEmailReport.Email.Body);
                 CustomReportSection.Visibility = System.Windows.Visibility.Hidden;

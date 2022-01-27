@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -29,13 +29,9 @@ namespace Ginger.Run.RunSetActions
 {
     public class RunSetActionScript : RunSetActionBase
     {
+        public IRunSetActionScriptOperations RunSetActionScriptOperations;
         [IsSerializedForLocalRepository]
         public string ScriptFileName { get; set; }
-
-        public new static class Fields
-        {
-            public static string ScriptFileName = "ScriptFileName";
-        }
 
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
@@ -52,38 +48,7 @@ namespace Ginger.Run.RunSetActions
 
         public override void Execute(IReportInfo RI)
         {
-            try
-            {
-                ActScript act = new ActScript();
-                string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScriptFileName);
-                RunSetActionScript actionScript = new RunSetActionScript();
-                actionScript.VerifySolutionFloder(SolutionFolder, FileName);
-                act.ScriptName = FileName;
-                act.ScriptInterpreterType = (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    ? ActScript.eScriptInterpreterType.VBS : ActScript.eScriptInterpreterType.SH;
-                act.Execute();
-            }
-            catch (Exception ex)
-            {
-                Errors = ex.Message.ToString();
-                Status = eRunSetActionStatus.Failed;
-            }
-        }
-
-        public void VerifySolutionFloder(string SolutionFolder, string FileName)
-        {
-            if (string.IsNullOrEmpty(SolutionFolder))
-            {
-               Errors = "Script path not provided.";
-                Status = eRunSetActionStatus.Failed;
-                return;
-            }
-            if (!System.IO.File.Exists(FileName))
-            {
-                Errors = "File Not found: " + FileName;
-                Status = eRunSetActionStatus.Failed;
-                return;
-            }
+            RunSetActionScriptOperations.Execute(RI);
         }
 
         public override string GetEditPage()

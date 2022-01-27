@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Reports;
 using Ginger.Run;
@@ -30,6 +29,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
 {
     public class RunSetActionJSONSummary : RunSetActionBase
     {
+        public IRunSetActionJSONSummaryOperations RunSetActionJSONSummaryOperations;
         public override bool SupportRunOnConfig
         {
             get { return true; }
@@ -39,16 +39,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
 
         public override void Execute(IReportInfo RI)
         {
-            string json = WorkSpace.Instance.RunsetExecutor.CreateSummary();
-            string timestamp = DateTime.Now.ToString("MMddyyyy_HHmmss");
-
-            string jsonSummaryFolder = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
-            if (!string.IsNullOrEmpty(WorkSpace.Instance.TestArtifactsFolder))
-            {
-                jsonSummaryFolder = WorkSpace.Instance.TestArtifactsFolder;
-            }
-            string fileName = Path.Combine(jsonSummaryFolder, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + timestamp + ".json.txt");//why not as .json?                
-            System.IO.File.WriteAllText(fileName, json);
+            RunSetActionJSONSummaryOperations.Execute(RI);
         }
 
         public override string GetEditPage()
@@ -65,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
 
         public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
         {
-            
+            throw new NotImplementedException();
         }
     }
 }

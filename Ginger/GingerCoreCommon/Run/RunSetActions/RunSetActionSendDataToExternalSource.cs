@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -21,17 +21,16 @@ using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using Ginger.Reports;
-using amdocs.ginger.GingerCoreNET;
 using GingerCore;
 using GingerCore.DataSource;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using RestSharp;
 
 namespace Ginger.Run.RunSetActions
 {
     public class RunSetActionSendDataToExternalSource : RunSetActionBase
     {
+        public IRunSetActionSendDataToExternalSourceOperations RunSetActionSendDataToExternalSourceOperations;
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
             List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
@@ -61,72 +60,13 @@ namespace Ginger.Run.RunSetActions
         [IsSerializedForLocalRepository]
         public string RequestBodyJson { get { return mRequestBodyJson; } set { if (mRequestBodyJson != value) { mRequestBodyJson = value; OnPropertyChanged(nameof(RequestBodyJson)); } } }
 
-        private ValueExpression mValueExpression = null;
 
         public override void Execute(IReportInfo RI)
         {
-            Context mContext = new Context();
-            mContext.RunsetAction = this;
-            mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mContext, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
-
-            if (!string.IsNullOrEmpty(RequestBodyJson))
-            {
-                mValueExpression.Value = RequestBodyJson;
-            }
-            else
-            {
-                mValueExpression.Value = RequestBodyWithParametersToJson();
-            }
-            string JsonOutput = mValueExpression.ValueCalculated;
-
-            Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, null, "Sending Execution data to External Source");
-
-            RestClient restClient = new RestClient(EndPointUrl);
-            restClient.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-            RestRequest restRequest = new RestRequest();
-            restRequest.Method = Method.POST;
-            restRequest.RequestFormat = RestSharp.DataFormat.Json;
-            foreach (ActInputValue actInputValue in RequestHeaders)
-            {
-                mValueExpression.Value = actInputValue.Value;
-                restRequest.AddHeader(actInputValue.Param, mValueExpression.ValueCalculated);
-            }
-            restRequest.AddJsonBody(JsonOutput);
-            
-            try
-            {
-                IRestResponse response = restClient.Execute(restRequest);
-                if (response.IsSuccessful)
-                {
-                    Reporter.ToLog(eLogLevel.INFO, "Successfully sent data to External Source");
-                }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send execution data to External Source Response: " + response.Content);
-                    Errors = "Failed to send execution data to External Source Response: " + response.Content;
-                    Status = eRunSetActionStatus.Failed;
-                    return;
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception when sending", ex);
-            }
-            finally
-            {
-                Reporter.HideStatusMessage();
-            }
+            RunSetActionSendDataToExternalSourceOperations.Execute(RI);
         }
 
-        private string RequestBodyWithParametersToJson()
-        {
-            Dictionary<string, string> requestBodyParams = new Dictionary<string, string>();
-            foreach (ActInputValue AIV in RequestBodyParams)
-            {
-                requestBodyParams.Add(AIV.Param, AIV.Value);
-            }
-            return JsonConvert.SerializeObject(requestBodyParams,Formatting.Indented);
-        }
+       
         public override string GetEditPage()
         {
             return "RunSetActionSendDataToExternalSourceEditPage";
@@ -136,6 +76,8 @@ namespace Ginger.Run.RunSetActions
         {
             throw new NotImplementedException();
         }
+
+        public override string Type { get { return "Send Execution JSON Data To External Source"; } }
 
         public void RefreshJsonPreview()
         {
@@ -156,7 +98,6 @@ namespace Ginger.Run.RunSetActions
                 RequestBodyJson = obj.ToString(Formatting.Indented);
             }
         }
-
         public void RefreshBodyParamsPreview()
         {
             if (!string.IsNullOrEmpty(RequestBodyJson))
@@ -179,7 +120,5 @@ namespace Ginger.Run.RunSetActions
                 }
             }
         }
-
-        public override string Type { get { return "Send Execution JSON Data To External Source"; } }
     }
 }
