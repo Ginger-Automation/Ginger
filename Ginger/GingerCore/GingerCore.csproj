@@ -129,6 +129,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\RQM_Repository.dll</HintPath>
     </Reference>
+    <Reference Include="SikuliStandardNet">
+      <HintPath>..\GingerCoreNET\DLLS\SikuliStandardNet.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
     </Reference>
@@ -294,6 +297,10 @@
     <Compile Include="Actions\ScreenCapture\LocatorImageCaptureWindow.xaml.cs">
       <DependentUpon>LocatorImageCaptureWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ScreenCapture\SnippingTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Actions\ScreenCapture\SnippingTool.Designer.cs" />
     <Compile Include="Actions\UIAutomation\UIAElementInfo.cs" />
     <Compile Include="Actions\Windows\ActWindowsControl.cs" />
     <Compile Include="Actions\ScreenCapture\ScreenCaptureWindow.xaml.cs">
@@ -528,6 +535,7 @@
     <None Include="Resources\Table_16x16.ico" />
     <None Include="Resources\SoapUI16x16.png" />
     <None Include="Resources\SoapUI.bmp" />
+    <EmbeddedResource Include="Actions\ScreenCapture\SnippingTool.resx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -728,8 +736,12 @@
       <Name>GingerCoreCommon</Name>
     </ProjectReference>
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj">
-      <Project>{6FACD2AB-8747-473B-AF43-5B6691775F62}</Project>
+      <Project>{0c33c26a-5f96-4060-bb1b-583be9ee8478}</Project>
       <Name>GingerCoreNET</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GingerHelper\GingerHelper.csproj">
+      <Project>{82201CD7-CAE1-461A-B477-47FA92BC463E}</Project>
+      <Name>GingerHelper</Name>
     </ProjectReference>
     <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj">
       <Project>{67ecc7f4-78d3-4260-bbe1-20688942c6d1}</Project>
@@ -738,10 +750,6 @@
     <ProjectReference Include="..\GingerPlugIns\GingerPlugIns.csproj">
       <Project>{d5329d81-7ff0-4af1-b186-a2fd65ef0583}</Project>
       <Name>GingerPlugIns</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GingerSikuliStandard\GingerSikuliStandard.csproj">
-      <Project>{72F4B38B-9900-4A17-A54B-0A7005F0937C}</Project>
-      <Name>GingerSikuliStandard</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

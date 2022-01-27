@@ -33,8 +33,8 @@ using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Enums;
-using GingerSikuliStandard.sikuli_UTIL;
-using GingerSikuliStandard.sikuli_REST;
+using SikuliStandard.sikuli_UTIL;
+using SikuliStandard.sikuli_REST;
 using Amdocs.Ginger.Common;
 using System.Diagnostics;
 using System.Linq;
@@ -109,7 +109,7 @@ namespace GingerCore.Actions
             get
             {
                 int procId = -1;
-                if(!string.IsNullOrEmpty(ProcessNameForSikuliOperation) && ActiveProcessWindowsDict.ContainsValue(ProcessNameForSikuliOperation))
+                if (!string.IsNullOrEmpty(ProcessNameForSikuliOperation) && ActiveProcessWindowsDict.ContainsValue(ProcessNameForSikuliOperation))
                 {
                     procId = ActiveProcessWindowsDict.Where(d => d.Value == ProcessNameForSikuliOperation).FirstOrDefault().Key;
                 }
@@ -133,16 +133,17 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
-            APILauncher sikuliLauncher = new APILauncher(ShowSikuliConsole);
+            string logMessage = string.Empty;
+            APILauncher sikuliLauncher = new APILauncher(out logMessage, ShowSikuliConsole);
             sikuliLauncher.Start();
 
             try
             {
                 Screen sekuliScreen = new Screen();
 
-                Pattern sikuliPattern = new Pattern(PatternPath);
+                Pattern sikuliPattern = new Pattern(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(PatternPath));
 
-                SetFocusToSelectedApplicationInstance();
+                System.Threading.Tasks.Task.Run(() => SetFocusToSelectedApplicationInstance());
 
                 switch (ActSikuliOperation)
                 {

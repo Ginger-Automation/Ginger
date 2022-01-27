@@ -34,7 +34,7 @@ namespace GingerCore.Actions.ScreenCapture
     public partial class LocatorImageCaptureWindow : Window
     {
         #region Data Members
-        private Rect dragRect=new Rect();
+        private Rect dragRect = new Rect();
 
         private ActImageCaptureSupport actImageCaptureSupport;
         /// <summary>
@@ -52,7 +52,7 @@ namespace GingerCore.Actions.ScreenCapture
         /// <summary>
         /// Records the location of the mouse (relative to the window) when the left-mouse button has pressed down.
         /// </summary>
-        private  System.Windows.Point origMouseDownPoint;
+        private System.Windows.Point origMouseDownPoint;
         private System.Windows.Point clickMousePoint;
         private bool bCapturedOrigCoordinates = false;
         private bool bCapturedTargetCoordinates = false;
@@ -61,16 +61,16 @@ namespace GingerCore.Actions.ScreenCapture
         {
             get
             {
-                if(string.IsNullOrEmpty(mScreenImageDirectory))
+                if (string.IsNullOrEmpty(mScreenImageDirectory))
                 {
                     //TODO: need to find a way to hold the image in the Act so it will go to shared repo have version and more
                     // Need to think if good or not
-                    mScreenImageDirectory = Path.Combine("~", actImageCaptureSupport.SolutionFolder + actImageCaptureSupport.ImagePath);
+                    mScreenImageDirectory = Path.Combine("~", actImageCaptureSupport.SolutionFolder, actImageCaptureSupport.ImagePath);
 
                     if (!Directory.Exists(mScreenImageDirectory))
                         Directory.CreateDirectory(mScreenImageDirectory);
 
-                    mScreenImageDirectory = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScreenImageDirectory);
+                    mScreenImageDirectory = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(mScreenImageDirectory);
                 }
 
                 return mScreenImageDirectory;
@@ -109,7 +109,7 @@ namespace GingerCore.Actions.ScreenCapture
         {
             if (e.ChangedButton == MouseButton.Left && !bCapturedOrigCoordinates)
             {
-                isLeftMouseButtonDownOnWindow = true;                             
+                isLeftMouseButtonDownOnWindow = true;
                 origMouseDownPoint = e.GetPosition(this);
                 this.CaptureMouse();
                 bCapturedOrigCoordinates = true;
@@ -132,7 +132,7 @@ namespace GingerCore.Actions.ScreenCapture
 
                     isDraggingSelectionRect = false;
                     ApplyDragSelectionRect();
-                    bCapturedTargetCoordinates=true;
+                    bCapturedTargetCoordinates = true;
                     e.Handled = true;
                 }
 
@@ -182,7 +182,7 @@ namespace GingerCore.Actions.ScreenCapture
                     //
                     isDraggingSelectionRect = true;
 
-                  
+
 
                     InitDragSelectionRect(origMouseDownPoint, curMouseDownPoint);
                 }
@@ -265,7 +265,7 @@ namespace GingerCore.Actions.ScreenCapture
             this.Close();
         }
 
-        public void CaptureImage( System.Drawing.Point SourcePoint, System.Drawing.Rectangle SelectionRectangle)
+        public void CaptureImage(System.Drawing.Point SourcePoint, System.Drawing.Rectangle SelectionRectangle)
         {
             this.Hide();
             try
@@ -280,7 +280,7 @@ namespace GingerCore.Actions.ScreenCapture
                     bitmap.Save(GetPathToExpectedImage(), ImageFormat.Jpeg);
                 }
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 Reporter.ToLog(eLogLevel.ERROR, exc.Message, exc);
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please select image to capture");
@@ -290,12 +290,12 @@ namespace GingerCore.Actions.ScreenCapture
 
         public string GetPathToExpectedImage()
         {
-            return Path.Combine(ScreenImageDirectory, ScreenImageName); 
+            return Path.Combine(ScreenImageDirectory, ScreenImageName);
         }
 
         public void SaveSelection(System.Drawing.Point clickdp)
         {
-            if (ScreenImageDirectory != "" )
+            if (ScreenImageDirectory != "")
             {
                 //Allow 250 milliseconds for the screen to repaint itself (we don't want to include this form in the capture)
                 System.Threading.Thread.Sleep(250);
@@ -310,7 +310,7 @@ namespace GingerCore.Actions.ScreenCapture
                 actImageCaptureSupport.EndX = actImageCaptureSupport.StartX + (int)dragRect.Width;
                 actImageCaptureSupport.EndY = actImageCaptureSupport.StartY + (int)dragRect.Height;
                 actImageCaptureSupport.LocatorImgFile = GetPathToExpectedImage();
-            }           
+            }
         }
     }
 }

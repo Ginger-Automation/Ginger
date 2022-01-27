@@ -16,16 +16,16 @@ using System.IO;
 
 namespace GingerSikuliStandard.sikuli_REST
 {
-	/// <summary>
-	/// Description of Screen.
-	/// </summary>
-	public class Screen
-	{
-		private String serviceURL;
-		
-		public Screen()
-		{
-			serviceURL = "http://localhost:8080/sikuli/api/";
+    /// <summary>
+    /// Description of Screen.
+    /// </summary>
+    public class Screen
+    {
+        private String serviceURL;
+
+        public Screen()
+        {
+            serviceURL = "http://localhost:8080/sikuli/api/";
             //serviceURL = string.Format("http://localhost:{0}/sikuli/api/", SocketHelper.GetOpenPort());
         }
 
@@ -34,12 +34,12 @@ namespace GingerSikuliStandard.sikuli_REST
         /// </summary>
         /// <param name="pattern">The pattern object passed to the tool for searching</param>
         public void Find(Pattern pattern, bool highlight = false)
-		{
+        {
             json_Find jFind = new json_Find(pattern.ToJsonPattern(), highlight);
             String jFindS = JsonConvert.SerializeObject(jFind);
             json_Result jResult = json_Result.getJResult(MakeRequest("find", jFindS));
             FailIfResultNotPASS(jResult);
-		}
+        }
         /// <summary>
         /// Method to click on the specified pattern
         /// </summary>
@@ -66,7 +66,7 @@ namespace GingerSikuliStandard.sikuli_REST
         /// <param name="pattern">The pattern object passed to the tool for clicking</param>
         public void DoubleClick(Pattern pattern, KeyModifier kmod = KeyModifier.NONE, bool highlight = false)
         {
-			if (highlight)
+            if (highlight)
             {
                 Find(pattern, highlight);
             }
@@ -75,30 +75,30 @@ namespace GingerSikuliStandard.sikuli_REST
             json_Result jResult = json_Result.getJResult(MakeRequest("doubleclick", jClickS));
             FailIfResultNotPASS(jResult);
         }
-		public void DoubleClick(Pattern pattern, bool highlight)
-		{
-			DoubleClick(pattern,KeyModifier.NONE, highlight);
-		}
-		/// <summary>
-		/// Method to right click on a specified pattern
-		/// </summary>
-		/// <param name="pattern"></param>
-		/// <param name="kmod"></param>
-		public void RightClick(Pattern pattern, KeyModifier kmod = KeyModifier.NONE, bool highlight = false)
-		{
-			if (highlight)
+        public void DoubleClick(Pattern pattern, bool highlight)
+        {
+            DoubleClick(pattern, KeyModifier.NONE, highlight);
+        }
+        /// <summary>
+        /// Method to right click on a specified pattern
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <param name="kmod"></param>
+        public void RightClick(Pattern pattern, KeyModifier kmod = KeyModifier.NONE, bool highlight = false)
+        {
+            if (highlight)
             {
                 Find(pattern, highlight);
             }
-			json_Click jClick = new json_Click(pattern.ToJsonPattern(), kmod);
-			String jClickS = JsonConvert.SerializeObject(jClick);
-			json_Result jResult = json_Result.getJResult(MakeRequest("rightclick",jClickS));
-			FailIfResultNotPASS(jResult);
-		}
-		public void RightClick(Pattern pattern, bool highlight)
-		{
-			RightClick(pattern, KeyModifier.NONE, highlight);
-		}
+            json_Click jClick = new json_Click(pattern.ToJsonPattern(), kmod);
+            String jClickS = JsonConvert.SerializeObject(jClick);
+            json_Result jResult = json_Result.getJResult(MakeRequest("rightclick", jClickS));
+            FailIfResultNotPASS(jResult);
+        }
+        public void RightClick(Pattern pattern, bool highlight)
+        {
+            RightClick(pattern, KeyModifier.NONE, highlight);
+        }
         /// <summary>
         /// Method to wait for a specific Pattern to appear on the screen.  If it does not appear by the specified timeout (in seconds), the action fails.
         /// </summary>
@@ -149,6 +149,8 @@ namespace GingerSikuliStandard.sikuli_REST
         {
             json_Type jType = new json_Type(pattern.ToJsonPattern(), text, kmod);
             String jTypeS = JsonConvert.SerializeObject(jType);
+
+            // use "text" instead of type for GetText
             json_Result jResult = json_Result.getJResult(MakeRequest("type", jTypeS));
             FailIfResultNotPASS(jResult);
         }
@@ -161,19 +163,19 @@ namespace GingerSikuliStandard.sikuli_REST
         {
             json_DragDrop jDragDrop = new json_DragDrop(clickPattern.ToJsonPattern(), dropPattern.ToJsonPattern());
             String jDragDropS = JsonConvert.SerializeObject(jDragDrop);
-            json_Result jResult = json_Result.getJResult(MakeRequest("dragdrop",jDragDropS));
+            json_Result jResult = json_Result.getJResult(MakeRequest("dragdrop", jDragDropS));
             FailIfResultNotPASS(jResult);
         }
 
-		/// <summary>
-		/// Method to make a request to the service with the specified URL extension and the specified Json object.
-		/// </summary>
-		/// <param name="requestURLExtension">The URL extenstion that the request is sent to. example: "find"</param>
-		/// <param name="jsonObject">The Json Object, usually a pattern, that is being passed through the POST request</param>
-		/// <returns></returns>
-		private String MakeRequest(String requestURLExtension, String jsonObject)
-		{
-			Util.Log.WriteLine("Making Request to Service: " + serviceURL + requestURLExtension + " POST: "+jsonObject);
+        /// <summary>
+        /// Method to make a request to the service with the specified URL extension and the specified Json object.
+        /// </summary>
+        /// <param name="requestURLExtension">The URL extenstion that the request is sent to. example: "find"</param>
+        /// <param name="jsonObject">The Json Object, usually a pattern, that is being passed through the POST request</param>
+        /// <returns></returns>
+        private String MakeRequest(String requestURLExtension, String jsonObject)
+        {
+            Util.Log.WriteLine("Making Request to Service: " + serviceURL + requestURLExtension + " POST: " + jsonObject);
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(serviceURL + requestURLExtension);
             request.Accept = "application/json";
             request.Method = "POST";
@@ -188,9 +190,9 @@ namespace GingerSikuliStandard.sikuli_REST
             {
                 resultString = reader.ReadToEnd();
             }
-			Util.Log.WriteLine(resultString);
+            Util.Log.WriteLine(resultString);
             return resultString;
-		}
+        }
         /// <summary>
         /// Method to check the json_Result object and throw an exception if the Result is not PASSing
         /// </summary>
@@ -203,5 +205,5 @@ namespace GingerSikuliStandard.sikuli_REST
                 throw new SikuliActionException(jResult.ToActionResult(), jResult.message);
             }
         }
-	}
+    }
 }
