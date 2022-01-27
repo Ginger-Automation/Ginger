@@ -161,11 +161,6 @@ namespace Ginger.Actions
             }
         }
 
-        private void xActiveProcessesTitlesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
         private void xRefreshActiveWindows_Click(object sender, RoutedEventArgs e)
         {
             RefreshProcessesCombo();

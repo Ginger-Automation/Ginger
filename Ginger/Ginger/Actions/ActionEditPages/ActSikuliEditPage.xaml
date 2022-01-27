@@ -33,7 +33,7 @@
             <DockPanel>
                 <Label Content="Window : "/>
                 <ComboBox x:Name="xActiveProcessesTitlesComboBox" MinWidth="250" MaxWidth="400"
-                          SelectionChanged="xActiveProcessesTitlesComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" >
+                           Style="{StaticResource $FlatInputComboBoxStyle}" >
                 </ComboBox>
                 <usercontrols:ucButton x:Name="xRefreshActiveWindows" ToolTip="Refresh Active Windows List" ButtonImageWidth="15" ButtonImageHeight="15"
                                        Margin="5,0" ButtonImageType="Refresh" Click="xRefreshActiveWindows_Click"/>

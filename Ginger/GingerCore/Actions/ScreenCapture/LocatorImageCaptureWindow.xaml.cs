@@ -65,12 +65,13 @@ namespace GingerCore.Actions.ScreenCapture
                 {
                     //TODO: need to find a way to hold the image in the Act so it will go to shared repo have version and more
                     // Need to think if good or not
-                    mScreenImageDirectory = Path.Combine("~", actImageCaptureSupport.SolutionFolder, actImageCaptureSupport.ImagePath);
+                    mScreenImageDirectory = Path.Combine("~", actImageCaptureSupport.SolutionFolder + actImageCaptureSupport.ImagePath);
 
                     if (!Directory.Exists(mScreenImageDirectory))
+                    {
                         Directory.CreateDirectory(mScreenImageDirectory);
-
-                    mScreenImageDirectory = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(mScreenImageDirectory);
+                    }
+                    mScreenImageDirectory = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScreenImageDirectory);
                 }
 
                 return mScreenImageDirectory;
@@ -83,8 +84,9 @@ namespace GingerCore.Actions.ScreenCapture
             get
             {
                 if (string.IsNullOrEmpty(mScreenImageName))
+                {
                     mScreenImageName = Guid.NewGuid().ToString() + ".JPG";
-
+                }
                 return mScreenImageName;
             }
         }

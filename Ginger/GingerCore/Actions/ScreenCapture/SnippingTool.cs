@@ -44,7 +44,10 @@ namespace ScreenSnipApplication
         protected override void OnMouseDown(MouseEventArgs e)
         {
             // Start the snip on mouse down
-            if (e.Button != MouseButtons.Left) return;
+            if (e.Button != MouseButtons.Left)
+            {
+                return;
+            }
             pntStart = e.Location;
             rcSelect = new Rectangle(e.Location, new Size(0, 0));
             this.Invalidate();
@@ -52,7 +55,10 @@ namespace ScreenSnipApplication
         protected override void OnMouseMove(MouseEventArgs e)
         {
             // Modify the selection on mouse move
-            if (e.Button != MouseButtons.Left) return;
+            if (e.Button != MouseButtons.Left)
+            {
+                return;
+            }
             int x1 = Math.Min(e.X, pntStart.X);
             int y1 = Math.Min(e.Y, pntStart.Y);
             int x2 = Math.Max(e.X, pntStart.X);
@@ -64,7 +70,9 @@ namespace ScreenSnipApplication
         {
             // Complete the snip on mouse-up
             if (rcSelect.Width <= 0 || rcSelect.Height <= 0)
+            {
                 return;
+            }
             Image = new Bitmap(rcSelect.Width, rcSelect.Height);
             using (Graphics gr = Graphics.FromImage(Image))
             {
@@ -96,7 +104,10 @@ namespace ScreenSnipApplication
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             // Allow canceling the snip with the Escape key
-            if (keyData == Keys.Escape) this.DialogResult = DialogResult.Cancel;
+            if (keyData == Keys.Escape)
+            {
+                this.DialogResult = DialogResult.Cancel;
+            }
             return base.ProcessCmdKey(ref msg, keyData);
         }
     }

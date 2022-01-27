@@ -166,6 +166,8 @@ namespace GingerCore.Actions
                     case eActSikuliOperation.Exist:
                         sekuliScreen.Exists(sikuliPattern);
                         break;
+                    default:
+                        //do nothing
                 }
             }
             catch (Exception ex)
@@ -202,9 +204,6 @@ namespace GingerCore.Actions
                 if (!String.IsNullOrEmpty(process.MainWindowTitle))
                 {
                     ActiveProcessWindowsDict.Add(process.Id, process.MainWindowTitle);
-                    //Console.WriteLine("Process:   {0}", process.ProcessName);
-                    //Console.WriteLine("    ID   : {0}", process.Id);
-                    //Console.WriteLine("    Title: {0} \n", process.MainWindowTitle);
                 }
             }
         }
