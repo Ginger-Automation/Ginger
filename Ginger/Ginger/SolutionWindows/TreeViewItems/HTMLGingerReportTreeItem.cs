@@ -128,7 +128,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 copiedItem.DirtyStatus = eDirtyStatus.NoTracked;
                 //TODO: why below is needed??
-                copiedItem.ID = copiedItem.SetReportTemplateSequence(true);
+                copiedItem.ID = copiedItem.HTMLReportConfigurationOperations.SetReportTemplateSequence(true);
                 copiedItem.IsDefault = false;
                 if (copiedItem != null)
                 {

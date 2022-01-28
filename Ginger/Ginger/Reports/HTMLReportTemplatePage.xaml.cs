@@ -73,7 +73,12 @@ namespace Ginger.Reports
 
         public HTMLReportTemplatePage()
         {
-            _HTMLReportConfiguration = new HTMLReportConfiguration("");
+            HTMLReportConfigurationOperations reportConfigurationOperations = new HTMLReportConfigurationOperations(_HTMLReportConfiguration);
+            _HTMLReportConfiguration.HTMLReportConfigurationOperations = reportConfigurationOperations;
+
+            _HTMLReportConfiguration = new HTMLReportConfiguration("", false, reportConfigurationOperations);
+            
+
             InitializeComponent();
             SetControlsNewTemplate();
             SetDefaultLogoImage();
@@ -222,18 +227,18 @@ namespace Ginger.Reports
         {
 
 
-            return HTMLReportConfiguration.GetReportLevelMembers(reportLevelType);
+            return HTMLReportConfigurationOperations.GetReportLevelMembers(reportLevelType);
         }
 
         public static HTMLReportConfiguration EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration HTMLReportConfiguration)
         {
 
-            return HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration);
+            return HTMLReportConfigurationOperations.EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration);
         }
 
         private static ObservableList<HTMLReportConfigFieldToSelect> EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames fieldsToSelectListName, Type reportType, HTMLReportConfiguration HTMLReportConfiguration)
         {
-            return HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidatingPerLevel(fieldsToSelectListName, reportType, HTMLReportConfiguration);
+            return HTMLReportConfigurationOperations.EnchancingLoadedFieldsWithDataAndValidatingPerLevel(fieldsToSelectListName, reportType, HTMLReportConfiguration);
         }
 
         private void SetControls()

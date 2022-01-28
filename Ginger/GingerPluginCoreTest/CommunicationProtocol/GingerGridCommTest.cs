@@ -73,6 +73,9 @@ namespace GingerPluginCoreTest.CommunicationProtocol
 
             // GingerRunner gingerRunner = new GingerRunner();
             agent = new Agent();
+            AgentOperations agentOperations = new AgentOperations(agent);
+            agent.AgentOperations = agentOperations;
+
             ((AgentOperations)agent.AgentOperations).GingerNodeProxy = gingerNodeProxy;
             agent.Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Service;
             // agent.PluginId = "aa";

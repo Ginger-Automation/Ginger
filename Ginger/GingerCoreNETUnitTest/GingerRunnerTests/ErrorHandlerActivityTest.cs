@@ -60,6 +60,9 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             mDriver.SavedXMLDirectoryPath = "~\\Documents";
             mDriver.SecurityType = @"None";
 
+            AgentOperations agentOperations = new AgentOperations(wsAgent);
+            wsAgent.AgentOperations = agentOperations;
+
             wsAgent.DriverType = Agent.eDriverType.WebServices;
             ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
             ApplicationAgent mAG = new ApplicationAgent();

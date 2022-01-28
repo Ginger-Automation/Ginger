@@ -172,6 +172,10 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             jsonReportOperation.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             jsonReportOperation.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
             jsonReportOperation.Active = true;
+
+            RunSetActionJSONSummaryOperations runSetActionJSONSummaryOperations = new RunSetActionJSONSummaryOperations(jsonReportOperation);
+            jsonReportOperation.RunSetActionJSONSummaryOperations = runSetActionJSONSummaryOperations;
+
             RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(jsonReportOperation);
             jsonReportOperation.runSetActionBaseOperations = runSetActionBaseOperations;
             return jsonReportOperation;
@@ -184,6 +188,10 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             testNGReportOperation.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             testNGReportOperation.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
             testNGReportOperation.Active = true;
+
+            RunSetActionGenerateTestNGReportOperations runSetActionGenerateTestNGReportOperations = new RunSetActionGenerateTestNGReportOperations(testNGReportOperation);
+            testNGReportOperation.RunSetActionGenerateTestNGReportOperations = runSetActionGenerateTestNGReportOperations;
+
             RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(testNGReportOperation);
             testNGReportOperation.runSetActionBaseOperations = runSetActionBaseOperations;
             return testNGReportOperation;

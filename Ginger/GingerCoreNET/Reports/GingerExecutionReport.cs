@@ -2653,7 +2653,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 // TODO - need to delete, template always should be initialize with fields.
                 if (defualtConfig != null)
                 {
-                    gingerExecutionReport.currentTemplate = HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidating(defualtConfig);
+                    gingerExecutionReport.currentTemplate = HTMLReportConfigurationOperations.EnchancingLoadedFieldsWithDataAndValidating(defualtConfig);
                 }
                 else
                 {
@@ -2762,7 +2762,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 // TODO - need to delete, template always should be initialize with fields.
                 if (defualtConfig != null)
                 {
-                    gingerExecutionReport.currentTemplate = HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidating(defualtConfig);
+                    gingerExecutionReport.currentTemplate = HTMLReportConfigurationOperations.EnchancingLoadedFieldsWithDataAndValidating(defualtConfig);
                 }
                 else
                 {
@@ -3036,7 +3036,7 @@ namespace Ginger.Reports.GingerExecutionReport
         public static ObservableList<HTMLReportConfiguration> GetSolutionHTMLReportConfigurations()
         {
             var list = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            list.ToList().ForEach(y => y = HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidating(y));
+            list.ToList().ForEach(y => y = HTMLReportConfigurationOperations.EnchancingLoadedFieldsWithDataAndValidating(y));
             return list;
         }
 

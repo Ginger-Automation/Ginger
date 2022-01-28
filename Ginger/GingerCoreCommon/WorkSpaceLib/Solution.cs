@@ -392,8 +392,9 @@ namespace Ginger.SolutionGeneral
                     if (name == "AlmType")
                     {
                         AlmConfig.AlmType = (ALMIntegrationEnums.eALMType)Enum.Parse(typeof(ALMIntegrationEnums.eALMType), value);
-                        ALMUserConfig AlmUserConfig = SolutionOperations.GetALMConfig();
-                        AlmUserConfig.AlmType = AlmConfig.AlmType;
+                        //need to fix this
+                        //ALMUserConfig AlmUserConfig = SolutionOperations.GetALMConfig();
+                        //AlmUserConfig.AlmType = AlmConfig.AlmType;
                         return true;
                     }
                     if (name == "ALMDomain")

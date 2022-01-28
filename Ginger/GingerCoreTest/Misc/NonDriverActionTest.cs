@@ -87,6 +87,9 @@ namespace UnitTests.NonUITests
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "Web" });
 
             Agent a = new Agent();
+            AgentOperations agentOperations = new AgentOperations(a);
+            a.AgentOperations = agentOperations;
+
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();

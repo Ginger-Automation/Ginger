@@ -56,7 +56,7 @@ namespace GingerCore.Platforms
         {
             get
             {
-                return ApplicationAgentOperations.GetAppID(mAppID);
+                return mAppID;// ApplicationAgentOperations.GetAppID(mAppID); // need to fix this
             }
             set
             {

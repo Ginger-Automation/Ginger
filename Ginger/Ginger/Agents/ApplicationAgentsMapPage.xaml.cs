@@ -80,6 +80,8 @@ namespace Ginger.Agents
 
                 foreach (ApplicationAgent Apag in mRunner.GingerRunner.ApplicationAgents)
                 {
+                    ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(Apag);
+                    Apag.ApplicationAgentOperations = applicationAgentOperations;
                     if (mRunner.SolutionApplications.Where(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() == null)
                     {
                         ApplicationAgents.Add(Apag);
