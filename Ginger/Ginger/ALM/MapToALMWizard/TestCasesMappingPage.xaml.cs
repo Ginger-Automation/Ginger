@@ -41,11 +41,6 @@ namespace Ginger.ALM.MapToALMWizard
         public TestCasesMappingPage()
         {
             InitializeComponent();
-        }
-
-        public TestCasesMappingPage(BusinessFlow mapBusinessFlow)
-        {
-            InitializeComponent();
             Bind();
         }
 
