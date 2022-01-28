@@ -26,6 +26,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common;
+using System.Windows.Threading;
 
 namespace GingerWPF.WizardLib
 {
@@ -43,19 +44,27 @@ namespace GingerWPF.WizardLib
 
         public static void ShowWizard(WizardBase wizard, double width = 800, double height = 800, bool DoNotShowAsDialog = false)
         {
-             WizardWindow wizardWindow = new WizardWindow(wizard);
-            wizardWindow.Width = width;
-            wizardWindow.Height = height;
-
-            if (DoNotShowAsDialog)
+            WizardWindow wizardWindow = new WizardWindow(wizard);
+            wizardWindow.Dispatcher.Invoke(() =>
             {
-                wizardWindow.Owner = App.MainWindow;//adding owner so it will come on top
-                wizardWindow.Show();                
-            }
-            else
-            {
-                wizardWindow.ShowDialog();
-            }
+                wizardWindow.Width = width;
+                wizardWindow.Height = height;
+                if (!wizard.IsNavigationListEnabled)
+                {
+                    SetterBaseCollection sbc = wizardWindow.NavigationList.ItemContainerStyle.Setters;
+                    sbc.Add(new Setter(ListBoxItem.IsEnabledProperty, wizard.IsNavigationListEnabled));
+                    ((System.Windows.Setter)sbc[sbc.Count - 1]).Value = wizard.IsNavigationListEnabled;
+                }
+                if (DoNotShowAsDialog)
+                {
+                    wizardWindow.Owner = App.MainWindow;//adding owner so it will come on top
+                    wizardWindow.Show();
+                }
+                else
+                {
+                    wizardWindow.ShowDialog();
+                }
+            });
         }
 
         public WizardWindow(WizardBase wizard)
@@ -107,7 +116,7 @@ namespace GingerWPF.WizardLib
             CurrentWizardWindow = null;
         }
 
-
+       
         void RefreshCurrentPage()
         {
             WizardPage page = mWizard.GetCurrentPage();
@@ -410,7 +419,7 @@ namespace GingerWPF.WizardLib
         {
             xNextButton.IsEnabled = isEnabled;
         }
-
+        
         bool WindowCloseWasHandled = false;
 
         private void CloseWindowClicked(object sender, System.ComponentModel.CancelEventArgs e)
@@ -422,7 +431,5 @@ namespace GingerWPF.WizardLib
             }
 
         }
-
-
     }
 }
