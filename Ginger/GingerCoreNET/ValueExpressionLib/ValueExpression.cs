@@ -186,7 +186,7 @@ namespace GingerCore
             this.ObjAttr = attr;
         }
 
-        [IsSerializedForLocalRepository]
+        //[IsSerializedForLocalRepository] // why we are serializing this
         public GingerCore.Actions.ActDSTableElement actDSTableElement { get; set; }
 
         //In case we need to pass VE to another control like grid -> edit then we fill this 2 values

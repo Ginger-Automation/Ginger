@@ -149,6 +149,13 @@ namespace GingerCore
                 }
             }
         }
+        public eStatus Status 
+        {
+            get
+            {
+                return AgentOperations.Status;
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> Tags = new ObservableList<Guid>();

@@ -118,20 +118,11 @@ namespace Ginger.Agents
         private void XAgentNameComboBox_DropDownOpened(object sender, EventArgs e)
         {
             ApplicationAgent applicationAgent = (ApplicationAgent)((ComboBox)sender).DataContext;
-            List<IAgent> filteredOptionalAgents = applicationAgent.PossibleAgents;
 
-            ////remove already mapped agents
-            //List<IAgent> alreadyMappedAgents = mRunner.ApplicationAgents.Where(x => x.Agent != null).Select(x => x.Agent).ToList();
-            //foreach (IAgent mappedAgent in alreadyMappedAgents)
-            //{
-            //    if (mappedAgent != applicationAgent.Agent)
-            //    {
-            //        if (filteredOptionalAgents.Contains(mappedAgent))
-            //        {
-            //            filteredOptionalAgents.Remove(mappedAgent);
-            //        }
-            //    }
-            //}
+            ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+            applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
+
+            List<IAgent> filteredOptionalAgents = applicationAgent.PossibleAgents;
 
             ((ComboBox)sender).ItemsSource = filteredOptionalAgents;
         }

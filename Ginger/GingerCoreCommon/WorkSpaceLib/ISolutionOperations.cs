@@ -1,4 +1,6 @@
-﻿namespace Ginger.SolutionGeneral
+﻿using GingerCoreNET.ALMLib;
+
+namespace Ginger.SolutionGeneral
 {
     public interface ISolutionOperations
     {
@@ -8,5 +10,7 @@
         void SaveSolution(bool showWarning = true, Solution.eSolutionItemToSave solutionItemToSave = Solution.eSolutionItemToSave.GeneralDetails);
         void SetReportsConfigurations();
         bool ValidateKey(string encryptionKey = null);
+
+        ALMUserConfig GetALMConfig();
     }
 }

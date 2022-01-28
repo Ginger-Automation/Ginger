@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -29,6 +28,7 @@ namespace GingerCore.Platforms
 {
     public class ApplicationAgent : RepositoryItemBase, IApplicationAgent
     {
+        public IApplicationAgentOperations ApplicationAgentOperations;
         private Agent mAgent;
 
         //Change to target
@@ -56,15 +56,7 @@ namespace GingerCore.Platforms
         {
             get
             {
-                if (mAppID == Guid.Empty)
-                {
-                    ApplicationPlatform appPlat = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == AppName).FirstOrDefault();
-                    if (appPlat != null)
-                    {
-                        mAppID = appPlat.Guid;
-                    }
-                }
-                return mAppID;
+                return ApplicationAgentOperations.GetAppID(mAppID);
             }
             set
             {
@@ -192,25 +184,7 @@ namespace GingerCore.Platforms
         {
             get
             {
-                List<IAgent> possibleAgents = new List<IAgent>();
-
-                //find out the target application platform
-                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == AppName).FirstOrDefault();//todo: make it be based on AppID and not name
-                if (ap != null)
-                {
-                    ePlatformType appPlatform = ap.Platform;
-
-                    //get the solution Agents which match to this platform                     
-                    List<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Platform == appPlatform || x.ServiceId == AppName).ToList();
-                    if (agents != null)
-                    {
-                        foreach (IAgent agent in agents)
-                        {
-                            possibleAgents.Add(agent);
-                        }
-                    }
-                }
-                return possibleAgents;
+                return ApplicationAgentOperations.PossibleAgents;
             }
         }
     }

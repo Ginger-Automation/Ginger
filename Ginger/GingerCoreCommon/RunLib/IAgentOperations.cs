@@ -8,7 +8,7 @@ namespace GingerCore
     {
         bool IsShowWindowExplorerOnStart { get; }
         bool IsWindowExplorerSupportReady { get; }
-
+        Agent.eStatus Status { get; }
         void Close();
         void HighLightElement(Act act);
         void InitDriverConfigs();

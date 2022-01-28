@@ -76,8 +76,6 @@ namespace GingerCore
             }
         }
 
-
-
         public bool IsFailedToStart = false;
         private static Object thisLock = new Object();
 
@@ -144,14 +142,14 @@ namespace GingerCore
             {
                 StartPluginService();
                 GingerNodeProxy.StartDriver();
-                Agent.OnPropertyChanged(nameof(Status));
+                Agent.OnPropertyChanged(nameof(Agent.Status));
             }
             else
             {
                 try
                 {
                     Agent.mIsStarting = true;
-                    Agent.OnPropertyChanged(nameof(Status));
+                    Agent.OnPropertyChanged(nameof(Agent.Status));
                     try
                     {
                         if (Agent.Remote)
@@ -233,7 +231,7 @@ namespace GingerCore
                         }
 
                         Agent.mIsStarting = false;
-                        Agent.OnPropertyChanged(nameof(Status));
+                        Agent.OnPropertyChanged(nameof(Agent.Status));
                         Agent.OnPropertyChanged(nameof(IsWindowExplorerSupportReady));
                     }
                 }

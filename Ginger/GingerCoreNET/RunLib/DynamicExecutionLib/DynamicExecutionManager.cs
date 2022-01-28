@@ -563,6 +563,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
                 foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
                 {
+                    ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+                    applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
                     if (applicationAgent.Agent == null)
                     {
                         continue;//probably target app without platform or no such Agent
@@ -882,6 +884,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                                 gingerRunner.ApplicationAgents.Add(appAgent);
                             }
+                            ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(appAgent);
+                            appAgent.ApplicationAgentOperations = applicationAgentOperations;
                             appAgent.Agent = agent;
                             appAgent.AppName = app.AppName;
                             appAgent.AppID = app.Guid;

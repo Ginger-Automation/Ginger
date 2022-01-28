@@ -537,6 +537,9 @@ namespace GingerWPF.BusinessFlowsLib
         {
             foreach (ApplicationAgent appAgent in mExecutionEngine.GingerRunner.ApplicationAgents)
             {
+                ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(appAgent);
+                appAgent.ApplicationAgentOperations = applicationAgentOperations;
+
                 if (appAgent.Agent != null)
                 {
                     AgentOperations agentOperations = new AgentOperations(appAgent.Agent);
