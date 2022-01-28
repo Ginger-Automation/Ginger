@@ -63,8 +63,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportAction.ActionType = action.ActionType;
             accountReportAction.Description = action.Description;
             accountReportAction.RunDescription = GetCalculatedValue(context, action.RunDescription);    //must pass also BF to VE
-            accountReportAction.Environment = context.Runner.ProjEnvironment.Name;
-            accountReportAction.EnvironmentId = context.Runner.ProjEnvironment.Guid;
+            accountReportAction.Environment = ((GingerExecutionEngine)context.Runner).GingerRunner.ProjEnvironment.Name;
+            accountReportAction.EnvironmentId = ((GingerExecutionEngine)context.Runner).GingerRunner.ProjEnvironment.Guid;
             accountReportAction.StartTimeStamp = action.StartTimeStamp;
             accountReportAction.InputValues = GetInputValues(action);
             accountReportAction.CurrentRetryIteration = action.RetryMechanismCount;
@@ -113,8 +113,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivity.Name = activity.ActivityName;
             accountReportActivity.Description = activity.Description;
             accountReportActivity.RunDescription = GetCalculatedValue(context, activity.RunDescription);
-            accountReportActivity.Environment = context.Runner.ProjEnvironment.Name;
-            accountReportActivity.EnvironmentId = context.Runner.ProjEnvironment.Guid;
+            accountReportActivity.Environment = ((GingerExecutionEngine)context.Runner).GingerRunner.ProjEnvironment.Name;
+            accountReportActivity.EnvironmentId = ((GingerExecutionEngine)context.Runner).GingerRunner.ProjEnvironment.Guid;
             accountReportActivity.StartTimeStamp = activity.StartTimeStamp;
             accountReportActivity.VariablesBeforeExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description + "_:_" + a.Guid + "_:_" + a.SetAsInputValue + "_:_" + a.SetAsOutputValue + "_:_" + a.Publish).ToList();
             accountReportActivity.ActivityGroupName = activity.ActivitiesGroupID;
@@ -158,8 +158,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivityGroup.Seq = context.BusinessFlow.ActivitiesGroups.IndexOf(activitiesGroup) + 1;// context.BusinessFlow.ExecutionLogActivityGroupCounter;            
             accountReportActivityGroup.Name = activitiesGroup.Name;
             accountReportActivityGroup.Description = activitiesGroup.Description;
-            accountReportActivityGroup.Environment = context.Runner.ProjEnvironment.Name;
-            accountReportActivityGroup.EnvironmentId = context.Runner.ProjEnvironment.Guid;
+            accountReportActivityGroup.Environment = ((GingerExecutionEngine)context.Runner).GingerRunner.ProjEnvironment.Name;
+            accountReportActivityGroup.EnvironmentId = ((GingerExecutionEngine)context.Runner).GingerRunner.ProjEnvironment.Guid;
             accountReportActivityGroup.AutomationPrecentage = activitiesGroup.AutomationPrecentage;
             accountReportActivityGroup.StartTimeStamp = activitiesGroup.StartTimeStamp;
             accountReportActivityGroup.ExecutedActivitiesGUID = activitiesGroup.ExecutedActivities.Select(x => x.Key).ToList();
@@ -197,8 +197,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportBusinessFlow.Name = businessFlow.Name;
             accountReportBusinessFlow.Description = businessFlow.Description;
             accountReportBusinessFlow.RunDescription = GetCalculatedValue(context, businessFlow.RunDescription);
-            accountReportBusinessFlow.Environment = context.Runner.ProjEnvironment.Name;
-            accountReportBusinessFlow.EnvironmentId = context.Runner.ProjEnvironment.Guid;
+            accountReportBusinessFlow.Environment = ((GingerExecutionEngine)context.Runner).GingerRunner.ProjEnvironment.Name;
+            accountReportBusinessFlow.EnvironmentId = ((GingerExecutionEngine)context.Runner).GingerRunner.ProjEnvironment.Guid;
             accountReportBusinessFlow.StartTimeStamp = businessFlow.StartTimeStamp;
             accountReportBusinessFlow.VariablesBeforeExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description + "_:_" + a.Guid + "_:_" + a.SetAsInputValue + "_:_" + a.SetAsOutputValue + "_:_" + a.Publish).ToList();
             accountReportBusinessFlow.SolutionVariablesBeforeExec = businessFlow.GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
@@ -292,7 +292,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             //accountReportRunner.Description = gingerRunner.Description;
             accountReportRunner.Environment = gingerRunner.ProjEnvironment.Name.ToString();
             accountReportRunner.EnvironmentId = gingerRunner.ProjEnvironment.Guid;
-            accountReportRunner.StartTimeStamp = gingerRunner.StartTimeStamp;
+            accountReportRunner.StartTimeStamp = gingerRunner.Executor.StartTimeStamp;
             accountReportRunner.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
             SetRunnerChildCounts((GingerExecutionEngine)gingerRunner.Executor, accountReportRunner);
             accountReportRunner.RunStatus = _InProgressStatus;
