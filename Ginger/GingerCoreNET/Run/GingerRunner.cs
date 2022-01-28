@@ -2645,6 +2645,7 @@ namespace Ginger.Run
                             // if execution has been stopped externally, stop at current action
                             if (!mStopRun)
                             {
+                                CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
                                 GotoNextAction();
                                 ((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem).Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                             }
@@ -2771,6 +2772,7 @@ namespace Ginger.Run
         {
             if (CurrentBusinessFlow.CurrentActivity.Acts.Count - 1 > CurrentBusinessFlow.CurrentActivity.Acts.IndexOf((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem))
             {
+                CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
                 CurrentBusinessFlow.CurrentActivity.Acts.MoveNext();
                 return true;
             }
@@ -3906,6 +3908,7 @@ namespace Ginger.Run
                         {
                             if (!CurrentBusinessFlow.Activities.IsLastItem())
                             {
+                                Thread.Sleep(1);
                                 GotoNextActivity();
                                 ExecutingActivity = (Activity)CurrentBusinessFlow.Activities.CurrentItem;
                             }
