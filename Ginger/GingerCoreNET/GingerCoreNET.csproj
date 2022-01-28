@@ -49,7 +49,6 @@
     <None Remove="DLLS\LibGit2Sharp.dll" />
     <None Remove="DLLS\OctaneInteractionStd.dll" />
     <None Remove="DLLS\OctaneRepositoryStd.dll" />
-    <None Remove="DLLS\sikulirestapi-1.0.jar" />
     <None Remove="DLLS\SikuliStandardNet.dll" />
     <None Remove="DLLS\ZephyrEntStdSDK.dll" />
     <None Remove="DLLS\Zepyhr_Ent_Repository_Std.dll" />
@@ -117,9 +116,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLS\OctaneRepositoryStd.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DLLS\sikulirestapi-1.0.jar">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLS\SikuliStandardNet.dll">
@@ -385,10 +381,6 @@
   </ItemGroup>
 
   <ItemGroup>
-
-    <None Update="DLLS\sikulixapi-2.0.2.jar">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
 
     <None Update="Images\%40amdocs_logo.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

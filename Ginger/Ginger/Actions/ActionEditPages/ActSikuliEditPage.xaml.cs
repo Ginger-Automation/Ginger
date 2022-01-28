@@ -73,9 +73,6 @@ namespace Ginger.Actions
                 return;
             }
 
-            LocatorImageCaptureWindow sc = new LocatorImageCaptureWindow(actSikuli);
-            //sc.Show();
-
             actSikuli.PatternPath = GetPathToExpectedImage();
             xPatternImageLocationTextBox.ValueTextBox.Text = GetPathToExpectedImage();
 
@@ -146,7 +143,6 @@ namespace Ginger.Actions
                     bitmapSource.EndInit();
 
                     xElementImage.Source = bitmapSource;
-                    //xElementImage.Source = General.GetImageStream(General.Base64StringToImage(xPatternImageLocationTextBox.ValueTextBox.Text));
                     xElementImageCanvas.Visibility = Visibility.Visible;
                 }
                 catch (Exception exc)
