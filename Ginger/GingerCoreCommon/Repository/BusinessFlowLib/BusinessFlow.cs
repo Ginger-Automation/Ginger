@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
@@ -254,12 +255,12 @@ namespace GingerCore
             }
         }
 
-       private bool mLazyLoadFlagForUnitTest;
+        private bool mLazyLoadFlagForUnitTest;
         public bool LazyLoadFlagForUnitTest
         {
             get
             {
-              return mLazyLoadFlagForUnitTest;
+                return mLazyLoadFlagForUnitTest;
             }
             set
             {
@@ -277,7 +278,7 @@ namespace GingerCore
         /// Been used to identify if Activities were loaded by lazy load or not
         /// </summary>
         public bool ActivitiesLazyLoad { get { return (mActivities != null) ? mActivities.LazyLoad : false; } }
-        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.NodePath)]
+        [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<Activity> Activities
         {
@@ -296,8 +297,24 @@ namespace GingerCore
             }
         }
 
+        private void CheckIfLazyLoadInfoNeedsUpdate()
+        {
+            string folderName = this.ContainingFolderFullPath;
+            if (mActivities != null && mActivities.LazyLoadDetails != null && !string.IsNullOrEmpty(mActivities.LazyLoadDetails.XmlFilePath))
+            {
+                string previousFilePath = mActivities.LazyLoadDetails.XmlFilePath;
+                string directoryName = Path.GetDirectoryName(previousFilePath);
+                if (!directoryName.Equals(folderName))
+                {
+                    string fileName = Path.GetFileName(previousFilePath);
+                    mActivities.LazyLoadDetails.XmlFilePath = Path.Combine(folderName, fileName);
+                }
+            }
+        }
+
         private void DoActivitiesLazyLoad()
         {
+            CheckIfLazyLoadInfoNeedsUpdate();
             if (mActivities.LazyLoad)
             {
                 mActivities.LoadLazyInfo();
@@ -310,8 +327,8 @@ namespace GingerCore
             }
         }
 
-    //    [IsSerializedForLocalRepository] Commented as it is duplicate
-    //    public new string ExternalID { get; set; } // will use it for QC ID or other external ID
+        //    [IsSerializedForLocalRepository] Commented as it is duplicate
+        //    public new string ExternalID { get; set; } // will use it for QC ID or other external ID
         [IsSerializedForLocalRepository]
         public string AlmData { get; set; }
         //[IsSerializedForLocalRepository]
@@ -333,7 +350,7 @@ namespace GingerCore
             set
             {
                 if (mCurrentActivity != value)
-                {                    
+                {
                     mCurrentActivity = value;
                     OnPropertyChanged("CurrentActivity");
                 }
@@ -342,8 +359,8 @@ namespace GingerCore
 
         public ActivitiesGroup CurrentActivitiesGroup
         {
-            get 
-            { 
+            get
+            {
                 if (CurrentActivity != null && string.IsNullOrEmpty(CurrentActivity.ActivitiesGroupID) == false)
                 {
                     return this.ActivitiesGroups.Where(x => x.Name == CurrentActivity.ActivitiesGroupID).FirstOrDefault();
@@ -351,7 +368,7 @@ namespace GingerCore
                 else
                 {
                     return null;
-                }                    
+                }
             }
         }
 
@@ -376,7 +393,7 @@ namespace GingerCore
                 return mPreviousAction;
             }
             set
-            {                
+            {
                 mPreviousAction = value;
             }
         }
@@ -453,7 +470,7 @@ namespace GingerCore
         /// Been used to identify if BF Variables were lazy loaded already or not
         /// </summary>
         public bool VariablesLazyLoad { get { return (mVariables != null) ? mVariables.LazyLoad : false; } }
-        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.StringData)]
+        [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.StringData)]
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables
         {
@@ -617,8 +634,8 @@ namespace GingerCore
                     continue;
                 }
                 if (includeOnlySetAsInputValue && var.SetAsInputValue == false)
-                {                    
-                   continue;                    
+                {
+                    continue;
                 }
                 if (includeOnlySetAsOutputValue && var.SetAsOutputValue == false)
                 {
@@ -1075,7 +1092,7 @@ namespace GingerCore
             foreach (Activity a in Activities)
             {
                 a.Reset(reSetActionErrorHandlerExecutionStatus);
-            }            
+            }
             foreach (ActivitiesGroup ag in ActivitiesGroups)
             {
                 ag.Reset();
@@ -1410,7 +1427,7 @@ namespace GingerCore
 
         public int ExecutionLogActivityCounter { get; set; }
 
-        public int ExecutionLogActivityGroupCounter { get; set; }        
+        public int ExecutionLogActivityGroupCounter { get; set; }
 
         // Only for Run time, no need to serialize        
         public DateTime StartTimeStamp { get; set; }
