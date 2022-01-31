@@ -80,7 +80,7 @@ namespace GingerCore.Actions
             Click,
             DoubleClick,
             SetValue,
-            GetValue,
+            //GetValue,
             Exist,
             MouseRightClick
         }
