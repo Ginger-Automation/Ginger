@@ -30,6 +30,7 @@ using GingerCore;
 using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Ginger.Run
@@ -197,6 +198,7 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
                 }
                 if (mGingerRunners.LazyLoad)
                 {
+                    CheckIfLazyLoadInfoNeedsUpdate();
                     mGingerRunners.LoadLazyInfo();
                     if (this.DirtyStatus != eDirtyStatus.NoTracked)
                     {
@@ -362,6 +364,20 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory1));
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory2));
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory3));
+            }
+        }
+        private void CheckIfLazyLoadInfoNeedsUpdate()
+        {
+            string folderName = this.ContainingFolderFullPath;
+            if (mGingerRunners != null && mGingerRunners.LazyLoadDetails != null && !string.IsNullOrEmpty(mGingerRunners.LazyLoadDetails.XmlFilePath))
+            {
+                string previousFilePath = mGingerRunners.LazyLoadDetails.XmlFilePath;
+                string directoryName = Path.GetDirectoryName(previousFilePath);
+                if (!directoryName.Equals(folderName))
+                {
+                    string fileName = Path.GetFileName(previousFilePath);
+                    mGingerRunners.LazyLoadDetails.XmlFilePath = Path.Combine(folderName, fileName);
+                }
             }
         }
     }
