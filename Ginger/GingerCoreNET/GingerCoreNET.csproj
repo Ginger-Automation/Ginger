@@ -49,6 +49,7 @@
     <None Remove="DLLS\LibGit2Sharp.dll" />
     <None Remove="DLLS\OctaneInteractionStd.dll" />
     <None Remove="DLLS\OctaneRepositoryStd.dll" />
+    <None Remove="DLLS\SikuliStandardNet.dll" />
     <None Remove="DLLS\ZephyrEntStdSDK.dll" />
     <None Remove="DLLS\Zepyhr_Ent_Repository_Std.dll" />
     <None Remove="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
@@ -115,6 +116,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLS\OctaneRepositoryStd.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DLLS\SikuliStandardNet.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLS\ZephyrEntStdSDK.dll">
@@ -316,6 +320,9 @@
     </Reference>
     <Reference Include="OctaneStdSDK">
       <HintPath>DLLS\OctaneStdSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="SikuliStandardNet">
+      <HintPath>DLLS\SikuliStandardNet.dll</HintPath>
     </Reference>
     <Reference Include="ZephyrEntStdSDK">
       <HintPath>DLLS\ZephyrEntStdSDK.dll</HintPath>
