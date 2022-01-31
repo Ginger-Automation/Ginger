@@ -83,6 +83,8 @@ namespace UnitTest
                 mDriver = new PBDriver(mBF);                              
                 mDriver.StartDriver();
                 Agent a = new Agent();
+            AgentOperations agentOperations = new AgentOperations(a);
+            a.AgentOperations = agentOperations;
                 a.Active = true;
             ((AgentOperations)a.AgentOperations).Driver = mDriver;
                 a.DriverType = Agent.eDriverType.PowerBuilder;
