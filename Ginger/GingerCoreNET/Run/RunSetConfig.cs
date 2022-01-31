@@ -29,6 +29,7 @@ using GingerCore;
 using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Ginger.Run
@@ -42,7 +43,7 @@ namespace Ginger.Run
             get { return mName; }
             set
             {
-             //
+                //
                 if (mName != value)
                 {
                     mName = value;
@@ -148,7 +149,7 @@ namespace Ginger.Run
         {
             get
             {
-                
+
                 if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed select x).Count() > 0)
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -161,8 +162,10 @@ namespace Ginger.Run
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                 }
-                else if ((from x in GingerRunners.ToList() where (x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed ||
-                          x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped) select x).Count() == GingerRunners.Count)
+                else if ((from x in GingerRunners.ToList()
+                          where (x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed ||
+x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
+                          select x).Count() == GingerRunners.Count)
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                 }
@@ -194,6 +197,7 @@ namespace Ginger.Run
                 }
                 if (mGingerRunners.LazyLoad)
                 {
+                    CheckIfLazyLoadInfoNeedsUpdate();
                     mGingerRunners.LoadLazyInfo();
                     if (this.DirtyStatus != eDirtyStatus.NoTracked)
                     {
@@ -359,6 +363,20 @@ namespace Ginger.Run
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory1));
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory2));
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory3));
+            }
+        }
+        private void CheckIfLazyLoadInfoNeedsUpdate()
+        {
+            string folderName = this.ContainingFolderFullPath;
+            if (mGingerRunners != null && mGingerRunners.LazyLoadDetails != null && !string.IsNullOrEmpty(mGingerRunners.LazyLoadDetails.XmlFilePath))
+            {
+                string previousFilePath = mGingerRunners.LazyLoadDetails.XmlFilePath;
+                string directoryName = Path.GetDirectoryName(previousFilePath);
+                if (!directoryName.Equals(folderName))
+                {
+                    string fileName = Path.GetFileName(previousFilePath);
+                    mGingerRunners.LazyLoadDetails.XmlFilePath = Path.Combine(folderName, fileName);
+                }
             }
         }
     }
