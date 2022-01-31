@@ -33,6 +33,9 @@ namespace Ginger.Agents.AddAgentWizardLib
 
         public AddAgentWizard(RepositoryFolder<Agent> AgentsFolder)
         {
+            AgentOperations agentOperations = new AgentOperations(Agent);
+            Agent.AgentOperations = agentOperations;
+
             this.AgentsFolder = AgentsFolder;            
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Agents Introduction", Page: new WizardIntroPage("/Agents/AddAgentWizardLib/AddAgentIntro.md"));

@@ -123,7 +123,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public override void DuplicateTreeItem(object item)
         {
             HTMLReportConfiguration copiedItem = (HTMLReportConfiguration)CopyTreeItemWithNewName((RepositoryItemBase)item);
-
+            HTMLReportConfigurationOperations reportConfigurationOperations = new HTMLReportConfigurationOperations(copiedItem);
+            copiedItem.HTMLReportConfigurationOperations = reportConfigurationOperations;
             if (copiedItem != null)
             {
                 copiedItem.DirtyStatus = eDirtyStatus.NoTracked;

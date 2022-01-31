@@ -57,6 +57,11 @@ namespace Ginger.AnalyzerLib
                 {
                     foreach (ApplicationAgent AA in GR.ApplicationAgents)
                     {
+                        if (AA.Agent != null)
+                        {
+                            AgentOperations agentOperations = new AgentOperations(AA.Agent);
+                            AA.Agent.AgentOperations = agentOperations;
+                        }
                         if (AA.Agent == null) continue;//no Agent so skip it
 
                         Guid agnetGuide = (from x in Agents where x == AA.Agent.Guid select x).FirstOrDefault();

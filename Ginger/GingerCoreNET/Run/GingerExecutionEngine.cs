@@ -572,6 +572,7 @@ namespace Ginger.Run
                             {
 
                                 var virtualagent = agent.CreateCopy(true) as Agent;
+                                virtualagent.AgentOperations = agent.AgentOperations;
                                 virtualagent.ParentGuid = agent.Guid;
                                 virtualagent.Name = agent.Name + " Virtual";
                                 virtualagent.IsVirtual = true;

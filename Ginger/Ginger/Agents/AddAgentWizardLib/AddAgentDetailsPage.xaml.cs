@@ -81,7 +81,7 @@ namespace Ginger.Agents.AddAgentWizardLib
                     //}
                     xPlatformTypeComboBox.SelectedIndex = 0;
 
-                    xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(AgentOperations.DriverInfo));
+                    xDriverTypeComboBox.BindControl(mWizard.Agent.AgentOperations, nameof(AgentOperations.DriverInfo));
                     xDriverTypeComboBox.SelectionChanged += xDriverTypeComboBox_SelectionChanged;
                     if (xDriverTypeComboBox.Items.Count > 0)
                     {

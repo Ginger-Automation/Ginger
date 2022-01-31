@@ -348,13 +348,13 @@ namespace Ginger.Run
                 if (e.PropertyName == nameof(GingerExecutionEngine.Status))
                 {
                     if (IsSelectedItemSyncWithExecution && mRunSetConfig.RunModeParallel == false
-                                && ((GingerExecutionEngine)sender).Status == eRunStatus.Running)
+                                && (((GingerExecutionEngine)((GingerRunner)sender).Executor).Status == eRunStatus.Running))
                     {
                         List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
                         foreach (FlowElement f in fe)
                         {
                             RunnerPage rp = (RunnerPage)f.GetCustomeShape().Content;
-                            if (rp != null && rp.ExecutorEngine.GingerRunner.Guid.Equals(((GingerExecutionEngine)sender).GingerRunner.Guid))
+                            if (rp != null && rp.ExecutorEngine.GingerRunner.Guid.Equals(((GingerRunner)sender).Guid))
                             {
                                 GingerRunnerHighlight(rp);
                             }
@@ -564,12 +564,18 @@ namespace Ginger.Run
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                RunnerPage runnerPage = InitRunnerFlowElement((GingerExecutionEngine)e.NewItems[0], e.NewStartingIndex);
+                GingerRunner gr = (GingerRunner)e.NewItems[0];
+                GingerExecutionEngine executionEngine = new GingerExecutionEngine(gr);
+
+                RunnerPage runnerPage = InitRunnerFlowElement(executionEngine, e.NewStartingIndex);
                 GingerRunnerHighlight(runnerPage);
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                mFlowDiagram.RemoveFlowElem(((GingerExecutionEngine)e.OldItems[0]).GingerRunner.Guid.ToString(), mRunSetConfig.RunModeParallel);
+                GingerRunner gr = (GingerRunner)e.OldItems[0];
+                GingerExecutionEngine executionEngine = new GingerExecutionEngine(gr);
+
+                mFlowDiagram.RemoveFlowElem(executionEngine.GingerRunner.Guid.ToString(), mRunSetConfig.RunModeParallel);
             }
             else if (e.Action == NotifyCollectionChangedAction.Move)
             {

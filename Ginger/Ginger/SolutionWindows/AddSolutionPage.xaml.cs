@@ -147,11 +147,15 @@ namespace Ginger.SolutionWindows
 
         private void AddDeafultReportTemplate()
         {
-            HTMLReportConfiguration r = new HTMLReportConfiguration("Default", true);
+            HTMLReportConfiguration r = new HTMLReportConfiguration();
             HTMLReportConfigurationOperations reportConfigurationOperations = new HTMLReportConfigurationOperations(r);
             r.HTMLReportConfigurationOperations = reportConfigurationOperations;
 
-            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(r);
+            HTMLReportConfiguration reportTemplate = new HTMLReportConfiguration("Default", true, reportConfigurationOperations);
+            HTMLReportConfigurationOperations reportTemplateConfigurationOperations = new HTMLReportConfigurationOperations(reportTemplate);
+            reportTemplate.HTMLReportConfigurationOperations = reportTemplateConfigurationOperations;
+
+            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(reportTemplate);
         }
 
         void AddFirstAgentForSolutionForApplicationPlatfrom(ApplicationPlatform MainApplicationPlatform)
