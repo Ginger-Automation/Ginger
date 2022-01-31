@@ -28,10 +28,12 @@ namespace GingerCoreNETUnitTest.RunTestslib
             act.AddNewReturnParams = true;
             act.SupportSimulation = true;
             mGingerRunner = new GingerRunner();
+            mGingerRunner.Executor = new GingerExecutionEngine(mGingerRunner);
+
             mGingerRunner.RunInSimulationMode = true;
             BF.Activities[0].Acts.Add(act);
 
-            mGingerRunner.BusinessFlows.Add(BF);
+            mGingerRunner.Executor.BusinessFlows.Add(BF);
           
         }
       
@@ -42,7 +44,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             ARC.Expected = "Test";            
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Contains;
             act.ActReturnValues.Add(ARC);                
-            mGingerRunner.RunRunner();
+            mGingerRunner.Executor.RunRunner();
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
@@ -54,7 +56,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             ARC.Expected = "ABC";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.DoesNotContains;
             act.ActReturnValues.Add(ARC);
-            mGingerRunner.RunRunner();
+            mGingerRunner.Executor.RunRunner();
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
@@ -66,7 +68,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             ARC.Expected = "Test";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
             act.ActReturnValues.Add(ARC);
-            mGingerRunner.RunRunner();
+            mGingerRunner.Executor.RunRunner();
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
@@ -78,7 +80,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             ARC.Expected = "{CS Exp=@\"Test\".Contains(@\"Test\")}";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Evaluate;
             act.ActReturnValues.Add(ARC);
-            mGingerRunner.RunRunner();
+            mGingerRunner.Executor.RunRunner();
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
@@ -90,7 +92,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             ARC.Expected = "9";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.GreaterThan;
             act.ActReturnValues.Add(ARC);
-            mGingerRunner.RunRunner();
+            mGingerRunner.Executor.RunRunner();
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
@@ -102,7 +104,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             ARC.Expected = "10";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.GreaterThanEquals;
             act.ActReturnValues.Add(ARC);
-            mGingerRunner.RunRunner();
+            mGingerRunner.Executor.RunRunner();
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
@@ -114,7 +116,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             ARC.Expected = "10";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.LessThan;
             act.ActReturnValues.Add(ARC);
-            mGingerRunner.RunRunner();
+            mGingerRunner.Executor.RunRunner();
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
@@ -126,7 +128,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             ARC.Expected = "10";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.LessThanEquals;
             act.ActReturnValues.Add(ARC);
-            mGingerRunner.RunRunner();
+            mGingerRunner.Executor.RunRunner();
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
@@ -138,7 +140,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             ARC.Expected = "9";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.NotEquals;
             act.ActReturnValues.Add(ARC);
-            mGingerRunner.RunRunner();
+            mGingerRunner.Executor.RunRunner();
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }

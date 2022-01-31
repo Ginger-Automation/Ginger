@@ -165,7 +165,7 @@ namespace amdocs.ginger.GingerCoreNET
                 if (!RunningInExecutionMode)
                 {
                     UserProfile.GingerStatus = eGingerStatus.Closed;
-                    UserProfile.SaveUserProfile();
+                    UserProfile.UserProfileOperations.SaveUserProfile();
                     AppSolutionAutoSave.CleanAutoSaveFolders();
                 }
 
@@ -283,7 +283,12 @@ namespace amdocs.ginger.GingerCoreNET
             // TODO: need to add a switch what we get from old ginger based on magic key
 
             Reporter.ToLog(eLogLevel.INFO, "Loading User Profile");
+
+            UserProfile = new UserProfile();
+            UserProfile.UserProfileOperations = new UserProfileOperations(UserProfile);
             UserProfile = UserProfile.LoadUserProfile();
+
+            ((UserProfileOperations)UserProfile.UserProfileOperations).UserProfile = UserProfile;
 
             Reporter.ToLog(eLogLevel.INFO, "Configuring User Type");
             UserProfile.LoadUserTypeHelper();
@@ -376,7 +381,10 @@ namespace amdocs.ginger.GingerCoreNET
                 }
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Loading Solution file xml into object");
-                Solution solution = Solution.LoadSolution(solutionFile, true, encryptionKey);
+                Solution solution = SolutionOperations.LoadSolution(solutionFile, true, encryptionKey);
+                SolutionOperations solutionOperations = new SolutionOperations(solution);
+                solution.SolutionOperations = solutionOperations;
+
                 if (solution == null)
                 {
                     Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Failed to load the Solution file");
@@ -385,7 +393,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
 
                 EncryptionHandler.SetCustomKey(solution.EncryptionKey);
-                if (!solution.ValidateKey())
+                if (!solution.SolutionOperations.ValidateKey())
                 {
                     if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
                     {
@@ -394,8 +402,8 @@ namespace amdocs.ginger.GingerCoreNET
                             // To support existing solutions, 
                             solution.EncryptionKey = EncryptionHandler.GetDefaultKey();
                             solution.NeedVariablesReEncryption = true;
-                            solution.SaveEncryptionKey();
-                            solution.SaveSolution(false);
+                            solution.SolutionOperations.SaveEncryptionKey();
+                            solution.SolutionOperations.SaveSolution(false);
                         }
                         else if (!Instance.EventHandler.OpenEncryptionKeyHandler(solution))
                         {
@@ -430,9 +438,9 @@ namespace amdocs.ginger.GingerCoreNET
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Updating Application Functionalities to Work with Loaded Solution");
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables;
-                solution.SetReportsConfigurations();
+                solution.SolutionOperations.SetReportsConfigurations();
                 Solution = solution;
-                UserProfile.LoadRecentAppAgentMapping();
+                UserProfile.UserProfileOperations.LoadRecentAppAgentMapping();
 
                 if (!RunningInExecutionMode)
                 {
@@ -454,7 +462,7 @@ namespace amdocs.ginger.GingerCoreNET
                 // No need to add solution to recent if running from CLI
                 if (!RunningInExecutionMode)
                 {
-                    UserProfile.AddSolutionToRecent(solution);
+                    ((UserProfileOperations)UserProfile.UserProfileOperations).AddSolutionToRecent(solution);
                 }
                 // PlugInsManager = new PluginsManager();
                 // mPluginsManager.Init(SolutionRepository);
@@ -524,14 +532,20 @@ namespace amdocs.ginger.GingerCoreNET
         {
             if (SolutionRepository != null)
             {
-                List<Agent> runningAgents = SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Status == Agent.eStatus.Running).ToList();
+                List<Agent> Agents = SolutionRepository.GetAllRepositoryItems<Agent>().ToList();
+                foreach (Agent agent in Agents)
+                {
+                    AgentOperations agentOperations = new AgentOperations(agent);
+                    agent.AgentOperations = agentOperations;
+                }
+                List<Agent> runningAgents = Agents.Where(x => ((AgentOperations)x.AgentOperations).Status == Agent.eStatus.Running).ToList();
                 if (runningAgents != null && runningAgents.Count > 0)
                 {
                     foreach (Agent agent in runningAgents)
                     {
                         try
                         {
-                            agent.Close();
+                            agent.AgentOperations.Close();
                         }
                         catch (Exception ex)
                         {
@@ -540,7 +554,7 @@ namespace amdocs.ginger.GingerCoreNET
                             else
                                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
                         }
-                        agent.IsFailedToStart = false;
+                        ((AgentOperations)agent.AgentOperations).IsFailedToStart = false;
                     }
                 }
             }
@@ -552,6 +566,17 @@ namespace amdocs.ginger.GingerCoreNET
             {
                 foreach (ProjEnvironment env in SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
                 {
+                    foreach (EnvApplication ea in env.Applications)
+                    {
+                        foreach (Database db in ea.Dbs)
+                        {
+                            if (db.DatabaseOperations == null)
+                            {
+                                DatabaseOperations databaseOperations = new DatabaseOperations(db);
+                                db.DatabaseOperations = databaseOperations;
+                            }
+                        }
+                    }
                     env.CloseEnvironment();
                 }
             }
@@ -585,7 +610,11 @@ namespace amdocs.ginger.GingerCoreNET
             EventHandler.SolutionClosed();
         }
 
-        public UserProfile UserProfile { get; set; }
+        public UserProfile UserProfile 
+        { 
+            get;
+            set;
+        }
 
 
         public IWorkSpaceEventHandler EventHandler { get; set; }

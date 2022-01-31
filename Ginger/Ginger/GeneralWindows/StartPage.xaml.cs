@@ -52,7 +52,7 @@ namespace Ginger
             try
             {
                 ObservableList<Hyperlink> recentSolutionsLinksList = new ObservableList<Hyperlink>();
-                foreach (Solution sol in  WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects)
+                foreach (Solution sol in  ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects)
                 {
                     Hyperlink solLink = new Hyperlink();
                     solLink.Tag = sol.Name;
@@ -81,7 +81,7 @@ namespace Ginger
             try
             {
                 string selectedSolFolder = ((Hyperlink)sender).ToolTip.ToString().ToUpper();
-                Solution selectedSol =  WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects.Where(x=>x.Folder.ToUpper() == selectedSolFolder).FirstOrDefault();
+                Solution selectedSol = ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.Where(x=>x.Folder.ToUpper() == selectedSolFolder).FirstOrDefault();
 
                 if (selectedSol != null)
                 {

@@ -98,16 +98,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public override async void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
-            if (!gingerRunner.Active || gingerRunner.ExecutionId == Guid.Empty || gingerRunner.Status == Execution.eRunStatus.Blocked)
+            if (!gingerRunner.Active || gingerRunner.Executor.ExecutionId == Guid.Empty || gingerRunner.Status == Execution.eRunStatus.Blocked)
             {
                 return;
             }
-            await RunnerRunEndTask(gingerRunner);
+            await RunnerRunEndTask((GingerExecutionEngine)gingerRunner.Executor);
         }
 
-        private async Task RunnerRunEndTask(GingerRunner gingerRunner)
+        private async Task RunnerRunEndTask(GingerExecutionEngine gingerRunner)
         {
-            AccountReportRunner accountReportRunner = AccountReportEntitiesDataMapping.MapRunnerEndData(gingerRunner, mContext);
+            AccountReportRunner accountReportRunner = AccountReportEntitiesDataMapping.MapRunnerEndData(gingerRunner.GingerRunner, mContext);
             await AccountReportApiHandler.SendRunnerExecutionDataToCentralDBAsync(accountReportRunner, true);
         }
 
