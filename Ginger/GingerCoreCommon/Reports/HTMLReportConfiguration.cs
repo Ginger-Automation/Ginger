@@ -216,7 +216,7 @@ namespace Ginger.Reports
         {
 
         }
-        public HTMLReportConfiguration(string name = "", bool isRunWithFlowOnly = false, IHTMLReportConfigurationOperations HTMLReportConfigurationOperations = null)
+        public HTMLReportConfiguration(string name, bool isRunWithFlowOnly = false, IHTMLReportConfigurationOperations HTMLReportConfigurationOperations = null)
         {
             int configID = 1;
             if (!isRunWithFlowOnly)

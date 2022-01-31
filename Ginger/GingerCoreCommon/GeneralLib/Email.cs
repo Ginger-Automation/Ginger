@@ -223,7 +223,8 @@ namespace GingerCore.GeneralLib
         }
 
         public bool IsBodyHTML { get; set; } = true;
-        
+
+        private string mItemName;
         public override string ItemName
         {
             get
@@ -232,7 +233,7 @@ namespace GingerCore.GeneralLib
             }
             set
             {
-                return;
+                mItemName = value;
             }
         }
 

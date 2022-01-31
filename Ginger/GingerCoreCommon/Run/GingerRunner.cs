@@ -196,6 +196,7 @@ namespace Ginger.Run
         [IsSerializedForLocalRepository]
         public ObservableList<BusinessFlowRun> BusinessFlowsRunList { get; set; } = new ObservableList<BusinessFlowRun>();
 
+        private string mItemName;
         public override string ItemName
         {
             get
@@ -204,7 +205,7 @@ namespace Ginger.Run
             }
             set
             {
-                return;
+                mItemName = value;
             }
         }
     }

@@ -365,6 +365,9 @@ namespace GingerCore.Environments
                         {
                             return false;
                         }
+                    default:
+                        //not implemented
+                        break;
                 }
                 if ((oConn != null) && (oConn.State == ConnectionState.Open))
                 {

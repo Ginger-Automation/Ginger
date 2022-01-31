@@ -924,10 +924,14 @@ namespace Ginger.Run
                     if (rp == null) continue;
 
                     if (rp.ExecutorEngine.GingerRunner.Guid.Equals(mCurrentSelectedRunner.ExecutorEngine.GingerRunner.Guid))
+                    {
                         //load BF's items
                         xBusinessflowsRunnerItemsListView.ItemsSource = rp.BusinessflowRunnerItems;
+                    }
                     else
+                    {
                         rp.ClearBusinessflowRunnerItems();
+                    }
                 }
                 GC.Collect();//to help with memory free
 
@@ -1404,7 +1408,9 @@ namespace Ginger.Run
                 int index = -1;
                 int Count = mRunSetConfig.GingerRunners.Count;
                 if (mCurrentSelectedRunner != null && mCurrentSelectedRunner.ExecutorEngine != null)
+                {
                     index = mRunSetConfig.GingerRunners.IndexOf(mCurrentSelectedRunner.ExecutorEngine.GingerRunner) + 1;
+                }
                 GingerRunner newRunner = new GingerRunner();
                 GingerExecutionEngine executionEngine = new GingerExecutionEngine(newRunner);
                 //newRunner.Executor = new GingerExecutionEngine(newRunner);
@@ -2274,7 +2280,7 @@ namespace Ginger.Run
 
         private void xmovedownBusinessflow_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress()) { return; }
 
             if (mCurrentBusinessFlowRunnerItem != null)
             {
@@ -2283,7 +2289,7 @@ namespace Ginger.Run
                 if (Indx < (mCurrentSelectedRunner.ExecutorEngine.BusinessFlows.Count - 1))
                     mCurrentSelectedRunner.ExecutorEngine.BusinessFlows.Move(Indx, Indx + 1);
                 else
-                    return;
+                { return; }
             }
             else
             {
@@ -2387,7 +2393,7 @@ namespace Ginger.Run
 
         private void duplicateRunner(GingerExecutionEngine runner)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress()) { return; }
 
             if (runner != null)
             {
@@ -2442,9 +2448,9 @@ namespace Ginger.Run
         private void xRunnersCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (xRunnersCombo.SelectedValue == null)
-                return;
+            { return; }
             if (mCurrentSelectedRunner.ExecutorEngine.GingerRunner.Guid == (Guid)xRunnersCombo.SelectedValue)
-                return;
+            { return; }
             GingerRunner SelectedRunner = mRunSetConfig.GingerRunners.Where(x => x.Guid.ToString() == xRunnersCombo.SelectedValue.ToString()).FirstOrDefault();
             int index = mRunSetConfig.GingerRunners.IndexOf(SelectedRunner);
             List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
@@ -2453,14 +2459,14 @@ namespace Ginger.Run
 
         private void xBusinessflowsDetailView_Click(object sender, RoutedEventArgs e)
         {
-            if (xBusinessflowsRunnerItemsListView == null || xBusinessflowsRunnerItemsListView.Items.Count == 0) return;
+            if (xBusinessflowsRunnerItemsListView == null || xBusinessflowsRunnerItemsListView.Items.Count == 0) { return; }
 
             RunnerItemPage rii = (RunnerItemPage)xBusinessflowsRunnerItemsListView.Items[0];
             bool isExpand = false;
             if (rii.pageGrid.RowDefinitions[1].Height.Value == 0)
-                isExpand = true;
+            { isExpand = true; }
             else
-                isExpand = false;
+            { isExpand = false; }
             foreach (RunnerItemPage ri in xBusinessflowsRunnerItemsListView.Items)
             {
                 ri.ExpandCollapseRunnerItem(isExpand);
@@ -2477,7 +2483,7 @@ namespace Ginger.Run
 
         private void xBusinessflowsActive_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress()) { return; }
 
             bool SetBusinessflowActive = false;
             if (xBusinessflowsRunnerItemsListView.Items.Count > 0)
@@ -2508,9 +2514,9 @@ namespace Ginger.Run
             RunnerItemPage rii = (RunnerItemPage)xActivitiesRunnerItemsListView.Items[0];
             bool isExpand = false;
             if (rii.pageGrid.RowDefinitions[1].Height.Value == 0)
-                isExpand = true;
+            { isExpand = true; }
             else
-                isExpand = false;
+            { isExpand = false; }
             foreach (RunnerItemPage ri in xActivitiesRunnerItemsListView.Items)
             {
                 ri.ExpandCollapseRunnerItem(isExpand);
@@ -2532,9 +2538,9 @@ namespace Ginger.Run
             RunnerItemPage rii = (RunnerItemPage)xActionsRunnerItemsListView.Items[0];
             bool isExpand = false;
             if (rii.pageGrid.RowDefinitions[1].Height.Value == 0)
-                isExpand = true;
+            { isExpand = true; }
             else
-                isExpand = false;
+            { isExpand = false; }
             foreach (RunnerItemPage ri in xActionsRunnerItemsListView.Items)
             {
                 ri.ExpandCollapseRunnerItem(isExpand);
@@ -2576,7 +2582,7 @@ namespace Ginger.Run
         }
         private void xRunnersActive_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress()) { return; }
 
             bool SetRunnerActive = false;
             List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
@@ -2663,7 +2669,7 @@ namespace Ginger.Run
         {
             try
             {
-                if (CheckIfExecutionIsInProgress()) return;
+                if (CheckIfExecutionIsInProgress()) { return; }
 
                 mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
 
