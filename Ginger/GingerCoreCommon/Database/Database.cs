@@ -142,10 +142,6 @@ namespace GingerCore.Environments
             {
                 return Enum.GetNames(typeof(eDBTypes)).ToList();
             }
-            set
-            {
-                //DbTypes = value;
-            }
         }
 
         private DateTime LastConnectionUsedTime;

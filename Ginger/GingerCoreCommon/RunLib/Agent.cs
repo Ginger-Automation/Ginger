@@ -169,8 +169,13 @@ namespace GingerCore
                     {
                         Guid guid = ((List<Guid>)obj).Where(x => tagGuid.Equals(x) == true).FirstOrDefault();
                         if (!guid.Equals(Guid.Empty))
+                        {
                             return true;
+                        }
                     }
+                    break;
+                default:
+                    //not implemented
                     break;
             }
             return false;
@@ -341,8 +346,9 @@ namespace GingerCore
         public void CancelTMSTATask(object sender, DoWorkEventArgs e)
         {
             if (MSTATask == null)
+            {
                 return;
-
+            }
             // Using cancellation token source to cancel  getting exceptions when trying to close agent and task is in running condition
 
             while (MSTATask != null && !(MSTATask.Status == TaskStatus.RanToCompletion || MSTATask.Status == TaskStatus.Faulted || MSTATask.Status == TaskStatus.Canceled))

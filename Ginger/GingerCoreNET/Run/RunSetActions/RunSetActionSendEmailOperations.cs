@@ -127,7 +127,10 @@ namespace Ginger.Run.RunSetActions
                     //Email.Body = HTP.HTML;
 
                     return;
-                    // break;
+                // break;
+                default:
+                    //not implemented
+                    break;
             }
 
             if (HRB != null)

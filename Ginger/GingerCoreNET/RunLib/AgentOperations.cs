@@ -83,9 +83,9 @@ namespace GingerCore
         {
             get
             {
-                if (IsFailedToStart) return Agent.eStatus.FailedToStart;
+                if (IsFailedToStart) { return Agent.eStatus.FailedToStart; }
 
-                if (Agent.mIsStarting) return Agent.eStatus.Starting;
+                if (Agent.mIsStarting) { return Agent.eStatus.Starting; }
 
                 if (Agent.AgentType == Agent.eAgentType.Service)
                 {
@@ -101,7 +101,7 @@ namespace GingerCore
                 }
 
 
-                if (Driver == null) return Agent.eStatus.NotStarted;
+                if (Driver == null) { return Agent.eStatus.NotStarted; }
                 //TODO: fixme  running called too many - and get stuck
                 bool DriverIsRunning = false;
                 lock (thisLock)
@@ -109,7 +109,7 @@ namespace GingerCore
                     DriverIsRunning = Driver.IsRunning();
                     //Reporter.ToLog(eAppReporterLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {DriverIsRunning}"); //TODO: if needed so need to be more informative including Agent type & name and to be written only in Debug mode of Log
                 }
-                if (DriverIsRunning) return Agent.eStatus.Running;
+                if (DriverIsRunning) { return Agent.eStatus.Running; }
 
                 return Agent.eStatus.NotStarted;
             }
@@ -800,7 +800,9 @@ namespace GingerCore
         public void HighLightElement(Act act)
         {
             if (Driver != null)
-                Driver.HighlightActElement(act);
+            {
+                Driver.HighlightActElement(act); 
+            }
         }
 
 

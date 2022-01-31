@@ -289,7 +289,9 @@ namespace GingerCore.Actions.Communication
             }
 
             if (email.Event != null && email.Event.IndexOf("Failed") >= 0)
+            {
                 Error = email.Event;
+            }
         }
     }
 }

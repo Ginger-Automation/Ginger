@@ -121,7 +121,9 @@ namespace GingerCore.GeneralLib
                 string mailHost = mVE.ValueCalculated;
 
                 if (Email.SMTPPort == 0 || Email.SMTPPort == null)
+                {
                     Email.SMTPPort = 25;
+                }
                 var smtp = new SmtpClient()
                 {
                     Host = mailHost,  // amdocs config              

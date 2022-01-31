@@ -177,7 +177,9 @@ namespace Ginger.Reports
                 token = Attribute.GetCustomAttribute(mi, typeof(FieldParams), false) as FieldParams;
 
                 if (token == null)
+                {
                     continue;
+                }
                 if (isSourceFeild && (Attribute.GetCustomAttribute(mi, typeof(FieldParamsFieldType), false) as FieldParamsFieldType).FieldType.ToString() == FieldsType.Section.ToString())
                 {
                     continue;

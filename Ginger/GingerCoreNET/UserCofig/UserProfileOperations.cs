@@ -269,7 +269,9 @@ namespace Ginger
                                     List<Agent> platformAgents = (from p in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where p.Platform == ap.Platform select p).ToList();
                                     Agent matchingAgent = platformAgents.Where(x => x.Name == mappingDic[ap.AppName]).FirstOrDefault();
                                     if (matchingAgent != null)
+                                    {
                                         ap.LastMappedAgentName = matchingAgent.Name;
+                                    }
                                 }
                             }
                         }

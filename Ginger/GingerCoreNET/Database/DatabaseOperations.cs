@@ -496,6 +496,9 @@ namespace GingerCore.Environments
                                 case eDBTypes.PostgreSQL:
                                     tableName = (string)row[2];
                                     break;
+                                default:
+                                    //not implemented
+                                    break;
                             }
 
                             rc.Add(tableName);
