@@ -860,7 +860,7 @@ namespace Amdocs.Ginger.Repository
                 RepositoryItemBase item = (RepositoryItemBase)(object)cacheitem;
                 mFolderItemsCache.DeleteItem(item.FilePath);
                 item.FilePath = Path.Combine(FolderFullPath, Path.GetFileName(PathHelper.GetLongPath(((RepositoryItemBase)item).FilePath)));
-                item.FileName = Path.Combine(FolderFullPath, Path.GetFileName(PathHelper.GetLongPath(((RepositoryItemBase)item).FilePath)));
+                item.FileName = Path.Combine(FolderFullPath, Path.GetFileName(PathHelper.GetLongPath((item).FilePath)));
                 item.ContainingFolder = FolderRelativePath;
                 item.ContainingFolderFullPath = FolderFullPath;
                 mFolderItemsCache[item.FilePath] = item;
