@@ -150,24 +150,20 @@ namespace GingerCore.Actions
                     case eActSikuliOperation.Click:
                         sekuliScreen.Click(sikuliPattern);
                         break;
-
                     case eActSikuliOperation.SetValue:
                         sekuliScreen.Type(sikuliPattern, SetTextValue);
                         break;
-
                     case eActSikuliOperation.DoubleClick:
                         sekuliScreen.DoubleClick(sikuliPattern);
                         break;
-
                     case eActSikuliOperation.MouseRightClick:
                         sekuliScreen.RightClick(sikuliPattern);
                         break;
-
                     case eActSikuliOperation.Exist:
                         sekuliScreen.Exists(sikuliPattern);
                         break;
                     default:
-                        throw new Exception("Case not implemented");
+                        break;
                 }
             }
             catch (Exception ex)
