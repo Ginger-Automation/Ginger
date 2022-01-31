@@ -233,6 +233,9 @@ namespace GingerCore
                 case eDriverType.JavaDriver:
                     isSupport = true;
                     break;
+                default:
+                    //not implemented
+                    break;
             }
             return isSupport;
         }
