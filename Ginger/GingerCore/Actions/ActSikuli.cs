@@ -147,6 +147,8 @@ namespace GingerCore.Actions
 
                 switch (ActSikuliOperation)
                 {
+                    default:
+                    //do nothing
                     case eActSikuliOperation.Click:
                         sekuliScreen.Click(sikuliPattern);
                         break;
@@ -166,8 +168,6 @@ namespace GingerCore.Actions
                     case eActSikuliOperation.Exist:
                         sekuliScreen.Exists(sikuliPattern);
                         break;
-                    default:
-                        //do nothing
                 }
             }
             catch (Exception ex)
