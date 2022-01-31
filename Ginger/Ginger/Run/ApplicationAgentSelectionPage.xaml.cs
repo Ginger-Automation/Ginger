@@ -35,9 +35,9 @@ namespace Ginger.Run
     {
         GenericWindow _pageGenericWin = null;
         ApplicationAgent mApplicationAgent;
-        GingerRunner mGingerRunner;
+        GingerExecutionEngine mGingerRunner;
 
-        public ApplicationAgentSelectionPage(GingerRunner gingerRunner, ApplicationAgent applicationAgent)
+        public ApplicationAgentSelectionPage(GingerExecutionEngine gingerRunner, ApplicationAgent applicationAgent)
         {
             InitializeComponent();
 
@@ -52,7 +52,7 @@ namespace Ginger.Run
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = Agent.Fields.Name, Header = "Agent Name", WidthWeight = 100, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(Agent.Name), Header = "Agent Name", WidthWeight = 100, ReadOnly = true });
             grdPossibleAgents.SetAllColumnsDefaultView(defView);
             grdPossibleAgents.InitViewItems();
 
@@ -77,7 +77,7 @@ namespace Ginger.Run
                     if (optionalAgentsList != null && mGingerRunner != null)
                     {
                         //remove already mapped agents
-                        List<IApplicationAgent> mappedApps = mGingerRunner.ApplicationAgents.Where(x => x.Agent != null).ToList();
+                        List<IApplicationAgent> mappedApps = mGingerRunner.GingerRunner.ApplicationAgents.Where(x => x.Agent != null).ToList();
                         foreach (ApplicationAgent mappedApp in mappedApps)
                         {
                             if (mappedApp.Agent.Platform == appPlatform && mappedApp != mApplicationAgent)

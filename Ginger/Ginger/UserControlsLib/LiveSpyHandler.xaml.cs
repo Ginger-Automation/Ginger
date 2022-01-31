@@ -42,7 +42,7 @@ namespace Ginger.UserControlsLib
     /// </summary>
     public partial class LiveSpyHandler : UserControl
     {
-        public Agent DirverAgent { get; set; }
+        public Agent DriverAgent { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private ElementInfo mSpySelectedElement = null;
@@ -69,15 +69,15 @@ namespace Ginger.UserControlsLib
         {
             get
             {
-                if (DirverAgent != null && DirverAgent.Status == Agent.eStatus.Running)
+                if (DriverAgent != null && ((AgentOperations)DriverAgent.AgentOperations).Status == Agent.eStatus.Running)
                 {
-                    return DirverAgent.Driver as IWindowExplorer;
+                    return ((AgentOperations)DriverAgent.AgentOperations).Driver as IWindowExplorer;
                 }
                 else
                 {
-                    if (DirverAgent != null)
+                    if (DriverAgent != null)
                     {
-                        DirverAgent.Close();
+                        DriverAgent.AgentOperations.Close();
                     }
                     return null;
                 }
@@ -98,7 +98,7 @@ namespace Ginger.UserControlsLib
                 return;
             }
 
-            if (DirverAgent.Driver.IsDriverBusy)
+            if (((AgentOperations)DriverAgent.AgentOperations).Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
                 xLiveSpyButton.IsChecked = false;

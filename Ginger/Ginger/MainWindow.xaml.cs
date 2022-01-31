@@ -113,14 +113,14 @@ namespace Ginger
                     Reporter.ToStatus(eStatusMsgKey.ExitMode);
                 }
                 WorkSpace.Instance.UserProfile.GingerStatus = eGingerStatus.Active;
-                WorkSpace.Instance.UserProfile.SaveUserProfile();
-                WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
+                WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
+                ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
 
                 //Main Menu                            
                 xGingerIconImg.ToolTip = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationName + Environment.NewLine + "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
                 SetSolutionDependedUIElements();
                 UpdateUserDetails();
-                if (WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects.Count > 0)
+                if (((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.Count > 0)
                 {
                     xRecentSolutionsMenuItem.Visibility = Visibility.Visible;
                 }
@@ -271,11 +271,11 @@ namespace Ginger
             {
                 //Insert
                 int insertIndex = xSolutionSelectionMainMenuItem.Items.IndexOf(xRecentSolutionsMenuItem) + 1;
-                if (WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects.Count > 0)
+                if (((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.Count > 0)
                 {
                     xRecentSolutionsMenuItem.Visibility = Visibility.Visible;
 
-                    foreach (Solution sol in WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects)
+                    foreach (Solution sol in ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects)
                     {
                         AddSubMenuItem(xSolutionSelectionMainMenuItem, sol.Name, sol, RecentSolutionSelection_Click, insertIndex++, sol.Folder, eImageType.Solution);
                     }
@@ -347,9 +347,9 @@ namespace Ginger
         {
             try
             {
-                if (WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects.Count > 0)
+                if (((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.Count > 0)
                 {
-                    WorkSpace.Instance.OpenSolution(WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects[0].Folder);
+                    WorkSpace.Instance.OpenSolution(((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects[0].Folder);
                     xSolutionTabsListView.SelectedItem = null;
                     xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                 }
@@ -504,6 +504,8 @@ namespace Ginger
         private void xCreateNewSolutionMenuItem_Click(object sender, RoutedEventArgs e)
         {
             Solution s1 = new Solution();
+            SolutionOperations solutionOperations = new SolutionOperations(s1);
+            s1.SolutionOperations = solutionOperations;
             AddSolutionPage addSol = new AddSolutionPage(s1);
             addSol.ShowAsWindow();
         }

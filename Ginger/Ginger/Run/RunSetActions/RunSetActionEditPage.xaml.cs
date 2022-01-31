@@ -35,16 +35,18 @@ namespace Ginger.Run.RunSetActions
         {
             InitializeComponent();
             mRunSetAction = RunSetAction;
+            RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(mRunSetAction);
+            mRunSetAction.runSetActionBaseOperations = runSetActionBaseOperations;
 
             xShowIDUC.Init(mRunSetAction);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NameTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Name);
-            RunAtComboBox.Init(mRunSetAction, RunSetActionBase.Fields.RunAt,mRunSetAction.GetRunOptions());
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NameTextBox, TextBox.TextProperty, RunSetAction, nameof(RunSetActionBase.Name));
+            RunAtComboBox.Init(mRunSetAction, nameof(RunSetActionBase.RunAt),mRunSetAction.GetRunOptions());
 
             GingerCore.General.FillComboFromEnumObj(ConditionComboBox, RunSetAction.Condition);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConditionComboBox, ComboBox.SelectedValueProperty, RunSetAction, RunSetActionBase.Fields.Condition);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConditionComboBox, ComboBox.SelectedValueProperty, RunSetAction, nameof(RunSetActionBase.Condition));
             
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(StatusTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Status);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ErrorsTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Errors);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(StatusTextBox, TextBox.TextProperty, RunSetAction, nameof(RunSetActionBase.Status));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ErrorsTextBox, TextBox.TextProperty, RunSetAction, nameof(RunSetActionBase.Errors));
 
             //Page p = mRunSetAction.GetEditPage();
             Page p = GetEditPage(mRunSetAction.GetEditPage());
@@ -89,7 +91,7 @@ namespace Ginger.Run.RunSetActions
                 return;
             }
             mRunSetAction.SolutionFolder = WorkSpace.Instance.Solution.Folder;
-            mRunSetAction.ExecuteWithRunPageBFES();
+            mRunSetAction.runSetActionBaseOperations.ExecuteWithRunPageBFES();
         }
     }
 }

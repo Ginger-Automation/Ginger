@@ -54,7 +54,7 @@ namespace Ginger.Agents.AddAgentWizardLib
             xTestBtn.IsEnabled = false;
             try
             {
-                mWizard.Agent.Test();
+                mWizard.Agent.AgentOperations.Test();
             }
             finally
             {

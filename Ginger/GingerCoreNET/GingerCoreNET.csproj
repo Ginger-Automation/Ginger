@@ -907,4 +907,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SolutionRepositoryLib\RepositoryObjectsLib\PlatformsLib\" />
+  </ItemGroup>
+
 </Project>

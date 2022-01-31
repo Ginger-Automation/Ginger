@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -451,6 +452,12 @@ namespace Amdocs.Ginger.Common.GeneralLib
             foreach (T o in List)
                 ObservableList.Add(o);
             return ObservableList;
+        }
+        public static bool isDesignMode()
+        {
+            //TODO: move this func to General
+            bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+            return designMode;
         }
     }
 }
