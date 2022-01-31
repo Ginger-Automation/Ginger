@@ -57,6 +57,9 @@ namespace UnitTests.NonUITests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
+            AgentOperations agentOperations = new AgentOperations(wsAgent);
+            wsAgent.AgentOperations = agentOperations;
+
             WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
@@ -313,6 +316,9 @@ namespace UnitTests.NonUITests
             WebServicesDriver mDriver = new WebServicesDriver(mBF);
 
             Agent wsAgent = new Agent();
+            AgentOperations agentOperations = new AgentOperations(wsAgent);
+            wsAgent.AgentOperations = agentOperations;
+
             wsAgent.DriverType = Agent.eDriverType.WebServices;
             ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
             ApplicationAgent mAG = new ApplicationAgent();
@@ -436,6 +442,9 @@ namespace UnitTests.NonUITests
             WebServicesDriver mDriver = new WebServicesDriver(mBF);
 
             Agent wsAgent = new Agent();
+            AgentOperations agentOperations = new AgentOperations(wsAgent);
+            wsAgent.AgentOperations = agentOperations;
+
             wsAgent.DriverType = Agent.eDriverType.WebServices;
             ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
             ApplicationAgent mAG = new ApplicationAgent();
