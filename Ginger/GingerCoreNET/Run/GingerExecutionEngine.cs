@@ -521,6 +521,18 @@ namespace Ginger.Run
                         CloseAgents();
                         if (mGingerRunner.ProjEnvironment != null)
                         {
+                            //needed for db close connection
+                            foreach (EnvApplication ea in mGingerRunner.ProjEnvironment.Applications)
+                            {
+                                foreach (Database db in ea.Dbs)
+                                {
+                                    if (db.DatabaseOperations == null)
+                                    {
+                                        DatabaseOperations databaseOperations = new DatabaseOperations(db);
+                                        db.DatabaseOperations = databaseOperations;
+                                    }
+                                }
+                            }
                             mGingerRunner.ProjEnvironment.CloseEnvironment();
                         }
                         Status = eRunStatus.Completed;
