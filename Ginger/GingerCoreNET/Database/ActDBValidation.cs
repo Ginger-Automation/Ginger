@@ -254,7 +254,7 @@ namespace GingerCore.Actions
                         
                         if (!DB.KeepConnectionOpen)
                         {
-                            DB.CloseConnection();
+                            DB.DatabaseOperations.CloseConnection();
                         }
                     }
                     break;
@@ -337,6 +337,9 @@ namespace GingerCore.Actions
             DB.ProjEnvironment = RunOnEnvironment;
             DB.BusinessFlow = RunOnBusinessFlow;
 
+            DatabaseOperations databaseOperations = new DatabaseOperations(DB);
+            DB.DatabaseOperations = databaseOperations;
+
             return true;
         }
 
@@ -345,7 +348,7 @@ namespace GingerCore.Actions
             string SQL = GetInputParamCalculatedValue("SQL");
             if (string.IsNullOrEmpty(SQL))
                 Error = "Fail to run Update SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error = Missing Query";
-            string val = DB.GetRecordCount(SQL);
+            string val = DB.DatabaseOperations.GetRecordCount(SQL);
             this.AddOrUpdateReturnParamActual("Record Count", val);
         }
         private void UpdateSqlHndler()
@@ -369,7 +372,7 @@ namespace GingerCore.Actions
                 if (string.IsNullOrEmpty(SQL))
                     Error = "Fail to run Update SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error = Missing Query";
                
-                string val = DB.fUpdateDB(SQL, CommitDB_Value);
+                string val = DB.DatabaseOperations.fUpdateDB(SQL, CommitDB_Value);
                     this.AddOrUpdateReturnParamActual("Impacted Lines", val);
                 
             }
@@ -384,7 +387,7 @@ namespace GingerCore.Actions
         {            
             if (string.IsNullOrEmpty(Where))
                 Where = "rownum<2";
-            string val = DB.fTableColWhere(Table, Column, Where);
+            string val = DB.DatabaseOperations.fTableColWhere(Table, Column, Where);
             this.AddOrUpdateReturnParamActual(Column , val);
         }
 
@@ -414,7 +417,7 @@ namespace GingerCore.Actions
                 foreach (ActInputValue param in QueryParams)
                     SQL = SQL.Replace("<<" + param.ItemName + ">>", param.ValueForDriver);
 
-                List<object> DBResponse = DB.FreeSQL(SQL, queryTimeout); 
+                List<object> DBResponse = DB.DatabaseOperations.FreeSQL(SQL, queryTimeout); 
                 
                 List<string> headers=( List<string>) DBResponse.ElementAt(0);
                 List<List<string>> Records = (List<List<string>>)DBResponse.ElementAt (1);
@@ -452,7 +455,7 @@ namespace GingerCore.Actions
 
                 if (e.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                 {
-                    string message = Database.GetMissingDLLErrorDescription();
+                    string message = DatabaseOperations.GetMissingDLLErrorDescription();
                     Reporter.ToLog(eLogLevel.WARN, message, e);
                     this.Error += Environment.NewLine + message;
                 }

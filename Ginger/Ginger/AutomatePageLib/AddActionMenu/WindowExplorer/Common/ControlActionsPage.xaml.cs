@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages;
 using Ginger.Reports;
+using Ginger.Run;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
@@ -238,11 +239,11 @@ namespace Ginger.WindowExplorer
 
             SetActionDetails(act);
             mContext.Runner.PrepActionValueExpression(act);
-            ApplicationAgent ag =(ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent ag =(ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.Where(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             if (ag != null)
             {
                 mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-               ((Agent) ag.Agent).RunAction(act);
+               ((Agent) ag.Agent).AgentOperations.RunAction(act);
             }
             
             TestStatusTextBlock.Text = string.Empty;

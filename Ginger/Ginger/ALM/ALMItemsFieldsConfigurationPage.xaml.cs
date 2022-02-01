@@ -98,7 +98,7 @@ namespace Ginger.ALM
             {
                 WorkSpace.Instance.Solution.ExternalItemsFields = tempItemList;
             }
-            WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
+            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
             genWin.Close();
         }
 

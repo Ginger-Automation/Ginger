@@ -114,7 +114,7 @@ namespace Ginger.Agents
             }
             
             GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mAgent.DriverType, lst);   
-            if(mAgent.SupportVirtualAgent())
+            if(mAgent.AgentOperations.SupportVirtualAgent())
             {
                 xVirtualAgentsPanel.Visibility = Visibility.Visible;
                 xAgentVirtualSupported.Content = "Yes";
@@ -149,7 +149,7 @@ namespace Ginger.Agents
                 else
                 {
                     mOriginalDriverType = xDriverTypeComboBox.SelectedItem.ToString();                    
-                    mAgent.InitDriverConfigs(); 
+                    mAgent.AgentOperations.InitDriverConfigs(); 
                 }                
             }
         }
@@ -162,7 +162,7 @@ namespace Ginger.Agents
             {
                 await Task.Run(() =>
                 {
-                    mAgent.Test();
+                    mAgent.AgentOperations.Test();
                 });
             }
             finally

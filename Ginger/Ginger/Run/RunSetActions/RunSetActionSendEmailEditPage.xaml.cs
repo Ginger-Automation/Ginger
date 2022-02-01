@@ -114,9 +114,9 @@ namespace Ginger.Run.RunSetActions
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
 
-            viewCols.Add(new GridColView() { Field = EmailAttachment.Fields.AttachmentType, WidthWeight = 50, BindingMode = BindingMode.OneTime });
-            viewCols.Add(new GridColView() { Field = EmailAttachment.Fields.Name, WidthWeight = 300 });
-            viewCols.Add(new GridColView() { Field = EmailAttachment.Fields.ZipIt, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });            
+            viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.AttachmentType), WidthWeight = 50, BindingMode = BindingMode.OneTime });
+            viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.Name), WidthWeight = 300 });
+            viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.ZipIt), WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });            
             
             AttachmentsGrid.SetAllColumnsDefaultView(view);
             AttachmentsGrid.InitViewItems();
@@ -142,7 +142,7 @@ namespace Ginger.Run.RunSetActions
                 BodyTextBox.Visibility = System.Windows.Visibility.Collapsed;
 
                 ReportInfo RI = new ReportInfo(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, WorkSpace.Instance.RunsetExecutor);
-                runSetActionEmailReport.SetBodyFromHTMLReport(RI);
+                ((RunSetActionSendEmailOperations)runSetActionEmailReport.RunSetActionSendEmailOperations).SetBodyFromHTMLReport(RI);
 
                 BodyWebBrowser.NavigateToString(runSetActionEmailReport.Email.Body);
                 CustomReportSection.Visibility = System.Windows.Visibility.Hidden;

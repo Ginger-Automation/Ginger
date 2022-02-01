@@ -402,7 +402,7 @@ namespace Ginger
 
         private bool IsDriverBusy()
         {
-            if (mAgent != null && mAgent.Driver.IsDriverBusy)
+            if (mAgent != null && ((AgentOperations)mAgent.AgentOperations).Driver.IsDriverBusy)
             {
                 return true;
             }
@@ -470,7 +470,7 @@ namespace Ginger
 
             if(WindowExplorerDriver == null)
             {
-                WindowExplorerDriver = (IWindowExplorer)Context.Agent.Driver;
+                WindowExplorerDriver = (IWindowExplorer)((AgentOperations)Context.Agent.AgentOperations).Driver;
             }
 
             if (WindowExplorerDriver.IsPOMSupported())

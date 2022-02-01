@@ -18,6 +18,7 @@ limitations under the License.
 
 using AlmDataContractsStd.Contracts;
 using AlmDataContractsStd.Enums;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -231,7 +232,7 @@ namespace GingerCore.ALM.JIRA.Bll
                 {
                     businessFlow.ExternalID = exportResponse.First().DataResult.key;
                 }
-                result = CreateTestExecution(businessFlow, tcArray, testExecutionFields);
+                result = true;
                 this.UpdateTestCaseLabel(bftestCases);
             }
             else
@@ -301,6 +302,21 @@ namespace GingerCore.ALM.JIRA.Bll
                     String timeStamp = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
                     publishToALMConfig.VariableForTCRunName = "GingerRun_" + timeStamp;
                 }
+
+                //Create new TEST_EXECUTION for each execution result publish operation
+                var bftestCases = bizFlow.ActivitiesGroups.ToList();
+                List<IJiraExportData> tcArray = CreateExportArrayFromActivites(bftestCases);
+                
+                //Get updated fields
+                ObservableList<ExternalItemFieldBase> exitingFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
+                JiraImportManager jiraImportObj = new JiraImportManager(jiraRepObj);
+                ObservableList<ExternalItemFieldBase> latestALMFields = jiraImportObj.GetALMItemFields(ResourceType.ALL, null, true);
+                ALMCore AlmCore = new JiraCore();
+                ObservableList<ExternalItemFieldBase> mergedFields = AlmCore.RefreshALMItemFields(exitingFields, latestALMFields);
+
+                var testExecutionFields = mergedFields.Where(a => a.ItemType == "TEST_EXECUTION" && (a.ToUpdate || a.Mandatory));
+                var isCreated = CreateTestExecution(bizFlow, tcArray, testExecutionFields);
+
                 foreach (var actGroup in bizFlow.ActivitiesGroups)
                 {
                     var testExecutionData = CreateTestRunData(actGroup);
@@ -542,7 +558,7 @@ namespace GingerCore.ALM.JIRA.Bll
             jiraIssue.issueType = "Test Execution";
             jiraIssue.resourceType = ResourceType.TEST_CASE_EXECUTION_RECORDS;
             jiraIssue.ExportFields.Add("project", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMProjectName } });
-            jiraIssue.ExportFields.Add("summary", new List<IJiraExportData>() { new JiraExportData() { value = businessFlow.Name + "Test Execution" } });
+            jiraIssue.ExportFields.Add("summary", new List<IJiraExportData>() { new JiraExportData() { value = businessFlow.Name + " Test Execution" + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") } });
             jiraIssue.ExportFields.Add("description", new List<IJiraExportData>() { new JiraExportData() { value = businessFlow.Description + " Test Execution" } });
             jiraIssue.ExportFields.Add("issuetype", new List<IJiraExportData>() { new JiraExportData() { value = "Test Execution" } });
             jiraIssue.ExportFields.Add("reporter", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMUserName } });
@@ -559,7 +575,6 @@ namespace GingerCore.ALM.JIRA.Bll
             var testCaseTemplate = jiraRepObj.GetFieldFromTemplateByName(ResourceType.TEST_CASE_EXECUTION_RECORDS, ALMCore.DefaultAlmConfig.ALMProjectKey, "Test Cases");
             if (testCaseTemplate != null && tcArray.Count > 0)
                 jiraIssue.ExportFields.Add(testCaseTemplate.key, tcArray);
-            jiraIssue.key = businessFlow.AlmData;
             exportData.Add(jiraIssue);
             var exportExecutionResponse = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, exportData);
             SetBusinessFlowAlmData(exportExecutionResponse, businessFlow);

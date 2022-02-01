@@ -52,7 +52,7 @@ namespace Ginger.Agents
                     break;
 
                 case eAgentControlValidationRuleType.AgentIsMappedAndRunning:
-                    if (value == null || ((Agent)value).Status != Agent.eStatus.Running)
+                    if (value == null || ((AgentOperations)((Agent)value).AgentOperations).Status != Agent.eStatus.Running)
                         return new ValidationResult(false, "Agent must be mapped and running");
                     break;
             }

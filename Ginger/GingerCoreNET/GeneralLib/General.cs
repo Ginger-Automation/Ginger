@@ -254,12 +254,12 @@ namespace GingerCoreNET.GeneralLib
         {
             return SecurityElement.Escape(str);
         }
-        public static bool isDesignMode()
-        {
-            //TODO: move this func to General
-            bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
-            return designMode;
-        }
+        //public static bool isDesignMode()
+        //{
+        //    //TODO: move this func to General
+        //    bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+        //    return designMode;
+        //}
 
         public static ObservableList<T> ConvertListToObservableList<T>(List<T> List)
         {

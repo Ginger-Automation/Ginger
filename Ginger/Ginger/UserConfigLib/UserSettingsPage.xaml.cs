@@ -97,7 +97,7 @@ namespace Ginger.User
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
-             WorkSpace.Instance.UserProfile.SaveUserProfile();
+             WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
             _pageGenericWin.Close();
         }
 

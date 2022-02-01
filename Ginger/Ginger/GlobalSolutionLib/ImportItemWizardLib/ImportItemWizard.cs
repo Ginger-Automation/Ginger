@@ -159,7 +159,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     GlobalSolutionUtils.Instance.AddEnvDependanciesToSolution(EnvAppListToImport);
                 }
                 //Save solution
-                WorkSpace.Instance.Solution.SaveSolution();
+                WorkSpace.Instance.Solution.SolutionOperations.SaveSolution();
             }
         }
 

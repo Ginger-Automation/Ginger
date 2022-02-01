@@ -54,7 +54,7 @@ namespace Ginger.Run
 
         GenericWindow _pageGenericWin = null;
 
-        GingerRunner mGingerRunner;
+        public GingerRunner mGingerRunner;
         Context mContext;
 
         public BusinessFlowRunConfigurationsPage(GingerRunner runner, BusinessFlow businessFlow)
@@ -65,7 +65,7 @@ namespace Ginger.Run
 
             mGingerRunner = runner;
             mBusinessFlow = businessFlow;
-            mContext = new Context() { BusinessFlow = businessFlow, Runner = runner };
+            mContext = new Context() { BusinessFlow = businessFlow, Runner = runner.Executor };
 
             mBusinessFlow.SaveBackup();
 
@@ -147,7 +147,7 @@ namespace Ginger.Run
                     //**Legacy--- set the Variabels can be used- user should use Global Variabels/ Output Variabels instead
                     ObservableList<string> optionalVars = new ObservableList<string>();
                     optionalVars.Add(string.Empty);//default value for clear selection
-                    foreach (VariableBase var in mGingerRunner.GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars: true, includePrevRunnersVars: false))
+                    foreach (VariableBase var in ((GingerExecutionEngine)mGingerRunner.Executor).GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars: true, includePrevRunnersVars: false))
                     {
                         optionalVars.Add(var.Name);
                     }
@@ -160,7 +160,7 @@ namespace Ginger.Run
 
                     //Set Output Variabels can be used
                     ObservableList<VariableBase> optionalOutputVars = new ObservableList<VariableBase>();
-                    foreach (VariableBase outputVar in mGingerRunner.GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true))
+                    foreach (VariableBase outputVar in ((GingerExecutionEngine)mGingerRunner.Executor).GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true))
                     {
                         optionalOutputVars.Add(outputVar);
                     }
@@ -190,7 +190,7 @@ namespace Ginger.Run
                     List<VariableBase> selectedVars = grdVariables.Grid.SelectedItems.Cast<VariableBase>().ToList();
                     foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.Runners)
                     {
-                        List<BusinessFlow> matchingBfs = runner.BusinessFlows.Where(x => x.Guid == mBusinessFlow.Guid).ToList();
+                        List<BusinessFlow> matchingBfs = ((GingerExecutionEngine)runner.Executor).BusinessFlows.Where(x => x.Guid == mBusinessFlow.Guid).ToList();
                         countMatchingBfs += matchingBfs.Count;
                         foreach (BusinessFlow bf in matchingBfs)
                         {

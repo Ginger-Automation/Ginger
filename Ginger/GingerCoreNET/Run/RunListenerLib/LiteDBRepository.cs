@@ -341,7 +341,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             bf.ActivitiesGroups.ToList().ForEach(acg => this.MapAcgToLiteDb(acg, bf));
         }
 
-        public override void SetReportRunner(GingerRunner gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
+        public override void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
             base.SetReportRunner(gingerRunner, gingerReport, gingerData, mContext, filename, runnerCount);
             LiteDbRunner runner = new LiteDbRunner();
@@ -466,7 +466,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSet.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), ChildExecutedItemsCountAction);
             runSet.ChildPassedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), ChildPassedItemsCountAction);
         }
-        public override void RunSetUpdate(ObjectId runSetLiteDbId, ObjectId runnerLiteDbId, GingerRunner gingerRunner)
+        public override void RunSetUpdate(ObjectId runSetLiteDbId, ObjectId runnerLiteDbId, GingerExecutionEngine gingerRunner)
         {
             try
             {
@@ -475,9 +475,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 runner._id = runnerLiteDbId;
                 runner.Seq = 1;
                 runner.Name = "Automated Runner";
-                runner.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
-                runner.Environment = gingerRunner.ProjEnvironment != null ? gingerRunner.ProjEnvironment.Name : string.Empty;
-                runner.GUID = gingerRunner.Guid;
+                runner.ApplicationAgentsMappingList = gingerRunner.GingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
+                runner.Environment = gingerRunner.GingerRunner.ProjEnvironment != null ? gingerRunner.GingerRunner.ProjEnvironment.Name : string.Empty;
+                runner.GUID = gingerRunner.GingerRunner.Guid;
                 if (gingerRunner.BusinessFlows.Count > 0)
                 {
                     runner.StartTimeStamp = gingerRunner.BusinessFlows[0].StartTimeStamp;
@@ -516,17 +516,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             
         }
 
-        internal override void CreateNewDirectory(string logFolder)
+        public override void CreateNewDirectory(string logFolder)
         {
             return;
         }
 
-        internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
+        public override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
         {          
             return;
         }
 
-        internal override void StartRunSet()
+        public override void StartRunSet()
         {
             ExecutionLoggerManager.RunSetReport = new RunSetReport();
             ExecutionLoggerManager.RunSetReport.Name = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
@@ -537,7 +537,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             ExecutionLoggerManager.RunSetReport.Watch.Start();
         }
 
-        internal override void EndRunSet()
+        public override void EndRunSet()
         {
             if (ExecutionLoggerManager.RunSetReport != null)
             {
@@ -908,7 +908,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         /// <summary>
         /// Clear last run details if we are not continue from last run
         /// </summary>
-        internal override void ResetLastRunSetDetails()
+        public override void ResetLastRunSetDetails()
         {
             lastBfStatus = eRunStatus.Pending;
             liteDbBFList.Clear();

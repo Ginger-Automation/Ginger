@@ -220,6 +220,9 @@
     <Compile Include="Actions\ActionConversion\SelectActivityWzardPage.xaml.cs">
       <DependentUpon>SelectActivityWzardPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionEditPages\ActSikuliEditPage.xaml.cs">
+      <DependentUpon>ActSikuliEditPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionEditPages\ActValidationEditPage.xaml.cs">
       <DependentUpon>ActValidationEditPage.xaml</DependentUpon>
     </Compile>
@@ -2025,6 +2028,12 @@
     <Content Include="Help\Library\OfflineHelp.htm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="sikulirestapi-1.0.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sikulixapi-2.0.2.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="StaticDrivers\selenium-server-standalone.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -2606,6 +2615,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Actions\ActionConversion\SelectActivityWzardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionEditPages\ActSikuliEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

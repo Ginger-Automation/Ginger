@@ -63,18 +63,20 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.AddVariable(busFlowV1);
 
             mGR = new GingerRunner();
-            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGR.Executor = new GingerExecutionEngine(mGR);
+
+            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
             Agent a = new Agent();            
             a.AgentType = Agent.eAgentType.Service; // Simple agent which anyhow we don't need to start for this test and will work on Linux
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
-            mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
-            mGR.BusinessFlows.Add(mBF);
+            mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
+            mGR.Executor.BusinessFlows.Add(mBF);
         }
 
         [ClassCleanup()]
@@ -109,7 +111,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             activity1.Acts.Add(actSetVariableValue);
             
             //Act            
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             //Assert
             
@@ -137,7 +139,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             activity1.Acts.Add(actSetVariableValue);
 
             //Act            
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus );
@@ -165,7 +167,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             activity1.Acts.Add(actSetVariableValue);
 
             //Act            
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
@@ -198,7 +200,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             activity1.Acts.Add(actSetVariableValue);
 
             //Act            
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
@@ -227,7 +229,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             activity1.Acts.Add(actSetVariableValue);
 
             //Act            
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             //Assert
             decimal num1 = decimal.Parse(v1.Value);
@@ -256,7 +258,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             activity1.Acts.Add(actSetVariableValue);
 
             //Act            
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
@@ -284,7 +286,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             activity1.Acts.Add(actSetVariableValue);
 
             //Act            
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             //Assert
             Assert.IsTrue(string.IsNullOrEmpty(actSetVariableValue.Error));
