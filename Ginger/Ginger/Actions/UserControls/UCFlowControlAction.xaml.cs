@@ -43,7 +43,7 @@ namespace Ginger.Actions.UserControls
         BusinessFlow mActParentBusinessFlow=null;
         Activity mActParentActivity=null;
         Act mAction = null;
-        GingerExecutionEngine mBfParentRunner = null;
+        GingerRunner mBfParentRunner = null;
         General.eRIPageViewMode mEditMode;
 
         public UCFlowControlAction()
@@ -96,16 +96,16 @@ namespace Ginger.Actions.UserControls
 
 
         public static DependencyProperty BfParentRunnerProperty =
-            DependencyProperty.Register("gingerRunner", typeof(GingerExecutionEngine), typeof(UCFlowControlAction), new PropertyMetadata(OnBfParentRunnerPropertyChanged));
+            DependencyProperty.Register("gingerRunner", typeof(GingerRunner), typeof(UCFlowControlAction), new PropertyMetadata(OnBfParentRunnerPropertyChanged));
 
         private static void OnBfParentRunnerPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             var control = sender as UCFlowControlAction;
             if (control != null)
-                control.OnBfParentRunnerChanged((GingerExecutionEngine)args.NewValue);
+                control.OnBfParentRunnerChanged((GingerRunner)args.NewValue);
         }
 
-        private void OnBfParentRunnerChanged(GingerExecutionEngine mRunner)
+        private void OnBfParentRunnerChanged(GingerRunner mRunner)
         {
             mBfParentRunner = mRunner;
         }
@@ -207,7 +207,7 @@ namespace Ginger.Actions.UserControls
                 {
                     case eBusinessFlowControlAction.GoToBusinessFlow:
                         {
-                            foreach (BusinessFlow bf in mBfParentRunner.BusinessFlows)
+                            foreach (BusinessFlow bf in mBfParentRunner.Executor.BusinessFlows)
                             {
                                 if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.Run && mActParentBusinessFlow == bf)//TODO: do better condition 
                                     continue;
