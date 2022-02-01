@@ -209,7 +209,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 
         private void GenerateResponse(SwaggerOperation operation, ApplicationAPIModel basicModal)
         {
-            if (operation.Responses.Count > 1 && operation.Responses.Keys.Where(x => x.StartsWith("2")).Count() > 0)
+            if (operation.Responses.Count > 0 && operation.Responses.Keys.Where(x => x.StartsWith("2")).Count() > 0)
             {
                 string sucesskey = operation.Responses.Keys.Where(x => x.StartsWith("2")).ElementAt(0);
                 SwaggerResponse response = null;
