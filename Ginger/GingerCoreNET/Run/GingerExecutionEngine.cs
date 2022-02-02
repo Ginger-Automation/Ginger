@@ -571,7 +571,7 @@ namespace Ginger.Run
                     RunSetConfig runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
                     foreach (ApplicationAgent applicationAgent in mGingerRunner.ApplicationAgents)
                     {
-
+                        
 
                         if (applicationAgent.AgentName != null)
                         {
@@ -590,7 +590,7 @@ namespace Ginger.Run
                                 if (agent.AgentOperations.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Where(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)).Count() > 0)
                                 {
                                     var virtualagent = agent.CreateCopy(true) as Agent;
-                                    virtualagent.AgentOperations = agent.AgentOperations;
+                                    virtualagent.AgentOperations = new AgentOperations(virtualagent);
                                     virtualagent.ParentGuid = agent.Guid;
                                     virtualagent.Name = agent.Name + " Virtual";
                                     virtualagent.IsVirtual = true;
@@ -4196,9 +4196,10 @@ namespace Ginger.Run
             {
                 if (p.Agent != null)
                 {
-                    AgentOperations agentOperations = new AgentOperations(p.Agent);
-                    p.Agent.AgentOperations = agentOperations;
-
+                    if (p.Agent.AgentOperations == null)
+                    {
+                        p.Agent.AgentOperations = new AgentOperations(p.Agent);
+                    }
                     try
                     {
                         ((Agent)p.Agent).AgentOperations.Close();
