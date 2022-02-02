@@ -59,8 +59,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private int bfSeq = 0;
         // private int runsetSeq = 0;
 
-        private readonly Object lockObject = new object();
-
         public LiteDBRepository()
         {
             liteDbManager = new LiteDbManager(executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
@@ -99,9 +97,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                         {
                             File.Delete(completeSSPath);
                         }
-                        //byte[] imageArray = File.ReadAllBytes(action.ScreenShots[s]);
-                        //File.WriteAllBytes(completeSSPath, imageArray);
-                        //File.Delete(action.ScreenShots[s]);
                         File.Move(action.ScreenShots[s], completeSSPath);
                         action.ScreenShots[s] = completeSSPath;
                     }
