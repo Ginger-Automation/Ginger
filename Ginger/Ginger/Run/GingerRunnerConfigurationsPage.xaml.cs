@@ -42,7 +42,7 @@ namespace Ginger.Run
             mPageViewMode = pageViewMode;
             mContext = context;
            
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mRunner, nameof(GingerRunner.Name));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mRunner.GingerRunner, nameof(GingerRunner.Name));
             xShowIDUC.Init(mRunner.GingerRunner);
 
             mRunner.UpdateApplicationAgents();
@@ -57,21 +57,21 @@ namespace Ginger.Run
 
             List<int> waitOptions = new List<int>() { 0, 1, 2, 3, 4, 5 };
             xAutoWaitComboBox.ItemsSource = waitOptions;
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoWaitComboBox, ComboBox.SelectedValueProperty, mRunner, nameof(GingerRunner.AutoWait));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoWaitComboBox, ComboBox.SelectedValueProperty, mRunner.GingerRunner, nameof(GingerRunner.AutoWait));
 
             GingerCore.General.FillComboFromEnumObj(xRunOptionComboBox, mRunner.GingerRunner.RunOption);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunOptionComboBox, ComboBox.SelectedValueProperty, mRunner, nameof(GingerRunner.RunOption));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunOptionComboBox, ComboBox.SelectedValueProperty, mRunner.GingerRunner, nameof(GingerRunner.RunOption));
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSimulationMode, CheckBox.IsCheckedProperty, mRunner, nameof(GingerRunner.RunInSimulationMode));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSimulationMode, CheckBox.IsCheckedProperty, mRunner.GingerRunner, nameof(GingerRunner.RunInSimulationMode));
 
             SetEnvironments();
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUseSpecificEnvChkbox, CheckBox.IsCheckedProperty, mRunner, nameof(GingerRunner.UseSpecificEnvironment));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSpecificEnvComboBox, ComboBox.SelectedItemProperty, mRunner, nameof(GingerRunner.ProjEnvironment));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSpecificEnvComboBox, ComboBox.SelectedValueProperty, mRunner, nameof(GingerRunner.SpecificEnvironmentName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUseSpecificEnvChkbox, CheckBox.IsCheckedProperty, mRunner.GingerRunner, nameof(GingerRunner.UseSpecificEnvironment));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSpecificEnvComboBox, ComboBox.SelectedItemProperty, mRunner.GingerRunner, nameof(GingerRunner.ProjEnvironment));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSpecificEnvComboBox, ComboBox.SelectedValueProperty, mRunner.GingerRunner, nameof(GingerRunner.SpecificEnvironmentName));
             
 
             xExecutionTags.Init(mRunner.GingerRunner.FilterExecutionTags);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecutionTagsChkbox, CheckBox.IsCheckedProperty, mRunner, nameof(GingerRunner.FilterExecutionByTags));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecutionTagsChkbox, CheckBox.IsCheckedProperty, mRunner.GingerRunner, nameof(GingerRunner.FilterExecutionByTags));
            
             if (mPageViewMode == ePageViewMode.AutomatePage)
             {
