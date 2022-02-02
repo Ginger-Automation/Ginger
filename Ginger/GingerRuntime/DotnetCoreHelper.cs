@@ -307,5 +307,10 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             //Not required for GingerConsole
         }
+
+        public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

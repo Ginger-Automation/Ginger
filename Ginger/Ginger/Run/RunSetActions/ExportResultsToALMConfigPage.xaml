@@ -6,6 +6,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Actions="clr-namespace:Ginger.Actions"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"    
       mc:Ignorable="d" 
       d:DesignHeight="210" d:DesignWidth="600"
@@ -13,30 +14,32 @@
 
     <Grid>
         <StackPanel Orientation="Vertical">
-            <DockPanel>
+            <StackPanel>
                 <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">ALM Type:</Label>
-                <ComboBox x:Name="xALMTypeCbx"  ContextMenu="{x:Null}" Width="250" HorizontalAlignment="Left" Margin="5 10 0 0" Style="{DynamicResource @InputComboBoxStyle}"></ComboBox>
-                <usercontrols:ucButton x:Name="xChangeTestSetBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" Margin="20 10 0 0" ButtonText="Set Selected ALM Fields" ButtonImageType="ALM" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
-            </DockPanel>
-            <DockPanel>
-                <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">ALM Test Set Level:</Label>
-                <ComboBox x:Name="xALMTestSetLevelCbx"  ContextMenu="{x:Null}" Width="250" HorizontalAlignment="Left" Margin="5 10 0 0" Style="{DynamicResource @InputComboBoxStyle}"></ComboBox>
-            </DockPanel>
-            <DockPanel>
+                <DockPanel>
+                    <UserControlsLib:UCComboBox x:Name="xALMTypeCbx" ContextMenu="{x:Null}" Margin="10,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
+                    <usercontrols:ucButton x:Name="xChangeTestSetBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" Margin="20,0,0,0" ButtonText="Set Fields" ButtonImageType="ALM" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+                </DockPanel>
+            </StackPanel>
+            <StackPanel>
+                <Label Style="{StaticResource @LabelStyle}">ALM Test Set Level:</Label>
+                <UserControlsLib:UCComboBox x:Name="xALMTestSetLevelCbx" Margin="10,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
+            </StackPanel>
+            <StackPanel>
                 <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Export Type:</Label>
-                <ComboBox x:Name="xExportTypeCbx"  ContextMenu="{x:Null}" Width="250" HorizontalAlignment="Left" Margin="5 10 0 0" Style="{DynamicResource @InputComboBoxStyle}"></ComboBox>
-            </DockPanel>
-            <DockPanel>
+                <UserControlsLib:UCComboBox x:Name="xExportTypeCbx" ContextMenu="{x:Null}" Margin="10,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
+            </StackPanel>
+            <StackPanel>
                 <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Export Test Set Destination Folder:</Label>
-                <Actions:UCValueExpression x:Name="xTestSetFolderDestination" />
-            </DockPanel>
-            <DockPanel>
+                <Actions:UCValueExpression x:Name="xTestSetFolderDestination" Margin="10,10,0,0" Width="300" HorizontalAlignment="Left"/>
+            </StackPanel>
+            <StackPanel>
                 <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Export Test Cases Destination Folder:</Label>
-                <Actions:UCValueExpression x:Name="xTestCaseFolderDestination" />
-            </DockPanel>
+                <Actions:UCValueExpression x:Name="xTestCaseFolderDestination" Margin="10,10,0,0" Width="300" HorizontalAlignment="Left"/>
+            </StackPanel>
             <DockPanel>
                 <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Test Cases Results to Export : </Label>
-                <ComboBox x:Name="xFilterByStatusDroplist"  ContextMenu="{x:Null}" Width="250" HorizontalAlignment="Left" Margin="5 10 0 0" Style="{DynamicResource @InputComboBoxStyle}"></ComboBox>
+                <ComboBox x:Name="xFilterByStatusDroplist"  ContextMenu="{x:Null}" Width="250" HorizontalAlignment="Left" Margin="5 10 0 0" Style="{StaticResource $FlatEditInputComboBoxStyle}"></ComboBox>
             </DockPanel>
             <CheckBox x:Name="AttachActivitiesGroupReportCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5" Checked="AttachActivitiesGroupReportCbx_Checked" Unchecked="AttachActivitiesGroupReportCbx_Unchecked">
                 <CheckBox.Content>

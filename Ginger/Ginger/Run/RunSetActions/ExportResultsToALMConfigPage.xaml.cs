@@ -22,6 +22,10 @@ using Ginger.ALM;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.ALM;
+using GingerCore.GeneralLib;
+using GingerCoreNET.ALMLib;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -52,7 +56,12 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.VariableForTCRunName);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.isVariableInTCRunUsed);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.toAttachActivitiesGroupReport);
-            xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));            
+            xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));
+            // new dev.
+            xALMTypeCbx.Init(mPublishToALMConfig, nameof(PublishToALMConfig.PublishALMType), GetTypeListForCbx(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = "Default" } }));
+            xALMTestSetLevelCbx.Init(mPublishToALMConfig, nameof(PublishToALMConfig.ALMTestSetLevel), GetTypeListForCbx(typeof(eALMTestSetLevel), new List<ComboEnumItem>()));
+            xExportTypeCbx.Init(mPublishToALMConfig, nameof(PublishToALMConfig.ExportType), GetTypeListForCbx(typeof(eExportType), new List<ComboEnumItem>()));
+
         }
         private ExportResultsToALMConfigPage()
         {
@@ -67,6 +76,8 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.IsVariableInTCRunUsed));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.ToAttachActivitiesGroupReport));
             xFilterByStatusDroplist.BindControl(mPublishToALMConfig, nameof(PublishToALMConfig.FilterStatus));
+
+            xALMTypeCbx.Init(mPublishToALMConfig, nameof(PublishToALMConfig.PublishALMType), GetTypeListForCbx(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = "Default" } }));
         }
 
         static ExportResultsToALMConfigPage mInstance= null;
@@ -137,6 +148,17 @@ namespace Ginger.Run
         private void AttachActivitiesGroupReportCbx_Checked(object sender, RoutedEventArgs e)
         {
             
+        }
+
+        private List<ComboEnumItem> GetTypeListForCbx(Type listType, List<ComboEnumItem> comboEnumItemsValues = null)
+        {
+            List<ComboEnumItem> comboEnumItemsList = new List<ComboEnumItem>();
+            if(comboEnumItemsValues is not null && comboEnumItemsValues.Count > 0)
+            {
+                comboEnumItemsList.AddRange(comboEnumItemsValues);
+            }
+            comboEnumItemsList.AddRange(GingerCore.General.GetEnumValuesForCombo(listType));
+            return comboEnumItemsList;
         }
     }
 }

@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Data.Common;
 using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
 using Ginger.Repository;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
@@ -176,6 +177,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void DispatcherRun()
         {
             //Not required
+        }
+
+        public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

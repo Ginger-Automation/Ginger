@@ -323,7 +323,20 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = null;
             return projectsList;
         }
+        public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
+        {
+            Reporter.ToLog(eLogLevel.INFO, ("Exporting " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
+            ////Passing Solution Folder path to GingerCore
+            //ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
+            bool isExportSucc = false;
+            if (AutoALMProjectConnect(eALMConnectType.Silence, false))
+            {
+                isExportSucc = AlmRepo.ExportBusinessFlowToALM(businessFlow, performSaveAfterExport, almConnectStyle, testPlanUploadPath, testLabUploadPath);
+                DisconnectALMServer();
+            }
+            return isExportSucc;
+        }
 
         public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false)
         {
@@ -443,8 +456,6 @@ namespace Ginger.ALM
         //Export Business Flow
         public bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false)
         {
-            //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-
             Reporter.ToLog(eLogLevel.INFO, ("Exporting " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
             //Passing Solution Folder path to GingerCore
             ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
@@ -455,8 +466,6 @@ namespace Ginger.ALM
                 isExportSucc = AlmRepo.ExportBusinessFlowToALM(businessFlow, performSaveAfterExport);
                 DisconnectALMServer();
             }
-
-            Mouse.OverrideCursor = null;
             return isExportSucc;
         }
 
