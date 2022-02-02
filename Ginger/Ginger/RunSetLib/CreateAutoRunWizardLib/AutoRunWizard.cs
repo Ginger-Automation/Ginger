@@ -153,11 +153,11 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 }
                 if (failCount == 0 && successCount > 0)
                 {
-                    userMsg += "Total " + successCount + " process started successfully." + Environment.NewLine;
+                    userMsg += "Total " + successCount + " process/es started successfully." + Environment.NewLine;
                 }
                 else if (failCount > 0)
                 {
-                    userMsg += "Total " + successCount + " process started successfully." + Environment.NewLine + "Total " + failCount + " process failed to start." + Environment.NewLine;
+                    userMsg += "Total " + successCount + " process/es started successfully." + Environment.NewLine + "Total " + failCount + " process failed to start." + Environment.NewLine;
                 }
 
                 return userMsg;
