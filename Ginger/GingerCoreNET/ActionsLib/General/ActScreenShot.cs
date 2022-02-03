@@ -29,7 +29,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
 
-    public class ActScreenShot : Act 
+    public class ActScreenShot : Act
     {
         public override string ActionDescription { get { return "Screen Shot Action"; } }
         public override string ActionUserDescription { get { return "Takes screen shot"; } }
@@ -43,7 +43,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddText("To use this action, please provide the folder path where do you want to save screenshots.");
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActScreenShotEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
@@ -68,7 +68,7 @@ namespace GingerCore.Actions
             }
         }
 
-       
+
 
         public override String ActionType
         {
@@ -82,7 +82,7 @@ namespace GingerCore.Actions
         public new static partial class Fields
         {
             public static string SaveToFileName = "SaveToFileName";
-            
+
         }
 
         public string SaveToFileName
@@ -111,7 +111,7 @@ namespace GingerCore.Actions
             if (DirectoryPath.StartsWith(@"~\"))
             {
                 DirectoryPath = Path.Combine(SolutionFolder, DirectoryPath.Replace(@"~\", string.Empty));
-            }            
+            }
 
             if (!Directory.Exists(DirectoryPath))
             {
@@ -122,10 +122,10 @@ namespace GingerCore.Actions
                 catch (Exception ex)
                 {
                     this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                    Error = string.Concat("Invalid Folder Path. :",DirectoryPath);
+                    Error = string.Concat("Invalid Folder Path. :", DirectoryPath);
                     throw ex;
                 }
-                
+
             }
 
             String FileName = "";
@@ -151,16 +151,19 @@ namespace GingerCore.Actions
 
             foreach (Bitmap Bitmap in Bitmp)
             {
-                if (Bitmp.IndexOf(Bitmap) == 0)
+                using (Bitmap)
                 {
-                    Bitmap.Save(DirectoryPath + @"\" + FileName + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                    if (Bitmp.IndexOf(Bitmap) == 0)
+                    {
+                        Bitmap.Save(DirectoryPath + @"\" + FileName + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
-                }
-                else
-                {
-                    int i = Bitmp.IndexOf(Bitmap);
-                    Bitmap.Save(DirectoryPath + @"\" + FileName + "_" + i.ToString() + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                    }
+                    else
+                    {
+                        int i = Bitmp.IndexOf(Bitmap);
+                        Bitmap.Save(DirectoryPath + @"\" + FileName + "_" + i.ToString() + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
+                    }
                 }
             }
         }
