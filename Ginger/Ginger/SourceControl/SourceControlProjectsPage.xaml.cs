@@ -200,7 +200,7 @@ namespace Ginger.SourceControl
                 ConnectionDetailsExpender.IsExpanded = false;
 
                 //Changed to save password only after successful Connect and search repositories
-                WorkSpace.Instance.UserProfile.SaveUserProfile();
+                WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
             }
             catch (Exception e)
             {

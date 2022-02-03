@@ -51,7 +51,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             agent.PluginId = "SeleniumPlugin";
             agent.ServiceId = "SeleniumChromeService";
             mTestHelper.Log("StartDriver SeleniumPlugin SeleniumChromeService");
-            agent.StartDriver();
+            agent.AgentOperations.StartDriver();
 
             GingerGrid GG = WorkSpace.Instance.LocalGingerGrid;
             Stopwatch stopwatch = Stopwatch.StartNew();
@@ -73,7 +73,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            agent.Close();
+            agent.AgentOperations.Close();
             mTestHelper.ClassCleanup();
         }
 

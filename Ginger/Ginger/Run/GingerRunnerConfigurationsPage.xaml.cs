@@ -30,11 +30,11 @@ namespace Ginger.Run
     {
         public enum ePageViewMode { AutomatePage,RunsetPage}
         ePageViewMode mPageViewMode;
-        GingerRunner mRunner;
+        GingerExecutionEngine mRunner;
         Context mContext;
         GenericWindow genWin = null;
 
-        public GingerRunnerConfigurationsPage(GingerRunner runner, ePageViewMode pageViewMode, Context context)
+        public GingerRunnerConfigurationsPage(GingerExecutionEngine runner, ePageViewMode pageViewMode, Context context)
         {
             InitializeComponent();
 
@@ -43,7 +43,7 @@ namespace Ginger.Run
             mContext = context;
            
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mRunner, nameof(GingerRunner.Name));
-            xShowIDUC.Init(mRunner);
+            xShowIDUC.Init(mRunner.GingerRunner);
 
             mRunner.UpdateApplicationAgents();
             if (mPageViewMode == ePageViewMode.AutomatePage)
@@ -59,7 +59,7 @@ namespace Ginger.Run
             xAutoWaitComboBox.ItemsSource = waitOptions;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoWaitComboBox, ComboBox.SelectedValueProperty, mRunner, nameof(GingerRunner.AutoWait));
 
-            GingerCore.General.FillComboFromEnumObj(xRunOptionComboBox, mRunner.RunOption);
+            GingerCore.General.FillComboFromEnumObj(xRunOptionComboBox, mRunner.GingerRunner.RunOption);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunOptionComboBox, ComboBox.SelectedValueProperty, mRunner, nameof(GingerRunner.RunOption));
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSimulationMode, CheckBox.IsCheckedProperty, mRunner, nameof(GingerRunner.RunInSimulationMode));
@@ -70,7 +70,7 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSpecificEnvComboBox, ComboBox.SelectedValueProperty, mRunner, nameof(GingerRunner.SpecificEnvironmentName));
             
 
-            xExecutionTags.Init(mRunner.FilterExecutionTags);
+            xExecutionTags.Init(mRunner.GingerRunner.FilterExecutionTags);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecutionTagsChkbox, CheckBox.IsCheckedProperty, mRunner, nameof(GingerRunner.FilterExecutionByTags));
            
             if (mPageViewMode == ePageViewMode.AutomatePage)

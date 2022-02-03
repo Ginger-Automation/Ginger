@@ -324,7 +324,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             mWizard.mPomLearnUtils.SpecificFramePath = null;
             if (mAppPlatform.Equals(ePlatformType.Java))
             {
-                var windowExplorerDriver = ((IWindowExplorer)(mWizard.mPomLearnUtils.Agent.Driver));
+                var windowExplorerDriver = ((IWindowExplorer)(((AgentOperations)mWizard.mPomLearnUtils.Agent.AgentOperations).Driver));
 
                 var list = windowExplorerDriver.GetWindowAllFrames();
                 xFrameListCmbBox.ItemsSource = list;

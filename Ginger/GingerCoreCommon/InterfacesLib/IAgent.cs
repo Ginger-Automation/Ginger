@@ -30,7 +30,5 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         ePlatformType Platform { get; }
         bool UsedForAutoMapping { get; set; }
 
-        void StartDriver();
-        
     }
 }

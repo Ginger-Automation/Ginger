@@ -147,7 +147,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
         private void RunFlow(BusinessFlow businessFlow)
         {
             GingerRunner gingerRunner = new GingerRunner();
-            ExecutionLoggerManager ex = (ExecutionLoggerManager)gingerRunner.RunListeners[0];  // temp until we remove it from GR constructor and add manually
+            ExecutionLoggerManager ex = (ExecutionLoggerManager)((GingerExecutionEngine)gingerRunner.Executor).RunListeners[0];  // temp until we remove it from GR constructor and add manually
 
 
             //!!!!!!!!!!!
@@ -166,10 +166,10 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
             // executionLogger = new ExecutionLogger(projEnvironment, eExecutedFrom.Automation);
             // executionLogger.Configuration.ExecutionLoggerConfigurationIsEnabled = true;
             // gingerRunner.RunListeners.Add(executionLogger);
-            gingerRunner.BusinessFlows.Clear();
-            gingerRunner.BusinessFlows.Add(businessFlow);
-            gingerRunner.CurrentBusinessFlow = businessFlow;
-            gingerRunner.RunRunner();
+            gingerRunner.Executor.BusinessFlows.Clear();
+            gingerRunner.Executor.BusinessFlows.Add(businessFlow);
+            gingerRunner.Executor.CurrentBusinessFlow = businessFlow;
+            gingerRunner.Executor.RunRunner();
 
             Console.WriteLine("Execution Completed");
             Console.WriteLine("----------------------------");

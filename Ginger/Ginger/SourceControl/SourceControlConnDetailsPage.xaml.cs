@@ -105,7 +105,7 @@ namespace Ginger.SourceControl
         private  void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             WorkSpace.Instance.Solution.SourceControl.SourceControlPass = ((PasswordBox)sender).Password;
-            WorkSpace.Instance.UserProfile.SaveUserProfile();//todo: check if needed
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();//todo: check if needed
             SourceControlIntegration.Init( WorkSpace.Instance.Solution.SourceControl);
         }
 
@@ -123,7 +123,7 @@ namespace Ginger.SourceControl
 
         private void SaveConfiguration_Click(object sender, RoutedEventArgs e)
         {
-             WorkSpace.Instance.Solution.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
+             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)

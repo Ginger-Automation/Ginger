@@ -111,7 +111,7 @@ namespace Ginger.SolutionWindows
 
         private void SaveHandler(object sender, RoutedEventArgs e)
         {
-            mSolution.SaveSolution(true, Solution.eSolutionItemToSave.TargetApplications);
+            mSolution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.TargetApplications);
         }
 
         private void AddApplication(object sender, RoutedEventArgs e)

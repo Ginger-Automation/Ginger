@@ -26,9 +26,11 @@ using GingerWPF.WizardLib;
 using IWshRuntimeLibrary;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
+
     public class AutoRunWizard : WizardBase
     {
         public override string Title { get { return string.Format("Create {0} Auto Run Configuration", GingerDicser.GetTermResValue(eTermResKey.RunSet)); } }
@@ -42,7 +44,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         public RunSetAutoRunConfiguration AutoRunConfiguration;
 
         public RunSetAutoRunShortcut AutoRunShortcut;
-
+        public bool ResetCLIContent;
 
         public AutoRunWizard(RunSetConfig runSetConfig, Context context)
         {
@@ -54,57 +56,153 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Auto Run Configuration Introduction", Page: new WizardIntroPage("/RunSetLib/CreateAutoRunWizardLib/AutoRunIntroduction.md"));
             AddPage(Name: "General Options", Title: "General Options", SubTitle: "Set Auto Run General Options", Page: new AutoRunWizardOptionsPage());                        
-            AddPage(Name: "Configuration Type", Title: "Configuration Type", SubTitle: "Set Auto Run Configuration Type", Page: new AutoRunWizardCLITypePage());
-            AddPage(Name: "Execution Shortcut", Title: "Execution Shortcut", SubTitle: "Create Auto Run Configuration Execution Shortcut", Page: new AutoRunWizardShortcutPage());
+            AddPage(Name: "Execution Configurations", Title: "Execution Configurations", SubTitle: "Execution Configurations", Page: new AutoRunWizardCLITypePage());
+            AddPage(Name: "Execute", Title: "Execute", SubTitle: "Execute", Page: new AutoRunWizardShortcutPage());
         }
 
         public override void Finish()
         {
-            try
+            _ = Task.Run(() =>
             {
-                // Write Configuration file
-                AutoRunConfiguration.CreateContentFile();
-
-                // Create windows shortcut
-                if (AutoRunShortcut.CreateShortcut)
+                try
                 {
-                    SaveShortcut();
-                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Auto Run Configuration and Shortcut were created successfully.");
-                    return;
-                }
+                    var userMsg = "";
 
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Auto Run Configuration was created successfully.");
-            }
-            catch(Exception ex)
-            {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error occurred while creating the Auto Run Configuration/Shortcut." + Environment.NewLine + "Error: " + ex.Message);
-            }
+                    // Write Configuration file
+                    if (AutoRunConfiguration.SelectedCLI.IsFileBasedConfig)
+                    {
+                        AutoRunConfiguration.CreateContentFile();
+                        userMsg += "Configuration file created successfully." + Environment.NewLine;
+                    }
+
+                    // Create windows shortcut
+                    if (AutoRunShortcut.CreateShortcut && AutoRunConfiguration.AutoRunEexecutorType != eAutoRunEexecutorType.Remote)
+                    {
+                        userMsg += SaveShortcut();
+                    }
+                    if (AutoRunShortcut.StartExecution)
+                    {
+                        userMsg = ExecuteCommand(userMsg);
+                    }
+                    if (!string.IsNullOrEmpty(userMsg))
+                    {
+                        Reporter.ToUser(eUserMsgKey.RunsetAutoRunResult, "Please find auto run wizard outcomes:" + Environment.NewLine + userMsg);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error occurred while creating the Auto Run Configuration/Shortcut/Execution." + Environment.NewLine + "Error: " + ex.Message);
+                }
+            });
+            
         }
 
-        public void SaveShortcut()
+        private string ExecuteCommand(string userMsg)
         {
-            WshShell shell = new WshShell();
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(AutoRunShortcut.ShortcutFileFullPath);
-            shortcut.Description = AutoRunShortcut.ShortcutFileName;
-            shortcut.WorkingDirectory = AutoRunShortcut.ExecuterFolderPath;
-            if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("GINGER_HOME")))
-            {                                
-                shortcut.TargetPath = "ginger"; 
-                shortcut.Arguments = AutoRunConfiguration.ConfigArgs;
-            }
-            else
+            try
             {
-                shortcut.TargetPath = AutoRunShortcut.ExecuterFullPath;
-                shortcut.Arguments = AutoRunConfiguration.ConfigArgs;
-            }
-            
-            string iconPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "GingerIconNew.ico");
-            if (System.IO.File.Exists(iconPath))
-            {
-                shortcut.IconLocation = iconPath;
-            }
+                var count = 1;
+                var successCount = 0;
+                var failCount = 0;
+                if(AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
+                {
+                    Reporter.ToStatus(eStatusMsgKey.StaticStatusMessage, null, "Sending the execution requests is in progress...");
+                }
+                else
+                {
+                    Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Starting execution process is in progress...");
+                }
+                while (count <= AutoRunConfiguration.ParallelExecutionCount)
+                {
+                    try
+                    {
+                        if (AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
+                        {
+                            var responseString = new RemoteExecutionRequestConfig().ExecuteFromRunsetShortCutWizard(AutoRunConfiguration.ExecutionServiceUrl, AutoRunConfiguration.CLIContent);
 
-            shortcut.Save();
+                            if (responseString == "Created")
+                            {
+                                successCount++;
+                            }
+                            else
+                            {
+                                failCount++;
+                                userMsg += "Failed to start remote execution, error: " + responseString + Environment.NewLine;
+                            }
+                        }
+                        else
+                        {
+                            var args = AutoRunConfiguration.CLIContent;
+
+                            if (AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.DynamicFile)
+                            {
+                                args = "dynamic --filename " + AutoRunConfiguration.ConfigFileFullPath;
+                            }
+                            System.Diagnostics.Process.Start(AutoRunShortcut.ExecuterFullPath, args);
+                            successCount++;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        userMsg += "Execution process failed to start, error: " + ex.Message + Environment.NewLine;
+                        Reporter.ToLog(eLogLevel.ERROR, "Execution process starting failed.", ex);
+                        failCount++;
+                    }
+
+                    count++;
+                }
+                if (failCount == 0 && successCount > 0)
+                {
+                    userMsg += "Total " + successCount + " proces/s started successfully." + Environment.NewLine;
+                }
+                else if (failCount > 0)
+                {
+                    userMsg += "Total " + successCount + " proces/s started successfully." + Environment.NewLine + "Total " + failCount + " process failed to start." + Environment.NewLine;
+                }
+
+                return userMsg;
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
+           
+        }
+
+        public string SaveShortcut()
+        {
+            var msg = string.Empty;
+            try
+            {
+                WshShell shell = new WshShell();
+                IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(AutoRunShortcut.ShortcutFileFullPath);
+                shortcut.Description = AutoRunShortcut.ShortcutFileName;
+                shortcut.WorkingDirectory = AutoRunShortcut.ExecuterFolderPath;
+                if (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("GINGER_HOME")))
+                {
+                    shortcut.TargetPath = "ginger";
+                    shortcut.Arguments = AutoRunConfiguration.ConfigArgs;
+                }
+                else
+                {
+                    shortcut.TargetPath = AutoRunShortcut.ExecuterFullPath;
+                    shortcut.Arguments = AutoRunConfiguration.ConfigArgs;
+                }
+
+                string iconPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "GingerIconNew.ico");
+                if (System.IO.File.Exists(iconPath))
+                {
+                    shortcut.IconLocation = iconPath;
+                }
+
+                shortcut.Save();
+                msg= "Execution shortcut file created successfully." + Environment.NewLine;
+            }
+            catch (Exception ex)
+            {
+                msg = "Execution shortcut file creation failed, error:" + ex + Environment.NewLine;
+            }
+            return msg;
         }
 
     }

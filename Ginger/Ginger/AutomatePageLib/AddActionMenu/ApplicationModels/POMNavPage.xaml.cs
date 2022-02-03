@@ -52,15 +52,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             get
             {
-                if (mAgent != null && mAgent.Status == Agent.eStatus.Running)
+                if (mAgent != null && ((AgentOperations)mAgent.AgentOperations).Status == Agent.eStatus.Running)
                 {
-                    return mAgent.Driver as IWindowExplorer;
+                    return ((AgentOperations)mAgent.AgentOperations).Driver as IWindowExplorer;
                 }
                 else
                 {
                     if (mAgent != null)
                     {
-                        mAgent.Close();
+                        mAgent.AgentOperations.Close();
                     }
                     return null;
                 }
@@ -109,6 +109,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             //SetElementsGridView();
             mPOMPage.HorizontalAlignment = HorizontalAlignment.Stretch;
             mPOMPage.xTreeView.HorizontalAlignment = HorizontalAlignment.Stretch;
+            mPOMPage.xTreeView.SetAddButtonToArrow();
             mPOMPage.Width = Double.NaN;
             xPOMFrame.Content = mPOMPage;
         }
@@ -139,7 +140,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 mPOMPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
             }
         }
-        
+
         private void MainTreeView_ItemSelected(object sender, SelectionTreeEventArgs e)
         {
             if (e.SelectedItems != null && e.SelectedItems.Count == 1)
@@ -165,7 +166,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 xPomElementsListView.Visibility = Visibility.Hidden;
                 xPOMSplitter.IsEnabled = false;
             }
-        }        
+        }
 
         public void RefreshTreeItems(object sender, RoutedEventArgs e)
         {
@@ -221,7 +222,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         }
         private bool IsDriverBusy()
         {
-            if (mAgent != null && mAgent.Driver.IsDriverBusy)
+            if (mAgent != null && ((AgentOperations)mAgent.AgentOperations).Driver.IsDriverBusy)
             {
                 return true;
             }

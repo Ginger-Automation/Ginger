@@ -76,9 +76,10 @@ namespace GingerCore.ALM.Qtest
                 connObj.Configuration.ApiKey.Add("Authorization", accessToken);
                 connObj.Configuration.ApiKeyPrefix.Add("Authorization", tokenType);
 
-                if (GingerCore.General.IsConfigPackageExists(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest))
+                string almConfigPackageFolderPathCalculated = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath);
+                if (GingerCore.General.IsConfigPackageExists(almConfigPackageFolderPathCalculated, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest))
                 {
-                    connObj.Configuration.MyAPIConfig.LoadSettingsFromConfig(Path.Combine(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPathCalculated, "QTestSettings", "QTestSettings.json"));
+                    connObj.Configuration.MyAPIConfig.LoadSettingsFromConfig(Path.Combine(almConfigPackageFolderPathCalculated, "QTestSettings", "QTestSettings.json"));
                 }
                 else
                 {

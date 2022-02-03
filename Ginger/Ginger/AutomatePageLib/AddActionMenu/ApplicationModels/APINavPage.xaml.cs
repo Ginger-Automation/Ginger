@@ -48,10 +48,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mItemTypeRootNode = mAPIsRoot;
             mAPIPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, mItemTypeRootNode, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true,
                                         new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication),
-                                            UCTreeView.eFilteroperationType.Equals, showAlerts: false) ;
+                                            UCTreeView.eFilteroperationType.Equals, showAlerts: false);
 
             mItemTypeRootNode.SetTools(mAPIPage.xTreeView);
-            mAPIPage.xTreeView.SetTopToolBarTools(mAPIsRoot.SaveAllTreeFolderItemsHandler, mAPIsRoot.AddAPIModelFromDocument, RefreshTreeItems);
+            mAPIPage.xTreeView.SetTopToolBarTools(mAPIsRoot.SaveAllTreeFolderItemsHandler, mAPIsRoot.AddAPIModelFromDocument, RefreshTreeItems, AddActionToListHandler);
 
             mContext.PropertyChanged += MContext_PropertyChanged;
             xAPIFrame.Content = mAPIPage;
@@ -71,6 +71,18 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         public void RefreshTreeItems(object sender, RoutedEventArgs e)
         {
             UpdateAPITree();
+        }
+
+        public void AddActionToListHandler(object sender, RoutedEventArgs e)
+        {
+            if (mAPIPage.xTreeView.Tree.CurrentSelectedTreeViewItem != null)
+            {
+                GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems.AppApiModelTreeItem selectedItem = mAPIPage.xTreeView.Tree.CurrentSelectedTreeViewItem as GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems.AppApiModelTreeItem;
+                if (selectedItem != null)
+                {
+                    BusinessFlowPages.ActionsFactory.AddActionsHandler(selectedItem.mApiModel, mContext);
+                }
+            }
         }
 
         private void UpdateAPITree()

@@ -38,8 +38,8 @@
                     <UserControls:ucButton x:Name="xWindowExplorerItemBtn" ButtonType="PanelButton"     ButtonText="          Explorer          " ToolTip="Add Actions using Window Explorer Tool" ButtonImageType="Window" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XNavWinExp_Click" Width="200" Margin="10,10,10,10"/>
                 </StackPanel>
                 <StackPanel x:Name="xApplicationModelsPnl" DockPanel.Dock="Top" HorizontalAlignment="Center">
-                    <UserControls:ucButton x:Name="xApplicationPOMItemBtn" ButtonType="PanelButton" ButtonText="Page Objects Model" ToolTip="Add Actions from Page Objects Model Mapped Elements" ButtonImageType="ApplicationPOMModel" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XNavPOM_Click" Width="200" Margin="10,10,10,10"/>
-                    <UserControls:ucButton x:Name="xAPIBtn" ButtonType="PanelButton" ButtonText="        API Models        " ToolTip="Add Actions from API Models" ButtonImageType="APIModel" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XAPIBtn_Click" Width="200" Margin="10,10,10,10"/>
+                    <!--<UserControls:ucButton x:Name="xApplicationPOMItemBtn" ButtonType="PanelButton" ButtonText="Page Objects Model" ToolTip="Add Actions from Page Objects Model Mapped Elements" ButtonImageType="ApplicationPOMModel" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XNavPOM_Click" Width="200" Margin="10,10,10,10"/>-->
+                    <!--<UserControls:ucButton x:Name="xAPIBtn" ButtonType="PanelButton" ButtonText="        API Models        " ToolTip="Add Actions from API Models" ButtonImageType="APIModel" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XAPIBtn_Click" Width="200" Margin="10,10,10,10"/>-->
                 </StackPanel>
                 <Frame Name="xSelectedItemFrame" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </DockPanel>

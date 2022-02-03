@@ -149,7 +149,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Agent agent = new Agent();
             agent.AgentType = Agent.eAgentType.Service;
             agent.ServiceId = "SeleniumChromeService";
-            agent.StartDriver();
+            agent.AgentOperations.StartDriver();
 
             // ActPlugIn actPlugin = new ActPlugIn() { ServiceId = "SeleniumChromeService", ActionId = "StartDriver" };
 

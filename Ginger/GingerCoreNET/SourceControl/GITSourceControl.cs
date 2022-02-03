@@ -30,7 +30,7 @@ using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.SourceControl
 {
-    [IsSerializedForLocalRepository]
+
     public class GITSourceControl : SourceControlBase
     {
         public override string Name { get { return "GIT"; } }
