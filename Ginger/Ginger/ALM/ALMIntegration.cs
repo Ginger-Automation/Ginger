@@ -608,8 +608,11 @@ namespace Ginger.ALM
             if (!isConnected && almConnectStyle != eALMConnectType.Silence)
                 if (showConnWin)
                 {
-                    ALMConnectionPage almConnPage = new ALMConnectionPage(almConnectStyle, asConnWin);
-                    almConnPage.ShowAsWindow();
+                    App.MainWindow.Dispatcher.Invoke(() =>
+                    {
+                        ALMConnectionPage almConnPage = new ALMConnectionPage(almConnectStyle, asConnWin);
+                        almConnPage.ShowAsWindow();
+                    });
                     try { isConnected = ConnectALMProject(); }
                     catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
                 }
