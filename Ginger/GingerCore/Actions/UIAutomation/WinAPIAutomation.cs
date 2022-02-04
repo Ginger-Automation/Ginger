@@ -220,8 +220,6 @@ namespace GingerCore.Drivers
         {
             try
             {
-
-
                 string clname = window.Current.ClassName;
                 string winname = window.Current.Name;
                 IntPtr hwnd = FindWindow(clname, winname);
