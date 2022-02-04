@@ -21,6 +21,7 @@ using Ginger.WizardLib;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM.QC;
+using GingerCore.ALM.ZephyrEnt.Bll;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
@@ -326,6 +327,10 @@ namespace Ginger.ALM.MapToALMWizard
                 AlmTestSetData.TestSetName = SelectedTestSetData.Name;
                 AlmTestSetData.TestSetPath = SelectedTestSetData.Path;
                 AlmTestSetData.TestSetInternalID2 = SelectedTestSetData.TestSetID;
+                if (SelectedTestSetData.entityType == EntityFolderType.Module)
+                {
+                    AlmTestSetData.TestSetInternalID2 = SelectedTestSetData.FatherId;
+                }
                 AlmTestSetData = await Task.Run(() =>
                 {
                     return ALMIntegration.Instance.GetALMTestCases(AlmTestSetData);
