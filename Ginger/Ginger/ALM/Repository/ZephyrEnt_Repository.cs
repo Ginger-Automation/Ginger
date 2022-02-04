@@ -596,11 +596,23 @@ namespace Ginger.ALM.Repository
             try
             {
                 //Get Test Set Name
-                List<BaseResponseItem> phase = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntPhaseById(Convert.ToInt32(almTestSet.TestSetInternalID2));
-                if (phase is not null && phase.Count > 0)
+                if (almTestSet.TestSetID != almTestSet.TestSetInternalID2)
                 {
-                    almTestSet.TestSetName = phase[0].TryGetItem("name").ToString();
+                    TreeNode treeNode = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTestRepositoryFolderById(Convert.ToInt32(almTestSet.TestSetID));
+                    if(treeNode != null)
+                    {
+                        almTestSet.TestSetName = treeNode.name;
+                    }
                 }
+                else
+                {
+                    List<BaseResponseItem>  testSetResponseItems = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntPhaseById(Convert.ToInt32(almTestSet.TestSetID));
+                    if (testSetResponseItems is not null && testSetResponseItems.Count > 0)
+                    {
+                        almTestSet.TestSetName = testSetResponseItems[0].TryGetItem("name").ToString();
+                    }
+                }
+                
                 // Add test cases
                 almTestSet = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(almTestSet);
             }
