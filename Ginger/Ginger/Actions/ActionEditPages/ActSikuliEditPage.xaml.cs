@@ -17,14 +17,17 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.ScreenCapture;
+using GingerCore.Drivers;
 using ScreenSnipApplication;
 
 namespace Ginger.Actions
@@ -41,7 +44,6 @@ namespace Ginger.Actions
             RefreshProcessesCombo();
             GingerCore.General.FillComboFromEnumObj(xSikuliOperationComboBox, Act.ActSikuliOperation);
 
-            //TODO: fix hard coded ButtonAction use Fields: Fixed
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPatternImageLocationTextBox.ValueTextBox, TextBox.TextProperty, Act, nameof(ActSikuli.PatternPath), BindingMode.TwoWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetTextValueTextBox.ValueTextBox, TextBox.TextProperty, Act, nameof(ActSikuli.SetTextValue), BindingMode.TwoWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xShowSikuliCheckBox, CheckBox.IsCheckedProperty, Act, nameof(ActSikuli.ShowSikuliConsole), BindingMode.TwoWay);
@@ -50,10 +52,17 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSikuliOperationComboBox, ComboBox.TextProperty, Act, nameof(ActSikuli.ActSikuliOperation), BindingMode.TwoWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xActiveProcessesTitlesComboBox, ComboBox.TextProperty, Act, nameof(ActSikuli.ProcessNameForSikuliOperation), BindingMode.TwoWay);
 
+
+            xPatternImageLocationTextBox.BindControl(Context.GetAsContext(actSikuli.Context), actSikuli, nameof(ActSikuli.PatternPath));
+            xSetTextValueTextBox.BindControl(Context.GetAsContext(actSikuli.Context), actSikuli, nameof(ActSikuli.SetTextValue));
+            xSetTextValueTextBox.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(actSikuli.SetTextValue),
+                (Context.GetAsContext(actSikuli.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
+            xPatternImageLocationTextBox.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(actSikuli.PatternPath),
+                (Context.GetAsContext(actSikuli.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
             xPatternImageLocationTextBox.ValueTextBox.TextChanged -= ValueTextBox_TextChanged;
             xPatternImageLocationTextBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
             xPatternImageLocationTextBox.ValueTextBox.Text = actSikuli.PatternPath;
-            ElementImageSourceChanged();
+            ElementImageSourceChanged(true);
         }
 
         private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -67,16 +76,17 @@ namespace Ginger.Actions
 
         private void CaptureLocatorImageButton_Click(object sender, RoutedEventArgs e)
         {
-            if (actSikuli.ProcessIDForSikuliOperation == -1)
+            if (string.IsNullOrEmpty(actSikuli.ProcessNameForSikuliOperation))
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please select valid application instance to proceed with image capture.");
                 return;
             }
 
             actSikuli.PatternPath = GetPathToExpectedImage();
-            xPatternImageLocationTextBox.ValueTextBox.Text = GetPathToExpectedImage();
+            xPatternImageLocationTextBox.ValueTextBox.Text = actSikuli.PatternPath;
 
             App.MainWindow.WindowState = WindowState.Minimized;
+            actSikuli.SetFocusToSelectedApplicationInstance();
 
             System.Threading.Tasks.Task.Run(() => OpenSnippingTool()).ContinueWith(t =>
             {
@@ -85,7 +95,6 @@ namespace Ginger.Actions
                     ElementImageSourceChanged();
                 }
             }, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
-            actSikuli.SetFocusToSelectedApplicationInstance();
         }
 
         private string GetPathToExpectedImage()
@@ -94,6 +103,10 @@ namespace Ginger.Actions
             string imagePath = @"Documents\SikuliImages\";
             string screenImageDirectory = Path.Combine("~", amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.SolutionFolder,
                                                         imagePath);
+            if (!Directory.Exists(screenImageDirectory))
+            {
+                Directory.CreateDirectory(screenImageDirectory);
+            }
             return Path.Combine(screenImageDirectory, screenImageName);
         }
 
@@ -111,7 +124,7 @@ namespace Ginger.Actions
             }
             else
             {
-                xSetTextRow.Visibility = Visibility.Collapsed;
+                xSetTextRow.Visibility = Visibility.Hidden;
             }
         }
 
@@ -129,7 +142,7 @@ namespace Ginger.Actions
             }
         }
 
-        void ElementImageSourceChanged()
+        void ElementImageSourceChanged(bool IsFirstCall = false)
         {
             if (!string.IsNullOrEmpty(xPatternImageLocationTextBox.ValueTextBox.Text)
                 && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(xPatternImageLocationTextBox.ValueTextBox.Text)))
@@ -153,6 +166,10 @@ namespace Ginger.Actions
             }
             else
             {
+                if (!IsFirstCall)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Valid Image file found. Please enter a valid Image path.");
+                }
                 xElementImageCanvas.Visibility = Visibility.Collapsed;
             }
         }
@@ -164,18 +181,13 @@ namespace Ginger.Actions
 
         void RefreshProcessesCombo()
         {
+
+
             GingerCore.General.FillComboFromList(xActiveProcessesTitlesComboBox, actSikuli.ActiveProcessWindows);
         }
 
         private void xRefreshPatternImage_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(xPatternImageLocationTextBox.ValueTextBox.Text)
-                || !File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(xPatternImageLocationTextBox.ValueTextBox.Text)))
-            {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Valid Image file found. Please enter a valid Image path.");
-                return;
-            }
-
             ElementImageSourceChanged();
         }
     }

@@ -85,6 +85,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
                             zeTS.TestSetID = ((TestPlanningFolderTreeItem)cc).CycleId.ToString();
                         }
                         zeTS.FatherId = Id;
+                        zeTS.entityType = ((ZephyrEntTreeItem)cc).entityType;
                         zeTS.TestSetStatuses.AddRange(((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTCsDataSummary(Convert.ToInt32(zeTS.TestSetID)));
                         tsChildrens.Add(zeTS);
                     }
@@ -130,6 +131,8 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
                         ZephyrEntPhaseTreeItem zeTS = new ZephyrEntPhaseTreeItem(p);
                         zeTS.Path = this.Path + '\\' + zeTS.Name;
                         zeTS.TestSetStatuses.AddRange(((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTCsDataSummary(Convert.ToInt32(zeTS.TestSetID)));
+                        zeTS.FatherId = zeFolder.CycleId.ToString();
+                        zeTS.entityType = zeFolder.entityType;
                         CurrentChildrens.Add(zeTS);
                     }
                 });

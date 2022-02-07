@@ -304,7 +304,7 @@ namespace GingerCore
             {
                 string previousFilePath = mActivities.LazyLoadDetails.XmlFilePath;
                 string directoryName = Path.GetDirectoryName(previousFilePath);
-                if (!directoryName.Equals(folderName))
+                if (!directoryName.Equals(folderName) && File.Exists(Path.Combine(folderName, Path.GetFileName(previousFilePath))))
                 {
                     string fileName = Path.GetFileName(previousFilePath);
                     mActivities.LazyLoadDetails.XmlFilePath = Path.Combine(folderName, fileName);

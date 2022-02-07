@@ -103,38 +103,79 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     AddAPIModelWizard.APIType = eAPIType.WSDL;
                     WizardEventArgs.CancelEvent = true;
-                    if (ValidateFile(xURLTextBox.Text))
+                    if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
                     {
-                        WizardEventArgs.CancelEvent = false;
-                        AddAPIModelWizard.mWSDLParser = mWSDLParser;
+                        if (ValidateFile(xURLTextBox.Text))
+                        {
+                            WizardEventArgs.CancelEvent = false;
+                            AddAPIModelWizard.mWSDLParser = mWSDLParser;
+                        }
                     }
                 }
                 else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString())
                 {
                     AddAPIModelWizard.APIType = eAPIType.XMLTemplates;
                     WizardEventArgs.CancelEvent = true;
-                    if (ValidateFile(xURLTextBox.Text))
+                    if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
                     {
-                        WizardEventArgs.CancelEvent = false;
-                        ValidateXMLTemplatesInputs(WizardEventArgs);
+                        if (ValidateFile(xURLTextBox.Text))
+                        {
+                            WizardEventArgs.CancelEvent = false;
+                        }
+                    }
+                    else if (XMLTemplatesGrid.DataSourceList != null && XMLTemplatesGrid.DataSourceList.Count > 0)
+                    {
+                        for (int i = 0; i < XMLTemplatesGrid.DataSourceList.Count; i++)
+                        {
+                            if (ValidateFile(((TemplateFile)XMLTemplatesGrid.DataSourceList[i]).FilePath))
+                            {
+                                WizardEventArgs.CancelEvent = false;
+                            }
+                            else
+                            {
+                                WizardEventArgs.CancelEvent = true;
+                                break;
+                            }
+                        }
                     }
                 }
                 else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.JsonTemplate.ToString())
                 {
                     AddAPIModelWizard.APIType = eAPIType.JsonTemplate;
                     WizardEventArgs.CancelEvent = true;
-                    if (ValidateFile(xURLTextBox.Text))
+                    if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
                     {
-                        WizardEventArgs.CancelEvent = false;
+                        if (ValidateFile(xURLTextBox.Text))
+                        {
+                            WizardEventArgs.CancelEvent = false;
+                        }
+                    }
+                    else if (XMLTemplatesGrid.DataSourceList != null && XMLTemplatesGrid.DataSourceList.Count > 0)
+                    {
+                        for (int i = 0; i < XMLTemplatesGrid.DataSourceList.Count; i++)
+                        {
+                            if (ValidateFile(((TemplateFile)XMLTemplatesGrid.DataSourceList[i]).FilePath))
+                            {
+                                WizardEventArgs.CancelEvent = false;
+                            }
+                            else
+                            {
+                                WizardEventArgs.CancelEvent = true;
+                                break;
+                            }
+                        }
                     }
                 }
                 else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
                 {
                     AddAPIModelWizard.APIType = eAPIType.Swagger;
                     WizardEventArgs.CancelEvent = true;
-                    if (ValidateFile(xURLTextBox.Text))
+                    if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
                     {
-                        WizardEventArgs.CancelEvent = false;
+                        if (ValidateFile(xURLTextBox.Text))
+                        {
+                            WizardEventArgs.CancelEvent = false;
+                        }
                     }
                 }
             }
