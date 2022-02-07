@@ -100,7 +100,7 @@ namespace Ginger.Agents
             get
             {
                 if (SelectedAgent != null)
-                    return ((IWindowExplorer)(SelectedAgent.Driver));
+                    return ((IWindowExplorer)(((AgentOperations)SelectedAgent.AgentOperations).Driver));
                 else
                     return null;
             }
@@ -110,7 +110,7 @@ namespace Ginger.Agents
         {
             get
             {
-                if(SelectedAgent != null && SelectedAgent.Status == Agent.eStatus.Running)
+                if(SelectedAgent != null && ((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Running)
                     return true;
                 else
                     return false;
@@ -159,7 +159,7 @@ namespace Ginger.Agents
             {
                 if (((Agent)sender) == SelectedAgent)
                 {
-                    if (e.PropertyName == nameof(Agent.Status))
+                    if (e.PropertyName == nameof(AgentOperations.Status))
                     {
                         SetAgentStatusView();
                         UpdateAgentWindows();
@@ -180,7 +180,7 @@ namespace Ginger.Agents
                 return;
             }         
 
-            switch(SelectedAgent.Status)
+            switch(((AgentOperations)SelectedAgent.AgentOperations).Status)
             {
                 case Agent.eStatus.FailedToStart:
                 case Agent.eStatus.NotStarted:
@@ -220,25 +220,25 @@ namespace Ginger.Agents
         {
             if (SelectedAgent == null) return;
 
-            switch (SelectedAgent.Status)
+            switch (((AgentOperations)SelectedAgent.AgentOperations).Status)
             {
                 case Agent.eStatus.FailedToStart:
                 case Agent.eStatus.NotStarted:
                     Reporter.ToStatus(eStatusMsgKey.StartAgent, null, SelectedAgent.Name, "");
-                    if (SelectedAgent.Status == Agent.eStatus.Running) SelectedAgent.Close();
+                    if (((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Running) SelectedAgent.AgentOperations.Close();
                     SelectedAgent.SolutionFolder =  WorkSpace.Instance.Solution.Folder;
                     SelectedAgent.ProjEnvironment = null;// App.AutomateTabEnvironment;
                     SelectedAgent.BusinessFlow = null; //App.BusinessFlow; ;                    
                     SelectedAgent.DSList = null; //WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-                    SelectedAgent.StartDriver();
+                    SelectedAgent.AgentOperations.StartDriver();
                     Reporter.HideStatusMessage();
                     //If there is errorMessageFromDriver is populated then do not wait. 
-                    if (SelectedAgent.Driver != null && String.IsNullOrEmpty(SelectedAgent.Driver.ErrorMessageFromDriver))
-                        SelectedAgent.WaitForAgentToBeReady();
-                    Agent.eStatus Status = SelectedAgent.Status;
+                    if (((AgentOperations)SelectedAgent.AgentOperations).Driver != null && String.IsNullOrEmpty(((AgentOperations)SelectedAgent.AgentOperations).Driver.ErrorMessageFromDriver))
+                        SelectedAgent.AgentOperations.WaitForAgentToBeReady();
+                    Agent.eStatus Status = ((AgentOperations)SelectedAgent.AgentOperations).Status;
                     if (Status != Agent.eStatus.Running && Status != Agent.eStatus.Starting)
                     {
-                        string errorMessage = SelectedAgent.Driver.ErrorMessageFromDriver;
+                        string errorMessage = ((AgentOperations)SelectedAgent.AgentOperations).Driver.ErrorMessageFromDriver;
                         if (String.IsNullOrEmpty(errorMessage))
                             errorMessage = "Failed to Connect the agent";
                         Reporter.ToStatus(eStatusMsgKey.StartAgentFailed, null, errorMessage);
@@ -248,13 +248,13 @@ namespace Ginger.Agents
                     break;
 
                 case Agent.eStatus.Starting:
-                    SelectedAgent.Driver.cancelAgentLoading = true;
+                    ((AgentOperations)SelectedAgent.AgentOperations).Driver.cancelAgentLoading = true;
                     break;
 
                 case Agent.eStatus.Completed:
                 case Agent.eStatus.Ready:
                 case Agent.eStatus.Running:
-                    SelectedAgent.Close();
+                    SelectedAgent.AgentOperations.Close();
                     break;
             }
 
@@ -289,9 +289,9 @@ namespace Ginger.Agents
             }
             List<AppWindow> winsList = null;
 
-            if (SelectedAgent.Status == Agent.eStatus.Completed || SelectedAgent.Status == Agent.eStatus.Ready || SelectedAgent.Status == Agent.eStatus.Running)
+            if (((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Completed || ((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Ready || ((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Running)
             {
-                winsList = ((IWindowExplorer)(SelectedAgent.Driver)).GetAppWindows();
+                winsList = ((IWindowExplorer)(((AgentOperations)SelectedAgent.AgentOperations).Driver)).GetAppWindows();
             }
             xAgentWindowsComboBox.ItemsSource = winsList;
             xAgentWindowsComboBox.DisplayMemberPath = nameof(AppWindow.WinInfo);
@@ -299,7 +299,7 @@ namespace Ginger.Agents
             //defualt selection            
             if (winsList != null && winsList.Count > 0)
             {
-                AppWindow activeWindow = ((IWindowExplorer)(SelectedAgent.Driver)).GetActiveWindow();
+                AppWindow activeWindow = ((IWindowExplorer)(((AgentOperations)SelectedAgent.AgentOperations).Driver)).GetActiveWindow();
                 if (activeWindow != null)
                 {
                     foreach (AppWindow win in winsList)

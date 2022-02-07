@@ -35,12 +35,12 @@ namespace GingerCoreNET
         /// <param name="runner"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static ApplicationAgent GetAppAgent(Activity activity, GingerRunner runner, Context context)
+        public static ApplicationAgent GetAppAgent(Activity activity, GingerExecutionEngine runner, Context context)
         {
             ApplicationAgent appAgent = null;
             if (context != null && activity != null)
             {
-                appAgent = (ApplicationAgent)runner.ApplicationAgents.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault();                
+                appAgent = (ApplicationAgent)runner.GingerRunner.ApplicationAgents.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault();                
             }
             return appAgent;
         }
@@ -50,16 +50,16 @@ namespace GingerCoreNET
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static bool CheckIfAgentIsRunning(Activity activity, GingerRunner runner, Context context, out IWindowExplorer windowExplorerDriver)
+        public static bool CheckIfAgentIsRunning(Activity activity, GingerExecutionEngine runner, Context context, out IWindowExplorer windowExplorerDriver)
         {
             bool isRunning = false;
             windowExplorerDriver = null;
             ApplicationAgent appAgent = GetAppAgent(activity, runner, context);
-            if (appAgent != null && appAgent.Agent != null && appAgent.Agent.Driver != null && appAgent.Agent.Driver.IsRunning())
+            if (appAgent != null && appAgent.Agent != null && ((AgentOperations)appAgent.Agent.AgentOperations).Driver != null && ((AgentOperations)appAgent.Agent.AgentOperations).Driver.IsRunning())
             {
-                if (appAgent.Agent.Driver is IWindowExplorer)
+                if (((AgentOperations)appAgent.Agent.AgentOperations).Driver is IWindowExplorer)
                 {
-                    windowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
+                    windowExplorerDriver = (IWindowExplorer)((AgentOperations)appAgent.Agent.AgentOperations).Driver;
                 }
                 isRunning = true;
             }
@@ -71,7 +71,7 @@ namespace GingerCoreNET
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static Agent GetDriverAgent(Activity activity, GingerRunner runner, Context context)
+        public static Agent GetDriverAgent(Activity activity, GingerExecutionEngine runner, Context context)
         {
             Agent agent = null;
             ApplicationAgent appAgent = GetAppAgent(activity, runner, context);
@@ -85,23 +85,23 @@ namespace GingerCoreNET
         /// <summary>
         /// This method is used to Start the agent
         /// </summary>
-        public static bool StartAgent(Activity activity, GingerRunner runner, Context context, out IWindowExplorer windowExplorerDriver)
+        public static bool StartAgent(Activity activity, GingerExecutionEngine runner, Context context, out IWindowExplorer windowExplorerDriver)
         {
             bool isAgentStarted = false;
             windowExplorerDriver = null;
             ApplicationAgent appAgent = GetAppAgent(activity, runner, context);
             if (appAgent != null)
             {
-                if (appAgent.Agent.Driver == null)
+                if (((AgentOperations)appAgent.Agent.AgentOperations).Driver == null)
                 {
-                    appAgent.Agent.StartDriver();
+                    appAgent.Agent.AgentOperations.StartDriver();
                     isAgentStarted = true;
                 }
-                else if (!appAgent.Agent.Driver.IsRunning())
+                else if (!((AgentOperations)appAgent.Agent.AgentOperations).Driver.IsRunning())
                 {
                     if (Reporter.ToUser(eUserMsgKey.PleaseStartAgent, eUserMsgOption.OKCancel, eUserMsgSelection.OK) == eUserMsgSelection.OK)
                     {
-                        appAgent.Agent.StartDriver();
+                        appAgent.Agent.AgentOperations.StartDriver();
                         isAgentStarted = true;
                     }
                     else
@@ -109,10 +109,10 @@ namespace GingerCoreNET
                         isAgentStarted = false;
                     }
                 }
-                DriverBase driver = appAgent.Agent.Driver;
+                DriverBase driver = ((AgentOperations)appAgent.Agent.AgentOperations).Driver;
                 if (driver is IWindowExplorer)
                 {
-                    windowExplorerDriver = (IWindowExplorer)appAgent.Agent.Driver;
+                    windowExplorerDriver = (IWindowExplorer)((AgentOperations)appAgent.Agent.AgentOperations).Driver;
                 }
             }
             else

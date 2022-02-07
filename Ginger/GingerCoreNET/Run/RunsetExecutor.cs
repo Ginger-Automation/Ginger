@@ -39,6 +39,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
+using Amdocs.Ginger.CoreNET.Run.RunSetActions;
+
 namespace Ginger.Run
 {
     public class RunsetExecutor : INotifyPropertyChanged
@@ -125,7 +128,7 @@ namespace Ginger.Run
         {
             foreach (GingerRunner runner in Runners)
             {
-                ConfigureRunnerForExecution(runner);
+                ConfigureRunnerForExecution((GingerExecutionEngine)runner.Executor);
             }
         }
 
@@ -135,12 +138,12 @@ namespace Ginger.Run
             set { mDefectSuggestionsList = value; }
         }
 
-        public void ConfigureRunnerForExecution(GingerRunner runner)
+        public void ConfigureRunnerForExecution(GingerExecutionEngine runner)
         {
             runner.SetExecutionEnvironment(RunsetExecutionEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
             runner.CurrentSolution = WorkSpace.Instance.Solution;
             runner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-            runner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            runner.GingerRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             runner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             runner.SolutionFolder = WorkSpace.Instance.Solution.Folder;
             //runner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList;
@@ -148,18 +151,21 @@ namespace Ginger.Run
 
         public void InitRunners()
         {
+
             AllPreviousBusinessFlowRuns.Clear();
             foreach (GingerRunner gingerRunner in Runners)
             {
-                InitRunner(gingerRunner);
+                GingerExecutionEngine ExecutorEngine = new GingerExecutionEngine(gingerRunner);
+                InitRunner(gingerRunner,ExecutorEngine);
             }
         }
 
-        public void InitRunner(GingerRunner runner)
+        public void InitRunner(GingerRunner runner, GingerExecutionEngine ExecutorEngine)
         {
             //Configure Runner for execution
             runner.Status = eRunStatus.Pending;
-            ConfigureRunnerForExecution(runner);
+            runner.Executor = ExecutorEngine;
+            ConfigureRunnerForExecution((GingerExecutionEngine)runner.Executor);
 
             //Set the Apps agents
             foreach (ApplicationAgent appagent in runner.ApplicationAgents.ToList())
@@ -235,8 +241,8 @@ namespace Ginger.Run
                 }
             }
 
-            runner.IsUpdateBusinessFlowRunList = true;
-            runner.BusinessFlows = runnerFlows;
+            runner.Executor.IsUpdateBusinessFlowRunList = true;
+            runner.Executor.BusinessFlows = runnerFlows;
         }
 
 
@@ -315,7 +321,7 @@ namespace Ginger.Run
             ObservableList<BusinessFlowExecutionSummary> BFESs = new ObservableList<BusinessFlowExecutionSummary>();
             foreach (GingerRunner ARC in Runners)
             {
-                BFESs.Append(ARC.GetAllBusinessFlowsExecutionSummary(GetSummaryOnlyForExecutedFlow, ARC.Name));
+                BFESs.Append(ARC.Executor.GetAllBusinessFlowsExecutionSummary(GetSummaryOnlyForExecutedFlow, ARC.Name));
             }
             return BFESs;
         }
@@ -328,6 +334,17 @@ namespace Ginger.Run
                 {
                     if (gr.ProjEnvironment != null)
                     {
+                        foreach (EnvApplication ea in gr.ProjEnvironment.Applications)
+                        {
+                            foreach (Database db in ea.Dbs)
+                            {
+                                if (db.DatabaseOperations == null)
+                                {
+                                    DatabaseOperations databaseOperations = new DatabaseOperations(db);
+                                    db.DatabaseOperations = databaseOperations;
+                                }
+                            }
+                        }
                         gr.ProjEnvironment.CloseEnvironment();
                     }
                 }
@@ -335,6 +352,17 @@ namespace Ginger.Run
 
             if (RunsetExecutionEnvironment != null)
             {
+                foreach (EnvApplication ea in RunsetExecutionEnvironment.Applications)
+                {
+                    foreach (Database db in ea.Dbs)
+                    {
+                        if (db.DatabaseOperations == null)
+                        {
+                            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+                            db.DatabaseOperations = databaseOperations;
+                        }
+                    }
+                }
                 RunsetExecutionEnvironment.CloseEnvironment();
             }
         }
@@ -344,7 +372,7 @@ namespace Ginger.Run
         {
             foreach (GingerRunner GR in Runners)
             {
-                GR.SetExecutionEnvironment(defualtEnv, allEnvs);
+                GR.Executor.SetExecutionEnvironment(defualtEnv, allEnvs);
             }
         }
 
@@ -354,25 +382,25 @@ namespace Ginger.Run
             if (mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 DateTime currentExecutionDateTime = DateTime.Now;
-                Runners[0].ExecutionLoggerManager.RunSetStart(mSelectedExecutionLoggerConfiguration.CalculatedLoggerFolder, mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, currentExecutionDateTime);
+                Runners[0].Executor.ExecutionLoggerManager.RunSetStart(mSelectedExecutionLoggerConfiguration.CalculatedLoggerFolder, mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, currentExecutionDateTime);
 
                 int gingerIndex = 0;
                 while (Runners.Count > gingerIndex)
                 {
-                    Runners[gingerIndex].ExecutionLoggerManager.GingerData.Seq = gingerIndex + 1;
-                    Runners[gingerIndex].ExecutionLoggerManager.GingerData.GingerName = Runners[gingerIndex].Name;
-                    Runners[gingerIndex].ExecutionLoggerManager.GingerData.Ginger_GUID = Runners[gingerIndex].Guid;
-                    Runners[gingerIndex].ExecutionLoggerManager.GingerData.GingerAggentMapping = Runners[gingerIndex].ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
-                    Runners[gingerIndex].ExecutionLoggerManager.GingerData.GingerEnv = Runners[gingerIndex].ProjEnvironment.Name.ToString();
-                    Runners[gingerIndex].ExecutionLoggerManager.CurrentExecutionDateTime = currentExecutionDateTime;
-                    Runners[gingerIndex].ExecutionLoggerManager.Configuration = mSelectedExecutionLoggerConfiguration;
+                    Runners[gingerIndex].Executor.ExecutionLoggerManager.GingerData.Seq = gingerIndex + 1;
+                    Runners[gingerIndex].Executor.ExecutionLoggerManager.GingerData.GingerName = Runners[gingerIndex].Name;
+                    Runners[gingerIndex].Executor.ExecutionLoggerManager.GingerData.Ginger_GUID = Runners[gingerIndex].Guid;
+                    Runners[gingerIndex].Executor.ExecutionLoggerManager.GingerData.GingerAggentMapping = Runners[gingerIndex].ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
+                    Runners[gingerIndex].Executor.ExecutionLoggerManager.GingerData.GingerEnv = Runners[gingerIndex].ProjEnvironment.Name.ToString();
+                    Runners[gingerIndex].Executor.ExecutionLoggerManager.CurrentExecutionDateTime = currentExecutionDateTime;
+                    Runners[gingerIndex].Executor.ExecutionLoggerManager.Configuration = mSelectedExecutionLoggerConfiguration;
                     //gingerIndex++;
-                    Runners[gingerIndex].ExecutionLoggerManager.mExecutionLogger.GingerData.Seq = gingerIndex + 1;
-                    Runners[gingerIndex].ExecutionLoggerManager.mExecutionLogger.GingerData.GingerName = Runners[gingerIndex].Name;
-                    Runners[gingerIndex].ExecutionLoggerManager.mExecutionLogger.GingerData.Ginger_GUID = Runners[gingerIndex].Guid;
-                    Runners[gingerIndex].ExecutionLoggerManager.mExecutionLogger.GingerData.GingerAggentMapping = Runners[gingerIndex].ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
-                    Runners[gingerIndex].ExecutionLoggerManager.mExecutionLogger.GingerData.GingerEnv = Runners[gingerIndex].ProjEnvironment.Name.ToString();
-                    Runners[gingerIndex].ExecutionLoggerManager.mExecutionLogger.CurrentExecutionDateTime = currentExecutionDateTime;
+                    Runners[gingerIndex].Executor.ExecutionLoggerManager.mExecutionLogger.GingerData.Seq = gingerIndex + 1;
+                    Runners[gingerIndex].Executor.ExecutionLoggerManager.mExecutionLogger.GingerData.GingerName = Runners[gingerIndex].Name;
+                    Runners[gingerIndex].Executor.ExecutionLoggerManager.mExecutionLogger.GingerData.Ginger_GUID = Runners[gingerIndex].Guid;
+                    Runners[gingerIndex].Executor.ExecutionLoggerManager.mExecutionLogger.GingerData.GingerAggentMapping = Runners[gingerIndex].ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
+                    Runners[gingerIndex].Executor.ExecutionLoggerManager.mExecutionLogger.GingerData.GingerEnv = Runners[gingerIndex].ProjEnvironment.Name.ToString();
+                    Runners[gingerIndex].Executor.ExecutionLoggerManager.mExecutionLogger.CurrentExecutionDateTime = currentExecutionDateTime;
                     //Runners[gingerIndex].ExecutionLoggerManager.mExecutionLogger.Configuration = mSelectedExecutionLoggerConfiguration;
                     gingerIndex++;
 
@@ -405,7 +433,7 @@ namespace Ginger.Run
                     }
                     else
                     {
-                        if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+                        if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && !string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl))
                         {
                             AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
                             bool isValidated = accountReportApiHandler.ExecutionIdValidation((Guid)RunSetConfig.ExecutionID);
@@ -440,9 +468,9 @@ namespace Ginger.Run
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
                 }
 
-                if (mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
+                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
                 {
-                    Runners[0].Centeralized_Logger.RunSetStart(RunSetConfig);
+                    await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetStart(RunSetConfig);
                 }
 
                 //Start Run 
@@ -472,13 +500,13 @@ namespace Ginger.Run
                         {
                             if (doContinueRun == false)
                             {
-                                GR.RunRunner();
+                                GR.Executor.RunRunner();
                             }
                             else
                                 if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
                             {
-                                GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
-                                GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
+                                GR.Executor.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
+                                GR.Executor.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
                             }
                         }, TaskCreationOptions.LongRunning);
                         runnersTasks.Add(t);
@@ -502,19 +530,19 @@ namespace Ginger.Run
 
                             if (doContinueRun == false)
                             {
-                                GR.RunRunner();
+                                GR.Executor.RunRunner();
                             }
                             else
                             {
                                 //continue
                                 if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
                                 {
-                                    GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
-                                    GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
+                                    GR.Executor.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
+                                    GR.Executor.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
                                 }
                                 else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)//continue the runners flow
                                 {
-                                    GR.RunRunner();
+                                    GR.Executor.RunRunner();
                                 }
                             }
 
@@ -523,9 +551,9 @@ namespace Ginger.Run
                                 //marking next Runners as blocked and stopping execution
                                 for (int indx = Runners.IndexOf(GR) + 1; indx < Runners.Count; indx++)
                                 {
-                                    Runners[indx].SetNextBusinessFlowsBlockedStatus();
+                                    Runners[indx].Executor.SetNextBusinessFlowsBlockedStatus();
                                     Runners[indx].Status = eRunStatus.Blocked;
-                                    Runners[indx].GiveUserFeedback();//for getting update for runner stats on runset page
+                                    Runners[indx].Executor.GiveUserFeedback();//for getting update for runner stats on runset page
                                 }
 
                                 break;
@@ -546,10 +574,11 @@ namespace Ginger.Run
                 //Do post execution items
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## {0} Runners Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 //ExecutionLoggerManager.RunSetEnd();
-                Runners[0].ExecutionLoggerManager.RunSetEnd();
-                if (mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
+                Runners[0].Executor.ExecutionLoggerManager.RunSetEnd();
+
+                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
                 {
-                    Runners[0].Centeralized_Logger.RunSetEnd(RunSetConfig);
+                   await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig);
                 }
                 if (mStopRun == false)
                 {
@@ -565,9 +594,8 @@ namespace Ginger.Run
 
                 if (mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.PostExecution)
                 {
-                    await Runners[0].ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
+                    await Runners[0].Executor.ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
                 }
-
             }
             finally
             {
@@ -590,7 +618,7 @@ namespace Ginger.Run
                     {
                         runSetReportName = ExecutionLoggerManager.defaultRunTabLogName;
                     }
-                    string exec_folder = new ExecutionLoggerHelper().GetLoggerDirectory(Path.Combine(mSelectedExecutionLoggerConfiguration.CalculatedLoggerFolder, runSetReportName + "_" + Runners[0].ExecutionLoggerManager.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmssfff")));
+                    string exec_folder = new ExecutionLoggerHelper().GetLoggerDirectory(Path.Combine(mSelectedExecutionLoggerConfiguration.CalculatedLoggerFolder, runSetReportName + "_" + Runners[0].Executor.ExecutionLoggerManager.CurrentExecutionDateTime.ToString("MMddyyyy_HHmmssfff")));
                 }
             }
         }
@@ -599,8 +627,8 @@ namespace Ginger.Run
         {
             foreach (GingerRunner runner in Runners)
             {
-                runner.ResetRunnerExecutionDetails();
-                runner.CloseAgents();
+                runner.Executor.ResetRunnerExecutionDetails();
+                runner.Executor.CloseAgents();
             }
         }
 
@@ -609,9 +637,9 @@ namespace Ginger.Run
             mStopRun = true;
             foreach (GingerRunner runner in Runners)
             {
-                if (runner.IsRunning)
+                if (runner.Executor.IsRunning)
                 {
-                    runner.StopRun();
+                    runner.Executor.StopRun();
                 }
             }
         }
@@ -624,6 +652,72 @@ namespace Ginger.Run
 
             foreach (RunSetActionBase RSA in RunSetConfig.RunSetActions)
             {
+                //set Operations object to call execute, specific to runsetAtion 
+                if (RSA is RunSetActionHTMLReport)
+                {
+                    RunSetActionHTMLReportOperations runSetActionHTMLReport = new RunSetActionHTMLReportOperations((RunSetActionHTMLReport)RSA);
+                    ((RunSetActionHTMLReport)RSA).RunSetActionHTMLReportOperations = runSetActionHTMLReport;
+                }
+                if (RSA is RunSetActionAutomatedALMDefects)
+                {
+                    RunSetActionAutomatedALMDefectsOperations runSetActionAutomatedALMDefects = new RunSetActionAutomatedALMDefectsOperations((RunSetActionAutomatedALMDefects)RSA);
+                    ((RunSetActionAutomatedALMDefects)RSA).RunSetActionAutomatedALMDefectsOperations = runSetActionAutomatedALMDefects;
+                }
+                if (RSA is RunSetActionGenerateTestNGReport)
+                {
+                    RunSetActionGenerateTestNGReportOperations runSetActionGenerateTestNGReport = new RunSetActionGenerateTestNGReportOperations((RunSetActionGenerateTestNGReport)RSA);
+                    ((RunSetActionGenerateTestNGReport)RSA).RunSetActionGenerateTestNGReportOperations = runSetActionGenerateTestNGReport;
+                }
+                if (RSA is RunSetActionHTMLReportSendEmail)
+                {
+                    RunSetActionHTMLReportSendEmailOperations runSetActionHTMLReportSendEmail = new RunSetActionHTMLReportSendEmailOperations((RunSetActionHTMLReportSendEmail)RSA);
+                    ((RunSetActionHTMLReportSendEmail)RSA).RunSetActionHTMLReportSendEmailOperations = runSetActionHTMLReportSendEmail;
+                }
+                if (RSA is RunSetActionPublishToQC)
+                {
+                    RunSetActionPublishToQCOperations runSetActionPublishToQC = new RunSetActionPublishToQCOperations((RunSetActionPublishToQC)RSA);
+                    ((RunSetActionPublishToQC)RSA).RunSetActionPublishToQCOperations = runSetActionPublishToQC;
+                }
+                if (RSA is RunSetActionSaveResults)
+                {
+                    RunSetActionSaveResultsOperations runSetActionSaveResults = new RunSetActionSaveResultsOperations((RunSetActionSaveResults)RSA);
+                    ((RunSetActionSaveResults)RSA).RunSetActionSaveResultsOperations = runSetActionSaveResults;
+                }
+                if (RSA is RunSetActionScript)
+                {
+                    RunSetActionScriptOperations runSetActionScript = new RunSetActionScriptOperations((RunSetActionScript)RSA);
+                    ((RunSetActionScript)RSA).RunSetActionScriptOperations = runSetActionScript;
+                }
+                if (RSA is RunSetActionJSONSummary)
+                {
+                    RunSetActionJSONSummaryOperations runSetActionJSONSummary = new RunSetActionJSONSummaryOperations((RunSetActionJSONSummary)RSA);
+                    ((RunSetActionJSONSummary)RSA).RunSetActionJSONSummaryOperations = runSetActionJSONSummary;
+                }
+                if (RSA is RunSetActionSendDataToExternalSource)
+                {
+                    RunSetActionSendDataToExternalSourceOperations runSetActionSendDataToExternalSource = new RunSetActionSendDataToExternalSourceOperations((RunSetActionSendDataToExternalSource)RSA);
+                    ((RunSetActionSendDataToExternalSource)RSA).RunSetActionSendDataToExternalSourceOperations = runSetActionSendDataToExternalSource;
+                }
+                if (RSA is RunSetActionSendEmail)
+                {
+                    RunSetActionSendEmailOperations runSetActionSendEmail = new RunSetActionSendEmailOperations((RunSetActionSendEmail)RSA);
+                    ((RunSetActionSendEmail)RSA).RunSetActionSendEmailOperations = runSetActionSendEmail;
+                }
+                if (RSA is RunSetActionSendFreeEmail)
+                {
+                    RunSetActionSendFreeEmailOperations runSetActionSendFreeEmail = new RunSetActionSendFreeEmailOperations((RunSetActionSendFreeEmail)RSA);
+                    ((RunSetActionSendFreeEmail)RSA).RunSetActionSendFreeEmailOperations = runSetActionSendFreeEmail;
+                }
+                if (RSA is RunSetActionSendSMS)
+                {
+                    RunSetActionSendSMSOperations runSetActionSendSMS = new RunSetActionSendSMSOperations((RunSetActionSendSMS)RSA);
+                    ((RunSetActionSendSMS)RSA).RunSetActionSendSMSOperations = runSetActionSendSMS;
+                }
+
+
+                RunSetActionBaseOperations runSetActionBaseOperations = new RunSetActionBaseOperations(RSA);
+                RSA.runSetActionBaseOperations = runSetActionBaseOperations;
+
                 if (RSA.Active == true && runAtList.Contains(RSA.RunAt))
                 {
                     switch (RSA.RunAt)
@@ -638,7 +732,7 @@ namespace Ginger.Run
                             bool b = CheckRSACondition(RI, RSA);
                             if (b)
                             {
-                                RSA.RunAction(RI);
+                                RSA.runSetActionBaseOperations.RunAction(RI);
                             }
                             break;
                     }
@@ -720,11 +814,11 @@ namespace Ginger.Run
 
 
         static volatile object locker = new Object();
-        public static void ClearAndResetVirtualAgents(RunSetConfig runset, GingerRunner runner)
+        public static void ClearAndResetVirtualAgents(RunSetConfig runset, GingerExecutionEngine runner)
         {
             lock (locker)
             {
-                var appAgents = runner.ApplicationAgents.Where(x => x.Agent != null && ((Agent)x.Agent).IsVirtual).ToList();
+                var appAgents = runner.GingerRunner.ApplicationAgents.Where(x => x.Agent != null && ((Agent)x.Agent).IsVirtual).ToList();
 
                 if (appAgents.Count > 0)
                 {
@@ -732,11 +826,11 @@ namespace Ginger.Run
                     {
                         var virtualAgent = (Agent)appAgents[i].Agent;
 
-                        var realAgent = runset.ActiveAgentList.Where(x => x.Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
+                        var realAgent = runset.ActiveAgentList.Where(x => ((Agent)x).Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
 
                         if (realAgent != null)
                         {
-                            var runsetVirtualAgent = runset.ActiveAgentList.Where(x => x.Guid == ((Agent)virtualAgent).Guid).FirstOrDefault();
+                            var runsetVirtualAgent = runset.ActiveAgentList.Where(x => ((Agent)x).Guid == ((Agent)virtualAgent).Guid).FirstOrDefault();
                             appAgents[i].Agent = realAgent;
 
                             if (runsetVirtualAgent != null)

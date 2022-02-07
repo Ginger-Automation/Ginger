@@ -62,13 +62,13 @@ namespace GingerCore.Platforms.PlatformsInfo
             List<ActBrowserElement.eControlAction> browserActElementList = base.GetPlatformBrowserControlOperations();//taken from WebPlatform
 
             //Do Changes from Web
-            browserActElementList.Remove(ActBrowserElement.eControlAction.OpenURLNewTab);
-            browserActElementList.Remove(ActBrowserElement.eControlAction.Maximize);
-            browserActElementList.Remove(ActBrowserElement.eControlAction.Close);
-            browserActElementList.Remove(ActBrowserElement.eControlAction.SwitchWindow);
-            browserActElementList.Remove(ActBrowserElement.eControlAction.GetWindowTitle);
-            browserActElementList.Remove(ActBrowserElement.eControlAction.CloseTabExcept);
-            browserActElementList.Remove(ActBrowserElement.eControlAction.CloseAll);
+            //browserActElementList.Remove(ActBrowserElement.eControlAction.OpenURLNewTab);
+            //browserActElementList.Remove(ActBrowserElement.eControlAction.Maximize);
+            //browserActElementList.Remove(ActBrowserElement.eControlAction.Close);
+            //browserActElementList.Remove(ActBrowserElement.eControlAction.SwitchWindow);
+            //browserActElementList.Remove(ActBrowserElement.eControlAction.GetWindowTitle);
+            //browserActElementList.Remove(ActBrowserElement.eControlAction.CloseTabExcept);
+            //browserActElementList.Remove(ActBrowserElement.eControlAction.CloseAll);
 
             return browserActElementList;
         }
@@ -158,7 +158,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override bool IsPlatformSupportPOM()
         {
-            return false;
+            return true;
         }
 
         public override string GetPageUrlRadioLabelText()

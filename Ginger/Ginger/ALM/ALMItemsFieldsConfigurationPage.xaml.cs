@@ -93,9 +93,12 @@ namespace Ginger.ALM
         private void Save(object sender, RoutedEventArgs e)
         {
             // TODO Rearrange save function to keep old fields value.
-            ObservableList<ExternalItemFieldBase> tempItemList = new ObservableList<ExternalItemFieldBase>();
-            WorkSpace.Instance.Solution.ExternalItemsFields = ALMIntegration.Instance.GetUpdatedFields(mItemsFields, false);
-            WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
+            ObservableList<ExternalItemFieldBase> tempItemList = ALMIntegration.Instance.GetUpdatedFields(mItemsFields, false);
+            if (tempItemList.Any())
+            {
+                WorkSpace.Instance.Solution.ExternalItemsFields = tempItemList;
+            }
+            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
             genWin.Close();
         }
 

@@ -21,6 +21,7 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
 using Ginger.BusinessFlowWindows;
+using Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
@@ -57,15 +58,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 if (mListView != value)
                 {
-                    //if (mListView != null)
-                    //{
-                    //    mListView.UcListViewEvent -= ListView_UcListViewEvent;
-                    //}
                     mListView = value;
-                    //if (mListView != null)
-                    //{
-                    //    mListView.UcListViewEvent += ListView_UcListViewEvent;
-                    //}
                 }
             }
         }
@@ -198,6 +191,20 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             addNew.OperationHandler = AddNewHandler;
             operationsList.Add(addNew);
 
+            ListItemOperation addToFlow = new ListItemOperation();
+            addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
+            addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft;
+            addToFlow.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "Add to");
+            addToFlow.OperationHandler = AddFromRepository;
+            operationsList.Add(addToFlow);
+
+            ListItemOperation editItem = new ListItemOperation();
+            editItem.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
+            editItem.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
+            editItem.ToolTip = "Edit Item";
+            editItem.OperationHandler = EditActivity;
+            operationsList.Add(editItem);
+
             return operationsList;
         }
 
@@ -316,15 +323,18 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             publishInd.BindingConverter = new BoolVisibilityConverter();
             notificationsList.Add(publishInd);
 
-            ListItemNotification sharedRepoInd = new ListItemNotification();            
-            sharedRepoInd.AutomationID = "sharedRepoInd";
-            sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-            sharedRepoInd.ToolTip = string.Format("{0} source is from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
-            sharedRepoInd.ImageForeground = Brushes.Orange;
-            sharedRepoInd.BindingObject = mActivity;
-            sharedRepoInd.BindingFieldName = nameof(Activity.IsSharedRepositoryInstance);
-            sharedRepoInd.BindingConverter = new BoolVisibilityConverter();
-            notificationsList.Add(sharedRepoInd);
+            if (PageViewMode != General.eRIPageViewMode.AddFromShardRepository)
+            {
+                ListItemNotification sharedRepoInd = new ListItemNotification();
+                sharedRepoInd.AutomationID = "sharedRepoInd";
+                sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+                sharedRepoInd.ToolTip = string.Format("{0} source is from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                sharedRepoInd.ImageForeground = Brushes.Orange;
+                sharedRepoInd.BindingObject = mActivity;
+                sharedRepoInd.BindingFieldName = nameof(Activity.IsSharedRepositoryInstance);
+                sharedRepoInd.BindingConverter = new BoolVisibilityConverter();
+                notificationsList.Add(sharedRepoInd);
+            }
 
             return notificationsList;
         }
@@ -369,6 +379,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             active.IsEnabeled = mActivity.IsNotGherkinOptimizedActivity;
             active.OperationHandler = ActiveHandler;
             operationsList.Add(active);
+
+
+            ListItemOperation ViewLinkedInstances = new ListItemOperation();
+            ViewLinkedInstances.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
+            ViewLinkedInstances.AutomationID = "ViewLinkedInstances";
+            ViewLinkedInstances.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InstanceLink;
+            ViewLinkedInstances.ToolTip = "View Linked Instances";
+            ViewLinkedInstances.OperationHandler = ViewRepositoryItemUsage;
+            operationsList.Add(ViewLinkedInstances);
 
             return operationsList;
         }
@@ -506,32 +525,39 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public List<ListItemNotification> GetItemGroupNotificationsList(string GroupName)
         {
-            ActivitiesGroup group = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == GroupName).FirstOrDefault();
-            if (group != null)
+            if (PageViewMode == General.eRIPageViewMode.Automation)
             {
-                List<ListItemNotification> notificationsList = new List<ListItemNotification>();
+                ActivitiesGroup group = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == GroupName).FirstOrDefault();
+                if (group != null)
+                {
+                    List<ListItemNotification> notificationsList = new List<ListItemNotification>();
 
-                ListItemNotification publishInd = new ListItemNotification();
-                publishInd.AutomationID = "publishInd";
-                publishInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
-                publishInd.ToolTip = string.Format("{0} is marked to be Published to third party applications", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
-                //publishInd.ImageForeground = Brushes.Orange;
-                publishInd.BindingObject = group;
-                publishInd.BindingFieldName = nameof(RepositoryItemBase.Publish);
-                publishInd.BindingConverter = new BoolVisibilityConverter();
-                notificationsList.Add(publishInd);
+                    ListItemNotification publishInd = new ListItemNotification();
+                    publishInd.AutomationID = "publishInd";
+                    publishInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
+                    publishInd.ToolTip = string.Format("{0} is marked to be Published to third party applications", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
+                    //publishInd.ImageForeground = Brushes.Orange;
+                    publishInd.BindingObject = group;
+                    publishInd.BindingFieldName = nameof(RepositoryItemBase.Publish);
+                    publishInd.BindingConverter = new BoolVisibilityConverter();
+                    notificationsList.Add(publishInd);
 
-                ListItemNotification sharedRepoInd = new ListItemNotification();
-                sharedRepoInd.AutomationID = "sharedRepoInd";
-                sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-                sharedRepoInd.ToolTip = string.Format("{0} source is from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
-                sharedRepoInd.ImageForeground = Brushes.Orange;
-                sharedRepoInd.BindingObject = group;
-                sharedRepoInd.BindingFieldName = nameof(ActivitiesGroup.IsSharedRepositoryInstance);
-                sharedRepoInd.BindingConverter = new BoolVisibilityConverter();
-                notificationsList.Add(sharedRepoInd);
+                    ListItemNotification sharedRepoInd = new ListItemNotification();
+                    sharedRepoInd.AutomationID = "sharedRepoInd";
+                    sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+                    sharedRepoInd.ToolTip = string.Format("{0} source is from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
+                    sharedRepoInd.ImageForeground = Brushes.Orange;
+                    sharedRepoInd.BindingObject = group;
+                    sharedRepoInd.BindingFieldName = nameof(ActivitiesGroup.IsSharedRepositoryInstance);
+                    sharedRepoInd.BindingConverter = new BoolVisibilityConverter();
+                    notificationsList.Add(sharedRepoInd);
 
-                return notificationsList;
+                    return notificationsList;
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
@@ -671,7 +697,41 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void AddNewHandler(object sender, RoutedEventArgs e)
         {
             WizardWindow.ShowWizard(new AddActivityWizard(mContext));
-            //OnActivityListItemEvent(ActivityListItemEventArgs.eEventType.UpdateGrouping);
+        }
+
+        private void AddFromRepository(object sender, RoutedEventArgs e)
+        {
+            if (mListView.List.SelectedItems != null && mListView.List.SelectedItems.Count > 0)
+            {
+                if (mContext.BusinessFlow == null)
+                {
+                    return;
+                }
+                List<Activity> list = new List<Activity>();
+                foreach (Activity selectedItem in mListView.List.SelectedItems)
+                {
+                    list.Add(selectedItem);
+                }
+                ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
+        }
+
+        private void EditActivity(object sender, RoutedEventArgs e)
+        {
+            if (mListView.List.SelectedItems != null && mListView.List.SelectedItems.Count > 0)
+            {
+                Activity a = (Activity)mListView.CurrentItem;
+                GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(a, new Context() { Activity = a }, General.eRIPageViewMode.SharedReposiotry);
+                w.ShowAsWindow();
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem);
+            }
         }
 
         private void DeleteAllHandler(object sender, RoutedEventArgs e)
@@ -707,6 +767,21 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(sender);
             mActivity.Active = !mActivity.Active;
+        }
+
+        private void ViewRepositoryItemUsage(object sender, RoutedEventArgs e)
+        {
+            List<object> SelectedItemsList = mListView.List.SelectedItems.Cast<object>().ToList();
+
+            if (SelectedItemsList.Count > 0)
+            {
+                RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItemBase)mListView.List.SelectedItem);
+                usagePage.ShowAsWindow();
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
 
         private void MandatoryHandler(object sender, RoutedEventArgs e)

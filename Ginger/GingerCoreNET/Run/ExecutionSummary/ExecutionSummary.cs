@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
             {
                 Runners.Total++;
                 Runners.Parallel = mRunsetExecutor.RunSetConfig.RunModeParallel;
-                AddBusinessFlows(runner.BusinessFlows);                
+                AddBusinessFlows(runner.Executor.BusinessFlows);                
             }
         }
 

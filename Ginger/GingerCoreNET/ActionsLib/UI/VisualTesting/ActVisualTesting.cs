@@ -19,6 +19,8 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Applitools.Selenium;
 using GingerCore.Actions.VisualTesting;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -48,14 +50,14 @@ namespace GingerCore.Actions
             BitmapPixelsComparison,
             [EnumValueDescription("UI Elements Analyzer")]
             UIElementsComparison,
-            [EnumValueDescription("OCR Analyzer - Not Implemented")]
-            OCRComparison,
+            //[EnumValueDescription("OCR Analyzer - Not Implemented")]
+            //OCRComparison,
             [EnumValueDescription("Applitools  Analyzer")]
             Applitools,
-            [EnumValueDescription("Blink Diff - Not Implemented")]
-            BlinkDiff,
-            [EnumValueDescription("Spell Check Analyzer - Not Implemented")]
-            Spellcheck,
+            //[EnumValueDescription("Blink Diff - Not Implemented")]
+            //BlinkDiff,
+            //[EnumValueDescription("Spell Check Analyzer - Not Implemented")]
+            //Spellcheck,
         }
 
         public enum eChangeAppWindowSize
@@ -92,6 +94,37 @@ namespace GingerCore.Actions
             InternetExplorer = 2
         }
 
+        //TODO: For ActComparepage ObjectLocatrosConfigNeeded is false 
+        //But still for Switch frame , intialize browser etc the locate by and locate value is binded with Act.cs LocateBy and LocateValue fields
+        //We override this field to ignore ObjectConfigNeeded check only for this action
+        //Need to remove all of this once restructring Act.cs
+        public override eLocateBy LocateBy
+        {
+            get
+            {
+                return GetOrCreateInputParam<eLocateBy>(Act.Fields.LocateBy, eLocateBy.NA);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(Act.Fields.LocateBy, value.ToString());
+                OnPropertyChanged(Act.Fields.LocateBy);
+                OnPropertyChanged(Act.Fields.Details);
+            }
+        }
+
+        public override string LocateValue
+        {
+            get
+            {
+                return GetOrCreateInputParam(Act.Fields.LocateValue).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(Act.Fields.LocateValue, value);
+                OnPropertyChanged(Act.Fields.LocateValue);
+                OnPropertyChanged(Act.Fields.Details);
+            }
+        }
         IVisualTestingDriver mDriver;
         public eVisualTestingAnalyzer VisualTestingAnalyzer
         {
@@ -182,6 +215,7 @@ namespace GingerCore.Actions
             public static string VisualAnalyzer = "VisualAnalyzer";
             public static string SavedBaselineImageManager = "SavedBaselineImageManager";
             public static string ApplitoolsKey = "ApplitoolsKey";
+            public static string ServerUrl = "ServerUrl";
             public static string CrossEnvironmentTest = "CrossEnvironmentTest";
             public static string IsTargetImageFromScreenShot = "IsTargetImageFromScreenShot";
             public static string IsTargetFromStaticImage = "IsTargetFromStaticImage";
@@ -199,6 +233,9 @@ namespace GingerCore.Actions
             public static string BaseLineVisualElementsInfoFileName = "BaseLineVisualElementsInfoFileName";            
             public static string CreateBaselineAction = "CreateBaselineAction";
             public static string ErrorMetric = "ErrorMetric";
+            public static readonly string ActionBy = "ActionBy";
+            public static readonly string LocateBy = "LocateBy";
+            public static readonly string LocateValue ="LocateValue";
         }
         
         public override string ActionEditPage { get { return "VisualTesting.ActVisualTestingEditPage"; } }
@@ -308,6 +345,59 @@ namespace GingerCore.Actions
                 case eChangeAppWindowSize.Resolution1920x1080:
                     mDriver.ChangeAppWindowSize(1920, 1080);
                     break;                
+            }
+        }
+
+        public List<int> GetWindowResolution()
+        {
+            List<int> Resolution = new List<int>();
+            switch (ChangeAppWindowSize)
+            {
+                case eChangeAppWindowSize.None:
+                    Resolution.Add(0);
+                    Resolution.Add(0);
+                    return Resolution;
+                case eChangeAppWindowSize.Maximized:
+                    Resolution.Add(0);
+                    Resolution.Add(0);
+                    return Resolution;
+                case eChangeAppWindowSize.Custom:
+                    //TODO:
+                    Resolution.Add(Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowWidth)));
+                    Resolution.Add(Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowHeight)));
+                    return Resolution;
+                case eChangeAppWindowSize.Resolution640x480:
+                    Resolution.Add(640);
+                    Resolution.Add(480);
+                    return Resolution;
+                case eChangeAppWindowSize.Resolution800x600:
+                    Resolution.Add(800);
+                    Resolution.Add(600);
+                    return Resolution;
+                case eChangeAppWindowSize.Resolution1024x768:
+                    Resolution.Add(1024);
+                    Resolution.Add(768);
+                    return Resolution;
+                case eChangeAppWindowSize.Resolution1280x800:
+                    Resolution.Add(1280);
+                    Resolution.Add(800);
+                    return Resolution;
+                case eChangeAppWindowSize.Resolution1280x1024:
+                    Resolution.Add(1280);
+                    Resolution.Add(1024);
+                    return Resolution;
+                case eChangeAppWindowSize.Resolution1366x768:
+                    Resolution.Add(1366);
+                    Resolution.Add(768);
+                    return Resolution;
+                case eChangeAppWindowSize.Resolution1920x1080:
+                    Resolution.Add(1920);
+                    Resolution.Add(1080);
+                    return Resolution;
+                default:
+                    Resolution.Add(0);
+                    Resolution.Add(0);
+                    return Resolution;
             }
         }
 

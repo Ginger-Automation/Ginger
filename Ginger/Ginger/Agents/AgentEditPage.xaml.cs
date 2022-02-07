@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,7 @@ namespace Ginger.Agents
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Notes));
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentTypelbl, Label.ContentProperty, mAgent, nameof(Agent.AgentType));
+                BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mAgent, nameof(RepositoryItemBase.Publish));
                 TagsViewer.Init(mAgent.Tags);
 
                 if (mAgent.AgentType == eAgentType.Driver)
@@ -114,7 +116,7 @@ namespace Ginger.Agents
             }
             
             GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mAgent.DriverType, lst);   
-            if(mAgent.SupportVirtualAgent())
+            if(mAgent.AgentOperations.SupportVirtualAgent())
             {
                 xVirtualAgentsPanel.Visibility = Visibility.Visible;
                 xAgentVirtualSupported.Content = "Yes";
@@ -149,7 +151,7 @@ namespace Ginger.Agents
                 else
                 {
                     mOriginalDriverType = xDriverTypeComboBox.SelectedItem.ToString();                    
-                    mAgent.InitDriverConfigs(); 
+                    mAgent.AgentOperations.InitDriverConfigs(); 
                 }                
             }
         }
@@ -162,7 +164,7 @@ namespace Ginger.Agents
             {
                 await Task.Run(() =>
                 {
-                    mAgent.Test();
+                    mAgent.AgentOperations.Test();
                 });
             }
             finally

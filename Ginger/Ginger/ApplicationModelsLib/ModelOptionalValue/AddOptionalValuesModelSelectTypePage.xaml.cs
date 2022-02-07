@@ -98,6 +98,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
+            bool isSucess = true;
             if (WizardEventArgs.EventType == EventType.Init)
             {
                 mAddModelOptionalValuesWizard = (AddModelOptionalValuesWizard)WizardEventArgs.Wizard;
@@ -112,7 +113,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             {
                 if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.Excel.ToString())
                 {
-                    LoadFile();
+                    isSucess = LoadFile();
                     mAddModelOptionalValuesWizard.SourceType = eSourceType.Excel;
                 }
                 else if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.XML.ToString())
@@ -125,8 +126,12 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
                 else if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.DB.ToString())
                 {
-                    LoadFile();
+                    isSucess = LoadFile();
                     mAddModelOptionalValuesWizard.SourceType = eSourceType.DB;
+                    if (isSucess == false)
+                    {
+                        WizardEventArgs.CancelEvent = true;
+                    }
                 } 
             }
             else if (WizardEventArgs.EventType == EventType.Cancel)
@@ -222,19 +227,32 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 xPathTextBox.Text = oldPathFile;
             }
         }
-        private void LoadFile()
+        private bool LoadFile()
         {
+            bool isSuccess = true;
             mAddModelOptionalValuesWizard.ProcessStarted();
             if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.Excel.ToString())
             {
                 mAddModelOptionalValuesWizard.ParameterValues = mAddModelOptionalValuesWizard.ImportOptionalValues.UpdateParametersOptionalValuesFromCurrentExcelTable();
+                mAddModelOptionalValuesWizard.ProcessEnded();
             }
             else if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.DB.ToString())
             {
-                mAddModelOptionalValuesWizard.ImportOptionalValues.ExecuteFreeSQL(xSQLTextBox.Text.Trim());
-                mAddModelOptionalValuesWizard.ParameterValues = mAddModelOptionalValuesWizard.ImportOptionalValues.UpdateParametersOptionalValuesFromDB();
+                try
+                {
+                    mAddModelOptionalValuesWizard.ImportOptionalValues.ExecuteFreeSQL(xSQLTextBox.Text.Trim());
+                    mAddModelOptionalValuesWizard.ParameterValues = mAddModelOptionalValuesWizard.ImportOptionalValues.UpdateParametersOptionalValuesFromDB();   
+                }
+                catch (Exception ex)
+                {
+                    isSuccess = false;
+                    Reporter.ToUser(eUserMsgKey.DbQueryError, ex.Message);
+                }
+                finally {
+                    mAddModelOptionalValuesWizard.ProcessEnded();
+                }    
             }
-            mAddModelOptionalValuesWizard.ProcessEnded();
+            return isSuccess;
         }
         private void ShowRelevantPanel(string FileType)
         {
@@ -465,20 +483,21 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         private void xSQLTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //if (string.IsNullOrEmpty(xSQLTextBox.Text))
-            //{
-            //    AddModelOptionalValuesWizard.NextEnabled = false;
-            //}
-            //else
-            //{
-            //    AddModelOptionalValuesWizard.NextEnabled = true;
-            //}
+            if (string.IsNullOrEmpty(xSQLTextBox.Text))
+            {
+                mAddModelOptionalValuesWizard.mWizardWindow.NextButton(false);
+            }
+            else
+            {
+                mAddModelOptionalValuesWizard.mWizardWindow.NextButton(true);
+            }
         }
         private void xDBTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Convert.ToString(xDBTypeComboBox.SelectedValue) == eDBTypes.MSAccess.ToString())
             {
                 xDBBrowseButton.Visibility = Visibility.Visible;
+                mAddModelOptionalValuesWizard.mWizardWindow.NextButton(false);
             }
             else
             {

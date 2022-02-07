@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -212,11 +213,11 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public static string TimeConvert(string s)
         {
-            double seconds = Convert.ToDouble(s);
-            TimeSpan ts = TimeSpan.FromSeconds(seconds);
-            return ts.ToString(@"hh\:mm\:ss");
+            double mseconds = Convert.ToDouble(s) * 1000;
+            TimeSpan ts = TimeSpan.FromMilliseconds(mseconds);
+            return string.Concat(ts.Hours.ToString("00"), ":", ts.Minutes.ToString("00"), ":", ts.Seconds.ToString("00"), ".", ts.Milliseconds.ToString("00"));            
         }
-
+      
         public static Image Base64StringToImage(string v)
         {
             byte[] imageBytes = Convert.FromBase64String(v);
@@ -451,6 +452,12 @@ namespace Amdocs.Ginger.Common.GeneralLib
             foreach (T o in List)
                 ObservableList.Add(o);
             return ObservableList;
+        }
+        public static bool isDesignMode()
+        {
+            //TODO: move this func to General
+            bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+            return designMode;
         }
     }
 }

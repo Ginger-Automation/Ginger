@@ -25,6 +25,7 @@ using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.ApiModelsFolder;
 using Ginger.Repository;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
@@ -359,8 +360,8 @@ namespace Ginger.BusinessFlowPages
                         if (mContext != null && mContext.Runner != null)
                         {
                             ((ActWithoutDriver)act).RunOnBusinessFlow = (BusinessFlow)mContext.Runner.CurrentBusinessFlow;
-                            ((ActWithoutDriver)act).RunOnEnvironment = (ProjEnvironment)mContext.Runner.ProjEnvironment;
-                            ((ActWithoutDriver)act).DSList = mContext.Runner.DSList;
+                            ((ActWithoutDriver)act).RunOnEnvironment = (ProjEnvironment)((GingerExecutionEngine)mContext.Runner).GingerRunner.ProjEnvironment;
+                            ((ActWithoutDriver)act).DSList = ((GingerExecutionEngine)mContext.Runner).GingerRunner.DSList;
                         }
                     }
 

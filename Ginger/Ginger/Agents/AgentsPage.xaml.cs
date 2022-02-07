@@ -55,9 +55,9 @@ namespace Ginger.Agents
             
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = Agent.Fields.Name, WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = Agent.Fields.Notes, WidthWeight = 80 });
-            view.GridColsView.Add(new GridColView() { Field = Agent.Fields.DriverType, WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Agent.Name), WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Agent.Notes), WidthWeight = 80 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Agent.DriverType), WidthWeight = 150 });
             xAgentsGrd.SetAllColumnsDefaultView(view);
             xAgentsGrd.InitViewItems();
             xAgentsGrd.ShowTagsFilter = Visibility.Visible;

@@ -247,6 +247,14 @@
                                         <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to ALM" />
                                     </MenuItem.Header>
                                 </MenuItem>
+                                <MenuItem x:Name="xMapToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xMapToAlmMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl ImageType="MapALM" SetAsFontImageWithSize="18" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to ALM" />
+                                    </MenuItem.Header>
+                                </MenuItem>
                                 <MenuItem x:Name="xRefreshFromAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRefreshFromAlmMenuItem_Click">
                                     <MenuItem.Icon>
                                         <UserControls:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="18" />

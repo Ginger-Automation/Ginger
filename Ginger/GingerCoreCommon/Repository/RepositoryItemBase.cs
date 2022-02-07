@@ -189,6 +189,7 @@ namespace Amdocs.Ginger.Repository
             throw new Exception("Unknown Type for GetItemType " + this.GetType().Name);
         }
 
+
         static NewRepositorySerializer mRepositorySerializer = new NewRepositorySerializer();
         public IRepositorySerializer RepositorySerializer
         {

@@ -28,7 +28,7 @@ using System.Collections.Generic;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {
-    public abstract class PlatformInfoBase: IPlatformInfo
+    public abstract class PlatformInfoBase : IPlatformInfo
     {
         static JavaPlatform mJavaPlatform = new JavaPlatform();
         static WebPlatform mWebPlatform = new WebPlatform();
@@ -94,6 +94,15 @@ namespace GingerCore.Platforms.PlatformsInfo
         /// </summary>
         /// <returns></returns>
         public virtual bool IsPlatformSupportPOM()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// This method is used to check if the paltform includes GUI based Application Instance and thus, supports Sikuli based operations
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool IsSikuliSupported()
         {
             return false;
         }

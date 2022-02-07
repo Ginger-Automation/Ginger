@@ -149,7 +149,12 @@ namespace Amdocs.Ginger.Common
         WarnAddSwingOrWidgetElement,
         AskToSelectValidItem,
         InvalidEncryptionKey,
-        SaveRunsetChangesWarn
+        SaveRunsetChangesWarn,
+        PublishRepositoryInfo,
+        FailedToPublishRepositoryInfo,
+        MissingErrorString,
+        RunsetAutoRunResult,
+        RunsetAutoConfigBackWarn
     }
 
     public static class UserMsgsPool
@@ -223,6 +228,11 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToDeLink, new UserMsg(eUserMsgType.WARN, "De-Link to Shared Repository", "Are you sure you want to de-link the item from it Shared Repository source item?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.OfferToUploadAlsoTheActivityGroupToRepository, new UserMsg(eUserMsgType.QUESTION, "Add the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to Repository", "The " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '{0}' is part of the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " '{1}', do you want to add the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to the shared repository as well?" + System.Environment.NewLine + System.Environment.NewLine + "Note: If you select Yes, only the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " will be added to the repository and not all of it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ".", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.PublishRepositoryInfo, new UserMsg(eUserMsgType.INFO, "Item Repository Publish Info", "Repository item is published to selected BusinessFlow.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToPublishRepositoryInfo, new UserMsg(eUserMsgType.ERROR, "Failed to pulblish Repository Item", "Failed to publish in one or more Business flows.", eUserMsgOption.OK, eUserMsgSelection.None));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MissingErrorString, new UserMsg(eUserMsgType.ERROR, "Missing Error String details", "Error String is missing for one or more row."+ Environment.NewLine +"Please add error string for missing rows", eUserMsgOption.OK,eUserMsgSelection.None));
+
             #endregion Repository
 
             #region Analyzer
@@ -357,6 +367,10 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.RunsetNoGingerPresentForBusinessFlow, new UserMsg(eUserMsgType.WARN, "No Ginger in " + GingerDicser.GetTermResValue(eTermResKey.RunSet), "Please add at least one Ginger to your " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " before choosing a " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ".", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ResetBusinessFlowRunVariablesFailed, new UserMsg(eUserMsgType.ERROR, GingerDicser.GetTermResValue(eTermResKey.Variables) + " Reset Failed", "Failed to reset the " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " to original configurations." + System.Environment.NewLine + "Error Details: {0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToGenerateAutoRunDescription, new UserMsg(eUserMsgType.QUESTION, "Automatic Description Creation", "Do you want to automatically populate the Run Description?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RunsetAutoRunResult, new UserMsg(eUserMsgType.INFO, "Runset Auto Run Configuration Result", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RunsetAutoConfigBackWarn, new UserMsg(eUserMsgType.WARN, "Runset Auto Run Configuration Changes", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.No));
+
             #endregion Runset Messages
 
             #region Excel Messages

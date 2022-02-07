@@ -25,6 +25,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using FontAwesome.WPF;
 using Amdocs.Ginger.Common.Enums;
+using System.Windows.Media.Animation;
 
 namespace Amdocs.Ginger.UserControls
 {
@@ -287,8 +288,11 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Pending:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline, (SolidColorBrush)FindResource("$PendingStatusColor"), 0, "Pending");
                     break;
+                case eImageType.Recording:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.VideoCamera, new SolidColorBrush(Color.FromRgb(255, 0, 0)), 0, "Recording...", true);
+                    break;
                 case eImageType.Processing:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (SolidColorBrush)FindResource("$HighlightColor_Orange"), 2);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (LinearGradientBrush)FindResource("$amdocsLogoLinarGradientBrush_NewAmdocsColors"), 2);
                     break;
                 case eImageType.Ready:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbsOutlineUp, (SolidColorBrush)FindResource("$PendingStatusColor"));
@@ -304,6 +308,15 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Running:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (SolidColorBrush)FindResource("$RunningStatusColor"), 2, "Running");
+                    break;
+                case eImageType.Mapped:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle);
+                    break;
+                case eImageType.Partial:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle);
+                    break;
+                case eImageType.UnMapped:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle);
                     break;
                 #endregion
 
@@ -829,6 +842,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.ALM:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Qrcode);//need to find better image type
                     break;
+                case eImageType.MapALM:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MapSigns);
+                    break;
                 case eImageType.CSV:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.FileText);
                     break;
@@ -1001,7 +1017,7 @@ namespace Amdocs.Ginger.UserControls
             this.Background = null;
         }
 
-        private void SetAsFontAwesomeIcon(FontAwesomeIcon fontAwesomeIcon, SolidColorBrush foreground = null, double spinDuration = 0, string toolTip = null)
+        private void SetAsFontAwesomeIcon(FontAwesomeIcon fontAwesomeIcon, Brush foreground = null, double spinDuration = 0, string toolTip = null, bool blinkingIcon = false)
         {
             //set the icon
             xFAFont.Icon = fontAwesomeIcon;
@@ -1035,6 +1051,19 @@ namespace Amdocs.Ginger.UserControls
                 xFAFont.SpinDuration = spinDuration;
             }
 
+            if(blinkingIcon)
+            {
+                DoubleAnimation blinkAnimation = new DoubleAnimation()
+                {
+                    From = 1,
+                    To = 0,
+                    Duration = new Duration(TimeSpan.FromSeconds(1)),
+                    AutoReverse = true,
+                    RepeatBehavior = RepeatBehavior.Forever
+                };
+
+                xFAImage.BeginAnimation(OpacityProperty, blinkAnimation);
+            }
 
             if (!string.IsNullOrEmpty(toolTip) && string.IsNullOrEmpty(ImageToolTip))
             {

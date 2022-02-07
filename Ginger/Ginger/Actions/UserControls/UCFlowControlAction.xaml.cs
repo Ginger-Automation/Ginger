@@ -43,7 +43,7 @@ namespace Ginger.Actions.UserControls
         BusinessFlow mActParentBusinessFlow=null;
         Activity mActParentActivity=null;
         Act mAction = null;
-        GingerRunner mBfParentRunner = null;
+        GingerExecutionEngine mBfParentRunner = null;
         General.eRIPageViewMode mEditMode;
 
         public UCFlowControlAction()
@@ -96,16 +96,16 @@ namespace Ginger.Actions.UserControls
 
 
         public static DependencyProperty BfParentRunnerProperty =
-            DependencyProperty.Register("gingerRunner", typeof(GingerRunner), typeof(UCFlowControlAction), new PropertyMetadata(OnBfParentRunnerPropertyChanged));
+            DependencyProperty.Register("gingerRunner", typeof(GingerExecutionEngine), typeof(UCFlowControlAction), new PropertyMetadata(OnBfParentRunnerPropertyChanged));
 
         private static void OnBfParentRunnerPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             var control = sender as UCFlowControlAction;
             if (control != null)
-                control.OnBfParentRunnerChanged((GingerRunner)args.NewValue);
+                control.OnBfParentRunnerChanged((GingerExecutionEngine)args.NewValue);
         }
 
-        private void OnBfParentRunnerChanged(GingerRunner mRunner)
+        private void OnBfParentRunnerChanged(GingerExecutionEngine mRunner)
         {
             mBfParentRunner = mRunner;
         }

@@ -67,7 +67,7 @@ namespace UnitTests.UITests.JavaDriverTest
             {
 
                 mGR = new GingerRunner();
-                mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+                mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
                 mBF = new BusinessFlow();
                 mBF.Activities = new ObservableList<Activity>();
                 mBF.Name = "BF Test Java Driver";
@@ -87,7 +87,7 @@ namespace UnitTests.UITests.JavaDriverTest
                 LJA.Port = "9898";
                 LJA.URL = TestResources.GetTestResourcesFile(@"JavaTestApp\JavaTestApp.jar");
                 activity.Acts.Add(LJA);
-                mGR.PrepActionValueExpression(LJA);
+                mGR.Executor.PrepActionValueExpression(LJA);
                 LJA.Execute();
                 // TODO: add wait till action done and check status
                 //if (!string.IsNullOrEmpty(LJA.Error))
@@ -108,19 +108,19 @@ namespace UnitTests.UITests.JavaDriverTest
                 a.DriverType = Agent.eDriverType.JavaDriver;
 
                 a.Name = "Java Agent";
-                a.Driver = mDriver;
+                ((AgentOperations)a.AgentOperations).Driver = mDriver;
 
-                mGR.SolutionAgents = new ObservableList<Agent>();
-                mGR.SolutionAgents.Add(a);
+                ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+                ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
 
                 ApplicationAgent AA = new ApplicationAgent();
                 AA.AppName = "JavaTestApp";
                 AA.Agent = a;
                 mBF.CurrentActivity.CurrentAgent = a;
                 mGR.ApplicationAgents.Add(AA);
-                mGR.CurrentBusinessFlow = mBF;
+                mGR.Executor.CurrentBusinessFlow = mBF;
 
-                mGR.SetCurrentActivityAgent();
+                mGR.Executor.SetCurrentActivityAgent();
 
                 PayLoad PL = new PayLoad("SwitchWindow");
                 PL.AddValue("Java Swing Test App");
@@ -140,8 +140,8 @@ namespace UnitTests.UITests.JavaDriverTest
             AWC.LocateBy = eLocateBy.ByTitle;
             AWC.LocateValue = "Java";
             AWC.WindowActionType = ActWindow.eWindowActionType.Close;
-            mGR.RunAction(AWC, false);
-            mGR.StopAgents();
+            mGR.Executor.RunAction(AWC, false);
+            mGR.Executor.StopAgents();
             // mDriver.CloseDriver();
             mDriver = null;
             mGR = null;
@@ -170,7 +170,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
 
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
             //TODO: Find a better way to get ExInfo.
             String ExInfo = a.ExInfo.Substring(a.ExInfo.LastIndexOf("M -") + 4);
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
@@ -201,7 +201,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = a;
             a.AddNewReturnParams = true;
 
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
 
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, setText, "ExInfo");
@@ -221,7 +221,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = a;
             a.AddNewReturnParams = true;
 
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
 
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
@@ -240,7 +240,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(asyncClickAction);
             mBF.CurrentActivity.Acts.CurrentItem = asyncClickAction;
 
-            mGR.RunAction(asyncClickAction, false);
+            mGR.Executor.RunAction(asyncClickAction, false);
 
             //TODO: Find a better way to get ExInfo.
             String ExInfo = asyncClickAction.ExInfo.Substring(asyncClickAction.ExInfo.LastIndexOf("M -") + 4);
@@ -257,7 +257,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(acceptdialogAction);
             mBF.CurrentActivity.Acts.CurrentItem = acceptdialogAction;
 
-            mGR.RunAction(acceptdialogAction, false);
+            mGR.Executor.RunAction(acceptdialogAction, false);
 
             Assert.AreEqual(eRunStatus.Passed, acceptdialogAction.Status, "Action Status");
             Assert.AreEqual(acceptdialogAction.Error, null, "Act.Error");
@@ -275,7 +275,7 @@ namespace UnitTests.UITests.JavaDriverTest
             actClickSubmitBtn.Active = true;
             mBF.CurrentActivity.Acts.Add(actClickSubmitBtn);
             mBF.CurrentActivity.Acts.CurrentItem = actClickSubmitBtn;
-            mGR.RunAction(actClickSubmitBtn, false);
+            mGR.Executor.RunAction(actClickSubmitBtn, false);
 
             // Remove Timestamp from ExInfo
             //TODO: Find a better way to get ExInfo.
@@ -295,7 +295,7 @@ namespace UnitTests.UITests.JavaDriverTest
             actGetDialogText.Active = true;
             mBF.CurrentActivity.Acts.Add(actGetDialogText);
             mBF.CurrentActivity.Acts.CurrentItem = actGetDialogText;
-            mGR.RunAction(actGetDialogText, false);
+            mGR.Executor.RunAction(actGetDialogText, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actGetDialogText.Status, "Action Status");
@@ -311,7 +311,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(actAcceptDialog);
             mBF.CurrentActivity.Acts.CurrentItem = actAcceptDialog;
 
-            mGR.RunAction(actAcceptDialog, false);
+            mGR.Executor.RunAction(actAcceptDialog, false);
 
             Assert.AreEqual(eRunStatus.Passed, actAcceptDialog.Status, "Action Status");
             Assert.AreEqual(actAcceptDialog.Error, null, "Act.Error");
@@ -329,7 +329,7 @@ namespace UnitTests.UITests.JavaDriverTest
             actClickSubmitBtn.Active = true;
             mBF.CurrentActivity.Acts.Add(actClickSubmitBtn);
             mBF.CurrentActivity.Acts.CurrentItem = actClickSubmitBtn;
-            mGR.RunAction(actClickSubmitBtn, false);
+            mGR.Executor.RunAction(actClickSubmitBtn, false);
 
             //*************Accept Dialog*********************//
             ActJavaElement actAcceptDialog = new ActJavaElement();
@@ -340,7 +340,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(actAcceptDialog);
             mBF.CurrentActivity.Acts.CurrentItem = actAcceptDialog;
 
-            mGR.RunAction(actAcceptDialog, false);
+            mGR.Executor.RunAction(actAcceptDialog, false);
 
             Assert.AreEqual(eRunStatus.Passed, actAcceptDialog.Status, "Action Status");
             Assert.AreEqual(actAcceptDialog.Error, null, "Act.Error");
@@ -366,7 +366,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(actSelectTab);
             mBF.CurrentActivity.Acts.CurrentItem = actSelectTab;
             //Act
-            mGR.RunAction(actSelectTab, false);
+            mGR.Executor.RunAction(actSelectTab, false);
 
             string xpath = "/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JOptionPane[0]/OptionPane.buttonArea/[[Name:OptionPane.button][ClassName:javax.swing.JButton][Value:No]]";
             //*************Create Dialog*********************//
@@ -377,7 +377,7 @@ namespace UnitTests.UITests.JavaDriverTest
             actClickTabBtn.Active = true;
             mBF.CurrentActivity.Acts.Add(actClickTabBtn);
             mBF.CurrentActivity.Acts.CurrentItem = actClickTabBtn;
-            mGR.RunAction(actClickTabBtn, false);
+            mGR.Executor.RunAction(actClickTabBtn, false);
             //*************Switch window to Dialog*********************
             GingerCore.Drivers.CommunicationProtocol.PayLoad PL = new GingerCore.Drivers.CommunicationProtocol.PayLoad("SwitchWindow");
             // PL.AddValue("ByTitle");
@@ -400,7 +400,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(actChoosetDialog);
             mBF.CurrentActivity.Acts.CurrentItem = actChoosetDialog;
 
-            mGR.RunAction(actChoosetDialog, false);
+            mGR.Executor.RunAction(actChoosetDialog, false);
 
             Assert.AreEqual(eRunStatus.Passed, actChoosetDialog.Status, "Action Status");
             Assert.AreEqual(actChoosetDialog.Error, null, "Act.Error");
@@ -431,7 +431,7 @@ namespace UnitTests.UITests.JavaDriverTest
             actClickTabBtn.Active = true;
             mBF.CurrentActivity.Acts.Add(actClickTabBtn);
             mBF.CurrentActivity.Acts.CurrentItem = actClickTabBtn;
-            mGR.RunAction(actClickTabBtn, false);
+            mGR.Executor.RunAction(actClickTabBtn, false);
             //*************Switch window to Dialog*********************
             GingerCore.Drivers.CommunicationProtocol.PayLoad PL = new GingerCore.Drivers.CommunicationProtocol.PayLoad("SwitchWindow");
             // PL.AddValue("ByTitle");
@@ -454,7 +454,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(actChoosetDialog);
             mBF.CurrentActivity.Acts.CurrentItem = actChoosetDialog;
 
-            mGR.RunAction(actChoosetDialog, false);
+            mGR.Executor.RunAction(actChoosetDialog, false);
 
             Assert.AreEqual(eRunStatus.Passed, actChoosetDialog.Status, "Action Status");
             Assert.AreEqual(actChoosetDialog.Error, null, "Act.Error");
@@ -491,7 +491,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(actJavaElement);
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
-            mGR.RunAction(actJavaElement, false);
+            mGR.Executor.RunAction(actJavaElement, false);
             //TODO: Find a better way to get ExInfo.
             String ExInfo = actJavaElement.ExInfo.Substring(actJavaElement.ExInfo.LastIndexOf("M -") + 4);
             Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
@@ -518,7 +518,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
             //Act
-            mGR.RunAction(actJavaElement, false);
+            mGR.Executor.RunAction(actJavaElement, false);
 
 
             //Assert
@@ -555,7 +555,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
             //Act
-            mGR.RunAction(actJavaElement, false);
+            mGR.Executor.RunAction(actJavaElement, false);
 
 
             //Assert
@@ -581,7 +581,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
             //Act
-            mGR.RunAction(actJavaElement, false);
+            mGR.Executor.RunAction(actJavaElement, false);
 
 
             //Assert
@@ -610,7 +610,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
             //Act
-            mGR.RunAction(actJavaElement, false);
+            mGR.Executor.RunAction(actJavaElement, false);
 
 
             //Assert
@@ -656,7 +656,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
             //Act
-            mGR.RunAction(actJavaElement, false);
+            mGR.Executor.RunAction(actJavaElement, false);
 
 
             //Assert
@@ -701,7 +701,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
             //Act
-            mGR.RunAction(actJavaElement, false);
+            mGR.Executor.RunAction(actJavaElement, false);
 
 
             //Assert
@@ -746,7 +746,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
             //Act
-            mGR.RunAction(actJavaElement, false);
+            mGR.Executor.RunAction(actJavaElement, false);
 
 
             //Assert
@@ -791,7 +791,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
             //Act
-            mGR.RunAction(actJavaElement, false);
+            mGR.Executor.RunAction(actJavaElement, false);
 
 
             //Assert
@@ -836,7 +836,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
             //Act
-            mGR.RunAction(actJavaElement, false);
+            mGR.Executor.RunAction(actJavaElement, false);
 
 
             //Assert
@@ -874,7 +874,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
             //Act
-            mGR.RunAction(actJavaElement, false);
+            mGR.Executor.RunAction(actJavaElement, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
@@ -920,7 +920,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actJavaElement;
 
             //Act
-            mGR.RunAction(actJavaElement, false);
+            mGR.Executor.RunAction(actJavaElement, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actJavaElement.Status, "Action Status");
@@ -953,7 +953,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(doubleClickAction);
             mBF.CurrentActivity.Acts.CurrentItem = doubleClickAction;
 
-            mGR.RunAction(doubleClickAction, false);
+            mGR.Executor.RunAction(doubleClickAction, false);
             //TODO: Find a better way to get ExInfo.
             String ExInfo = doubleClickAction.ExInfo.Substring(doubleClickAction.ExInfo.LastIndexOf("M -") + 4);
             Assert.AreEqual(eRunStatus.Passed, doubleClickAction.Status, "Action Status");
@@ -978,7 +978,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(actJavaElement);
 
             //Act
-            mGR.RunAction(actJavaElement, false);
+            mGR.Executor.RunAction(actJavaElement, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");           
@@ -1002,7 +1002,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(menuClickAction);
             mBF.CurrentActivity.Acts.CurrentItem = menuClickAction;
 
-            mGR.RunAction(menuClickAction, false);
+            mGR.Executor.RunAction(menuClickAction, false);
 
             Assert.AreEqual(eRunStatus.Passed, menuClickAction.Status, "Action Status");
             Assert.AreEqual(menuClickAction.Error, null, "Act.Error");
@@ -1018,7 +1018,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(submenuClickAction_1);
             mBF.CurrentActivity.Acts.CurrentItem = submenuClickAction_1;
 
-            mGR.RunAction(submenuClickAction_1, false);
+            mGR.Executor.RunAction(submenuClickAction_1, false);
 
             Assert.AreEqual(submenuClickAction_1.Status, eRunStatus.Passed, "Action Status");
             Assert.AreEqual(submenuClickAction_1.Error, null, "Act.Error");
@@ -1035,7 +1035,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(submenuClickAction_2);
             mBF.CurrentActivity.Acts.CurrentItem = submenuClickAction_2;
 
-            mGR.RunAction(submenuClickAction_2, false);
+            mGR.Executor.RunAction(submenuClickAction_2, false);
 
             Assert.AreEqual(submenuClickAction_2.Status, eRunStatus.Passed, "Action Status");
             Assert.AreEqual(submenuClickAction_2.Error, null, "Act.Error");
@@ -1051,7 +1051,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(actDismissDialog);
             mBF.CurrentActivity.Acts.CurrentItem = actDismissDialog;
 
-            mGR.RunAction(actDismissDialog, false);
+            mGR.Executor.RunAction(actDismissDialog, false);
 
             Assert.AreEqual(eRunStatus.Passed, actDismissDialog.Status, "Action Status");
             Assert.AreEqual(actDismissDialog.Error, null, "Act.Error");
@@ -1073,7 +1073,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
@@ -1096,7 +1096,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
@@ -1116,7 +1116,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
@@ -1134,7 +1134,7 @@ namespace UnitTests.UITests.JavaDriverTest
             a.Active = true;
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
             //Assert
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
         }
@@ -1152,7 +1152,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
@@ -1173,7 +1173,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
@@ -1193,7 +1193,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
             //Assert
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
             Assert.AreEqual(a.Error, null, "Act.Error");
@@ -1212,7 +1212,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
@@ -1233,7 +1233,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
@@ -1254,7 +1254,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
             //Assert
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
             Assert.AreEqual(a.Error, null, "Act.Error");
@@ -1274,7 +1274,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
             //Assert
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "India", "ExInfo");
@@ -1294,7 +1294,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(actSelectTab);
             mBF.CurrentActivity.Acts.CurrentItem = actSelectTab;
             //Act
-            mGR.RunAction(actSelectTab, false);
+            mGR.Executor.RunAction(actSelectTab, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actSelectTab.Status, "Action Status");
@@ -1314,7 +1314,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(actSelectTab);
             mBF.CurrentActivity.Acts.CurrentItem = actSelectTab;
             //Act
-            mGR.RunAction(actSelectTab, false);
+            mGR.Executor.RunAction(actSelectTab, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actSelectTab.Status, "Action Status");
@@ -1331,7 +1331,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = a;
             a.AddNewReturnParams = true;
             //Act
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
@@ -1351,7 +1351,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(a);
             mBF.CurrentActivity.Acts.CurrentItem = a;
             //Act
-            mGR.RunAction(a, false);
+            mGR.Executor.RunAction(a, false);
 
             //Assert
             //TODO: Find a better way to get ExInfo.
@@ -1375,7 +1375,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(actSelectInternalFrame);
             mBF.CurrentActivity.Acts.CurrentItem = actSelectInternalFrame;
             //Act
-            mGR.RunAction(actSelectInternalFrame, false);
+            mGR.Executor.RunAction(actSelectInternalFrame, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actSelectInternalFrame.Status, "Action Status");
@@ -1427,7 +1427,7 @@ namespace UnitTests.UITests.JavaDriverTest
             actTableElement.AddNewReturnParams = true;
             mBF.CurrentActivity.Acts.Add(actTableElement);
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
-            mGR.RunAction(actTableElement, false);
+            mGR.Executor.RunAction(actTableElement, false);
             //TODO: Find a better way to get ExInfo.
             //Notice: [IndexOf("-")+2] and [LastIndexOf("-")+2] not work with a different format of Date and String(in case we have additional '-'). 
             String ExInfo = actTableElement.ExInfo.Substring(actTableElement.ExInfo.LastIndexOf("M -") + 4);
@@ -1455,7 +1455,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
             actTableElement.AddNewReturnParams = true;
 
-            mGR.RunAction(actTableElement, false);
+            mGR.Executor.RunAction(actTableElement, false);
 
             Assert.AreEqual(eRunStatus.Passed, actTableElement.Status, "Action Status");
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
@@ -1480,7 +1480,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
             actTableElement.AddNewReturnParams = true;
 
-            mGR.RunAction(actTableElement, false);
+            mGR.Executor.RunAction(actTableElement, false);
 
             Assert.AreEqual(eRunStatus.Passed, actTableElement.Status, "Action Status");
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
@@ -1506,7 +1506,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
             actTableElement.AddNewReturnParams = true;
 
-            mGR.RunAction(actTableElement, false);
+            mGR.Executor.RunAction(actTableElement, false);
 
             Assert.AreEqual(eRunStatus.Passed, actTableElement.Status, "Action Status");
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
@@ -1532,7 +1532,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
             actTableElement.AddNewReturnParams = true;
 
-            mGR.RunAction(actTableElement, false);
+            mGR.Executor.RunAction(actTableElement, false);
 
             Assert.AreEqual(eRunStatus.Passed, actTableElement.Status, "Action Status");
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
@@ -1558,7 +1558,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
             actTableElement.AddNewReturnParams = true;
 
-            mGR.RunAction(actTableElement, false);
+            mGR.Executor.RunAction(actTableElement, false);
 
             Assert.AreEqual(eRunStatus.Passed, actTableElement.Status, "Action Status");
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
@@ -1589,7 +1589,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
             actTableElement.AddNewReturnParams = true;
 
-            mGR.RunAction(actTableElement, false);
+            mGR.Executor.RunAction(actTableElement, false);
 
             Assert.AreEqual(eRunStatus.Passed, actTableElement.Status, "Action Status");
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
@@ -1619,7 +1619,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(actTableElement);
             mBF.CurrentActivity.Acts.CurrentItem = actTableElement;
 
-            mGR.RunAction(actTableElement, false);
+            mGR.Executor.RunAction(actTableElement, false);
             //TODO: Find a better way to get ExInfo.
             //Notice: [IndexOf("-")+2] and [LastIndexOf("-")+2] not work with a different format of Date and String(in case we have additional '-'). 
             String ExInfo = actTableElement.ExInfo.Substring(actTableElement.ExInfo.LastIndexOf("M -") + 4);
@@ -1647,7 +1647,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -1672,7 +1672,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             var IsExpectedExInfo = action.ExInfo.Contains(@"Text Area Value Set to - Testing");
@@ -1698,7 +1698,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -1721,7 +1721,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             var IsExpectedExInfo = action.ExInfo.Contains(@"Click Activity Passed");
@@ -1743,7 +1743,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.Add(action);
             mBF.CurrentActivity.Acts.CurrentItem = action;
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
             Assert.AreEqual(action.Error, null, "Act.Error");
@@ -1766,7 +1766,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -1786,7 +1786,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -1807,7 +1807,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -1827,7 +1827,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -1855,7 +1855,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -1880,7 +1880,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -1915,7 +1915,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -1941,7 +1941,7 @@ namespace UnitTests.UITests.JavaDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");

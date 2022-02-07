@@ -24,14 +24,17 @@ using Ginger.ALM.ZephyrEnt.TreeViewItems;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
+using GingerCore.ALM.QC;
 using GingerCore.ALM.ZephyrEnt.Bll;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using ZephyrEntStdSDK.Models;
 using ZephyrEntStdSDK.Models.Base;
 using static Ginger.ALM.ZephyrEnt.ZephyrEntPlanningExplorerPage;
@@ -54,7 +57,7 @@ namespace Ginger.ALM.Repository
         }
         public override bool ConnectALMServer(eALMConnectType userMsgStyle)
         {
-            if(AlmCore.IsConnectValidationDone)
+            if (AlmCore.IsConnectValidationDone)
             {
                 return true;
             }
@@ -88,7 +91,7 @@ namespace Ginger.ALM.Repository
             }
         }
 
-        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath , bool performSaveAfterExport, BusinessFlow businessFlow = null)
+        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath, bool performSaveAfterExport, BusinessFlow businessFlow = null)
         {
             TestCaseResource currentTC;
             if (activtiesGroup == null)
@@ -108,10 +111,15 @@ namespace Ginger.ALM.Repository
             {
                 ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
                 ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
-                Dictionary<string,string> testInstanceFields = CleanUnrelvantFields(allFields, EntityName.testcase);
+                Dictionary<string, string> testInstanceFields = CleanUnrelvantFields(allFields, EntityName.testcase);
 
                 Reporter.ToLog(eLogLevel.INFO, "Starting export to Zephyr Ent");
                 currentTC = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).CreateTestCase(Convert.ToInt64(uploadPath), activtiesGroup, testInstanceFields);
+                // Check if BF already exist and Mapped new TC to Zephyr TS
+                if (!String.IsNullOrEmpty(businessFlow.ExternalID))
+                {
+                    ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).AssigningTestCasesToCyclePhase(new List<long>() { currentTC.id }, Convert.ToInt64(businessFlow.ExternalID2), Convert.ToInt64(businessFlow.ExternalID));
+                }
             }
             else
             {
@@ -162,7 +170,7 @@ namespace Ginger.ALM.Repository
             Amdocs.Ginger.Common.eUserMsgSelection userSelec = Amdocs.Ginger.Common.eUserMsgSelection.None;
             //check if the businessFlow already mapped to Zephyr ent. Test Set
             if (!String.IsNullOrEmpty(businessFlow.ExternalID))
-            { 
+            {
                 matchingTS = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntPhaseById(Convert.ToInt32(businessFlow.ExternalID2));
                 if (matchingTS != null && matchingTS.Count > 0)
                 {
@@ -266,7 +274,7 @@ namespace Ginger.ALM.Repository
             ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
             ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
 
-            Dictionary<string,string> testSetFieldsFields = CleanUnrelvantFields(allFields, EntityName.cycle);
+            Dictionary<string, string> testSetFieldsFields = CleanUnrelvantFields(allFields, EntityName.cycle);
             Dictionary<string, string> testInstanceFields = CleanUnrelvantFields(allFields, EntityName.testcase);
 
             bool exportRes = ExportBusinessFlowToTestPlanning(businessFlow, matchingTS, testLabUploadPath, testSetFieldsFields, testInstanceFields, ref res);
@@ -295,14 +303,14 @@ namespace Ginger.ALM.Repository
 
             return exportRes;
         }
-        private Dictionary<string,string> CleanUnrelvantFields(ObservableList<ExternalItemFieldBase> fields, EntityName entityName)
+        private Dictionary<string, string> CleanUnrelvantFields(ObservableList<ExternalItemFieldBase> fields, EntityName entityName)
         {
             ObservableList<ExternalItemFieldBase> fieldsToReturn = new ObservableList<ExternalItemFieldBase>();
             Dictionary<string, string> selectedFields = new Dictionary<string, string>();
             string currentResource = entityName.ToString();
             fields.ToList().ForEach(item =>
             {
-                if(item.ItemType.ToLower().Equals(entityName.ToString().ToLower()))
+                if (item.ItemType.ToLower().Equals(entityName.ToString().ToLower()))
                 {
                     fieldsToReturn.Add(item);
                 }
@@ -312,7 +320,7 @@ namespace Ginger.ALM.Repository
                 if (!String.IsNullOrEmpty(tst.ID) && !String.IsNullOrEmpty(tst.SelectedValue) && !selectedFields.ContainsKey(tst.ID))
                 {
                     int index = tst.SelectedValue.IndexOf("#");
-                    selectedFields.Add(tst.ID, index == -1 ? tst.SelectedValue :tst.SelectedValue.Remove(tst.SelectedValue.IndexOf("#")));
+                    selectedFields.Add(tst.ID, index == -1 ? tst.SelectedValue : tst.SelectedValue.Remove(tst.SelectedValue.IndexOf("#")));
                 }
             });
             return selectedFields;
@@ -326,12 +334,12 @@ namespace Ginger.ALM.Repository
             long testerId = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetCurrentUser();
             bool isUpdate = false;
             // Update testset
-            if(matchingTS != null && matchingTS.Count > 0)
+            if (matchingTS != null && matchingTS.Count > 0)
             {
                 testLabUploadPath = businessFlow.ExternalID;
                 moduleParentId = businessFlow.ExternalID2;
                 bfEntityType = matchingTS[0].TryGetItem("type").ToString();
-                if(bfEntityType.Equals(EntityFolderType.Phase.ToString()))
+                if (bfEntityType.Equals(EntityFolderType.Phase.ToString()))
                 {
                     folderCycleId = moduleParentId;
                 }
@@ -355,7 +363,7 @@ namespace Ginger.ALM.Repository
             {
                 List<BaseResponseItem> phase = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntPhaseById(Convert.ToInt32(folderCycleId));
                 BaseResponseItem item = phase.FirstOrDefault(md => md.id.ToString().Equals(testLabUploadPath));
-                if(isUpdate)
+                if (isUpdate)
                 {
                     ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).UpdateTestPlanningFolder(Convert.ToInt64(folderCycleId), Convert.ToInt64(item.TryGetItem("id")), businessFlow);
                     return true;
@@ -380,8 +388,8 @@ namespace Ginger.ALM.Repository
                 tcrCatalogTreeId = treeNode.id;
             }
             ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).AssigningTestCasesToCyclePhase(tcsRepositoryList.Select(z => z.id).ToList(),
-                folderId, tcrCatalogTreeId);      
-            List<TestCaseResource> tcsPlanningList                                                              
+                folderId, tcrCatalogTreeId);
+            List<TestCaseResource> tcsPlanningList
                 = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTestCasesByAssignmentTree((int)tcrCatalogTreeId);
             List<Execution> assignsList = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).AssigningTestCasesToTesterForExecution(
                 tcsPlanningList.Select(z => z.tct.id).ToList(), folderId, testerId, tcrCatalogTreeId);
@@ -556,7 +564,6 @@ namespace Ginger.ALM.Repository
             ZephyrEntRepositoryExplorerPage win = new ZephyrEntRepositoryExplorerPage();
             return win.ShowAsWindow(eWindowShowStyle.Dialog);
         }
-
         public override IEnumerable<object> SelectALMTestSets()
         {
             throw new NotImplementedException();
@@ -576,7 +583,36 @@ namespace Ginger.ALM.Repository
         {
             return; // todo refresh
         }
-
-        
+        public override Page GetALMTestSetsTreePage(string importDestinationPath = "")
+        {
+            return new ZephyrEntPlanningExplorerPage(eExplorerTestPlanningPageUsageType.Import, importDestinationPath);
+        }
+        public override Object GetSelectedImportTestSetData(Page page)
+        {
+            return (page as ZephyrEntPlanningExplorerPage).CurrentSelectedTestSets.FirstOrDefault();
+        }
+        public override void GetALMTestSetData(ALMTestSet almTestSet)
+        {
+            try
+            {
+                //Get Test Set Name
+                List<BaseResponseItem> phase = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntPhaseById(Convert.ToInt32(almTestSet.TestSetInternalID2));
+                if (phase is not null && phase.Count > 0)
+                {
+                    almTestSet.TestSetName = phase[0].TryGetItem("name").ToString();
+                }
+                // Add test cases
+                almTestSet = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(almTestSet);
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to get Test Set data, {System.Reflection.MethodBase.GetCurrentMethod().Name}: Error - {ex.Message} ");
+            }
+        }
+        public override ALMTestSet GetALMTestCasesToTestSetObject(ALMTestSet almTestSet)
+        {
+            return ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(almTestSet);
+        }
     }
 }
+

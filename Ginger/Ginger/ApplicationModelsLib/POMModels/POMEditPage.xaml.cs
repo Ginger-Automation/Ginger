@@ -75,15 +75,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             get
             {
-                if (mAgent != null && mAgent.Status == Agent.eStatus.Running)
+                if (mAgent != null && ((AgentOperations)mAgent.AgentOperations).Status == Agent.eStatus.Running)
                 {
-                    return mAgent.Driver as IWindowExplorer;
+                    return ((AgentOperations)mAgent.AgentOperations).Driver as IWindowExplorer;
                 }
                 else
                 {
                     if (mAgent != null)
                     {
-                        mAgent.Close();
+                        mAgent.AgentOperations.Close();
                     }
                     return null;
                 }
@@ -240,7 +240,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
             mWinExplorer.UnHighLightElements();
-            Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mAgent.Driver).GetScreenShot(new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
+            Bitmap ScreenShotBitmap = ((IVisualTestingDriver)((AgentOperations)mAgent.AgentOperations).Driver).GetScreenShot(new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
             mPOM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShotBitmap);
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
             xScreenShotFrame.Content = mScreenShotViewPage;
@@ -314,7 +314,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
             if (act != null)
             {
-                mAgent.Driver.RunAction(act);
+                ((AgentOperations)mAgent.AgentOperations).Driver.RunAction(act);
 
                 if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.Error.Contains("not support"))
                 {
