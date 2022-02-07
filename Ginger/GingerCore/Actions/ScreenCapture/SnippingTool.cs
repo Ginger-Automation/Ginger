@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Windows.Forms;
 
 namespace ScreenSnipApplication
@@ -73,15 +75,17 @@ namespace ScreenSnipApplication
             {
                 return;
             }
-            Image = new Bitmap(rcSelect.Width, rcSelect.Height);
-            using (Graphics gr = Graphics.FromImage(Image))
+            using (Image = new Bitmap(rcSelect.Width, rcSelect.Height))
             {
-                gr.DrawImage(this.BackgroundImage, new Rectangle(0, 0, Image.Width, Image.Height),
-                    rcSelect, GraphicsUnit.Pixel);
-                string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+                using (Graphics gr = Graphics.FromImage(Image))
+                {
+                    gr.DrawImage(this.BackgroundImage, new Rectangle(0, 0, Image.Width, Image.Height),
+                        rcSelect, GraphicsUnit.Pixel);
+                    string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
 
-                Image.Save(fileName, System.Drawing.Imaging.ImageFormat.Bmp);
-                DialogResult = DialogResult.OK;
+                    Image.Save(fileName, System.Drawing.Imaging.ImageFormat.Bmp);
+                    DialogResult = DialogResult.OK;
+                }
             }
         }
         protected override void OnPaint(PaintEventArgs e)
@@ -109,6 +113,17 @@ namespace ScreenSnipApplication
                 this.DialogResult = DialogResult.Cancel;
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+    }
+    public static class ImageExtensions
+    {
+        public static byte[] ToByteArray(this Image image, ImageFormat format)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, format);
+                return ms.ToArray();
+            }
         }
     }
 }

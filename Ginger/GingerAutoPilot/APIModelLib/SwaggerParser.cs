@@ -402,23 +402,43 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
             }
             foreach (SwaggerParameter SP in operation.ActualParameters)
             {
-                string ModelParameterName = "{" + SP.Name.ToUpper() + "}";
 
-                aAM.AppModelParameters.Add(new AppModelParameter()
+                if (SP.Schema != null && SP.Schema.ActualProperties != null && SP.Schema.ActualProperties.Count > 0)
                 {
-                    ItemName = ModelParameterName,
-                });
+                    foreach (KeyValuePair<string, JsonProperty> property in SP.Schema.ActualProperties)
+                    {
+                        string modelParameterName = "{" + SP.Name.ToUpper() + "." + property.Key + "}";
+                        aAM.AppModelParameters.Add(new AppModelParameter()
+                        {
+                            ItemName = modelParameterName,
+                        });
 
-                aAM.APIModelBodyKeyValueHeaders.Add(new APIModelBodyKeyValue()
+                        aAM.APIModelBodyKeyValueHeaders.Add(new APIModelBodyKeyValue()
+                        {
+                            Param = modelParameterName,
+                            ValueType = SP.Type == JsonObjectType.File ? APIModelBodyKeyValue.eValueType.File : APIModelBodyKeyValue.eValueType.Text,
+                            Value = modelParameterName,
+
+                        });
+                    }
+                }
+                else
                 {
-                    Param = SP.Name,
-                    ValueType = SP.Type == JsonObjectType.File ? APIModelBodyKeyValue.eValueType.File : APIModelBodyKeyValue.eValueType.Text,
-                    Value = ModelParameterName,
+                    string ModelParameterName = "{" + SP.Name.ToUpper() + "}";
+                    aAM.AppModelParameters.Add(new AppModelParameter()
+                    {
+                        ItemName = ModelParameterName,
+                    });
 
-                });
+                    aAM.APIModelBodyKeyValueHeaders.Add(new APIModelBodyKeyValue()
+                    {
+                        Param = SP.Name,
+                        ValueType = SP.Type == JsonObjectType.File ? APIModelBodyKeyValue.eValueType.File : APIModelBodyKeyValue.eValueType.Text,
+                        Value = ModelParameterName,
+
+                    });
+                }
             }
-
-
         }
 
         private ObservableList<OptionalValue> GetListOfParamEnums(SwaggerParameter swaggerParameter)

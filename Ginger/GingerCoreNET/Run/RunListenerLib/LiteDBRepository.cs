@@ -49,7 +49,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public List<LiteDbBusinessFlow> liteDbBFList = new List<LiteDbBusinessFlow>();
         public List<LiteDbActivityGroup> liteDbAGList = new List<LiteDbActivityGroup>();
         public List<LiteDbActivity> liteDbActivityList = new List<LiteDbActivity>();
-        public List<LiteDbAction> liteDbActionList = new List<LiteDbAction>();       
+        public List<LiteDbAction> liteDbActionList = new List<LiteDbAction>();
         private eRunStatus lastBfStatus;
         private eRunStatus lastRunnertStatus;
         private ObjectId lastBfObjId;
@@ -72,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             //save screenshots
             string executionLogFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
-
+            string completeSSPath = string.Empty;
             int screenShotCountPerAction = 0;
             for (var s = 0; s < action.ScreenShots.Count; s++)
             {
@@ -80,9 +80,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 {
                     screenShotCountPerAction++;
                     string imagesFolderName = Path.Combine(executionLogFolder, "LiteDBImages");
-                    var screenShotName = string.Concat( @"ScreenShot_" ,action.Guid , "_" , action.StartTimeStamp.ToString("hhmmss") , "_" + screenShotCountPerAction.ToString() , ".png");
+                    var screenShotName = string.Concat(@"ScreenShot_", action.Guid, "_", action.StartTimeStamp.ToString("hhmmss"), "_" + screenShotCountPerAction.ToString(), ".png");
 
-                    var completeSSPath = Path.Combine(imagesFolderName, screenShotName);
+                    completeSSPath = Path.Combine(imagesFolderName, screenShotName);
                     if (!System.IO.Directory.Exists(imagesFolderName))
                     {
                         System.IO.Directory.CreateDirectory(imagesFolderName);
@@ -93,13 +93,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     }
                     else
                     {
-                        System.IO.File.Move(action.ScreenShots[s], completeSSPath);
+                        if (File.Exists(completeSSPath))
+                        {
+                            File.Delete(completeSSPath);
+                        }
+                        File.Move(action.ScreenShots[s], completeSSPath);
                         action.ScreenShots[s] = completeSSPath;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to move screen shot of the action:'" + action.Description + "' to the Execution Logger folder", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to move screen shot with path: " + completeSSPath + " of the action:'" + action.Description + "' to the Execution Logger folder", ex);
                     screenShotCountPerAction--;
                 }
             }
@@ -134,7 +138,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 liteDbActionList.RemoveAll(x => x.GUID == liteDbAction.GUID);
             }
-            liteDbActionList.Add(liteDbAction);        
+            liteDbActionList.Add(liteDbAction);
             SaveObjToReporsitory(liteDbAction, liteDbManager.NameInDb<LiteDbAction>());
             if (executedFrom == eExecutedFrom.Automation)
             {
@@ -175,7 +179,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             activity.Acts.ToList().ForEach(action => this.MapActionToLiteDb((GingerCore.Actions.Act)action, context, executedFrom));
             AR.ActionsColl.AddRange(liteDbActionList);
-            
+
             AR.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active == true);
             AR.ChildExecutedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored);
             AR.ChildPassedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed);
@@ -218,7 +222,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public override object SetReportBusinessFlow(Context context, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
         {
             LiteDbBusinessFlow BFR = new LiteDbBusinessFlow();
-            if(executedFrom==eExecutedFrom.Automation)
+            if (executedFrom == eExecutedFrom.Automation)
                 ClearSeq();
 
             if (liteDbBFList.Count > context.Runner.BusinessFlows.Count)
@@ -240,7 +244,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             int ChildPassedItemsCountActivity = 0;
 
             ChildExecutableItemsCountActivity = context.BusinessFlow.Activities.Count(x => x.Active == true);
-            ChildExecutedItemsCountActivity =  context.BusinessFlow.Activities.Where(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored).Count();
+            ChildExecutedItemsCountActivity = context.BusinessFlow.Activities.Where(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored).Count();
             ChildPassedItemsCountActivity = context.BusinessFlow.Activities.Where(ac => ac.Status == eRunStatus.Passed).Count();
 
             BFR.ChildExecutableItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString(), ChildExecutableItemsCountActivity);
@@ -365,7 +369,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 var runnerItem = ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Find(x => x.Name == runner.Name);
                 ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Remove(runnerItem);
             }
-            if(runner.RunStatus != eRunStatus.Stopped.ToString())
+            if (runner.RunStatus != eRunStatus.Stopped.ToString())
             {
                 liteDbBFList.Clear();
             }
@@ -513,7 +517,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occured during RunSetUpdate..", ex);
             }
-            
+
         }
 
         public override void CreateNewDirectory(string logFolder)
@@ -522,7 +526,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
 
         public override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
-        {          
+        {
             return;
         }
 
@@ -571,8 +575,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             //Get the latest execution details from LiteDB
             LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
             LiteDbRunSet liteDbRunSet = dbManager.GetLatestExecutionRunsetData(runsetId?.ToString());
-            List<string> screenshotList= PopulateMissingFieldsAndGetScreenshotsList(liteDbRunSet, executionId);
-            
+            List<string> screenshotList = PopulateMissingFieldsAndGetScreenshotsList(liteDbRunSet, executionId);
+
             AccountReportApiHandler centralExecutionLogger = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
 
             //Map the data to AccountReportRunset Object
@@ -580,24 +584,24 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             SetExecutionId(accountReportRunSet, executionId);
             accountReportRunSet.EntityId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid;
             accountReportRunSet.GingerSolutionGuid = WorkSpace.Instance.Solution.Guid;
-           
+
             //Publish the Data and screenshots to Central DB
             await centralExecutionLogger.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
             await centralExecutionLogger.SendScreenShotsToCentralDBAsync(executionId, screenshotList);
 
 
             //Delete local data if configured
-            if(deleteLocalData== eDeleteLocalDataOnPublish.Yes)
+            if (deleteLocalData == eDeleteLocalDataOnPublish.Yes)
             {
                 try
                 {
                     dbManager.DeleteDocumentByLiteDbRunSet(liteDbRunSet);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error when deleting local LiteDB data after Publis", ex);
                 }
-                     
+
 
                 foreach (string screenshot in screenshotList)
                 {
@@ -611,7 +615,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     }
                 }
             }
-           
+
 
             return true;
         }
@@ -651,7 +655,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             List<string> allScreenshots = new List<string>();
             //select template 
-            HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => x.IsDefault ).FirstOrDefault();
+            HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => x.IsDefault).FirstOrDefault();
 
             //populate data based on level
             if (string.IsNullOrEmpty(_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()))
@@ -659,7 +663,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 _HTMLReportConfig.ExecutionStatisticsCountBy = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions;
             }
 
-          
+
             List<string> runSetEnv = new List<string>();
 
             liteDbRunSet.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
@@ -699,7 +703,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     }
                     else { liteDbBusinessFlow.Elapsed = 0; }
 
-                    foreach(LiteDbActivityGroup liteDbActivityGroup in liteDbBusinessFlow.ActivitiesGroupsColl)
+                    foreach (LiteDbActivityGroup liteDbActivityGroup in liteDbBusinessFlow.ActivitiesGroupsColl)
                     {
                         foreach (LiteDbActivity liteDbActivity in liteDbActivityGroup.ActivitiesColl)
                         {
@@ -726,20 +730,20 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                 {
                                     liteDbAction.ExInfo = liteDbAction.ExInfo.Remove(liteDbAction.ExInfo.Length - 1);
                                 }
-                                    
+
                                 foreach (string screenshot in liteDbAction.ScreenShots)
                                 {
                                     allScreenshots.Add(screenshot);
-                                    string newScreenshotPath =executionId.ToString()+"/"+ Path.GetFileName(screenshot);
+                                    string newScreenshotPath = executionId.ToString() + "/" + Path.GetFileName(screenshot);
 
-                                    newScreenShotsList.Add(newScreenshotPath);                            
+                                    newScreenShotsList.Add(newScreenshotPath);
                                 }
                                 liteDbAction.ScreenShots = newScreenShotsList;
                             }
                         }
                     }
 
-                   
+
                 }
             }
 

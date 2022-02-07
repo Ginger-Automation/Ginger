@@ -565,17 +565,17 @@ namespace Ginger.Run
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
                 GingerRunner gr = (GingerRunner)e.NewItems[0];
-                GingerExecutionEngine executionEngine = new GingerExecutionEngine(gr);
-
-                RunnerPage runnerPage = InitRunnerFlowElement(executionEngine, e.NewStartingIndex);
+                if (gr.Executor == null)
+                {
+                    gr.Executor = new GingerExecutionEngine(gr);
+                }
+                RunnerPage runnerPage = InitRunnerFlowElement((GingerExecutionEngine)gr.Executor, e.NewStartingIndex);
                 GingerRunnerHighlight(runnerPage);
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
                 GingerRunner gr = (GingerRunner)e.OldItems[0];
-                GingerExecutionEngine executionEngine = new GingerExecutionEngine(gr);
-
-                mFlowDiagram.RemoveFlowElem(executionEngine.GingerRunner.Guid.ToString(), mRunSetConfig.RunModeParallel);
+                mFlowDiagram.RemoveFlowElem(gr.Guid.ToString(), mRunSetConfig.RunModeParallel);
             }
             else if (e.Action == NotifyCollectionChangedAction.Move)
             {

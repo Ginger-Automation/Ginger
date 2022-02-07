@@ -11,25 +11,10 @@
             <RowDefinition MaxHeight="50"/>
             <RowDefinition MaxHeight="60"/>
             <RowDefinition MaxHeight="50"/>
-            <RowDefinition MinHeight="50" Height="Auto"/>
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <DockPanel>
-                <Label Content="Operation Type : "/>
-                <ComboBox x:Name="xSikuliOperationComboBox" Margin="15,0" MinWidth="300" Height="25" MaxWidth="450"
-                      SelectionChanged="xSikuliOperationComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" >
-                </ComboBox>
-            </DockPanel>
-        </StackPanel>
-
-        <StackPanel Orientation="Horizontal" x:Name="xSetTextRow" Grid.Row="1" Visibility="Collapsed">
-            <Label Content="Text : "/>
-            <Actions:UCValueExpression x:Name="xSetTextValueTextBox" ToolTip="Set Text Element Value for Sikuli Operation Pattern" MinWidth="100" MaxWidth="300" Margin="15,0"/>
-        </StackPanel>
-
-        <StackPanel Orientation="Horizontal" Grid.Row="2">
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
             <DockPanel>
                 <Label Content="Window : "/>
                 <ComboBox x:Name="xActiveProcessesTitlesComboBox" MinWidth="250" MaxWidth="400"
@@ -41,14 +26,28 @@
             </DockPanel>
         </StackPanel>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="15,0">
-            <Label Content="Pattern : " />
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <DockPanel>
+                <Label Content="Operation Type : "/>
+                <ComboBox x:Name="xSikuliOperationComboBox" Margin="15,0" MinWidth="300" Height="25" MaxWidth="450"
+                      SelectionChanged="xSikuliOperationComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" >
+                </ComboBox>
+            </DockPanel>
+
+            <StackPanel Orientation="Horizontal" x:Name="xSetTextRow" Visibility="Hidden">
+                <Label Content="Text : "/>
+                <Actions:UCValueExpression x:Name="xSetTextValueTextBox" ToolTip="Set Text Element Value for Sikuli Operation Pattern" MinWidth="100" MaxWidth="300" Margin="5  ,0"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Label Content="Image Path : " />
             <Actions:UCValueExpression x:Name="xPatternImageLocationTextBox" ToolTip="Element Image Path for Sikuli Operation Pattern" MinWidth="300" MaxWidth="450"/>
             <Button x:Name="xBrowsePatternButton" Content="Browse" Click="xBrowsePatternButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"/>
             <usercontrols:ucButton x:Name="xCaptureLocatorImageButton" ButtonType="ImageButton" Click="CaptureLocatorImageButton_Click" ToolTip="Capture Application Element Image" ButtonFontImageSize="15" ButtonImageType="Camera" Foreground="Red" VerticalAlignment="Center" />
         </StackPanel>
 
-        <StackPanel CanVerticallyScroll="True" CanHorizontallyScroll="True" Grid.Row="4" >
+        <StackPanel CanVerticallyScroll="True" CanHorizontallyScroll="True" Grid.Row="3" >
             <StackPanel Orientation="Horizontal">
                 <Label Content=" Element Screenshot Preview :" />
                 <usercontrols:ucButton x:Name="xRefreshPatternImage" ToolTip="Refresh Pattern Image" ButtonImageWidth="15" ButtonImageHeight="15"

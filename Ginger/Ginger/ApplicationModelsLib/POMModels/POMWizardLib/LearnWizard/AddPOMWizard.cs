@@ -72,6 +72,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (OptionalAgentsList != null)
             {
                 foreach (Agent agent in OptionalAgentsList)
+                {
+                    if (agent.AgentOperations == null)
+                    {
+                        AgentOperations agentOperations = new AgentOperations(agent);
+                        agent.AgentOperations = agentOperations;
+                    }
                     if (agent != null && ((AgentOperations)agent.AgentOperations).Status == Agent.eStatus.Running && agent.Tag != null && agent.Tag.ToString() == "Started with Agent Control" && !((AgentOperations)agent.AgentOperations).Driver.IsDriverBusy)
                     {
                         if (Reporter.ToUser(eUserMsgKey.AskIfToCloseAgent, agent.Name) == eUserMsgSelection.Yes)
@@ -79,6 +85,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                             agent.AgentOperations.Close();
                         }
                     }
+                }
             }
         }
 
