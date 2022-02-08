@@ -17,7 +17,6 @@ namespace GingerCore
         void SetDriverConfiguration();
         void StartDriver();
         void StartPluginService();
-        bool SupportVirtualAgent();
         void Test();
         void WaitForAgentToBeReady();
     }

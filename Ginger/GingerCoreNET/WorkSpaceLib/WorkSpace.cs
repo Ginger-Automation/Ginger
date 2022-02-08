@@ -49,6 +49,7 @@ using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run.RunSetActions;
 using Amdocs.Ginger.Common.SelfHealingLib;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -100,7 +101,6 @@ namespace amdocs.ginger.GingerCoreNET
             lockit = false;
             Reporter.ToLog(eLogLevel.DEBUG, "Workspace released");
         }
-
 
         public static void Init(IWorkSpaceEventHandler WSEH, bool startLocalGrid = true)
         {
@@ -216,11 +216,13 @@ namespace amdocs.ginger.GingerCoreNET
         {
             get
             {
+                mSolution = GingerCoreCommonWorkSpace.Instance.Solution;
                 return mSolution;
             }
             set
             {
                 mSolution = value;
+                GingerCoreCommonWorkSpace.Instance.Solution = value;
                 OnPropertyChanged(nameof(Solution));
             }
         }
@@ -611,9 +613,15 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public UserProfile UserProfile 
-        { 
-            get;
-            set;
+        {
+            get
+            {
+                return GingerCoreCommonWorkSpace.Instance.UserProfile;
+            }
+            set
+            {
+                GingerCoreCommonWorkSpace.Instance.UserProfile = value;
+            }
         }
 
 

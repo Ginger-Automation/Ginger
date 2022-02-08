@@ -11,6 +11,5 @@ namespace Ginger.SolutionGeneral
         void SetReportsConfigurations();
         bool ValidateKey(string encryptionKey = null);
 
-        ALMUserConfig GetALMConfig();
     }
 }

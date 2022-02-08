@@ -36,18 +36,6 @@ namespace GingerCore.Platforms
             this.ApplicationAgent.ApplicationAgentOperations = this;   
         }
 
-        public Guid GetAppID(Guid appID)
-        {
-            if (appID == Guid.Empty)
-            {
-                ApplicationPlatform appPlat = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == ApplicationAgent.AppName).FirstOrDefault();
-                if (appPlat != null)
-                {
-                    return appPlat.Guid;
-                }
-            }
-            return appID;
-        }
         public List<IAgent> PossibleAgents
         {
             get

@@ -65,7 +65,6 @@ namespace GingerCore
                 else return false;
             }
         }
-        internal Type DriverClass = null;
         public bool IsShowWindowExplorerOnStart
         {
             get
@@ -324,38 +323,8 @@ namespace GingerCore
                 Agent.OnPropertyChanged(nameof(AgentOperations.Status));
             }
         }
-        /// <summary>
-        /// Check if agent support virtual drivers 
-        /// </summary>
-        /// <returns></returns>
-        public bool SupportVirtualAgent()
-        {
-            try
-            {
-
-                if (DriverClass == null)
-                {
-                    DriverClass = TargetFrameworkHelper.Helper.GetDriverType(Agent);
-                    if (DriverClass == null)
-                    {
-                        return false;
-                    }
-                }
-
-
-                if (DriverClass.GetInterfaces().Contains(typeof(IVirtualDriver)))
-                {
-                    return true;
-                }
-            }
-            //if the exceptions are throws we consider it to be not supportable for virtual agents
-            catch (Exception e)
-            {
-
-
-            }
-            return false;
-        }
+        
+       
         public void SetDriverConfiguration()
         {
             if (Agent.DriverConfiguration == null)
@@ -379,9 +348,9 @@ namespace GingerCore
             }
             else
             {
-                DriverClass = TargetFrameworkHelper.Helper.GetDriverType(Agent);
+                Agent.DriverClass = TargetFrameworkHelper.Helper.GetDriverType(Agent);
 
-                SetDriverMissingParams(DriverClass);
+                SetDriverMissingParams(Agent.DriverClass);
 
 
                 foreach (DriverConfigParam DCP in Agent.DriverConfiguration)

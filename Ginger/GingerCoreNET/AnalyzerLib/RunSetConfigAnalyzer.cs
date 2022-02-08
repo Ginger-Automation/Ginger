@@ -69,7 +69,7 @@ namespace Ginger.AnalyzerLib
                             Agents.Add(AA.Agent.Guid);
                         else
                         {
-                            if (!AA.Agent.AgentOperations.SupportVirtualAgent())
+                            if (!AA.Agent.SupportVirtualAgent())
                             {
                                 //create error
                                 RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
