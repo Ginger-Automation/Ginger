@@ -11,6 +11,7 @@ using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -24,18 +25,15 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         Context Context;
         IPlatformInfo PlatformInfo;
         static SolutionRepository mSolutionRepository;
-        static string solutionName;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            solutionName = "BasicSimple";
-
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             mSolutionRepository = WorkSpace.Instance.SolutionRepository;
-            string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\" + solutionName);
+            string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
             mSolutionRepository.Open(TempRepositoryFolder);
         }
 
