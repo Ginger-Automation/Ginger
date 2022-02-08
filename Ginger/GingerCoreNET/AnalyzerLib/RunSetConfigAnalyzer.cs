@@ -59,8 +59,10 @@ namespace Ginger.AnalyzerLib
                     {
                         if (AA.Agent != null)
                         {
-                            AgentOperations agentOperations = new AgentOperations(AA.Agent);
-                            AA.Agent.AgentOperations = agentOperations;
+                            if (AA.Agent.AgentOperations == null)
+                            {
+                                AA.Agent.AgentOperations = new AgentOperations(AA.Agent);
+                            }
                         }
                         if (AA.Agent == null) continue;//no Agent so skip it
 

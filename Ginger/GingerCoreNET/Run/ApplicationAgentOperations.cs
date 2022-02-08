@@ -54,9 +54,10 @@ namespace GingerCore.Platforms
                     {
                         foreach (IAgent agent in agents)
                         {
-                            AgentOperations agentOperations = new AgentOperations((Agent)agent);
-                            ((Agent)agent).AgentOperations = agentOperations;
-
+                            if (((Agent)agent).AgentOperations == null)
+                            {
+                                ((Agent)agent).AgentOperations = new AgentOperations((Agent)agent);
+                            }
                             possibleAgents.Add(agent);
                         }
                     }
