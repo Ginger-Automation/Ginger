@@ -98,21 +98,21 @@ namespace Amdocs.Ginger.Common
             }
             else
             {
-                string property = string.Empty;
+                System.Text.StringBuilder property = new System.Text.StringBuilder();
                 foreach (var schemaObject in schema.AllOf)
                 {
-                    if (string.IsNullOrEmpty(property))
+                    if (string.IsNullOrEmpty(property.ToString()))
                     {
-                        property += JsonSchemaFaker(schemaObject, ReferenceStack, UseXMlNames);
+                        property.Append(JsonSchemaFaker(schemaObject, ReferenceStack, UseXMlNames));
                     }
                     else
                     {
-                        property = property.Substring(0, property.Length - 1);
+                        property.Remove(property.Length - 1, 1);
                         var result = JsonSchemaFaker(schemaObject, ReferenceStack, UseXMlNames);
-                        property += "," + result.Substring(1, result.Length - 1);
+                        property.Append(string.Format(",{0}", result.Substring(1, result.Length - 1)));
                     }
                 }
-                return property;
+                return property.ToString();
             }
 
             ReferenceStack.Remove(schema);
