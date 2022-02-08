@@ -145,7 +145,7 @@ namespace GingerCore
                 if (mName != value)
                 {
                     mName = value;
-                    OnPropertyChanged(Name);
+                    OnPropertyChanged(nameof(Agent.Name));
                 }
             }
         }

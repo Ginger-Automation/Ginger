@@ -79,7 +79,16 @@ namespace Ginger.Agents
         {
             get
             {
-                return (Agent)GetValue(SelectedAgentProperty);
+                Agent agent = (Agent)GetValue(SelectedAgentProperty);
+                if (agent != null)
+                {
+                    if (agent.AgentOperations == null)
+                    {
+                        AgentOperations agentOperations = new AgentOperations(agent);
+                        agent.AgentOperations = agentOperations;
+                    }
+                }
+                return agent;
             }
             set
             {

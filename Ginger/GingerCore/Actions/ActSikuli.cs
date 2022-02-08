@@ -38,6 +38,7 @@ using SikuliStandard.sikuli_REST;
 using Amdocs.Ginger.Common;
 using System.Diagnostics;
 using System.Linq;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Actions
 {
@@ -64,12 +65,7 @@ namespace GingerCore.Actions
             {
                 if (mPlatforms.Count == 0)
                 {
-                    mPlatforms.Add(ePlatformType.Web);
-                    mPlatforms.Add(ePlatformType.Mobile);
-                    mPlatforms.Add(ePlatformType.Windows);
-                    mPlatforms.Add(ePlatformType.Java);
-                    mPlatforms.Add(ePlatformType.PowerBuilder);
-                    mPlatforms.Add(ePlatformType.MainFrame);
+                    AddAllPlatforms();
                 }
                 return mPlatforms;
             }
@@ -109,10 +105,10 @@ namespace GingerCore.Actions
             get
             {
                 int procId = -1;
-                if (!string.IsNullOrEmpty(ProcessNameForSikuliOperation) && ActiveProcessWindowsDict.ContainsValue(ProcessNameForSikuliOperation))
-                {
-                    procId = ActiveProcessWindowsDict.Where(d => d.Value == ProcessNameForSikuliOperation).FirstOrDefault().Key;
-                }
+                //if (!string.IsNullOrEmpty(ProcessNameForSikuliOperation) && ActiveProcessWindowsDict.ContainsValue(ProcessNameForSikuliOperation))
+                //{
+                //    procId = ActiveProcessWindowsDict.Where(d => d.Value == ProcessNameForSikuliOperation).FirstOrDefault().Key;
+                //}
 
                 return procId;
             }
@@ -123,11 +119,13 @@ namespace GingerCore.Actions
 
         public override eImageType Image { get { return eImageType.BullsEye; } }
 
+        private List<AutomationElement> lstWindows = new List<AutomationElement>();
+
         public void SetFocusToSelectedApplicationInstance()
         {
-            if (ProcessIDForSikuliOperation != -1)
+            if (!string.IsNullOrEmpty(ProcessNameForSikuliOperation))
             {
-                WinAPIAutomation.SetForeGroundWindow(ProcessIDForSikuliOperation);
+                WinAPIAutomation.ShowWindow(lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).First());
             }
         }
 
@@ -135,6 +133,7 @@ namespace GingerCore.Actions
         {
             string logMessage = string.Empty;
             APILauncher sikuliLauncher = new APILauncher(out logMessage, ShowSikuliConsole);
+            sikuliLauncher.EvtLogMessage += sikuliLauncher_EvtLogMessage;
             sikuliLauncher.Start();
 
             try
@@ -177,29 +176,45 @@ namespace GingerCore.Actions
             }
         }
 
-        Dictionary<int, string> ActiveProcessWindowsDict = new Dictionary<int, string>();
+        private void sikuliLauncher_EvtLogMessage(object sender, EventArgs e)
+        {
+            SikuliErrorModel ex = (SikuliErrorModel)sender;
+            if (ex.Exception != null)
+            {
+                Reporter.ToLog(eLogLevel.INFO, ex.Message);
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex.Exception);
+            }
+        }
+
+        List<string> ActiveProcessWindowsList = new List<string>();
 
         public List<string> ActiveProcessWindows
         {
             get
             {
                 RefreshActiveProcessesTitles();
-                return ActiveProcessWindowsDict.Values.ToList();
+                return ActiveProcessWindowsList;
             }
         }
 
         void RefreshActiveProcessesTitles()
         {
-            Process[] processList = Process.GetProcesses();
-
-            ActiveProcessWindowsDict.Clear();
-            foreach (Process process in processList)
+            UIAComWrapperHelper uiHelper = new UIAComWrapperHelper();
+            uiHelper.mPlatform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Windows;
+            List<object> lstAppWindow = uiHelper.GetListOfWindows();
+            ActiveProcessWindowsList.Clear();
+            lstWindows.Clear();
+            foreach (AutomationElement process in lstAppWindow)
             {
                 // If the process appears on the Taskbar (if has a title)
                 // print the information of the process
-                if (!String.IsNullOrEmpty(process.MainWindowTitle))
+                if (!String.IsNullOrEmpty(process.Current.Name))
                 {
-                    ActiveProcessWindowsDict.Add(process.Id, process.MainWindowTitle);
+                    ActiveProcessWindowsList.Add(process.Current.Name);
+                    lstWindows.Add(process);
                 }
             }
         }

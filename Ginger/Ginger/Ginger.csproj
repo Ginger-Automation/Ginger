@@ -2031,9 +2031,6 @@
     <Content Include="sikulirestapi-1.0.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="sikulixapi-2.0.2.jar">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="StaticDrivers\selenium-server-standalone.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -88,7 +88,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Param To Col")]
             ParamToCol,
         }
-        public  static partial class Fields
+        public static partial class Fields
         {
             public static string Active = "Active";
             public static string ActionDescription = "ActionDescription";
@@ -191,16 +191,16 @@ namespace GingerCore.Actions
             }
             set
             {
-                if(this.ObjectLocatorConfigsNeeded)
+                if (this.ObjectLocatorConfigsNeeded)
                 {
                     AddOrUpdateInputParamValue(Act.Fields.LocateBy, value.ToString());
                     OnPropertyChanged(Fields.LocateBy);
                     OnPropertyChanged(Fields.Details);
-                }                
+                }
             }
         }
-     
-     
+
+
         public virtual string LocateValue
         {
             get
@@ -257,7 +257,7 @@ namespace GingerCore.Actions
                     MaxNumberOfRetries = 0;
                 }
 
-                OnPropertyChanged(Fields.EnableRetryMechanism); 
+                OnPropertyChanged(Fields.EnableRetryMechanism);
             }
         }
 
@@ -271,7 +271,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                if(EnableRetryMechanism)
+                if (EnableRetryMechanism)
                 {
                     return mMaxNumberOfRetries;
                 }
@@ -295,7 +295,7 @@ namespace GingerCore.Actions
             set
             {
                 mWait = value;
-                if(WaitVE==null)
+                if (WaitVE == null)
                     WaitVE = value.ToString();
             }
         }
@@ -318,7 +318,8 @@ namespace GingerCore.Actions
 
         private int? mTimeout;
         [IsSerializedForLocalRepository]
-        public int? Timeout {
+        public int? Timeout
+        {
             get
             {
                 return mTimeout;
@@ -328,7 +329,7 @@ namespace GingerCore.Actions
                 mTimeout = value;
                 OnPropertyChanged(nameof(Timeout));
             }
-            } //timeout in secs
+        } //timeout in secs
 
         private bool mConfigOutputDS;
         [IsSerializedForLocalRepository]
@@ -358,7 +359,7 @@ namespace GingerCore.Actions
         }
 
         private eStatusConverterOptions mStatusConverter;
-       [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public eStatusConverterOptions StatusConverter
         {
             get
@@ -375,8 +376,8 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public ObservableList<FlowControl> FlowControls { get; set; } = new ObservableList<FlowControl>();
 
-       [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> InputValues { get; set; } =new ObservableList<ActInputValue>();
+        [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> InputValues { get; set; } = new ObservableList<ActInputValue>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActReturnValue> ReturnValues { get; set; } = new ObservableList<ActReturnValue>();
@@ -405,7 +406,7 @@ namespace GingerCore.Actions
         //private int mSmartWait;
         //public int SmartWait { get; set; }  
 
-       // public bool? IsSingleAction { get; set; }
+        // public bool? IsSingleAction { get; set; }
 
         public DateTime StartTimeStamp { get; set; }
         public DateTime EndTimeStamp { get; set; }
@@ -442,7 +443,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                if(mBreakPoint != value)
+                if (mBreakPoint != value)
                 {
                     mBreakPoint = value;
                     OnPropertyChanged(Fields.BreakPoint);
@@ -559,13 +560,13 @@ namespace GingerCore.Actions
 
         private string mExInfo;
 
-        public string ExInfo 
-        { 
-            get 
-            { 
-                return mExInfo; 
+        public string ExInfo
+        {
+            get
+            {
+                return mExInfo;
             }
-            set 
+            set
             {
                 if (string.IsNullOrEmpty(mExInfo) == false && value.Contains(mExInfo) && value.IndexOf(mExInfo) == 0)//meaning act.ExInfo += was used
                 {
@@ -576,8 +577,8 @@ namespace GingerCore.Actions
                 {
                     mExInfo = value;
                 }
-                OnPropertyChanged(Fields.ExInfo); 
-            } 
+                OnPropertyChanged(Fields.ExInfo);
+            }
         }
 
         [DoNotBackup]
@@ -600,7 +601,7 @@ namespace GingerCore.Actions
             }
             set
             {
-              AddOrUpdateInputParamValue("Value", value);
+                AddOrUpdateInputParamValue("Value", value);
             }
         }
 
@@ -781,8 +782,8 @@ namespace GingerCore.Actions
             ActInputValue AIV = GetOrCreateInputParam(Param, DefaultValue.ToString());
 
             TEnum result;
-       _ = Enum.TryParse<TEnum>(AIV.Value, out result);
-         
+            _ = Enum.TryParse<TEnum>(AIV.Value, out result);
+
             return result;
 
         }
@@ -933,15 +934,15 @@ namespace GingerCore.Actions
             }
         }
 
-        public void AddScreenShot(string  Base64String, string Name = "")
+        public void AddScreenShot(string Base64String, string Name = "")
         {
             try
             {
-                byte[] bytes = Convert.FromBase64String(Base64String);                
+                byte[] bytes = Convert.FromBase64String(Base64String);
                 string filePath = GetScreenShotRandomFileName();
                 using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
-                {                                        
-                    fs.Write(bytes, 0, bytes.Length);      
+                {
+                    fs.Write(bytes, 0, bytes.Length);
                 }
                 ScreenShots.Add(filePath);
                 ScreenShotsNames.Add(Name);
@@ -958,16 +959,16 @@ namespace GingerCore.Actions
         public void AddScreenShot(byte[] bytes, string Name)
         {
             try
-            {                
+            {
                 string filePath = GetScreenShotRandomFileName();
                 using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
-                {                                        
+                {
                     fs.Write(bytes, 0, bytes.Length);
                 }
-                ScreenShots.Add(filePath);                
+                ScreenShots.Add(filePath);
                 ScreenShotsNames.Add(Name);
-            }         
-            catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Error += "Unable to add Screen shot " + ex.Message;
             }
@@ -977,15 +978,18 @@ namespace GingerCore.Actions
 
         // TODO: move to Utils
         public static string SaveScreenshotToTempFile(Bitmap screenshot)
-        {            
-            string filePath = GetScreenShotRandomFileName();                        
-            screenshot.Save(filePath);            
-            return filePath;
+        {
+            using (screenshot)
+            {
+                string filePath = GetScreenShotRandomFileName();
+                screenshot.Save(filePath);
+                return filePath;
+            }
         }
 
         public static string GetScreenShotRandomFileName()
         {
-            string filename = Path.GetRandomFileName();            
+            string filename = Path.GetRandomFileName();
             string filePath = Path.Combine(ScreenshotTempFolder, filename);
             if (!Directory.Exists(ScreenshotTempFolder))
             {
@@ -994,7 +998,7 @@ namespace GingerCore.Actions
             return filePath;
         }
 
-        
+
 
         //public override string GetNameForFileName() { return Description; }
         public override string GetNameForFileName()
@@ -1119,7 +1123,7 @@ namespace GingerCore.Actions
                     }
                     catch (Exception ex)
                     {
-                     Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
                     }
             }
             catch (Exception ex)
@@ -1174,7 +1178,7 @@ namespace GingerCore.Actions
             if (ARC != null)
             {
                 ARC.Actual = ActualValue;
-                if(string.IsNullOrEmpty(ExpectedValue))
+                if (string.IsNullOrEmpty(ExpectedValue))
                 {
                     ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
                 }
@@ -1223,7 +1227,7 @@ namespace GingerCore.Actions
 
             if (ARC != null)
             {
-                if(string.IsNullOrEmpty(ARC.Expected))
+                if (string.IsNullOrEmpty(ARC.Expected))
                 {
                     ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
                 }
@@ -1366,8 +1370,8 @@ namespace GingerCore.Actions
         public void ActionDescriptionTextBlock(object ActionRecUseCaseTextBlock)
         {
 
-            ITextBoxFormatter TBH= TargetFrameworkHelper.Helper.CreateTextBoxFormatter(ActionRecUseCaseTextBlock);
-  
+            ITextBoxFormatter TBH = TargetFrameworkHelper.Helper.CreateTextBoxFormatter(ActionRecUseCaseTextBlock);
+
             TBH.AddHeader1("Description:");
             TBH.AddLineBreak();
             TBH.AddText(ActionUserDescription);
@@ -1466,7 +1470,7 @@ namespace GingerCore.Actions
 
 
 
-        public  void InvokPropertyChanngedForAllFields()
+        public void InvokPropertyChanngedForAllFields()
         {
             foreach (var field in typeof(Fields).GetFields())
                 OnPropertyChanged(field.Name);
@@ -1608,7 +1612,7 @@ namespace GingerCore.Actions
                 {
                     this.ErrorHandlerExecuted = false;
                 }
-                
+
                 this.ExInfo = string.Empty;
                 this.Error = null;
                 this.Elapsed = null;
@@ -1728,7 +1732,7 @@ namespace GingerCore.Actions
                 // Show old LocateBy, LocateValue
                 // TODO: remove when locate by removed from here
                 ActionDetails AD = new ActionDetails();
-                if (this.ObjectLocatorConfigsNeeded)                
+                if (this.ObjectLocatorConfigsNeeded)
                 {
                     AD.Info = this.LocateBy + "=" + this.LocateValue;
                 }
@@ -1800,7 +1804,7 @@ namespace GingerCore.Actions
             }
         } // end of ParseRC
 
-     
+
 
         public override eImageType ItemImageType
         {
