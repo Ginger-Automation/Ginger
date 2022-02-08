@@ -498,6 +498,255 @@ namespace WorkspaceHold
         }
 
         /// <summary>
+        /// Testing JSON - Existing Runset & Existing Runner with Virtual Business Flow exist in solution
+        /// </summary>
+        [TestMethod]
+        public void CLIDynamicJSON_VirtualBF_RunsetAndRunnerExist_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-VirtualBF_ExistingRunsetRunner.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Default Run Set", "Validating correct Run set was executed");
+
+            //Runner 
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Runner 1", "Validating correct Runner Name");
+
+            //Envs Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Default", "Validating correct Run set Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ProjEnvironment.Name, "Default", "Validating correct Runner Environment");
+
+            //Agent Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ApplicationAgents[0].AgentName, "Chrome", "Validating correct Runner Agent");
+
+            //BF 1 Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Name, "Flow 1", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[0].ActivityName, "Activity 1", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            //BF 2 Validation (Virtual Business Flow existing in the Solution)
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Name, "Flow_D", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[0].ActivityName, "Do-Work", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
+        }
+
+        /// <summary>
+        /// Testing JSON - Existing Runset & Existing Runner with Virtual Business Flow exist in solution
+        /// </summary>
+        [TestMethod]
+        public void CLIDynamicJSON_VirtualBF_RunsetAndRunnerExist_OnlyNames_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-VirtualBF_ExistingRunsetRunner_OnlyName.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Default Run Set", "Validating correct Run set was executed");
+
+            //Runner 
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Runner 1", "Validating correct Runner Name");
+
+            //Envs Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Default", "Validating correct Run set Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ProjEnvironment.Name, "Default", "Validating correct Runner Environment");
+
+            //Agent Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ApplicationAgents[0].AgentName, "Chrome", "Validating correct Runner Agent");
+
+            //BF 1 Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Name, "Flow 1", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[0].ActivityName, "Activity 1", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            //BF 2 Validation (Virtual Business Flow existing in the Solution)
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Name, "Flow_D", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[0].ActivityName, "Do-Work", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
+        }
+
+        /// <summary>
+        /// Testing JSON - Virtual Runset & Runner with Virtual Business Flow (flow exist in solution)
+        /// </summary>
+        [TestMethod]
+        public void CLIDynamicJSON_VirtualBF_VirtualRunsetAndRunner_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-VirtualBF_VirtualRunsetAndRunner.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Virtual Run Set", "Validating correct Run set was executed");
+
+            //Runner 
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Virtual Runner", "Validating correct Runner Name");
+
+            //Envs Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Default", "Validating correct Run set Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ProjEnvironment.Name, "Default", "Validating correct Runner Environment");
+
+            //BF 1 Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Name, "Flow 1", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Guid.ToString(), "2db992cd-c5f7-43a6-beb6-cd4de10fece7", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[0].ActivityName, "Activity 1", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            //BF 2 Validation (Virtual Business Flow existing in the Solution)
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Name, "Flow_D", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Guid.ToString(), "86ad108b-bddc-4cce-ba17-c8bb50fe2c66", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[0].ActivityName, "Do-Work", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
+        }
+
+        /// <summary>
+        /// Testing JSON - Virtual Runset & Runner with Virtual Business Flow (flow exist in solution)
+        /// </summary>
+        [TestMethod]
+        public void CLIDynamicJSON_VirtualBF_VirtualRunsetAndRunner_OnlyNames_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-VirtualBF_VirtualRunsetAndRunner_OnlyName.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Virtual Run Set", "Validating correct Run set was executed");
+
+            //Runner 
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Virtual Runner", "Validating correct Runner Name");
+
+            //Envs Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Default", "Validating correct Run set Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ProjEnvironment.Name, "Default", "Validating correct Runner Environment");
+
+            //BF 1 Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Name, "Flow 1", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Guid.ToString(), "2db992cd-c5f7-43a6-beb6-cd4de10fece7", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[0].ActivityName, "Activity 1", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            //BF 2 Validation (Virtual Business Flow existing in the Solution)
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Name, "Flow_D", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Guid.ToString(), "86ad108b-bddc-4cce-ba17-c8bb50fe2c66", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[0].ActivityName, "Do-Work", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
+        }
+
+        /// <summary>
+        /// Testing JSON - Virtual Runset & Runner with Virtual Business Flow (flow exist in solution)
+        /// </summary>
+        [TestMethod]
+        public void CLIDynamicJSON_VirtualBF_VirtualRunset_ExistingRunner_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-VirtualBF_VirtualRunset_ExistingRunner.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Virtual Run Set", "Validating correct Run set was executed");
+
+            //Runners Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Runner 1", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Name, "Virtual Runner", "Validating correct Runner Name");
+
+            //Envs Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Default", "Validating correct Run set Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ProjEnvironment.Name, "Default", "Validating correct Runner Environment");
+
+            //Runner 1 BF Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Name, "Flow 1", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Guid.ToString(), "2db992cd-c5f7-43a6-beb6-cd4de10fece7", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[0].ActivityName, "Activity 1", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            //Runner 2 BF Validation (Virtual Business Flow existing in the Solution)
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Name, "Flow_D", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Guid.ToString(), "86ad108b-bddc-4cce-ba17-c8bb50fe2c66", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivityName, "Do-Work", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
+        }
+
+        /// <summary>
+        /// Testing JSON - Virtual Runset & Runner with Virtual Business Flow (flow exist in solution)
+        /// </summary>
+        [TestMethod]
+        public void CLIDynamicJSON_VirtualBF_VirtualRunset_ExistingRunner_OnlyNames_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-VirtualBF_VirtualRunset_ExistingRunner_OnlyName.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Virtual Run Set", "Validating correct Run set was executed");
+
+            //Runners Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Runner 1", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Name, "Virtual Runner", "Validating correct Runner Name");
+
+            //Envs Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Default", "Validating correct Run set Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ProjEnvironment.Name, "Default", "Validating correct Runner Environment");
+
+            //Runner 1 BF Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Name, "Flow 1", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Guid.ToString(), "2db992cd-c5f7-43a6-beb6-cd4de10fece7", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[0].ActivityName, "Activity 1", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            //Runner 2 BF Validation (Virtual Business Flow existing in the Solution)
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Name, "Flow_D", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Guid.ToString(), "86ad108b-bddc-4cce-ba17-c8bb50fe2c66", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivityName, "Do-Work", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
+        }
+
+        /// <summary>
         /// Testing JSON existing Runset of outputs pass without customization
         /// </summary>   
         [TestMethod]

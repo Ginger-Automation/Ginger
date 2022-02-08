@@ -1,0 +1,37 @@
+{
+  "SolutionLocalPath": "SOLUTION_PATH",
+  "ShowAutoRunWindow": false,
+  "VerboseLevel": "normal",
+  "Runset": {
+    "Exist": false,
+    "Name": "Virtual Run Set",
+    "EnvironmentName": "Default",
+    "EnvironmentID": "23ac9f62-72ed-446a-a6fc-01be97cb2b40",
+    "RunAnalyzer": false,
+    "RunInParallel": true,
+    "StopRunnersOnFailure": false,
+    "Runners": [
+      {
+        "Name": "Virtual Runner",
+        "OnFailureRunOption": "ContinueToRunall",
+        "BusinessFlows": [
+          {
+            "Name": "Flow 1",
+            "Active": true
+          },
+          {
+            "Name": "Flow_D",
+            "Exist": false,
+            "Active": true
+          }
+        ]
+      }
+    ],
+    "SelfHealingConfiguration": {
+      "ReprioritizePOMLocators": true,
+      "AutoFixAnalyzerIssue": false,
+      "AutoUpdateApplicationModel": false,
+      "SaveChangesInSourceControl": false
+    }
+  }
+}

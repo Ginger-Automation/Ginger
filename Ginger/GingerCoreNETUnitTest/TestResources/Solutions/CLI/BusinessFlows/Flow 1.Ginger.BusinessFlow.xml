@@ -1,14 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="2db992cd-c5f7-43a6-beb6-cd4de10fece7" ItemType="BusinessFlow" CreatedBy="YARONWE" Created="201904012027" GingerVersion="3.4.0.0" Version="5" LastUpdateBy="YARONWE" LastUpdate="201909061522" />
+<GingerRepositoryItem><Header ItemGuid="2db992cd-c5f7-43a6-beb6-cd4de10fece7" ItemType="BusinessFlow" CreatedBy="YARONWE" Created="201904012027" GingerVersion="4.2.0.0" Version="9" LastUpdateBy="prateekv" LastUpdate="202202080758" />
 <BusinessFlow Description="Flow #1" Elapsed="90" Guid="2db992cd-c5f7-43a6-beb6-cd4de10fece7" Name="Flow 1" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
 <Activities>
 <Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="23efe99f-88c1-4de3-bf60-047d7b5accc0" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="app1">
 <Acts>
-<ActDummy Active="True" Description="Dummy Action" Guid="ad4c0f32-64bf-4711-8fe4-591ddeb1d282" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<ActDummy Active="True" Description="Dummy Action" Guid="ad4c0f32-64bf-4711-8fe4-591ddeb1d282" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
 <InputValues>
 <ActInputValue Guid="8c98f3df-a04d-4b99-96ea-0c47783e1411" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ggg" />
 </InputValues>
 </ActDummy>
+</Acts>
+</Activity>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="NewGroup" ActivityName="User Detail Activity" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="01ee7e9c-4810-464d-872c-76cb1c0dda97" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="app1">
+<Acts>
+<ActLogAction Active="True" Description="Log Action" Guid="c4714c0c-4814-46fc-9387-0cebdc2696f8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SelectedLogLevel="INFO" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="abe18996-357c-45a4-b2fa-1782effb1b50" Param="LogText" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Flow '{FD Object=BusinessFlow Field=Name}' Executed on machine '{CS Exp=System.Environment.MachineName}' by user '{CS Exp=System.Environment.UserName}' at '{CS Exp=DateTime.Now}'" />
+</InputValues>
+</ActLogAction>
 </Acts>
 </Activity>
 </Activities>
@@ -16,7 +25,12 @@
 <ActivitiesGroups>
 <ActivitiesGroup Guid="d2a00b89-fba0-4a3a-b36f-253f6f822a50" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ActivitiesIdentifiers>
-<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="23efe99f-88c1-4de3-bf60-047d7b5accc0" ActivityName="Activity 1" Guid="b42b85c1-d2ec-48ea-92b2-f90cc935f6a8" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="23efe99f-88c1-4de3-bf60-047d7b5accc0" ActivityName="Activity 1" Guid="90ddae7c-096d-4c56-ba3b-73beb42ac9f4" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+<ActivitiesGroup Guid="1a2549eb-a85d-48d7-a95e-9027d150f662" Name="NewGroup" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="01ee7e9c-4810-464d-872c-76cb1c0dda97" ActivityName="User Detail Activity" Guid="26867139-7ffd-429c-bafd-8062a0e05dbd" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </ActivitiesIdentifiers>
 </ActivitiesGroup>
 </ActivitiesGroups>
