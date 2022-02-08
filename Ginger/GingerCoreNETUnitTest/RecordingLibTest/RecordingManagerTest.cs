@@ -29,12 +29,12 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-            mSolutionRepository = WorkSpace.Instance.SolutionRepository;
-            string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
-            mSolutionRepository.Open(TempRepositoryFolder);
+            //WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            //WorkSpace.Init(WSEH);
+            //WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+            //mSolutionRepository = WorkSpace.Instance.SolutionRepository;
+            //string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
+            //mSolutionRepository.Open(TempRepositoryFolder);
         }
 
         [TestInitialize]
