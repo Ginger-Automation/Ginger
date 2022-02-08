@@ -2,11 +2,13 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions.Common;
 using GingerCoreNETUnitTest.RunTestslib;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,12 +23,20 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         BusinessFlow mBF;
         Context Context;
         IPlatformInfo PlatformInfo;
+        static SolutionRepository mSolutionRepository;
+        static string solutionName;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
+            solutionName = "BasicSimple";
+
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
+            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+            mSolutionRepository = WorkSpace.Instance.SolutionRepository;
+            string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\" + solutionName);
+            mSolutionRepository.Open(TempRepositoryFolder);
         }
 
         [TestInitialize]
