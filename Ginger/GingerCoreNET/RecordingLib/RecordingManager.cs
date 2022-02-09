@@ -118,18 +118,8 @@ namespace Amdocs.Ginger.CoreNET
                 newPOM.PageURL = pageURL;
                 newPOM.ScreenShotImage = screenShot;
                 newPOM.MappedUIElements = new ObservableList<ElementInfo>();
-                Console.WriteLine("------------------------------------------------------------------------------------------------------------------------------------");
                 if (WorkSpace.Instance.Solution != null)//check for unit tests
                 {
-                    Console.WriteLine("WorkSpace.Instance.Solution is not null");
-                    if (WorkSpace.Instance.Solution.ApplicationPlatforms != null)
-                    {
-                        Console.WriteLine("WorkSpace.Instance.Solution.ApplicationPlatforms is not null");
-                    }
-                    else
-                    {
-                        Console.WriteLine("WorkSpace.Instance.Solution.ApplicationPlatforms is null");
-                    }
                     RepositoryItemKey tAppkey = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == Context.Target.Name).Select(x => x.Key).FirstOrDefault();
                     if (tAppkey != null)
                     {
@@ -140,7 +130,6 @@ namespace Amdocs.Ginger.CoreNET
                         newPOM.TargetApplicationKey = Context.Target.Key;
                     }
                 }
-                Console.WriteLine("------------------------------------------------------------------------------------------------------------------------------------");
 
                 //Save new POM
                 if (WorkSpace.Instance.SolutionRepository != null)//check for unit tests
@@ -217,10 +206,13 @@ namespace Amdocs.Ginger.CoreNET
             {
                 uniqueName = pageTitle;
                 int appendCount = 2;
-                while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(x => x.Name.Trim().ToLower() == uniqueName.Trim().ToLower()).FirstOrDefault() != null)
+                if (WorkSpace.Instance.SolutionRepository != null)//check for unit tests
                 {
-                    uniqueName = string.Format("{0}_{1}", pageTitle, appendCount);
-                    appendCount++;
+                    while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(x => x.Name.Trim().ToLower() == uniqueName.Trim().ToLower()).FirstOrDefault() != null)
+                    {
+                        uniqueName = string.Format("{0}_{1}", pageTitle, appendCount);
+                        appendCount++;
+                    }
                 }
             }
             catch (Exception ex)

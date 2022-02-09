@@ -29,12 +29,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            //WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            //WorkSpace.Init(WSEH);
-            //WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-            //mSolutionRepository = WorkSpace.Instance.SolutionRepository;
-            //string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
-            //mSolutionRepository.Open(TempRepositoryFolder);
+            
         }
 
         [TestInitialize]
@@ -47,6 +42,8 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             Activity activity = new Activity();
             mBF.AddActivity(activity);
             Context.BusinessFlow = mBF;
+
+            Context.Target = new Amdocs.Ginger.Common.Repository.TargetBase();
         }
 
         [TestCleanup]
