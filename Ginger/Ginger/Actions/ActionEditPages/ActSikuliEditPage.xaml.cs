@@ -157,25 +157,7 @@ namespace Ginger.Actions
             {
                 try
                 {
-                    //var imgSrc = File.ReadAllBytes(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculateValue));
-                    //var bitmapSource = new BitmapImage();
-                    //bitmapSource.BeginInit();
-                    //bitmapSource.StreamSource = new MemoryStream(imgSrc);
-                    //bitmapSource.EndInit();
-                    //actSikuli.PatternPath = calculateValue;
-
-                    //xElementImage.Source = bitmapSource;
-                    //xElementImageCanvas.Visibility = Visibility.Visible;
-
                     ScreenShotViewPage screenShotPage = new ScreenShotViewPage(calculateValue, calculateValue, 0.5);
-                    //Frame fram = new Frame();
-                    //fram.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
-                    //fram.NavigationService.RemoveBackEntry();
-                    //fram.Margin = new Thickness(20);
-                    //DockPanel.SetDock(fram, Dock.Top);
-                    //fram.HorizontalAlignment = HorizontalAlignment.Center;
-                    //fram.VerticalAlignment = VerticalAlignment.Center;
-                    //fram.SetContent(screenShotPage);
                     xScreenShotsViewFrame.Content = screenShotPage;
                 }
                 catch (Exception exc)
