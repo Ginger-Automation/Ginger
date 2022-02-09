@@ -2,16 +2,13 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions.Common;
 using GingerCoreNETUnitTest.RunTestslib;
-using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -24,7 +21,6 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         BusinessFlow mBF;
         Context Context;
         IPlatformInfo PlatformInfo;
-        static SolutionRepository mSolutionRepository;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
