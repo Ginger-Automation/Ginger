@@ -22,7 +22,7 @@
                                HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Refresh Windows List" ButtonFontImageSize="16"  
                                Click="RefreshWindowsButton_Click" />
         
-        <userControls:ucButton Grid.Column="3" x:Name="xAddSwitchWindowActionButton" ButtonType="ImageButton" ButtonImageType="Add"  
+        <userControls:ucButton Grid.Column="3" x:Name="xAddSwitchWindowActionButton" ButtonType="ImageButton" ButtonImageType="MoveLeft"  
                                HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Add Switch Window Action to Flow" ButtonFontImageSize="16"  
                                Click="AddSwitchWindowActionButton_Click" />
     </Grid>

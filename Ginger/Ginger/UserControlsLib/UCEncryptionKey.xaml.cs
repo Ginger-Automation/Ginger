@@ -73,7 +73,7 @@ namespace Ginger.UserControlsLib
 
         public bool ValidateKey()
         {
-            if (!string.IsNullOrEmpty(EncryptionKeyPasswordBox.Password) && mSolution.ValidateKey(EncryptionKeyPasswordBox.Password))
+            if (!string.IsNullOrEmpty(EncryptionKeyPasswordBox.Password) && mSolution.SolutionOperations.ValidateKey(EncryptionKeyPasswordBox.Password))
             {
                 ValidFlag.Visibility = Visibility.Visible;
                 InvalidFlag.Visibility = Visibility.Collapsed;
@@ -94,10 +94,16 @@ namespace Ginger.UserControlsLib
             {
                 InvalidFlag.Visibility = Visibility.Visible;
                 ValidFlag.Visibility = Visibility.Collapsed;
+                EncryptionKeyPasswordBox.Visibility = Visibility.Visible;
+                EncryptionkeyError.Visibility = Visibility.Visible;
+                EncryptionkeyError.Content = "Encryption key must be 8-16 in length and should contain atleast 1 cap, 1 small, 1 digit and 1 special char.";
+                EncryptionkeyError.Foreground = Brushes.Red;
+                EncryptionkeyError.FontSize = 9;
                 return false;
             }
             InvalidFlag.Visibility = Visibility.Collapsed;
             ValidFlag.Visibility = Visibility.Visible;
+            EncryptionkeyError.Visibility = Visibility.Collapsed;
             return true;
         }
 

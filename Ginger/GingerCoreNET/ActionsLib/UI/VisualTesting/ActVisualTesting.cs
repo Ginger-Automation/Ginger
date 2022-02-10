@@ -19,11 +19,10 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
 using Applitools.Selenium;
 using GingerCore.Actions.VisualTesting;
-using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -95,6 +94,37 @@ namespace GingerCore.Actions
             InternetExplorer = 2
         }
 
+        //TODO: For ActComparepage ObjectLocatrosConfigNeeded is false 
+        //But still for Switch frame , intialize browser etc the locate by and locate value is binded with Act.cs LocateBy and LocateValue fields
+        //We override this field to ignore ObjectConfigNeeded check only for this action
+        //Need to remove all of this once restructring Act.cs
+        public override eLocateBy LocateBy
+        {
+            get
+            {
+                return GetOrCreateInputParam<eLocateBy>(Act.Fields.LocateBy, eLocateBy.NA);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(Act.Fields.LocateBy, value.ToString());
+                OnPropertyChanged(Act.Fields.LocateBy);
+                OnPropertyChanged(Act.Fields.Details);
+            }
+        }
+
+        public override string LocateValue
+        {
+            get
+            {
+                return GetOrCreateInputParam(Act.Fields.LocateValue).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(Act.Fields.LocateValue, value);
+                OnPropertyChanged(Act.Fields.LocateValue);
+                OnPropertyChanged(Act.Fields.Details);
+            }
+        }
         IVisualTestingDriver mDriver;
         public eVisualTestingAnalyzer VisualTestingAnalyzer
         {
@@ -203,6 +233,9 @@ namespace GingerCore.Actions
             public static string BaseLineVisualElementsInfoFileName = "BaseLineVisualElementsInfoFileName";            
             public static string CreateBaselineAction = "CreateBaselineAction";
             public static string ErrorMetric = "ErrorMetric";
+            public static readonly string ActionBy = "ActionBy";
+            public static readonly string LocateBy = "LocateBy";
+            public static readonly string LocateValue ="LocateValue";
         }
         
         public override string ActionEditPage { get { return "VisualTesting.ActVisualTestingEditPage"; } }
@@ -258,7 +291,6 @@ namespace GingerCore.Actions
         public void Execute(IVisualTestingDriver driver)
         {
             mDriver = driver;
-            SeleniumDriver webDriver = ((SeleniumDriver)mDriver);
             CheckSetVisualAnalyzer();
             CheckSetAppWindowSize();
 
@@ -266,7 +298,6 @@ namespace GingerCore.Actions
             {
                 mVisualAnalyzer.SetAction(mDriver, this);
                 mVisualAnalyzer.Execute();
-                
             }
             else
             {
@@ -332,7 +363,7 @@ namespace GingerCore.Actions
                     return Resolution;
                 case eChangeAppWindowSize.Custom:
                     //TODO:
-                    Resolution.Add(Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowHeight)));
+                    Resolution.Add(Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowWidth)));
                     Resolution.Add(Convert.ToInt32(GetInputParamCalculatedValue(ActVisualTesting.Fields.SetAppWindowHeight)));
                     return Resolution;
                 case eChangeAppWindowSize.Resolution640x480:
@@ -507,6 +538,5 @@ namespace GingerCore.Actions
 
             return relativePath;
         }
-
     }
 }

@@ -38,8 +38,8 @@ namespace GingerCore.DataSource
                 
         public string Name { get; set; }                  
 
-        [IsSerializedForLocalRepository]
-        public eDSTableColType DSTableColType { get; set; }
+        //[IsSerializedForLocalRepository]
+        //public eDSTableColType DSTableColType { get; set; }
        
         public override string ItemName
         {

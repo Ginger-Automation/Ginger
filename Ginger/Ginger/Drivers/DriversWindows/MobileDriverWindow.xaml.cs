@@ -516,7 +516,7 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         try
                         {
-                            mAgent.Close();
+                            mAgent.AgentOperations.Close();
                         }
                         catch (Exception ex)
                         {

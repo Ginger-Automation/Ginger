@@ -92,8 +92,8 @@ namespace GingerWPF.RunLib
         {
             DisbleRunButtons();
 
-            Act act = (Act)mGingerRunner.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
-            int result = await mGingerRunner.RunActionAsync(act);
+            Act act = (Act)mGingerRunner.Executor.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+            int result = await mGingerRunner.Executor.RunActionAsync(act);
 
             //TODO: temp we get 0 + take it to flag button or something !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -104,7 +104,7 @@ namespace GingerWPF.RunLib
         private async void RunActivityButton_Click(object sender, RoutedEventArgs e)
         {
             DisbleRunButtons();            
-            int result = await mGingerRunner.RunActivityAsync((Activity)mGingerRunner.CurrentBusinessFlow.CurrentActivity);
+            int result = await mGingerRunner.Executor.RunActivityAsync((Activity)mGingerRunner.Executor.CurrentBusinessFlow.CurrentActivity);
             EnableRunButtons();
         }
 
@@ -124,7 +124,7 @@ namespace GingerWPF.RunLib
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            mGingerRunner.StopRun();
+            mGingerRunner.Executor.StopRun();
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -133,7 +133,7 @@ namespace GingerWPF.RunLib
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
-            mGingerRunner.CurrentBusinessFlow.Reset();
+            mGingerRunner.Executor.CurrentBusinessFlow.Reset();
         }
 
         private void MiniButton_Click(object sender, RoutedEventArgs e)

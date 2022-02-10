@@ -25,6 +25,12 @@ using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
+    public enum eAutoRunEexecutorType
+    {
+        Run,
+        DynamicFile,
+        Remote
+    }
     public class RunSetAutoRunConfiguration: INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -41,15 +47,35 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         RunsetExecutor mRunsetExecutor;
         CLIHelper mCLIHelper;
         
+        public int ParallelExecutionCount;
+        public eAutoRunEexecutorType AutoRunEexecutorType { get; set; }
+
 
         public ICLI SelectedCLI;
 
+        private string mCLIContent;
         public string CLIContent
         {
             get
             {
-                return SelectedCLI.CreateConfigurationsContent(mSolution, mRunsetExecutor, mCLIHelper);
+                if (mCLIContent == null)
+                {
+                    mCLIContent = GetCLIContent();
+                }
+                return mCLIContent;
             }
+            set
+            {
+                if (mCLIContent != value)
+                {
+                    mCLIContent = value;
+                }
+            }
+        }
+
+        public string GetCLIContent()
+        {
+            return SelectedCLI.CreateConfigurationsContent(mSolution, mRunsetExecutor, mCLIHelper);
         }
 
         string mConfigFileFolderPath = null;
@@ -118,11 +144,25 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        public string ExecutionServiceUrl
+        {
+            get
+            {
+                return mRunsetExecutor.RunSetConfig.ExecutionServiceURLUsed;
+            }
+            set
+            {
+                if (mRunsetExecutor.RunSetConfig.ExecutionServiceURLUsed != value)
+                {
+                    mRunsetExecutor.RunSetConfig.ExecutionServiceURLUsed = value;
+                }
+            }
+        }
         public string ConfigFileName
         {
             get
             {
-                return FileUtils.RemoveInvalidChars(ConfigName) + ".Ginger.AutoRunConfigs." + SelectedCLI.FileExtension;
+                return System.Text.RegularExpressions.Regex.Replace(FileUtils.RemoveInvalidChars(ConfigName) + ".Ginger.AutoRunConfigs." + SelectedCLI.FileExtension, @"\s+", ""); ;
             }
         }
 

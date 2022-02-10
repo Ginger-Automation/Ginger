@@ -32,7 +32,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 {
     public class AppApiModelTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        private ApplicationAPIModel mApiModel;
+        public ApplicationAPIModel mApiModel;
         private APIModelPage mAPIModelPage;
         bool mShowEditInMenu = false;
 

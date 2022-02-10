@@ -100,12 +100,12 @@ namespace WorkspaceHold
 
             //Act
             mTestHelper.Log("agent.StartDriver()");
-            agent.StartDriver();
+            agent.AgentOperations.StartDriver();
 
             int count = mGingerGrid.NodeList.Count;
 
             mTestHelper.Log("agent.Close();");
-            agent.Close();
+            agent.AgentOperations.Close();
             ObservableList<GingerNodeInfo> list = mGingerGrid.NodeList;
 
             //Assert
@@ -125,15 +125,15 @@ namespace WorkspaceHold
 
 
             //Act
-            a1.StartDriver();
-            a2.StartDriver();
-            a3.StartDriver();
+            a1.AgentOperations.StartDriver();
+            a2.AgentOperations.StartDriver();
+            a3.AgentOperations.StartDriver();
 
             int count = mGingerGrid.NodeList.Count;
 
-            a1.Close();
-            a2.Close();
-            a3.Close();
+            a1.AgentOperations.Close();
+            a2.AgentOperations.Close();
+            a3.AgentOperations.Close();
 
             ObservableList<GingerNodeInfo> list = mGingerGrid.NodeList;
 

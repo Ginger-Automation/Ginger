@@ -80,7 +80,7 @@ namespace GingerWPF.AgentsLib
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             ApplicationAgent a = (ApplicationAgent)mApps.CurrentItem;
-           ((Agent) a.Agent).StartDriver();
+           ((Agent) a.Agent).AgentOperations.StartDriver();
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
