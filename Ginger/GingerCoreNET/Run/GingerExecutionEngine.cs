@@ -587,14 +587,14 @@ namespace Ginger.Run
                                     agent.AgentOperations = agentOperations;
                                 }
                                 //logic for if need to assign virtual agent
-                                if (agent.AgentOperations.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Where(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)).Count() > 0)
+                                if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Where(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)).Count() > 0)
                                 {
                                     var virtualagent = agent.CreateCopy(true) as Agent;
                                     virtualagent.AgentOperations = new AgentOperations(virtualagent);
                                     virtualagent.ParentGuid = agent.Guid;
                                     virtualagent.Name = agent.Name + " Virtual";
                                     virtualagent.IsVirtual = true;
-                                    ((AgentOperations)virtualagent.AgentOperations).DriverClass = ((AgentOperations)agent.AgentOperations).DriverClass;
+                                    virtualagent.DriverClass = agent.DriverClass;
                                     virtualagent.DriverType = agent.DriverType;
                                     applicationAgent.Agent = virtualagent;
                                     virtualagent.DriverConfiguration = agent.DriverConfiguration;

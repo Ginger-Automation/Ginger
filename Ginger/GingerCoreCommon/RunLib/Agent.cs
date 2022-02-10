@@ -565,6 +565,40 @@ namespace GingerCore
 
         public bool IsVirtual { get; set; }
 
+        public Type DriverClass = null;
+
+        /// <summary>
+        /// Check if agent support virtual drivers 
+        /// </summary>
+        /// <returns></returns>
+        public bool SupportVirtualAgent()
+        {
+            try
+            {
+
+                if (DriverClass == null)
+                {
+                    DriverClass = TargetFrameworkHelper.Helper.GetDriverType(this);
+                    if (DriverClass == null)
+                    {
+                        return false;
+                    }
+                }
+
+
+                if (DriverClass.GetInterfaces().Contains(typeof(IVirtualDriver)))
+                {
+                    return true;
+                }
+            }
+            //if the exceptions are throws we consider it to be not supportable for virtual agents
+            catch (Exception e)
+            {
+
+
+            }
+            return false;
+        }
 
         public override void PostDeserialization()
         {

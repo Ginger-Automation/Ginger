@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -56,7 +57,15 @@ namespace GingerCore.Platforms
         {
             get
             {
-                return mAppID;// ApplicationAgentOperations.GetAppID(mAppID); // need to fix this
+                if (mAppID == Guid.Empty)
+                {
+                    ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == AppName).FirstOrDefault();
+                    if (appPlat != null)
+                    {
+                        return appPlat.Guid;
+                    }
+                }
+                return mAppID;
             }
             set
             {

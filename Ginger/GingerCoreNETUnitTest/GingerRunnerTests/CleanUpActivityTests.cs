@@ -195,7 +195,7 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             Assert.AreEqual(eRunStatus.Passed, businessFlow.Activities[0].Status, "Activity 1 Status");
             Assert.AreEqual(eRunStatus.Passed, businessFlow.Activities[1].Status, "Activity 2 Status");
             Assert.AreEqual(eRunStatus.Stopped, businessFlow.Activities[2].Status, "Activity 3 Status stopped by FC");
-            Assert.AreEqual(null, businessFlow.Activities[3].Status, "Clean Up Activity Stshould not execute");
+            Assert.AreEqual(eRunStatus.Skipped, businessFlow.Activities[3].Status, "Clean Up Activity Stshould not execute");
         }
 
         [TestMethod]
