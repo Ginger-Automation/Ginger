@@ -6,12 +6,12 @@
       mc:Ignorable="d" 
 	Title="ActLowLevelClicksEditPage">
 
-    <Grid Height="Auto" VerticalAlignment="Top">
+    <Grid VerticalAlignment="Top">
         <Grid.RowDefinitions>
             <RowDefinition MaxHeight="50"/>
             <RowDefinition MaxHeight="60"/>
             <RowDefinition MaxHeight="50"/>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="60*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Grid.Row="0">
@@ -47,15 +47,14 @@
             <usercontrols:ucButton x:Name="xCaptureLocatorImageButton" ButtonType="ImageButton" Click="CaptureLocatorImageButton_Click" ToolTip="Capture Application Element Image" ButtonFontImageSize="15" ButtonImageType="Camera" Foreground="Red" VerticalAlignment="Center" />
         </StackPanel>
 
-        <StackPanel CanVerticallyScroll="True" CanHorizontallyScroll="True" Grid.Row="3" >
+        <StackPanel Grid.Row="3" >
             <StackPanel Orientation="Horizontal">
                 <Label Content=" Element Screenshot Preview :" />
                 <usercontrols:ucButton x:Name="xRefreshPatternImage" ToolTip="Refresh Pattern Image" ButtonImageWidth="15" ButtonImageHeight="15"
                                        Margin="5,0" ButtonImageType="Reset" Click="xRefreshPatternImage_Click"/>
             </StackPanel>
-            <Canvas x:Name="xElementImageCanvas" Visibility="Collapsed">
-                <Image x:Name="xElementImage" />
-            </Canvas>
+            <Frame ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" x:Name="xScreenShotsViewFrame" DockPanel.Dock="Top">
+            </Frame>
         </StackPanel>
     </Grid>
 </Page>

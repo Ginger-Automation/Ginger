@@ -25,10 +25,10 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.MainFrame
 {
-   public class ActMainframeSendKey : Act
+    public class ActMainframeSendKey : Act
     {
         public override string ActionDescription { get { return "Send Key to MainFrame"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Send Key to MainFrame"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {

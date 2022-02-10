@@ -45,7 +45,7 @@ namespace GingerCore.Actions
     public class ActSikuli : ActImageCaptureSupport
     {
         public override string ActionDescription { get { return "Sikuli Operation"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Sikuli Operation"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -131,48 +131,51 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
-            string logMessage = string.Empty;
-            APILauncher sikuliLauncher = new APILauncher(out logMessage, ShowSikuliConsole);
-            sikuliLauncher.EvtLogMessage += sikuliLauncher_EvtLogMessage;
-            sikuliLauncher.Start();
-
-            try
+            if (CheckIfImageValid())
             {
-                Screen sekuliScreen = new Screen();
+                string logMessage = string.Empty;
+                APILauncher sikuliLauncher = new APILauncher(out logMessage, ShowSikuliConsole);
+                sikuliLauncher.EvtLogMessage += sikuliLauncher_EvtLogMessage;
+                sikuliLauncher.Start();
 
-                Pattern sikuliPattern = new Pattern(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(PatternPath));
-
-                System.Threading.Tasks.Task.Run(() => SetFocusToSelectedApplicationInstance());
-
-                switch (ActSikuliOperation)
+                try
                 {
-                    case eActSikuliOperation.Click:
-                        sekuliScreen.Click(sikuliPattern);
-                        break;
-                    case eActSikuliOperation.SetValue:
-                        sekuliScreen.Type(sikuliPattern, SetTextValue);
-                        break;
-                    case eActSikuliOperation.DoubleClick:
-                        sekuliScreen.DoubleClick(sikuliPattern);
-                        break;
-                    case eActSikuliOperation.MouseRightClick:
-                        sekuliScreen.RightClick(sikuliPattern);
-                        break;
-                    case eActSikuliOperation.Exist:
-                        sekuliScreen.Exists(sikuliPattern);
-                        break;
-                    default:
-                        break;
+                    Screen sekuliScreen = new Screen();
+
+                    Pattern sikuliPattern = new Pattern(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(PatternPath));
+
+                    System.Threading.Tasks.Task.Run(() => SetFocusToSelectedApplicationInstance());
+
+                    switch (ActSikuliOperation)
+                    {
+                        case eActSikuliOperation.Click:
+                            sekuliScreen.Click(sikuliPattern);
+                            break;
+                        case eActSikuliOperation.SetValue:
+                            sekuliScreen.Type(sikuliPattern, SetTextValue);
+                            break;
+                        case eActSikuliOperation.DoubleClick:
+                            sekuliScreen.DoubleClick(sikuliPattern);
+                            break;
+                        case eActSikuliOperation.MouseRightClick:
+                            sekuliScreen.RightClick(sikuliPattern);
+                            break;
+                        case eActSikuliOperation.Exist:
+                            sekuliScreen.Exists(sikuliPattern);
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message + Environment.NewLine + ex.Source, ex);
-                Error = string.Format("Error Occured while executing Sikuli Operation {0} : {1}", ActSikuliOperation, ex.Message);
-            }
-            finally
-            {
-                sikuliLauncher.Stop();
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, ex.Message + Environment.NewLine + ex.Source, ex);
+                    Error = string.Format("Error Occured while executing Sikuli Operation {0} : {1}", ActSikuliOperation, ex.Message);
+                }
+                finally
+                {
+                    sikuliLauncher.Stop();
+                }
             }
         }
 
@@ -239,6 +242,21 @@ namespace GingerCore.Actions
             {
                 return @"Documents\SikuliImages\";
             }
+        }
+
+        private bool CheckIfImageValid()
+        {
+            if (string.IsNullOrEmpty(PatternPath))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Empty");
+                return false;
+            }
+            if (!File.Exists(PatternPath))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Invalid");
+                return false;
+            }
+            return true;
         }
     }
 }
