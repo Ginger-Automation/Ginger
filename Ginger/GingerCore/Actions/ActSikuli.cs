@@ -248,11 +248,13 @@ namespace GingerCore.Actions
         {
             if (string.IsNullOrEmpty(PatternPath))
             {
+                Error = "File Path is Empty";
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Empty");
                 return false;
             }
             if (!File.Exists(PatternPath))
             {
+                Error = "File Path is Invalid";
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Invalid");
                 return false;
             }

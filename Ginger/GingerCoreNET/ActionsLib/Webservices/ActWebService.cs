@@ -34,7 +34,7 @@ namespace GingerCore.Actions
     public class ActWebService : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Web Service Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Web Service Action"; } }
 
         public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 
