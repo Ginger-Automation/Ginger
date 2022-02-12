@@ -50,13 +50,13 @@ namespace GingerCore.Actions.XML
 
 
         public override string ActionDescription { get { return "XML/JSON Tag Validation Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "XML/JSON Tag Validation Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Validate tags in XML/JSON documents by path");
             TBH.AddLineBreak();
-          
+
         }
 
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
@@ -77,7 +77,7 @@ namespace GingerCore.Actions.XML
             }
         }
 
-       
+
         public ActInputValue InputFile
         {
             get
@@ -88,11 +88,11 @@ namespace GingerCore.Actions.XML
         }
 
 
-        
+
         [IsSerializedForLocalRepository(true)]
         public bool ReqisFromFile
         {
-            get;set;
+            get; set;
         }
         private eDocumentType mDocumentType;
         [IsSerializedForLocalRepository]
@@ -100,7 +100,7 @@ namespace GingerCore.Actions.XML
         {
             get
             {
-                return  mDocumentType;
+                return mDocumentType;
             }
             set
             {
@@ -143,15 +143,15 @@ namespace GingerCore.Actions.XML
             {
                 if (FilePath == null || FilePath == String.Empty)
                 {
-                    this.Error="Please provide a valid file name";
+                    this.Error = "Please provide a valid file name";
                 }
 
                 if (FilePath.Contains("~"))
                 {
                     FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
                 }
-                
-                if (FilePath.EndsWith(".XML",StringComparison.OrdinalIgnoreCase) ||FilePath.EndsWith(".JSON",StringComparison.OrdinalIgnoreCase))
+
+                if (FilePath.EndsWith(".XML", StringComparison.OrdinalIgnoreCase) || FilePath.EndsWith(".JSON", StringComparison.OrdinalIgnoreCase))
                 {
                     docTxt = System.IO.File.ReadAllText(FilePath);
                 }
@@ -163,7 +163,7 @@ namespace GingerCore.Actions.XML
             }
             else
             {
-                if (!FilePath.EndsWith(".XML",StringComparison.OrdinalIgnoreCase) && !FilePath.EndsWith(".JSON", StringComparison.OrdinalIgnoreCase))
+                if (!FilePath.EndsWith(".XML", StringComparison.OrdinalIgnoreCase) && !FilePath.EndsWith(".JSON", StringComparison.OrdinalIgnoreCase))
                 {
                     docTxt = InputFile.ValueForDriver.ToString();
                 }
@@ -195,8 +195,8 @@ namespace GingerCore.Actions.XML
             {
                 ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
                 VE.Value = @aiv.Param;
-                if(string.IsNullOrEmpty(VE.ValueCalculated))
-                    {
+                if (string.IsNullOrEmpty(VE.ValueCalculated))
+                {
                     continue;
                 }
                 JToken Tokenfound = jo.SelectToken(VE.ValueCalculated);
@@ -229,7 +229,7 @@ namespace GingerCore.Actions.XML
             {
                 foreach (ActInputValue aiv in DynamicElements)
                 {
-                    ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow,DSList);
+                    ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
                     VE.Value = @aiv.Param;
                     // var.Value = VE.ValueCalculated;
 
@@ -244,11 +244,11 @@ namespace GingerCore.Actions.XML
                     {
                         foreach (XmlAttribute XA in node.Attributes)
                         {
-                            ActReturnValue rv= ReturnValues.Where(x => x.Path == XA.Name).FirstOrDefault();
-                            if (rv==null)
+                            ActReturnValue rv = ReturnValues.Where(x => x.Path == XA.Name).FirstOrDefault();
+                            if (rv == null)
                                 AddOrUpdateReturnParamActualWithPath(aiv.Param, XA.Value.ToString(), XA.Name);
                             else
-                                rv.Actual= XA.Value.ToString();
+                                rv.Actual = XA.Value.ToString();
                         }
                     }
                     else

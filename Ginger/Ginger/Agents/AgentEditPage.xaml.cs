@@ -116,7 +116,7 @@ namespace Ginger.Agents
             }
             
             GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mAgent.DriverType, lst);   
-            if(mAgent.AgentOperations.SupportVirtualAgent())
+            if(mAgent.SupportVirtualAgent())
             {
                 xVirtualAgentsPanel.Visibility = Visibility.Visible;
                 xAgentVirtualSupported.Content = "Yes";
