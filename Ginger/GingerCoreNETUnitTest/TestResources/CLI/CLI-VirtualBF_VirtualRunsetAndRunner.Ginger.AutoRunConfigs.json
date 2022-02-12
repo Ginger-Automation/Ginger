@@ -27,6 +27,27 @@
             "Active": true
           }
         ]
+      },
+      {
+        "Name": "Virtual Runner Flows With Shared Activities",
+        "OnFailureRunOption": "ContinueToRunall",
+        "BusinessFlows": [
+          {
+            "Name": "Virtual Business Flow",
+            "Exist": false,
+            "Active": true,
+            "SharedActivities": [
+              {
+                "SharedActivityName": "Test Activity",
+                "SharedActivityID": "bf285a86-6384-4b1f-acfb-e0c1b60eec12"
+              },
+              {
+                "SharedActivityName": "User Detail Activity",
+                "SharedActivityID": "01ee7e9c-4810-464d-872c-76cb1c0dda97"
+              }
+            ]
+          }
+        ]
       }
     ],
     "SelfHealingConfiguration": {

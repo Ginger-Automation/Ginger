@@ -960,17 +960,25 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             ///        but are not part of current Runset & Runners
                             else
                             {
-                                /// Business Flow exist in the Solution but isn't already part of Runner/Runset
-                                /// Fetch BF & use the same for execution
-                                if (businessFlowConfig.ID != null || !string.IsNullOrEmpty(businessFlowConfig.Name))
+                                try
                                 {
-                                    bf = (BusinessFlow)FindItemByIDAndName<BusinessFlow>(
-                                     new Tuple<string, Guid?>(nameof(BusinessFlow.Guid), businessFlowConfig.ID),
-                                     new Tuple<string, string>(nameof(BusinessFlow.Name), businessFlowConfig.Name),
-                                     WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
+                                    /// Business Flow exist in the Solution but isn't already part of Runner/Runset
+                                    /// Fetch BF & use the same for execution
+                                    if (businessFlowConfig.ID != null || !string.IsNullOrEmpty(businessFlowConfig.Name))
+                                    {
+                                        bf = (BusinessFlow)FindItemByIDAndName<BusinessFlow>(
+                                         new Tuple<string, Guid?>(nameof(BusinessFlow.Guid), businessFlowConfig.ID),
+                                         new Tuple<string, string>(nameof(BusinessFlow.Name), businessFlowConfig.Name),
+                                         WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
+                                    }
                                 }
+                                catch(Exception exc)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, "No Business found in Solution with given Name or ID. Creating Virtual Business Flow to proceed with execution.", exc);
+                                }
+
                                 /// BF not exist in the solution, Create new one for this Execution Request
-                                else
+                                if(bf == null)
                                 {
                                     bf = new BusinessFlow();
                                     bf.Name = businessFlowConfig.Name;
@@ -997,16 +1005,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         Name = sharedActivity.SharedActivityName
                                     };
 
-                                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(actGrp);
+                                    bf.ActivitiesGroups.Add(actGrp);
 
-                                    Activity shActivity = (Activity)FindItemByIDAndName<Activity>(
+                                    var SolutionActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+
+                                    Activity shActivity = FindItemByIDAndName<Activity>(
                                      new Tuple<string, Guid?>(nameof(Activity.Guid), sharedActivity.SharedActivityID),
                                      new Tuple<string, string>(nameof(Activity.ActivityName), sharedActivity.SharedActivityName),
                                      WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>());
 
-                                    shActivity.ActivitiesGroupID = actGrp.Name;
-
-                                    bf.Activities.Add(shActivity);
+                                    bf.AddActivity(shActivity, actGrp);
                                 }
                             }
 
@@ -1325,7 +1333,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
                         runSetOperation = jsonReportOperation;
                     }
+                    else if (runsetOperationConfig is AlmPublishOperationExecConfig)
+                    {
 
+                    }
                     //Generic settings
                     if (runSetOperation != null)
                     {

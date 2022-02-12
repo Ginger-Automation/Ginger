@@ -6,7 +6,6 @@
     "Exist": false,
     "Name": "Virtual Run Set",
     "EnvironmentName": "Default",
-    "EnvironmentID": "23ac9f62-72ed-446a-a6fc-01be97cb2b40",
     "RunAnalyzer": false,
     "RunInParallel": true,
     "StopRunnersOnFailure": false,
@@ -17,15 +16,26 @@
         "AppAgentMappings": [
           {
             "ApplicationName": "app1",
-            "ApplicationID": "e514fcc7-9e32-40c4-badf-845930479277",
             "AgentName": "Chrome",
-            "AgentID": "aa2f27c9-16e5-466e-ad41-ba34841fa72d"
           }
         ],
         "BusinessFlows": [
           {
             "Name": "Flow 1",
             "Active": true
+          },
+          {
+            "Name": "Virtual BF Runner1",
+            "Exist": false,
+            "Active": true,
+            "SharedActivities": [
+              {
+                "SharedActivityName": "Test Activity",
+              },
+              {
+                "SharedActivityName": "User Detail Activity",
+              }
+            ]
           }
         ]
       },
@@ -37,7 +47,25 @@
           {
             "Name": "Flow_D",
             "Exist": false,
-            "Active": true
+            "Active": true,
+            "SharedActivities": [
+              {
+                "SharedActivityName": "Test Activity",
+              }
+            ]
+          },
+          {
+            "Name": "Virtual BF Virtual Runner",
+            "Exist": false,
+            "Active": true,
+            "SharedActivities": [
+              {
+                "SharedActivityName": "Test Activity",
+              },
+              {
+                "SharedActivityName": "User Detail Activity",
+              }
+            ]
           }
         ]
       }
