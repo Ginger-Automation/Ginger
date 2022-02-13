@@ -8,6 +8,5 @@ namespace GingerCore.Platforms
     {
         List<IAgent> PossibleAgents { get; }
 
-        Guid GetAppID(Guid appID);
     }
 }

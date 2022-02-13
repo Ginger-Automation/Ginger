@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
@@ -392,9 +393,13 @@ namespace Ginger.SolutionGeneral
                     if (name == "AlmType")
                     {
                         AlmConfig.AlmType = (ALMIntegrationEnums.eALMType)Enum.Parse(typeof(ALMIntegrationEnums.eALMType), value);
-                        //need to fix this
-                        //ALMUserConfig AlmUserConfig = SolutionOperations.GetALMConfig();
-                        //AlmUserConfig.AlmType = AlmConfig.AlmType;
+                        ALMUserConfig AlmUserConfig = GingerCoreCommonWorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault();
+                        if (AlmUserConfig == null)
+                        {
+                            AlmUserConfig = new ALMUserConfig();
+                            GingerCoreCommonWorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
+                        }
+                        AlmUserConfig.AlmType = AlmConfig.AlmType;
                         return true;
                     }
                     if (name == "ALMDomain")

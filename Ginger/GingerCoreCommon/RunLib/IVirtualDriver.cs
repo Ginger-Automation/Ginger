@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore.Drivers;
+//using GingerCore.Drivers;
 using System;
 using System.Collections.Generic;
 using System.Text;

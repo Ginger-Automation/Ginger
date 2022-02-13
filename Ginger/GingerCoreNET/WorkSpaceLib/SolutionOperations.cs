@@ -334,17 +334,5 @@ namespace Ginger.SolutionGeneral
         }
 
 
-
-        // SerializationError cant have access to workspace 
-        public ALMUserConfig GetALMConfig()
-        {
-            ALMUserConfig AlmUserConfig = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault();
-            if (AlmUserConfig == null)
-            {
-                AlmUserConfig = new ALMUserConfig();
-                amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
-            }
-            return AlmUserConfig;
-        }
     }
 }
