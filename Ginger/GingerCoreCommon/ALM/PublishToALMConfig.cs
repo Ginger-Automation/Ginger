@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.ComponentModel;
 using Amdocs.Ginger.Common;
 using GingerCoreNET.ALMLib;
@@ -75,6 +76,7 @@ namespace GingerCore.ALM
         public ALMIntegrationEnums.eALMType PublishALMType { get; set; }
         public eALMTestSetLevel ALMTestSetLevel { get; set; }
         public eExportType ExportType { get; set; }
+        public Guid ActionGuid { get; set; }
         public void CalculateTCRunName(IValueExpression ve)
         {          
             if (IsVariableInTCRunUsed && (VariableForTCRunName != null) && (VariableForTCRunName != string.Empty))

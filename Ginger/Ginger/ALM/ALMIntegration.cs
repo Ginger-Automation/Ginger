@@ -544,6 +544,17 @@ namespace Ginger.ALM
                 ObservableList<ExternalItemFieldBase> mergedFields = AlmCore.RefreshALMItemFields(exitingFields, latestALMFields);
             }
         }
+        public ObservableList<ExternalItemFieldBase> GetALMItemFields(ObservableList<ExternalItemFieldBase> exitingFields, bool online, BackgroundWorker bw = null)
+        {
+            ObservableList<ExternalItemFieldBase> mergedFields = null;
+            if (ALMIntegration.Instance.AutoALMProjectConnect())
+            {
+                //Get latestALMFields from ALMCore with Online flag
+                ObservableList<ExternalItemFieldBase> latestALMFields = AlmCore.GetALMItemFields(bw, online);
+                mergedFields = AlmCore.RefreshALMItemFields(exitingFields, latestALMFields);
+            }
+            return mergedFields;
+        }
         internal ObservableList<ExternalItemFieldBase> GetUpdatedFields(ObservableList<ExternalItemFieldBase> mItemsFields, bool online, BackgroundWorker bw = null)
         {
             ObservableList<ExternalItemFieldBase> updatedFields = new ObservableList<ExternalItemFieldBase>();
@@ -631,14 +642,14 @@ namespace Ginger.ALM
             return AlmRepo.ConnectALMServer(almConnectStyle);
         }
 
-        public void OpenALMItemsFieldsPage()
+        public void OpenALMItemsFieldsPage(eALMConfigType configType, eALMType type, ObservableList<ExternalItemFieldBase> ExternalItemsFields, Guid actionGuid = default(Guid))
         {
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig();
+            //GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig();
             if (AlmRepo == null)
             {
-                UpdateALMType(AlmConfig.AlmType);
+                UpdateALMType(type);
             }
-            AlmRepo.OpenALMItemsFieldsPage();
+            AlmRepo.OpenALMItemsFieldsPage(configType, type, ExternalItemsFields, actionGuid);
         }
 
         public bool LoadALMConfigurations()

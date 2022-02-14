@@ -80,14 +80,14 @@ namespace Ginger.UserControlsLib
             BindVEAndSelectionChangedEvent(false, UCselectionChange);
         }
 
-        public void Init(object bindedObject, string AttrName, dynamic comboBoxEnumItemsList)
+        public void Init(object bindedObject, string AttrName, dynamic comboBoxEnumItemsList, DependencyProperty dependencyProperty)
         {
             this.obj = bindedObject;
             this.AttrName = AttrName;
 
             FillComboBoxFromDynamicList(comboBoxEnumItemsList);
             ComboBox.IsEditable = false;
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, bindedObject, AttrName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, dependencyProperty, bindedObject, AttrName);
            
         }
 

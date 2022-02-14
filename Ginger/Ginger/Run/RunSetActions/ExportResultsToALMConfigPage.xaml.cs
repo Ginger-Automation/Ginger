@@ -17,7 +17,9 @@ limitations under the License.
 #endregion
 
 //# Status=Cleaned; Comment=Cleaned on 05/11/18
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.Run.RunSetActions;
 using GingerCore;
@@ -26,6 +28,8 @@ using GingerCore.GeneralLib;
 using GingerCoreNET.ALMLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,6 +47,7 @@ namespace Ginger.Run
         PublishToALMConfig mPublishToALMConfig = new PublishToALMConfig();        
         public bool IsProcessing = false;
         ValueExpression mVE = null;
+        
         public ExportResultsToALMConfigPage(RunSetActionPublishToQC runSetActionPublishToQC)
         {
             InitializeComponent();
@@ -50,7 +55,7 @@ namespace Ginger.Run
             {
                 runSetActionPublishToQC.VariableForTCRunName = "GingerRun_{CS Exp=DateTime.Now}";
             }
-
+            mPublishToALMConfig.ActionGuid = runSetActionPublishToQC.Guid;
             VariableForTCRunName.Init(null, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.VariableForTCRunName);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.VariableForTCRunName);
@@ -58,10 +63,13 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, RunSetActionPublishToQC.Fields.toAttachActivitiesGroupReport);
             xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));
             // new dev.
-            xALMTypeCbx.Init(mPublishToALMConfig, nameof(PublishToALMConfig.PublishALMType), GetTypeListForCbx(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = "Default" } }));
-            xALMTestSetLevelCbx.Init(mPublishToALMConfig, nameof(PublishToALMConfig.ALMTestSetLevel), GetTypeListForCbx(typeof(eALMTestSetLevel), new List<ComboEnumItem>()));
-            xExportTypeCbx.Init(mPublishToALMConfig, nameof(PublishToALMConfig.ExportType), GetTypeListForCbx(typeof(eExportType), new List<ComboEnumItem>()));
-
+            xALMTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType), GetTypeListForCbx(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = RunSetActionPublishToQC.AlmTypeDefault, Value = RunSetActionPublishToQC.AlmTypeDefault } }), ComboBox.TextProperty);
+            //xALMTypeCbx.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType), GetTypeListForCbx(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = RunSetActionPublishToQC.AlmTypeDefault } }), false);
+            //xALMTypeCbx.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType));
+            //xALMTestSetLevelCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ALMTestSetLevel), GetTypeListForCbx(typeof(eALMTestSetLevel), new List<ComboEnumItem>()));
+            xALMTestSetLevelCbx.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ALMTestSetLevel));
+            //xExportTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ExportType), GetTypeListForCbx(typeof(eExportType), new List<ComboEnumItem>()));
+            xExportTypeCbx.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ExportType));
         }
         private ExportResultsToALMConfigPage()
         {
@@ -77,7 +85,7 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, mPublishToALMConfig, nameof(PublishToALMConfig.ToAttachActivitiesGroupReport));
             xFilterByStatusDroplist.BindControl(mPublishToALMConfig, nameof(PublishToALMConfig.FilterStatus));
 
-            xALMTypeCbx.Init(mPublishToALMConfig, nameof(PublishToALMConfig.PublishALMType), GetTypeListForCbx(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = "Default" } }));
+            //xALMTypeCbx.Init(mPublishToALMConfig, nameof(PublishToALMConfig.PublishALMType), GetTypeListForCbx(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = "Default" } }));
         }
 
         static ExportResultsToALMConfigPage mInstance= null;
@@ -159,6 +167,57 @@ namespace Ginger.Run
             }
             comboEnumItemsList.AddRange(GingerCore.General.GetEnumValuesForCombo(listType));
             return comboEnumItemsList;
+        }
+
+        private void xChangeTestSetBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (xALMTypeCbx.ComboBoxSelectedValue.ToString().Equals(RunSetActionPublishToQC.AlmTypeDefault))
+            {
+                ALMIntegration.Instance.OpenALMItemsFieldsPage(eALMConfigType.MainMenu, ALMIntegration.Instance.GetALMType(), WorkSpace.Instance.Solution.ExternalItemsFields);
+            }
+            else
+            {
+                GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(alm => alm.AlmType.ToString().Equals(xALMTypeCbx.ComboBoxSelectedValue.ToString())).FirstOrDefault();
+                if (AlmConfig is null)
+                {
+                    ALMConnectionPage almConnPage = new ALMConnectionPage(eALMConnectType.Auto, true);
+                    almConnPage.ShowAsWindow();
+                    if (ALMIntegration.Instance.TestALMProjectConn(eALMConnectType.Auto))
+                    {
+                        return;
+                    }
+
+                }
+                else
+                {
+                    //ObservableList<ExternalItemFieldBase> latestALMFields = ALMIntegration.Instance.AlmCore.GetALMItemFields(null, true);
+                    ALMIntegration.Instance.UpdateALMType(AlmConfig.AlmType, true);
+                    ObservableList<ExternalItemFieldBase> almItemFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.ALL, null);
+                    ALMIntegration.Instance.OpenALMItemsFieldsPage(eALMConfigType.Operation, AlmConfig.AlmType, almItemFields, this.mPublishToALMConfig.ActionGuid);
+                }
+            }
+
+        }
+
+        private void xALMTestSetLevelCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xALMTestSetLevelCbx.SelectedValue is not null && xALMTestSetLevelCbx.SelectedValue.ToString().Equals(eALMTestSetLevel.BusinessFlow.ToString()))
+            {
+                xExportTypePanel.Visibility = Visibility.Collapsed;
+                return;
+            }
+            xExportTypePanel.Visibility = Visibility.Visible;
+            xExportTypeCbx_SelectionChanged(this, null);  
+        }
+
+        private void xExportTypeCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(xExportTypeCbx.SelectedValue is not null && xExportTypeCbx.SelectedValue.ToString().Equals(eExportType.ResultsOnly.ToString()))
+            {
+                xExportDestinationFolder.Visibility = Visibility.Collapsed;
+                return;
+            }
+            xExportDestinationFolder.Visibility = Visibility.Visible;
         }
     }
 }
