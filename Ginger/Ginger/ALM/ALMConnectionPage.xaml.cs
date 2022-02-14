@@ -610,8 +610,8 @@ namespace Ginger.ALM
 
         private void SaveALMConfigs()
         {
-            WorkSpace.Instance.UserProfile.SaveUserProfile();
-            WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
+            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
         }
 
         private void ALMRadioButton_Checked_Changed(object sender, RoutedEventArgs e)

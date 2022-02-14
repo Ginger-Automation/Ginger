@@ -37,14 +37,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
     // Each ExecutionLogger instance should be added to GingerRunner Listeneres
     // Create new ExecutionLogger for each run 
 
-    public abstract class ExecutionLogger
+    public abstract class ExecutionLogger : IExecutionLogger
     {
         // static JsonSerializer mJsonSerializer;
         public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogfolder { get; set; }
         string mLogsFolderName;
         DateTime mCurrentExecutionDateTime;
-        
+
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
         // uint meventtime;
@@ -72,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             get { return mLogsFolder; }
         }
-        
+
 
         public DateTime CurrentExecutionDateTime
         {
@@ -80,16 +80,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             set { mCurrentExecutionDateTime = value; }
         }
 
+        ParentGingerData IExecutionLogger.GingerData => GingerData;
+
         private ExecutionLoggerConfiguration mConfiguration = new ExecutionLoggerConfiguration();
 
-        public class ParentGingerData
-        {
-            public int Seq;
-            public string GingerName;
-            public string GingerEnv;
-            public List<string> GingerAggentMapping;
-            public Guid Ginger_GUID;
-        };
+        //public class ParentGingerData
+        //{
+        //    public int Seq;
+        //    public string GingerName;
+        //    public string GingerEnv;
+        //    public List<string> GingerAggentMapping;
+        //    public Guid Ginger_GUID;
+        //};
         public ParentGingerData GingerData = new ParentGingerData();
 
         // TODO: remove the need for env - get it from notify event !!!!!!
@@ -186,7 +188,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public abstract object SetReportBusinessFlow(Context context, bool offlineMode = false, Amdocs.Ginger.Common.eExecutedFrom executedFrom = eExecutedFrom.Run, bool isConfEnable = false);
         public abstract object SetReportActivityGroup(ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false);
-        public virtual void SetReportRunner(GingerRunner gingerRunner, GingerReport gingerReport, ExecutionLoggerManager.ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
+        public virtual void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
             if (gingerRunner == null)
             {
@@ -200,7 +202,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             else
             {
-                gingerReport.GingerRunner = gingerRunner;
+                gingerReport.GingerRunner = gingerRunner.GingerRunner;
                 if (runnerCount != 0)
                 {
                     gingerReport.Seq = runnerCount;
@@ -210,10 +212,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     gingerReport.Seq = this.GingerData.Seq;  //!!!
                 }
                 gingerReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
-                gingerReport.GUID = gingerRunner.Guid.ToString();
-                gingerReport.Name = gingerRunner.Name;
-                gingerReport.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
-                gingerReport.EnvironmentName = gingerRunner.ProjEnvironment != null ? gingerRunner.ProjEnvironment.Name : string.Empty;
+                gingerReport.GUID = gingerRunner.GingerRunner.Guid.ToString();
+                gingerReport.Name = gingerRunner.GingerRunner.Name;
+                gingerReport.ApplicationAgentsMappingList = gingerRunner.GingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
+                gingerReport.EnvironmentName = gingerRunner.GingerRunner.ProjEnvironment != null ? gingerRunner.GingerRunner.ProjEnvironment.Name : string.Empty;
                 gingerReport.Elapsed = (double)gingerRunner.Elapsed / 1000;
                 if (gingerReport.LogFolder == null && !(string.IsNullOrEmpty(filename)))
                 {
@@ -222,7 +224,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
         }
 
-        internal abstract void CreateNewDirectory(string logFolder);
+        public abstract void CreateNewDirectory(string logFolder);
 
         public virtual void SetReportRunSet(RunSetReport runSetReport, string logFolder)
         {
@@ -232,11 +234,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSetReport.ExecutedbyUser = Environment.UserName;
             runSetReport.GingerVersion = ApplicationInfo.ApplicationVersion;
         }
-        public abstract void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerRunner gingerRunner);
-        internal abstract void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline);
-        internal abstract void StartRunSet();
-        internal abstract void EndRunSet();
-        internal abstract void ResetLastRunSetDetails();
+        public abstract void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerExecutionEngine gingerRunner);
+        public abstract void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline);
+        public abstract void StartRunSet();
+        public abstract void EndRunSet();
+        public abstract void ResetLastRunSetDetails();
         public abstract string SetExecutionLogFolder(string executionLogfolder, bool isCleanFile);
         public abstract string GetLogFolder(string folder);
 

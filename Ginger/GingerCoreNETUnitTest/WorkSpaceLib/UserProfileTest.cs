@@ -55,23 +55,25 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
         public void NewProfileSaveLoad()
         {
             //Arrange                        
-            UserProfile userProfile = new UserProfile();
+            //UserProfile userProfile = new UserProfile();
+            UserProfileOperations userProfileOperations = new UserProfileOperations(new UserProfile());
+
             // string UserProfileFileName = Path.Combine(TestResources.GetTempFile("UserProfile.Ginger.xml"));
             // UP.FileName = UserProfileFileName;            
             // WorkSpace.Instance.UserProfile = userProfile;
 
-            
+
             string LastSolutionFolder = @"c:\ginger\sol1";  
             Solution solution = new Solution() {Name = "sol1" , Folder = LastSolutionFolder }; // just something to verify it is loaded later doesn't need to exist
 
 
             //Act
-            userProfile.AddSolutionToRecent(solution);
-            userProfile.SaveUserProfile();
+            userProfileOperations.AddSolutionToRecent(solution);
+            userProfileOperations.SaveUserProfile();
 
             // WorkSpace.Instance.UserProfile = new UserProfile
 
-            UserProfile UP2 = UserProfile.LoadUserProfile();
+            UserProfile UP2 = new UserProfile().LoadUserProfile();
 
             //Assert
             Assert.AreEqual(LastSolutionFolder, UP2.RecentSolutions[0]);
@@ -84,9 +86,10 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             // Arrange                                    
             string UserAppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string expected = Path.Combine(UserAppDataFolder, "amdocs", "Ginger", "Ginger.UserProfile.xml");
+            UserProfileOperations userProfileOperations = new UserProfileOperations(new UserProfile());
 
             //Act
-            string userProfileFilePath = UserProfile.UserProfileFilePath;
+            string userProfileFilePath = userProfileOperations.UserProfileFilePath;
 
 
             //Assert

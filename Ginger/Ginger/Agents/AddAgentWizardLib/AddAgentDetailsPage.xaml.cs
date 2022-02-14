@@ -81,7 +81,7 @@ namespace Ginger.Agents.AddAgentWizardLib
                     //}
                     xPlatformTypeComboBox.SelectedIndex = 0;
 
-                    xDriverTypeComboBox.BindControl(mWizard.Agent, nameof(Agent.DriverInfo));
+                    xDriverTypeComboBox.BindControl(mWizard.Agent.AgentOperations, nameof(AgentOperations.DriverInfo));
                     xDriverTypeComboBox.SelectionChanged += xDriverTypeComboBox_SelectionChanged;
                     if (xDriverTypeComboBox.Items.Count > 0)
                     {
@@ -130,7 +130,7 @@ namespace Ginger.Agents.AddAgentWizardLib
                 
                 if (xDriverTypeComboBox.SelectedItem is DriverInfo DI)
                 {
-                    mWizard.Agent.DriverInfo = DI;
+                    ((AgentOperations)mWizard.Agent.AgentOperations).DriverInfo = DI;
 
                     if (DI.isDriverPlugin)
                     {
@@ -142,7 +142,7 @@ namespace Ginger.Agents.AddAgentWizardLib
                         mWizard.Agent.AgentType = Agent.eAgentType.Driver;
                     }
 
-                    foreach (var service in mWizard.Agent.DriverInfo.services)
+                    foreach (var service in ((AgentOperations)mWizard.Agent.AgentOperations).DriverInfo.services)
                     {
                         xDriverSubTypeComboBox.Items.Add(service);
                     }
@@ -154,7 +154,7 @@ namespace Ginger.Agents.AddAgentWizardLib
           
                    if(DI.services.Count==0)
                     {
-                        mWizard.Agent.InitDriverConfigs();
+                        mWizard.Agent.AgentOperations.InitDriverConfigs();
                     }
                 }
             }
@@ -165,7 +165,7 @@ namespace Ginger.Agents.AddAgentWizardLib
         {
             if (xDriverTypeComboBox.SelectedItem is DriverInfo DI && xDriverSubTypeComboBox != null)
             {
-                mWizard.Agent.DriverInfo = DI;
+                ((AgentOperations)mWizard.Agent.AgentOperations).DriverInfo = DI;
                 //foreach (var service in mWizard.Agent.DriverInfo.services)
                 //{
                 //    xDriverSubTypeComboBox.Items.Add(service);
@@ -179,7 +179,7 @@ namespace Ginger.Agents.AddAgentWizardLib
                 {
                     mWizard.Agent.DriverType = (eDriverType)Enum.Parse(typeof(eDriverType), SubdriverType);
                 }
-                mWizard.Agent.InitDriverConfigs();
+                mWizard.Agent.AgentOperations.InitDriverConfigs();
             }
         }
 

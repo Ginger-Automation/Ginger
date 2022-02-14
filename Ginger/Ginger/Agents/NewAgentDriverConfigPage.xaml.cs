@@ -44,7 +44,7 @@ namespace Ginger.Agents
         {
             mAgent = agent;
             InitializeComponent();
-            agent.SetDriverConfiguration();
+            agent.AgentOperations.SetDriverConfiguration();
             StackPanel dynamicPanel = new StackPanel { Orientation = Orientation.Vertical, HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Center };
 
             foreach (DriverConfigParam DCp in mAgent.DriverConfiguration)

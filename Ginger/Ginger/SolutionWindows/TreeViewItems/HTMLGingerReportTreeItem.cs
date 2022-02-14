@@ -123,17 +123,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public override void DuplicateTreeItem(object item)
         {
             HTMLReportConfiguration copiedItem = (HTMLReportConfiguration)CopyTreeItemWithNewName((RepositoryItemBase)item);
-
+            HTMLReportConfigurationOperations reportConfigurationOperations = new HTMLReportConfigurationOperations(copiedItem);
+            copiedItem.HTMLReportConfigurationOperations = reportConfigurationOperations;
             if (copiedItem != null)
             {
                 copiedItem.DirtyStatus = eDirtyStatus.NoTracked;
                 //TODO: why below is needed??
-                copiedItem.ID = copiedItem.SetReportTemplateSequence(true);
+                copiedItem.ID = copiedItem.HTMLReportConfigurationOperations.SetReportTemplateSequence(true);
                 copiedItem.IsDefault = false;
                 if (copiedItem != null)
                 {
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(copiedItem);
-                    WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+                    WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
                 }
             }
         }

@@ -45,17 +45,17 @@ namespace GingerCore.NoSqlBase
                 clusterCB = new Couchbase.Cluster(new ClientConfiguration
                 {
                     ViewRequestTimeout = 45000,
-                    Servers = new List<Uri> { new Uri(Db.TNSCalculated.ToString()) },                    
+                    Servers = new List<Uri> { new Uri(Db.DatabaseOperations.TNSCalculated.ToString()) },                    
                 });
                 //TODO: need to decrypt the password in the Database->PassCalculated
-                String deCryptValue = EncryptionHandler.DecryptwithKey(Db.PassCalculated.ToString());
+                String deCryptValue = EncryptionHandler.DecryptwithKey(Db.DatabaseOperations.PassCalculated.ToString());
                 if (!string.IsNullOrEmpty(deCryptValue))
                 {
-                    clusterCB.Authenticate(Db.UserCalculated.ToString(), deCryptValue);
+                    clusterCB.Authenticate(Db.DatabaseOperations.UserCalculated.ToString(), deCryptValue);
                 }
                 else
                 {
-                    clusterCB.Authenticate(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());
+                    clusterCB.Authenticate(Db.DatabaseOperations.UserCalculated.ToString(), Db.DatabaseOperations.PassCalculated.ToString());
                 }
                 return true;
             }
@@ -69,17 +69,17 @@ namespace GingerCore.NoSqlBase
         public override bool MakeSureConnectionIsOpen()
         {
             string password = string.Empty;
-            string pass = EncryptionHandler.DecryptwithKey(Db.PassCalculated.ToString());
+            string pass = EncryptionHandler.DecryptwithKey(Db.DatabaseOperations.PassCalculated.ToString());
             if (!string.IsNullOrEmpty(pass))
             {
                 password = pass;
             }
-            else { password = Db.PassCalculated; }
+            else { password = Db.DatabaseOperations.PassCalculated; }
             try
             {
                 if (clusterCB != null)
                 {
-                    var clusterManager = clusterCB.CreateManager(Db.UserCalculated, password);
+                    var clusterManager = clusterCB.CreateManager(Db.DatabaseOperations.UserCalculated, password);
                     var buckets = clusterManager.ListBuckets().Value;
                     if (buckets != null)
                     {
@@ -138,7 +138,7 @@ namespace GingerCore.NoSqlBase
             {
                 var bucket = clusterCB.OpenBucket(bucketName);
                 string bucketpassword = bucket.Configuration.Password;
-                ClassicAuthenticator classicAuthenticator = new ClassicAuthenticator(Db.UserCalculated.ToString(), Db.PassCalculated.ToString());
+                ClassicAuthenticator classicAuthenticator = new ClassicAuthenticator(Db.DatabaseOperations.UserCalculated.ToString(), Db.DatabaseOperations.PassCalculated.ToString());
                 classicAuthenticator.AddBucketCredential(bucketName, bucketpassword);
                 clusterCB.Authenticate(classicAuthenticator);
                 //TODO: need to check and true and flase on basis of connection

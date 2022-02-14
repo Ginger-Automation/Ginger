@@ -44,13 +44,13 @@ namespace GingerCore.NoSqlBase
             {
                 string queryTimeoutString = "querytimeout=";
                 int queryTimeout = 20000;//default timeout (20 seconds).
-                if (Db.TNSCalculated.ToLower().Contains(queryTimeoutString.ToLower()))
+                if (Db.DatabaseOperations.TNSCalculated.ToLower().Contains(queryTimeoutString.ToLower()))
                 {
-                    string queryTimeoutValue = Db.TNSCalculated.Substring(Db.TNSCalculated.ToLower().IndexOf(queryTimeoutString.ToLower()) + queryTimeoutString.Length);
+                    string queryTimeoutValue = Db.DatabaseOperations.TNSCalculated.Substring(Db.DatabaseOperations.TNSCalculated.ToLower().IndexOf(queryTimeoutString.ToLower()) + queryTimeoutString.Length);
                     queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
                 }
 
-                string[] HostKeySpace = Db.TNSCalculated.Split('/');
+                string[] HostKeySpace = Db.DatabaseOperations.TNSCalculated.Split('/');
                 string[] HostPort = HostKeySpace[0].Split(':');
 
                 if (HostPort.Length == 2)
@@ -62,7 +62,7 @@ namespace GingerCore.NoSqlBase
                 }
                 else
                 {
-                    cluster = Cluster.Builder().AddContactPoint(Db.TNSCalculated).WithQueryTimeout(queryTimeout).Build();
+                    cluster = Cluster.Builder().AddContactPoint(Db.DatabaseOperations.TNSCalculated).WithQueryTimeout(queryTimeout).Build();
                 }
 
                 if (HostKeySpace.Length > 1)

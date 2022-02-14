@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
@@ -26,6 +27,7 @@ using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
+using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
@@ -51,18 +53,25 @@ namespace UnitTests.NonUITests
             p.PlatformType = ePlatformType.WebServices;            
 
             wsAgent = new Agent();
+            AgentOperations agentOperations = new AgentOperations(wsAgent);
+            wsAgent.AgentOperations = agentOperations;
+
             wsAgent.DriverType = Agent.eDriverType.WebServices;
-            wsAgent.Driver = mDriver;
+            ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
             ApplicationAgent mAG = new ApplicationAgent();
             mAG.Agent = wsAgent;
 
             mGR = new GingerRunner();
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(wsAgent);
+            mGR.Executor = new GingerExecutionEngine(mGR);
 
-            mGR.BusinessFlows.Add(mBF);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
 
-          
+            mGR.Executor.BusinessFlows.Add(mBF);
+
+            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
+            WorkSpace.Init(WSEH);
+            //WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
         }
 
@@ -103,7 +112,7 @@ namespace UnitTests.NonUITests
             mGR.RunInSimulationMode = true;
 
             mDriver.StartDriver();
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
 
             if (restAct.ReturnValues.Count > 0)
@@ -152,7 +161,7 @@ namespace UnitTests.NonUITests
             
 
             mDriver.StartDriver();
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
 
             if (restAct.ReturnValues.Count > 0)
@@ -203,7 +212,7 @@ namespace UnitTests.NonUITests
 
 
             mDriver.StartDriver();
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
 
             if (restAct.ReturnValues.Count > 0)
@@ -258,7 +267,7 @@ namespace UnitTests.NonUITests
             mGR.RunInSimulationMode = true;
 
 
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             if (restAct.ReturnValues[0].SimulatedActual == restAct.ReturnValues[0].Actual)
                 Assert.AreEqual(restAct.ReturnValues[0].Actual, restAct.ReturnValues[0].ExpectedCalculated);

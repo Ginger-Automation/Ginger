@@ -27,7 +27,7 @@ using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.Run
 {
-    public class RunListenerBase
+    public class RunListenerBase : IRunListenerBase
     {
         // Stopwatch for all listeners to have the same start point reference for event time 
         static readonly Stopwatch mStopwatch = new Stopwatch();
@@ -57,7 +57,7 @@ namespace Amdocs.Ginger.Run
 
         }
         #endregion General
-       
+
         #region Runner
         public virtual void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
@@ -89,11 +89,11 @@ namespace Amdocs.Ginger.Run
 
 
         #region Activity
-        public virtual void ActivityStart(uint eventTime, Activity activity, bool continuerun= false)
+        public virtual void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
         {
 
         }
-        public virtual void ActivityEnd(uint eventTime, Activity activity, bool offlineMode=false)
+        public virtual void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
 
         }
@@ -110,7 +110,7 @@ namespace Amdocs.Ginger.Run
         {
 
         }
-        public virtual void ActionEnd(uint eventTime, Act action, bool offlineMode= false)
+        public virtual void ActionEnd(uint eventTime, Act action, bool offlineMode = false)
         {
 
         }
@@ -149,12 +149,12 @@ namespace Amdocs.Ginger.Run
 
         public virtual void EnvironmentChanged(uint eventTime, ProjEnvironment mProjEnvironment)
         {
-            
+
         }
 
         public virtual void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)
         {
-            
+
         }
 
         public virtual void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
@@ -169,7 +169,7 @@ namespace Amdocs.Ginger.Run
         /// <param name="automationTabContext"></param>
         public virtual void ExecutionContext(uint eventTime, AutomationTabContext automationTabContext, BusinessFlow businessFlow)
         {
-            
+
         }
         #endregion Action
 

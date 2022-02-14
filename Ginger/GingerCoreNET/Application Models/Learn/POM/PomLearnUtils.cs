@@ -75,7 +75,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             get
             {
                 if (Agent != null)
-                    return ((IWindowExplorer)(Agent.Driver));
+                    return ((IWindowExplorer)(((AgentOperations)Agent.AgentOperations).Driver));
                 else
                     return null;
             }
@@ -130,17 +130,17 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public void StopLearning()
         {
-            if (mAgent != null && mAgent.Driver != null)
+            if (mAgent != null && ((AgentOperations)mAgent.AgentOperations).Driver != null)
             {
-                mAgent.Driver.StopProcess = true;
+                ((AgentOperations)mAgent.AgentOperations).Driver.StopProcess = true;
             }
         }
 
         public void ClearStopLearning()
         {
-            if (mAgent != null && mAgent.Driver != null)
+            if (mAgent != null && ((AgentOperations)mAgent.AgentOperations).Driver != null)
             {
-                mAgent.Driver.StopProcess = false;
+                ((AgentOperations)mAgent.AgentOperations).Driver.StopProcess = false;
             }
         }
 
@@ -157,7 +157,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         public void LearnScreenShot()
         {
             IWindowExplorerDriver.UnHighLightElements();
-            ScreenShot = ((IVisualTestingDriver)Agent.Driver).GetScreenShot(new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
+            ScreenShot = ((IVisualTestingDriver)((AgentOperations)Agent.AgentOperations).Driver).GetScreenShot(new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
         }
 
         public async Task Learn()
@@ -165,7 +165,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             ClearStopLearning();
             PrepareLearningConfigurations();
             LearnScreenShot();
-            POM.PageURL = ((DriverBase)Agent.Driver).GetURL();
+            POM.PageURL = ((DriverBase)((AgentOperations)Agent.AgentOperations).Driver).GetURL();
             POM.Name = IWindowExplorerDriver.GetActiveWindow().Title;
             
             // appending Specific frame title in POM name

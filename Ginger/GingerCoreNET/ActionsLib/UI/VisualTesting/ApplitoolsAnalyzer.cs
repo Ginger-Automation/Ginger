@@ -36,6 +36,7 @@ using System.Net.Http;
 using System.Threading;
 using System.IO;
 using Amdocs.Ginger.Common.UIElement;
+using Ginger.Run;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -285,7 +286,7 @@ namespace GingerCore.Actions.VisualTesting
             try
             {
                 runner = new ClassicRunner();
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any() && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners[0].ExecutedFrom == eExecutedFrom.Run)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any() && ((GingerExecutionEngine)WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners[0].Executor).ExecutedFrom == eExecutedFrom.Run)
                 {
                     runner.DontCloseBatches = true;
                 }
@@ -444,7 +445,7 @@ namespace GingerCore.Actions.VisualTesting
         private void SetUp(Eyes eyes,string AppilToolServerUrl,string AppilToolsApiKey, eBrowserType BrowserType,string Environment)
         {
             Applitools.Selenium.Configuration config = new Applitools.Selenium.Configuration();
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any() && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners[0].ExecutedFrom == eExecutedFrom.Run)
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any() && ((GingerExecutionEngine)WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners[0].Executor).ExecutedFrom == eExecutedFrom.Run)
             {
                 BatchInfo batchInfo = new BatchInfo(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ItemName);
 

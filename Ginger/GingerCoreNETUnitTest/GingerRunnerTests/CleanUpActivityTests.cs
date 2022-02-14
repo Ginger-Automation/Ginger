@@ -44,8 +44,10 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
 
             mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
+
             mGR.Name = "Test Runner";
-            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
             environment = new ProjEnvironment();
             environment.Name = "Default";
@@ -54,13 +56,13 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
-            mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
 
-            mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
+            mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             //mGR.BusinessFlows.Add(BF1);
 
       
@@ -71,18 +73,18 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
         public void CleanUpActivityShouldExecuteWhenAllActivitiesPass()
         {
             BusinessFlow businessFlow = CreateBusinessFlow();
-            mGR.BusinessFlows.Add(businessFlow);
+            mGR.Executor.BusinessFlows.Add(businessFlow);
 
             Context context1 = new Context();
             context1.BusinessFlow = businessFlow;
             context1.Activity = businessFlow.Activities[0];
 
-            mGR.CurrentBusinessFlow = businessFlow;
-            mGR.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
-            mGR.Context = context1;
+            mGR.Executor.CurrentBusinessFlow = businessFlow;
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
+            mGR.Executor.Context = context1;
 
             //Act
-            mGR.RunBusinessFlow(businessFlow);
+            mGR.Executor.RunBusinessFlow(businessFlow);
 
             Assert.AreEqual(eRunStatus.Passed, businessFlow.RunStatus, "Business Flow Status");
             Assert.AreEqual(eRunStatus.Passed, businessFlow.Activities[0].Status, "Activity 1 Status");
@@ -105,18 +107,18 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             businessFlow.Activities[0].Mandatory = true;
             businessFlow.Activities[0].Acts[0].ActReturnValues.Add(returnValue);
 
-            mGR.BusinessFlows.Add(businessFlow);
+            mGR.Executor.BusinessFlows.Add(businessFlow);
 
             Context context1 = new Context();
             context1.BusinessFlow = businessFlow;
             context1.Activity = businessFlow.Activities[0];
 
-            mGR.CurrentBusinessFlow = businessFlow;
-            mGR.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
-            mGR.Context = context1;
+            mGR.Executor.CurrentBusinessFlow = businessFlow;
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
+            mGR.Executor.Context = context1;
 
             //Act
-            mGR.RunBusinessFlow(businessFlow);
+            mGR.Executor.RunBusinessFlow(businessFlow);
 
             Assert.AreEqual(eRunStatus.Failed, businessFlow.RunStatus, "Business Flow Status");
             Assert.AreEqual(eRunStatus.Failed, businessFlow.Activities[0].Status, "Mandatory Activity 1 Status should be failed");
@@ -139,18 +141,18 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
             businessFlow.Activities[1].Acts[0].ActReturnValues.Add(returnValue);
 
-            mGR.BusinessFlows.Add(businessFlow);
+            mGR.Executor.BusinessFlows.Add(businessFlow);
 
             Context context1 = new Context();
             context1.BusinessFlow = businessFlow;
             context1.Activity = businessFlow.Activities[0];
 
-            mGR.CurrentBusinessFlow = businessFlow;
-            mGR.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
-            mGR.Context = context1;
+            mGR.Executor.CurrentBusinessFlow = businessFlow;
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
+            mGR.Executor.Context = context1;
 
             //Act
-            mGR.RunBusinessFlow(businessFlow);
+            mGR.Executor.RunBusinessFlow(businessFlow);
 
             Assert.AreEqual(eRunStatus.Failed, businessFlow.RunStatus, "Business Flow Status");
             Assert.AreEqual(eRunStatus.Passed, businessFlow.Activities[0].Status, "Activity 1 Status");
@@ -175,25 +177,25 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
             businessFlow.Activities[2].Acts[0].FlowControls.Add(flowControl);
 
-            mGR.BusinessFlows.Add(businessFlow);
+            mGR.Executor.BusinessFlows.Add(businessFlow);
           
 
             Context context1 = new Context();
             context1.BusinessFlow = businessFlow;
             context1.Activity = businessFlow.Activities[0];
 
-            mGR.CurrentBusinessFlow = businessFlow;
-            mGR.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
-            mGR.Context = context1;
+            mGR.Executor.CurrentBusinessFlow = businessFlow;
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
+            mGR.Executor.Context = context1;
 
             //Act
-            mGR.RunBusinessFlow(businessFlow);
+            mGR.Executor.RunBusinessFlow(businessFlow);
 
             Assert.AreEqual(eRunStatus.Stopped, businessFlow.RunStatus, "Business Flow Status");
             Assert.AreEqual(eRunStatus.Passed, businessFlow.Activities[0].Status, "Activity 1 Status");
             Assert.AreEqual(eRunStatus.Passed, businessFlow.Activities[1].Status, "Activity 2 Status");
             Assert.AreEqual(eRunStatus.Stopped, businessFlow.Activities[2].Status, "Activity 3 Status stopped by FC");
-            Assert.AreEqual(null, businessFlow.Activities[3].Status, "Clean Up Activity Stshould not execute");
+            Assert.AreEqual(eRunStatus.Skipped, businessFlow.Activities[3].Status, "Clean Up Activity Stshould not execute");
         }
 
         [TestMethod]
@@ -209,18 +211,18 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
             businessFlow.Activities[2].Acts[0].FlowControls.Add(flowControl);
 
-            mGR.BusinessFlows.Add(businessFlow);
+            mGR.Executor.BusinessFlows.Add(businessFlow);
 
             Context context1 = new Context();
             context1.BusinessFlow = businessFlow;
             context1.Activity = businessFlow.Activities[0];
 
-            mGR.CurrentBusinessFlow = businessFlow;
-            mGR.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
-            mGR.Context = context1;
+            mGR.Executor.CurrentBusinessFlow = businessFlow;
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity = businessFlow.Activities[0];
+            mGR.Executor.Context = context1;
 
             //Act
-            mGR.RunBusinessFlow(businessFlow);
+            mGR.Executor.RunBusinessFlow(businessFlow);
 
             Assert.AreEqual(eRunStatus.Passed, businessFlow.RunStatus, "Business Flow Status");
             Assert.AreEqual(eRunStatus.Passed, businessFlow.Activities[0].Status, "Activity 1 Status");

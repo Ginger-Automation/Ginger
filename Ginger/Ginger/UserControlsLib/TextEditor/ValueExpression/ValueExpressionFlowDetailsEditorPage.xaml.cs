@@ -67,7 +67,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                     objType = typeof(RunSetConfig);
                     break;
                 case GingerCore.ValueExpression.eFlowDetailsObjects.Runner:
-                    objType = typeof(GingerRunner);
+                    objType = typeof(GingerExecutionEngine);
                     break;
                 case GingerCore.ValueExpression.eFlowDetailsObjects.BusinessFlow:
                 case GingerCore.ValueExpression.eFlowDetailsObjects.PreviousBusinessFlow:

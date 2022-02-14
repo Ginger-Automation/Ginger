@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -22,7 +22,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.Common.InterfacesLib
 {
-    public interface IReportInfo
-    {
-    }
+    //public interface IReportInfo
+    //{
+    //}
 }

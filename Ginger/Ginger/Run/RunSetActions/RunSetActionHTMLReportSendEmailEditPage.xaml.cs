@@ -145,11 +145,11 @@ namespace Ginger.Run.RunSetActions
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
 
-            viewCols.Add(new GridColView() { Field = EmailAttachment.Fields.AttachmentType, WidthWeight = 100, BindingMode = BindingMode.OneTime });
-            viewCols.Add(new GridColView() { Field = EmailAttachment.Fields.Name, WidthWeight = 200 });
+            viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.AttachmentType), WidthWeight = 100, BindingMode = BindingMode.OneTime });
+            viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.Name), WidthWeight = 200 });
             viewCols.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.GridAttachment.Resources["ParamValueExpressionButton"]});
-            viewCols.Add(new GridColView() { Field = EmailAttachment.Fields.ExtraInformation, WidthWeight = 250 });            
-            viewCols.Add(new GridColView() { Field = EmailAttachment.Fields.ZipIt, WidthWeight = 50, Header = "Zip It", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.GridAttachment.Resources["ReportAttachment"]});
+            viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.ExtraInformation), WidthWeight = 250 });            
+            viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.ZipIt), WidthWeight = 50, Header = "Zip It", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.GridAttachment.Resources["ReportAttachment"]});
             
             AttachmentsGrid.SetAllColumnsDefaultView(view);
             AttachmentsGrid.InitViewItems();
@@ -243,7 +243,7 @@ namespace Ginger.Run.RunSetActions
             
             if(item.AttachmentType == EmailAttachment.eAttachmentType.File)
             {
-                ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AttachmentsGrid.CurrentItem, EmailAttachment.Fields.Name, null);
+                ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AttachmentsGrid.CurrentItem, nameof(EmailAttachment.Name), null);
 
                 VEEW.ShowAsWindow();
             }

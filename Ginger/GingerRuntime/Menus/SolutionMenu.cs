@@ -93,7 +93,7 @@ namespace Amdocs.Ginger.GingerRuntime
                 Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " not found");
                 return;
             }
-            GingerRunner gingerRunner = new GingerRunner();            
+            GingerExecutionEngine gingerRunner = new GingerExecutionEngine(new GingerRunner());            
             gingerRunner.RunBusinessFlow(businessFlow, true);
 
             Console.WriteLine("Execution Completed");

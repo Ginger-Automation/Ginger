@@ -228,7 +228,7 @@ namespace Ginger.Reports
                 }
                 else if (GingerRunner != null)
                 {
-                    return GingerRunner.BusinessFlows.Where(x => x.Active == true).ToList().Count();
+                    return GingerRunner.Executor.BusinessFlows.Where(x => x.Active == true).ToList().Count();
                 }
                 else
                 {
@@ -330,7 +330,7 @@ namespace Ginger.Reports
                 }
                 else if (GingerRunner != null)
                 {
-                    count = (from x in GingerRunner.BusinessFlows where x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed select x).Count();
+                    count = (from x in GingerRunner.Executor.BusinessFlows where x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed select x).Count();
                 }
                 return count;
             }

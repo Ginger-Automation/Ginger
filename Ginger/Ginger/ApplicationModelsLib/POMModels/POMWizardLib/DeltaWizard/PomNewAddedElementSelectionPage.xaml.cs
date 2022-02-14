@@ -57,7 +57,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
 
             // set LiveSpy Agent
-            xLiveSpy.DirverAgent = mAgent;
+            xLiveSpy.DriverAgent = mAgent;
             xLiveSpy.PropertyChanged += XLiveSpy_PropertyChanged;
 
         }

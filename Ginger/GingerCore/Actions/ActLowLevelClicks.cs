@@ -36,10 +36,10 @@ using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
-    public class ActLowLevelClicks : ActWithoutDriver
+    public class ActLowLevelClicks : ActImageCaptureSupport
     {
         public override string ActionDescription { get { return "Image search and click on screen"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Image search and click on screen"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -68,30 +68,36 @@ namespace GingerCore.Actions
             MouseRightClick = 1,
             MouseLeftClick = 0,
             MouseLeftDoubleClick = 2,
-            InputValue=3,
-            
+            InputValue = 3,
+
         }
-      
+
         [IsSerializedForLocalRepository]
         public string WindowTitle { get; set; }
         [IsSerializedForLocalRepository]
         public eActLowLevelClicksAction ActLowLevelClicksAction { get; set; }
         [IsSerializedForLocalRepository]
-        public int ClickX { get; set; }        
+        public override int ClickX { get; set; }
         [IsSerializedForLocalRepository]
-        public int ClickY { get; set; }
+        public override int ClickY { get; set; }
         [IsSerializedForLocalRepository]
-        public int StartX { get; set; }
+        public override int StartX { get; set; }
         [IsSerializedForLocalRepository]
-        public int StartY { get; set; }
+        public override int StartY { get; set; }
         [IsSerializedForLocalRepository]
-        public int EndX { get; set; }
+        public override int EndX { get; set; }
         [IsSerializedForLocalRepository]
-        public int EndY { get; set; }
+        public override int EndY { get; set; }
         [IsSerializedForLocalRepository]
-        public string LocatorImgFile { get; set; }               
+        public override string LocatorImgFile { get; set; }
 
-        public string Coordinates { get { return StartX + ", " + StartY; } }
+        public override string ImagePath
+        {
+            get
+            {
+                return @"Documents\ExpectedImages\";
+            }
+        }
 
         public override String ActionType
         {
@@ -105,16 +111,16 @@ namespace GingerCore.Actions
             public static string Coordinates = "Coordinates";
             public static string LocatorImgFile = "LocatorImgFile";
             public static string WindowTitle = "WindowTitle";
-         
+
         }
-        
+
         public override eImageType Image { get { return eImageType.MousePointer; } }
 
         public override void Execute()
         {
             Bitmap MainWinImage;
-            AutomationElement targetWin=null;
-            AutomationElement gingerWin=null;
+            AutomationElement targetWin = null;
+            AutomationElement gingerWin = null;
             WinAPIAutomation winAPI = new WinAPIAutomation();
             List<System.Drawing.Point> result = new List<System.Drawing.Point>(); //System.Drawing.Point(0,0);
             if (!string.IsNullOrWhiteSpace(WindowTitle))
@@ -131,15 +137,15 @@ namespace GingerCore.Actions
                     int getLengthFilePath = LocatorImgFile.Length;
                     int getDocumentLastIndex = LocatorImgFile.LastIndexOf("Documents");
                     locatorImgFilePath = System.IO.Path.Combine(SolutionFolder, LocatorImgFile.Substring(getDocumentLastIndex, getLengthFilePath - getDocumentLastIndex));
-                    if (!File.Exists(locatorImgFilePath)) 
+                    if (!File.Exists(locatorImgFilePath))
                     {
-                         Error= "Failed to find the image file at: " + LocatorImgFile;
-                    return;
+                        Error = "Failed to find the image file at: " + LocatorImgFile;
+                        return;
                     }
                 }
                 else
                 {
-                    Error= "Failed to find the image file at: " + LocatorImgFile;
+                    Error = "Failed to find the image file at: " + LocatorImgFile;
                     return;
                 }
             }
@@ -181,10 +187,10 @@ namespace GingerCore.Actions
                 }
             }
             else if (string.IsNullOrWhiteSpace(WindowTitle) || targetWin == null)
-            {       
+            {
                 List<AutomationElement> wins = UIAutomationGetFirstLevelWindows();
                 targetWin = AutomationElement.RootElement;
-                
+
                 foreach (AutomationElement w in wins)
                 {
                     if (w == UIAutomationGetWindowByTitle("Amdocs Ginger Automation"))
@@ -206,7 +212,7 @@ namespace GingerCore.Actions
                     this.Error = "Image is not found in the current screen";
                     return;
                 }
-            }            
+            }
             else
             {
                 if (targetWin != null)
@@ -225,7 +231,7 @@ namespace GingerCore.Actions
                     this.Error = "The main searching is not existing";
                     return;
                 }
-            }            
+            }
 
             switch (ActLowLevelClicksAction)
             {
@@ -243,18 +249,18 @@ namespace GingerCore.Actions
                     break;
             }
             if (WindowTitle == "FULLSCREEN")
-             WinAPIAutomation.NormalizeWindow(gingerWin.Current.ProcessId);
+                WinAPIAutomation.NormalizeWindow(gingerWin.Current.ProcessId);
         }
 
         private AutomationElement UIAutomationGetWindowByTitle(string WindowTitle)
-        {                             
+        {
             TreeWalker walker = TreeWalker.ControlViewWalker;
             AutomationElement win = walker.GetFirstChild(AutomationElement.RootElement);
 
             while (win != null)
             {
                 string WinTitle = (string)win.GetCurrentPropertyValue(AutomationElement.NameProperty);
-                if (WinTitle.Contains(WindowTitle))                
+                if (WinTitle.Contains(WindowTitle))
                 {
                     return win;
                 }
@@ -270,7 +276,7 @@ namespace GingerCore.Actions
             AutomationElement win = walker.GetFirstChild(AutomationElement.RootElement);
 
             while (win != null)
-            {                
+            {
                 winList.Add(win);
                 win = walker.GetNextSibling(win);
             }
@@ -280,7 +286,7 @@ namespace GingerCore.Actions
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
-        
+
         private Bitmap GetWindowBitmap(AutomationElement window)
         {
             Bitmap bmp = new Bitmap((int)window.Current.BoundingRectangle.Width, (int)window.Current.BoundingRectangle.Height);
@@ -288,7 +294,7 @@ namespace GingerCore.Actions
             IntPtr dc = memoryGraphics.GetHdc();
             bool success = PrintWindow((IntPtr)window.Current.NativeWindowHandle, dc, 0);
             memoryGraphics.ReleaseHdc(dc);
-            return bmp;            
+            return bmp;
         }
 
         private void ClickWindowXY(AutomationElement win, int x, int y)
@@ -312,7 +318,7 @@ namespace GingerCore.Actions
                 }
             return Bmp;
         }
-        
+
         public static List<System.Drawing.Point> GetSubPositions(Image main, Image sub)
         {
             List<System.Drawing.Point> possiblepos = new List<System.Drawing.Point>();
@@ -326,92 +332,100 @@ namespace GingerCore.Actions
             int subwidth = subBitmap.Width;
             int subheight = subBitmap.Height;
 
-    int movewidth = mainwidth - subwidth;
-    int moveheight = mainheight - subheight;
+            int movewidth = mainwidth - subwidth;
+            int moveheight = mainheight - subheight;
 
-    BitmapData bmMainData = mainBitmap.LockBits(new System.Drawing.Rectangle(0, 0, mainwidth, mainheight), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-    BitmapData bmSubData = subBitmap.LockBits(new System.Drawing.Rectangle(0, 0, subwidth, subheight), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+            BitmapData bmMainData = mainBitmap.LockBits(new System.Drawing.Rectangle(0, 0, mainwidth, mainheight), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+            BitmapData bmSubData = subBitmap.LockBits(new System.Drawing.Rectangle(0, 0, subwidth, subheight), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
 
-    int bytesMain = Math.Abs(bmMainData.Stride) * mainheight;
-    int strideMain = bmMainData.Stride;
-    System.IntPtr Scan0Main = bmMainData.Scan0;
-    byte[] dataMain = new byte[bytesMain];
-    System.Runtime.InteropServices.Marshal.Copy(Scan0Main, dataMain, 0, bytesMain);
+            int bytesMain = Math.Abs(bmMainData.Stride) * mainheight;
+            int strideMain = bmMainData.Stride;
+            System.IntPtr Scan0Main = bmMainData.Scan0;
+            byte[] dataMain = new byte[bytesMain];
+            System.Runtime.InteropServices.Marshal.Copy(Scan0Main, dataMain, 0, bytesMain);
 
-    int bytesSub = Math.Abs(bmSubData.Stride) * subheight;
-    int strideSub = bmSubData.Stride;
-    System.IntPtr Scan0Sub = bmSubData.Scan0;
-    byte[] dataSub = new byte[bytesSub];
-    System.Runtime.InteropServices.Marshal.Copy(Scan0Sub, dataSub, 0, bytesSub);
+            int bytesSub = Math.Abs(bmSubData.Stride) * subheight;
+            int strideSub = bmSubData.Stride;
+            System.IntPtr Scan0Sub = bmSubData.Scan0;
+            byte[] dataSub = new byte[bytesSub];
+            System.Runtime.InteropServices.Marshal.Copy(Scan0Sub, dataSub, 0, bytesSub);
 
-    for (int y = 0; y < moveheight; ++y) {
-        for (int x = 0; x < movewidth; ++x) {
-            MyColor curcolor = GetColor(x, y, strideMain, dataMain);
+            for (int y = 0; y < moveheight; ++y)
+            {
+                for (int x = 0; x < movewidth; ++x)
+                {
+                    MyColor curcolor = GetColor(x, y, strideMain, dataMain);
 
-            foreach (var item in possiblepos.ToArray()) {
-                int xsub = x - item.X;
-                int ysub = y - item.Y;
-                if (xsub >= subwidth || ysub >= subheight || xsub < 0)
-                    continue;
+                    foreach (var item in possiblepos.ToArray())
+                    {
+                        int xsub = x - item.X;
+                        int ysub = y - item.Y;
+                        if (xsub >= subwidth || ysub >= subheight || xsub < 0)
+                            continue;
 
-                MyColor subcolor = GetColor(xsub, ysub, strideSub, dataSub);
+                        MyColor subcolor = GetColor(xsub, ysub, strideSub, dataSub);
 
-                if (!curcolor.Equals(subcolor)) {
-                    possiblepos.Remove(item);
+                        if (!curcolor.Equals(subcolor))
+                        {
+                            possiblepos.Remove(item);
+                        }
+                    }
+
+                    if (curcolor.Equals(GetColor(0, 0, strideSub, dataSub)))
+                        possiblepos.Add(new System.Drawing.Point(x, y));
                 }
             }
 
-            if (curcolor.Equals(GetColor(0, 0, strideSub, dataSub)))
-                possiblepos.Add(new System.Drawing.Point(x, y));
+            System.Runtime.InteropServices.Marshal.Copy(dataSub, 0, Scan0Sub, bytesSub);
+            subBitmap.UnlockBits(bmSubData);
+
+            System.Runtime.InteropServices.Marshal.Copy(dataMain, 0, Scan0Main, bytesMain);
+            mainBitmap.UnlockBits(bmMainData);
+
+            return possiblepos;
         }
-    }
-
-    System.Runtime.InteropServices.Marshal.Copy(dataSub, 0, Scan0Sub, bytesSub);
-    subBitmap.UnlockBits(bmSubData);
-
-    System.Runtime.InteropServices.Marshal.Copy(dataMain, 0, Scan0Main, bytesMain);
-    mainBitmap.UnlockBits(bmMainData);
-
-    return possiblepos;
-}
 
         private static MyColor GetColor(System.Drawing.Point point, int stride, byte[] data)
         {
             return GetColor(point.X, point.Y, stride, data);
         }
 
-        private static MyColor GetColor(int x, int y, int stride, byte[] data) {
-    int pos = y * stride + x * 4;
-    byte a = data[pos + 3];
-    byte r = data[pos + 2];
-    byte g = data[pos + 1];
-    byte b = data[pos + 0];
-    return MyColor.FromARGB(a, r, g, b);
-}
+        private static MyColor GetColor(int x, int y, int stride, byte[] data)
+        {
+            int pos = y * stride + x * 4;
+            byte a = data[pos + 3];
+            byte r = data[pos + 2];
+            byte g = data[pos + 1];
+            byte b = data[pos + 0];
+            return MyColor.FromARGB(a, r, g, b);
+        }
 
-struct MyColor {
-    byte A;
-    byte R;
-    byte G;
-    byte B;
+        struct MyColor
+        {
+            byte A;
+            byte R;
+            byte G;
+            byte B;
 
-    public static MyColor FromARGB(byte a, byte r, byte g, byte b) {
-        MyColor mc = new MyColor();
-        mc.A = a;
-        mc.R = r;
-        mc.G = g;
-        mc.B = b;
-        return mc;
-    }
+            public static MyColor FromARGB(byte a, byte r, byte g, byte b)
+            {
+                MyColor mc = new MyColor();
+                mc.A = a;
+                mc.R = r;
+                mc.G = g;
+                mc.B = b;
+                return mc;
+            }
 
-    public override bool Equals(object obj) {
-        if (!(obj is MyColor))
-            return false;
-        MyColor color = (MyColor)obj;
-        if(color.A == this.A && color.R == this.R && color.G == this.G && color.B == this.B)
-            return true;
-        return false;
-    }
-}
+            public override bool Equals(object obj)
+            {
+                if (!(obj is MyColor))
+                    return false;
+                MyColor color = (MyColor)obj;
+                if (color.A == this.A && color.R == this.R && color.G == this.G && color.B == this.B)
+                    return true;
+                return false;
+            }
+        }
     }
 }

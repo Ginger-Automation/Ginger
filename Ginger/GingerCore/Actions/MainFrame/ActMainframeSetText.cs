@@ -30,7 +30,7 @@ namespace GingerCore.Actions.MainFrame
     public class ActMainframeSetText : Act
     {
         public override string ActionDescription { get { return "Set Text Main Frame"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Set Text Main Frame"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -55,15 +55,18 @@ namespace GingerCore.Actions.MainFrame
         }
         private eSetTextMode mSetTextMode = eSetTextMode.SetSingleField;
 
-       private bool mReloadvalue = true;
+        private bool mReloadvalue = true;
 
         [IsSerializedForLocalRepository(true)]
-        public bool ReloadValue{
-            get{
+        public bool ReloadValue
+        {
+            get
+            {
                 return mReloadvalue;
             }
-            set{
-                mReloadvalue=value;
+            set
+            {
+                mReloadvalue = value;
             }
         }
 
@@ -103,44 +106,44 @@ namespace GingerCore.Actions.MainFrame
         }
 
 
-       public void LoadCaretValueList()
+        public void LoadCaretValueList()
         {
-             ObservableList<ActInputValue> mCaretValueList = new ObservableList<ActInputValue> ();
-            String LoadText =ValueForDriver;
-            if (String.IsNullOrWhiteSpace (LoadText))
+            ObservableList<ActInputValue> mCaretValueList = new ObservableList<ActInputValue>();
+            String LoadText = ValueForDriver;
+            if (String.IsNullOrWhiteSpace(LoadText))
                 return;
-            XmlDocument XD = new XmlDocument ();
-            XD.LoadXml (LoadText);
+            XmlDocument XD = new XmlDocument();
+            XD.LoadXml(LoadText);
             foreach (XmlNode xn in XD.ChildNodes)
             {
                 if (xn.Name == "EditableFields")
                 {
                     foreach (XmlNode xns in xn.ChildNodes)
                     {
-                        ActInputValue aiv = new ActInputValue ();
+                        ActInputValue aiv = new ActInputValue();
                         foreach (XmlAttribute XA in xns.Attributes)
                         {
-                                if (XA.Name == "Caret")
-                                {
-                                    aiv.Param = XA.Value;
-                                }
-                                else if (XA.Name == "Text")
-                                {
-                                    aiv.Value = XA.Value;
-                                }
+                            if (XA.Name == "Caret")
+                            {
+                                aiv.Param = XA.Value;
                             }
+                            else if (XA.Name == "Text")
+                            {
+                                aiv.Value = XA.Value;
+                            }
+                        }
 
-                        if (CaretValueList.Any (av => av.Param == aiv.Param) || CaretValueList.Count () == 0)
+                        if (CaretValueList.Any(av => av.Param == aiv.Param) || CaretValueList.Count() == 0)
                         {
-                                mCaretValueList.Add (aiv);
+                            mCaretValueList.Add(aiv);
                         }
                     }
                 }
             }
-           CaretValueList=mCaretValueList;
+            CaretValueList = mCaretValueList;
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> CaretValueList = new ObservableList<ActInputValue> ();
+        public ObservableList<ActInputValue> CaretValueList = new ObservableList<ActInputValue>();
     }
 }

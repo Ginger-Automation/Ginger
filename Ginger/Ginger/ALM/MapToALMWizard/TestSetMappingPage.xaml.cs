@@ -82,10 +82,10 @@ namespace Ginger.ALM.MapToALMWizard
             mWizard.ProcessStarted();
             try
             {
-                mWizard.AddActivitiesGroupsInitialMapping();
                 // Business Flow Mapped, get mapped test cases and steps to display.
                 if (!String.IsNullOrEmpty(mWizard.mapBusinessFlow.ExternalID) && String.IsNullOrEmpty(mWizard.AlmTestSetData.TestSetID))
                 {
+                    mWizard.AddActivitiesGroupsInitialMapping();
                     await Task.Run(() => mWizard.SetMappedALMTestSetData()).ConfigureAwait(true);
                     ChangeTestSetPageVisibility();
                     mWizard.UpdateMappedTestCasesCollections();
@@ -113,9 +113,9 @@ namespace Ginger.ALM.MapToALMWizard
             mWizard.ProcessStarted();
             try
             {
-                mWizard.AddActivitiesGroupsInitialMapping();
                 if (String.IsNullOrEmpty(mWizard.AlmTestSetData.TestSetID))
                 {
+                    mWizard.AddActivitiesGroupsInitialMapping();
                     BindTestSet();
                 }
             }

@@ -25,8 +25,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
+            
         }
 
         [TestInitialize]
@@ -39,6 +38,8 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             Activity activity = new Activity();
             mBF.AddActivity(activity);
             Context.BusinessFlow = mBF;
+
+            Context.Target = new Amdocs.Ginger.Common.Repository.TargetBase();
         }
 
         [TestCleanup]

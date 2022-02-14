@@ -194,7 +194,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             ((Act)actPlugin).AddNewReturnParams = true;  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ???
 
             // Send the payload to the service
-            NewPayLoad RC = agent.GingerNodeProxy.RunAction(payload);
+            NewPayLoad RC = ((AgentOperations)agent.AgentOperations).GingerNodeProxy.RunAction(payload);
 
 
        
@@ -435,7 +435,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
             PL.ClosePackage();
             // Send the payload to the service
-            NewPayLoad RC = agent.GingerNodeProxy.RunAction(PL);
+            NewPayLoad RC = ((AgentOperations)agent.AgentOperations).GingerNodeProxy.RunAction(PL);
 
             if (RC.Name == "ScreenShots")
             {

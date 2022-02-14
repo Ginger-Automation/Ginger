@@ -34,8 +34,9 @@ namespace GingerCore.Actions.ScreenCapture
     public partial class LocatorImageCaptureWindow : Window
     {
         #region Data Members
-        private Rect dragRect=new Rect();
-        private ActLowLevelClicks f;
+        private Rect dragRect = new Rect();
+
+        private ActImageCaptureSupport actImageCaptureSupport;
         /// <summary>
         /// Set to 'true' when the left mouse-button is down.
         /// </summary>
@@ -51,11 +52,45 @@ namespace GingerCore.Actions.ScreenCapture
         /// <summary>
         /// Records the location of the mouse (relative to the window) when the left-mouse button has pressed down.
         /// </summary>
-        private  System.Windows.Point origMouseDownPoint;
+        private System.Windows.Point origMouseDownPoint;
         private System.Windows.Point clickMousePoint;
         private bool bCapturedOrigCoordinates = false;
         private bool bCapturedTargetCoordinates = false;
-        private string ScreenPath="";
+        private string mScreenImageDirectory = string.Empty;
+        public string ScreenImageDirectory
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(mScreenImageDirectory))
+                {
+                    //TODO: need to find a way to hold the image in the Act so it will go to shared repo have version and more
+                    // Need to think if good or not
+                    mScreenImageDirectory = Path.Combine("~", actImageCaptureSupport.SolutionFolder + actImageCaptureSupport.ImagePath);
+
+                    if (!Directory.Exists(mScreenImageDirectory))
+                    {
+                        Directory.CreateDirectory(mScreenImageDirectory);
+                    }
+                    mScreenImageDirectory = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScreenImageDirectory);
+                }
+
+                return mScreenImageDirectory;
+            }
+        }
+
+        public string mScreenImageName;
+        public string ScreenImageName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(mScreenImageName))
+                {
+                    mScreenImageName = Guid.NewGuid().ToString() + ".JPG";
+                }
+                return mScreenImageName;
+            }
+        }
+
         /// <summary>
         /// The threshold distance the mouse-cursor must move before drag-selection begins.
         /// </summary>
@@ -63,10 +98,10 @@ namespace GingerCore.Actions.ScreenCapture
 
         #endregion Data Members
 
-        public LocatorImageCaptureWindow(ActLowLevelClicks act)
+        public LocatorImageCaptureWindow(ActImageCaptureSupport act)
         {
             InitializeComponent();
-            f = act;
+            actImageCaptureSupport = act;
         }
 
         /// <summary>
@@ -76,7 +111,7 @@ namespace GingerCore.Actions.ScreenCapture
         {
             if (e.ChangedButton == MouseButton.Left && !bCapturedOrigCoordinates)
             {
-                isLeftMouseButtonDownOnWindow = true;                             
+                isLeftMouseButtonDownOnWindow = true;
                 origMouseDownPoint = e.GetPosition(this);
                 this.CaptureMouse();
                 bCapturedOrigCoordinates = true;
@@ -99,7 +134,7 @@ namespace GingerCore.Actions.ScreenCapture
 
                     isDraggingSelectionRect = false;
                     ApplyDragSelectionRect();
-                    bCapturedTargetCoordinates=true;
+                    bCapturedTargetCoordinates = true;
                     e.Handled = true;
                 }
 
@@ -149,7 +184,7 @@ namespace GingerCore.Actions.ScreenCapture
                     //
                     isDraggingSelectionRect = true;
 
-                  
+
 
                     InitDragSelectionRect(origMouseDownPoint, curMouseDownPoint);
                 }
@@ -232,7 +267,7 @@ namespace GingerCore.Actions.ScreenCapture
             this.Close();
         }
 
-        public void CaptureImage( System.Drawing.Point SourcePoint, System.Drawing.Rectangle SelectionRectangle, string FilePath)
+        public void CaptureImage(System.Drawing.Point SourcePoint, System.Drawing.Rectangle SelectionRectangle)
         {
             this.Hide();
             try
@@ -244,14 +279,12 @@ namespace GingerCore.Actions.ScreenCapture
                         g.CopyFromScreen(SourcePoint, System.Drawing.Point.Empty, SelectionRectangle.Size);
                     }
 
-                    //FilePath = FilePath.Replace("~\\", f.SolutionFolder);
-                    FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
-
-                    bitmap.Save(FilePath, ImageFormat.Png);
+                    bitmap.Save(GetPathToExpectedImage(), ImageFormat.Jpeg);
                 }
             }
-            catch
+            catch (Exception exc)
             {
+                Reporter.ToLog(eLogLevel.ERROR, exc.Message, exc);
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please select image to capture");
             }
 
@@ -259,45 +292,27 @@ namespace GingerCore.Actions.ScreenCapture
 
         public string GetPathToExpectedImage()
         {
-            try
-            {
-                //TODO: need to find a way to hold the image in the Act so it will go to shared repo have version and more
-                // Need to think if good or not
-                if (!Directory.Exists(System.IO.Path.Combine(f.SolutionFolder + @"Documents\ExpectedImages\")))
-                    Directory.CreateDirectory(System.IO.Path.Combine(f.SolutionFolder + @"Documents\ExpectedImages\"));
-            }
-            catch (Exception e)
-            {                
-                Reporter.ToUser(eUserMsgKey.FolderOperationError, e.Message);
-            }
-            //return f.SolutionFolder + @"Documents\ExpectedImages\"+Guid.NewGuid().ToString()+".png";
-            return @"~\Documents\ExpectedImages\" + Guid.NewGuid().ToString() + ".png"; 
+            return Path.Combine(ScreenImageDirectory, ScreenImageName);
         }
 
         public void SaveSelection(System.Drawing.Point clickdp)
         {
-            ScreenPath = GetPathToExpectedImage();
-            
-            if (ScreenPath != "" )
+            if (ScreenImageDirectory != "")
             {
-
                 //Allow 250 milliseconds for the screen to repaint itself (we don't want to include this form in the capture)
                 System.Threading.Thread.Sleep(250);
-                               
-                //Rectangle bounds = new Rectangle(CurrentTopLeft.X, CurrentTopLeft.Y, CurrentBottomRight.X - CurrentTopLeft.X, CurrentBottomRight.Y - CurrentTopLeft.Y);
-               
-                
+
                 System.Drawing.Point dp = new System.Drawing.Point((int)origMouseDownPoint.X, (int)origMouseDownPoint.Y);
                 System.Drawing.Rectangle rc = new System.Drawing.Rectangle() { Width = (int)dragRect.Width, Height = (int)dragRect.Height };
-                CaptureImage(dp, rc, ScreenPath);
-                f.ClickX = clickdp.X;
-                f.ClickY = clickdp.Y;
-                f.StartX = (int)origMouseDownPoint.X;
-                f.StartY = (int)origMouseDownPoint.Y;
-                f.EndX = f.StartX + (int)dragRect.Width;
-                f.EndY = f.StartY + (int)dragRect.Height;
-                f.LocatorImgFile = ScreenPath;
-            }           
+                CaptureImage(dp, rc);
+                actImageCaptureSupport.ClickX = clickdp.X;
+                actImageCaptureSupport.ClickY = clickdp.Y;
+                actImageCaptureSupport.StartX = (int)origMouseDownPoint.X;
+                actImageCaptureSupport.StartY = (int)origMouseDownPoint.Y;
+                actImageCaptureSupport.EndX = actImageCaptureSupport.StartX + (int)dragRect.Width;
+                actImageCaptureSupport.EndY = actImageCaptureSupport.StartY + (int)dragRect.Height;
+                actImageCaptureSupport.LocatorImgFile = GetPathToExpectedImage();
+            }
         }
     }
 }

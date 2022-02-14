@@ -153,17 +153,17 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             this.Dispatcher.Invoke(() =>
             {
-                if (mContext.Agent != null && mContext.Agent.Driver != null)
+                if (mContext.Agent != null && ((AgentOperations)mContext.Agent.AgentOperations).Driver != null)
                 {
-                    if (mContext.Agent.Driver is IWindowExplorer)
+                    if (((AgentOperations)mContext.Agent.AgentOperations).Driver is IWindowExplorer)
                     {
-                        xWindowExplorerItemBtn.xButton.IsEnabled = mContext.Agent.Driver.IsRunning();
-                        xLiveSpyItemBtn.xButton.IsEnabled = (mContext.Agent.Driver as IWindowExplorer).IsLiveSpySupported() && mContext.Agent.Driver.IsRunning();
-                        xRecordItemBtn.xButton.IsEnabled = (mContext.Agent.Driver as IWindowExplorer).IsRecordingSupported() && mContext.Agent.Driver.IsRunning();
+                        xWindowExplorerItemBtn.xButton.IsEnabled = ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning();
+                        xLiveSpyItemBtn.xButton.IsEnabled = (((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer).IsLiveSpySupported() && ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning();
+                        xRecordItemBtn.xButton.IsEnabled = (((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer).IsRecordingSupported() && ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning();
 
-                        xWindowExplorerItemBtn.IsEnabled = mContext.Agent.Driver.IsRunning();
-                        xLiveSpyItemBtn.IsEnabled = (mContext.Agent.Driver as IWindowExplorer).IsLiveSpySupported() && mContext.Agent.Driver.IsRunning();
-                        xRecordItemBtn.IsEnabled = (mContext.Agent.Driver as IWindowExplorer).IsRecordingSupported() && mContext.Agent.Driver.IsRunning();
+                        xWindowExplorerItemBtn.IsEnabled = ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning();
+                        xLiveSpyItemBtn.IsEnabled = (((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer).IsLiveSpySupported() && ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning();
+                        xRecordItemBtn.IsEnabled = (((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer).IsRecordingSupported() && ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning();
                     }
                 }
                 else

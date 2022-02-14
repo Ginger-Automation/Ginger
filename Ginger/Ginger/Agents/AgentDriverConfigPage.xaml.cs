@@ -64,7 +64,7 @@ namespace Ginger.Agents
         {
             if (mAgent.DriverConfiguration == null)
             {
-                mAgent.InitDriverConfigs();
+                mAgent.AgentOperations.InitDriverConfigs();
                 if (mAgent.DriverConfiguration == null)
                 {
                     Reporter.ToUser(eUserMsgKey.DriverConfigUnknownDriverType, mAgent.DriverType);
@@ -108,7 +108,7 @@ namespace Ginger.Agents
         {
             if (e.PropertyName == nameof(Agent.DriverType))
             {
-                mAgent.InitDriverConfigs();
+                mAgent.AgentOperations.InitDriverConfigs();
                 SetDriverConfigsPageContent();
             }
         }
@@ -135,7 +135,7 @@ namespace Ginger.Agents
 
         private void ResetAgentDriverConfigs(object sender, RoutedEventArgs e)
         {
-            mAgent.InitDriverConfigs();
+            mAgent.AgentOperations.InitDriverConfigs();
             InitAgentDriverConfigs();
         }
 

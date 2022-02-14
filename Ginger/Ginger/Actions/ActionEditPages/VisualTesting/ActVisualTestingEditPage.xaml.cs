@@ -305,9 +305,9 @@ namespace Ginger.Actions.VisualTesting
             Context.GetAsContext(mAct.Context).Runner.SetCurrentActivityAgent();
             Agent a = (Agent)(Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.CurrentAgent;
 
-            if (a.Driver is IVisualTestingDriver)
+            if (((AgentOperations)a.AgentOperations).Driver is IVisualTestingDriver)
             {
-                return (IVisualTestingDriver)a.Driver;
+                return (IVisualTestingDriver)((AgentOperations)a.AgentOperations).Driver;
             }
             else
             {

@@ -67,6 +67,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     ((WizardWindow)wiz.mWizardWindow).ShowFinishButton(false);
 
                     UCEncryptionKey.mSolution = GlobalSolutionUtils.Instance.GetSolution();
+                    UCEncryptionKey.mSolution.SolutionOperations = new SolutionOperations(UCEncryptionKey.mSolution);
                     if (!string.IsNullOrEmpty(wiz.EncryptionKey))
                     {
                         UCEncryptionKey.EncryptionKeyPasswordBox.Password = wiz.EncryptionKey;

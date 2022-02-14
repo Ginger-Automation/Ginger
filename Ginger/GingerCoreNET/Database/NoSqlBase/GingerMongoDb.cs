@@ -48,8 +48,8 @@ namespace GingerCore.NoSqlBase
                 ///
                 if (Db.ConnectionString != null && !string.IsNullOrEmpty(Db.ConnectionString))
                 {
-                    var connectionString = Db.ConnectionStringCalculated.ToString();
-                    DbName = MongoUrl.Create(Db.ConnectionStringCalculated.ToString()).DatabaseName;
+                    var connectionString = Db.DatabaseOperations.ConnectionStringCalculated.ToString();
+                    DbName = MongoUrl.Create(Db.DatabaseOperations.ConnectionStringCalculated.ToString()).DatabaseName;
                     if (DbName == null)
                     {
                         return false;
@@ -62,7 +62,7 @@ namespace GingerCore.NoSqlBase
                     /// Host format
                     /// "mongodb://HostOrIP:27017/DBName"
                     ///
-                    string[] HostPortDB = Db.TNSCalculated.Split('/');
+                    string[] HostPortDB = Db.DatabaseOperations.TNSCalculated.Split('/');
                     string[] HostPort = HostPortDB[0].Split(':');
                     //need to get db name
 
@@ -85,14 +85,14 @@ namespace GingerCore.NoSqlBase
                         }
                         else
                         {
-                            String deCryptValue = EncryptionHandler.DecryptwithKey(Db.PassCalculated.ToString());
+                            String deCryptValue = EncryptionHandler.DecryptwithKey(Db.DatabaseOperations.PassCalculated.ToString());
                             if (!string.IsNullOrEmpty(deCryptValue))
                             {
-                                mongoCredential = MongoCredential.CreateCredential(HostPortDB[HostPortDB.Length-1], Db.UserCalculated, deCryptValue);
+                                mongoCredential = MongoCredential.CreateCredential(HostPortDB[HostPortDB.Length-1], Db.DatabaseOperations.UserCalculated, deCryptValue);
                             }
                             else
                             {
-                                mongoCredential = MongoCredential.CreateCredential(HostPortDB[HostPortDB.Length - 1], Db.UserCalculated, Db.PassCalculated.ToString());
+                                mongoCredential = MongoCredential.CreateCredential(HostPortDB[HostPortDB.Length - 1], Db.DatabaseOperations.UserCalculated, Db.DatabaseOperations.PassCalculated.ToString());
                             }
                             mongoClientSettings = new MongoClientSettings
                             {

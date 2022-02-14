@@ -1242,6 +1242,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             if(!string.IsNullOrEmpty(connectionString))
                 db.ConnectionString = connectionString;
             db.DBType = (Database.eDBTypes)Enum.Parse(typeof(Database.eDBTypes), dbType);
+
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
         }
         public List<string> GetDBTypeList()
         {
@@ -1249,7 +1252,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         public bool Connect()
         {
-            if (db.Connect())
+            if (db.DatabaseOperations.Connect())
             {
                 return true;
             }
@@ -1257,7 +1260,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         public void ExecuteFreeSQL(string command)
         {
-             SQLResult = db.FreeSQL(command);
+             SQLResult = db.DatabaseOperations.FreeSQL(command);
         }
         public List<ParameterValues> UpdateParametersOptionalValuesFromDB()
         {

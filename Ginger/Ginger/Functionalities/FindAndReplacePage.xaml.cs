@@ -473,7 +473,7 @@ namespace Ginger.Functionalities
                     break;
                 case eContext.RunsetPage:
                     foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners)
-                        foreach (BusinessFlow bf in runner.BusinessFlows)
+                        foreach (BusinessFlow bf in runner.Executor.BusinessFlows)
                             mItemsToSearchIn.Add(new ItemToSearchIn(bf, bf, WorkSpace.Instance.RunsetExecutor.RunSetConfig, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\" + bf.Name, string.Empty));
                     break;
             }
@@ -515,7 +515,7 @@ namespace Ginger.Functionalities
                 case eContext.RunsetPage:
                     //Pull Activities from runsets businessflows
                     foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners)
-                        foreach (BusinessFlow BF in runner.BusinessFlows)
+                        foreach (BusinessFlow BF in runner.Executor.BusinessFlows)
                         {
                             foreach (Activity activity in BF.Activities)
                             {
@@ -593,7 +593,7 @@ namespace Ginger.Functionalities
                 case eContext.RunsetPage:
                     //Pull Activities from businessflows inside runsets
                     foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners)
-                        foreach (BusinessFlow bf in runner.BusinessFlows)
+                        foreach (BusinessFlow bf in runner.Executor.BusinessFlows)
                         {
                             foreach (Activity activity in bf.Activities)
                             {
@@ -656,7 +656,7 @@ namespace Ginger.Functionalities
 
                 case eContext.RunsetPage:
                     foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners)
-                        AddVariableFromBusinessFlowList(runner.BusinessFlows, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\", WorkSpace.Instance.RunsetExecutor.RunSetConfig);
+                        AddVariableFromBusinessFlowList(runner.Executor.BusinessFlows, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\", WorkSpace.Instance.RunsetExecutor.RunSetConfig);
                     break;
             }
         }

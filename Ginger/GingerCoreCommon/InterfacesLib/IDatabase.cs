@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -22,6 +22,6 @@ namespace Amdocs.Ginger.Common
     {
         string Name { get; }
 
-        void CloseConnection();
+        //void CloseConnection();
     }
 }

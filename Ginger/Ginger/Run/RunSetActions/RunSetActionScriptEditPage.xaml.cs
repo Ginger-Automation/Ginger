@@ -33,7 +33,7 @@ namespace Ginger.Run.RunSetActions
 
             mRunSetActionScript = RunSetActionScript;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptFileNameTextBox, TextBox.TextProperty, mRunSetActionScript, RunSetActionScript.Fields.ScriptFileName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptFileNameTextBox, TextBox.TextProperty, mRunSetActionScript, nameof(RunSetActionScript.ScriptFileName));
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)

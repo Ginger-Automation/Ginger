@@ -1068,5 +1068,14 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             return true;
         }
+
+        /// <summary>
+        /// This method is used to check if the paltform includes GUI based Application Instance and thus, supports Sikuli based operations
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsSikuliSupported()
+        {
+            return true;
+        }
     }
 }

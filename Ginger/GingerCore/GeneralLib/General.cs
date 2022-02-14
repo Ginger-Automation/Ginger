@@ -47,7 +47,7 @@ namespace GingerCore
     public class General
     {
         public static void LoadGenericWindow(ref GenericWindow genWindow, System.Windows.Window owner, eWindowShowStyle windowStyle, string windowTitle, Page windowPage,
-                                            ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset=false, UserControl loaderElement = null)
+                                            ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset = false, UserControl loaderElement = null)
         {
             genWindow = null;
             eWindowShowStyle winStyle;
@@ -130,7 +130,7 @@ namespace GingerCore
         /// <param name="comboBox"></param>
         /// <param name="EnumObj"></param>
         /// <param name="values"> leave values empty will take all possible vals, or pass a list to limit selection </param>
-        public static void FillComboFromEnumObj(ComboBox comboBox, Object EnumObj, List<object> values = null, bool sortValues = true, ListCollectionView valuesCollView = null, List<dynamic> excludeList= null)
+        public static void FillComboFromEnumObj(ComboBox comboBox, Object EnumObj, List<object> values = null, bool sortValues = true, ListCollectionView valuesCollView = null, List<dynamic> excludeList = null)
         {
             comboBox.SelectedValuePath = "Value";
             Type Etype = EnumObj.GetType();
@@ -183,7 +183,7 @@ namespace GingerCore
 
             //if ((values == null) && (valuesCollView != null))
             //{
-                comboBox.SelectedItem = EnumObj;
+            comboBox.SelectedItem = EnumObj;
             //}
             //else
             //{
@@ -226,12 +226,12 @@ namespace GingerCore
         {
             comboBox.Items.Clear();
             comboBox.SelectedValuePath = "Content";
-            
-                // Get all possible enum vals
+
+            // Get all possible enum vals
             foreach (object item in Enum.GetValues(Etype))
             {
                 ComboBoxItem CEI = new ComboBoxItem();
-                CEI.Content = item;                 
+                CEI.Content = item;
                 comboBox.Items.Add(CEI);
             }
             // Get the combo to be sorted
@@ -241,7 +241,7 @@ namespace GingerCore
         {
             List<string> l = new List<string>();
             foreach (object item in Enum.GetValues(EnumType))
-            {               
+            {
                 l.Add(GetEnumValueDescription(EnumType, item));
             }
             return l;
@@ -274,17 +274,17 @@ namespace GingerCore
             }
         }
 
-       
-
-       
 
 
-       
+
+
+
+
         #endregion ENUM
 
         public static string CorrectJSON(string WrongJson)
         {
-           
+
             return Amdocs.Ginger.Common.GeneralLib.General.CorrectJSON(WrongJson);
         }
         public static void FillComboFromList(ComboBox comboBox, List<string> ls)
@@ -327,7 +327,7 @@ namespace GingerCore
                 else
                 {
                     PropertyInfo propertyInfo = (comboBox.Items[i]).GetType().GetProperty(specificValueField);
-                    if(propertyInfo != null && propertyInfo.GetValue((comboBox.Items[i])).ToString() == value)
+                    if (propertyInfo != null && propertyInfo.GetValue((comboBox.Items[i])).ToString() == value)
                         return true;
                 }
             }
@@ -421,14 +421,17 @@ namespace GingerCore
 
         public static string BitmapImageToFile(Bitmap bmp, string filePath = "")
         {
-            if (string.IsNullOrEmpty(filePath))
-                filePath = Path.GetTempFileName();
-            else if(!CheckOrCreateDirectory(Path.GetDirectoryName(filePath)))
+            using (bmp)
             {
-                return string.Empty;
-            }                
+                if (string.IsNullOrEmpty(filePath))
+                    filePath = Path.GetTempFileName();
+                else if (!CheckOrCreateDirectory(Path.GetDirectoryName(filePath)))
+                {
+                    return string.Empty;
+                }
 
-            bmp.Save(filePath, System.Drawing.Imaging.ImageFormat.Png);
+                bmp.Save(filePath, System.Drawing.Imaging.ImageFormat.Png);
+            }
             return filePath;
         }
 
@@ -471,13 +474,13 @@ namespace GingerCore
                     }
                 }
             }
-            catch(IOException ex)
+            catch (IOException ex)
             {
                 Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Clean the Folder '{0}', Issue:'{1}'", folderName, ex.Message));
             }
-            
+
         }
-        
+
 
         public static string GetGingerEXEPath()
         {
@@ -486,7 +489,7 @@ namespace GingerCore
             return exeLocation;
         }
 
-        
+
 
         public static List<ComboEnumItem> GetEnumValuesForCombo(Type Etype)
         {
@@ -503,7 +506,7 @@ namespace GingerCore
         }
 
 
-        public static List<ComboEnumItem> GetEnumValuesForComboFromList(Type Etype,List<Object> Items)
+        public static List<ComboEnumItem> GetEnumValuesForComboFromList(Type Etype, List<Object> Items)
         {
             List<ComboEnumItem> list = new List<ComboEnumItem>();
             foreach (object item in Items)
@@ -529,11 +532,11 @@ namespace GingerCore
                 else
                     itemVal = item.ToString();
                 if (itemVal == Value)
-                {                    
+                {
                     comboBox.SelectedItem = item;
                     return;
                 }
-            }               
+            }
         }
 
         public static void AddComboItem(ComboBox comboBox, object itemtoadd)
@@ -576,13 +579,13 @@ namespace GingerCore
                         return;
                     }
                 }
-            }             
+            }
         }
 
-        public static void UpdateComboItem(ComboBox comboBox, object itemtoUpdate,string newVal)
+        public static void UpdateComboItem(ComboBox comboBox, object itemtoUpdate, string newVal)
         {
             string itemText = itemtoUpdate.ToString();
-            if (itemtoUpdate.GetType().BaseType.Name == "Enum")                
+            if (itemtoUpdate.GetType().BaseType.Name == "Enum")
                 itemText = GetEnumValueDescription(itemtoUpdate.GetType(), itemtoUpdate);
             foreach (var item in comboBox.Items)
             {
@@ -600,7 +603,7 @@ namespace GingerCore
         public static void EnableComboItem(ComboBox comboBox, object itemtoDisable)
         {
             foreach (var item in comboBox.Items)
-            {                
+            {
                 if (item.GetType() == typeof(ComboBoxItem))
                 {
                     if (((ComboBoxItem)item).Content.ToString() == itemtoDisable.ToString())
@@ -612,7 +615,7 @@ namespace GingerCore
             }
         }
 
-     
+
         public static void ClearDirectoryContent(string DirPath)
         {
             Amdocs.Ginger.Common.GeneralLib.General.ClearDirectoryContent(DirPath);
@@ -718,7 +721,7 @@ namespace GingerCore
             }
             return r;
         }
-     
+
         /// <summary>
         /// The function will take full desktop screen shot of Primary screen or all Screens and will return Dictionary of (ScreenDeviceName, ScreenShotPath)
         /// </summary>
@@ -847,8 +850,8 @@ namespace GingerCore
         {
             string[] fileEntries = Directory.EnumerateFiles(filepath, "*.*", SearchOption.AllDirectories)
                     .Where(s => s.ToLower().EndsWith(extension)).ToArray();
-            
-                return fileEntries;
+
+            return fileEntries;
         }
         public static ObservableList<T> ConvertListToObservableList<T>(List<T> List)
         {
@@ -942,7 +945,7 @@ namespace GingerCore
                 string folderPath = Path.Combine(WorkSpace.Instance.Solution.Folder, "Configurations");
                 DirectoryInfo di = Directory.CreateDirectory(folderPath);
                 string configPackageFolder = string.Empty;
-                switch(eALMType)
+                switch (eALMType)
                 {
                     case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
                         configPackageFolder = "JiraConfigurationsPackage";
@@ -969,7 +972,7 @@ namespace GingerCore
                     return false;
                 }
             }
-            return true; 
+            return true;
         }
         static bool ValidateConfigurationFile(string PackageFileName, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType eALMType)
         {

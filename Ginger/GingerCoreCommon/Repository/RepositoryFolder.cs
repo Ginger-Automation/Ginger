@@ -117,7 +117,7 @@ namespace Amdocs.Ginger.Repository
         {
             ObservableList<RepositoryFolder<T>> list = new ObservableList<RepositoryFolder<T>>();
             string FullPath = SolutionRepository.GetFolderFullPath(Folder.FolderRelativePath);
-            string[] folders = FileSystem.GetDirectorySubFolders(FullPath);                      
+            string[] folders = FileSystem.GetDirectorySubFolders(FullPath);
             foreach (string subFolder in folders)
             {
                 if (!SolutionRepository.IsSolutionPathToAvoid(subFolder))
@@ -207,7 +207,7 @@ namespace Amdocs.Ginger.Repository
             {
                 allItemsRecursive = list;
             }
-            
+
 
             foreach (T item in GetFolderItems())
             {
@@ -256,7 +256,7 @@ namespace Amdocs.Ginger.Repository
         // Generic handling for any RI type
         // This is recursive function which run in parallel for extreme speed, be careful! 
         private ObservableList<T> LoadFolderFiles(string Folder = null)
-        {            
+        {
             // for each file we check if in cache return from cache else load from file system and cache the item             
 
             string FullPath = SolutionRepository.GetFolderFullPath(Folder);
@@ -277,7 +277,7 @@ namespace Amdocs.Ginger.Repository
             Parallel.ForEach(fileEntries, FileName =>
             {
                 try
-                {                    
+                {
                     // Check if item exist in cache if yes use it, no need to load from file, yay!
                     T item = (T)mFolderItemsCache[FileName];
                     if (item == null)
@@ -286,8 +286,8 @@ namespace Amdocs.Ginger.Repository
                         AddItemtoCache(FileName, item);
                     }
                     list.Add(item);
-                }   
-                catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
                     string error = string.Format("RepositoryFolder/LoadFolderFiles- Failed to load the Repository Item XML which in file: '{0}'.", FileName);
                     if (Assembly.GetEntryAssembly().GetName().ToString().Contains("GingerRuntime") && ex.Message.Contains("Unable to create object for the class type"))
@@ -356,7 +356,7 @@ namespace Amdocs.Ginger.Repository
                     mFileWatcher.EnableRaisingEvents = true;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("StartFileWatcher failed for " + base.FolderFullPath + " " + ex.Message);
             }
@@ -426,18 +426,18 @@ namespace Amdocs.Ginger.Repository
 
                 // this is single repository item
                 RepositoryItemBase item = GetItemFromCacheByFileName(e.OldFullPath);
-                if(item != null)
+                if (item != null)
                 {
                     item.FileName = e.FullPath;
                     item.FilePath = e.FullPath;
 
                     // set Folder item cache as it depends on the file name, so remove the old name and add with new name
                     mFolderItemsCache.DeleteItem(e.OldFullPath);
-                    mFolderItemsCache[e.FullPath] = item;                    
+                    mFolderItemsCache[e.FullPath] = item;
                 }
                 RepositoryItemBase item2 = GetItemFromCacheByFileName(e.FullPath);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception thrown from ReposiotryFolder/FileWatcher", ex);
             }
@@ -467,7 +467,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     if (e.ChangeType == WatcherChangeTypes.Deleted)
                     {
-                        if((from x in mSubFoldersCache where x.FolderName == e.Name select x).SingleOrDefault() != null)
+                        if ((from x in mSubFoldersCache where x.FolderName == e.Name select x).SingleOrDefault() != null)
                         {
                             HandleDirecortyChange(e);
                         }
@@ -489,7 +489,7 @@ namespace Amdocs.Ginger.Repository
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "FileWatcher_Changed - Exception thrown from ReposiotryFolder/FileWatcher", ex);
             }
@@ -584,7 +584,7 @@ namespace Amdocs.Ginger.Repository
                             repositoryFolder.ResumeFileWatcher();
                         }
                     }
-                    
+
                     break;
                 case WatcherChangeTypes.Deleted:
                     RepositoryFolder<T> repositoryFolder1 = GetSubFolder(fn);
@@ -598,7 +598,7 @@ namespace Amdocs.Ginger.Repository
                             mSubFoldersCache.Remove(repositoryFolder1);
                         }
                     }
-                    
+
                     break;
             }
             SolutionRepository.RefreshParentFoldersSoucerControlStatus(e.FullPath);
@@ -668,7 +668,7 @@ namespace Amdocs.Ginger.Repository
             string FullPath = Path.Combine(FolderFullPath, folderName);
 
             //add to folders cache
-            string relativeFolder =  Path.Combine(FolderRelativePath, folderName);
+            string relativeFolder = Path.Combine(FolderRelativePath, folderName);
             RepositoryFolder<T> subfolder = new RepositoryFolder<T>(SolutionRepository, mSolutionRepositoryItemInfo, ItemFilePattern, relativeFolder, ContainsRepositoryItems, null);
 
             PauseFileWatcher();
@@ -680,7 +680,7 @@ namespace Amdocs.Ginger.Repository
                 GetSubFolders().Add(subfolder);
                 subfolder.StartFileWatcher();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -712,7 +712,7 @@ namespace Amdocs.Ginger.Repository
 
             //add it to general item cache
             if (!mSolutionRepositoryItemInfo.AllItemsCacheIsNull())
-            {                                
+            {
                 mSolutionRepositoryItemInfo.AddItemToCache((T)(object)repositoryItem);
             }
         }
@@ -860,6 +860,7 @@ namespace Amdocs.Ginger.Repository
                 RepositoryItemBase item = (RepositoryItemBase)(object)cacheitem;
                 mFolderItemsCache.DeleteItem(item.FilePath);
                 item.FilePath = Path.Combine(FolderFullPath, Path.GetFileName(PathHelper.GetLongPath(((RepositoryItemBase)item).FilePath)));
+                item.FileName = Path.Combine(FolderFullPath, Path.GetFileName(PathHelper.GetLongPath((item).FilePath)));
                 item.ContainingFolder = FolderRelativePath;
                 item.ContainingFolderFullPath = FolderFullPath;
                 mFolderItemsCache[item.FilePath] = item;
@@ -867,6 +868,7 @@ namespace Amdocs.Ginger.Repository
                 item.OnPropertyChanged(nameof(RepositoryItemBase.ContainingFolder));
                 item.OnPropertyChanged(nameof(RepositoryItemBase.ContainingFolderFullPath));
                 item.OnPropertyChanged(nameof(RepositoryItemBase.RelativeFilePath));
+                item.OnPropertyChanged(nameof(RepositoryItemBase.FileName));
             }
         }
 

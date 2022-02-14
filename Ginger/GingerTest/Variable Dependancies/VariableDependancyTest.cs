@@ -118,8 +118,10 @@ namespace GingerTest.Variable_Dependancies
 
 
             mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
+
             mGR.Name = "Test Runner";
-            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
             ProjEnvironment environment = new ProjEnvironment();
             environment.Name = "Default";
@@ -128,22 +130,22 @@ namespace GingerTest.Variable_Dependancies
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
-            mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
 
-            mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
-            mGR.BusinessFlows.Add(BF1);
+            mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
+            mGR.Executor.BusinessFlows.Add(BF1);
 
             Context context1 = new Context();
             context1.BusinessFlow = BF1;
             context1.Activity = BF1.Activities[0];
 
-            mGR.CurrentBusinessFlow = BF1;
-            mGR.CurrentBusinessFlow.CurrentActivity = BF1.Activities[0];
-            mGR.Context = context1;
+            mGR.Executor.CurrentBusinessFlow = BF1;
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity = BF1.Activities[0];
+            mGR.Executor.Context = context1;
         }
 
         [TestMethod]
@@ -177,7 +179,7 @@ namespace GingerTest.Variable_Dependancies
             activityList[2].VariablesDependencies.Add(actiVD2);
             
             //Act
-            mGR.RunBusinessFlow(BF1);
+            mGR.Executor.RunBusinessFlow(BF1);
 
             //Assert
             Assert.AreEqual(BF1.Activities[0].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
@@ -188,7 +190,7 @@ namespace GingerTest.Variable_Dependancies
             ((VariableSelectionList)BF1.Variables[0]).SelectedValue = selectionList.OptionalValuesList[1].Value;
 
             //Act
-            mGR.RunBusinessFlow(BF1);
+            mGR.Executor.RunBusinessFlow(BF1);
 
             //Assert
             Assert.AreEqual(BF1.Activities[0].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
@@ -208,7 +210,7 @@ namespace GingerTest.Variable_Dependancies
 
             activity.EnableActionsVariablesDependenciesControl = true;
 
-            mGR.CurrentBusinessFlow.CurrentActivity = BF1.Activities[1];
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity = BF1.Activities[1];
             //Added selection list variable in activity
             VariableSelectionList selectionList = new VariableSelectionList();
             selectionList.OptionalValuesList.Add(new OptionalValue("abc"));
@@ -234,7 +236,7 @@ namespace GingerTest.Variable_Dependancies
             actionList[3].VariablesDependencies.Add(actiVD4);
 
             //Act
-            mGR.RunActivity(activity);
+            mGR.Executor.RunActivity(activity);
 
             //Assert
             Assert.AreEqual(BF1.Activities[1].Acts[0].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped);
@@ -246,7 +248,7 @@ namespace GingerTest.Variable_Dependancies
             ((VariableSelectionList)activity.Variables[0]).SelectedValue = selectionList.OptionalValuesList[0].Value;
 
             //Act
-            mGR.RunActivity(activity);
+            mGR.Executor.RunActivity(activity);
 
             //Assert
             Assert.AreEqual(BF1.Activities[1].Acts[0].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);

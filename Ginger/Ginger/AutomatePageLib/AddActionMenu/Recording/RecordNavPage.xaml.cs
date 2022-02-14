@@ -132,9 +132,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             this.Dispatcher.Invoke(() =>
             {
-                if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || mContext.Agent.Driver is IRecord))
+                if (mContext.Agent != null && (mContext.Agent.IsSupportRecording() || ((AgentOperations)mContext.Agent.AgentOperations).Driver is IRecord))
                 {
-                    mDriver = mContext.Agent.Driver as IWindowExplorer;
+                    mDriver = ((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer;
 
                     xWindowSelectionUC.mWindowExplorerDriver = mDriver;
                     xWindowSelectionUC.Platform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);

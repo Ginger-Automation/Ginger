@@ -398,12 +398,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             if (WorkSpace.Instance.UserProfile == null)
             {
                 WorkSpace.Instance.UserProfile = new UserProfile();
+                UserProfileOperations userProfileOperations = new UserProfileOperations(WorkSpace.Instance.UserProfile);
+                WorkSpace.Instance.UserProfile.UserProfileOperations = userProfileOperations;
             }
             WorkSpace.Instance.UserProfile.SourceControlURL = runOptions.URL;
             WorkSpace.Instance.UserProfile.SourceControlUser = runOptions.User;
             WorkSpace.Instance.UserProfile.SourceControlType = runOptions.SCMType;
-            WorkSpace.Instance.UserProfile.SourceControlIgnoreCertificate = runOptions.ignoreCertificate;
-            WorkSpace.Instance.UserProfile.SourceControlUseShellClient = runOptions.useScmShell;
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlIgnoreCertificate = runOptions.ignoreCertificate;
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SourceControlUseShellClient = runOptions.useScmShell;
 
 
 

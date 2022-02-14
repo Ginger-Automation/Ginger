@@ -51,10 +51,10 @@ namespace Ginger.Reports
 
         private void Init()
         {
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DefaultTemplatePickerCbx, ComboBox.SelectedValueProperty, mEmailAttachment, EmailHtmlReportAttachment.Fields.SelectedHTMLReportTemplateID);
-            HTMLReportFolderTextBox.Init(null, mEmailAttachment, EmailAttachment.Fields.ExtraInformation, true, true, UCValueExpression.eBrowserType.Folder,"*.*", null); 
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DefaultTemplatePickerCbx, ComboBox.SelectedValueProperty, mEmailAttachment, nameof(EmailHtmlReportAttachment.SelectedHTMLReportTemplateID));
+            HTMLReportFolderTextBox.Init(null, mEmailAttachment, nameof(EmailAttachment.ExtraInformation), true, true, UCValueExpression.eBrowserType.Folder,"*.*", null); 
             
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseAlternativeHTMLReportFolderCbx, CheckBox.IsCheckedProperty, mEmailAttachment, EmailHtmlReportAttachment.Fields.IsAlternameFolderUsed);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseAlternativeHTMLReportFolderCbx, CheckBox.IsCheckedProperty, mEmailAttachment, nameof(EmailHtmlReportAttachment.IsAlternameFolderUsed));
             RadioButtonInit(mEmailAttachment.IsLinkEnabled);
 
             DefaultTemplatePickerCbx.ItemsSource = null;
@@ -63,8 +63,8 @@ namespace Ginger.Reports
             if ( WorkSpace.Instance.Solution != null  && HTMLReportConfigurations.Count > 0)
             {
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
-                DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
-                DefaultTemplatePickerCbx.SelectedValuePath = HTMLReportConfiguration.Fields.ID;
+                DefaultTemplatePickerCbx.DisplayMemberPath = nameof(HTMLReportConfiguration.Name);
+                DefaultTemplatePickerCbx.SelectedValuePath = nameof(HTMLReportConfiguration.ID);
             }
         }
 

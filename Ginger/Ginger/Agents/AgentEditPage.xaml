@@ -64,6 +64,7 @@
                             </Button>
                         </StackPanel>-->
                     </StackPanel>
+                    <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" HorizontalAlignment="Left" Margin="5,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
                 </StackPanel>
 
                 <StackPanel x:Name="xPluginConfigPnl" Visibility="Collapsed" Margin="0,10,0,0">

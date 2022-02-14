@@ -274,7 +274,7 @@ namespace Ginger.Actions
                 db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
                 if (db == null) return;
                 string KeySpace = KeySpaceComboBox.Text;
-                List<string> Tables = db.GetTablesList(KeySpace);
+                List<string> Tables = db.DatabaseOperations.GetTablesList(KeySpace);
                 if (Tables == null)
                 {
                     return;
@@ -306,7 +306,7 @@ namespace Ginger.Actions
             {
                 table = TablesComboBox.Text;
             }
-            List<string> Columns = db.GetTablesColumns(table);
+            List<string> Columns = db.DatabaseOperations.GetTablesColumns(table);
             if (Columns == null)
             {
                 return;

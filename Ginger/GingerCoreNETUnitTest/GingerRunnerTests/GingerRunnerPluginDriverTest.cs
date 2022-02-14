@@ -86,18 +86,18 @@ namespace WorkspaceHold
             mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = mAppName });
 
             mGingerRunner = new GingerRunner();
-            mGingerRunner.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGingerRunner.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
             Agent agent = new Agent();
             agent.AgentType = Agent.eAgentType.Service;
 
-            mGingerRunner.SolutionAgents = new ObservableList<Agent>();
-            mGingerRunner.SolutionAgents.Add(agent);
+            ((GingerExecutionEngine)mGingerRunner.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGingerRunner.Executor).SolutionAgents.Add(agent);
 
             mGingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = mAppName, Agent = agent });
-            mGingerRunner.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGingerRunner.SolutionApplications.Add(new ApplicationPlatform() { AppName = mAppName, Platform = ePlatformType.NA });
-            mGingerRunner.BusinessFlows.Add(mBusinessFlow);
+            mGingerRunner.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGingerRunner.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = mAppName, Platform = ePlatformType.NA });
+            mGingerRunner.Executor.BusinessFlows.Add(mBusinessFlow);
 
             WorkspaceHelper.CreateWorkspaceWithTempSolution("sol1");
 
@@ -142,7 +142,7 @@ namespace WorkspaceHold
 
                 //Act            
                 mTestHelper.Log("Before Ginger Runner");
-                mGingerRunner.RunRunner();
+                mGingerRunner.Executor.RunRunner();
                 // mGingerRunner.CloseAgents();
                 mTestHelper.Log("After Ginger Runner");
 
@@ -182,7 +182,7 @@ namespace WorkspaceHold
                 }
 
                 //Act
-                mGingerRunner.RunRunner();
+                mGingerRunner.Executor.RunRunner();
 
 
                 //Assert

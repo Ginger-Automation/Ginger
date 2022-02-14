@@ -401,7 +401,7 @@ namespace Ginger.Variables
 
         private void SaveSolutionConfigurations(object sender, RoutedEventArgs e)
         {
-            ((Solution)mVariablesParentObj).SaveSolution(true, Solution.eSolutionItemToSave.GlobalVariabels);
+            ((Solution)mVariablesParentObj).SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.GlobalVariabels);
         }
         
         private void AddVar(object sender, RoutedEventArgs e)

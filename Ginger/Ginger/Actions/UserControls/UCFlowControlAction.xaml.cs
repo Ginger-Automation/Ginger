@@ -207,7 +207,7 @@ namespace Ginger.Actions.UserControls
                 {
                     case eBusinessFlowControlAction.GoToBusinessFlow:
                         {
-                            foreach (BusinessFlow bf in mBfParentRunner.BusinessFlows)
+                            foreach (BusinessFlow bf in mBfParentRunner.Executor.BusinessFlows)
                             {
                                 if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.Run && mActParentBusinessFlow == bf)//TODO: do better condition 
                                     continue;

@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.UserControls;
+using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -244,7 +245,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             mWizard.mPomDeltaUtils.SpecificFramePath = null;
             if (mAppPlatform.Equals(ePlatformType.Java))
             {
-                var windowExplorerDriver = ((IWindowExplorer)(mWizard.mPomDeltaUtils.Agent.Driver));
+                var windowExplorerDriver = ((IWindowExplorer)(((AgentOperations)mWizard.mPomDeltaUtils.Agent.AgentOperations).Driver));
 
                 var list = windowExplorerDriver.GetWindowAllFrames();
                 xFrameListCmbBox.ItemsSource = list;

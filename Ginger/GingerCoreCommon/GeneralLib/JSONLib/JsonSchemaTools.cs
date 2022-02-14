@@ -47,60 +47,72 @@ namespace Amdocs.Ginger.Common
                 return (string)returnValue;
             }
 
-
-
-
             if (schema.HasReference)
             {
-
                 if (ReferenceStack.Contains(schema.Reference))
                 {
                     return string.Empty;
                 }
                 else
                 {
-
                     return JsonSchemaFaker(schema.Reference, ReferenceStack, UseXMlNames);
                 }
-
-
             }
 
-
-
             Dictionary<string, object> JsonBody = new Dictionary<string, object>();
-            foreach (KeyValuePair<string, JsonProperty> jkp in schema.ActualProperties)
+            if (schema.AllOf.Count == 0)
             {
-                //code
-                string key = jkp.Key;
-                if (UseXMlNames && jkp.Value.Xml != null)
+                foreach (KeyValuePair<string, JsonProperty> jkp in schema.ActualProperties)
                 {
-                    key = jkp.Value.Xml.Name;
-                }
-                if (jkp.Value.HasReference && !ReferenceStack.Contains(jkp.Value.Reference))
-                {
-                    if (jkp.Value.Reference.HasReference == false && jkp.Value.Reference.Properties.Count == 0)
+                    //code
+                    string key = jkp.Key;
+                    if (UseXMlNames && jkp.Value.Xml != null)
                     {
+                        key = jkp.Value.Xml.Name;
+                    }
+                    if (jkp.Value.HasReference && !ReferenceStack.Contains(jkp.Value.Reference))
+                    {
+                        if (jkp.Value.Reference.HasReference == false && jkp.Value.Reference.Properties.Count == 0)
+                        {
 
-                        object o1 = GenerateJsonObjectFromJsonSchema4(jkp.Value, ReferenceStack, UseXMlNames);
-                        JsonBody.Add(key, o1);
+                            object o1 = GenerateJsonObjectFromJsonSchema4(jkp.Value, ReferenceStack, UseXMlNames);
+                            JsonBody.Add(key, o1);
+                        }
+                        else
+                        {
+                            if (!jkp.Value.Reference.Equals(jkp.Value))
+                            {
+                                string property = JsonSchemaFaker(jkp.Value.Reference, ReferenceStack, UseXMlNames);
+                                object o = JsonConvert.DeserializeObject(property);
+                                JsonBody.Add(key, o);
+                            }
+                        }
                     }
                     else
                     {
-                        if (!jkp.Value.Reference.Equals(jkp.Value))
-                        {
-                            string property = JsonSchemaFaker(jkp.Value.Reference, ReferenceStack, UseXMlNames);
-                            object o = JsonConvert.DeserializeObject(property);
-                            JsonBody.Add(key, o);
-                        }
+                        object o = GenerateJsonObjectFromJsonSchema4(jkp.Value, ReferenceStack, UseXMlNames);
+                        JsonBody.Add(key, o);
+                    }
+
+                }
+            }
+            else
+            {
+                System.Text.StringBuilder property = new System.Text.StringBuilder();
+                foreach (var schemaObject in schema.AllOf)
+                {
+                    if (string.IsNullOrEmpty(property.ToString()))
+                    {
+                        property.Append(JsonSchemaFaker(schemaObject, ReferenceStack, UseXMlNames));
+                    }
+                    else
+                    {
+                        property.Remove(property.Length - 1, 1);
+                        var result = JsonSchemaFaker(schemaObject, ReferenceStack, UseXMlNames);
+                        property.Append(string.Format(",{0}", result.Substring(1, result.Length - 1)));
                     }
                 }
-                else
-                {
-                    object o = GenerateJsonObjectFromJsonSchema4(jkp.Value, ReferenceStack, UseXMlNames);
-                    JsonBody.Add(key, o);
-                }
-
+                return property.ToString();
             }
 
             ReferenceStack.Remove(schema);

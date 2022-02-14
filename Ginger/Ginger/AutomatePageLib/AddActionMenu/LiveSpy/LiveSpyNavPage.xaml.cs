@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowPages.AddActionMenu;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Platforms;
 using GingerCoreNET;
@@ -47,7 +48,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             if (mContext.Agent != null)
             {
-                mDriver = mContext.Agent.Driver as IWindowExplorer;
+                mDriver = ((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer;
             }
             else
             {
@@ -61,7 +62,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mContext.Agent != null)
             {
-                mDriver = mContext.Agent.Driver as IWindowExplorer;
+                mDriver = ((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer;
                 LoadLiveSpyPage(mContext);
             }
             else
@@ -85,7 +86,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     if (mContext.Agent != null)
                     {
-                        mDriver = mContext.Agent.Driver as IWindowExplorer;
+                        mDriver = ((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer;
                     }
                     else
                     {
@@ -126,7 +127,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                 if (!isLoaded)
                 {
-                    ApplicationAgent appAgent = AgentHelper.GetAppAgent(mContext.BusinessFlow.CurrentActivity, mContext.Runner, mContext);
+                    ApplicationAgent appAgent = AgentHelper.GetAppAgent(mContext.BusinessFlow.CurrentActivity, (GingerExecutionEngine)mContext.Runner, mContext);
                     if (appAgent != null)
                     {
                         mCurrentLoadedPage = new LiveSpyPage(mContext, mDriver);

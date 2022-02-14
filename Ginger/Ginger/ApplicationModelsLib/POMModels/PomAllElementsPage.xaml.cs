@@ -45,15 +45,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             get
             {
-                if (mAgent != null && mAgent.Status == Agent.eStatus.Running)
+                if (mAgent != null && ((AgentOperations)mAgent.AgentOperations).Status == Agent.eStatus.Running)
                 {
-                    return mAgent.Driver as IWindowExplorer;
+                    return ((AgentOperations)mAgent.AgentOperations).Driver as IWindowExplorer;
                 }
                 else
                 {
                     if (mAgent != null)
                     {
-                        mAgent.Close();
+                        mAgent.AgentOperations.Close();
                     }
                     return null;
                 }
@@ -175,7 +175,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            if (mAgent.Driver.IsDriverBusy)
+            if (((AgentOperations)mAgent.AgentOperations).Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
                 LiveSpyButton.IsChecked = false;
@@ -281,7 +281,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            if (mAgent != null && mAgent.Driver.IsDriverBusy)
+            if (mAgent != null && ((AgentOperations)mAgent.AgentOperations).Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
                 return;
@@ -418,7 +418,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 return;
             }
 
-            if (mAgent.Driver.IsDriverBusy)
+            if (((AgentOperations)mAgent.AgentOperations).Driver.IsDriverBusy)
             {
                 Reporter.ToUser(eUserMsgKey.POMDriverIsBusy);
                 return;

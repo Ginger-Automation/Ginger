@@ -78,7 +78,7 @@ namespace Ginger.AnalyzerLib
 
                 //Code to analyze Runner Unique Businessflow with Source BF
                 List<Guid> checkedGuidList = new List<Guid>();
-                Parallel.ForEach(GR.BusinessFlows, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
+                Parallel.ForEach(GR.Executor.BusinessFlows, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
                 {
                     if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
                     {
@@ -93,9 +93,9 @@ namespace Ginger.AnalyzerLib
 
                 //Code to analyze Runner BF i.e. BFFlowControls
                 //foreach (BusinessFlow BF in GR.BusinessFlows)
-                Parallel.ForEach(GR.BusinessFlows, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
+                Parallel.ForEach(GR.Executor.BusinessFlows, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
                 {
-                    foreach (AnalyzerItemBase issue in AnalyzeRunnerBusinessFlow.Analyze(GR, BF))
+                    foreach (AnalyzerItemBase issue in AnalyzeRunnerBusinessFlow.Analyze((GingerExecutionEngine)GR.Executor, BF))
                     {
                         AddIssue(issuesList, issue);
                     }

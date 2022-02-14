@@ -59,11 +59,11 @@ namespace GingerCore.Drivers.Common
         public bool taskFinished;
         public bool StopProcess { get; set; } = false;
         public abstract void StopRecording();
-    
+
         public UIAElementInfo CurrentWindowRootElement = null;
         public void UpdateRootElement()
         {
-            CurrentWindowRootElement = new UIAElementInfo() { ElementName=GetControlPropertyValue(GetCurrentWindow(),"Name"), ElementObject = GetCurrentWindow() };
+            CurrentWindowRootElement = new UIAElementInfo() { ElementName = GetControlPropertyValue(GetCurrentWindow(), "Name"), ElementObject = GetCurrentWindow() };
         }
 
         public abstract object GetCurrentWindow();
@@ -76,7 +76,7 @@ namespace GingerCore.Drivers.Common
         public abstract Boolean SetWindowVisualState(ActWindow act);
         public abstract bool ExpandComboboxByUIA(object element);
 
-        public abstract string SetElementVisualState(object AE,string state);
+        public abstract string SetElementVisualState(object AE, string state);
 
         public abstract string SetElementSize(object AE, string size);
 
@@ -86,7 +86,7 @@ namespace GingerCore.Drivers.Common
             try
             {
                 string LocValueCalculated = act.LocateValueCalculated;
-                CurAE = FindElementByLocator(act.LocateBy, LocValueCalculated);                
+                CurAE = FindElementByLocator(act.LocateBy, LocValueCalculated);
             }
             catch (COMException e)
             {
@@ -116,15 +116,15 @@ namespace GingerCore.Drivers.Common
         public abstract string SelectAndValidateHandler(object element, ActUIElement action);
         public abstract void SelectControlByIndex(object element, string value);
         public abstract void SendKeysToControl(object element, string value);
-        public abstract  String GetControlValue(object element);
-        public abstract String GetControlText(object element, string XY= "");
-        public abstract  String GetControlFieldValue(object element,String value);
+        public abstract String GetControlValue(object element);
+        public abstract String GetControlText(object element, string XY = "");
+        public abstract String GetControlFieldValue(object element, String value);
         public abstract String GetControlPropertyValue(object element, String value);
         public abstract bool ClickContextMenuItem(object element, string value);
-        public abstract string ClickElement(object element, Boolean asyncFlag=false);
+        public abstract string ClickElement(object element, Boolean asyncFlag = false);
         public abstract void ClickOnXYPoint(object element, string value);
 
-        public abstract void DoRightClick(object element, string XY="");
+        public abstract void DoRightClick(object element, string XY = "");
 
         public abstract void DoDoubleClick(object element, string XY = "");
 
@@ -139,17 +139,17 @@ namespace GingerCore.Drivers.Common
 
         public abstract Boolean IsElementExist(eLocateBy eLocatorType, string LocateValue); //IsChildElementExist
 
-        public abstract Boolean IsChildElementExist(eLocateBy eLocatorType, string LocateValue,string ValueForDriver);
+        public abstract Boolean IsChildElementExist(eLocateBy eLocatorType, string LocateValue, string ValueForDriver);
 
         public abstract void ScrollDown(object element);
 
         public abstract void ScrollUp(object element);
 
         public abstract string IsControlSelected(object element);
-        
+
         public abstract ElementInfo GetElementInfoFor(object element);
 
-        public abstract  void ExpandControlElement(object element);
+        public abstract void ExpandControlElement(object element);
 
         public abstract void CollapseControlElement(object element);
 
@@ -160,8 +160,8 @@ namespace GingerCore.Drivers.Common
         public abstract object GetElementAtPoint(System.Windows.Point point);
 
         public abstract Task<List<ElementInfo>> GetVisibleControls();
-                
-        public  ObservableList<ElementLocator> GetElementLocators(ElementInfo ei)
+
+        public ObservableList<ElementLocator> GetElementLocators(ElementInfo ei)
         {
             string elementName = GetElementTitle(ei.ElementObject);
 
@@ -181,7 +181,7 @@ namespace GingerCore.Drivers.Common
             {
                 list.Add(new ElementLocator() { LocateBy = eLocateBy.ByAutomationID, LocateValue = elementAutomamtionID, Help = "Recommended and usually stable" });
             }
-            
+
             //TODO: Fix the issue with X,Y Calculations for Windows Driver. meanwhile showing x,y locator only for PB
             if (mPlatform == ePlatformType.PowerBuilder)
             {
@@ -265,12 +265,12 @@ namespace GingerCore.Drivers.Common
                 WEI.XCordinate = double.Parse(GetControlPropertyValue(window, "XOffset"));
                 WEI.YCordinate = double.Parse(GetControlPropertyValue(window, "XOffset"));
                 AW.RefObject = WEI;
-                AW.WindowType = windowType; 
+                AW.WindowType = windowType;
             }
             return AW;
         }
 
-       public abstract object[] GetSupportedPatterns(object element);
+        public abstract object[] GetSupportedPatterns(object element);
 
         public abstract string GetPatternName(object pattern);
 
@@ -305,10 +305,10 @@ namespace GingerCore.Drivers.Common
 
                 // If user have multiple screens, get the one where the current window is displayed, resolve issue of highlighter not working when app window on secondary monitor
                 System.Windows.Forms.Screen scr = System.Windows.Forms.Screen.FromHandle((IntPtr)hwnd);
-                HighlightRect(r, scr, WEI); 
+                HighlightRect(r, scr, WEI);
             }
             else
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.ObjectUnavailable, "Selected Object is not available, cannot highlight the element");
             }
         }
@@ -376,7 +376,7 @@ namespace GingerCore.Drivers.Common
             InvalidateRect(IntPtr.Zero, IntPtr.Zero, true);
             return UpdateWindow(hWnd);
         }
-        public  void StartRecording()
+        public void StartRecording()
         {
             //TODO : make available recording function for PBDriver and Windows Driver            
             Reporter.ToUser(eUserMsgKey.MissingImplementation, "Recording");

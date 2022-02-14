@@ -65,7 +65,7 @@ namespace Ginger.Environments
             Database selectedDB = (Database)grdAppDbs.CurrentItem;
             if (e.Column.Header.ToString() == nameof(Database.Name))
             {
-                selectedDB.NameBeforeEdit = selectedDB.Name;
+                ((DatabaseOperations)selectedDB.DatabaseOperations).NameBeforeEdit = selectedDB.Name;
             }
             if (selectedDB.DBType == Database.eDBTypes.Cassandra)
             {
@@ -99,7 +99,7 @@ namespace Ginger.Environments
             if (e.Column.Header.ToString() == nameof(Database.Name))
             {
                 Database selectedDB = (Database)grdAppDbs.CurrentItem;
-                if (selectedDB.Name != selectedDB.NameBeforeEdit)
+                if (selectedDB.Name != ((DatabaseOperations)selectedDB.DatabaseOperations).NameBeforeEdit)
                 {
                     await UpdateDatabaseNameChange(selectedDB);
                 }
@@ -117,7 +117,7 @@ namespace Ginger.Environments
             {
                 await Task.Run(() =>
                 {
-                    Reporter.ToStatus(eStatusMsgKey.RenameItem, null, db.NameBeforeEdit, db.Name);
+                    Reporter.ToStatus(eStatusMsgKey.RenameItem, null, ((DatabaseOperations)db.DatabaseOperations).NameBeforeEdit, db.Name);
                     ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
                     Parallel.ForEach(allBF, new ParallelOptions { MaxDegreeOfParallelism = 5 }, businessFlow =>
                     {
@@ -128,7 +128,7 @@ namespace Ginger.Environments
                                 if (act.GetType() == typeof(ActDBValidation))
                                 {
                                     ActDBValidation actDB = (ActDBValidation)act;
-                                    if (actDB.DBName == db.NameBeforeEdit)
+                                    if (actDB.DBName == ((DatabaseOperations)db.DatabaseOperations).NameBeforeEdit)
                                     {
                                         businessFlow.DirtyStatus = eDirtyStatus.Modified;
                                         actDB.DBName = db.Name;
@@ -140,7 +140,7 @@ namespace Ginger.Environments
                     });
                 });
 
-                db.NameBeforeEdit = db.Name;
+                ((DatabaseOperations)db.DatabaseOperations).NameBeforeEdit = db.Name;
             }
             catch (Exception ex)
             {
@@ -168,8 +168,8 @@ namespace Ginger.Environments
                 db.ProjEnvironment = mContext.Environment;
                 db.BusinessFlow = null;
 
-                db.CloseConnection();
-                if (db.Connect(true))
+                db.DatabaseOperations.CloseConnection();
+                if (db.DatabaseOperations.Connect(true))
                 {
                     Reporter.ToUser(eUserMsgKey.DbConnSucceed);
                 }
@@ -177,7 +177,7 @@ namespace Ginger.Environments
                 {
                     Reporter.ToUser(eUserMsgKey.DbConnFailed);
                 }
-                db.CloseConnection();
+                db.DatabaseOperations.CloseConnection();
             }
             catch (Exception ex)
             {
@@ -214,19 +214,19 @@ namespace Ginger.Environments
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.Name, WidthWeight = 20 });
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.Description, WidthWeight = 30 });
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.DBVer, Header = "Version", WidthWeight = 10 });
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.Type, WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = Database.DbTypes, Header = "DB Type" });
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.TNS, Header = "TNS / File Path / Host ", WidthWeight = 30 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Database.Name), WidthWeight = 20 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Database.Description), WidthWeight = 30 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Database.DBVer), Header = "Version", WidthWeight = 10 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Database.DBType), WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = Database.DbTypes, Header = "DB Type" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Database.TNS), Header = "TNS / File Path / Host ", WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = "VE1", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["TNSValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.User, Header = "User Name", WidthWeight = 10 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Database.User), Header = "User Name", WidthWeight = 10 });
             view.GridColsView.Add(new GridColView() { Field = "VE2", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["UserValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.Pass, Header = "User Password", WidthWeight = 10 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Database.Pass), Header = "User Password", WidthWeight = 10 });
             view.GridColsView.Add(new GridColView() { Field = "VE3", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["PswdValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.ConnectionString, WidthWeight = 20, Header = "Connection String (Optional)" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Database.ConnectionString), WidthWeight = 20, Header = "Connection String (Optional)" });
             view.GridColsView.Add(new GridColView() { Field = "VE4", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["ConnStrValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = Database.Fields.KeepConnectionOpen, Header = "Keep Connection Open", StyleType = GridColView.eGridColStyleType.CheckBox, MaxWidth = 150, WidthWeight = 10 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Database.KeepConnectionOpen), Header = "Keep Connection Open", StyleType = GridColView.eGridColStyleType.CheckBox, MaxWidth = 150, WidthWeight = 10 });
             grdAppDbs.SetAllColumnsDefaultView(view);
             grdAppDbs.InitViewItems();
         }
@@ -236,6 +236,9 @@ namespace Ginger.Environments
             db.Name = "New";
             db.PropertyChanged += db_PropertyChanged;
             grdAppDbs.DataSourceList.Add(db);
+            
+            DatabaseOperations databaseOperations = new DatabaseOperations(db);
+            db.DatabaseOperations = databaseOperations;
         }
 
         private void SetGridData()
@@ -244,6 +247,8 @@ namespace Ginger.Environments
             {
                 db.PropertyChanged -= db_PropertyChanged;
                 db.PropertyChanged += db_PropertyChanged;
+                DatabaseOperations databaseOperations = new DatabaseOperations(db);
+                db.DatabaseOperations = databaseOperations;
             }
             grdAppDbs.DataSourceList = AppOwner.Dbs;
         }
@@ -254,16 +259,16 @@ namespace Ginger.Environments
             Database db = (Database)sender;
             if (db.DBType != Database.eDBTypes.Cassandra && db.DBType != Database.eDBTypes.Couchbase && db.DBType != Database.eDBTypes.MongoDb)
             {
-                if (e.PropertyName == Database.Fields.TNS)
+                if (e.PropertyName == nameof(Database.TNS))
                 {
-                    if (db.CheckUserCredentialsInTNS())
+                    if (db.DatabaseOperations.CheckUserCredentialsInTNS())
                     {
-                        db.SplitUserIdPassFromTNS();
+                        db.DatabaseOperations.SplitUserIdPassFromTNS();
                     }
                 }
-                if (e.PropertyName == Database.Fields.TNS || e.PropertyName == Database.Fields.User || e.PropertyName == Database.Fields.Pass)
+                if (e.PropertyName == nameof(Database.TNS) || e.PropertyName == nameof(Database.User) || e.PropertyName == nameof(Database.Pass))
                 {
-                    db.CreateConnectionString();
+                    db.DatabaseOperations.CreateConnectionString();
                 }
             }
         }
@@ -277,28 +282,28 @@ namespace Ginger.Environments
         private void GridTNSVEButton_Click(object sender, RoutedEventArgs e)
         {
             Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, Database.Fields.TNS, null);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, nameof(Database.TNS), null);
             VEEW.ShowAsWindow();
         }
 
         private void GridUserVEButton_Click(object sender, RoutedEventArgs e)
         {
             Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, Database.Fields.User, null);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, nameof(Database.User), null);
             VEEW.ShowAsWindow();
         }
 
         private void GridPswdVEButton_Click(object sender, RoutedEventArgs e)
         {
             Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, Database.Fields.Pass, null);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, nameof(Database.Pass), null);
             VEEW.ShowAsWindow();
         }
 
         private void GridConnStrVEButton_Click(object sender, RoutedEventArgs e)
         {
             Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, Database.Fields.ConnectionString, null);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, nameof(Database.ConnectionString), null);
             VEEW.ShowAsWindow();
         }
     }

@@ -29,6 +29,7 @@ using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.BusinessFlowWindows;
 using Ginger.Drivers;
 using Ginger.Reports;
+using Ginger.Run;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
@@ -98,7 +99,7 @@ namespace Ginger.WindowExplorer
 
             IsLegacyPlatform = DefaultAction == null;
 
-            mContext.Runner.PropertyChanged += Runner_PropertyChanged;
+            ((GingerExecutionEngine)mContext.Runner).GingerRunner.PropertyChanged += Runner_PropertyChanged;
             SetPlatformBasedUIUpdates();
 
             //mAction.PropertyChanged -= Action_PropertyChanged;
@@ -259,7 +260,7 @@ namespace Ginger.WindowExplorer
 
         private void Runner_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Run.GingerRunner.IsRunning))
+            if (e.PropertyName == nameof(Run.GingerExecutionEngine.IsRunning))
             {
                 if (mContext.Runner.IsRunning == false)
                 {

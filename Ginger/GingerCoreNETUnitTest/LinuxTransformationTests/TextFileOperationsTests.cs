@@ -15,7 +15,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
     [TestClass]
     public class TextFileOperationsTests
     {
-        GingerRunner gingerRunner = null;
+        GingerExecutionEngine gingerRunner = null;
         ActReadTextFile actReadTextFile = new ActReadTextFile();
         String txt = "<html>\n!@$!#@%$^%$&\rטקסט בעיברית\n ∂c๏∂ε\nÖ Ø ç Ñ ½ ¥";
 
@@ -24,7 +24,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         {
             WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-            gingerRunner = new GingerRunner(Amdocs.Ginger.Common.eExecutedFrom.Automation);
+            gingerRunner = new GingerExecutionEngine(new GingerRunner(), Amdocs.Ginger.Common.eExecutedFrom.Automation);
         }
 
         [TestMethod]

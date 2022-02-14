@@ -94,11 +94,11 @@ namespace GingerCore.Environments
             {
                 foreach (EnvApplication ea in Applications)
                 {
-                    foreach (IDatabase db in ea.Dbs)
+                    foreach (Database db in ea.Dbs)
                     {
                         if (ea.Dbs != null)
                         {
-                            db.CloseConnection();
+                            db.DatabaseOperations.CloseConnection();
                         }
                     }
                 }

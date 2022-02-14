@@ -39,7 +39,7 @@ namespace GingerCore.Actions.JSON
 
         public override bool IsSelectableAction { get { return false; } }
         public override string ActionDescription { get { return "JSON Tag Validation Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "JSON Tag Validation Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -129,7 +129,7 @@ namespace GingerCore.Actions.JSON
             {
                 jsonContent = JsonInput.ValueForDriver.ToString();
             }
-            
+
             XmlDocument doc = null;
             if (((jsonContent[0] == '[') && (jsonContent[jsonContent.Length - 1] == ']')))
             {
@@ -147,7 +147,7 @@ namespace GingerCore.Actions.JSON
             foreach (Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem outputItem in outputTagsList)
             {
                 foreach (ActInputValue aiv in DynamicElements)
-                {                    
+                {
                     string calculatedValue = ValueExpression.Calculate(@aiv.Param);
                     if (outputItem.path == "/root/" + calculatedValue)
                     {

@@ -108,7 +108,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         
         public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
-            WorkSpace.Instance.Telemetry.Add("runnerrunend", new { Guid = gingerRunner.Guid, Elapsed = gingerRunner.Elapsed, Status = gingerRunner.Status });
+            WorkSpace.Instance.Telemetry.Add("runnerrunend", new { Guid = gingerRunner.Guid, Elapsed = gingerRunner.Executor.Elapsed, Status = gingerRunner.Status });
         }
         
 

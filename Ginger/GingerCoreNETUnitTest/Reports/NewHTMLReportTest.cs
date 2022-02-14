@@ -28,8 +28,8 @@ namespace GingerCoreNETUnitTest.Reports
             // add ExecutionDumperListener so json.txt files will be created            
             string dumpFolder = TestResources.GetTempFolder("dumper");
 
-            ExecutionDumperListener executionDumperListener = new ExecutionDumperListener(dumpFolder);   
-            mGingerRunner.RunListeners.Add(executionDumperListener);
+            ExecutionDumperListener executionDumperListener = new ExecutionDumperListener(dumpFolder);
+            ((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.Add(executionDumperListener);
         }
 
         [ClassCleanup]
@@ -65,9 +65,9 @@ namespace GingerCoreNETUnitTest.Reports
             mBF.Activities.Add(activitiy1);
             ActDummy action1 = new ActDummy() { Description = "Dummay action 1", Active = true };
             activitiy1.Acts.Add(action1);
-            mGingerRunner.BusinessFlows.Add(mBF);
+            mGingerRunner.Executor.BusinessFlows.Add(mBF);
             RunListenerBase.Start();
-            mGingerRunner.RunBusinessFlow(mBF);
+            mGingerRunner.Executor.RunBusinessFlow(mBF);
 
             //Act
             NewHTMLReport newHTMLReport = new NewHTMLReport();

@@ -60,18 +60,18 @@ namespace UnitTests.UITests
             mBF.AddVariable(v1);
 
             mGR = new GingerRunner();
-            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
-            
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(a);
+
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "WebApp", Agent = a });
-            mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "WebApp", Platform = ePlatformType.Web, Description = "New application" });
-            mGR.BusinessFlows.Add(mBF);
+            mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "WebApp", Platform = ePlatformType.Web, Description = "New application" });
+            mGR.Executor.BusinessFlows.Add(mBF);
         }
 
         
@@ -103,7 +103,7 @@ namespace UnitTests.UITests
             a1.Acts.Add(act3);
 
             // Act
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
 
             //Assert
             Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
@@ -138,7 +138,7 @@ namespace UnitTests.UITests
             act2.Active = true;
             a1.Acts.Add(act2);
 
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
             Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
             Assert.AreEqual(a1.Status, eRunStatus.Passed);
             Assert.AreEqual(act1.Status, eRunStatus.Passed);
@@ -172,7 +172,7 @@ namespace UnitTests.UITests
             act3.Active = true;
             a1.Acts.Add(act3);
 
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
             Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
             Assert.AreEqual(a1.Status, eRunStatus.Passed);
             Assert.AreEqual(act1.Status, eRunStatus.Passed);
@@ -205,7 +205,7 @@ namespace UnitTests.UITests
             act3.Active = true;
             a1.Acts.Add(act3);
 
-            mGR.RunRunner();
+            mGR.Executor.RunRunner();
             Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
             Assert.AreEqual(a1.Status, eRunStatus.Passed);
             Assert.AreEqual(act1.Status, eRunStatus.Passed);

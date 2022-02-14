@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             HTMLReportConfiguration currentTemplate = (HTMLReportConfiguration)a;
             System.Drawing.Image CustomerLogo = this.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
             CustomerLogo.Save(Path.Combine(tempFolder,"CustomerLogo.png"));
-            HTMLReportConfiguration.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
+            HTMLReportConfigurationOperations.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
         }
 
         public System.Drawing.Image Base64StringToImage(string base64String)

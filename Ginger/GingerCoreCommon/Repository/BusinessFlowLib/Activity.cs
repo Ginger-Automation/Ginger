@@ -39,7 +39,8 @@ namespace GingerCore
     public enum eActivityAutomationStatus
     {
         Development = 0,
-        Automated = 1
+        Automated = 1,
+        Manual = 2
     }
 
     public enum eActionRunOption
@@ -899,7 +900,10 @@ namespace GingerCore
         {
             base.UpdateItemFieldForReposiotryUse();
             ActivitiesGroupID = null;
-            AutomationStatus = eActivityAutomationStatus.Automated;
+            if (AutomationStatus == eActivityAutomationStatus.Development)//In case Manual need to keep it as is
+            {
+                AutomationStatus = eActivityAutomationStatus.Automated;
+            }
         }
 
         public ObservableList<VariableBase> GetVariables()

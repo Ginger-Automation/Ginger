@@ -42,7 +42,7 @@ namespace WorkspaceHold
         
         static DummyDriver mDummyDriver;
         static GingerGrid mGingerGrid;
-        static GingerRunner mGingerRunner;
+        static GingerExecutionEngine mGingerRunner;
 
         const string cWebApp = "Web";
         static string mPluginId = "DummyPlugin";
@@ -92,7 +92,7 @@ namespace WorkspaceHold
                 //Act            
                 mGingerRunner.RunBusinessFlow(BF);
                 Console.WriteLine("a1.Error = " + a1.Error);
-                agent.Close();
+                agent.AgentOperations.Close();
 
                 //Assert
                 Assert.IsTrue(string.IsNullOrEmpty(a1.Error), "Action.Error=null");
@@ -145,8 +145,8 @@ namespace WorkspaceHold
             agent.PluginId = mPluginId;
             agent.ServiceId = mServiceId;
 
-            mGingerRunner = new GingerRunner();
-            mGingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = cWebApp, Agent = agent });
+            mGingerRunner = new GingerExecutionEngine(new GingerRunner());
+            mGingerRunner.GingerRunner.ApplicationAgents.Add(new ApplicationAgent() { AppName = cWebApp, Agent = agent });
 
             return agent;
         }

@@ -146,7 +146,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
             }
 
-            SetActionsListViewData(xPlatformPlugInsActionsListView, PlugInsActions);            
+            SetActionsListViewData(xPlatformPlugInsActionsListView, PlugInsActions);
         }
 
         private void LoadGridData()
@@ -187,7 +187,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void SetActionsListView(UcListView ucListView, Ginger.General.eRIPageViewMode pageViewMode)
         {
             ucListView.ListTitleVisibility = Visibility.Hidden;
-                        
+
             mActionsListHelper = new ActionsListViewHelper(mContext, pageViewMode);
 
             ucListView.SetDefaultListDataTemplate(mActionsListHelper);
@@ -212,7 +212,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             var ActTypes = new List<Type>();
             foreach (Assembly GC in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("GingerCore")))
             {
-                var types = from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) select type;
+                var types = from type in GC.GetTypes() where type.IsSubclassOf(typeof(Act)) && type != typeof(ActWithoutDriver) && type != typeof(ActImageCaptureSupport) select type;
                 ActTypes.AddRange(types);
             }
 
@@ -259,7 +259,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
             return Acts;
         }
-                
+
         /*
         private void SetActionsGridView(ucGrid actionsGrid)
         {
@@ -290,7 +290,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (ActionsTabs.SelectedContent != null)
             {
-                ucGrid actionsGrid = ((ucGrid) ActionsTabs.SelectedContent);
+                ucGrid actionsGrid = ((ucGrid)ActionsTabs.SelectedContent);
                 if (actionsGrid.Grid.SelectedItems != null && actionsGrid.Grid.SelectedItems.Count > 0)
                 {
                     foreach (Act selectedAct in actionsGrid.Grid.SelectedItems)

@@ -153,6 +153,9 @@ namespace Ginger.GeneralLib
             try
             {
                 Email mail = new Email();
+                EmailOperations emailOperations = new EmailOperations(mail);
+                mail.EmailOperations = emailOperations;
+
                 mail.EmailMethod = Email.eEmailMethod.OUTLOOK;
 
                 mail.Subject = "Ginger Error Occurred: " + mException.Message;
@@ -171,7 +174,7 @@ namespace Ginger.GeneralLib
                     mail.Attachments.Add(screenShot);
                 }                
 
-                mail.DisplayAsOutlookMail();
+                mail.EmailOperations.DisplayAsOutlookMail();
 
                 if (mail.Event != null && mail.Event.IndexOf("Failed") >= 0)
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to send the error mail." + System.Environment.NewLine + System.Environment.NewLine + "Details: " + mail.Event);

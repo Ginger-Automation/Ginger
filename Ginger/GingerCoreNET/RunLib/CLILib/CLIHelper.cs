@@ -485,7 +485,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SaveAndCommitSelfHealingChanges()
         {
-            WorkSpace.Instance.Solution.SaveSolution();
+            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution();
 
             //TODO: We don't have save all option yet. iterating each item then save it. So, need to add save all option on solution level
             var POMs =WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
