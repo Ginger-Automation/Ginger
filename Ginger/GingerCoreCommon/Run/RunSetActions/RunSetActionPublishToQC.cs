@@ -37,7 +37,7 @@ namespace Ginger.Run.RunSetActions
     public class RunSetActionPublishToQC : RunSetActionBase
     {
         public IRunSetActionPublishToQCOperations RunSetActionPublishToQCOperations;
-        
+        public static String AlmTypeDefault = "Default";
         private string mVariableForTCRunName;
         [IsSerializedForLocalRepository]
         public string VariableForTCRunName { get { return mVariableForTCRunName; } set { if (mVariableForTCRunName != value) { mVariableForTCRunName = value; OnPropertyChanged(nameof(VariableForTCRunName)); } } }

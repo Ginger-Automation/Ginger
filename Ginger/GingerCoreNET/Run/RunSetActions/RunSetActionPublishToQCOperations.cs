@@ -28,6 +28,7 @@ using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
 using Amdocs.Ginger.Common.InterfacesLib;
 using static Ginger.Run.RunSetActions.RunSetActionBase;
+using GingerCore.Activities;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -81,6 +82,52 @@ namespace Ginger.Run.RunSetActions
                 RunSetActionPublishToQC.Status = eRunSetActionStatus.Completed;
             }
         }
+        public BusinessFlow ConvertRunSetToBF(ReportInfo reportInfo)
+        {
+            RunsetExecutor runSetExec = WorkSpace.Instance.RunsetExecutor;
+            try
+            {
+                if (reportInfo == null)
+                {
+                    return null;
+                }
 
+                //Create Business Flow
+                BusinessFlow virtualBF = new BusinessFlow();
+                virtualBF.Name = runSetExec.RunSetConfig.Name;
+                virtualBF.Description = runSetExec.RunSetConfig.Description;
+                virtualBF.Status = BusinessFlow.eBusinessFlowStatus.Development;
+                virtualBF.RunStatus = runSetExec.RunSetConfig.RunSetExecutionStatus;
+                virtualBF.Activities = new ObservableList<Activity>();
+                foreach (GingerRunner runSetrunner in runSetExec.Runners)
+                {
+                    foreach (BusinessFlow runSetBF in runSetrunner.BusinessFlows)
+                    {
+                        ActivitiesGroup virtualAG = new ActivitiesGroup();
+                        virtualAG.Name = runSetBF.Name;
+                        virtualAG.Description = runSetBF.Description;
+                        if (Enum.IsDefined(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString()))
+                        {
+                            virtualAG.RunStatus = (eActivitiesGroupRunStatus)Enum.Parse(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString());
+                        }
+                        else
+                        {
+                            virtualAG.RunStatus = eActivitiesGroupRunStatus.NA;
+                        }
+                        virtualBF.AddActivitiesGroup(virtualAG);
+                        foreach (Activity runSetAct in runSetBF.Activities)
+                        {
+                            virtualBF.AddActivity(runSetAct, virtualAG);
+                        }
+                    }
+                }
+                return virtualBF;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                return null;
+            }
+        }
     }
 }
