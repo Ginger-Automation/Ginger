@@ -31,23 +31,25 @@ using System.Linq;
 
 namespace Amdocs.Ginger.Common
 {
-    public class Context : INotifyPropertyChanged
+    public class Context : INotifyPropertyChanged, IContext
     {
-        private GingerRunner mRunner;
-        public GingerRunner Runner
+        private IGingerExecutionEngine mRunner;
+        public IGingerExecutionEngine Runner
         {
-            get {
+            get
+            {
                 return mRunner;
             }
-            set {
-                if(mRunner != value)
+            set
+            {
+                if (mRunner != value)
                 {
                     mRunner = value;
                     OnPropertyChanged(nameof(Runner));
                 }
             }
         }
-        
+
         private ProjEnvironment mEnvironment;
         public ProjEnvironment Environment
         {
@@ -98,7 +100,7 @@ namespace Amdocs.Ginger.Common
                 }
             }
         }
-        
+
         private TargetBase mTarget;
         public TargetBase Target
         {
@@ -115,7 +117,7 @@ namespace Amdocs.Ginger.Common
                 }
             }
         }
-                
+
         private Agent mAgent;
         public Agent Agent
         {

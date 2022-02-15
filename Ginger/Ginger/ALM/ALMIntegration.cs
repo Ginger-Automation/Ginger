@@ -32,6 +32,9 @@ using GingerCore.ALM.QC;
 using amdocs.ginger.GingerCoreNET;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 using GingerCoreNET.ALMLib;
+using GingerWPF.WizardLib;
+using System.Windows.Controls;
+using System.Threading.Tasks;
 
 namespace Ginger.ALM
 {
@@ -258,6 +261,44 @@ namespace Ginger.ALM
 
             Mouse.OverrideCursor = null;
             return domainList;
+        }
+
+        internal async Task<bool> MapBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false)
+        {
+            Reporter.ToLog(eLogLevel.INFO, "Mapping " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM");
+            //Passing Solution Folder path to GingerCore
+            ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+
+            bool isMapSucc = false;
+
+            try
+            {
+                Reporter.ToStatus(eStatusMsgKey.ALMTestSetMap);
+                bool isConnected = false;
+                await Task.Run(() =>
+                {
+                    isConnected = AutoALMProjectConnect(eALMConnectType.Auto);
+                });
+                if (isConnected)
+                    {
+                        if (GetALMType().Equals(eALMType.ZephyrEnterprise))
+                        {
+                            WizardWindow.ShowWizard(new MapToALMWizard.AddMapToALMWizard(businessFlow), 1200);
+                            isMapSucc = true;
+                            DisconnectALMServer();
+                        }
+                        else
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"'Map To ALM' - not Supporting {GetALMType()}.");
+                        }
+                    }
+                
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
+            return isMapSucc;
         }
 
         public List<string> GetJiraTestingALMs()
@@ -487,50 +528,12 @@ namespace Ginger.ALM
 
         public void RefreshALMItemFields(ObservableList<ExternalItemFieldBase> exitingFields, bool online, BackgroundWorker bw = null)
         {
-            ObservableList<ExternalItemFieldBase> mergedFields = new ObservableList<ExternalItemFieldBase>();
             if (ALMIntegration.Instance.AutoALMProjectConnect())
             {
                 //Get latestALMFields from ALMCore with Online flag
                 ObservableList<ExternalItemFieldBase> latestALMFields = AlmCore.GetALMItemFields(bw, online);
-                foreach (ExternalItemFieldBase latestField in latestALMFields)
-                {
-                    ExternalItemFieldBase currentField = exitingFields.Where(x => x.ID == latestField.ID && x.ItemType == latestField.ItemType).FirstOrDefault();
-                    if (currentField != null)
-                    {
-                        currentField.Name = latestField.Name;
-                        currentField.ItemType = latestField.ItemType;
-                        currentField.Mandatory = latestField.Mandatory;
-                        currentField.ExternalID = latestField.ExternalID;
-                        currentField.PossibleValues = latestField.PossibleValues;
-                        currentField.ToUpdate = false;
-                        if (string.IsNullOrEmpty(currentField.SelectedValue) == false)
-                        {
-                            if ((latestField.PossibleValues.Count == 0 && currentField.SelectedValue != latestField.SelectedValue) || (latestField.PossibleValues.Count > 0 && latestField.PossibleValues.Contains(currentField.SelectedValue) && currentField.SelectedValue != latestField.PossibleValues[0]))
-                            {
-                                currentField.ToUpdate = true;
-                            }
-                            else
-                            {
-                                currentField.SelectedValue = latestField.SelectedValue;
-                                currentField.ToUpdate = false;
-                            }
-                        }
-                        else
-                        {
-                            currentField.SelectedValue = latestField.SelectedValue;
-                            currentField.ToUpdate = false;
-                        }
-                        mergedFields.Add(currentField);
-                    }
-                    else
-                    {
-                        mergedFields.Add(latestField);
-                    }
-                }
-                exitingFields.ClearAll();
-                exitingFields.Append(mergedFields);
+                ObservableList<ExternalItemFieldBase> mergedFields = AlmCore.RefreshALMItemFields(exitingFields, latestALMFields);
             }
-
         }
         internal ObservableList<ExternalItemFieldBase> GetUpdatedFields(ObservableList<ExternalItemFieldBase> mItemsFields, bool online, BackgroundWorker bw = null)
         {
@@ -605,8 +608,11 @@ namespace Ginger.ALM
             if (!isConnected && almConnectStyle != eALMConnectType.Silence)
                 if (showConnWin)
                 {
-                    ALMConnectionPage almConnPage = new ALMConnectionPage(almConnectStyle, asConnWin);
-                    almConnPage.ShowAsWindow();
+                    App.MainWindow.Dispatcher.Invoke(() =>
+                    {
+                        ALMConnectionPage almConnPage = new ALMConnectionPage(almConnectStyle, asConnWin);
+                        almConnPage.ShowAsWindow();
+                    });
                     try { isConnected = ConnectALMProject(); }
                     catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
                 }
@@ -660,7 +666,23 @@ namespace Ginger.ALM
         }
         public eALMType GetALMType()
         {
-            return ALMCore.AlmConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType;
+            return ALMCore.GetDefaultAlmConfig().AlmType;
+        }
+        public Page GetALMTestSetsTreePage(string importDestinationPath = "")
+        {
+            return AlmRepo.GetALMTestSetsTreePage(importDestinationPath);
+        }
+        public Object GetSelectedImportTestSetData(Page page)
+        {
+            return AlmRepo.GetSelectedImportTestSetData(page);
+        }
+        public void GetALMTestSetData(ALMTestSet almTestSet)
+        {
+            AlmRepo.GetALMTestSetData(almTestSet);
+        }
+        public ALMTestSet GetALMTestCases(ALMTestSet almTestSet)
+        {
+            return AlmRepo.GetALMTestCasesToTestSetObject(almTestSet);
         }
     }
 }

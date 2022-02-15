@@ -48,7 +48,7 @@ namespace GingerCoreNET.Application_Models
             {
                 if (Agent != null)
                 {
-                    return ((IWindowExplorer)(Agent.Driver));
+                    return ((IWindowExplorer)(((AgentOperations)Agent.AgentOperations).Driver));
                 }
                 else
                 {
@@ -74,7 +74,7 @@ namespace GingerCoreNET.Application_Models
             {
                 IsLearning = true;
                 mIWindowExplorerDriver.UnHighLightElements();
-                ((DriverBase)Agent.Driver).StopProcess = false;
+                ((DriverBase)((AgentOperations)Agent.AgentOperations).Driver).StopProcess = false;
                 POMElementsCopy.Clear();
                 DeltaViewElements.Clear();
                 PomLearnUtils.PrepareLearningConfigurations();
@@ -127,8 +127,8 @@ namespace GingerCoreNET.Application_Models
             return customRelXpathTemplateList;
         }
         public void StopLearning()
-        {            
-            ((DriverBase)Agent.Driver).StopProcess = true;
+        {
+            ((DriverBase)((AgentOperations)Agent.AgentOperations).Driver).StopProcess = true;
             IsLearning = false;
         }
 

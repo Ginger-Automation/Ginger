@@ -206,10 +206,13 @@ namespace Amdocs.Ginger.CoreNET
             {
                 uniqueName = pageTitle;
                 int appendCount = 2;
-                while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(x => x.Name.Trim().ToLower() == uniqueName.Trim().ToLower()).FirstOrDefault() != null)
+                if (WorkSpace.Instance.SolutionRepository != null)//check for unit tests
                 {
-                    uniqueName = string.Format("{0}_{1}", pageTitle, appendCount);
-                    appendCount++;
+                    while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(x => x.Name.Trim().ToLower() == uniqueName.Trim().ToLower()).FirstOrDefault() != null)
+                    {
+                        uniqueName = string.Format("{0}_{1}", pageTitle, appendCount);
+                        appendCount++;
+                    }
                 }
             }
             catch (Exception ex)

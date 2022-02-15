@@ -61,9 +61,11 @@ namespace UnitTests.NonUITests
             mBF.CurrentActivity = activity;
 
             mGR = new GingerRunner();
-            mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
-            mGR.CurrentBusinessFlow = mBF;
-            mGR.BusinessFlows.Add(mBF);
+            mGR.Executor = new GingerExecutionEngine(mGR);
+
+            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+            mGR.Executor.CurrentBusinessFlow = mBF;
+            mGR.Executor.BusinessFlows.Add(mBF);
             
             
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
@@ -85,14 +87,17 @@ namespace UnitTests.NonUITests
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "Web" });
 
             Agent a = new Agent();
+            AgentOperations agentOperations = new AgentOperations(a);
+            a.AgentOperations = agentOperations;
+
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "Web", Agent = a });
-            mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
-            mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "Web", Platform = ePlatformType.Web, Description = "New Web application" });
+            mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "Web", Platform = ePlatformType.Web, Description = "New Web application" });
         }
 
 
@@ -132,7 +137,7 @@ namespace UnitTests.NonUITests
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -169,7 +174,7 @@ namespace UnitTests.NonUITests
             mBF.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
-            mGR.RunAction(action, false);
+            mGR.Executor.RunAction(action, false);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -192,7 +197,7 @@ namespace UnitTests.NonUITests
             mBF.CurrentActivity = activity;
 
             //Act
-            mGR.RunAction(actAgentManipulation);
+            mGR.Executor.RunAction(actAgentManipulation);
 
             //Assert
             Assert.AreEqual(eRunStatus.Failed, actAgentManipulation.Status, "Action Status");
@@ -206,10 +211,10 @@ namespace UnitTests.NonUITests
             actAgentManipulation.GetOrCreateInputParam(ActAgentManipulation.Fields.AgentManipulationActionType);
             actAgentManipulation.Active = true;
             AddApplicationAgent();
-            mGR.SetCurrentActivityAgent();
+            mGR.Executor.SetCurrentActivityAgent();
 
             //Act
-            mGR.RunAction(actAgentManipulation);
+            mGR.Executor.RunAction(actAgentManipulation);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actAgentManipulation.Status, "Action Status");
@@ -228,7 +233,7 @@ namespace UnitTests.NonUITests
             mBF.CurrentActivity = activity;
 
             //Act
-            mGR.RunAction(actAgentManipulation);
+            mGR.Executor.RunAction(actAgentManipulation);
 
             //Assert
             Assert.AreEqual(eRunStatus.Failed, actAgentManipulation.Status, "Action Status");
@@ -243,10 +248,10 @@ namespace UnitTests.NonUITests
             actAgentManipulation.GetOrCreateInputParam(ActAgentManipulation.Fields.AgentManipulationActionType, "RestartAgent");
             actAgentManipulation.Active = true;
             AddApplicationAgent();
-            mGR.SetCurrentActivityAgent();
+            mGR.Executor.SetCurrentActivityAgent();
 
             //Act
-            mGR.RunAction(actAgentManipulation);
+            mGR.Executor.RunAction(actAgentManipulation);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actAgentManipulation.Status, "Action Status");
@@ -270,7 +275,7 @@ namespace UnitTests.NonUITests
             action.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(action);
+            mGR.Executor.RunAction(action);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -289,7 +294,7 @@ namespace UnitTests.NonUITests
             action.Active = true;
 
             //Act
-            mGR.RunAction(action);
+            mGR.Executor.RunAction(action);
 
             //Assert
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
@@ -312,7 +317,7 @@ namespace UnitTests.NonUITests
             action.AddNewReturnParams = true;
 
             //Act
-            mGR.RunAction(action);
+            mGR.Executor.RunAction(action);
 
             //Assert
             Assert.AreEqual(eRunStatus.Failed, action.Status, "Action Status");
@@ -331,7 +336,7 @@ namespace UnitTests.NonUITests
             action.Active = true;
 
             //Act
-            mGR.RunAction(action);
+            mGR.Executor.RunAction(action);
 
             //Assert
             Assert.AreEqual(eRunStatus.Failed, action.Status, "Action Status");

@@ -45,7 +45,10 @@ namespace Ginger.Reports
             mHTMLReportConfiguration =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             mHTMLReportConfiguration.StartDirtyTracking();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LimitReportFolder, CheckBox.IsCheckedProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.LimitReportFolderSize));
-          
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralizedReportDataServiceURLTextBox, TextBox.TextProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.CentralizedReportDataServiceURL));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralizedHtmlReportServiceURLTextBox, TextBox.TextProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.CentralizedHtmlReportServiceURL));
+
+
             if (LimitReportFolder.IsChecked == true)
             {
                 FolderMaxSize.Visibility = Visibility.Visible;
@@ -176,7 +179,7 @@ namespace Ginger.Reports
             }
 
             //App.AutomateTabGingerRunner.ExecutionLogger.Configuration = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
         }
 
         private void DefaultTemplatePickerCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)

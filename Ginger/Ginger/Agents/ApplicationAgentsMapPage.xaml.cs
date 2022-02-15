@@ -42,7 +42,7 @@ namespace Ginger.Agents
     public partial class ApplicationAgentsMapPage : Page
     {        
         public ObservableList<ApplicationAgent> ApplicationAgents;
-        GingerRunner mRunner;
+        GingerExecutionEngine mRunner;
         Context mContext;
 
         bool AllowAgentsManipulation;
@@ -52,21 +52,21 @@ namespace Ginger.Agents
             get { return xAppAgentsListBox; }
         }
 
-        public ApplicationAgentsMapPage(GingerRunner runner, Context context, bool allowAgentsManipulation=true)
+        public ApplicationAgentsMapPage(GingerExecutionEngine runner, Context context, bool allowAgentsManipulation=true)
         {
             InitializeComponent();
             mRunner = runner;
             mContext = context;
             AllowAgentsManipulation = allowAgentsManipulation;
             xAppAgentsListBox.Tag = AllowAgentsManipulation;//Placed here for binding with list dataTemplate- need better place
-            mRunner.PropertyChanged += MGR_PropertyChanged;
+            mRunner.GingerRunner.PropertyChanged += MGR_PropertyChanged;
             
             RefreshApplicationAgentsList();
         }
 
         private void MGR_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(mRunner.ApplicationAgents))
+            if (e.PropertyName == nameof(mRunner.GingerRunner.ApplicationAgents))
             {
                 RefreshApplicationAgentsList();
             }
@@ -78,8 +78,12 @@ namespace Ginger.Agents
             {
                 ApplicationAgents = new ObservableList<ApplicationAgent>();
 
-                foreach (ApplicationAgent Apag in mRunner.ApplicationAgents)
+                foreach (ApplicationAgent Apag in mRunner.GingerRunner.ApplicationAgents)
                 {
+                    if (Apag.ApplicationAgentOperations == null)
+                    {
+                        Apag.ApplicationAgentOperations = new ApplicationAgentOperations(Apag);
+                    }
                     if (mRunner.SolutionApplications.Where(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() == null)
                     {
                         ApplicationAgents.Add(Apag);
@@ -96,7 +100,7 @@ namespace Ginger.Agents
             {
                 ApplicationAgent AG = (ApplicationAgent)((ucButton)sender).DataContext;
                 Agent agent = ((Agent)AG.Agent);
-                if (agent.Status != Agent.eStatus.Running)
+                if (((AgentOperations)agent.AgentOperations).Status != Agent.eStatus.Running)
                 {
                     //start Agent
                     Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
@@ -104,13 +108,13 @@ namespace Ginger.Agents
                     ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
                     ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
                     ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-                    ((Agent)AG.Agent).StartDriver();
+                    ((Agent)AG.Agent).AgentOperations.StartDriver();
                     Reporter.HideStatusMessage();
                 }
                 else
                 {
                     //close Agent
-                    agent.Close();
+                    agent.AgentOperations.Close();
                 }
             }
         }
@@ -118,20 +122,11 @@ namespace Ginger.Agents
         private void XAgentNameComboBox_DropDownOpened(object sender, EventArgs e)
         {
             ApplicationAgent applicationAgent = (ApplicationAgent)((ComboBox)sender).DataContext;
-            List<IAgent> filteredOptionalAgents = applicationAgent.PossibleAgents;
 
-            ////remove already mapped agents
-            //List<IAgent> alreadyMappedAgents = mRunner.ApplicationAgents.Where(x => x.Agent != null).Select(x => x.Agent).ToList();
-            //foreach (IAgent mappedAgent in alreadyMappedAgents)
-            //{
-            //    if (mappedAgent != applicationAgent.Agent)
-            //    {
-            //        if (filteredOptionalAgents.Contains(mappedAgent))
-            //        {
-            //            filteredOptionalAgents.Remove(mappedAgent);
-            //        }
-            //    }
-            //}
+            ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+            applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
+
+            List<IAgent> filteredOptionalAgents = applicationAgent.PossibleAgents;
 
             ((ComboBox)sender).ItemsSource = filteredOptionalAgents;
         }

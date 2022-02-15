@@ -135,7 +135,7 @@ namespace Ginger.SolutionWindows
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            mSolution.SaveSolution(true, Solution.eSolutionItemToSave.GeneralDetails);
+            mSolution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.GeneralDetails);
         }
 
         public bool ShowAsWindow(Solution solution, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
@@ -203,14 +203,14 @@ namespace Ginger.SolutionWindows
             {
                 mSolution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
                 mSolution.NeedVariablesReEncryption = true;
-                mSolution.SaveEncryptionKey();
-                mSolution.SaveSolution(false);
+                mSolution.SolutionOperations.SaveEncryptionKey();
+                mSolution.SolutionOperations.SaveSolution(false);
                 IsValidEncryptionKeyAdded = true;
                 _pageGenericWin.Close();
             }
             else if (IsEncrytedStrAvailableOnSol && UCEncryptionKey.ValidateKey())
             {
-                mSolution.SaveEncryptionKey();
+                mSolution.SolutionOperations.SaveEncryptionKey();
                 IsValidEncryptionKeyAdded = true;
                 _pageGenericWin.Close();
             }

@@ -31,6 +31,7 @@ using ZephyrEntStdSDK.Models.Base;
 using Ginger.ALM.ZephyrEnt.TreeViewItems;
 using Newtonsoft.Json.Linq;
 using GingerCore.ALM.ZephyrEnt.Bll;
+using System.IO;
 
 namespace Ginger.ALM.ZephyrEnt
 {
@@ -39,7 +40,7 @@ namespace Ginger.ALM.ZephyrEnt
     /// </summary>
     public partial class ZephyrEntPlanningExplorerPage : Page
     {
-        public enum eExplorerTestPlanningPageUsageType { Import, Select, BrowseFolders }
+        public enum eExplorerTestPlanningPageUsageType { Import, Select, BrowseFolders, Map }
         private eExplorerTestPlanningPageUsageType mExplorerTestPlanningPageUsageType;
         ObservableList<BusinessFlow> mBizFlows;
         Dictionary<string, BusinessFlow> bfsExternalIds = new Dictionary<string, BusinessFlow>();
@@ -260,6 +261,12 @@ namespace Ginger.ALM.ZephyrEnt
                     selectFolderBtn.Click += new RoutedEventHandler(SelectFolder);
                     GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Planning", this, new ObservableList<Button> { selectFolderBtn }, true, "Cancel", Cancel_Clicked);
                     return CurrentSelectedPath;
+                case (eExplorerTestPlanningPageUsageType.Map):
+                    //Button importBtn = new Button();
+                    //importBtn.Content = "Import Selected";
+                    //importBtn.Click += new RoutedEventHandler(ImportSelected);
+                    //GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Planning", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
+                    return CurrentSelectedTestSets;
                 default:
                     return "";
             }
@@ -340,11 +347,11 @@ namespace Ginger.ALM.ZephyrEnt
 
         private void UpdateIfAlreadyImported(ZephyrEntPhaseTreeItem ts)
         {
-            if (bfsExternalIds.ContainsKey(ts.TestSetID))
+            if (bfsExternalIds.ContainsKey(ts.Id))
             {
                 ts.AlreadyImported = true;
-                ts.MappedBusinessFlow = bfsExternalIds[ts.TestSetID];
-                ts.MappedBusinessFlowPath = bfsExternalIds[ts.TestSetID].ContainingFolder + '\\' + bfsExternalIds[ts.TestSetID].Name;
+                ts.MappedBusinessFlow = bfsExternalIds[ts.Id];
+                ts.MappedBusinessFlowPath = Path.Combine(bfsExternalIds[ts.Id].ContainingFolder, bfsExternalIds[ts.Id].Name);
             }
         }
 

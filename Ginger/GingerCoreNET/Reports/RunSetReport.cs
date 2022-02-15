@@ -38,6 +38,7 @@ namespace Ginger.Reports
             public static string EndTimeStamp = "EndTimeStamp";
             public static string Elapsed = "Elapsed";
             public static string ExecutionDuration = "ExecutionDuration";
+            public static string ExecutionDurationHHMMSS = "ExecutionDurationHHMMSS";
             public static string RunSetExecutionStatus = "RunSetExecutionStatus";
             public static string GingerRunnersPassRate = "GingerRunnersPassRate";
             public static string RunSetExecutionRate = "RunSetExecutionRate";
@@ -179,6 +180,9 @@ namespace Ginger.Reports
         [JsonProperty]
         public double? Elapsed { get; set; }
 
+        public string ExecutionDurationHHMMSS { get; set; }
+        
+
         public string LogFolder { get; set; }
 
         public System.Diagnostics.Stopwatch Watch = new System.Diagnostics.Stopwatch();
@@ -224,7 +228,7 @@ namespace Ginger.Reports
         {
             get
             {
-                if (DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                if (DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB || DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote)
                 {
                     return runSetExecutionStatus;
                 }
@@ -263,6 +267,7 @@ namespace Ginger.Reports
             StartTimeStamp = runSet.StartTimeStamp;
             EndTimeStamp = runSet.EndTimeStamp;
             Elapsed = runSet.Elapsed;
+            ExecutionDurationHHMMSS = GingerCoreNET.GeneralLib.General.TimeConvert(Elapsed.ToString());
             Amdocs.Ginger.CoreNET.Execution.eRunStatus myStatus;
             if(Enum.TryParse(runSet.RunStatus, out myStatus))
             {

@@ -115,14 +115,14 @@ namespace Ginger.WindowExplorer
             mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
 
             //Instead of check make it disabled ?
-            if (((Agent)ApplicationAgent.Agent).Driver != null && (((Agent)ApplicationAgent.Agent).Driver is IWindowExplorer) == false)
+            if (((AgentOperations)((Agent)ApplicationAgent.Agent).AgentOperations).Driver != null && (((AgentOperations)((Agent)ApplicationAgent.Agent).AgentOperations).Driver is IWindowExplorer) == false)
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Control selection is not available yet for driver - " + ((Agent)ApplicationAgent.Agent).Driver.GetType().ToString());
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Control selection is not available yet for driver - " + ((AgentOperations)((Agent)ApplicationAgent.Agent).AgentOperations).Driver.GetType().ToString());
                 _GenWin.Close();
                 return;
             }
 
-            IWindowExplorer WindowExplorerDriver = (IWindowExplorer)((Agent)ApplicationAgent.Agent).Driver;
+            IWindowExplorer WindowExplorerDriver = (IWindowExplorer)((AgentOperations)((Agent)ApplicationAgent.Agent).AgentOperations).Driver;
 
             mWindowExplorerDriver = WindowExplorerDriver;
             mAction = Act;
@@ -410,7 +410,7 @@ namespace Ginger.WindowExplorer
                         }
                     }
 
-                    if (xWindowSelection.WindowsComboBox.Items.Count == 1 && mContext.Agent.Driver.IsRunning())
+                    if (xWindowSelection.WindowsComboBox.Items.Count == 1 && ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning())
                     {
                         xWindowSelection.WindowsComboBox.SelectedItem = xWindowSelection.WindowsComboBox.Items[0];
                         mWindowExplorerDriver.SwitchWindow((xWindowSelection.WindowsComboBox.SelectedItem as AppWindow).Title);
@@ -1074,7 +1074,7 @@ namespace Ginger.WindowExplorer
 
         public void ShowScreenShot()
         {
-            if (mWindowExplorerDriver == null || mContext.Agent.Driver.IsRunning() == false)
+            if (mWindowExplorerDriver == null || ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning() == false)
             {
                 return;
             }
@@ -1093,7 +1093,7 @@ namespace Ginger.WindowExplorer
                 if (!mWindowExplorerDriver.SupportedViews().Contains(eTabView.Screenshot) || SwitchToCurrentWindow() == null)
                     return;
 
-                Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot();
+                Bitmap ScreenShotBitmap = ((IVisualTestingDriver)((AgentOperations)mApplicationAgent.Agent.AgentOperations).Driver).GetScreenShot();
                 mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, (mWindowExplorerDriver as DriverBase).ScreenShotInitialZoom());
 
                 mScreenShotViewPage.ImageMouseCursor = Cursors.Hand;
@@ -1232,7 +1232,7 @@ namespace Ginger.WindowExplorer
                     mScreenShotViewPage.xMainImage.Source.Height, mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight);
 
                 //get the clicked element
-                ElementInfo inspectElementInfo = await ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetElementAtPoint(pointOnAppScreen.X, pointOnAppScreen.Y);
+                ElementInfo inspectElementInfo = await ((IVisualTestingDriver)((AgentOperations)mApplicationAgent.Agent.AgentOperations).Driver).GetElementAtPoint(pointOnAppScreen.X, pointOnAppScreen.Y);
                 if (inspectElementInfo != null && inspectElementInfo != currentHighlightedElement)
                 {
                     //mark the element bounds on image
@@ -1502,7 +1502,7 @@ namespace Ginger.WindowExplorer
             {
                 if (mWindowExplorerDriver == null)
                 {
-                    mWindowExplorerDriver = (IWindowExplorer)mContext.Agent.Driver;
+                    mWindowExplorerDriver = (IWindowExplorer)((AgentOperations)mContext.Agent.AgentOperations).Driver;
                 }
 
                 spyPage = new LiveSpyPage(mContext, mWindowExplorerDriver);

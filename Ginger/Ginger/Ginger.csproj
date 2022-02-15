@@ -138,7 +138,7 @@
     </Reference>
     <Reference Include="ReachFramework" />
     <Reference Include="System">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.configuration" />
@@ -220,6 +220,9 @@
     <Compile Include="Actions\ActionConversion\SelectActivityWzardPage.xaml.cs">
       <DependentUpon>SelectActivityWzardPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionEditPages\ActSikuliEditPage.xaml.cs">
+      <DependentUpon>ActSikuliEditPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionEditPages\ActValidationEditPage.xaml.cs">
       <DependentUpon>ActValidationEditPage.xaml</DependentUpon>
     </Compile>
@@ -274,6 +277,7 @@
     <Compile Include="Activities\ConfigureErrorListPage.xaml.cs">
       <DependentUpon>ConfigureErrorListPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ALM\MapToALMWizard\AddMapToALMWizard.cs" />
     <Compile Include="ALM\JIRA\JiraZephyrCyclesExplorerPage.xaml.cs">
       <DependentUpon>JiraZephyrCyclesExplorerPage.xaml</DependentUpon>
     </Compile>
@@ -281,6 +285,18 @@
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrFolderTreeItem.cs" />
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrCycleTreeItem.cs" />
     <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrVersionTreeItem.cs" />
+    <Compile Include="ALM\MapToALMWizard\ALMTestCaseManualMappingConfig.cs" />
+    <Compile Include="ALM\MapToALMWizard\ALMTestStepManualMappingConfig.cs" />
+    <Compile Include="ALM\MapToALMWizard\MapToALMValidation.cs" />
+    <Compile Include="ALM\MapToALMWizard\TestCasesMappingPage.xaml.cs">
+      <DependentUpon>TestCasesMappingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\MapToALMWizard\TestSetMappingPage.xaml.cs">
+      <DependentUpon>TestSetMappingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\MapToALMWizard\TestStepMappingPage.xaml.cs">
+      <DependentUpon>TestStepMappingPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ALM\Qtest\QtestModuleExplorerPage.xaml.cs">
       <DependentUpon>QtestModuleExplorerPage.xaml</DependentUpon>
     </Compile>
@@ -526,6 +542,8 @@
     <Compile Include="GlobalSolutionLib\ImportItemWizardLib\SelectItemImportTypePage.xaml.cs">
       <DependentUpon>SelectItemImportTypePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\ValidateJsonFormat.cs" />
+    <Compile Include="RunSetLib\CreateAutoRunWizardLib\ValidateURLFormat.cs" />
     <Compile Include="RunSetPageLib\RunsetRunnersConfigPage.xaml.cs">
       <DependentUpon>RunsetRunnersConfigPage.xaml</DependentUpon>
     </Compile>
@@ -630,6 +648,12 @@
     </Compile>
     <Compile Include="UserControlsLib\ucLabel.xaml.cs">
       <DependentUpon>ucLabel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\UCLocateByAndValue.xaml.cs">
+      <DependentUpon>UCLocateByAndValue.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\UCNumberPicker.xaml.cs">
+      <DependentUpon>UCNumberPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\ucShowItemID.xaml.cs">
       <DependentUpon>ucShowItemID.xaml</DependentUpon>
@@ -2004,6 +2028,9 @@
     <Content Include="Help\Library\OfflineHelp.htm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="sikulirestapi-1.0.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="StaticDrivers\selenium-server-standalone.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -2016,6 +2043,7 @@
     <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
     <None Include="ALMRESTConfiguration\appsettings_QTest.json" />
+    <Resource Include="ALM\MapToALMWizard\MappedToALMIntro.md" />
     <None Include="Ginger.ruleset" />
     <EmbeddedResource Include="Resources\LiteDB.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -2587,6 +2615,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\ActionEditPages\ActSikuliEditPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Actions\ActionEditPages\ActValidationEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2602,6 +2634,18 @@
     <Page Include="Actions\ActionEditPages\ActLogActionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ALM\MapToALMWizard\TestCasesMappingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ALM\MapToALMWizard\TestSetMappingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ALM\MapToALMWizard\TestStepMappingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ALM\Qtest\QtestCyclesExplorerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -3048,6 +3092,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\ucLabel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\UCLocateByAndValue.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\UCNumberPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4676,6 +4728,7 @@
     <Resource Include="SourceControlItemNew.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ALM\MapToALMWizard\MapWizardHelper\" />
     <Folder Include="ALM\Octane\" />
     <Folder Include="AutomatePageLib\AddActionMenu\WindowExplorer\InternalBrowser\" />
     <Folder Include="Dictionaries\Languages\" />
@@ -4855,7 +4908,7 @@
       <Version>106.11.4</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.ChromeDriver">
-      <Version>96.0.4664.4500</Version>
+      <Version>98.0.4758.8000</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.GeckoDriver">
       <Version>0.30.0.1</Version>
@@ -4864,7 +4917,7 @@
       <Version>4.0.0</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.MSEdgeDriver">
-      <Version>96.0.1054.26</Version>
+      <Version>97.0.1072.55</Version>
     </PackageReference>
     <PackageReference Include="SharpAdbClient">
       <Version>2.3.23</Version>
