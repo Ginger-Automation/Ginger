@@ -91,11 +91,11 @@ namespace GingerTest.POMs
             wizard.CurrentPage["LearnOnlyMappedElementsCheckBox AID"].SetCheckedValue(false);//to it will learn all
 
             string html = TestResources.GetTestResourcesFile(URL);
-            agent.Driver.RunAction(new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, ValueForDriver = html });
+            ((AgentOperations)agent.AgentOperations).Driver.RunAction(new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, ValueForDriver = html });
             SleepWithDoEvents(10000);
             wizard.NextButton.Click();
             SleepWithDoEvents(5000);
-            while (agent.Driver.IsDriverBusy)
+            while (((AgentOperations)agent.AgentOperations).Driver.IsDriverBusy)
             {
                 SleepWithDoEvents(20000);
             }

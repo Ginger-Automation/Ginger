@@ -530,7 +530,8 @@ public class EditorHelper {
 					colCount++;
 				}
 			}
-			int rowOneColumnCount = table.getElementsByTag("tr").get(1).getElementsByTag("td").size();
+			// If table not contains header then colCount will be 0 so to access tr we need to use 0th index.
+			int rowOneColumnCount = colCount == 0 ? table.getElementsByTag("tr").get(0).getElementsByTag("td").size() : table.getElementsByTag("tr").get(1).getElementsByTag("td").size();
 			if(colCount < rowOneColumnCount)
 			{
 				return rowOneColumnCount;

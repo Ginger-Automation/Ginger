@@ -937,7 +937,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
         {
             string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.TopDirectoryOnly);
             Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
-            solution.EncryptionKey = Solution.GetEncryptionKey(solution.Guid.ToString());
+            solution.EncryptionKey = SolutionOperations.GetEncryptionKey(solution.Guid.ToString());
             
             return solution.EncryptionKey;
         }
@@ -948,7 +948,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             if (filePaths.Length > 0)
             {
                 Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
-                solution.EncryptionKey = Solution.GetEncryptionKey(solution.Guid.ToString());
+                solution.EncryptionKey = SolutionOperations.GetEncryptionKey(solution.Guid.ToString());
 
                 return solution;
             }

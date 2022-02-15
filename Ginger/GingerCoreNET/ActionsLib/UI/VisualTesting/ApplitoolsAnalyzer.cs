@@ -30,6 +30,13 @@ using System.Net;
 using static GingerCore.Agent;
 using static GingerCore.Drivers.SeleniumDriver;
 using System.Linq;
+using amdocs.ginger.GingerCoreNET;
+using System.Text.RegularExpressions;
+using System.Net.Http;
+using System.Threading;
+using System.IO;
+using Amdocs.Ginger.Common.UIElement;
+using Ginger.Run;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -37,13 +44,24 @@ namespace GingerCore.Actions.VisualTesting
     {
         ActVisualTesting mAct;
         IVisualTestingDriver mDriver;
-        
+      
 
         public static string ApplitoolsAction = "ApplitoolsAction";
         public static string ApplitoolsEyesClose = "ApplitoolsEyesClose";
         public static string ApplitoolsEyesOpen = "ApplitoolsEyesOpen";
         public static string ApplitoolsMatchLevel = "ApplitoolsMatchLevel";
         public static string FailActionOnMistmach = "FailActionOnMistmach";
+        public const string ActionBy = "ActionBy";
+        public const string LocateBy = "LocateBy";
+
+        private const int RETRY_REQUEST_INTERVAL = 500; //ms
+        private const int LONG_REQUEST_DELAY_MS = 2000; // ms
+        private const int MAX_LONG_REQUEST_DELAY_MS = 10000; // ms
+        private const double LONG_REQUEST_DELAY_MULTIPLICATIVE_INCREASE_FACTOR = 1.5;
+
+        private string ServerURL;
+        private string batchID;
+        private string sessionID;
 
         // We keep one static eyes so we can reuse across action and close when done, to support applitools behaviour
         static Applitools.Images.Eyes mEyes = null;
@@ -80,6 +98,17 @@ namespace GingerCore.Actions.VisualTesting
             Strict,
             Content,
             Layout
+        }
+
+        public enum eActionBy
+        {
+            Window,
+            Region
+        }
+
+        public enum eLocateByElement
+        {
+            ByXpath
         }
 
         private void SetEyesMatchLevel()
@@ -164,21 +193,38 @@ namespace GingerCore.Actions.VisualTesting
 
         void EyesOpen()
         {
-            mEyes = new Applitools.Images.Eyes();
+            List<int> mResolution = new List<int>();
+            try
+            {
+                mEyes = new Applitools.Images.Eyes();
 
-            //TODO: set the proxy
-            // IWebProxy p = WebRequest.DefaultWebProxy; // .GetSystemWebProxy();
+                //TODO: set the proxy
+                // IWebProxy p = WebRequest.DefaultWebProxy; // .GetSystemWebProxy();
 
-            mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
-            mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName); 
-            mAct.CheckSetAppWindowSize();
-            mEyes.ApiKey = ((SeleniumDriver)mDriver).ApplitoolsViewKey; 
-            mEyes.ServerUrl = string.IsNullOrEmpty(((SeleniumDriver)mDriver).ApplitoolsServerUrl) ? mEyes.ServerUrl : ((SeleniumDriver)mDriver).ApplitoolsServerUrl;
-            OperatingSystem Os_info = System.Environment.OSVersion;
-            mEyes.HostOS = Os_info.VersionString;
-            mEyes.HostApp = ((SeleniumDriver)mDriver).GetBrowserType().ToString();
-            List<int> mResolution = mAct.GetWindowResolution();
-            mEyes.Open(mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
+                mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
+                mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
+                mAct.CheckSetAppWindowSize();
+                mEyes.ApiKey = ((SeleniumDriver)mDriver).ApplitoolsViewKey;
+                mEyes.ServerUrl = string.IsNullOrEmpty(((SeleniumDriver)mDriver).ApplitoolsServerUrl) ? mEyes.ServerUrl : ((SeleniumDriver)mDriver).ApplitoolsServerUrl;
+                OperatingSystem Os_info = System.Environment.OSVersion;
+                mEyes.HostOS = Os_info.VersionString;
+                mEyes.HostApp = ((SeleniumDriver)mDriver).GetBrowserType().ToString();
+                mEyes.AddProperty("Environment ID", ((SeleniumDriver)mDriver).BusinessFlow.Environment);
+                mResolution = mAct.GetWindowResolution();
+                mEyes.Open(mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
+            }
+            catch (Exception ex)
+            {
+                if (mResolution != null && mResolution.Any() && mResolution[0] < 500)
+                {
+                    mAct.Error += "Eyes Open Failed. Set Resolution having width more than 500px, Error: " + ex.Message;
+                }
+                else
+                {
+                    mAct.Error += "Eyes Open Failed, Error: " + ex.Message;
+                }
+            }
+            
         }
 
         private void Checkpoint()
@@ -236,16 +282,35 @@ namespace GingerCore.Actions.VisualTesting
 
         void NewEyesOpen()
         {
-            runner = new ClassicRunner();
-            newmEyes = new Eyes(runner);
-            mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
-            mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
-            SetUp(newmEyes,((SeleniumDriver)mDriver).ApplitoolsServerUrl, ((SeleniumDriver)mDriver).ApplitoolsViewKey, ((SeleniumDriver)mDriver).GetBrowserType());
+            List<int> mResolution = new List<int>();
+            try
+            {
+                runner = new ClassicRunner();
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any() && ((GingerExecutionEngine)WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners[0].Executor).ExecutedFrom == eExecutedFrom.Run)
+                {
+                    runner.DontCloseBatches = true;
+                }
+                newmEyes = new Eyes(runner);
+                mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
+                mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
+                
+                SetUp(newmEyes, ((SeleniumDriver)mDriver).ApplitoolsServerUrl, ((SeleniumDriver)mDriver).ApplitoolsViewKey, ((SeleniumDriver)mDriver).GetBrowserType(), ((SeleniumDriver)mDriver).BusinessFlow.Environment);
+                mAct.CheckSetAppWindowSize();
+                mResolution = mAct.GetWindowResolution();
+                newmEyes.Open(((SeleniumDriver)mDriver).GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
+            }
+            catch (Exception ex)
+            {
+                if (mResolution != null && mResolution.Any() && mResolution[0] < 500)
+                {
+                    mAct.Error += "Eyes Open Failed. Set Resolution having width more than 500px, Error: " + ex.Message;
+                }
+                else
+                {
+                    mAct.Error += "Eyes Open Failed, Error: " + ex.Message;
+                }
+            }
             
-            mAct.CheckSetAppWindowSize();
-            List<int> mResolution= mAct.GetWindowResolution();
-            newmEyes.Open(((SeleniumDriver)mDriver).GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
-
         }
 
         private void NewCheckpoint()
@@ -258,11 +323,44 @@ namespace GingerCore.Actions.VisualTesting
             }
 
             NewSetEyesMatchLevel();
+            string ActionTakenBy = GetActionBy();
+            try
+            {
+                if (ActionTakenBy == "Window")
+                {
+                    newmEyes.Check(Target.Window().Fully().WithName(mAct.ItemName));
+                } 
+                else
+                {
+                    ElementLocator locator = new ElementLocator();
+                    locator.LocateBy = GetLocateBy();
+                    locator.LocateValue = GetLocateValue();
+                    IWebElement webElement = ((SeleniumDriver)mDriver).LocateElementByLocator(locator, true);
+                    newmEyes.Check(Target.Region(webElement).Fully().WithName(mAct.ItemName));
+                }
+                    
+                
+            }
+            catch (Exception ex) 
+            {
+                if (ActionTakenBy == "Region") 
+                {
+                    mAct.Error += "Not Able to locate XPath, Error: " + ex.Message;
+                }
+                else
+                {
+                    mAct.Error += ex.Message;
+                }
+                    
+            }
+            finally
+            {
+                mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+            }
+             
+
             
-            newmEyes.Check(Target.Window().Fully().WithName(mAct.GetInputParamCalculatedValue(mAct.ItemName)));
-
-            mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;          
-
+            
         }
         private void NewCloseEyes()
         {
@@ -279,7 +377,7 @@ namespace GingerCore.Actions.VisualTesting
                     TestResultContainer[] resultContainer = allTestResults.GetAllResults();
                     TR = resultContainer[0].TestResults;
                 }
-
+                SaveApplitoolsImages(TR);
                 // Update results info into outputs
                 mAct.ExInfo = "URL to view results: " + TR.Url;
                 mAct.AddOrUpdateReturnParamActual("ResultsURL", TR.Url + "");
@@ -292,13 +390,13 @@ namespace GingerCore.Actions.VisualTesting
                 mAct.AddOrUpdateReturnParamActual("LayoutMatches", TR.LayoutMatches + "");
                 mAct.AddOrUpdateReturnParamActual("Missing", TR.Missing + "");
 
-
-
+                
+                
                 if (!TR.IsNew)
                 {
                     foreach (StepInfo step in TR.StepsInfo)
                     {
-                        if (!step.HasCurrentImage)
+                       if (!step.HasCurrentImage)
                         {
                             mAct.AddOrUpdateReturnParamActual(step.Name, "Failed with Missing Image" + "");
                         }
@@ -344,15 +442,23 @@ namespace GingerCore.Actions.VisualTesting
                 newmEyes.AbortIfNotClosed();
             }
         }
-        private void SetUp(Eyes eyes,string AppilToolServerUrl,string AppilToolsApiKey, eBrowserType BrowserType)
+        private void SetUp(Eyes eyes,string AppilToolServerUrl,string AppilToolsApiKey, eBrowserType BrowserType,string Environment)
         {
             Applitools.Selenium.Configuration config = new Applitools.Selenium.Configuration();
-            
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any() && ((GingerExecutionEngine)WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners[0].Executor).ExecutedFrom == eExecutedFrom.Run)
+            {
+                BatchInfo batchInfo = new BatchInfo(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ItemName);
+
+                batchInfo.Id = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString();
+                config.SetBatch(batchInfo);
+            }
+
             config.SetApiKey(AppilToolsApiKey);
             config.SetServerUrl(AppilToolServerUrl);
             OperatingSystem Os_info = System.Environment.OSVersion;
             config.SetHostOS(Os_info.VersionString);
             config.SetHostApp(BrowserType.ToString());
+            eyes.AddProperty("Environment ID", !String.IsNullOrEmpty(Environment) ? Environment : "Default");
             eyes.SetConfiguration(config);
 
         }
@@ -385,38 +491,193 @@ namespace GingerCore.Actions.VisualTesting
 
         private void SaveApplitoolsImages(TestResults testResult)
         {
+            setServerURL(testResult);
+            setbatchID(testResult);
+            setsessionID(testResult);
             String sessionURL = testResult.Url;
-            String URLforDownloading = BakeURL(sessionURL);
             int numOfSteps = testResult.Steps;
-            DownloadImages(URLforDownloading, numOfSteps);
+            DownloadImages(numOfSteps, testResult);
         }
 
         private String BakeURL(String sessionURL)
         {
             //Edit URL and prepare it to download images from report
             String bakedURL = sessionURL.Replace("/app/", "/api/");
-            bakedURL = bakedURL.Insert(bakedURL.IndexOf("sessions") + 9, "batches/");
             bakedURL = bakedURL.Substring(0, bakedURL.IndexOf("?accountId"));
             bakedURL += "/steps/";
             return bakedURL;
         }
 
-        private void DownloadImages(String BaseURLForDownloading, int numOfImages)
+        private void DownloadImages(int numOfImages, TestResults testResults)
         {
-            String imagePath = @"C:\test\Applitools\image";  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIXME - add to the action
             for (int i = 1; i <= numOfImages; i++)
             {
-                String currImagePath = imagePath + i.ToString() + ".jpg";
-                String currImageURL = BaseURLForDownloading + i.ToString() + "/diff?ApiKey=" + GetApplitoolsAPIKey();
-                Console.WriteLine(currImageURL);
-                WebClient webClient = new WebClient();
-                webClient.DownloadFile(currImageURL, currImagePath);
+                String currImagePath = Act.GetScreenShotRandomFileName();
+                String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + i.ToString() + "/images/diff?ApiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
+                try
+                {
+                    HttpResponseMessage response = runLongRequest(currImageURL);
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                        response.Content.CopyToAsync(fs).ContinueWith(
+                        (discard) =>
+                        {
+                            fs.Close();
+                        });
+                        mAct.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
+                        mAct.ScreenShots.Add(currImagePath);
+                        
+                    }
+                    else if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        mAct.Error = mAct.Error + " File Not Found";
+                    }
+                }
+                catch(Exception ex)
+                {
+                    mAct.Error = mAct.Error + ex.Message;
+                }
+                
+                
             }
         }
 
         private string GetServerUrl()
         {
             return mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ServerUrl).ValueForDriver;
+        }
+        private string GetActionBy()
+        {
+            return mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ActionBy).Value;
+        }
+
+        private eLocateBy GetLocateBy()
+        {
+            eLocateBy eVal = eLocateBy.ByXPath;
+            if (Enum.TryParse<eLocateBy>(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.LocateBy).Value, out eVal))
+                return eVal;
+            else
+                return eLocateBy.ByXPath;
+        }
+
+        private string GetLocateValue()
+        {
+            return mAct.GetOrCreateInputParam(ActVisualTesting.Fields.LocateValue).Value;
+        }
+
+        private void setServerURL(TestResults testresult)
+        {
+            int endOfServerUrlLocation = testresult.Url.IndexOf("/app/session");
+            if (endOfServerUrlLocation < 1)
+            {
+                endOfServerUrlLocation = testresult.Url.IndexOf("/app/batches");
+            }
+            this.ServerURL = testresult.Url.Substring(0, endOfServerUrlLocation);
+
+        }
+
+        private void setbatchID(TestResults testresult)
+        {
+            string URL = testresult.Url;
+            string temp = "^" + this.ServerURL + @"/app/sessions/(?<batchId>\d+).*$";
+            Match match = Regex.Match(URL, "^" + this.ServerURL + @"/app/batches/(?<batchId>\d+).*$");
+            this.batchID = match.Groups[1].Value;
+        }
+
+        private void setsessionID(TestResults testresult)
+        {
+            string URL = testresult.Url;
+            Match match = Regex.Match(URL, "^" + this.ServerURL + @"/app/batches/\d+/(?<sessionId>\d+).*$");
+            this.sessionID = match.Groups[1].Value;
+        }
+
+
+        private HttpResponseMessage runLongRequest(string URL)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, URL);
+
+            HttpResponseMessage response = sendRequest(request, 1, false);
+
+            return longRequestCheckStatus(response);
+        }
+
+        private HttpResponseMessage sendRequest(HttpRequestMessage request, int retry, Boolean delayBeforeRetry)
+        {
+            HttpClient client = new HttpClient();
+
+            try
+            {
+                HttpResponseMessage response = client.SendAsync(request).Result;
+                return response;
+            }
+            catch (Exception e)
+            {
+                String errorMessage = "error message: " + e.Message;
+                
+                if (retry > 0)
+                {
+                    if (delayBeforeRetry)
+                    {
+                        Thread.Sleep(RETRY_REQUEST_INTERVAL);
+                    }
+                    return sendRequest(request, retry - 1, delayBeforeRetry);
+                }
+                throw new ThreadInterruptedException(errorMessage);
+            }
+        }
+
+        public HttpResponseMessage longRequestCheckStatus(HttpResponseMessage responseReceived)
+        {
+            HttpStatusCode status = responseReceived.StatusCode;
+
+
+            HttpRequestMessage request = null;
+            String URI;
+
+            switch (status)
+            {
+                case HttpStatusCode.OK:
+                    return responseReceived;
+
+                case HttpStatusCode.Accepted:
+                    var location = responseReceived.Headers.GetValues("Location");
+                    URI = location.First() + "?apiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
+
+                    request = new HttpRequestMessage(HttpMethod.Get, URI);
+                    HttpResponseMessage response = longRequestLoop(request, LONG_REQUEST_DELAY_MS);
+                    return longRequestCheckStatus(response);
+
+                case HttpStatusCode.Created:
+                    var location2 = responseReceived.Headers.GetValues("Location");
+                    URI = location2.First() + "?apiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
+                    request = new HttpRequestMessage(HttpMethod.Delete, URI);
+                    return sendRequest(request, 1, false);
+
+                case HttpStatusCode.NotFound:
+                    mAct.Error = mAct.Error + "Unknown error during long request: " + status;
+                    return responseReceived;
+
+                case HttpStatusCode.Gone:
+                    throw new ThreadInterruptedException("The server task is gone");
+
+                default:
+                    throw new ThreadInterruptedException("Unknown error during long request: " + status);
+                    
+            }
+        }
+
+        public HttpResponseMessage longRequestLoop(HttpRequestMessage request, int delay)
+        {
+            delay = (int)Math.Min(MAX_LONG_REQUEST_DELAY_MS, Math.Floor(delay * LONG_REQUEST_DELAY_MULTIPLICATIVE_INCREASE_FACTOR));
+            Thread.Sleep(delay);
+
+            HttpResponseMessage response = sendRequest(request, 1, false);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return longRequestLoop(request, delay);
+            }
+            return response;
         }
     }
 }

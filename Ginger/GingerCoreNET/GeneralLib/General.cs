@@ -201,9 +201,10 @@ namespace GingerCoreNET.GeneralLib
         //HTML Report related methods added here 
         public static string TimeConvert(string s)
         {
-            double seconds = Convert.ToDouble(s);
-            TimeSpan ts = TimeSpan.FromSeconds(seconds);
-            return ts.ToString(@"hh\:mm\:ss");
+            return Amdocs.Ginger.Common.GeneralLib.General.TimeConvert(s);
+            //double seconds = Convert.ToDouble(s);
+            //TimeSpan ts = TimeSpan.FromSeconds(seconds);
+            //return ts.ToString(@"hh\:mm\:ss");
         }
 
         public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
@@ -253,12 +254,12 @@ namespace GingerCoreNET.GeneralLib
         {
             return SecurityElement.Escape(str);
         }
-        public static bool isDesignMode()
-        {
-            //TODO: move this func to General
-            bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
-            return designMode;
-        }
+        //public static bool isDesignMode()
+        //{
+        //    //TODO: move this func to General
+        //    bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+        //    return designMode;
+        //}
 
         public static ObservableList<T> ConvertListToObservableList<T>(List<T> List)
         {

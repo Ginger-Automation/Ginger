@@ -240,8 +240,8 @@ namespace Ginger.SolutionWindows
                 if (Reporter.ToUser(eUserMsgKey.ForgotKeySaveChanges) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     _solution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
-                    _solution.SaveEncryptionKey();
-                    _solution.SaveSolution(false);
+                    _solution.SolutionOperations.SaveEncryptionKey();
+                    _solution.SolutionOperations.SaveSolution(false);
 
                     uOkBtn.Visibility = Visibility.Visible;
                     uSaveKeyBtn.Visibility = Visibility.Collapsed;
@@ -263,8 +263,8 @@ namespace Ginger.SolutionWindows
                 uSaveKeyBtn.Visibility = Visibility.Collapsed;
                 uCloseBtn.Visibility = Visibility.Collapsed;
                 _solution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
-                _solution.SaveEncryptionKey();
-                _solution.SaveSolution(false);
+                _solution.SolutionOperations.SaveEncryptionKey();
+                _solution.SolutionOperations.SaveSolution(false);
                 if (WorkSpace.Instance.SolutionRepository == null)
                 {
                     WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
@@ -318,7 +318,7 @@ namespace Ginger.SolutionWindows
                     {
                         try
                         {
-                            WorkSpace.Instance.Solution.SaveSolution(false);
+                            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(false);
                         }
                         catch (Exception ex)
                         {
@@ -436,7 +436,7 @@ namespace Ginger.SolutionWindows
                         }
                     }
 
-                    _solution.SaveSolution(false);
+                    _solution.SolutionOperations.SaveSolution(false);
                 }
                 catch (Exception ex)
                 {
@@ -694,7 +694,7 @@ namespace Ginger.SolutionWindows
                 }
                 if (isSaveRequired)
                 {
-                    WorkSpace.Instance.Solution.SaveSolution(false);
+                    WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(false);
                 }
                 return varReencryptedCount;
             });
@@ -728,9 +728,14 @@ namespace Ginger.SolutionWindows
                                 if (!string.IsNullOrEmpty(db.Pass))
                                 {
                                     //if Pass is stored in the form of variable, encryption not required at this stage
-                                    if (!db.Pass.Contains("{Var Name"))
+                                    if (!db.Pass.Contains("{Var Name") && !db.Pass.Contains("{EnvParam"))
                                     {
-                                        db.Pass = EncryptionHandler.ReEncryptString(db.Pass, oldKey);
+                                        string encryptedPassWord = EncryptionHandler.ReEncryptString(db.Pass, oldKey);
+                                        if (string.IsNullOrEmpty(encryptedPassWord))
+                                        {
+                                            encryptedPassWord = EncryptionHandler.EncryptwithKey(db.Pass);
+                                        }
+                                        db.Pass = encryptedPassWord;
                                     }
                                     isSaveRequired = true;
                                     varReencryptedCount++;

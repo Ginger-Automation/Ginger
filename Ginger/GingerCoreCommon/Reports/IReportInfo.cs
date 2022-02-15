@@ -1,0 +1,42 @@
+﻿using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Repository;
+using System;
+using System.Collections.Generic;
+
+namespace Ginger.Reports
+{
+    public interface IReportInfo
+    {
+        //IEnumerable<ActionReport> AllActionsForReport { get; }
+        //IEnumerable<ActivityReport> AllActivitiesForReport { get; }
+        IEnumerable<ReturnValueReport> AllValidationsForReport { get; }
+        //List<BusinessFlowReport> BusinessFlowReports { get; set; }
+        //List<BusinessFlowReport> BusinessFlows { get; }
+        string DateCreated { get; set; }
+        string DateCreatedShort { get; set; }
+        //EnvironmentReport Environment { get; set; }
+        TimeSpan ExecutionElapsedTime { get; set; }
+        string ExecutionEnv { get; set; }
+        int TotalActionsBlockedFromAllFlows { get; }
+        int TotalActionsFailedFromAllFlows { get; }
+        int TotalActionsPassedFromAllFlows { get; }
+        int TotalActionsSkippedFromAllFlows { get; }
+        int TotalActivitesBlockedFromAllFlows { get; }
+        int TotalActivitesFailedFromAllFlows { get; }
+        int TotalActivitesPassedFromAllFlows { get; }
+        int TotalActivitesSkippedFromAllFlows { get; }
+        int TotalActivitiesCount { get; }
+        int TotalBusinessFlows { get; }
+        int TotalBusinessFlowsBlocked { get; }
+        int TotalBusinessFlowsFailed { get; }
+        int TotalBusinessFlowsPassed { get; }
+        int TotalBusinessFlowsStopped { get; }
+        TimeSpan TotalExecutionTime { get; set; }
+
+        int TotalActionsCount();
+        int TotalActionsCountByStatus(eRunStatus Status);
+        int TotalActivitiesByRunStatus(eRunStatus RunStatus);
+        int TotalValidationsCount();
+        int TotalValidationsCountByStatus(ActReturnValue.eStatus Status);
+    }
+}

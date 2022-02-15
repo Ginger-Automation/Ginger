@@ -99,7 +99,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             get { return xTreeTitle.Content.ToString(); }
             set { xTreeTitle.Content = value; }
         }
-       
+
         public eImageType TreeIcon
         {
             get { return xTreeIcon.ImageType; }
@@ -119,11 +119,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         }
 
         public eImageType AddButtonIcon
-        {            
+        {
             get { return xAddButton.ButtonImageType; }
-            set { xAddButton.ButtonImageType = value; }          
+            set { xAddButton.ButtonImageType = value; }
         }
-      
+
         bool mAllowTreeTools = true;
         public bool AllowTreeTools { get { return mAllowTreeTools; } set { mAllowTreeTools = value; } }
 
@@ -141,10 +141,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         public bool IsSearchRunning()
         {
-            if(mSearchTask==null)
+            if (mSearchTask == null)
             {
                 return false;
-            }    
+            }
             else if (mSearchTask.IsCompleted == false && mSearchTask.IsCanceled == false)
             {
                 return true;
@@ -160,7 +160,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
         }
 
-        public void SetTopToolBarTools(RoutedEventHandler saveAllHandler=null, RoutedEventHandler addHandler = null, RoutedEventHandler refreshHandler = null)
+        public void SetTopToolBarTools(RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, RoutedEventHandler refreshHandler = null, RoutedEventHandler addActionHandler = null)
         {
             if (saveAllHandler != null)
             {
@@ -182,7 +182,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 xAddButton.Visibility = Visibility.Collapsed;
             }
 
-            if(refreshHandler != null)
+            if (refreshHandler != null)
             {
                 xRefreshButton.Visibility = Visibility.Visible;
                 xRefreshButton.Click += refreshHandler;
@@ -190,7 +190,17 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             else
             {
                 xRefreshButton.Visibility = Visibility.Collapsed;
-            }         
+            }
+
+            if (addActionHandler != null)
+            {
+                xAddActionButton.Visibility = Visibility.Visible;
+                xAddActionButton.Click += addActionHandler;
+            }
+            else
+            {
+                xAddActionButton.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void xTreeViewTree_ItemSelected(object sender, EventArgs e)
@@ -200,7 +210,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 xTreeViewTree.CurrentSelectedTreeViewItem.SetTools(this);
             }
         }
-        
+
         public void SetTitleSection(double margin, double GridLength, double TitleFontSize, FontWeight TitleFontWeight, Visibility titleSectionVisibility = Visibility.Visible)
         {
             xTreeItemHeaderPnl.Margin = new Thickness(margin);
@@ -222,17 +232,17 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             // this inner method checks if user is still typing
             async Task<bool> UserKeepsTyping()
             {
-                string txt = xSearchTextBox.Text; 
-                await Task.Delay(1000);     
+                string txt = xSearchTextBox.Text;
+                await Task.Delay(1000);
                 return txt != xSearchTextBox.Text;
             }
             if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString) return;
-          
+
             mSearchString = xSearchTextBox.Text;
-            await SearchAsync();           
-           
+            await SearchAsync();
+
         }
-        
+
         private async void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
         {
             await ClearSearch();
@@ -242,9 +252,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             xSearchClearBtn.Visibility = Visibility.Collapsed;
             xSearchBtn.Visibility = Visibility.Visible;
-           
 
-            if (mSearchTask?.IsCompleted==false && mSearchTask?.IsCanceled == false)
+
+            if (mSearchTask?.IsCompleted == false && mSearchTask?.IsCanceled == false)
             {
                 await CancelSearchAsync();
             }
@@ -262,8 +272,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             mSearchString = null;
         }
 
-      
-        
+
+
         public void SearchTree(string txt)
         {
             xSearchTextBox.Text = txt;
@@ -287,7 +297,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             if (!string.IsNullOrEmpty(xSearchTextBox.Text))
             {
-               await SearchAsync();
+                await SearchAsync();
             }
         }
 
@@ -300,11 +310,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 return;
             }
 
-            if (mSearchTask?.IsCanceled==false && mSearchTask?.IsCompleted==false)
+            if (mSearchTask?.IsCanceled == false && mSearchTask?.IsCompleted == false)
             {
                 //Cancel if previous search is running 
-              await CancelSearchAsync();
-            }           
+                await CancelSearchAsync();
+            }
 
             xSearchBtn.Visibility = Visibility.Collapsed;
             xSearchClearBtn.Visibility = Visibility.Visible;
@@ -317,10 +327,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     {
                         mCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                        if(SearchStarted==null)
+                        if (SearchStarted == null)
                         {
                             //If event is not hooked we say searching status on main window
-                            Reporter.ToStatus(eStatusMsgKey.Search, null, ": " + mSearchString);                           
+                            Reporter.ToStatus(eStatusMsgKey.Search, null, ": " + mSearchString);
                         }
                         else
                         {
@@ -337,7 +347,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     }
                     finally
                     {
-                        
+
                         if (SearchStarted == null)
                         {
                             Reporter.HideStatusMessage();
@@ -346,7 +356,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                         {
                             SearchCompleted.Invoke(Tree, new EventArgs());
                         }
-                           
+
                         Mouse.OverrideCursor = null;
                         mCancellationTokenSource.Dispose();
                     }
@@ -363,7 +373,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             mCancellationTokenSource?.Cancel();
             Stopwatch st = new Stopwatch();
             st.Start();
-            while (mSearchTask.IsCompleted ==false && mSearchTask.IsCanceled==false  && mSearchTask.IsFaulted==false)
+            while (mSearchTask.IsCompleted == false && mSearchTask.IsCanceled == false && mSearchTask.IsFaulted == false)
             {
                 await Task.Delay(1000);
                 if (st.ElapsedMilliseconds > 5000)
@@ -373,7 +383,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
 
             mCancellationTokenSource?.Dispose();
-            mSearchTask = null;   
+            mSearchTask = null;
             if (SearchCancelled != null)
             {
                 SearchCancelled.Invoke(Tree, new EventArgs());
@@ -383,6 +393,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 Reporter.HideStatusMessage();
             }
             Mouse.OverrideCursor = null;
+        }
+
+        public void SetAddButtonToArrow()
+        {
+            this.xAddButton.ButtonImageType = eImageType.MoveLeft;
         }
     }
 }

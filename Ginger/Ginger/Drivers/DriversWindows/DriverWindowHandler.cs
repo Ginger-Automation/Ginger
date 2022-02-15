@@ -52,14 +52,14 @@ namespace Ginger.Drivers.DriversWindows
                             try
                             {
                                 DriverBase driver = args.Driver;
-                                Agent agent = (Agent)args.DataObject;                                
-                                string classname = "Ginger.Drivers.DriversWindows." + ((IDriverWindow)driver).GetDriverWindowName(agent.DriverType);
+                                AgentOperations agentOperations = (AgentOperations)args.DataObject;                                
+                                string classname = "Ginger.Drivers.DriversWindows." + ((IDriverWindow)driver).GetDriverWindowName(agentOperations.Agent.DriverType);
                                 Type t = Assembly.GetExecutingAssembly().GetType(classname);
                                 if (t == null)
                                 {
                                     throw new Exception(string.Format("The Driver Window was not found '{0}'", classname));
                                 }
-                                Window window = (Window)Activator.CreateInstance(t, driver, agent);
+                                Window window = (Window)Activator.CreateInstance(t, driver, agentOperations.Agent);
                                 if (window != null)
                                 {
                                     mOpenWindowsDic.Add(args.Driver, window);

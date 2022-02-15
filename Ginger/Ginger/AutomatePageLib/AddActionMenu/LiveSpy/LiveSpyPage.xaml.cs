@@ -223,7 +223,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void SpyTimerHandler(object sender, EventArgs e)
         {
-            if (mWindowExplorerDriver != null && mContext.Agent.Status == Agent.eStatus.Running)    //((GingerCore.Drivers.DriverBase)mWindowExplorerDriver).IsDriverRunning)
+            if (mWindowExplorerDriver != null && ((AgentOperations)mContext.Agent.AgentOperations).Status == Agent.eStatus.Running)    //((GingerCore.Drivers.DriverBase)mWindowExplorerDriver).IsDriverRunning)
             {
                 ///?? why we have specific driver handleing?
                 //if (xWindowSelectionUC.mWindowExplorerDriver.GetType() == typeof(GingerCore.Drivers.SeleniumDriver) 

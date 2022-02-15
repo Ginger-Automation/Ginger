@@ -29,6 +29,7 @@ using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.BusinessFlowWindows;
 using Ginger.Help;
 using Ginger.Repository;
+using Ginger.Run;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
@@ -53,7 +54,9 @@ using System.Windows.Input;
 
 namespace Ginger.Actions
 {
-    enum eGridView { All, NonSimulation }
+    enum eGridView { All, NonSimulation,
+        RegularView
+    }
 
     public partial class ActionEditPage : Page
     {
@@ -1268,10 +1271,10 @@ namespace Ginger.Actions
         private void HighLightElementButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: fixme - Currently working with first agent
-            ApplicationAgent aa = (ApplicationAgent)mContext.Runner.ApplicationAgents[0];
+            ApplicationAgent aa = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents[0];
             if (aa != null)
             {
-                DriverBase driver = ((Agent)aa.Agent).Driver;
+                DriverBase driver = ((AgentOperations)((Agent)aa.Agent).AgentOperations).Driver;
                 mContext.Runner.PrepActionValueExpression(mAction);
                 if (driver != null)
                 {
@@ -1286,15 +1289,15 @@ namespace Ginger.Actions
 
         private void ControlSelectorButton_Click(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent aa = (ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent aa = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
             if (aa != null)
             {
-                if (((Agent)aa.Agent).Driver == null)
+                if (((AgentOperations)((Agent)aa.Agent).AgentOperations).Driver == null)
                 {
                     ((Agent)aa.Agent).DSList = mDSList;
-                    ((Agent)aa.Agent).StartDriver();
+                    ((Agent)aa.Agent).AgentOperations.StartDriver();
                 }
-                DriverBase driver = ((Agent)aa.Agent).Driver;
+                DriverBase driver = ((AgentOperations)((Agent)aa.Agent).AgentOperations).Driver;
                 //Instead of check make it disabled ?
                 if (driver is IWindowExplorer)
                 {

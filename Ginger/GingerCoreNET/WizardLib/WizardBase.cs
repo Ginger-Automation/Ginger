@@ -34,7 +34,7 @@ namespace GingerWPF.WizardLib
 
         // Each wizard must set the title window
         public abstract string Title { get; }
-
+        public bool IsNavigationListEnabled { get; set; } = true;
         public abstract void Finish();
 
         //public bool FinishVisible
@@ -83,7 +83,10 @@ namespace GingerWPF.WizardLib
         //}
 
 
-
+        public void DisableNavigationList()
+        {
+            IsNavigationListEnabled = false;
+        }
 
         public void ProcessStarted()
         {        
@@ -192,12 +195,14 @@ namespace GingerWPF.WizardLib
             WizardEventArgs WizardEventArgs = new WizardEventArgs(this, EventType.Prev);
             foreach (WizardPage wp in Pages)
             {
-                wp.Page.WizardEvent(WizardEventArgs);                
+                wp.Page.WizardEvent(WizardEventArgs);
             }
-
-            Pages.MovePrev();
-
-            GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));            
+            if (!WizardEventArgs.CancelEvent)
+            {
+                Pages.MovePrev();
+                GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));
+            }
+           
         }
 
         public virtual void Cancel()
@@ -262,13 +267,5 @@ namespace GingerWPF.WizardLib
             mWizardWindow = null;
             // GC.Collect();            
         }
-
-
-
-        
-
-
-
-
     }
 }

@@ -44,11 +44,13 @@ namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
             // RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();                        
 
             mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
+
             Agent a = new Agent();
             a.DriverType = Agent.eDriverType.WindowsAutomation; // just a dummy driver not really for use
 
-            mGR.SolutionAgents = new ObservableList<Agent>();
-            mGR.SolutionAgents.Add(a);
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
 
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "App1", Agent = a });            
         }
@@ -174,15 +176,15 @@ namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
 
         private void Run()
         {
-            mGR.BusinessFlows[0].Reset();
-            mGR.RunRunner();
+            mGR.Executor.BusinessFlows[0].Reset();
+            mGR.Executor.RunRunner();
         }
 
         private BusinessFlow CreateBusinessFlow()
         {
             BusinessFlow businessFlow = new BusinessFlow();
-            mGR.BusinessFlows.Clear();
-            mGR.BusinessFlows.Add(businessFlow);
+            mGR.Executor.BusinessFlows.Clear();
+            mGR.Executor.BusinessFlows.Add(businessFlow);
             businessFlow.RunStatus = eRunStatus.Pending;
 
             businessFlow.Name = "BF Test Flow Control";
