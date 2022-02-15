@@ -23,19 +23,19 @@
         <!--Choose Visual Testing Engine - First Line-->
 
         <StackPanel Orientation="Horizontal">
-            <StackPanel>
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Visual Testing Analyzer:</Label>
-                <UserControlsLib:UCComboBox x:Name="VisualTestingEngineComboBox" Width="250" HorizontalAlignment="Left"/>
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <Label Style="{StaticResource @LabelStyle}" Grid.Column="0" VerticalAlignment="Center" >Visual Testing Analyzer:</Label>
+                <UserControlsLib:UCComboBox x:Name="VisualTestingEngineComboBox" Grid.Column="1" Width="250" HorizontalAlignment="Left" Margin="30,0,0,0"/>
             </StackPanel>
             <StackPanel Margin="60,2,0,-2" x:Name="xCompareOrCreateBaselinesRadioButtons">
-                <Label Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Left">Action</Label>
+                <Label Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left">Action</Label>
                 <RadioButton x:Name="CompareRadioButton" Content="Compare Baseline vs. Target" Checked="CompareRadioButton_Checked" GroupName="CompareOrBaseline" VerticalAlignment="Center" ></RadioButton>
                 <RadioButton x:Name="CreateBaselineRadioButton" Content="Create baseline at runtime" Checked="CreateBaselineRadioButton_Checked" GroupName="CompareOrBaseline" VerticalAlignment="Center" ></RadioButton>
             </StackPanel>
             <Border BorderBrush="LightGray" BorderThickness="1" Margin="50,0,0,0" x:Name="xLightGrayVerticalBorder">
                 
                     <StackPanel x:Name="xSetApplicationScreenSize">
-                    <Label Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Left">Change Application Screen Size:</Label>
+                    <Label Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left">Change Application Screen Size:</Label>
                         <StackPanel Orientation="Horizontal">
                             <UserControlsLib:UCComboBox x:Name="ChangeAppScreenSizeComboBox" Width="250" Margin="0,0,20,0"/>
 

@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.ExecuterService.Contracts;
+using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Requests;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration.RunsetOperations;
 using Ginger.Run;
@@ -72,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
                 {
                     dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.SourceControlUser;
-                    dynamicExecution.SolutionDetails.SourceControlDetails.Password =  EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+                    dynamicExecution.SolutionDetails.SourceControlDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
                     dynamicExecution.SolutionDetails.SourceControlDetails.PasswordEncrypted = "Y";
                 }
                 else
@@ -201,7 +202,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         dynamicReport.HTMLReportFolderName = runsetActionProduceHTMLReport.HTMLReportFolderName;
                     }
                     dynamicReport.isHTMLReportPermanentFolderNameUsed = runsetActionProduceHTMLReport.isHTMLReportPermanentFolderNameUsed;
-                   
+
                     addRunset.AddRunsetOperations.Add(dynamicReport);
                 }
             }
@@ -354,7 +355,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     ProduceHTML dynamicReport = (ProduceHTML)addOperation;
                     RunSetActionHTMLReport reportOpertaion = new RunSetActionHTMLReport();
 
-                    reportOpertaion.Name = "Dynamic HTML Report" ;
+                    reportOpertaion.Name = "Dynamic HTML Report";
                     reportOpertaion.Condition = (RunSetActionBase.eRunSetActionCondition)Enum.Parse(typeof(RunSetActionBase.eRunSetActionCondition), dynamicReport.Condition, true);
                     reportOpertaion.RunAt = (RunSetActionBase.eRunAt)Enum.Parse(typeof(RunSetActionBase.eRunAt), dynamicReport.RunAt, true);
                     reportOpertaion.Active = true;
@@ -365,7 +366,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         reportOpertaion.HTMLReportFolderName = dynamicReport.HTMLReportFolderName;
                     }
                     reportOpertaion.isHTMLReportPermanentFolderNameUsed = dynamicReport.isHTMLReportPermanentFolderNameUsed;
-                   
+
 
                     runSetConfig.RunSetActions.Add(reportOpertaion);
                 }
@@ -377,17 +378,42 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         #endregion XML
 
         #region JSON
+
+        public static string CreateRemoteExecutionRequestJSON(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
+        {
+            //create execution object for RemoteExecution
+            AddExecutionRequest remoteExecutionRequest = new AddExecutionRequest();
+            remoteExecutionRequest.Priority = eExecutionPriority.Normal;
+            remoteExecutionRequest.Title = runsetExecutor.RunSetConfig.Name;
+            remoteExecutionRequest.Description = "Execution Requested from Ginger Desktop";
+            remoteExecutionRequest.RequestingUser = Environment.UserName;
+            remoteExecutionRequest.RequestingApplication = "Ginger Desktop";
+            remoteExecutionRequest.PreferredAgentId = null;
+            remoteExecutionRequest.TagName = string.Empty;
+            remoteExecutionRequest.ExecutionConfigurations = GetGingerExecConfigurationObject(solution,runsetExecutor,cliHelper);
+            
+            return SerializeDynamicExecutionToJSON(remoteExecutionRequest);
+
+        }
         public static string CreateDynamicRunSetJSON(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             runsetExecutor.RunSetConfig.UpdateRunnersBusinessFlowRunsList();
 
             //Create execution object
+            GingerExecConfig executionConfig = GetGingerExecConfigurationObject(solution, runsetExecutor, cliHelper);
+
+            //serilize object to JSON String
+             return SerializeDynamicExecutionToJSON(executionConfig);
+        }
+
+        private static GingerExecConfig GetGingerExecConfigurationObject(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
+        {
             GingerExecConfig executionConfig = new GingerExecConfig();
-            
+
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
             {
                 executionConfig.SolutionScmDetails = new ScmDetails();
-                executionConfig.SolutionScmDetails.SCMType = (ScmDetails.eSCMType)Enum.Parse(typeof(ScmDetails.eSCMType), solution.SourceControl.GetSourceControlType.ToString(), true);                
+                executionConfig.SolutionScmDetails.SCMType = (ScmDetails.eSCMType)Enum.Parse(typeof(ScmDetails.eSCMType), solution.SourceControl.GetSourceControlType.ToString(), true);
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
                 {
                     string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
@@ -482,11 +508,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             executionConfig.VerboseLevel = GingerExecConfig.eVerboseLevel.normal;
             executionConfig.EncryptionKey = solution.EncryptionKey;
 
+
+
             RunsetExecConfig runset = new RunsetExecConfig();
             runset.Exist = true;
             runset.Name = runsetExecutor.RunSetConfig.Name;
             runset.ID = runsetExecutor.RunSetConfig.Guid;
-            runset.Description = runsetExecutor.RunSetConfig.Description;            
+            runset.Description = runsetExecutor.RunSetConfig.Description;
 
             runset.EnvironmentName = runsetExecutor.RunsetExecutionEnvironment.Name;
             runset.EnvironmentID = runsetExecutor.RunsetExecutionEnvironment.Guid;
@@ -516,7 +544,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runner.Name = gingerRunner.Name;
                 runner.ID = gingerRunner.Guid;
                 if (gingerRunner.UseSpecificEnvironment == true && string.IsNullOrEmpty(gingerRunner.SpecificEnvironmentName) == false)
-                {                    
+                {
                     ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == gingerRunner.SpecificEnvironmentName).FirstOrDefault();
                     if (env != null)
                     {
@@ -526,7 +554,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
                 //if (gingerRunner.RunOption != GingerRunner.eRunOptions.ContinueToRunall)
                 //{
-                    runner.OnFailureRunOption = (RunnerExecConfig.eOnFailureRunOption)Enum.Parse(typeof(RunnerExecConfig.eOnFailureRunOption), gingerRunner.RunOption.ToString(), true);                    
+                runner.OnFailureRunOption = (RunnerExecConfig.eOnFailureRunOption)Enum.Parse(typeof(RunnerExecConfig.eOnFailureRunOption), gingerRunner.RunOption.ToString(), true);
                 //}
 
                 if (gingerRunner.ApplicationAgents.Count > 0)
@@ -535,11 +563,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
                 foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
                 {
+                    ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+                    applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
                     if (applicationAgent.Agent == null)
                     {
                         continue;//probably target app without platform or no such Agent
                     }
-                    runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID});
+                    runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID });
                 }
 
                 if (gingerRunner.BusinessFlowsRunList.Count > 0)
@@ -551,7 +581,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     BusinessFlowExecConfig businessFlow = new BusinessFlowExecConfig();
                     businessFlow.Name = businessFlowRun.BusinessFlowName;
                     businessFlow.ID = businessFlowRun.BusinessFlowGuid;
-                    if(gingerRunner.BusinessFlowsRunList.Where(x=>x.BusinessFlowGuid == businessFlowRun.BusinessFlowGuid).ToList().Count > 1)
+                    if (gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid == businessFlowRun.BusinessFlowGuid).ToList().Count > 1)
                     {
                         businessFlow.Instance = gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid == businessFlowRun.BusinessFlowGuid).ToList().IndexOf(businessFlowRun) + 1;
                     }
@@ -581,8 +611,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                            allInputVars);
                             if (originalVar != null)
                             {
-                                jsonInputVar.VariableParentName = originalVar.ParentName;                              
-                                jsonInputVar.VariableParentID = originalVar.ParentGuid;                                
+                                jsonInputVar.VariableParentName = originalVar.ParentName;
+                                jsonInputVar.VariableParentID = originalVar.ParentGuid;
                                 jsonInputVar.VariableName = originalVar.Name;
                                 jsonInputVar.VariableID = originalVar.Guid;
 
@@ -612,7 +642,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.Value;
                                         jsonInputVar.VariableCustomizedValue = customizedVar.Value;
                                         break;
-                                }                                                                
+                                }
 
                                 businessFlow.InputValues.Add(jsonInputVar);
                             }
@@ -657,14 +687,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             mailReportConfig.MailSettings.SmtpDetails.User = runsetMailReport.Email.SMTPUser;
                             mailReportConfig.MailSettings.SmtpDetails.Password = runsetMailReport.Email.SMTPPass;
                         }
-                    }                   
+                    }
                     mailReportConfig.MailSettings.MailFrom = runsetMailReport.MailFrom;
                     mailReportConfig.MailSettings.MailFromDisplayName = runsetMailReport.MailFromDisplayName;
                     mailReportConfig.MailSettings.MailTo = runsetMailReport.MailTo;
                     mailReportConfig.MailSettings.MailCC = runsetMailReport.MailCC;
                     mailReportConfig.MailSettings.Subject = runsetMailReport.Subject;
                     //Report mail content
-                    mailReportConfig.Comments = runsetMailReport.Comments;                   
+                    mailReportConfig.Comments = runsetMailReport.Comments;
                     switch (runsetMailReport.HTMLReportTemplate)
                     {
                         case RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport:
@@ -687,7 +717,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             mailReportConfig.AttachmentReportTemplateID = reportAttachment.SelectedHTMLReportTemplateID;
                             if (reportAttachment.IsLinkEnabled)
                             {
-                                mailReportConfig.AttachmentReportAttachType = MailReportOperationExecConfig.ReportAttachType.Link;                                   
+                                mailReportConfig.AttachmentReportAttachType = MailReportOperationExecConfig.ReportAttachType.Link;
                             }
                             else
                             {
@@ -722,9 +752,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
             }
             executionConfig.Runset = runset;
-
-            //serilize object to JSON String
-            return SerializeDynamicExecutionToJSON(executionConfig);
+            return executionConfig;
         }
 
         public static GingerExecConfig DeserializeDynamicExecutionFromJSON(string content)
@@ -732,10 +760,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             return NewtonsoftJsonUtils.DeserializeObject<GingerExecConfig>(content);
         }
 
-        public static string SerializeDynamicExecutionToJSON(GingerExecConfig gingerExecConfig)
+        public static AddExecutionRequest DeserializeRequestExecutionFromJSON(string content)
+        {
+            return NewtonsoftJsonUtils.DeserializeObject<AddExecutionRequest>(content);
+        }
+
+        public static string SerializeDynamicExecutionToJSON(dynamic gingerExecConfig)
         {
             return NewtonsoftJsonUtils.SerializeObject(gingerExecConfig);
         }
+
 
         public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, GingerExecConfig gingerExecConfig)
         {
@@ -847,9 +881,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             {
                                 appAgent = new ApplicationAgent();
 
-                              
+
                                 gingerRunner.ApplicationAgents.Add(appAgent);
                             }
+                            ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(appAgent);
+                            appAgent.ApplicationAgentOperations = applicationAgentOperations;
                             appAgent.Agent = agent;
                             appAgent.AppName = app.AppName;
                             appAgent.AppID = app.Guid;
@@ -900,7 +936,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             {
                                 businessFlowRun = new BusinessFlowRun();
                                 businessFlowRun.BusinessFlowGuid = bf.Guid;
-                                businessFlowRun.BusinessFlowName = bf.Name;                               
+                                businessFlowRun.BusinessFlowName = bf.Name;
                                 businessFlowRun.BusinessFlowIsActive = true;
                                 businessFlowRun.BusinessFlowInstanceGuid = Guid.NewGuid();
                             }
@@ -913,9 +949,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             //Set/Update BF Input Variables
                             if (businessFlowConfig.InputValues != null)
                             {
-                                ObservableList<VariableBase> allInputVars = null;                                
+                                ObservableList<VariableBase> allInputVars = null;
                                 allInputVars = bf.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsInputValue: true);
-                                
+
                                 foreach (InputValue inputValueConfig in businessFlowConfig.InputValues)
                                 {
                                     VariableBase customizedInputVar = null;
@@ -962,7 +998,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                     if (customizedInputVar != null)
                                     {
                                         customizedInputVar.DiffrentFromOrigin = true;
-                                        switch(inputValueConfig.VariableCustomizationType)
+                                        switch (inputValueConfig.VariableCustomizationType)
                                         {
                                             case InputValue.eVariableCustomizationType.Value:
                                                 customizedInputVar.VarValChanged = true;
@@ -979,7 +1015,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                             case InputValue.eVariableCustomizationType.GlobalVariable:
                                                 customizedInputVar.MappedOutputType = VariableBase.eOutputType.GlobalVariable;
                                                 customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
-                                                break;    
+                                                break;
                                             case InputValue.eVariableCustomizationType.ApplicationModelParameter:
                                                 customizedInputVar.MappedOutputType = VariableBase.eOutputType.ApplicationModelParameter;
                                                 customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
@@ -1009,7 +1045,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
                         if (!dynamicRunsetConfigs.Exist)
                         {
-                            runSetConfig.GingerRunners.Add(gingerRunner);
+                            (runSetConfig).GingerRunners.Add(gingerRunner);
                         }
                     }
                 }
@@ -1038,12 +1074,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                     mailOperation = (RunSetActionHTMLReportSendEmail)oper;
                                 }
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 Reporter.ToLog(eLogLevel.INFO, string.Format("{0} operation was not found so configuring new one", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                             }
                         }
-                        
+
                         if (mailOperation == null)//not found 
                         {
                             mailOperation = new RunSetActionHTMLReportSendEmail();
@@ -1173,7 +1209,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             }
                         }
                         if (reportAttachment != null && runsetOperationConfigMail.CustomizedReportFolder != null)
-                        {                                                        
+                        {
                             ((EmailHtmlReportAttachment)reportAttachment).ExtraInformation = runsetOperationConfigMail.CustomizedReportFolder;
                             if (string.IsNullOrEmpty(runsetOperationConfigMail.CustomizedReportFolder))
                             {
@@ -1187,7 +1223,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                         if (runsetOperationConfigMail.FilesPathToAttach != null)
                         {
-                            foreach(string attachmentPath in runsetOperationConfigMail.FilesPathToAttach)
+                            foreach (string attachmentPath in runsetOperationConfigMail.FilesPathToAttach)
                             {
                                 EmailAttachment exsitingAttachment = mailOperation.EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.File && x.Name.Trim().ToLower() == attachmentPath.Trim().ToLower()).FirstOrDefault();
                                 if (exsitingAttachment == null)
@@ -1293,7 +1329,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     return item;
                 }
                 else
-                {                    
+                {
                     string error = string.Format("Failed to find {0} with the details '{1}/{2}'", typeof(T), name.Item2.ToLower(), id.Item2);
                     throw new Exception(error);
                 }

@@ -543,6 +543,7 @@ namespace GingerCore.Actions.Common
             LongClick,
             #endregion NOT TO USE Action Types
         }
+
         public enum eElementDragDropType
         {
             [EnumValueDescription("Using JavaScript")]

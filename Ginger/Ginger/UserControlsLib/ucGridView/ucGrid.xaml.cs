@@ -77,7 +77,7 @@ namespace Ginger
         public event SelectedItemChangedHandler SelectedItemChanged;
 
         public event PasteItemEventHandler PasteItemEvent;
-
+        public bool isSourceEqualTargetDragAndDrop = false;
         public void OnSelectedItemChangedEvent(object selectedItem)
         {
             SelectedItemChangedHandler handler = SelectedItemChanged;
@@ -1954,7 +1954,19 @@ public void RemoveCustomView(string viewName)
 
             if (Info.DragTarget == Info.DragSource)
             {
-                Info.DragIcon = DragInfo.eDragIcon.DoNotDrop;
+                if (isSourceEqualTargetDragAndDrop)
+                {
+                    Info.DragIcon = DragInfo.eDragIcon.Move;
+                    EventHandler handler = PreviewDragItem;
+                    if (handler != null)
+                    {
+                        handler(Info, new EventArgs());
+                    }
+                }
+                else
+                {
+                    Info.DragIcon = DragInfo.eDragIcon.DoNotDrop;
+                }
             }
             else
             {
@@ -1969,7 +1981,7 @@ public void RemoveCustomView(string viewName)
         void IDragDrop.Drop(DragInfo Info)
         {
             // first check if we did drag and drop in the same grid then it is a move - reorder
-            if (Info.DragSource == this)
+            if (Info.DragSource == this && !isSourceEqualTargetDragAndDrop)
             {
                 if (!(btnUp.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
                 return;

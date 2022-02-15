@@ -54,8 +54,8 @@ namespace UnitTests.NonUITests
         {
             // We do only  simple calculation not including BF or proj env params so it will work 
             ARC.ExpectedCalculated = ARC.Expected;
-            GingerRunner.ReplaceActualPlaceHolder(ARC);
-            GingerRunner.CalculateARCStatus(ARC);
+            GingerExecutionEngine.ReplaceActualPlaceHolder(ARC);
+            GingerExecutionEngine.CalculateARCStatus(ARC);
         }
 
         [TestMethod]  [Timeout(60000)]

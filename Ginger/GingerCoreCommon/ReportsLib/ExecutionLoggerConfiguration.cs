@@ -43,7 +43,8 @@ namespace Ginger.Reports
         public enum DataRepositoryMethod
         {
             TextFile=1,
-            LiteDB=0
+            LiteDB=0,
+            Remote = 2
         }
                
         public enum ePublishToCentralDB

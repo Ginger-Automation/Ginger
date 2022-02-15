@@ -72,7 +72,7 @@ namespace UnitTests.NonUITests
 
             //Act
             createSol.RepositorySerializer.SaveToFile(createSol, SolFile);
-            Solution loadSol = Solution.LoadSolution(SolFile, false);
+            Solution loadSol = SolutionOperations.LoadSolution(SolFile, false);
 
             //Assert
            Assert.AreEqual(loadSol.Name, createSol.Name);
@@ -90,7 +90,7 @@ namespace UnitTests.NonUITests
             
             //Act
             createSol.RepositorySerializer.SaveToFile(createSol, solFile);
-            Solution loadSol = Solution.LoadSolution(solFile, false);
+            Solution loadSol = SolutionOperations.LoadSolution(solFile, false);
 
             //Assert
            Assert.AreEqual(loadSol.Name, createSol.Name);

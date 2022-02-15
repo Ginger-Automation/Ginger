@@ -116,6 +116,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                 MenuItem ExportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export", eImageType.Export);
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to ALM", ExportToALM, null, eImageType.ALM);
+                TreeViewUtils.AddSubMenuItem(ExportMenu, "Map to ALM", MapToALM, null, eImageType.MapALM);
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to CSV", ExportToCSV, null, eImageType.CSV);
                 if (WorkSpace.Instance.BetaFeatures.BFExportToJava)
                     TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to Java", ExportToJava, null, "");
@@ -209,6 +210,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void ExportToALM(object sender, System.Windows.RoutedEventArgs e)
         {
             ALMIntegration.Instance.ExportBusinessFlowToALM(mBusinessFlow, true);
+        }
+        private void MapToALM(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ALMIntegration.Instance.MapBusinessFlowToALM(mBusinessFlow, true);
         }
 
         private void ExportToCSV(object sender, System.Windows.RoutedEventArgs e)

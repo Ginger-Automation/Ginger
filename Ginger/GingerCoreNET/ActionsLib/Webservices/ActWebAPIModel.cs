@@ -31,7 +31,7 @@ using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Actions.WebServices.WebAPI
 {
-    public class ActWebAPIModel : Act, IActPluginExecution,IActPluginPostRun
+    public class ActWebAPIModel : Act, IActPluginExecution, IActPluginPostRun
     {
         public override String ActionType
         {
@@ -80,7 +80,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
             {
                 if (string.IsNullOrEmpty(GetOrCreateInputParam(nameof(APImodelGUID)).Value))
                     return new Guid();
-                else   
+                else
                     return Guid.Parse(GetOrCreateInputParam(nameof(APImodelGUID)).Value);
             }
             set
@@ -106,9 +106,9 @@ namespace GingerCore.Actions.WebServices.WebAPI
         public ObservableList<AppModelParameter> ActAppModelParameters;
 
         public override void CalculateModelParameterExpectedValue(ActReturnValue actReturnValue)
-        {            
+        {
             if (actReturnValue.ExpectedCalculated.Contains("AppModelParam"))
-            {                
+            {
                 List<AppModelParameter> usedParams = ActAppModelParameters.Where(x => actReturnValue.ExpectedCalculated.Contains(x.PlaceHolder)).ToList();
                 foreach (AppModelParameter param in usedParams)
                 {
@@ -134,7 +134,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
             ActWebAPIBase actWebAPI = null;
             if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.REST)
             {
-                actWebAPI = CreateActWebAPIREST((ApplicationAPIModel)AAMB,this);
+                actWebAPI = CreateActWebAPIREST((ApplicationAPIModel)AAMB, this);
 
             }
             else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)

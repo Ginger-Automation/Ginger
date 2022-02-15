@@ -38,6 +38,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public AgentTreeItem(Agent agent)
         {
             mAgent = agent;
+            if (mAgent.AgentOperations == null)
+            {
+                mAgent.AgentOperations = new AgentOperations(mAgent);
+            }
         }
 
         Object ITreeViewItem.NodeObject()

@@ -35,7 +35,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         string mFileName { get; set; }
         DataTable mExcelDataTable { get; set; }
         DataTable mFilteredDataTable { get; set; }
-        List<Tuple<string, object>> UpdateCellList { get; set; }
         IWorkbook mWorkbook { get; set; }
         ISheet mSheet { get; set; }
         private DataTable ConvertSheetToDataTable(ISheet sheet)
@@ -162,7 +161,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             IWorkbook workbook = null;
             try
             {
-                var fileExtension = Path.GetExtension(fullFilePath);
                 using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
                 {
                     workbook = WorkbookFactory.Create(fs);
@@ -353,6 +351,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 sheets.Add(wb.GetSheetAt(i).SheetName);
             }
             return sheets.OrderBy(itm => itm).ToList();
+        }
+
+        public void Dispose()
+        {
+            mSheet = null;
+            mWorkbook.Close();
+            mWorkbook = null;
         }
     }
 }

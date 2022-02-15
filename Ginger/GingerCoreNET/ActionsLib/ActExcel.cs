@@ -216,21 +216,23 @@ namespace GingerCore.Actions
             {
                 return;
             }
-            excelOperator = new ExcelNPOIOperations();
-            switch (ExcelActionType)
+            using (excelOperator = new ExcelNPOIOperations())
             {
-                case eExcelActionType.ReadData:
-                    ReadData();
-                    break;
-                case eExcelActionType.WriteData:
-                    WriteData();
-                    break;
-                case eExcelActionType.ReadCellData:
-                    ReadCellData();
-                    break;
-                default:
-                    Reporter.ToLog(eLogLevel.INFO, "Only action type can be selected");
-                    break;
+                switch (ExcelActionType)
+                {
+                    case eExcelActionType.ReadData:
+                        ReadData();
+                        break;
+                    case eExcelActionType.WriteData:
+                        WriteData();
+                        break;
+                    case eExcelActionType.ReadCellData:
+                        ReadCellData();
+                        break;
+                    default:
+                        Reporter.ToLog(eLogLevel.INFO, "Only action type can be selected");
+                        break;
+                }
             }
         }
         public object this[string propertyName]

@@ -544,7 +544,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             switch(VariablesLevel)
             {
                 case eVariablesLevel.Solution:
-                    ((Solution)VariablesParent).SaveSolution(true, Solution.eSolutionItemToSave.GlobalVariabels);
+                    ((Solution)VariablesParent).SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.GlobalVariabels);
                     break;
             }
         }

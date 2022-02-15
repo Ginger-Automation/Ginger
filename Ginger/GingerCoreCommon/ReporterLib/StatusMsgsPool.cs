@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.Common
         CreateAgentTip,
         CreateBusinessFlowTip,
         ScriptImported_RefreshSolution,
-        ALMTestSetImport, ExportItemToALM,
+        ALMTestSetImport, ExportItemToALM, ALMTestSetMap,
         AddingToSharedRepository,
         CheckInToSourceControl, GetLatestFromSourceControl, DownloadSolutionFromSourceControl,ResolveSourceControlConflicts,RevertChangesFromSourceControl,
         ExportExecutionDetails, UndoChanges,
@@ -118,7 +118,7 @@ namespace Amdocs.Ginger.Common
             #region Import/Export Messages
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ALMTestSetImport, new StatusMsg(eStatusMsgType.PROCESS, "Importing QC/ALM Test Set", "Importing the ALM Test Set: '{0}'"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExportItemToALM, new StatusMsg(eStatusMsgType.PROCESS, "Exporting to ALM", "Exporting the item: '{0}'"));
-            
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.ALMTestSetMap, new StatusMsg(eStatusMsgType.PROCESS, "Mapping To ALM Wizard upload" , "Prepares 'Map To ALM' Wizard data."));
             #endregion Import/Export Messages
 
             #region BusinessFlows Messages

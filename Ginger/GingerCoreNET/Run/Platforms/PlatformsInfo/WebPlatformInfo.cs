@@ -255,6 +255,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     return ActUIElement.eElementAction.NotExist.ToString();
             }
         }
+
         /// <summary>
         /// This method is used to check if the paltform supports POM
         /// </summary>
@@ -263,6 +264,16 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             return true;
         }
+
+        /// <summary>
+        /// This method is used to check if the paltform includes GUI based Application Instance and thus, supports Sikuli based operations
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsSikuliSupported()
+        {
+            return true;
+        }
+
         public override Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList()
         {
             ObservableList<UIElementFilter> uIBasicElementFilters = new ObservableList<UIElementFilter>();

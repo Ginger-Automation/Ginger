@@ -25,6 +25,7 @@ using GingerCore;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -78,6 +79,9 @@ namespace Ginger.SolutionWindows
             xTargetApplicationsGrid.Grid.CellEditEnding += ApplicationGrid_CellEditEnding;
 
             xTargetApplicationsGrid.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.ID, "Copy selected item ID", CopySelectedItemID);
+
+            xTargetApplicationsGrid.SetbtnDeleteHandler(btnDelete_Click);
+            xTargetApplicationsGrid.SetbtnClearAllHandler(btnClearAll_Click);
         }
 
         private void LoadGridData()
@@ -111,7 +115,7 @@ namespace Ginger.SolutionWindows
 
         private void SaveHandler(object sender, RoutedEventArgs e)
         {
-            mSolution.SaveSolution(true, Solution.eSolutionItemToSave.TargetApplications);
+            mSolution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.TargetApplications);
         }
 
         private void AddApplication(object sender, RoutedEventArgs e)
@@ -176,6 +180,39 @@ namespace Ginger.SolutionWindows
                 }
             }
             Reporter.ToUser(eUserMsgKey.StaticInfoMessage, string.Format("{0} {1} were updated successfully, please remember to Save All change.", numOfAfectedBFs, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
+        }
+
+        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (xTargetApplicationsGrid.grdMain.SelectedItems.Count == 0)
+            {
+                Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
+                return;
+            }
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x => x.TargetApplications.Any(y => y.Name == xTargetApplicationsGrid.grdMain.SelectedItem.ToString())))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Can not remove " + xTargetApplicationsGrid.grdMain.SelectedItem.ToString() + ", as it is being used by business flows.");
+            }
+            else 
+            {
+                WorkSpace.Instance.Solution.ApplicationPlatforms.Remove((ApplicationPlatform)xTargetApplicationsGrid.grdMain.SelectedItem);
+            }
+
+        }
+        private void btnClearAll_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (ApplicationPlatform applicationPlatform in WorkSpace.Instance.Solution.ApplicationPlatforms.ToList())
+            {
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x => x.TargetApplications.Any(y => y.Name == applicationPlatform.AppName)))
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Can not remove " + applicationPlatform.AppName + ", as it is being used by business flows.");
+                }
+                else
+                {
+                    WorkSpace.Instance.Solution.ApplicationPlatforms.Remove(applicationPlatform);
+                }
+            }
+            
         }
 
     }

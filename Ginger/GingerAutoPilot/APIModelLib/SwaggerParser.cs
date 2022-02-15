@@ -31,24 +31,24 @@ using YamlDotNet.Serialization;
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 {
     public class SwaggerParser : APIConfigurationsDocumentParserBase
-    {        
+    {
         SwaggerDocument Swaggerdoc = null;
 
         public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> SwaggerModels, bool avoidDuplicatesNodes = false)
         {
             string FinalFileName = "";
             Uri url = new Uri(FileName);
-            
+
             string orignaljson = "";
             if (url.IsFile)
             {
-             orignaljson=   System.IO.File.ReadAllText(FileName);
+                orignaljson = System.IO.File.ReadAllText(FileName);
             }
             {
                 orignaljson = GeneralLib.HttpUtilities.Download(url);
 
             }
-           try
+            try
             {
 
                 JToken.Parse(orignaljson);
@@ -64,7 +64,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                 serializer.Serialize(tw, yamlObject);
                 orignaljson = tw.ToString();
                 string tempfile = System.IO.Path.GetTempFileName();
-      
+
                 System.IO.File.WriteAllText(tempfile, orignaljson);
                 FinalFileName = tempfile;
             }
@@ -85,18 +85,18 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 
                         ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key);
                         SwaggerModels.Add(basicModal);
-                        GenerateResponse(Operation,basicModal);
+                        GenerateResponse(Operation, basicModal);
                     }
 
-        
-                    else if(Operation.ActualConsumes.Count() == 0 && Operation.RequestBody.Content.Count() != 0)
+
+                    else if (Operation.ActualConsumes.Count() == 0 && Operation.RequestBody.Content.Count() != 0)
                     {
 
                         foreach (var body in Operation.RequestBody.Content)
                         {
 
                             ApplicationAPIModel AAM = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key);
-                       
+
 
 
                             if (supportBody)
@@ -107,12 +107,12 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                                         GenerateFormParameters(AAM, Operation);
                                         break;
                                     case "multipart/form-data":
-                                        GenerateFormParameters(AAM, Operation,true);
+                                        GenerateFormParameters(AAM, Operation, true);
                                         break;
                                     case "application/json":
                                         AAM.ContentType = ApplicationAPIUtils.eContentType.JSon;
                                         AAM.ResponseContentType = ApplicationAPIUtils.eContentType.JSon;
-                                        if (Operation.RequestBody!= null)
+                                        if (Operation.RequestBody != null)
                                         {
                                             AAM.AppModelParameters.Append(GenerateJsonBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
                                         }
@@ -120,7 +120,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                                         {
                                             AAM.Name += "-JSON"; AAM.Description = "Body Type is JSON";
                                         }
-          
+
                                         break;
                                     case "application/xml":
                                         AAM.ContentType = ApplicationAPIUtils.eContentType.XML;
@@ -134,7 +134,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                                             AAM.Name += "-XML";
                                             AAM.Description = "Body Type is XML";
                                         }
-                              
+
                                         break;
 
                                 }
@@ -144,15 +144,15 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                         }
 
                     }
-                  
-                    foreach (var body in    Operation.ActualConsumes)
+
+                    foreach (var body in Operation.ActualConsumes)
                     {
-                    
-                        ApplicationAPIModel AAM= GenerateBasicModel(Operation,so.Key,ref supportBody,paths.Key);
-                        
-         
-                    
-                 
+
+                        ApplicationAPIModel AAM = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key);
+
+
+
+
                         if (supportBody)
                         {
                             switch (body)
@@ -161,30 +161,30 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                                     GenerateFormParameters(AAM, Operation);
                                     break;
                                 case "multipart/form-data":
-                                    GenerateFormParameters(AAM, Operation,true);
+                                    GenerateFormParameters(AAM, Operation, true);
                                     break;
                                 case "application/json":
                                     AAM.ContentType = ApplicationAPIUtils.eContentType.JSon;
                                     AAM.ResponseContentType = ApplicationAPIUtils.eContentType.JSon;
-                                    if (Operation.RequestBody!= null)
+                                    if (Operation.RequestBody != null)
                                     {
                                         AAM.AppModelParameters.Append(GenerateJsonBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
                                     }
-                                    if (Operation.ActualConsumes.Count()>1)
+                                    if (Operation.ActualConsumes.Count() > 1)
                                     {
                                         AAM.Name += "-JSON";
                                         AAM.Description = "Body Type is JSON";
                                     }
-                               
+
                                     break;
                                 case "application/xml":
                                     AAM.ContentType = ApplicationAPIUtils.eContentType.XML;
                                     AAM.ResponseContentType = ApplicationAPIUtils.eContentType.XML;
-                                    if (Operation.RequestBody!= null)
+                                    if (Operation.RequestBody != null)
                                     {
                                         AAM.AppModelParameters.Append(GenerateXMLBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
                                     }
-                                        if (Operation.ActualConsumes.Count() > 1)
+                                    if (Operation.ActualConsumes.Count() > 1)
                                     {
                                         AAM.Name += "-XML";
                                         AAM.Description = "Body Type is XML";
@@ -194,14 +194,14 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                             }
                         }
                         GenerateResponse(Operation, AAM);
-                        
+
                         SwaggerModels.Add(AAM);
                     }
 
 
-         
 
-                   
+
+
                 }
             }
             return SwaggerModels;
@@ -209,22 +209,36 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 
         private void GenerateResponse(SwaggerOperation operation, ApplicationAPIModel basicModal)
         {
-            if (operation.Responses.Count > 1 && operation.Responses.Keys.Where(x => x.StartsWith("2")).Count() > 0)
+            if (operation.Responses.Count > 0 && operation.Responses.Keys.Where(x => x.StartsWith("2")).Count() > 0)
             {
+                //handling only the first sucess response code need to be improved
+                //as discussed, for now handling response for only success
                 string sucesskey = operation.Responses.Keys.Where(x => x.StartsWith("2")).ElementAt(0);
                 SwaggerResponse response = null;
                 operation.Responses.TryGetValue(sucesskey, out response);
+
+                if (response != null && response.Schema == null)
+                {
+                    if (response.Reference != null && response.Reference is SwaggerResponse)
+                    {
+                        response = response.Reference;
+                    }
+                }
+
                 if (response.Schema != null)
                 {
-
-
+                    var schemaObj = response.Schema;
+                    if (response.Schema.HasReference && response.Schema.Reference != null)
+                    {
+                        schemaObj = response.Schema.Reference;
+                    }
                     if (basicModal.ContentType == ApplicationAPIUtils.eContentType.XML)
                     {
 
                         ApplicationAPIModel JsonResponseModel = new ApplicationAPIModel();
-                        var i = GenerateXMLBody(JsonResponseModel, response.Schema);
+                        var i = GenerateXMLBody(JsonResponseModel, schemaObj);
 
-                        foreach (AppModelParameter currModel in GenerateJsonBody(JsonResponseModel, response.Schema))
+                        foreach (AppModelParameter currModel in GenerateJsonBody(JsonResponseModel, schemaObj))
                         {
                             ActReturnValue arv = new ActReturnValue();
                             arv.ItemName = currModel.ItemName;
@@ -232,16 +246,13 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                             arv.DoNotConsiderAsTemp = true;
                             basicModal.ReturnValues.Add(arv);
                         }
-
-
                     }
                     else if (basicModal.ContentType == ApplicationAPIUtils.eContentType.JSon)
                     {
-
                         ApplicationAPIModel JsonResponseModel = new ApplicationAPIModel();
-                        var i=GenerateJsonBody(JsonResponseModel, response.Schema);
+                        var i = GenerateJsonBody(JsonResponseModel, schemaObj);
 
-                        foreach (AppModelParameter currModel in GenerateJsonBody(JsonResponseModel, response.Schema))
+                        foreach (AppModelParameter currModel in GenerateJsonBody(JsonResponseModel, schemaObj))
                         {
                             ActReturnValue arv = new ActReturnValue();
                             arv.ItemName = currModel.ItemName;
@@ -251,15 +262,11 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                         }
 
                     }
-                }
-                else
-                {
-
                 }
             }
         }
 
-        private ApplicationAPIModel GenerateBasicModel(SwaggerOperation Operation, SwaggerOperationMethod method,ref bool supportBody, string path)
+        private ApplicationAPIModel GenerateBasicModel(SwaggerOperation Operation, SwaggerOperationMethod method, ref bool supportBody, string path)
         {
             ApplicationAPIModel AAM = new ApplicationAPIModel();
             System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("{[a-zA-Z]*}");
@@ -272,12 +279,12 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
             AAM.EndpointURL = Swaggerdoc.BaseUrl + path;
             AAM.APIType = ApplicationAPIUtils.eWebApiType.REST;
             AAM.Name = Operation.Summary;
-            if(string.IsNullOrWhiteSpace(AAM.Name))
+            if (string.IsNullOrWhiteSpace(AAM.Name))
             {
                 AAM.Name = Operation.OperationId;
             }
             AAM.URLDomain = Swaggerdoc.BaseUrl;
-             supportBody = true;
+            supportBody = true;
             switch (method)
             {
                 case SwaggerOperationMethod.Get:
@@ -313,15 +320,37 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 
             foreach (SwaggerParameter param in Operation.Parameters)
             {
-                if (param.Kind == SwaggerParameterKind.Header)
+                SwaggerParameter parameter = new SwaggerParameter();
+                if (!string.IsNullOrEmpty(param.Name))
                 {
-                    string modelName = "<" + param.Name + ">";
+                    parameter = param;
+                }
+                else
+                {
+                    if (param.HasReference && param.Reference is SwaggerParameter)
+                    {
+                        parameter = (SwaggerParameter)param.Reference;
+                    }
+                }
+                if (parameter.Kind == SwaggerParameterKind.Header)
+                {
+                    string modelName = "<" + parameter.Name + ">";
                     APIModelKeyValue header = new APIModelKeyValue();
-                    header.ItemName = param.Name;
-                    header.Param = param.Name;
+                    header.ItemName = parameter.Name;
+                    header.Param = parameter.Name;
                     header.Value = modelName;
-                    AAM.AppModelParameters.Add(new AppModelParameter(modelName, param.Name+ " in headers", "", "", new ObservableList<OptionalValue>()));
+                    ObservableList<OptionalValue> listOptions = GetListOfParamEnums(parameter);
+                    AAM.AppModelParameters.Add(new AppModelParameter(modelName, parameter.Name + " in headers", "", "", listOptions));
                     AAM.HttpHeaders.Add(header);
+                }
+                else if (parameter.Kind == SwaggerParameterKind.Query)
+                {
+                    string modelName = parameter.Name;
+                    AAM.EndpointURL = !AAM.EndpointURL.Contains("?") ?
+                        AAM.EndpointURL + "?" + parameter.Name + "=" + "[<" + parameter.Name + ">]" :
+                        AAM.EndpointURL + "+" + parameter.Name + "=" + "[<" + parameter.Name + ">]";
+                    ObservableList<OptionalValue> listOptions = GetListOfParamEnums(parameter);
+                    AAM.AppModelParameters.Add(new AppModelParameter(string.Format("[<{0}>]", modelName), parameter.Name + " in query", "", "", listOptions));
                 }
             }
 
@@ -333,10 +362,10 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
         private ObservableList<AppModelParameter> GenerateXMLBody(ApplicationAPIModel aAM, JsonSchema4 operation)
         {
 
-            string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation,null,true);
-            string XMlName = operation.HasReference? XMlName = operation.Reference.Xml.Name: XMlName = operation.Xml.Name;
+            string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation, null, true);
+            string XMlName = operation.HasReference ? XMlName = operation.Reference.Xml.Name : XMlName = operation.Xml.Name;
 
-        
+
 
 
             SampleBody = "{\"" + XMlName + "\":" + SampleBody + "}";
@@ -345,7 +374,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
             string temppath = System.IO.Path.GetTempFileName();
             File.WriteAllText(temppath, xmlbody);
             XMLTemplateParser XTp = new XMLTemplateParser();
-            ApplicationAPIModel aam = XTp.ParseDocument(temppath,new ObservableList<ApplicationAPIModel>()).ElementAt(0);
+            ApplicationAPIModel aam = XTp.ParseDocument(temppath, new ObservableList<ApplicationAPIModel>()).ElementAt(0);
             object[] BodyandModelParameters = JSONTemplateParser.GenerateBodyANdModelParameters(SampleBody);
             aAM.RequestBody = aam.RequestBody;
             aAM.RequestBodyType = ApplicationAPIUtils.eRequestBodyType.FreeText;
@@ -355,7 +384,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 
         private ObservableList<AppModelParameter> GenerateJsonBody(ApplicationAPIModel aAM, JsonSchema4 operation)
         {
-            string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation,null);
+            string SampleBody = JsonSchemaTools.JsonSchemaFaker(operation, null);
             object[] BodyandModelParameters = JSONTemplateParser.GenerateBodyANdModelParameters(SampleBody);
             aAM.RequestBody = (string)BodyandModelParameters[0];
             return (ObservableList<AppModelParameter>)BodyandModelParameters[1];
@@ -373,23 +402,81 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
             }
             foreach (SwaggerParameter SP in operation.ActualParameters)
             {
-                string ModelParameterName = "{" + SP.Name.ToUpper() + "}";
 
-                aAM.AppModelParameters.Add(new AppModelParameter()
+                if (SP.Schema != null && SP.Schema.ActualProperties != null && SP.Schema.ActualProperties.Count > 0)
                 {
-                    ItemName = ModelParameterName,
-                });
+                    foreach (KeyValuePair<string, JsonProperty> property in SP.Schema.ActualProperties)
+                    {
+                        string modelParameterName = "{" + SP.Name.ToUpper() + "." + property.Key + "}";
+                        aAM.AppModelParameters.Add(new AppModelParameter()
+                        {
+                            ItemName = modelParameterName,
+                        });
 
-                aAM.APIModelBodyKeyValueHeaders.Add(new APIModelBodyKeyValue()
+                        aAM.APIModelBodyKeyValueHeaders.Add(new APIModelBodyKeyValue()
+                        {
+                            Param = modelParameterName,
+                            ValueType = SP.Type == JsonObjectType.File ? APIModelBodyKeyValue.eValueType.File : APIModelBodyKeyValue.eValueType.Text,
+                            Value = modelParameterName,
+
+                        });
+                    }
+                }
+                else
                 {
-                    Param = SP.Name,
-                    ValueType = SP.Type == JsonObjectType.File ? APIModelBodyKeyValue.eValueType.File : APIModelBodyKeyValue.eValueType.Text,
-                    Value = ModelParameterName,
+                    string ModelParameterName = "{" + SP.Name.ToUpper() + "}";
+                    aAM.AppModelParameters.Add(new AppModelParameter()
+                    {
+                        ItemName = ModelParameterName,
+                    });
 
-                });
+                    aAM.APIModelBodyKeyValueHeaders.Add(new APIModelBodyKeyValue()
+                    {
+                        Param = SP.Name,
+                        ValueType = SP.Type == JsonObjectType.File ? APIModelBodyKeyValue.eValueType.File : APIModelBodyKeyValue.eValueType.Text,
+                        Value = ModelParameterName,
+
+                    });
+                }
             }
+        }
 
+        private ObservableList<OptionalValue> GetListOfParamEnums(SwaggerParameter swaggerParameter)
+        {
+            ObservableList<OptionalValue> lstOptions = new ObservableList<OptionalValue>();
+            try
+            {
+                if (swaggerParameter.Item != null && swaggerParameter.Item.Enumeration != null && swaggerParameter.Item.Enumeration.Count != 0)
+                {
+                    foreach (object item in swaggerParameter.Item.Enumeration)
+                    {
+                        OptionalValue value = new OptionalValue()
+                        {
+                            Value = item.ToString(),
+                            ItemName = item.ToString(),
+                        };
+                        lstOptions.Add(value);
+                    }
+                }
+                if (swaggerParameter.Enumeration != null && swaggerParameter.Enumeration.Count > 0)
+                {
+                    foreach (object item in swaggerParameter.Enumeration)
+                    {
+                        OptionalValue value = new OptionalValue()
+                        {
+                            Value = item.ToString(),
+                            ItemName = item.ToString(),
+                        };
+                        lstOptions.Add(value);
+                    }
 
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in getting optional values enum", ex);
+            }
+            return lstOptions;
         }
 
     }

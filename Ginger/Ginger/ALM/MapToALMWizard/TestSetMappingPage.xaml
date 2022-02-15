@@ -1,0 +1,20 @@
+﻿<Page x:Class="Ginger.ALM.MapToALMWizard.TestSetMappingPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.ALM.MapToALMWizard"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="TestSetMappingPage">
+
+    <Grid x:Name="xTestSetGrid" Margin="10,10,10,0" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Frame x:Name="load_frame" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" SizeChanged="load_frame_SizeChanged"/>
+        <StackPanel Name="xMappedTestSetPanel" Visibility="Collapsed">
+            <Label x:Name="xMappedTestSetLbl" Style="{StaticResource $LabelStyle}" Grid.Column="0" Content="Mapped Test Set:" VerticalAlignment="Top"/>
+            <TextBox x:Name="xMappedTestSetBox" Style="{StaticResource $TextBoxStyle}" Height="25" IsReadOnly="True" VerticalAlignment="Top" Margin="0,0,0,0" ToolTip="Current Mapped Test Set"/>
+            <UserControls:ucButton x:Name="xChangeTestSetBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Center" ButtonText="Change Mapped Test Set" ButtonImageType="BusinessFlow" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xChangeTestSetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+        </StackPanel>
+    </Grid>
+</Page>

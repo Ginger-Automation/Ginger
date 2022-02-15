@@ -133,6 +133,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             foreach (Agent agent in mWizard.OptionalAgentsList)
             {
+                if (agent.AgentOperations == null)
+                {
+                    AgentOperations agentOperations = new AgentOperations(agent);
+                    agent.AgentOperations = agentOperations;
+                }
                 agent.Tag = string.Empty;
             }
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard.mPomLearnUtils, nameof(mWizard.mPomLearnUtils.Agent));
@@ -324,7 +329,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             mWizard.mPomLearnUtils.SpecificFramePath = null;
             if (mAppPlatform.Equals(ePlatformType.Java))
             {
-                var windowExplorerDriver = ((IWindowExplorer)(mWizard.mPomLearnUtils.Agent.Driver));
+                var windowExplorerDriver = ((IWindowExplorer)(((AgentOperations)mWizard.mPomLearnUtils.Agent.AgentOperations).Driver));
 
                 var list = windowExplorerDriver.GetWindowAllFrames();
                 xFrameListCmbBox.ItemsSource = list;

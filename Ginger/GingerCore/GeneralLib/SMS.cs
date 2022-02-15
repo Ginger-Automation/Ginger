@@ -25,7 +25,7 @@ namespace GingerCore.GeneralLib
 
         public void Send()
         {
-            Email.Send();
+            Email.EmailOperations.Send();
         }
     }
 }

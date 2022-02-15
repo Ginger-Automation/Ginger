@@ -1,0 +1,60 @@
+﻿<Page x:Class="Ginger.ALM.MapToALMWizard.TestStepMappingPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.ALM.MapToALMWizard"
+      xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" 
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" 
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="TestStepMappingPage">
+
+    <Grid x:Name="xMappingGrid">
+        <Grid.Resources>
+            <DataTemplate  x:Key="xMappingStatusIconTemplate">
+                <UserControls:ImageMakerControl x:Name="xMappingStatusIconImageMakerControl" ImageType="{Binding MappingStatusIcon}" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding MappingStatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Mapped">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xMappingStatusIconImageMakerControl" Value="Green"/>
+                        <Setter Property="ToolTip" Value="Completed - All Test Case Steps mapped." />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding MappingStatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Unknown">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xMappingStatusIconImageMakerControl" Value="Gray"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding MappingStatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="UnMapped">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xMappingStatusIconImageMakerControl" Value="Red"/>
+                        <Setter Property="ToolTip" Value="Error - Test Case has no Steps." />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding MappingStatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Partial">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xMappingStatusIconImageMakerControl" Value="Orange"/>
+                        <Setter Property="ToolTip" Value="Warning - Test Case steps partial mapped." />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="6*"/>
+        </Grid.RowDefinitions>
+        <Ginger:ucGrid ScrollViewer.CanContentScroll="True" x:Name="xMapTestCasesGrid" Title="Ginger ' ' Activities Group to ALM Test Cases Mapping" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                       ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowDelete="Collapsed" ShowAdd="Collapsed" SelectedItemChanged="xMapTestCasesGrid_SelectedItemChanged"/>
+        <GridSplitter x:Name="xStepsGridSplitter" ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="5" Style="{StaticResource @HorizontalGridSplitterStyle}" />
+        <Grid x:Name="xTestStepsGrid" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250*"/>
+                <ColumnDefinition Width="150*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="90*"/>
+            </Grid.RowDefinitions>
+            <Ginger:ucGrid Grid.Row="1" x:Name="xMapTestStepsGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" PreviewDragItem="TestStepsMapping_PreviewDragItem" ItemDropped="TestStepsMapping_ItemDropped"
+                           ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowAdd="Collapsed"/>
+            <GridSplitter Grid.Row="1" x:Name="xStepMapGridSplitter" ResizeDirection="Columns" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="5" Style="{StaticResource $VerticalGridSplitterStyle}" />
+            <Ginger:ucGrid Grid.Row="1" x:Name="xUnMapTestStepsGrid" Grid.Column="1"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsReadOnly="True" PreviewDragItem="TestStepsMapping_PreviewDragItem" ItemDropped="TestStepsMapping_ItemDropped"
+                           ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowDelete="Collapsed" ShowAdd="Collapsed"/>
+        </Grid>
+    </Grid>
+</Page>

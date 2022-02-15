@@ -149,6 +149,11 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                 {
                     executions = zephyrEntRepository.GetModuleExecutionData(Convert.ToInt32(bizFlow.ExternalID));
                 }
+                // Create new Executions Ids for selected Activities Groups
+                if(executions == null || executions.Count == 0)
+                {
+
+                }
                 if (executions != null && executions.Count > 0)
                 {
                     long scheduleId = 0;
@@ -183,8 +188,8 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
                                     if (executionResult == null)
                                     {
-                                        result = "Failed to create run using rest API";
-                                        return false;
+                                        string executionFailedMessage = "Failed to create run using rest API for " + TestCaseName;
+                                        result = String.IsNullOrEmpty(result) ? executionFailedMessage : result + Environment.NewLine + executionFailedMessage;
                                     }
 
                                     // Attach ActivityGroup Report if needed
@@ -213,8 +218,8 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
                                             if (attachmentExecution == null)
                                             {
-                                                result = "Failed to create attachment";
-                                                return false;
+                                                string failedCreateAttachment = "Failed to create attachment";
+                                                result = String.IsNullOrEmpty(result) ? failedCreateAttachment : result + Environment.NewLine + failedCreateAttachment;
                                             }
 
                                             System.IO.File.Delete(zipFileName);
@@ -224,13 +229,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                 }
                                 else
                                 {
-                                    //No matching TC was found for the ActivitiesGroup in QC
-                                    result = "Matching TC's were not found for all " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " in QC/ALM.";
+                                    string failedNotAllTCMatching = "Matching TC's were not found for all " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " in QC/ALM.";
+                                    result = String.IsNullOrEmpty(result) ? failedNotAllTCMatching : result + Environment.NewLine + failedNotAllTCMatching;
                                 }
-                            }
-                            if (result != string.Empty)
-                            {
-                                return false;
                             }
                         }
                     }
@@ -253,7 +254,8 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             }
             catch (Exception ex)
             {
-                result = "Unexpected error occurred- " + ex.Message;
+                string failedPublishMessage = "Unexpected error occurred- " + ex.Message;
+                result = String.IsNullOrEmpty(result) ? failedPublishMessage : result + Environment.NewLine + failedPublishMessage;
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
                 return false;
             }
