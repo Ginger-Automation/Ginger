@@ -47,7 +47,7 @@ namespace GingerCore.Actions
         }
 
         public override string ActionDescription { get { return "Browser Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Browser Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
