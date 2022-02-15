@@ -11,7 +11,7 @@
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="200*"/>
-            <RowDefinition Height="28"/>
+            <RowDefinition Height="22"/>
         </Grid.RowDefinitions>
         
         <UCTreeView:TreeView1 x:Name="xTreeView" TreeTitle="Title" Grid.Row="0"/>
