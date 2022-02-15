@@ -543,6 +543,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 RunnerExecConfig runner = new RunnerExecConfig();
                 runner.Name = gingerRunner.Name;
                 runner.ID = gingerRunner.Guid;
+                runner.Active = gingerRunner.Active;
                 if (gingerRunner.UseSpecificEnvironment == true && string.IsNullOrEmpty(gingerRunner.SpecificEnvironmentName) == false)
                 {
                     ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == gingerRunner.SpecificEnvironmentName).FirstOrDefault();
@@ -581,6 +582,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     BusinessFlowExecConfig businessFlow = new BusinessFlowExecConfig();
                     businessFlow.Name = businessFlowRun.BusinessFlowName;
                     businessFlow.ID = businessFlowRun.BusinessFlowGuid;
+                    businessFlow.InstanceID = businessFlowRun.BusinessFlowInstanceGuid;
+
                     if (gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid == businessFlowRun.BusinessFlowGuid).ToList().Count > 1)
                     {
                         businessFlow.Instance = gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid == businessFlowRun.BusinessFlowGuid).ToList().IndexOf(businessFlowRun) + 1;
@@ -749,6 +752,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     jsonReportConfig.RunAt = (OperationExecConfigBase.eOperationRunAt)Enum.Parse(typeof(OperationExecConfigBase.eOperationRunAt), runSetOperation.RunAt.ToString(), true);
                     jsonReportConfig.Active = runSetOperation.Active;
                     runset.Operations.Add(jsonReportConfig);
+                }
+                else if (runSetOperation is RunSetActionAutomatedALMDefects)
+                {
+
                 }
             }
             executionConfig.Runset = runset;
