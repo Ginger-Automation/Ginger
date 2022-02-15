@@ -73,6 +73,10 @@ namespace Ginger.BusinessFlowPages
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Activity target platform is \"" + currentActivityPlatform + "\", where as action platform is \"" + selectedAction.Platform + "\"" + System.Environment.NewLine + "Please select same platform actions only.");
                     return -1;
                 }
+                if (!(selectedAction is ActWithoutDriver))
+                {
+                    selectedAction.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
+                }
                 instance = GenerateSelectedAction(selectedAction, mContext);
             }
             else if (mItem is ElementInfo)

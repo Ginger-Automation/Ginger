@@ -39,7 +39,7 @@ namespace GingerCore.Actions.ASCF
             }
 
             public override string ActionDescription { get { return "ASCF Browser Control Action"; } }
-            public override string ActionUserDescription { get { return string.Empty; } }
+            public override string ActionUserDescription { get { return "ASCF Browser Control Action"; } }
 
             public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
             {

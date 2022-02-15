@@ -27,7 +27,7 @@ namespace GingerCore.Actions
     public class ActActivateRow : Act
     {
         public override string ActionDescription { get { return "ASCF Activate Row Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "ASCF Activate Row Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
