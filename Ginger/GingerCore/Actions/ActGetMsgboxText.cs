@@ -31,7 +31,7 @@ namespace GingerCore.Actions
     public class ActGetMsgboxText : Act
     {
         public override string ActionDescription { get { return "Get msgbox text Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Get msgbox text Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
