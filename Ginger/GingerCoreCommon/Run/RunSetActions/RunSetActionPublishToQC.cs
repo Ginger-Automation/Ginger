@@ -26,7 +26,8 @@ using GingerCore;
 using GingerCore.ALM;
 using GingerCore.DataSource;
 using Amdocs.Ginger.Common.InterfacesLib;
-
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using static GingerCore.ALM.PublishToALMConfig;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -35,7 +36,7 @@ namespace Ginger.Run.RunSetActions
     public class RunSetActionPublishToQC : RunSetActionBase
     {
         public IRunSetActionPublishToQCOperations RunSetActionPublishToQCOperations;
-        
+        public static readonly string AlmTypeDefault = "Default";
         private string mVariableForTCRunName;
         [IsSerializedForLocalRepository]
         public string VariableForTCRunName { get { return mVariableForTCRunName; } set { if (mVariableForTCRunName != value) { mVariableForTCRunName = value; OnPropertyChanged(nameof(VariableForTCRunName)); } } }
@@ -55,6 +56,52 @@ namespace Ginger.Run.RunSetActions
             get { return mFilterStatus; }
             set { mFilterStatus = value; }
         }
+        private string mPublishALMType = AlmTypeDefault;
+        [IsSerializedForLocalRepository]
+        public string PublishALMType
+        {
+            get
+            {
+                return mPublishALMType;
+            }
+            set
+            {
+                mPublishALMType = value;
+            }
+        }
+        private eALMTestSetLevel mALMTestSetLevel;
+        [IsSerializedForLocalRepository]
+        public eALMTestSetLevel ALMTestSetLevel
+        {
+            get
+            {
+                return mALMTestSetLevel;
+            }
+            set
+            {
+                if (mALMTestSetLevel != value)
+                {
+                    mALMTestSetLevel = value;
+                    OnPropertyChanged(nameof(RunSetActionPublishToQC.ALMTestSetLevel));
+                }
+            }
+        }
+        private eExportType mExportType;
+        [IsSerializedForLocalRepository]
+        public eExportType ExportType
+        {
+            get
+            {
+                return mExportType;
+            }
+            set
+            {
+                mExportType = value;
+                OnPropertyChanged(nameof(RunSetActionPublishToQC.ExportType));
+            }
+        }
+        [IsSerializedForLocalRepository]
+        public ObservableList<ExternalItemFieldBase> AlmFields { get; set; }
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
             List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();

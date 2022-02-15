@@ -98,6 +98,8 @@ namespace Ginger.ALM
             AlmCore.GetCurrentAlmConfig(isOperationAlmType);
             ALMCore.SetALMCoreConfigurations(AlmType, AlmCore);
         }
+
+
         public void SetALMCoreConfigurations(eALMType almType)
         {
             ALMCore.SetALMCoreConfigurations(almType, AlmCore);           
@@ -625,14 +627,14 @@ namespace Ginger.ALM
             return AlmRepo.ConnectALMServer(almConnectStyle);
         }
 
-        public void OpenALMItemsFieldsPage()
+        public void OpenALMItemsFieldsPage(eALMConfigType configType, eALMType type, ObservableList<ExternalItemFieldBase> ExternalItemsFields, Guid actionGuid = default(Guid))
         {
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig();
+            //GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig();
             if (AlmRepo == null)
             {
-                UpdateALMType(AlmConfig.AlmType);
+                UpdateALMType(type);
             }
-            AlmRepo.OpenALMItemsFieldsPage();
+            AlmRepo.OpenALMItemsFieldsPage(configType, type, ExternalItemsFields, actionGuid);
         }
 
         public bool LoadALMConfigurations()
@@ -683,6 +685,32 @@ namespace Ginger.ALM
         public ALMTestSet GetALMTestCases(ALMTestSet almTestSet)
         {
             return AlmRepo.GetALMTestCasesToTestSetObject(almTestSet);
+        }
+
+        public ObservableList<ExternalItemFieldBase> GetALMItemFields(ObservableList<ExternalItemFieldBase> exitingFields, bool online, BackgroundWorker bw = null)
+        {
+            ObservableList<ExternalItemFieldBase> mergedFields = null;
+            if (ALMIntegration.Instance.AutoALMProjectConnect())
+            {
+                //Get latestALMFields from ALMCore with Online flag
+                ObservableList<ExternalItemFieldBase> latestALMFields = AlmCore.GetALMItemFields(bw, online);
+                mergedFields = AlmCore.RefreshALMItemFields(exitingFields, latestALMFields);
+            }
+            return mergedFields;
+        }
+        public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
+        {
+            Reporter.ToLog(eLogLevel.INFO, ("Exporting " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
+            ////Passing Solution Folder path to GingerCore
+            //ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+
+            bool isExportSucc = false;
+            if (AutoALMProjectConnect(eALMConnectType.Silence, false))
+            {
+                isExportSucc = AlmRepo.ExportBusinessFlowToALM(businessFlow, performSaveAfterExport, almConnectStyle, testPlanUploadPath, testLabUploadPath);
+                DisconnectALMServer();
+            }
+            return isExportSucc;
         }
     }
 }
