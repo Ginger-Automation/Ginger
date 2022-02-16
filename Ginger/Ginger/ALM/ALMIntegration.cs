@@ -701,8 +701,6 @@ namespace Ginger.ALM
         public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
             Reporter.ToLog(eLogLevel.INFO, ("Exporting " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
-            ////Passing Solution Folder path to GingerCore
-            //ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
             bool isExportSucc = false;
             if (AutoALMProjectConnect(eALMConnectType.Silence, false))
