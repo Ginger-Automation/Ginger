@@ -183,7 +183,7 @@ namespace Ginger.SolutionWindows
                     agent.DriverType = Agent.eDriverType.UnixShell;
                     break;
                 case ePlatformType.Web:
-                    agent.DriverType = Agent.eDriverType.SeleniumIE;
+                    agent.DriverType = Agent.eDriverType.SeleniumChrome;
                     break;
                 case ePlatformType.WebServices:
                     agent.DriverType = Agent.eDriverType.WebServices;

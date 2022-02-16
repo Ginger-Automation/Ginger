@@ -1,4 +1,4 @@
-    <Page x:Class="GingerWPF.UserControlsLib.UCTreeView.SingleItemTreeViewSelectionPage"
+<Page x:Class="GingerWPF.UserControlsLib.UCTreeView.SingleItemTreeViewSelectionPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -11,9 +11,9 @@
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="200*"/>
-            <RowDefinition Height="22"/>
+            <RowDefinition Height="28"/>
         </Grid.RowDefinitions>
-        
+
         <UCTreeView:TreeView1 x:Name="xTreeView" TreeTitle="Title" Grid.Row="0"/>
         <Label x:Name="xTipLabel" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Content="You can double click on item for multi selection." Style="{StaticResource $LabelStyle}" />
     </Grid>

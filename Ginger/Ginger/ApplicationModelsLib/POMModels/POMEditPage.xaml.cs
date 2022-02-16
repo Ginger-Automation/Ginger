@@ -167,6 +167,22 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     mPOM.TargetApplicationKey = key;
                 }
+                else if (mPOM.TargetApplicationKey.ItemName != null && key == null)//if POM is imported/copied from other solution
+                {
+                    var platform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
+                    if (platform != ePlatformType.NA)
+                    {
+                        mPOM.TargetApplicationKey = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform == platform).Select(x => x.Key).FirstOrDefault();
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mPOM.Key.ItemName + " Target Application was not found, please select new Target Application");
+                    }
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mPOM.Key.ItemName + " Target Application was not found, please select new Target Application");
+                }
             }
 
             xTargetApplicationComboBox.ItemsSource = null;
