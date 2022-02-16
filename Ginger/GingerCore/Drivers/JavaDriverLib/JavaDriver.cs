@@ -453,7 +453,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             ObservableList<ElementLocator> locators = new ObservableList<ElementLocator>();
 
-            var pomExcutionUtil = new POMExecutionUtils(act);
+            var pomExcutionUtil = new POMExecutionUtils(act,act.ElementLocateValue);
 
             var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
