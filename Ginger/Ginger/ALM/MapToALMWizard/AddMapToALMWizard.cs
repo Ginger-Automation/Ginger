@@ -94,10 +94,13 @@ namespace Ginger.ALM.MapToALMWizard
         {
             foreach (ActivitiesGroup ag in mapBusinessFlow.ActivitiesGroups)
             {
-                testCasesMappingList.Add(new ALMTestCaseManualMappingConfig() { activitiesGroup = ag });
-                if (!String.IsNullOrEmpty(ag.ExternalID))
+                if (ag.ActivitiesIdentifiers.Count > 0)
                 {
-                    SetReMapAGSDic(ag.ExternalID, null);
+                    testCasesMappingList.Add(new ALMTestCaseManualMappingConfig() { activitiesGroup = ag });
+                    if (!String.IsNullOrEmpty(ag.ExternalID))
+                    {
+                        SetReMapAGSDic(ag.ExternalID, null);
+                    }
                 }
             }
         }
