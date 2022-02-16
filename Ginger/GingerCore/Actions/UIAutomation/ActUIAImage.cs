@@ -30,7 +30,7 @@ namespace GingerCore.Actions
     public class ActUIAImage : Act
     {
         public override string ActionDescription { get { return "UI Image Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "UI Image Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {

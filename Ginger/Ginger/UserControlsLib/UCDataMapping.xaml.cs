@@ -466,7 +466,7 @@ namespace Ginger.UserControlsLib
         }
         #endregion Output Variables
 
-        #region Global Variabels
+        #region Global Variables
         private void SetGlobalVariabelsListValues()
         {
             mGlobalVariablesList = new ObservableList<VariableBase>();
@@ -503,7 +503,7 @@ namespace Ginger.UserControlsLib
 
             SetValueControlsData();
         }
-        #endregion Global Variabels
+        #endregion Global Variables
 
         #region Model Global Parameters
         private void SetModelGlobalParametersListValues()

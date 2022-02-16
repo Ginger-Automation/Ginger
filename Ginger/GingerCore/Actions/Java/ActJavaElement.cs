@@ -35,7 +35,7 @@ namespace GingerCore.Actions.Java
     public class ActJavaElement : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Java Element Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Java Element Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {

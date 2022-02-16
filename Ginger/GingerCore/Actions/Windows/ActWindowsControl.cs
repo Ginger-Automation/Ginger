@@ -35,7 +35,7 @@ namespace GingerCore.Actions.Windows
         }
 
         public override string ActionDescription { get { return "Windows Control Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Windows Control Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
