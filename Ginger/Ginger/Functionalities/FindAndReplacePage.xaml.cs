@@ -751,7 +751,6 @@ namespace Ginger.Functionalities
                 from assembly in assemblies
                 from type in assembly.GetTypes()
                 where type.IsSubclassOf(typeof(Act)) && !type.IsAbstract
-                && type != typeof(ActWithoutDriver)
                 select type;
 
             foreach (Type t in ActTypes)
