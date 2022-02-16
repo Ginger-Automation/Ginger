@@ -824,6 +824,10 @@ namespace GingerCore
                 {
                     Reporter.ToUser(eUserMsgKey.TestagentSucceed);
                 }
+                else if(Driver.ErrorMessageFromDriver.Contains("Chrome version"))
+                {
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Failed to update chrome driver, Please run Ginger as Admin and make sure internet is working to update the driver");
+                }
                 else
                 {
                     Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Please confirm Agent configurations are valid");

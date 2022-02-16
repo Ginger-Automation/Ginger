@@ -648,7 +648,7 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in start driver", ex);
                 ErrorMessageFromDriver = ex.Message;
 
-                if (RestartRetry && mBrowserTpe == eBrowserType.Chrome && ex.Message.Contains("version"))
+                if (RestartRetry && mBrowserTpe == eBrowserType.Chrome && (ex.Message.Contains("version") || ex.Message.Contains("chromedriver.exe does not exist")))
                 {
                     GingerCore.Drivers.Updater.ChromeDriverUpdater chromeupdater = new Updater.ChromeDriverUpdater();
 
@@ -656,6 +656,10 @@ namespace GingerCore.Drivers
                     if (chromeupdater.UpdateDriver())
                     {
                         StartDriver();
+                    }
+                    else
+                    {
+                        ErrorMessageFromDriver += "Chrome version";
                     }
                 }
             }
