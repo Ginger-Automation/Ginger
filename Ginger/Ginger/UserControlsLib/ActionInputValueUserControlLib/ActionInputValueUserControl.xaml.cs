@@ -271,7 +271,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
             dynamic currentListItem = (dynamic)xListInputGrid.CurrentItem;
-            //get name of relevent field
+            //get name of relevant field
             int currentColIndex = xListInputGrid.Grid.CurrentColumn.DisplayIndex;
             object field = xListInputGrid.Grid.Columns[currentColIndex - 1].Header;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(currentListItem, field.ToString(), mContext);
