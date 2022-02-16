@@ -54,7 +54,8 @@ namespace GingerCoreCommonTest.VariableTests
         }
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void StringVar_TestVariableType()
         {
             //Arrange
@@ -67,7 +68,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("String", varType, "String Variable Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void StringVar_TestVariableUIType()
         {
             //Arrange
@@ -81,7 +83,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Variable String", varType, "String Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void StringVar_TestImageType()
         {
             //Arrange
@@ -94,7 +97,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(eImageType.Label, eImageType, "Image Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void StringVar_TestFormulaVal()
         {
             //Arrange
@@ -109,7 +113,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Initial String Value=", formulaStr, "Mismatch with Default Formula String");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void StringVar_TestResetVal()
         {
             //Arrange
@@ -124,7 +129,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsNull(variableString.Value, "Reset Value not null");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void StringVar_TestVal()
         {
             //Arrange
@@ -138,26 +144,28 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("testVal", variableString.Value, "String Value");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void PasswordStringVar_TestVal()
         {
             //Arrange
             VariablePasswordString variablePasswordString = new VariablePasswordString();
-            string passwordVal = "sampleTest";
+            string testVal = "sampleTest";
 
             //Act
             variablePasswordString.Name = "v1";
-            variablePasswordString.Value = passwordVal;
+            variablePasswordString.Value = testVal;
 
             //Assert            
-            Assert.AreEqual(passwordVal, variablePasswordString.Value, "Mismatch with VariablePasswordString.Value");
+            Assert.AreEqual(testVal, variablePasswordString.Value, "Mismatch with VariablePasswordString.Value");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void PasswordStringVar_TestResetValue()
         {
             //Arrange
-            string password = "testPass"; 
+            string password = "testPass";
             VariablePasswordString variablePasswordString = new VariablePasswordString();
             variablePasswordString.Name = "p1";
             variablePasswordString.Password = password;
@@ -170,7 +178,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(password, variablePasswordString.Value, "Password Reset Fail");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void PasswordStringVar_TestVariableUIType()
         {
             //Arrange
@@ -183,7 +192,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(varType.Contains("Password"), "Password String Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void PasswordStringVar_TestVariableType()
         {
             //Arrange
@@ -196,7 +206,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("PasswordString", varType, "Password String Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void PasswordStringVar_TestFormula()
         {
             //Arrange
@@ -212,7 +223,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(passwordVal, formulaVal, "Password Formula");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void PasswordStringVar_TestImageType()
         {
             //Arrange
