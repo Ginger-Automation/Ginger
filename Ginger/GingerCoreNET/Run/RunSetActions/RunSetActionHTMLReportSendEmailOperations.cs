@@ -90,7 +90,15 @@ namespace Ginger.Run.RunSetActions
                 {
                     //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Using LiteDB and using new WebReportGenerator");
                     reportsResultFolder = Path.Combine(ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports");
-                    reportsResultFolder = Path.Combine(reportsResultFolder, $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name)}_{DateTime.UtcNow.ToString("yyyymmddhhmmssfff")}");
+                    string reportTempPath = Path.Combine(reportsResultFolder, $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name)}_{DateTime.UtcNow.ToString("yyyymmddhhmmssfff")}");
+                    if (reportTempPath.Length >255)
+                    {
+                        reportsResultFolder = Path.Combine(reportsResultFolder, $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name.Substring(0,5))}_{DateTime.UtcNow.ToString("yyyymmddhhmmssfff")}");
+                    }
+                    else
+                    {
+                        reportsResultFolder = reportTempPath;
+                    }                   
                     WebReportGenerator webReporterRunner = new WebReportGenerator();
                     liteDbRunSet = webReporterRunner.RunNewHtmlReport(reportsResultFolder, null, null, false);
                 }
