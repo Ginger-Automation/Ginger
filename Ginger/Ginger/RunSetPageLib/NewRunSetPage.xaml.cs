@@ -615,6 +615,14 @@ namespace Ginger.Run
         {
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ToolTipProperty, mRunSetConfig, nameof(RunSetConfig.Name));
+            if (WorkSpace.Instance.SourceControl == null)
+            {
+                xRunSetUcLabel.xSourceControlIcon.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                xRunSetUcLabel.xSourceControlIcon.Visibility = Visibility.Visible;
+            }
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xSourceControlIcon, ImageMakerControl.ImageTypeProperty, mRunSetConfig, nameof(RunSetConfig.SourceControlStatus), BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xModifiedIcon, ImageMakerControl.ImageTypeProperty, mRunSetConfig, nameof(RunSetConfig.DirtyStatusImage), BindingMode.OneWay);
             UpdateDescription();
@@ -1088,11 +1096,11 @@ namespace Ginger.Run
                 GingerExecutionEngine GEE = new GingerExecutionEngine(GR);
                 if (runAsync)
                 {
-                    await Task.Run(() => WorkSpace.Instance.RunsetExecutor.InitRunner(GR,GEE));
+                    await Task.Run(() => WorkSpace.Instance.RunsetExecutor.InitRunner(GR, GEE));
                 }
                 else
                 {
-                    WorkSpace.Instance.RunsetExecutor.InitRunner(GR,GEE);
+                    WorkSpace.Instance.RunsetExecutor.InitRunner(GR, GEE);
                 }
 
                 this.Dispatcher.Invoke(() =>
@@ -1431,7 +1439,7 @@ namespace Ginger.Run
                 newRunner.PropertyChanged += Runner_PropertyChanged;
                 newRunner.ApplicationAgents.CollectionChanged -= RunnerApplicationAgents_CollectionChanged;
                 newRunner.ApplicationAgents.CollectionChanged += RunnerApplicationAgents_CollectionChanged;
-                WorkSpace.Instance.RunsetExecutor.InitRunner(newRunner,executionEngine);
+                WorkSpace.Instance.RunsetExecutor.InitRunner(newRunner, executionEngine);
                 if (Count != index && index > 0) //TODO : Check if need to add in between runner.
                 {
                     mRunSetConfig.GingerRunners.Insert(index, newRunner);

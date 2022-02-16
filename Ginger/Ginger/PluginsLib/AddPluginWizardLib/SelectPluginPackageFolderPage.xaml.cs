@@ -33,16 +33,25 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
         AddPluginPackageWizard wiz;
         public SelectPlugPackageinFolderPage()
         {
-            InitializeComponent();     
+            InitializeComponent();
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
-        {       
+        {
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
                     wiz = (AddPluginPackageWizard)WizardEventArgs.Wizard;
                     xPluginFolderUC.Init(null, wiz, nameof(AddPluginPackageWizard.Folder), false, true, UCValueExpression.eBrowserType.Folder);
+                    break;
+                case EventType.LeavingForNextPage:
+                    string folderName = xPluginFolderUC.ValueTextBox.Text;
+                    if (string.IsNullOrEmpty(folderName))
+                    {
+                        WizardEventArgs.CancelEvent = true;
+                        Amdocs.Ginger.Common.Reporter.ToUser(Amdocs.Ginger.Common.eUserMsgKey.StaticErrorMessage,
+                                                            "Folder path cannot be empty");
+                    }
                     break;
             }
         }

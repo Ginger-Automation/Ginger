@@ -23,12 +23,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.ScreenCapture;
+using GingerCore.DataSource;
 using GingerCore.Drivers;
 using ScreenSnipApplication;
 
@@ -147,7 +149,9 @@ namespace Ginger.Actions
 
         void ElementImageSourceChanged(bool IsFirstCall = false)
         {
-            string calculateValue = actSikuli.GetInputParamCalculatedValue(xPatternImageLocationTextBox.ValueTextBox.Text);
+            ValueExpression mVE = new ValueExpression(Context.GetAsContext(actSikuli.Context).Environment, Context.GetAsContext(actSikuli.Context), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+            mVE.Value = xPatternImageLocationTextBox.ValueTextBox.Text;
+            string calculateValue = mVE.ValueCalculated;
             if (string.IsNullOrEmpty(calculateValue))
             {
                 calculateValue = xPatternImageLocationTextBox.ValueTextBox.Text;

@@ -36,7 +36,7 @@ namespace GingerCore.Actions
     public class ActASCFControl : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "ASCF Control Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "ASCF Control Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
