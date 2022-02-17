@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
         
 
 
-        public ApplicationPOMModel GetCurrentPOM(bool isVisualtest = false)
+        public ApplicationPOMModel GetCurrentPOM()
         {
             Guid selectedPOMGUID = new Guid(PomElementGUID[0]);
             ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
