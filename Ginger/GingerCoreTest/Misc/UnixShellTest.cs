@@ -51,9 +51,9 @@ limitations under the License.
 //            UnixShellDriver uxsh = new UnixShellDriver(bf);
 
 //            // Commented out due to email from security
-//            //uxsh.Host = "hpitan4";
-//            //uxsh.UserName="jackd";
-//            //uxsh.Password = "Unix11!!";
+//            //uxsh.Host = "";
+//            //uxsh.UserName="";
+//            //uxsh.Password = "";
 //            uxsh.Port = 22;
 //            uxsh.StartDriver();
 //            Thread.Sleep(30);
@@ -68,8 +68,8 @@ limitations under the License.
 //            // TODO: Add AAA
 //            UnixShellDriver uxsh = new UnixShellDriver(bf);
 //            // Commented out due to email from security
-//            //uxsh.Host = "hpitan4";
-//            //uxsh.UserName = "ksingara";
+//            //uxsh.Host = "";
+//            //uxsh.UserName = "";
 //            uxsh.Password = "";
 //            uxsh.PrivateKey = Common.getGingerUnitTesterDocumentsFolder() + @"keys\Privatekey.txt";
 //            uxsh.Port = 22;
@@ -87,11 +87,11 @@ limitations under the License.
 //            // TODO: Add AAA
 //            UnixShellDriver uxsh = new UnixShellDriver(bf);
 //            // Commented out due to email from security
-//            //uxsh.Host = "hpitan4";
-//            //uxsh.UserName = "jackd";
+//            //uxsh.Host = "";
+//            //uxsh.UserName = "";
 //            uxsh.Password = "";
 //            uxsh.PrivateKey = Common.getGingerUnitTesterDocumentsFolder()+@"keys\PrivateKey_jack.txt";
-//            uxsh.PrivateKeyPassPhrase="1122";
+//            uxsh.PrivateKeyPassPhrase="";
 //            uxsh.Port = 22;
 //            uxsh.StartDriver();
 //            Thread.Sleep(30);
@@ -109,7 +109,7 @@ limitations under the License.
 //            //uxsh.UserName = "jackd";
 //            uxsh.Password = "";
 //            uxsh.PrivateKey = Common.getGingerUnitTesterDocumentsFolder() + @"keys\PrivateKey_jack.txt";
-//            uxsh.PrivateKeyPassPhrase = "1122";
+//            uxsh.PrivateKeyPassPhrase = "";
 //            uxsh.Port = 22;
 //            uxsh.StartDriver();
 //            Thread.Sleep(30);
