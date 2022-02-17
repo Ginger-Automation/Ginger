@@ -41,7 +41,7 @@ namespace Ginger.Run.RunSetActions
             if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
             {
                 DefaultExt = "*.VBS",
-                Filter = "Script File (*.VBS)|*.VBS"
+                Filter = "Script File (*.VBS)|*.VBS|Shell Script File (*.sh)|*.sh"
             }) is string fileName)
             {
                 ScriptFileNameTextBox.Text = fileName;

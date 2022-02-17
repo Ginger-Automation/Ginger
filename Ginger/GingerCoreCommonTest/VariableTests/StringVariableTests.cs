@@ -54,7 +54,8 @@ namespace GingerCoreCommonTest.VariableTests
         }
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void StringVar_TestVariableType()
         {
             //Arrange
@@ -67,7 +68,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("String", varType, "String Variable Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void StringVar_TestVariableUIType()
         {
             //Arrange
@@ -81,7 +83,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Variable String", varType, "String Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void StringVar_TestImageType()
         {
             //Arrange
@@ -94,7 +97,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(eImageType.Label, eImageType, "Image Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void StringVar_TestFormulaVal()
         {
             //Arrange
@@ -109,7 +113,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Initial String Value=", formulaStr, "Mismatch with Default Formula String");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void StringVar_TestResetVal()
         {
             //Arrange
@@ -124,7 +129,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsNull(variableString.Value, "Reset Value not null");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void StringVar_TestVal()
         {
             //Arrange
@@ -138,88 +144,94 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("testVal", variableString.Value, "String Value");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void PasswordStringVar_TestVal()
         {
             //Arrange
-            VariablePasswordString variablePasswordString = new VariablePasswordString();
-            string passwordVal = "sampleTest";
+            VariablePasswordString variableString = new VariablePasswordString();
+            string testVal = "sampleTest";
 
             //Act
-            variablePasswordString.Name = "v1";
-            variablePasswordString.Value = passwordVal;
+            variableString.Name = "v1";
+            variableString.Value = testVal;
 
             //Assert            
-            Assert.AreEqual(passwordVal, variablePasswordString.Value, "Mismatch with VariablePasswordString.Value");
+            Assert.AreEqual(testVal, variableString.Value, "Mismatch with variableString.Value");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void PasswordStringVar_TestResetValue()
         {
             //Arrange
-            string password = "testPass"; 
-            VariablePasswordString variablePasswordString = new VariablePasswordString();
-            variablePasswordString.Name = "p1";
-            variablePasswordString.Password = password;
+            string testVal = "testPass";
+            VariablePasswordString variableString = new VariablePasswordString();
+            variableString.Name = "p1";
+            variableString.Password = testVal;
 
             //Act
-            variablePasswordString.Value = password + "change";
-            variablePasswordString.ResetValue();
+            variableString.Value = testVal + "change";
+            variableString.ResetValue();
 
             //Assert
-            Assert.AreEqual(password, variablePasswordString.Value, "Password Reset Fail");
+            Assert.AreEqual(testVal, variableString.Value, "Password Reset Fail");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void PasswordStringVar_TestVariableUIType()
         {
             //Arrange
-            VariablePasswordString variablePasswordString = new VariablePasswordString();
+            VariablePasswordString variableString = new VariablePasswordString();
 
             //Act
-            string varType = variablePasswordString.VariableUIType;
+            string varType = variableString.VariableUIType;
 
             //Assert            
             Assert.IsTrue(varType.Contains("Password"), "Password String Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void PasswordStringVar_TestVariableType()
         {
             //Arrange
-            VariablePasswordString variablePasswordString = new VariablePasswordString();
+            VariablePasswordString variableString = new VariablePasswordString();
 
             //Act
-            string varType = variablePasswordString.VariableType;
+            string varType = variableString.VariableType;
 
             //Assert            
             Assert.AreEqual("PasswordString", varType, "Password String Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void PasswordStringVar_TestFormula()
         {
             //Arrange
-            VariablePasswordString variablePasswordString = new VariablePasswordString();
-            string passwordVal = "testPass";
+            VariablePasswordString variableString = new VariablePasswordString();
+            string testVal = "testPass";
 
             //Act
-            variablePasswordString.Name = "v2";
-            variablePasswordString.Password = passwordVal;
-            string formulaVal = variablePasswordString.GetFormula();
+            variableString.Name = "v2";
+            variableString.Password = testVal;
+            string formulaVal = variableString.GetFormula();
 
             //Assert            
-            Assert.AreEqual(passwordVal, formulaVal, "Password Formula");
+            Assert.AreEqual(testVal, formulaVal, "Password Formula");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void PasswordStringVar_TestImageType()
         {
             //Arrange
-            VariablePasswordString variablePasswordString = new VariablePasswordString();
+            VariablePasswordString variableString = new VariablePasswordString();
 
             //Act
-            eImageType eImageType = variablePasswordString.Image;
+            eImageType eImageType = variableString.Image;
 
             //Assert
             Assert.AreEqual(eImageType.Password, eImageType, "Image Type");
