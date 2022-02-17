@@ -23,7 +23,7 @@
                 <usercontrols:ucButton x:Name="xAddGroupBtn" ButtonType="RoundTextAndImageButton" ButtonImageType="Add" ButtonFontImageSize="16" ButtonText="New Activities Group" Click="XAddGroupBtn_Click" VerticalAlignment="Center" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <CheckBox x:Name="xCopyAsLink"  Grid.Column="0" Height="20" IsChecked="False" Grid.Row="3" HorizontalAlignment="Left"  Margin="10,10,0,0" >
+                <CheckBox x:Name="xCopyAsLink"  Grid.Column="0" Height="20" IsChecked="True" Grid.Row="3" HorizontalAlignment="Left"  Margin="10,10,0,0" >
                     <CheckBox.Content>
                         <GingerCore:ucTextDicResource Text="Copy Activity As Link"/>
                     </CheckBox.Content>

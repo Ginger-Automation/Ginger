@@ -196,7 +196,11 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public SolutionRepository SolutionRepository;
+        public SolutionRepository SolutionRepository
+        {
+            get { return GingerCoreCommonWorkSpace.Instance.SolutionRepository; }
+            set { GingerCoreCommonWorkSpace.Instance.SolutionRepository = value; }
+        }
 
         public SourceControlBase SourceControl;
 
@@ -421,6 +425,8 @@ namespace amdocs.ginger.GingerCoreNET
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Creating Items Repository");
                 SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+                //TODO: to find better solution
+                GingerCoreCommonWorkSpace.Instance.SolutionRepository = this.SolutionRepository;
                 SolutionRepository.Open(solutionFolder);
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Loading needed Plugins");
@@ -432,11 +438,11 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     HandleSolutionLoadSourceControl(solution);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "exception occured while doing Solution Source Control Configurations", ex);
                 }
-            
+
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Updating Application Functionalities to Work with Loaded Solution");
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables;
@@ -468,6 +474,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
                 // PlugInsManager = new PluginsManager();
                 // mPluginsManager.Init(SolutionRepository);
+
 
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
                 return true;
@@ -614,7 +621,7 @@ namespace amdocs.ginger.GingerCoreNET
             EventHandler.SolutionClosed();
         }
 
-        public UserProfile UserProfile 
+        public UserProfile UserProfile
         {
             get
             {

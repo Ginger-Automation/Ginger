@@ -3626,11 +3626,15 @@ namespace Ginger.Run
                     IsRunning = true;
                     mStopRun = false;
                 }
+                
+ 
 
                 //set the BF to execute
                 if (businessFlow != null)
                 {
                     businessFlow.ExecutionParentGuid = this.GingerRunner.Guid;
+                    //Mkale: load linked activites from shared repository
+                    businessFlow.LoadLinkActivities();
                 }
                 if (doContinueRun == false)
                 {

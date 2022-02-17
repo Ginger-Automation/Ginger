@@ -108,7 +108,10 @@ namespace Ginger.Repository
                 {
                     itemToUpload.UsageItem.ParentGuid = Guid.Empty;
                 }
-
+                if (itemToUpload.ReplaceAsLink)
+                {
+                    context.BusinessFlow.MarkActivityAsLink(itemToUpload.ItemGUID, itemCopy.Guid);
+                }
                 itemToUpload.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.Uploaded;
                 return true;
             }

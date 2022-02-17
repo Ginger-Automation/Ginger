@@ -159,10 +159,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 return new ListItemUniqueIdentifier() { Color = "Goldenrod", Tooltip = "This is a Gherkin Optimized " + GingerDicser.GetTermResValue(eTermResKey.Activity) };
             }
-            else if (mActivity.Type == eType.Link)
-            {
-                return new ListItemUniqueIdentifier() { Color = "Pink", Tooltip = "Added as a link from shared repository" + GingerDicser.GetTermResValue(eTermResKey.Activity) };
-            }
+            //else if (mActivity.Type == eType.Link)
+            //{
+            //    return new ListItemUniqueIdentifier() { Color = "Pink", Tooltip = "Added as a link from shared repository" + GingerDicser.GetTermResValue(eTermResKey.Activity) };
+            //}
             else
             {
                 return null;
@@ -328,13 +328,22 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 ListItemNotification sharedRepoInd = new ListItemNotification();
                 sharedRepoInd.AutomationID = "sharedRepoInd";
                 sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-                sharedRepoInd.ToolTip = string.Format("{0} source is from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
-                sharedRepoInd.ImageForeground = Brushes.Orange;
+                if (mActivity.ISLinkedItem)
+                {
+                    sharedRepoInd.ToolTip = string.Format("{0} source is Linked to Activity from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                    sharedRepoInd.ImageForeground = Brushes.MediumPurple;
+                }
+                else {
+                    sharedRepoInd.ToolTip = string.Format("{0} source is from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                    sharedRepoInd.ImageForeground = Brushes.Orange;
+                }
+
                 sharedRepoInd.BindingObject = mActivity;
                 sharedRepoInd.BindingFieldName = nameof(Activity.IsSharedRepositoryInstance);
                 sharedRepoInd.BindingConverter = new BoolVisibilityConverter();
                 notificationsList.Add(sharedRepoInd);
             }
+          
 
             return notificationsList;
         }

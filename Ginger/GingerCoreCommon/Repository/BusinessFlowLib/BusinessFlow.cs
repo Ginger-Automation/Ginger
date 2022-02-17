@@ -25,6 +25,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -1717,6 +1718,45 @@ namespace GingerCore
             {
                 AttachActivitiesGroupsAndActivities();//so attach will be done also in case BF will be reloaded by FileWatcher
             }
+
+            //if (Activities.Any(act => act.ISLinkedItem == true))
+            //{
+            //    var srActivities = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            //    foreach (Activity activity in Activities.Where(act => act.ISLinkedItem == true))
+            //    {
+            //        activity.Acts = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Acts;
+            //        activity.Variables = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Variables;
+            //    }
+            //}
+        }
+
+        public void LoadLinkActivities()
+        {
+            if (Activities.Any(act => act.ISLinkedItem == true))
+            {
+                try
+                {
+                    var srActivities = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                    foreach (Activity activity in Activities.Where(act => act.ISLinkedItem == true))
+                    {
+                        activity.Acts = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Acts;
+                        activity.Variables = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Variables;
+                    }
+                }
+                catch
+                { }
+            }
+        }
+
+        public bool MarkActivityAsLink(Guid activityGuid, Guid parentGuid)
+        {
+            if (Activities.Any(act => act.Guid == activityGuid))
+            {
+                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().Type = eType.Link;
+                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().ParentGuid = parentGuid;
+                return true;
+            }
+            return false;
         }
 
         public override void PrepareItemToBeCopied()

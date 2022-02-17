@@ -394,6 +394,7 @@ namespace GingerWPF.BusinessFlowsLib
             SetEnvsCombo();
             if (mBusinessFlow != businessFlowToLoad)
             {
+                businessFlowToLoad.LoadLinkActivities();
                 RemoveCurrentBusinessFlow();
                 ResetPageUI();
                 

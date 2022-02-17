@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -183,6 +183,20 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
             if (PartToUpload.Count > 0)
                 SelectedItemPart = PartToUpload[0];
+        }
+
+        bool mReplaceAsLink;
+        public bool ReplaceAsLink
+        {
+            get
+            {
+                return mReplaceAsLink;
+            }
+            set
+            {
+                mReplaceAsLink = value;
+                OnPropertyChanged(nameof(ReplaceAsLink));
+            }
         }
     }
 }
