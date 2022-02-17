@@ -133,13 +133,6 @@ namespace Ginger.GingerCoreNETTestLib
         }
 
 
-        private void RunCShrapCode()
-        {
-            CodeProcessor SCT = new CodeProcessor();
-            SCT.runcode();
-        }
-
-
 
         private static Random random = new Random((int)DateTime.Now.Ticks);
         private string GetRandomString()
