@@ -149,15 +149,15 @@ namespace GingerCoreCommonTest.VariableTests
         public void PasswordStringVar_TestVal()
         {
             //Arrange
-            VariablePasswordString variablePasswordString = new VariablePasswordString();
+            VariablePasswordString variableString = new VariablePasswordString();
             string testVal = "sampleTest";
 
             //Act
-            variablePasswordString.Name = "v1";
-            variablePasswordString.Value = testVal;
+            variableString.Name = "v1";
+            variableString.Value = testVal;
 
             //Assert            
-            Assert.AreEqual(testVal, variablePasswordString.Value, "Mismatch with VariablePasswordString.Value");
+            Assert.AreEqual(testVal, variableString.Value, "Mismatch with variableString.Value");
         }
 
         [TestMethod]
@@ -165,17 +165,17 @@ namespace GingerCoreCommonTest.VariableTests
         public void PasswordStringVar_TestResetValue()
         {
             //Arrange
-            string password = "testPass";
-            VariablePasswordString variablePasswordString = new VariablePasswordString();
-            variablePasswordString.Name = "p1";
-            variablePasswordString.Password = password;
+            string testVal = "testPass";
+            VariablePasswordString variableString = new VariablePasswordString();
+            variableString.Name = "p1";
+            variableString.Password = testVal;
 
             //Act
-            variablePasswordString.Value = password + "change";
-            variablePasswordString.ResetValue();
+            variableString.Value = testVal + "change";
+            variableString.ResetValue();
 
             //Assert
-            Assert.AreEqual(password, variablePasswordString.Value, "Password Reset Fail");
+            Assert.AreEqual(testVal, variableString.Value, "Password Reset Fail");
         }
 
         [TestMethod]
@@ -183,10 +183,10 @@ namespace GingerCoreCommonTest.VariableTests
         public void PasswordStringVar_TestVariableUIType()
         {
             //Arrange
-            VariablePasswordString variablePasswordString = new VariablePasswordString();
+            VariablePasswordString variableString = new VariablePasswordString();
 
             //Act
-            string varType = variablePasswordString.VariableUIType;
+            string varType = variableString.VariableUIType;
 
             //Assert            
             Assert.IsTrue(varType.Contains("Password"), "Password String Variable UI Type");
@@ -197,10 +197,10 @@ namespace GingerCoreCommonTest.VariableTests
         public void PasswordStringVar_TestVariableType()
         {
             //Arrange
-            VariablePasswordString variablePasswordString = new VariablePasswordString();
+            VariablePasswordString variableString = new VariablePasswordString();
 
             //Act
-            string varType = variablePasswordString.VariableType;
+            string varType = variableString.VariableType;
 
             //Assert            
             Assert.AreEqual("PasswordString", varType, "Password String Type");
@@ -211,16 +211,16 @@ namespace GingerCoreCommonTest.VariableTests
         public void PasswordStringVar_TestFormula()
         {
             //Arrange
-            VariablePasswordString variablePasswordString = new VariablePasswordString();
-            string passwordVal = "testPass";
+            VariablePasswordString variableString = new VariablePasswordString();
+            string testVal = "testPass";
 
             //Act
-            variablePasswordString.Name = "v2";
-            variablePasswordString.Password = passwordVal;
-            string formulaVal = variablePasswordString.GetFormula();
+            variableString.Name = "v2";
+            variableString.Password = testVal;
+            string formulaVal = variableString.GetFormula();
 
             //Assert            
-            Assert.AreEqual(passwordVal, formulaVal, "Password Formula");
+            Assert.AreEqual(testVal, formulaVal, "Password Formula");
         }
 
         [TestMethod]
@@ -228,10 +228,10 @@ namespace GingerCoreCommonTest.VariableTests
         public void PasswordStringVar_TestImageType()
         {
             //Arrange
-            VariablePasswordString variablePasswordString = new VariablePasswordString();
+            VariablePasswordString variableString = new VariablePasswordString();
 
             //Act
-            eImageType eImageType = variablePasswordString.Image;
+            eImageType eImageType = variableString.Image;
 
             //Assert
             Assert.AreEqual(eImageType.Password, eImageType, "Image Type");
