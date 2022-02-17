@@ -659,7 +659,8 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        ErrorMessageFromDriver += "Chrome version";
+                        ErrorMessageFromDriver += " Chrome driver version mismatch. Please run Ginger as Admin to Auto update the chrome driver.";
+                        Reporter.ToLog(eLogLevel.ERROR, ErrorMessageFromDriver);
                     }
                 }
             }

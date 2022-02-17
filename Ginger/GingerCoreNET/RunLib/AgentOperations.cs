@@ -824,9 +824,9 @@ namespace GingerCore
                 {
                     Reporter.ToUser(eUserMsgKey.TestagentSucceed);
                 }
-                else if(Driver.ErrorMessageFromDriver.Contains("Chrome version"))
+                else if(Driver.ErrorMessageFromDriver.Contains("Chrome driver version mismatch"))
                 {
-                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Failed to update chrome driver, Please run Ginger as Admin and make sure internet is working to update the driver");
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Chrome driver version mismatch. Please run Ginger as Admin to Auto update the chrome driver.");
                 }
                 else
                 {
