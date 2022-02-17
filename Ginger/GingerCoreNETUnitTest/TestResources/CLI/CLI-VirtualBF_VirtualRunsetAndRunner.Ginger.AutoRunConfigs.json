@@ -30,10 +30,11 @@
       },
       {
         "Name": "Virtual Runner Flows With Shared Activities",
+        "Exist": false,
         "OnFailureRunOption": "ContinueToRunall",
         "BusinessFlows": [
           {
-            "Name": "Virtual Business Flow",
+            "Name": "Flow_D",
             "Exist": false,
             "Active": true,
             "SharedActivities": [

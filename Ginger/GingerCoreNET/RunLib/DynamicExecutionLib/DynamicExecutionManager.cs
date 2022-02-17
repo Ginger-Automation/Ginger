@@ -753,7 +753,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     jsonReportConfig.Active = runSetOperation.Active;
                     runset.Operations.Add(jsonReportConfig);
                 }
-                else if (runSetOperation is RunSetActionAutomatedALMDefects)
+                else if (runSetOperation is RunSetActionPublishToQC)
                 {
 
                 }
@@ -967,29 +967,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             ///        but are not part of current Runset & Runners
                             else
                             {
-                                try
+                                /// Business Flow exist in the Solution but isn't already part of Runner/Runset
+                                /// Fetch BF & use the same for execution
+                                if (businessFlowConfig.ID != null || !string.IsNullOrEmpty(businessFlowConfig.Name))
                                 {
-                                    /// Business Flow exist in the Solution but isn't already part of Runner/Runset
-                                    /// Fetch BF & use the same for execution
-                                    if (businessFlowConfig.ID != null || !string.IsNullOrEmpty(businessFlowConfig.Name))
-                                    {
-                                        bf = (BusinessFlow)FindItemByIDAndName<BusinessFlow>(
-                                         new Tuple<string, Guid?>(nameof(BusinessFlow.Guid), businessFlowConfig.ID),
-                                         new Tuple<string, string>(nameof(BusinessFlow.Name), businessFlowConfig.Name),
-                                         WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
-                                    }
-                                }
-                                catch(Exception exc)
-                                {
-                                    Reporter.ToLog(eLogLevel.ERROR, "No Business found in Solution with given Name or ID. Creating Virtual Business Flow to proceed with execution.", exc);
-                                }
-
-                                /// BF not exist in the solution, Create new one for this Execution Request
-                                if(bf == null)
-                                {
-                                    bf = new BusinessFlow();
-                                    bf.Name = businessFlowConfig.Name;
-                                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(bf);
+                                    bf = (BusinessFlow)FindItemByIDAndName<BusinessFlow>(
+                                     new Tuple<string, Guid?>(nameof(BusinessFlow.Guid), businessFlowConfig.ID),
+                                     new Tuple<string, string>(nameof(BusinessFlow.Name), businessFlowConfig.Name),
+                                     WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
                                 }
 
                                 businessFlowRun = new BusinessFlowRun();
@@ -1127,7 +1112,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 gingerRunner.BusinessFlowsRunList.Add(businessFlowRun);
                             }
                         }
-                        if (!dynamicRunsetConfigs.Exist)
+
+                        if (!dynamicRunsetConfigs.Exist || (runnerConfig.Exist.HasValue && !runnerConfig.Exist.Value))
                         {
                             (runSetConfig).GingerRunners.Add(gingerRunner);
                         }

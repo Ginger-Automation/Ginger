@@ -519,6 +519,7 @@ namespace WorkspaceHold
 
             //Runner
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Runner 1", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Name, "Virtual Runner Flows With Shared Activities", "Validating correct Runner Name");
 
             //Envs Validation
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Default", "Validating correct Run set Environment");
@@ -548,17 +549,18 @@ namespace WorkspaceHold
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[1].Status, eRunStatus.Passed, "Validating BF execution Stopped");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[1].ActivitiesGroupID, "Test Activity", "Validating Customized BF level Selection List Variable");
 
-            //BF 3 Validation (Virtual Business Flow does not exist in the Solution with shared activities)
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Name, "Virtual Business Flow", "Validating correct Business Flow was executed");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Activities[0].ActivityName, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Activities[0].Guid.ToString(), "bf285a86-6384-4b1f-acfb-e0c1b60eec12", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Activities[0].ActivitiesGroupID, "Test Activity", "Validating Customized BF level Selection List Variable");
-
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Activities[1].Guid.ToString(), "01ee7e9c-4810-464d-872c-76cb1c0dda97", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Activities[1].ActivitiesGroupID, "User Detail Activity", "Validating Customized BF level Selection List Variable");
+            // Runner 2 BF 1 Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Name, "Flow_D", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivityName, "Do-Work", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivitiesGroupID, "Group", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].Guid.ToString(), "b6a05602-a059-48d9-95cb-1b5878d98fc8", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].ActivityName, "Test Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].ActivitiesGroupID, "Test Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].Guid.ToString(), "bf285a86-6384-4b1f-acfb-e0c1b60eec12", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[2].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[2].ActivitiesGroupID, "User Detail Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[2].Guid.ToString(), "01ee7e9c-4810-464d-872c-76cb1c0dda97", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
         }
 
         /// <summary>
@@ -611,18 +613,6 @@ namespace WorkspaceHold
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[1].Guid.ToString(), "bf285a86-6384-4b1f-acfb-e0c1b60eec12", "Validating Customized BF level Selection List Variable");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[1].Status, eRunStatus.Passed, "Validating BF execution Stopped");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[1].ActivitiesGroupID, "Test Activity", "Validating Customized BF level Selection List Variable");
-
-            //BF 3 Validation (Virtual Business Flow does not exist in the Solution with shared activities)
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Name, "Virtual Business Flow", "Validating correct Business Flow was executed");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Activities[0].ActivityName, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Activities[0].Guid.ToString(), "bf285a86-6384-4b1f-acfb-e0c1b60eec12", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Activities[0].ActivitiesGroupID, "Test Activity", "Validating Customized BF level Selection List Variable");
-
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Activities[1].Guid.ToString(), "01ee7e9c-4810-464d-872c-76cb1c0dda97", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Activities[1].ActivitiesGroupID, "User Detail Activity", "Validating Customized BF level Selection List Variable");
         }
 
         /// <summary>
@@ -668,13 +658,16 @@ namespace WorkspaceHold
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
 
             // Runner 2 BF 1 Validation
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Name, "Virtual Business Flow", "Validating correct Business Flow was executed");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivityName, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivitiesGroupID, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].Guid.ToString(), "bf285a86-6384-4b1f-acfb-e0c1b60eec12", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].ActivitiesGroupID, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].Guid.ToString(), "01ee7e9c-4810-464d-872c-76cb1c0dda97", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Name, "Flow_D", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivityName, "Do-Work", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivitiesGroupID, "Group", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].Guid.ToString(), "b6a05602-a059-48d9-95cb-1b5878d98fc8", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].ActivityName, "Test Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].ActivitiesGroupID, "Test Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].Guid.ToString(), "bf285a86-6384-4b1f-acfb-e0c1b60eec12", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[2].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[2].ActivitiesGroupID, "User Detail Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[2].Guid.ToString(), "01ee7e9c-4810-464d-872c-76cb1c0dda97", "Validating Customized BF level Selection List Variable");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
         }
 
@@ -721,13 +714,16 @@ namespace WorkspaceHold
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
 
             // Runner 2 BF 1 Validation
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Name, "Virtual Business Flow", "Validating correct Business Flow was executed");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivityName, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivitiesGroupID, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].Guid.ToString(), "bf285a86-6384-4b1f-acfb-e0c1b60eec12", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].ActivitiesGroupID, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].Guid.ToString(), "01ee7e9c-4810-464d-872c-76cb1c0dda97", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Name, "Flow_D", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivityName, "Do-Work", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivitiesGroupID, "Group", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].Guid.ToString(), "b6a05602-a059-48d9-95cb-1b5878d98fc8", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].ActivityName, "Test Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].ActivitiesGroupID, "Test Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[1].Guid.ToString(), "bf285a86-6384-4b1f-acfb-e0c1b60eec12", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[2].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[2].ActivitiesGroupID, "User Detail Activity", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[2].Guid.ToString(), "01ee7e9c-4810-464d-872c-76cb1c0dda97", "Validating Customized BF level Selection List Variable");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
         }
 
@@ -765,30 +761,12 @@ namespace WorkspaceHold
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[0].ActivityName, "Activity 1", "Validating Customized BF level Selection List Variable");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
-                // Runner 1 Virtual BF w Shared Activities Validation
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Name, "Virtual BF Runner1", "Validating correct Business Flow was executed");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[0].ActivityName, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[0].ActivitiesGroupID, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[0].Guid.ToString(), "bf285a86-6384-4b1f-acfb-e0c1b60eec12", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[1].ActivitiesGroupID, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[1].Guid.ToString(), "01ee7e9c-4810-464d-872c-76cb1c0dda97", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
 
             //Runner 2 BF Validation (Virtual Business Flow existing in the Solution)
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Name, "Flow_D", "Validating correct Business Flow was executed");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Guid.ToString(), "86ad108b-bddc-4cce-ba17-c8bb50fe2c66", "Validating correct Business Flow was executed");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivityName, "Do-Work", "Validating Customized BF level Selection List Variable");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
-                // Runner 2 Virtual BF w Shared Activities Validation
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Name, "Virtual BF Virtual Runner", "Validating correct Business Flow was executed");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Activities[0].ActivityName, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Activities[0].ActivitiesGroupID, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Activities[0].Guid.ToString(), "bf285a86-6384-4b1f-acfb-e0c1b60eec12", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Activities[1].ActivitiesGroupID, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Activities[1].Guid.ToString(), "01ee7e9c-4810-464d-872c-76cb1c0dda97", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
         }
 
         /// <summary>
@@ -827,30 +805,12 @@ namespace WorkspaceHold
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[0].ActivityName, "Activity 1", "Validating Customized BF level Selection List Variable");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
-            // Runner 1 Virtual BF w Shared Activities Validation
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Name, "Virtual BF Runner1", "Validating correct Business Flow was executed");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[0].ActivityName, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[0].ActivitiesGroupID, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[0].Guid.ToString(), "bf285a86-6384-4b1f-acfb-e0c1b60eec12", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[1].ActivitiesGroupID, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].Activities[1].Guid.ToString(), "01ee7e9c-4810-464d-872c-76cb1c0dda97", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[1].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
 
             //Runner 2 BF Validation (Virtual Business Flow existing in the Solution)
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Name, "Flow_D", "Validating correct Business Flow was executed");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Guid.ToString(), "86ad108b-bddc-4cce-ba17-c8bb50fe2c66", "Validating correct Business Flow was executed");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].Activities[0].ActivityName, "Do-Work", "Validating Customized BF level Selection List Variable");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
-            // Runner 2 Virtual BF w Shared Activities Validation
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Name, "Virtual BF Virtual Runner", "Validating correct Business Flow was executed");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Activities[0].ActivityName, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Activities[0].ActivitiesGroupID, "Test Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Activities[0].Guid.ToString(), "bf285a86-6384-4b1f-acfb-e0c1b60eec12", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Activities[1].ActivityName, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Activities[1].ActivitiesGroupID, "User Detail Activity", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].Activities[1].Guid.ToString(), "01ee7e9c-4810-464d-872c-76cb1c0dda97", "Validating Customized BF level Selection List Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Executor.BusinessFlows[1].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
         }
 
         /// <summary>

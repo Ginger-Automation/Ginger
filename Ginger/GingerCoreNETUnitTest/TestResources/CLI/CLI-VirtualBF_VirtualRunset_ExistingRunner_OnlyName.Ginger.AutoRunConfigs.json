@@ -16,26 +16,13 @@
         "AppAgentMappings": [
           {
             "ApplicationName": "app1",
-            "AgentName": "Chrome",
+            "AgentName": "Chrome"
           }
         ],
         "BusinessFlows": [
           {
             "Name": "Flow 1",
             "Active": true
-          },
-          {
-            "Name": "Virtual BF Runner1",
-            "Exist": false,
-            "Active": true,
-            "SharedActivities": [
-              {
-                "SharedActivityName": "Test Activity",
-              },
-              {
-                "SharedActivityName": "User Detail Activity",
-              }
-            ]
           }
         ]
       },
@@ -51,19 +38,6 @@
             "SharedActivities": [
               {
                 "SharedActivityName": "Test Activity",
-              }
-            ]
-          },
-          {
-            "Name": "Virtual BF Virtual Runner",
-            "Exist": false,
-            "Active": true,
-            "SharedActivities": [
-              {
-                "SharedActivityName": "Test Activity",
-              },
-              {
-                "SharedActivityName": "User Detail Activity",
               }
             ]
           }
