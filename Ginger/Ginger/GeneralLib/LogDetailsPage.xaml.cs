@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -58,23 +59,23 @@ namespace Ginger.GeneralLib
             xLogTypeCombo.SelectedValue = mLogLevel;
             xLogTypeCombo.SelectionChanged += XLogTypeCombo_SelectionChanged;
 
-            FillLogData();
+            FillLogData().ConfigureAwait(false);
             xScrollViewer.ScrollToBottom();
         }
 
-        public void Refresh()
+        public async void Refresh()
         {
-            FillLogData();
+            await FillLogData();
             xScrollViewer.ScrollToBottom();
         }
 
-        private void XLogTypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void XLogTypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mLogLevel = (eLogShowLevel)xLogTypeCombo.SelectedValue;
-            FillLogData();
+            await FillLogData();
         }
 
-        private void FillLogData()
+        private async Task FillLogData()
         {
             //get the log file text            
             using (StreamReader sr = new StreamReader(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile))
