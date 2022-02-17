@@ -32,7 +32,7 @@ namespace Amdocs.Ginger.GingerRuntime
     public class Program
     {
         static SolutionMenu mSolutionMenu;
-        
+
         static ManualResetEvent mCloseGingerConsoleEvent = new ManualResetEvent(false);
 
         static bool Keepalive = false;
@@ -40,20 +40,21 @@ namespace Amdocs.Ginger.GingerRuntime
         static MenuManager mMenuManager;
 
         static GingerGridMenu gingerGridMenu;
-        
+
         public static void Main(string[] args)
         {
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
-            Console.ForegroundColor = ConsoleColor.Yellow;            
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.ResetColor();
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
 
             //Enable cancel with CTRL-C
-            Console.CancelKeyPress += (sender, eArgs) => {
+            Console.CancelKeyPress += (sender, eArgs) =>
+            {
                 Console.WriteLine("CTRL+C pressed Canceling...");
                 mCloseGingerConsoleEvent.Set();
                 eArgs.Cancel = true;
-                Keepalive = false;                      
+                Keepalive = false;
             };
 
             Reporter.WorkSpaceReporter = new GingerRuntimeWorkspaceReporter();
@@ -108,7 +109,7 @@ namespace Amdocs.Ginger.GingerRuntime
             }
         }
 
-       
+
 
         private static void InitMenu()
         {
@@ -118,17 +119,12 @@ namespace Amdocs.Ginger.GingerRuntime
             mSolutionMenu = new SolutionMenu();
             mMenuManager.MenuItems.Add(mSolutionMenu.GetMenu());
 
-            CodeProcessorMenu codeProcessorMenu = new CodeProcessorMenu();
-            mMenuManager.MenuItems.Add(codeProcessorMenu.GetMenu());
-
             gingerGridMenu = new GingerGridMenu();
             mMenuManager.MenuItems.Add(gingerGridMenu.GetMenu());
 
             PluginMenu pluginMenu = new PluginMenu();
             mMenuManager.MenuItems.Add(pluginMenu.GetMenu());
 
-            ScriptMenu scriptMenu = new ScriptMenu();
-            mMenuManager.MenuItems.Add(scriptMenu.GetMenu());
         }
 
         private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -136,14 +132,14 @@ namespace Amdocs.Ginger.GingerRuntime
             Console.WriteLine("--------------------------------------------------------------");
             Console.WriteLine(DateTime.Now + " UnhandledException: " + e.ToString());
             Console.WriteLine("--------------------------------------------------------------");
-            Console.Out.Flush();            
+            Console.Out.Flush();
             Thread.Sleep(5000);
         }
-        
+
 
         private static void InitWorkSpace(bool startLocalGrid)
         {
-            GingerConsoleWorkSpace ws = new GingerConsoleWorkSpace();  
+            GingerConsoleWorkSpace ws = new GingerConsoleWorkSpace();
             WorkSpace.Init(ws, startLocalGrid);
         }
 
@@ -154,9 +150,9 @@ namespace Amdocs.Ginger.GingerRuntime
             Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console   
             WorkSpace.Instance.InitWorkspace(new GingerRuntimeWorkspaceReporter(), new DotnetCoreHelper());
             CLIProcessor CLI = new CLIProcessor();
-           await CLI.ExecuteArgs(args);            
+            await CLI.ExecuteArgs(args);
         }
 
-       
+
     }
 }
