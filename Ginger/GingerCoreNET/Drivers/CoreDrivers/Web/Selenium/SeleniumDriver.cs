@@ -223,7 +223,7 @@ namespace GingerCore.Drivers
         //public Boolean UseApplitools { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("W3IBcWNoSAABDt21U3X3XpS2xpeV7Rgt990JwQz8th4A110")]
+        [UserConfiguredDefault("")]
         [UserConfiguredDescription("Applitool View Key number")]
         public String ApplitoolsViewKey { get; set; }
 
@@ -3234,7 +3234,8 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                var pomExcutionUtil = new POMExecutionUtils(act);
+                var pomExcutionUtil = new POMExecutionUtils(act,act is ActUIElement ? ((ActUIElement)act).ElementLocateValue : ((ActVisualTesting)act).LocateValue);
+                
                 var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
                 if (currentPOM != null)
@@ -3285,6 +3286,8 @@ namespace GingerCore.Drivers
 
             return elem;
         }
+
+        
 
         private void SwitchFrame(ElementInfo EI)
         {

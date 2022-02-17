@@ -619,7 +619,7 @@ namespace GingerCore.Drivers.WindowsLib
         private AutomationElement HandlePOMElememnt(ActUIElement act)
         {
             ObservableList<ElementLocator> locators = new ObservableList<ElementLocator>();
-            var pomExcutionUtil = new POMExecutionUtils(act);
+            var pomExcutionUtil = new POMExecutionUtils(act,act.ElementLocateValue);
             var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
             ElementInfo currentPOMElementInfo = null;
