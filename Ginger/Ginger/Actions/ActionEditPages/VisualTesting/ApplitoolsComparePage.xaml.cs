@@ -247,5 +247,20 @@ namespace Ginger.Actions.VisualTesting
                     break;
             }
         }
+
+        private ePlatformType GetActionPlatform()
+        {
+            ePlatformType platform;
+            if (mAct.Context != null && (Context.GetAsContext(mAct.Context)).BusinessFlow != null)
+            {
+                string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
+                platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            }
+            else
+            {
+                platform = WorkSpace.Instance.Solution.ApplicationPlatforms[0].Platform;
+            }
+            return platform;
+        }
     }
 }
