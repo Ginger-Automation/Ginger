@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -372,6 +372,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
                 }
             }
+            //also find used global variable
+            AddGlobalVariablesUsedInAction(VariableListToImport, string.IsNullOrEmpty(dependacyFor) ? act.Description : dependacyFor, act);
+
             string filePath = GetApplicationPOMModelFilePathForAction(act);
             if (!string.IsNullOrEmpty(filePath))
             {
@@ -584,6 +587,9 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     //3. Shared Actions
                     foreach (Act act in activity.Acts)
                     {
+                        //also find used global variable
+                        AddGlobalVariablesUsedInAction(VariableListToImport, importedBF.Name, act);
+
                         foreach (string file in filePathsActs)
                         {
                             try
@@ -657,6 +663,26 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 Reporter.ToLog(eLogLevel.ERROR, $"Global Cross Solution, Import Failed to load dependancy of {itemBF.ItemFullPath}, Method - {MethodBase.GetCurrentMethod().Name} Error - {ex.Message}", ex);
             }
         }
+
+        private void AddGlobalVariablesUsedInAction(List<VariableBase> VariableListToImport, string dependancyFor, Act act)
+        {
+            if (act is ActSetVariableValue)
+            {
+                Solution solution = GetSolution();
+                VariableBase isAlreadyAddedVB = VariableListToImport.Where(x => x.Name == ((ActSetVariableValue)act).VariableName).FirstOrDefault();
+                if (isAlreadyAddedVB == null)
+                {
+                    VariableBase vb = (from v1 in solution.Variables where v1.Name == ((ActSetVariableValue)act).VariableName select v1).FirstOrDefault();
+                    if (vb != null)
+                    {
+                        VariableListToImport.Add(vb);
+                    }
+                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.Variables, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", dependancyFor);
+                    newItem.ItemName = string.Join(",", VariableListToImport);
+                }
+            }
+        }
+
         void AddSharedVariblesDependancies(ObservableList<VariableBase> variables, List<string> filePathsVars, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, string dependancyFor)
         {
             foreach (VariableBase variable in variables)
@@ -910,6 +936,15 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
         {
             bool skipAdd = false;
             //check if item already exist in the list -> if duplicate keep dependant item
+            if (itemToAdd.ItemType == GlobalSolution.eImportItemType.Variables)
+            {
+                //Remove the variables row before add, to avoid duplicate rows in grid
+                GlobalSolutionItem varItem = SelectedItemsListToImport.Where(x => x.ItemType == itemToAdd.ItemType).FirstOrDefault();
+                if (varItem != null)
+                {
+                    SelectedItemsListToImport.Remove(varItem);
+                }
+            }
             GlobalSolutionItem listItem = SelectedItemsListToImport.Where(x => x.ItemFullPath == itemToAdd.ItemFullPath && x.ItemType == itemToAdd.ItemType && x.ItemName == itemToAdd.ItemName).FirstOrDefault();
             if (listItem != null)
             {

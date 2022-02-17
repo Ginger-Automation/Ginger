@@ -150,7 +150,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             GlobalSolutionUtils.Instance.AddDependaciesForBusinessFlows(item, ref SelectedItemsListToImport, ref VariableListToImport, ref EnvAppListToImport);
 
             //Assert
-            Assert.AreEqual(SelectedItemsListToImport.Count, 13);
+            Assert.AreEqual(SelectedItemsListToImport.Count, 12);
             Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\Applications Models\\POM Models\\Selenium Easy - Input Form Demo with Validations.Ginger.ApplicationPOMModel.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\Browser Action.Ginger.Action.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\UIElement Action.Ginger.Action.xml"));

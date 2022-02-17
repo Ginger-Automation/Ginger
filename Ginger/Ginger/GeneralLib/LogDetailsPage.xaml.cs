@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ namespace Ginger.GeneralLib
     /// </summary>
     public partial class LogDetailsPage : Page
     {
+        public const int NoOfLinesToShow = 5000;
         public enum eLogShowLevel
         {
             ALL, DEBUG, INFO, WARN, ERROR, FATAL
@@ -99,9 +100,10 @@ namespace Ginger.GeneralLib
             xLogDetailsTextBlock.Text = string.Empty;
             mTextBlockHelper = new TextBlockHelper(xLogDetailsTextBlock);
             bool allowLogDetailsWrite = true;
-            foreach (string log in logs)
+            int start = logs.Length > NoOfLinesToShow ? logs.Length - NoOfLinesToShow : 0;
+            for (int i = start; i < logs.Length; i++)
             {
-                if (log == string.Empty)
+                if (logs[i] == string.Empty)
                 {
                     if (allowLogDetailsWrite)
                     {
@@ -109,15 +111,15 @@ namespace Ginger.GeneralLib
                     }
                     continue;
                 }
-                else if (log.Contains("#### Application version"))
+                else if (logs[i].Contains("#### Application version"))
                 {
-                    mTextBlockHelper.AddFormattedText(log, Brushes.Black, true);
+                    mTextBlockHelper.AddFormattedText(logs[i], Brushes.Black, true);
                 }
-                else if(IsLogHeader(log))
+                else if (IsLogHeader(logs[i]))
                 {
-                    if (mLogLevel == eLogShowLevel.ALL || log.Contains("| " + mLogLevel.ToString()))
+                    if (mLogLevel == eLogShowLevel.ALL || logs[i].Contains("| " + mLogLevel.ToString()))
                     {
-                        mTextBlockHelper.AddFormattedText(log, GetProperLogTypeBrush(log), isBold: true);
+                        mTextBlockHelper.AddFormattedText(logs[i], GetProperLogTypeBrush(logs[i]), isBold: true);
                         mTextBlockHelper.AddLineBreak();
                         allowLogDetailsWrite = true;
                     }
@@ -130,10 +132,10 @@ namespace Ginger.GeneralLib
                 {
                     if (allowLogDetailsWrite)
                     {
-                        mTextBlockHelper.AddText(log);
+                        mTextBlockHelper.AddText(logs[i]);
                         mTextBlockHelper.AddLineBreak();
                     }
-                }                
+                }
             }
         }
 
