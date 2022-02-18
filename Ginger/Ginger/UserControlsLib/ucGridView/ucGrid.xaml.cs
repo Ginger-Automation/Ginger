@@ -902,6 +902,8 @@ namespace Ginger
 
             string search = txtSearch.Text.ToUpper();
 
+            if (mObjList == null) return;
+
             mObjList.CurrentItem = null;
 
 
