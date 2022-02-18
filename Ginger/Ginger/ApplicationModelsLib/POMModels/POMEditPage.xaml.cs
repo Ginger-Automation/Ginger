@@ -447,7 +447,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void xEditPageExpander_Expanded(object sender, RoutedEventArgs e)
         {
-            FirstRow.Height = new GridLength(235, GridUnitType.Pixel);
+            FirstRow.Height = new GridLength(280, GridUnitType.Pixel);
             SecondRow.Height = new GridLength(100, GridUnitType.Star);
         }
 
