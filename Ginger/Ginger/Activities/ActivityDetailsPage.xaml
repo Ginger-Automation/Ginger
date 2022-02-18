@@ -55,7 +55,7 @@
                 <CheckBox x:Name="xMandatoryActivityCB" Margin="10,0,0,0" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Mandatory"/>
             </StackPanel>
 
-            <StackPanel x:Name="xHandlerTypeStack" Visibility="Collapsed" DockPanel.Dock="Top" Margin="0,10,0,0" Orientation="Horizontal">
+            <StackPanel x:Name="xHandlerTypeStack" Visibility="Visible" DockPanel.Dock="Top" Margin="0,10,0,0" Orientation="Horizontal">
                 <Label Content="Error Handler Type:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
                 <ComboBox x:Name="xHandlerTypeCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="15,0,0,0"/>
             </StackPanel>

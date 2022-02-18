@@ -138,7 +138,7 @@ namespace Ginger.BusinessFlowPages
 
             if (mActivity.GetType() == typeof(ErrorHandler))
             {
-                xHandlerTypeStack.Visibility = Visibility.Collapsed;
+                xHandlerTypeStack.Visibility = Visibility.Visible;
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Visible;
                 xHandlerPostExecutionCombo.BindControl(mActivity, nameof(ErrorHandler.ErrorHandlerPostExecutionAction));
 
