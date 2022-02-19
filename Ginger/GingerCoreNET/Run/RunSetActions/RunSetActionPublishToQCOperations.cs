@@ -72,11 +72,12 @@ namespace Ginger.Run.RunSetActions
             {
                 eALMType almType = (eALMType)Enum.Parse(typeof(eALMType), RunSetActionPublishToQC.PublishALMType);
                 //connect to the specific ALM type
-                PublishToALMConfig.PublishALMType = almType; // bind?
+                PublishToALMConfig.PublishALMType = almType;
             }
 
-            PublishToALMConfig.ALMTestSetLevel = RunSetActionPublishToQC.ALMTestSetLevel; // bind?
-            PublishToALMConfig.ExportType = RunSetActionPublishToQC.ExportType; // bind?
+            PublishToALMConfig.ALMTestSetLevel = RunSetActionPublishToQC.ALMTestSetLevel; 
+            PublishToALMConfig.ExportType = RunSetActionPublishToQC.ExportType;
+            PublishToALMConfig.AlmFields = RunSetActionPublishToQC.AlmFields;
         }
         public void Execute(IReportInfo RI)
         {

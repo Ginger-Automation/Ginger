@@ -19,11 +19,12 @@ limitations under the License.
 using System;
 using System.ComponentModel;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace GingerCore.ALM
 {
-    public class PublishToALMConfig
+    public class PublishToALMConfig : INotifyPropertyChanged
     {
         public enum eALMTestSetLevel
         {
@@ -77,6 +78,22 @@ namespace GingerCore.ALM
         public eALMTestSetLevel ALMTestSetLevel { get; set; } 
         public eExportType ExportType { get; set; }
         public Guid ActionGuid { get; set; }
+        private ObservableList<ExternalItemFieldBase> mAlmFields;
+        public ObservableList<ExternalItemFieldBase> AlmFields
+        {
+            get
+            {
+                return mAlmFields;
+            }
+            set
+            {
+                if (mAlmFields != value)
+                {
+                    mAlmFields = value;
+                    OnPropertyChanged(nameof(AlmFields));
+                }
+            }
+        }
         public void CalculateTCRunName(IValueExpression ve)
         {          
             if (IsVariableInTCRunUsed && (VariableForTCRunName != null) && (VariableForTCRunName != string.Empty))

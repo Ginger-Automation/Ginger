@@ -64,7 +64,14 @@ namespace Ginger.ALM.Repository
             if (mALMFieldsPage == null)
             {
                 mALMFieldsPage = new ALMItemsFieldsConfigurationPage(configType, type, ExternalItemsFields, actionGuid);
-                mALMFieldsPage.ShowAsWindow(false);
+                if (configType == eALMConfigType.MainMenu)
+                {
+                    mALMFieldsPage.ShowAsWindow(false);
+                }
+                else
+                {
+                    mALMFieldsPage.ShowAsWindow(true);
+                }
             }
             else
             {

@@ -29,6 +29,7 @@ using amdocs.ginger.GingerCoreNET;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
+using GingerCore.ALM;
 
 namespace Ginger.ALM
 {
@@ -66,7 +67,6 @@ namespace Ginger.ALM
             }
             else
             {
-                mItemsFields = ALMIntegration.Instance.GetALMItemFields(externalItemsFields, true);
                 grdQCFields.DataSourceList = externalItemsFields;
                 SetFieldsGrid();
             }
@@ -124,7 +124,8 @@ namespace Ginger.ALM
                 RunSetActionBase runSetActionBase = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.Where(x => x.Guid == mActionGuid).FirstOrDefault();
                 if (runSetActionBase is not null && runSetActionBase is RunSetActionPublishToQC)
                 {
-                    (runSetActionBase as RunSetActionPublishToQC).AlmFields = mItemsFields;
+                    ObservableList<ExternalItemFieldBase> tempItemList = ALMIntegration.Instance.GetUpdatedFields((ObservableList<ExternalItemFieldBase>)grdQCFields.DataSourceList, false);
+                    (runSetActionBase as RunSetActionPublishToQC).AlmFields = tempItemList;
                 }
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(runSetConfig);
 
@@ -175,6 +176,24 @@ namespace Ginger.ALM
             grdQCFields.Visibility = Visibility.Visible;
             grdQCFields.DataSourceList = mItemsFields;
             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "ALM Item Fields population is complete");
+        }
+        ObservableList<ExternalItemFieldBase> FetchALLFields(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType AlmType)
+        {
+            ObservableList<ExternalItemFieldBase> mItemsFields = null;
+            try
+            {
+                ALMIntegration.Instance.UpdateALMType(AlmType, true);
+                mItemsFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.ALL);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Fetching Fields", ex);
+            }
+            finally
+            {
+                ALMIntegration.Instance.UpdateALMType(ALMCore.GetDefaultAlmConfig().AlmType);
+            }
+            return mItemsFields;
         }
         #endregion
     }

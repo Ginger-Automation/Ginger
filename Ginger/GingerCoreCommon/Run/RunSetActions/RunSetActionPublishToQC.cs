@@ -28,12 +28,13 @@ using GingerCore.DataSource;
 using Amdocs.Ginger.Common.InterfacesLib;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 using static GingerCore.ALM.PublishToALMConfig;
+using System.ComponentModel;
 
 namespace Ginger.Run.RunSetActions
 {
     //Name of the class should be RunSetActionPublishToQC 
     //If we change the name, run set xml fails to find it because it look for name RunSetActionPublishToQC
-    public class RunSetActionPublishToQC : RunSetActionBase
+    public class RunSetActionPublishToQC : RunSetActionBase, INotifyPropertyChanged
     {
         public IRunSetActionPublishToQCOperations RunSetActionPublishToQCOperations;
         public static readonly string AlmTypeDefault = "Default";
@@ -66,7 +67,12 @@ namespace Ginger.Run.RunSetActions
             }
             set
             {
-                mPublishALMType = value;
+                if (mPublishALMType != value)
+                {
+                    mPublishALMType = value;
+                    AlmFields.Clear();
+                    OnPropertyChanged(nameof(RunSetActionPublishToQC.ALMTestSetLevel));
+                }
             }
         }
         private eALMTestSetLevel mALMTestSetLevel;
@@ -101,7 +107,8 @@ namespace Ginger.Run.RunSetActions
             }
         }
         [IsSerializedForLocalRepository]
-        public ObservableList<ExternalItemFieldBase> AlmFields { get; set; }
+        public ObservableList<ExternalItemFieldBase> AlmFields = new ObservableList<ExternalItemFieldBase>();
+        
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
             List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
