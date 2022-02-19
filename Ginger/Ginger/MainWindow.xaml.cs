@@ -562,12 +562,8 @@ namespace Ginger
 
         private void ALMFieldsConfiguration_Click(object sender, RoutedEventArgs e)
         {
-            ////pull default alm type
-            //Type = default;
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig(); 
-            //WorkSpace.Instance.Solution.ExternalItemsFields
             ALMIntegration.Instance.OpenALMItemsFieldsPage(eALMConfigType.MainMenu, ALMIntegration.Instance.GetALMType(), WorkSpace.Instance.Solution.ExternalItemsFields);
-            //ALMIntegration.Instance.OpenALMItemsFieldsPage();
         }
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)

@@ -60,7 +60,8 @@ namespace Ginger.Run
             BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.isVariableInTCRunUsed));
             BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.toAttachActivitiesGroupReport));
             xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));
-            xALMTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType), GetTypeListForCbx(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = RunSetActionPublishToQC.AlmTypeDefault, Value = RunSetActionPublishToQC.AlmTypeDefault } }), ComboBox.TextProperty);
+            xALMTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType), 
+                GingerCore.General.GetEnumValuesForComboAndAddExtraValues(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = RunSetActionPublishToQC.AlmTypeDefault, Value = RunSetActionPublishToQC.AlmTypeDefault } }), ComboBox.TextProperty);
             xALMTestSetLevelCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ALMTestSetLevel), Enum.GetValues(typeof(eALMTestSetLevel)).Cast<eALMTestSetLevel>().ToList(), ComboBox.SelectedValueProperty);
             xALMTestSetLevelCbx.ComboBox.SelectionChanged += xALMTestSetLevelCbx_SelectionChanged;
             xExportTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ExportType), Enum.GetValues(typeof(eExportType)).Cast<eExportType>().ToList(), ComboBox.SelectedValueProperty);
@@ -152,16 +153,6 @@ namespace Ginger.Run
         private void AttachActivitiesGroupReportCbx_Checked(object sender, RoutedEventArgs e)
         {
             
-        }
-        private List<ComboEnumItem> GetTypeListForCbx(Type listType, List<ComboEnumItem> comboEnumItemsValues = null)
-        {
-            List<ComboEnumItem> comboEnumItemsList = new List<ComboEnumItem>();
-            if (comboEnumItemsValues is not null && comboEnumItemsValues.Count > 0)
-            {
-                comboEnumItemsList.AddRange(comboEnumItemsValues);
-            }
-            comboEnumItemsList.AddRange(GingerCore.General.GetEnumValuesForCombo(listType));
-            return comboEnumItemsList;
         }
 
         private void xChangeTestSetBtn_Click(object sender, RoutedEventArgs e)

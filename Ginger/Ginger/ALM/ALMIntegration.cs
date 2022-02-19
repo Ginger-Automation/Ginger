@@ -629,7 +629,6 @@ namespace Ginger.ALM
 
         public void OpenALMItemsFieldsPage(eALMConfigType configType, eALMType type, ObservableList<ExternalItemFieldBase> ExternalItemsFields, Guid actionGuid = default(Guid))
         {
-            //GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig();
             if (AlmRepo == null)
             {
                 UpdateALMType(type);
@@ -686,22 +685,10 @@ namespace Ginger.ALM
         {
             return AlmRepo.GetALMTestCasesToTestSetObject(almTestSet);
         }
-
-        public ObservableList<ExternalItemFieldBase> GetALMItemFields(ObservableList<ExternalItemFieldBase> exitingFields, bool online, BackgroundWorker bw = null)
-        {
-            ObservableList<ExternalItemFieldBase> mergedFields = null;
-            if (ALMIntegration.Instance.AutoALMProjectConnect())
-            {
-                //Get latestALMFields from ALMCore with Online flag
-                ObservableList<ExternalItemFieldBase> latestALMFields = AlmCore.GetALMItemFields(bw, online);
-                mergedFields = AlmCore.RefreshALMItemFields(exitingFields, latestALMFields);
-            }
-            return mergedFields;
-        }
         public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
-            Reporter.ToLog(eLogLevel.INFO, ("Exporting " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
-
+            // todo add task
+            Reporter.ToLog(eLogLevel.INFO, ("Exporting virtual " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
             bool isExportSucc = false;
             if (AutoALMProjectConnect(eALMConnectType.Silence, false))
             {

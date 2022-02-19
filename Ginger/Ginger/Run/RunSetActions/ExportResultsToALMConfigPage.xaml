@@ -18,19 +18,16 @@
                 <Label Style="{StaticResource @LabelStyle}">ALM Type:</Label>
                 <DockPanel>
                     <UserControlsLib:UCComboBox x:Name="xALMTypeCbx" ContextMenu="{x:Null}" Margin="10,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
-                    <!-- <ComboBox x:Name="xALMTypeCbx"  ContextMenu="{x:Null}" Width="300" HorizontalAlignment="Left" Margin="10,0,0,0" Style="{StaticResource $FlatEditInputComboBoxStyle}"></ComboBox> -->
                     <usercontrols:ucButton x:Name="xChangeTestSetBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" Margin="20,0,0,0" ButtonText="Set Fields" ButtonImageType="ALM" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Click="xChangeTestSetBtn_Click"/>
                 </DockPanel>
             </StackPanel>
             <StackPanel>
                 <Label Style="{StaticResource @LabelStyle}">ALM Test Set Level:</Label>
                 <UserControlsLib:UCComboBox x:Name="xALMTestSetLevelCbx" Margin="10,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
-                <!-- <ComboBox x:Name="xALMTestSetLevelCbx"  ContextMenu="{x:Null}" Width="300" HorizontalAlignment="Left" Margin="10,0,0,0" Style="{StaticResource $FlatEditInputComboBoxStyle}" SelectionChanged="xALMTestSetLevelCbx_SelectionChanged"></ComboBox>-->
             </StackPanel>
             <StackPanel x:Name="xExportTypePanel" Visibility="Collapsed">
                 <Label Style="{StaticResource @LabelStyle}">Export Type:</Label>
                 <UserControlsLib:UCComboBox x:Name="xExportTypeCbx" ContextMenu="{x:Null}" Margin="10,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
-                <!-- <ComboBox x:Name="xExportTypeCbx"  ContextMenu="{x:Null}" Width="300" HorizontalAlignment="Left" Margin="10,0,0,0" Style="{StaticResource $FlatEditInputComboBoxStyle}" SelectionChanged="xExportTypeCbx_SelectionChanged"></ComboBox>-->
             </StackPanel>
             <StackPanel x:Name="xExportDestinationFolder" Visibility="Collapsed">
                 <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Export Test Set Destination Folder:</Label>

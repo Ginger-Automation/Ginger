@@ -48,7 +48,7 @@ namespace Ginger.ALM
         eALMConfigType mAlmConfigType = eALMConfigType.MainMenu;
         Guid mActionGuid;
 
-        public ALMItemsFieldsConfigurationPage(eALMConfigType configType, eALMType type, ObservableList<ExternalItemFieldBase> externalItemsFields, Guid actionGuid)
+        public ALMItemsFieldsConfigurationPage(eALMConfigType configType, eALMType type, ObservableList<ExternalItemFieldBase> selectedItemsFields, Guid actionGuid)
         {
             InitializeComponent();
             mAlmConfigType = configType;
@@ -67,7 +67,7 @@ namespace Ginger.ALM
             }
             else
             {
-                grdQCFields.DataSourceList = externalItemsFields;
+                grdQCFields.DataSourceList = selectedItemsFields;
                 SetFieldsGrid();
             }
         }
@@ -126,14 +126,18 @@ namespace Ginger.ALM
                 {
                     ObservableList<ExternalItemFieldBase> tempItemList = ALMIntegration.Instance.GetUpdatedFields((ObservableList<ExternalItemFieldBase>)grdQCFields.DataSourceList, false);
                     (runSetActionBase as RunSetActionPublishToQC).AlmFields = tempItemList;
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(runSetConfig);
+                    Reporter.ToLog(eLogLevel.INFO, $"Operation fields saved to {runSetActionBase.Name}");
                 }
-                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(runSetConfig);
+                else
+                {
+                    Reporter.ToLog(eLogLevel.INFO, $"Operation fields failed saving to {runSetActionBase.Name}");
 
+                }
             }
             genWin.Close();
         }
     
-
         #region BackgroundWorker Thread
         public void RunWorker(Boolean refreshFlag)
         {
@@ -176,24 +180,6 @@ namespace Ginger.ALM
             grdQCFields.Visibility = Visibility.Visible;
             grdQCFields.DataSourceList = mItemsFields;
             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "ALM Item Fields population is complete");
-        }
-        ObservableList<ExternalItemFieldBase> FetchALLFields(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType AlmType)
-        {
-            ObservableList<ExternalItemFieldBase> mItemsFields = null;
-            try
-            {
-                ALMIntegration.Instance.UpdateALMType(AlmType, true);
-                mItemsFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.ALL);
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Fetching Fields", ex);
-            }
-            finally
-            {
-                ALMIntegration.Instance.UpdateALMType(ALMCore.GetDefaultAlmConfig().AlmType);
-            }
-            return mItemsFields;
         }
         #endregion
     }
