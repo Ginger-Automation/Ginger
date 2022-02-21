@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,22 +34,26 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 {
     public class POMExecutionUtils
     {
-        ActUIElement mAct = null;
+        Act mAct = null;
         eExecutedFrom ExecutedFrom;
-        public POMExecutionUtils(Act act)
+        private string[] PomElementGUID;// => mAct.ElementLocateValue.ToString().Split('_');
+        public POMExecutionUtils(Act act, string elementLocateValue)
         {
-            mAct = (ActUIElement)act;
-
+            
+            mAct = act;
             var context = Context.GetAsContext(mAct.Context);
             ExecutedFrom = context.ExecutedFrom;
+            PomElementGUID = elementLocateValue.ToString().Split('_');
+
         }
 
         public POMExecutionUtils()
         {
-
+            
         }
 
-        private string[] PomElementGUID => mAct.ElementLocateValue.ToString().Split('_');
+
+        
 
 
         public ApplicationPOMModel GetCurrentPOM()

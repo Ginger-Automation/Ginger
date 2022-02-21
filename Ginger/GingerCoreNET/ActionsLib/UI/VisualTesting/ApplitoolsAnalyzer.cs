@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -104,11 +104,6 @@ namespace GingerCore.Actions.VisualTesting
         {
             Window,
             Region
-        }
-
-        public enum eLocateByElement
-        {
-            ByXpath
         }
 
         private void SetEyesMatchLevel()
@@ -335,7 +330,8 @@ namespace GingerCore.Actions.VisualTesting
                     ElementLocator locator = new ElementLocator();
                     locator.LocateBy = GetLocateBy();
                     locator.LocateValue = GetLocateValue();
-                    IWebElement webElement = ((SeleniumDriver)mDriver).LocateElementByLocator(locator, true);
+                    IWebElement webElement = ((SeleniumDriver)mDriver).LocateElement(mAct, false,null,null);
+                    //IWebElement webElement = ((SeleniumDriver)mDriver).LocateElementByLocator(locator, true);
                     newmEyes.Check(Target.Region(webElement).Fully().WithName(mAct.ItemName));
                 }
                     
@@ -529,10 +525,6 @@ namespace GingerCore.Actions.VisualTesting
                         mAct.ScreenShots.Add(currImagePath);
                         
                     }
-                    else if (response.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        mAct.Error = mAct.Error + " File Not Found";
-                    }
                 }
                 catch(Exception ex)
                 {
@@ -655,7 +647,6 @@ namespace GingerCore.Actions.VisualTesting
                     return sendRequest(request, 1, false);
 
                 case HttpStatusCode.NotFound:
-                    mAct.Error = mAct.Error + "Unknown error during long request: " + status;
                     return responseReceived;
 
                 case HttpStatusCode.Gone:

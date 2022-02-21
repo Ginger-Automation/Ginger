@@ -64,7 +64,7 @@
                 <usercontrols:ucButton DockPanel.Dock="Right"  x:Name="xCopyBtn" Visibility="Visible" ToolTip="Copy configuration to Clipboard"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonType="ImageButton" ButtonImageType="Copy" Click="xCopyBtn_Click"  Margin="0,0,-6,-5" HorizontalAlignment="Right" VerticalAlignment="Top" />
             </DockPanel>
 
-            <TextBox x:Name="xCLIContentTextBox" Grid.Column="0" Grid.Row="1" DockPanel.Dock="Top" TextWrapping="Wrap" IsReadOnly="False" ScrollViewer.VerticalScrollBarVisibility="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Auto">Configuration Preview</TextBox>
+            <TextBox x:Name="xCLIContentTextBox" Grid.Column="0" Grid.Row="1" DockPanel.Dock="Top" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="False" ScrollViewer.VerticalScrollBarVisibility="Auto"  ScrollViewer.HorizontalScrollBarVisibility="Auto">Configuration Preview</TextBox>
         </Grid>
 
     </DockPanel>

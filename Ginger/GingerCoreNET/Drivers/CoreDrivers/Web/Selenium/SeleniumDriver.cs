@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -223,7 +223,7 @@ namespace GingerCore.Drivers
         //public Boolean UseApplitools { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("W3IBcWNoSAABDt21U3X3XpS2xpeV7Rgt990JwQz8th4A110")]
+        [UserConfiguredDefault("")]
         [UserConfiguredDescription("Applitool View Key number")]
         public String ApplitoolsViewKey { get; set; }
 
@@ -648,7 +648,7 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in start driver", ex);
                 ErrorMessageFromDriver = ex.Message;
 
-                if (RestartRetry && mBrowserTpe == eBrowserType.Chrome && ex.Message.Contains("version"))
+                if (RestartRetry && mBrowserTpe == eBrowserType.Chrome && (ex.Message.Contains("version") || ex.Message.Contains("chromedriver.exe does not exist")))
                 {
                     GingerCore.Drivers.Updater.ChromeDriverUpdater chromeupdater = new Updater.ChromeDriverUpdater();
 
@@ -656,6 +656,11 @@ namespace GingerCore.Drivers
                     if (chromeupdater.UpdateDriver())
                     {
                         StartDriver();
+                    }
+                    else
+                    {
+                        ErrorMessageFromDriver += " Chrome driver version mismatch. Please run Ginger as Admin to Auto update the chrome driver.";
+                        Reporter.ToLog(eLogLevel.ERROR, ErrorMessageFromDriver);
                     }
                 }
             }
@@ -3229,7 +3234,8 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                var pomExcutionUtil = new POMExecutionUtils(act);
+                var pomExcutionUtil = new POMExecutionUtils(act,act is ActUIElement ? ((ActUIElement)act).ElementLocateValue : ((ActVisualTesting)act).LocateValue);
+                
                 var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
                 if (currentPOM != null)
@@ -3280,6 +3286,8 @@ namespace GingerCore.Drivers
 
             return elem;
         }
+
+        
 
         private void SwitchFrame(ElementInfo EI)
         {
