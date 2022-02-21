@@ -26,6 +26,10 @@ using Ginger.UserControls;
 using System.ComponentModel;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using Ginger.Run;
+using Ginger.Run.RunSetActions;
+using GingerCore.ALM;
 
 namespace Ginger.ALM
 {
@@ -41,19 +45,31 @@ namespace Ginger.ALM
         BackgroundWorker fieldsWorker = new BackgroundWorker();
 
         public static string LoadFieldsState = "aa";
+        eALMConfigType mAlmConfigType = eALMConfigType.MainMenu;
+        Guid mActionGuid;
 
-        public ALMItemsFieldsConfigurationPage()
+        public ALMItemsFieldsConfigurationPage(eALMConfigType configType, eALMType type, ObservableList<ExternalItemFieldBase> selectedItemsFields, Guid actionGuid)
         {
             InitializeComponent();
-            ALMIntegration.Instance.RefreshALMItemFields(WorkSpace.Instance.Solution.ExternalItemsFields, true, null);
-            mItemsFields =  WorkSpace.Instance.Solution.ExternalItemsFields;
-            if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            mAlmConfigType = configType;
+            mActionGuid = actionGuid;
+            if (mAlmConfigType.ToString().Equals(eALMConfigType.MainMenu.ToString()))
             {
-                RunWorker(true);
-            }
+                ALMIntegration.Instance.RefreshALMItemFields(WorkSpace.Instance.Solution.ExternalItemsFields, true, null);
+                mItemsFields = WorkSpace.Instance.Solution.ExternalItemsFields;
+                if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                {
+                    RunWorker(true);
+                }
 
-            grdQCFields.DataSourceList = mItemsFields;
-            SetFieldsGrid();
+                grdQCFields.DataSourceList = mItemsFields;
+                SetFieldsGrid();
+            }
+            else
+            {
+                grdQCFields.DataSourceList = selectedItemsFields;
+                SetFieldsGrid();
+            }
         }
 
         private void SetFieldsGrid()
@@ -92,16 +108,36 @@ namespace Ginger.ALM
 
         private void Save(object sender, RoutedEventArgs e)
         {
-            // TODO Rearrange save function to keep old fields value.
-            ObservableList<ExternalItemFieldBase> tempItemList = ALMIntegration.Instance.GetUpdatedFields(mItemsFields, false);
-            if (tempItemList.Any())
+            if (mAlmConfigType.Equals(eALMConfigType.MainMenu))
             {
-                WorkSpace.Instance.Solution.ExternalItemsFields = tempItemList;
+                // TODO Rearrange save function to keep old fields value.
+                ObservableList<ExternalItemFieldBase> tempItemList = ALMIntegration.Instance.GetUpdatedFields(mItemsFields, false);
+                if (tempItemList.Any())
+                {
+                    WorkSpace.Instance.Solution.ExternalItemsFields = tempItemList;
+                }
+                WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
             }
-            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
+            else
+            {
+                RunSetConfig runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
+                RunSetActionBase runSetActionBase = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.Where(x => x.Guid == mActionGuid).FirstOrDefault();
+                if (runSetActionBase is not null && runSetActionBase is RunSetActionPublishToQC)
+                {
+                    ObservableList<ExternalItemFieldBase> tempItemList = ALMIntegration.Instance.GetUpdatedFields((ObservableList<ExternalItemFieldBase>)grdQCFields.DataSourceList, false);
+                    (runSetActionBase as RunSetActionPublishToQC).AlmFields = tempItemList;
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(runSetConfig);
+                    Reporter.ToLog(eLogLevel.INFO, $"Operation fields saved to {runSetActionBase.Name}");
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.INFO, $"Operation fields failed saving to {runSetActionBase.Name}");
+
+                }
+            }
             genWin.Close();
         }
-
+    
         #region BackgroundWorker Thread
         public void RunWorker(Boolean refreshFlag)
         {

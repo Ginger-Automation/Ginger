@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2021 European Support Limited
 
@@ -31,7 +31,8 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         Failed,
         Stopped,
         Blocked,
-        Skipped
+        Skipped,
+        NA
     }
     public enum executionLoggerStatus
     {

@@ -26,16 +26,18 @@ using GingerCore;
 using GingerCore.ALM;
 using GingerCore.DataSource;
 using Amdocs.Ginger.Common.InterfacesLib;
-
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using static GingerCore.ALM.PublishToALMConfig;
+using System.ComponentModel;
 
 namespace Ginger.Run.RunSetActions
 {
     //Name of the class should be RunSetActionPublishToQC 
     //If we change the name, run set xml fails to find it because it look for name RunSetActionPublishToQC
-    public class RunSetActionPublishToQC : RunSetActionBase
+    public class RunSetActionPublishToQC : RunSetActionBase, INotifyPropertyChanged
     {
         public IRunSetActionPublishToQCOperations RunSetActionPublishToQCOperations;
-        
+        public static readonly string AlmTypeDefault = "Default";
         private string mVariableForTCRunName;
         [IsSerializedForLocalRepository]
         public string VariableForTCRunName { get { return mVariableForTCRunName; } set { if (mVariableForTCRunName != value) { mVariableForTCRunName = value; OnPropertyChanged(nameof(VariableForTCRunName)); } } }
@@ -55,6 +57,58 @@ namespace Ginger.Run.RunSetActions
             get { return mFilterStatus; }
             set { mFilterStatus = value; }
         }
+        private string mPublishALMType = AlmTypeDefault;
+        [IsSerializedForLocalRepository]
+        public string PublishALMType
+        {
+            get
+            {
+                return mPublishALMType;
+            }
+            set
+            {
+                if (mPublishALMType != value)
+                {
+                    mPublishALMType = value;
+                    AlmFields.Clear();
+                    OnPropertyChanged(nameof(RunSetActionPublishToQC.ALMTestSetLevel));
+                }
+            }
+        }
+        private eALMTestSetLevel mALMTestSetLevel;
+        [IsSerializedForLocalRepository]
+        public eALMTestSetLevel ALMTestSetLevel
+        {
+            get
+            {
+                return mALMTestSetLevel;
+            }
+            set
+            {
+                if (mALMTestSetLevel != value)
+                {
+                    mALMTestSetLevel = value;
+                    OnPropertyChanged(nameof(RunSetActionPublishToQC.ALMTestSetLevel));
+                }
+            }
+        }
+        private eExportType mExportType;
+        [IsSerializedForLocalRepository]
+        public eExportType ExportType
+        {
+            get
+            {
+                return mExportType;
+            }
+            set
+            {
+                mExportType = value;
+                OnPropertyChanged(nameof(RunSetActionPublishToQC.ExportType));
+            }
+        }
+        [IsSerializedForLocalRepository]
+        public ObservableList<ExternalItemFieldBase> AlmFields = new ObservableList<ExternalItemFieldBase>();
+        
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
             List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();

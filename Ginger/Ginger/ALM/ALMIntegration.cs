@@ -98,6 +98,8 @@ namespace Ginger.ALM
             AlmCore.GetCurrentAlmConfig(isOperationAlmType);
             ALMCore.SetALMCoreConfigurations(AlmType, AlmCore);
         }
+
+
         public void SetALMCoreConfigurations(eALMType almType)
         {
             ALMCore.SetALMCoreConfigurations(almType, AlmCore);           
@@ -625,14 +627,13 @@ namespace Ginger.ALM
             return AlmRepo.ConnectALMServer(almConnectStyle);
         }
 
-        public void OpenALMItemsFieldsPage()
+        public void OpenALMItemsFieldsPage(eALMConfigType configType, eALMType type, ObservableList<ExternalItemFieldBase> ExternalItemsFields, Guid actionGuid = default(Guid))
         {
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig();
             if (AlmRepo == null)
             {
-                UpdateALMType(AlmConfig.AlmType);
+                UpdateALMType(type);
             }
-            AlmRepo.OpenALMItemsFieldsPage();
+            AlmRepo.OpenALMItemsFieldsPage(configType, type, ExternalItemsFields, actionGuid);
         }
 
         public bool LoadALMConfigurations()
@@ -683,6 +684,18 @@ namespace Ginger.ALM
         public ALMTestSet GetALMTestCases(ALMTestSet almTestSet)
         {
             return AlmRepo.GetALMTestCasesToTestSetObject(almTestSet);
+        }
+        public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
+        {
+            // todo add task
+            Reporter.ToLog(eLogLevel.INFO, ("Exporting virtual " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
+            bool isExportSucc = false;
+            if (AutoALMProjectConnect(eALMConnectType.Silence, false))
+            {
+                isExportSucc = AlmRepo.ExportBusinessFlowToALM(businessFlow, performSaveAfterExport, almConnectStyle, testPlanUploadPath, testLabUploadPath);
+                DisconnectALMServer();
+            }
+            return isExportSucc;
         }
     }
 }
