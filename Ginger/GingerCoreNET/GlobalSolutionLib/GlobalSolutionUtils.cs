@@ -663,7 +663,6 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
 
         private void AddGlobalVariablesUsedInAction(ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, List<VariableBase> VariableListToImport, string dependancyFor, Act act)
         {
-            Solution solution = GetSolution();
             if (act is ActSetVariableValue)
             {
                 AddVariableToList(((ActSetVariableValue)act).VariableName, dependancyFor, VariableListToImport, ref SelectedItemsListToImport);
