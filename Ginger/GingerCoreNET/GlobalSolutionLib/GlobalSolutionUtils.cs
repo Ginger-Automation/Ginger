@@ -373,7 +373,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 }
             }
             //also find used global variable
-            AddGlobalVariablesUsedInAction(VariableListToImport, string.IsNullOrEmpty(dependacyFor) ? act.Description : dependacyFor, act);
+            AddGlobalVariablesUsedInAction(ref SelectedItemsListToImport, VariableListToImport, string.IsNullOrEmpty(dependacyFor) ? act.Description : dependacyFor, act);
 
             string filePath = GetApplicationPOMModelFilePathForAction(act);
             if (!string.IsNullOrEmpty(filePath))
@@ -587,9 +587,6 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     //3. Shared Actions
                     foreach (Act act in activity.Acts)
                     {
-                        //also find used global variable
-                        AddGlobalVariablesUsedInAction(VariableListToImport, importedBF.Name, act);
-
                         foreach (string file in filePathsActs)
                         {
                             try
@@ -664,22 +661,34 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             }
         }
 
-        private void AddGlobalVariablesUsedInAction(List<VariableBase> VariableListToImport, string dependancyFor, Act act)
+        private void AddGlobalVariablesUsedInAction(ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, List<VariableBase> VariableListToImport, string dependancyFor, Act act)
         {
+            Solution solution = GetSolution();
             if (act is ActSetVariableValue)
             {
-                Solution solution = GetSolution();
-                VariableBase isAlreadyAddedVB = VariableListToImport.Where(x => x.Name == ((ActSetVariableValue)act).VariableName).FirstOrDefault();
-                if (isAlreadyAddedVB == null)
+                AddVariableToList(((ActSetVariableValue)act).VariableName, dependancyFor, VariableListToImport, ref SelectedItemsListToImport);
+            }
+            //check if the action has StoreTo as Variable/GlobalVariable
+            var list = act.ActReturnValues.Where(x => x.StoreTo == ActReturnValue.eStoreTo.Variable || x.StoreTo == ActReturnValue.eStoreTo.GlobalVariable);
+            foreach(ActReturnValue arv in list)
+            {
+                AddVariableToList(arv.StoreToValue, dependancyFor, VariableListToImport, ref SelectedItemsListToImport);
+            }
+        }
+        void AddVariableToList(string varName, string dependancyFor, List<VariableBase> VariableListToImport, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport)
+        {
+            Solution solution = GetSolution();
+            VariableBase isAlreadyAddedVB = VariableListToImport.Where(x => x.Name == varName).FirstOrDefault();
+            if (isAlreadyAddedVB == null)
+            {
+                VariableBase vb = (from v1 in solution.Variables where v1.Name == varName select v1).FirstOrDefault();
+                if (vb != null)
                 {
-                    VariableBase vb = (from v1 in solution.Variables where v1.Name == ((ActSetVariableValue)act).VariableName select v1).FirstOrDefault();
-                    if (vb != null)
-                    {
-                        VariableListToImport.Add(vb);
-                    }
-                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.Variables, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", dependancyFor);
-                    newItem.ItemName = string.Join(",", VariableListToImport);
+                    VariableListToImport.Add(vb);
                 }
+                GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.Variables, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", dependancyFor);
+                newItem.ItemName = string.Join(",", VariableListToImport);
+                AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
             }
         }
 
