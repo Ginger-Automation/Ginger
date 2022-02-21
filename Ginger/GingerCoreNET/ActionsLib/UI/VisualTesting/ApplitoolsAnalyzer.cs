@@ -148,6 +148,7 @@ namespace GingerCore.Actions.VisualTesting
 
         void IVisualAnalyzer.Execute()
         {
+            //TODO:Remove hardcoded string and use typeof
             if (mDriver.GetType().Name == "SeleniumDriver")
             {
                 switch (GetSelectedApplitoolsActionEnum())
