@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -138,7 +138,7 @@ namespace Ginger.BusinessFlowPages
 
             if (mActivity.GetType() == typeof(ErrorHandler))
             {
-                xHandlerTypeStack.Visibility = Visibility.Collapsed;
+                xHandlerTypeStack.Visibility = Visibility.Visible;
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Visible;
                 xHandlerPostExecutionCombo.BindControl(mActivity, nameof(ErrorHandler.ErrorHandlerPostExecutionAction));
 
