@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -72,6 +72,10 @@ namespace Ginger.BusinessFlowPages
                 {
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Activity target platform is \"" + currentActivityPlatform + "\", where as action platform is \"" + selectedAction.Platform + "\"" + System.Environment.NewLine + "Please select same platform actions only.");
                     return -1;
+                }
+                if (!(selectedAction is ActWithoutDriver))
+                {
+                    selectedAction.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
                 }
                 instance = GenerateSelectedAction(selectedAction, mContext);
             }

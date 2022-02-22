@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,11 +34,11 @@ namespace GingerCoreNET.RosLynLib
 {
     public class CodeProcessor
     {
-      static  Regex Pattern = new Regex("{CS(\\s)*Exp(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((\")*([^\\)}\\({])*(\")*\\)}", RegexOptions.Compiled);
+        static Regex Pattern = new Regex("{CS(\\s)*Exp(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((\")*([^\\)}\\({])*(\")*\\)}", RegexOptions.Compiled);
         public object EvalExpression(string expression)
         {
-           
-            string code = expression.Replace("{CS Eval(", "").Trim().Replace(")}", "");                      
+
+            string code = expression.Replace("{CS Eval(", "").Trim().Replace(")}", "");
             Stopwatch st = Stopwatch.StartNew();
             Task<object> task = EvalExpressionTask(code);
             task.Wait();
@@ -55,7 +55,7 @@ namespace GingerCoreNET.RosLynLib
 
             }
             ScriptOptions SO = ScriptOptions.Default.WithReferences(new Assembly[] { Assembly.GetAssembly(typeof(string)), Assembly.GetAssembly(typeof(System.Net.Dns)) });
-     
+
             SO.WithReferences(Assembly.GetAssembly(typeof(string)));
 
 
@@ -65,11 +65,11 @@ namespace GingerCoreNET.RosLynLib
                        "((?'Close-Open'})[^{}]*)+" +
                        ")*" +
                        "(?(Open)(?!))";
-             pattern = "{CS({.*}|[^{}]*)*}";
+            pattern = "{CS({.*}|[^{}]*)*}";
 
 
-            Pattern =   new Regex(pattern);
-            Regex Clean =new  Regex("{CS(\\s)*Exp(\\s)*=");
+            Pattern = new Regex(pattern);
+            Regex Clean = new Regex("{CS(\\s)*Exp(\\s)*=");
 
             foreach (Match M in Pattern.Matches(Expression))
             {
@@ -78,7 +78,7 @@ namespace GingerCoreNET.RosLynLib
                 string exp = match;
                 exp = exp.Replace(Clean.Match(exp).Value, "");
                 //not doing string replacement to
-                exp = exp.Remove(exp.Length-1);
+                exp = exp.Remove(exp.Length - 1);
                 string evalresult = GetEvaluteResult(exp, out csharpError);
                 Expression = Expression.Replace(match, evalresult);
             }
@@ -136,7 +136,7 @@ namespace GingerCoreNET.RosLynLib
             {
                 result = (bool)CSharpScript.EvaluateAsync(condition).Result;
             }
-            catch(Exception EvalExcep)
+            catch (Exception EvalExcep)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, condition + System.Environment.NewLine + " not a valid c# expression to evaluate", EvalExcep);
 
@@ -157,7 +157,7 @@ namespace GingerCoreNET.RosLynLib
                 ContinueWith("if (" + condition + ") b=true; else b=false;").   // check the condition
                 ContinueWith("b");    // return the value of b
 
-            return ((bool)(await script.RunAsync()).ReturnValue);            
+            return ((bool)(await script.RunAsync()).ReturnValue);
         }
 
 
@@ -169,9 +169,9 @@ namespace GingerCoreNET.RosLynLib
         }
 
 
-        
+
         //!!!!!   Cleanup
-        
+
         private static ScriptState<object> scriptState = null;
         public static object Execute(string code)
         {
@@ -188,58 +188,27 @@ namespace GingerCoreNET.RosLynLib
                 return scriptState.ReturnValue;
 
             Console.WriteLine("Executing script code complete");
-            
+
 
             return null;
         }
 
-
-        //!!!!!   Cleanup
-        public void runcode()
-        {
-            SyntaxTree tree = CSharpSyntaxTree.ParseText(@"var x = new DateTime(2016,12,1);");
-            Console.WriteLine(tree.ToString()); // new DateTime(2016,12,1)
-            var result = Task.Run<object>(async () =>
-            {
-                Console.WriteLine("Enter expression:");
-                string exp = Console.ReadLine();
-                var rc = await CSharpScript.RunAsync(exp);
-                Console.WriteLine(exp + "=" + rc.ReturnValue);
-
-                var s = await CSharpScript.RunAsync(@"using System;");
-                // continuing with previous evaluation state
-                s = await s.ContinueWithAsync(@"var x = ""my/"" + string.Join(""_"", ""a"", ""b"", ""c"") + "".ss"";");
-                s = await s.ContinueWithAsync(@"var y = ""my/"" + @x;");
-                s = await s.ContinueWithAsync(@"y // this just returns y, note there is NOT trailing semicolon");
-                // inspecting defined variables
-                Console.WriteLine("inspecting defined variables:");
-                foreach (var variable in s.Variables)
-                {
-                    Console.WriteLine("name: {0}, type: {1}, value: {2}", variable.Name, variable.Type.Name, variable.Value);
-                }
-                return s.ReturnValue;
-
-            }).Result;
-
-            Console.WriteLine("Result is: {0}", result);
-        }
-
         public object RunCode2(string code)
-        {            
+        {
             //SyntaxTree tree = CSharpSyntaxTree.ParseText(@"object result;");
             var result = Task.Run<object>(async () =>
-            {                                
+            {
                 var s = await CSharpScript.RunAsync(@"using System;");
                 s = await s.ContinueWithAsync(@"object result;");
                 // continuing with previous evaluation state
-                s = await s.ContinueWithAsync(code);                
+                s = await s.ContinueWithAsync(code);
                 s = await s.ContinueWithAsync("result");   // output result
                 // inspecting defined variables
                 Console.WriteLine("inspecting defined variables:");
                 foreach (var variable in s.Variables)
                 {
                     string varInfo = string.Format("name: {0}, type: {1}, value: {2}", variable.Name, variable.Type.Name, variable.Value);
-                    Reporter.ToLog(eLogLevel.DEBUG, varInfo);                    
+                    Reporter.ToLog(eLogLevel.DEBUG, varInfo);
                 }
                 return s.ReturnValue;
 

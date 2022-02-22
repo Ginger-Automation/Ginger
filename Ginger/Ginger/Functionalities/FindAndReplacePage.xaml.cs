@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -744,14 +744,13 @@ namespace Ginger.Functionalities
             ObservableList<Act> Acts = new ObservableList<Act>();
             List<FindItemType> ActsSubItemList = new List<FindItemType>();
 
-            AppDomain.CurrentDomain.Load("GingerCore");
+            Assembly[] assemblies = { AppDomain.CurrentDomain.Load("GingerCore"), AppDomain.CurrentDomain.Load("GingerCoreCommon"), AppDomain.CurrentDomain.Load("GingerCoreNet") };
 
             //!!!!!!!!!!!! FIXME see add action page
             var ActTypes =
-                // from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                from type in typeof(Act).Assembly.GetTypes()
-                where type.IsSubclassOf(typeof(Act))
-                && type != typeof(ActWithoutDriver)
+                from assembly in assemblies
+                from type in assembly.GetTypes()
+                where type.IsSubclassOf(typeof(Act)) && !type.IsAbstract
                 select type;
 
             foreach (Type t in ActTypes)

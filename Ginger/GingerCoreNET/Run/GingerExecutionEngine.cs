@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1154,9 +1154,10 @@ namespace Ginger.Run
 
                     // fetch all pop-up handlers
                     ObservableList<ErrorHandler> lstPopUpHandlers = GetAllErrorHandlersByType(eHandlerType.Popup_Handler);
-                    if (lstPopUpHandlers.Count > 0)
+                    if (lstPopUpHandlers.Count > 0 && !act.ErrorHandlerExecuted)
                     {
                         ExecuteErrorHandlerActivities(lstPopUpHandlers);
+                        continue;
                     }
 
                     if (!act.ErrorHandlerExecuted
@@ -1190,8 +1191,10 @@ namespace Ginger.Run
                         }
                     }
                     else
+                    {
                         break;
-
+                    }
+                    
                 }
                 // Run any code needed after the action executed, used in ACTScreenShot save to file after driver took screen shot
 
@@ -1723,8 +1726,8 @@ namespace Ginger.Run
                 }
                 else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginAction)
                 {
-                    orginAction.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
                     ResetAction(orginAction);
+                    orginAction.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
                     NotifyActionStart(orginAction);
                 }
                 CurrentBusinessFlow.CurrentActivity = originActivity;

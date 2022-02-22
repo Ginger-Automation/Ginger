@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -694,8 +694,11 @@ namespace Ginger.GherkinLib
                 if (guid != Guid.Empty)
                     mSolTags.Add(guid);
             }
-            
-            ARP = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), null, mSolTags, ArrowButtonHandler);
+
+            string externalID = FileName.Replace(WorkSpace.Instance.Solution.Folder, "~");
+            mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName)).SingleOrDefault();
+
+            ARP = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), new Context() { BusinessFlow = mBizFlow}, mSolTags, ArrowButtonHandler);
             //ARP.xActivitiesRepositoryListView.EnableTagsPanel = false;
             SharedActivitiesFrame.Content = ARP;
 
@@ -710,10 +713,7 @@ namespace Ginger.GherkinLib
                 BFName = Path.GetFileName(FileName).Replace(".feature", "");
             }            
             // search if we have the BF defined already, so search in BF will work
-            string externalID = FileName.Replace( WorkSpace.Instance.Solution.Folder, "~");
-            
-            mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x =>x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName)).SingleOrDefault();                           
-            
+             
             if (mBizFlow != null)
             {
                 BFName = mBizFlow.FileName;

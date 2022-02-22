@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -48,7 +49,7 @@ namespace Ginger.Actions.VisualTesting
             InitializeComponent();
             // TODO: Complete member initialization
             this.mAct = mAct;
-        xApplitoolsActionComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ApplitoolsAction, ApplitoolsAnalyzer.eApplitoolsAction.Checkpoint.ToString()), typeof(ApplitoolsAnalyzer.eApplitoolsAction), false);
+            xApplitoolsActionComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ApplitoolsAction, ApplitoolsAnalyzer.eApplitoolsAction.Checkpoint.ToString()), typeof(ApplitoolsAnalyzer.eApplitoolsAction), false);
             xApplitoolsActionComboBox.ComboBox.SelectionChanged += ChangeApplitoolsAction_Changed;
 
             xActionByComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ActionBy, ApplitoolsAnalyzer.eActionBy.Window.ToString()), typeof(ApplitoolsAnalyzer.eActionBy), false);
@@ -62,7 +63,14 @@ namespace Ginger.Actions.VisualTesting
 
             SetMatchLevelComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ApplitoolsMatchLevel, ApplitoolsAnalyzer.eMatchLevel.Strict.ToString()), typeof(ApplitoolsAnalyzer.eMatchLevel), false, null);
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotFailActionOnMismatch, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.FailActionOnMistmach, "False"));
-            xElementLocateByComboBox.BindControl(mAct,Act.Fields.LocateBy);
+            //List<eLocateBy> locatorsTypeList = mAct.AvailableLocateBy().Where(e => e != eLocateBy.iOSClassChain && e != eLocateBy.iOSPredicateString).ToList();
+            if (mAct.Platform == ePlatformType.NA)
+            {
+                mAct.Platform = GetActionPlatform();
+            }
+            PlatformInfoBase mPlatform = PlatformInfoBase.GetPlatformImpl(mAct.Platform);
+            List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
+            xElementLocateByComboBox.BindControl(mAct,Act.Fields.LocateBy, LocateByList);
             xLocateValueVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(Act.Fields.LocateValue));
             mAct.PropertyChanged += mAct_PropertyChanged;
             SetLocateValueControls();
@@ -82,6 +90,7 @@ namespace Ginger.Actions.VisualTesting
                     xApplitoolsResultsButton.Visibility = Visibility.Collapsed;
                     xDoNotFailActionOnMismatchPanel.Visibility = Visibility.Collapsed;
                     xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
+                    xActionByPanel.Visibility = Visibility.Collapsed;
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Visible);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetBaselineSectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetTargetSectionVisibility, eVisualTestingVisibility.Collapsed);
@@ -93,7 +102,8 @@ namespace Ginger.Actions.VisualTesting
                     xApplitoolsMatchLevel.Visibility = Visibility.Visible;
                     xApplitoolsResultsButton.Visibility = Visibility.Collapsed;
                     xDoNotFailActionOnMismatchPanel.Visibility = Visibility.Collapsed;
-                    if(actionBy == ApplitoolsAnalyzer.eActionBy.Region)
+                    xActionByPanel.Visibility = Visibility.Visible;
+                    if (actionBy == ApplitoolsAnalyzer.eActionBy.Region)
                     {
                         xLocateByAndValuePanel.Visibility = Visibility.Visible;
                         SetLocateValueControls();
@@ -115,6 +125,7 @@ namespace Ginger.Actions.VisualTesting
                     xApplitoolsResultsButton.Visibility = Visibility.Visible;
                     xDoNotFailActionOnMismatchPanel.Visibility = Visibility.Collapsed;
                     xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
+                    xActionByPanel.Visibility = Visibility.Collapsed;
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetBaselineSectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetTargetSectionVisibility, eVisualTestingVisibility.Collapsed);
@@ -235,6 +246,21 @@ namespace Ginger.Actions.VisualTesting
                     xLocateValueEditFrame.Visibility = System.Windows.Visibility.Collapsed;
                     break;
             }
+        }
+
+        private ePlatformType GetActionPlatform()
+        {
+            ePlatformType platform;
+            if (mAct.Context != null && (Context.GetAsContext(mAct.Context)).BusinessFlow != null)
+            {
+                string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
+                platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            }
+            else
+            {
+                platform = WorkSpace.Instance.Solution.ApplicationPlatforms[0].Platform;
+            }
+            return platform;
         }
     }
 }
