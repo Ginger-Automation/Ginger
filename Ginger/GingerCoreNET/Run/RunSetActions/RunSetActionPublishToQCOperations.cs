@@ -28,6 +28,9 @@ using amdocs.ginger.GingerCoreNET;
 using GingerCore.DataSource;
 using Amdocs.Ginger.Common.InterfacesLib;
 using static Ginger.Run.RunSetActions.RunSetActionBase;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using static GingerCore.ALM.PublishToALMConfig;
+using GingerCore.Activities;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -60,17 +63,54 @@ namespace Ginger.Run.RunSetActions
             PublishToALMConfig.VariableForTCRunName = RunSetActionPublishToQC.VariableForTCRunName;
             PublishToALMConfig.CalculateTCRunName(mVE);
             PublishToALMConfig.FilterStatus = RunSetActionPublishToQC.FilterStatus;
+            //check ALM type logic
+            if (RunSetActionPublishToQC.PublishALMType == RunSetActionPublishToQC.AlmTypeDefault)
+            {
+                //connect as connected till now to whatever default
+            }
+            else if (RunSetActionPublishToQC.PublishALMType != null)
+            {
+                eALMType almType = (eALMType)Enum.Parse(typeof(eALMType), RunSetActionPublishToQC.PublishALMType);
+                //connect to the specific ALM type
+                PublishToALMConfig.PublishALMType = almType;
+            }
+
+            PublishToALMConfig.ALMTestSetLevel = RunSetActionPublishToQC.ALMTestSetLevel; 
+            PublishToALMConfig.ExportType = RunSetActionPublishToQC.ExportType;
+            PublishToALMConfig.AlmFields = RunSetActionPublishToQC.AlmFields;
+            PublishToALMConfig.TestSetFolderDestination = RunSetActionPublishToQC.TestSetFolderDestination;
+            PublishToALMConfig.TestCaseFolderDestination = RunSetActionPublishToQC.TestCaseFolderDestination;
         }
         public void Execute(IReportInfo RI)
         {
+
             string result = string.Empty;
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             SetExportToALMConfig();
-            foreach (BusinessFlowReport BFR in ((ReportInfo)RI).BusinessFlows)
+            // ALM Test Set Level: if "Run Set" convert Run Set to Business flow
+            if (PublishToALMConfig.ALMTestSetLevel == eALMTestSetLevel.RunSet)
             {
-                bfs.Add((BusinessFlow)BFR.GetBusinessFlow());
+                bfs.Add(ConvertRunSetToBF(RI));
+                // Export Type: if eExportType.EntitiesAndResults then export Business Flow to ALM.
+                if (PublishToALMConfig.ExportType == eExportType.EntitiesAndResults)
+                {
+                    if (bfs.Count > 0)
+                    {
+                        TargetFrameworkHelper.Helper.ExportVirtualBusinessFlowToALM(bfs[0], false, eALMConnectType.Silence, PublishToALMConfig.TestSetFolderDestination, PublishToALMConfig.TestCaseFolderDestination);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "Export Business Flow to ALM failed while publish results to ALM");
+                    }
+                }
             }
-
+            else
+            {
+                foreach (BusinessFlowReport BFR in ((ReportInfo)RI).BusinessFlows)
+                {
+                    bfs.Add((BusinessFlow)BFR.GetBusinessFlow());
+                }
+            }
             if (!TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig))
             {
                 RunSetActionPublishToQC.Errors = result;
@@ -82,5 +122,57 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
+        private BusinessFlow ConvertRunSetToBF(IReportInfo reportInfo)
+        {
+            RunsetExecutor runSetExec = WorkSpace.Instance.RunsetExecutor;
+            try
+            {
+                if (reportInfo == null)
+                {
+                    return null;
+                }
+
+                //Create Business Flow
+                BusinessFlow virtualBF = new BusinessFlow();
+                virtualBF.Name = runSetExec.RunSetConfig.Name;
+                virtualBF.Description = runSetExec.RunSetConfig.Description;
+                virtualBF.Status = BusinessFlow.eBusinessFlowStatus.Unknown;
+                virtualBF.RunStatus = runSetExec.RunSetConfig.RunSetExecutionStatus;
+                virtualBF.Activities = new ObservableList<Activity>();
+                foreach (GingerRunner runSetrunner in runSetExec.Runners)
+                {
+                    // if executor is null when run if from file
+                    if(runSetrunner.Executor is null)
+                    {
+                        runSetrunner.Executor = new GingerExecutionEngine(runSetrunner);
+                    }
+                    foreach (BusinessFlow runSetBF in runSetrunner.Executor.BusinessFlows)
+                    {
+                        ActivitiesGroup virtualAG = new ActivitiesGroup();
+                        virtualAG.Name = runSetBF.Name;
+                        virtualAG.Description = runSetBF.Description;
+                        if (Enum.IsDefined(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString()))
+                        {
+                            virtualAG.RunStatus = (eActivitiesGroupRunStatus)Enum.Parse(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString());
+                        }
+                        else
+                        {
+                            virtualAG.RunStatus = eActivitiesGroupRunStatus.NA;
+                        }
+                        virtualBF.AddActivitiesGroup(virtualAG);
+                        foreach (Activity runSetAct in runSetBF.Activities)
+                        {
+                            virtualBF.AddActivity(runSetAct, virtualAG);
+                        }
+                    }
+                }
+                return virtualBF;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert Run Set to BF for ALM Export" , ex);
+                return null;
+            }
+        }
     }
 }

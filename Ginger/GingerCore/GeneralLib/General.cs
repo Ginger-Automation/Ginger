@@ -505,7 +505,16 @@ namespace GingerCore
             return list;
         }
 
-
+        public static List<ComboEnumItem> GetEnumValuesForComboAndAddExtraValues(Type listType, List<ComboEnumItem> comboEnumItemsValues = null)
+        {
+            List<ComboEnumItem> comboEnumItemsList = new List<ComboEnumItem>();
+            if (comboEnumItemsValues != null && comboEnumItemsValues.Count > 0)
+            {
+                comboEnumItemsList.AddRange(comboEnumItemsValues);
+            }
+            comboEnumItemsList.AddRange(GetEnumValuesForCombo(listType));
+            return comboEnumItemsList;
+        }
         public static List<ComboEnumItem> GetEnumValuesForComboFromList(Type Etype, List<Object> Items)
         {
             List<ComboEnumItem> list = new List<ComboEnumItem>();
