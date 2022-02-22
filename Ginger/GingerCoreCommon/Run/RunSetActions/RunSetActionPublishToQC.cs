@@ -106,9 +106,39 @@ namespace Ginger.Run.RunSetActions
                 OnPropertyChanged(nameof(RunSetActionPublishToQC.ExportType));
             }
         }
+
         [IsSerializedForLocalRepository]
         public ObservableList<ExternalItemFieldBase> AlmFields = new ObservableList<ExternalItemFieldBase>();
-        
+
+        private string mTestSetFolderDestination;
+        [IsSerializedForLocalRepository]
+        public string TestSetFolderDestination
+        {
+            get
+            {
+                return mTestSetFolderDestination;
+            }
+            set
+            {
+                mTestSetFolderDestination = value;
+                OnPropertyChanged(nameof(TestSetFolderDestination));
+            }
+        }
+
+        private string mTestCaseFolderDestination;
+        [IsSerializedForLocalRepository]
+        public string TestCaseFolderDestination
+        {
+            get
+            {
+                return mTestCaseFolderDestination;
+            }
+            set
+            {
+                mTestCaseFolderDestination = value;
+                OnPropertyChanged(nameof(TestCaseFolderDestination));
+            }
+        }
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
             List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
