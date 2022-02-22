@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -271,7 +271,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
             dynamic currentListItem = (dynamic)xListInputGrid.CurrentItem;
-            //get name of relevent field
+            //get name of relevant field
             int currentColIndex = xListInputGrid.Grid.CurrentColumn.DisplayIndex;
             object field = xListInputGrid.Grid.Columns[currentColIndex - 1].Header;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(currentListItem, field.ToString(), mContext);
