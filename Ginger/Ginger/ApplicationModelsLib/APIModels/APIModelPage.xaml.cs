@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -190,6 +190,18 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 if (key != null)
                 {
                     mApplicationAPIModel.TargetApplicationKey = key;
+                }
+                else if (mApplicationAPIModel.TargetApplicationKey.ItemName != null && key == null)//if API Model is imported/copied from other solution
+                {
+                    var platform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mApplicationAPIModel.TargetApplicationKey);
+                    if (platform != ePlatformType.NA)
+                    {
+                        mApplicationAPIModel.TargetApplicationKey = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform == platform).Select(x => x.Key).FirstOrDefault();
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
+                    }
                 }
                 else
                 {                                        

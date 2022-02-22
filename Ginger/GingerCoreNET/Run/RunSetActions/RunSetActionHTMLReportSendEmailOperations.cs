@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
@@ -85,12 +85,23 @@ namespace Ginger.Run.RunSetActions
                 RunSetActionHTMLReportSendEmail.Email.EmailOperations.alternateView = null;
                 LiteDbRunSet liteDbRunSet = null;
                 var loggerMode = WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod;
-
+                const int MAXPATHLENGTH = 150;                
                 if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
                     //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Using LiteDB and using new WebReportGenerator");
                     reportsResultFolder = Path.Combine(ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports");
-                    reportsResultFolder = Path.Combine(reportsResultFolder, $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name)}_{DateTime.UtcNow.ToString("yyyymmddhhmmssfff")}");
+                    string RunsetName = General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name);
+                    string DateTimeStamp = DateTime.UtcNow.ToString("yyyymmddhhmmssfff");                    
+                    int remainingChars = MAXPATHLENGTH - (reportsResultFolder.Length + DateTimeStamp.Length);
+                    if(remainingChars > 0 && RunsetName.Length > remainingChars)
+                    {
+                        reportsResultFolder = Path.Combine(reportsResultFolder, $"{RunsetName.Substring(0, remainingChars)}_{DateTimeStamp}");
+                    }
+                    else
+                    {
+                        reportsResultFolder = Path.Combine(reportsResultFolder, $"{RunsetName}_{DateTimeStamp}");
+                    }
+                                      
                     WebReportGenerator webReporterRunner = new WebReportGenerator();
                     liteDbRunSet = webReporterRunner.RunNewHtmlReport(reportsResultFolder, null, null, false);
                 }

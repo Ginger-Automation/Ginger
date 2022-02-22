@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ namespace GingerCore.Actions
     public class ActWebService : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Web Service Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Web Service Action"; } }
 
         public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 
