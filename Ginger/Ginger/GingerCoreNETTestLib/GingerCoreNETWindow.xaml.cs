@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -73,9 +73,8 @@ namespace Ginger.GingerCoreNETTestLib
             Actions.Add(new MyAction() { Name = "Get All BFs", Action = () => GetBFs() });
             Actions.Add(new MyAction() { Name = "Get All BFs + keep refs", Action = () => GetBFsKeepRef() });
             Actions.Add(new MyAction() { Name = "Get All BFs and Drill down", Action = () => GetAllBFsandDrilldown() });
-            Actions.Add(new MyAction() { Name = "Get All BFs and Save", Action = () => GetAllBFsandSave() });                        
-            Actions.Add(new MyAction() { Name = "GetEnvironments", Action = () => GetEnvironments() });                        
-            Actions.Add(new MyAction() { Name = "Run C# Code", Action = () => RunCShrapCode() });            
+            Actions.Add(new MyAction() { Name = "Get All BFs and Save", Action = () => GetAllBFsandSave() });
+            Actions.Add(new MyAction() { Name = "GetEnvironments", Action = () => GetEnvironments() });
             Actions.Add(new MyAction() { Name = "Repository Item Base Report", Action = () => RepositoryItemBaseReport() });
             Actions.Add(new MyAction() { Name = "Test crash on non UI thread", Action = () => TestCrash() });
             Actions.Add(new MyAction() { Name = "LongPath Test", Action = () => LongPathTest() });
@@ -108,7 +107,7 @@ namespace Ginger.GingerCoreNETTestLib
             foreach (Type t in RepositoryItemTypes)
             {
                 string Notes = "";
-                if(t.IsSubclassOf(typeof(Act)))
+                if (t.IsSubclassOf(typeof(Act)))
                 {
                     Notes = "Act";
                 }
@@ -121,7 +120,7 @@ namespace Ginger.GingerCoreNETTestLib
         {
             Reporter.ToLog(eLogLevel.ERROR, "Test Reporter Error!");
         }
-       
+
 
         Action<Object> GridDoubleClick = null;
 
@@ -134,13 +133,6 @@ namespace Ginger.GingerCoreNETTestLib
         }
 
 
-        private void RunCShrapCode()
-        {
-            CodeProcessor SCT = new CodeProcessor();
-            SCT.runcode();
-        }
-
-        
 
         private static Random random = new Random((int)DateTime.Now.Ticks);
         private string GetRandomString()
@@ -162,13 +154,13 @@ namespace Ginger.GingerCoreNETTestLib
             return builder.ToString();
         }
 
-        
+
 
         private void GetAllBFsandSave()
         {
             ObservableList<BusinessFlow> BFs = mSolutionRepository.GetAllRepositoryItems<BusinessFlow>();
             foreach (BusinessFlow BF in BFs)
-            {             
+            {
                 ObservableList<Activity> activities = BF.Activities; // force it to parse the activities objects
                 int i = activities.Count;
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BF);
@@ -206,7 +198,7 @@ namespace Ginger.GingerCoreNETTestLib
             Log("BFs count=" + BFs.Count);
         }
 
-        
+
 
         private void GetAllFiles()
         {
@@ -236,10 +228,10 @@ namespace Ginger.GingerCoreNETTestLib
 
                     LogTextBox.AppendText(s);
 
-                        // refresh every 100 ms - speed - not for every log write
-                        LogTextBox.ScrollToEnd();
+                    // refresh every 100 ms - speed - not for every log write
+                    LogTextBox.ScrollToEnd();
                     GingerCore.General.DoEvents();
-                    }
+                }
             );
         }
 
@@ -257,7 +249,7 @@ namespace Ginger.GingerCoreNETTestLib
         }
 
         private void ActionsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {            
+        {
             ExecuteSelectedAction();
         }
 
@@ -299,7 +291,7 @@ namespace Ginger.GingerCoreNETTestLib
 
                 Mouse.OverrideCursor = null;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Mouse.OverrideCursor = null;
                 throw ex;

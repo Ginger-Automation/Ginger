@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -184,8 +184,10 @@ namespace Ginger
         }
 
         AutoRunWindow mAutoRunWindow;
+        private AutoResetEvent mAutoRunWindowEven;
         public void ShowAutoRunWindow()
         {
+            mAutoRunWindowEven = new AutoResetEvent(false);
             // Run the AutoRunWindow on its own thread 
             Thread mGingerThread = new Thread(() =>
             {
@@ -193,6 +195,7 @@ namespace Ginger
                 mAutoRunWindow.Show();
 
                 GingerCore.General.DoEvents();
+                mAutoRunWindowEven.Set();
                 SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
                 Dispatcher.Run();
             });
@@ -203,11 +206,12 @@ namespace Ginger
             mGingerThread.IsBackground = true;
             mGingerThread.Start();
 
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            while (mAutoRunWindow == null && stopwatch.ElapsedMilliseconds < 5000) // max 5 seconds
-            {
-                Thread.Sleep(100);
-            }
+            mAutoRunWindowEven.WaitOne(TimeSpan.FromMinutes(2));
+            //Stopwatch stopwatch = Stopwatch.StartNew();
+            //while (mAutoRunWindow == null && stopwatch.ElapsedMilliseconds < 5000) // max 5 seconds
+            //{
+            //    Thread.Sleep(100);
+            //}
             if (!WorkSpace.Instance.RunningInExecutionMode)
             {
                 mAutoRunWindow.Dispatcher.Invoke(() =>
