@@ -1,6 +1,6 @@
 FROM  mcr.microsoft.com/dotnet/aspnet:3.1-alpine
 
-COPY ./bin/Release/netcoreapp3.1/ ./GingerRuntime
+COPY ./bin/Release/netcoreapp3.1/publish ./GingerRuntime
 
 USER root
 
