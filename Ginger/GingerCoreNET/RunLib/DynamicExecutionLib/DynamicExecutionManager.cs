@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using Amdocs.Ginger.Repository;
 using Ginger.ExecuterService.Contracts;
 using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Requests;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
@@ -755,7 +756,51 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
                 else if (runSetOperation is RunSetActionPublishToQC)
                 {
+                    RunSetActionPublishToQC publishToQCAction = runSetOperation as RunSetActionPublishToQC;
 
+                    AlmPublishOperationExecConfig operationConfigPublishToALM = new AlmPublishOperationExecConfig();
+
+                    operationConfigPublishToALM.ALMType = (eALMType)Enum.Parse(typeof(eALMType), publishToQCAction.PublishALMType, true);
+                    operationConfigPublishToALM.Name = publishToQCAction.Name;
+                    operationConfigPublishToALM.Condition = (OperationExecConfigBase.eOperationRunCondition?)publishToQCAction.Condition;
+                    operationConfigPublishToALM.RunAt = (OperationExecConfigBase.eOperationRunAt?)publishToQCAction.RunAt;
+                    operationConfigPublishToALM.AlmTestSetLevel = (AlmPublishOperationExecConfig.eAlmTestSetLevel?)publishToQCAction.ALMTestSetLevel;
+                    operationConfigPublishToALM.ExportType = (AlmPublishOperationExecConfig.eExportType?)publishToQCAction.ExportType;
+                    operationConfigPublishToALM.TestsetExportDestination= publishToQCAction.TestCaseFolderDestination;
+                    operationConfigPublishToALM.TestcasesExportDestination = publishToQCAction.TestCaseFolderDestination;
+                    operationConfigPublishToALM.TestCasesResultsToExport = (AlmPublishOperationExecConfig.eTestCasesResultsToExport?)publishToQCAction.FilterStatus;
+                    operationConfigPublishToALM.AttachActivitiesGroupsReport = publishToQCAction.toAttachActivitiesGroupReport;
+                    operationConfigPublishToALM.UseUserVariableInRunInstanceName = publishToQCAction.isVariableInTCRunUsed;
+                    operationConfigPublishToALM.UserVariableInRunInstance = publishToQCAction.VariableForTCRunName;
+
+                    if (publishToQCAction.AlmFields != null && publishToQCAction.AlmFields.Count > 0)
+                    {
+                        foreach (var almField in publishToQCAction.AlmFields)
+                        {
+                            ALMFieldConfig almFieldConfig;
+
+                            if (!string.IsNullOrEmpty(almField.ItemType))
+                            {
+                                almFieldConfig = new ALMFieldConfig()
+                                {
+                                    FieldParentType = (ALMFieldConfig.eALMItemType)Enum.Parse(typeof(ALMFieldConfig.eALMItemType), almField.ItemType, true),
+                                    FieldID = almField.ID,
+                                    FieldBackendName = almField.ExternalID,
+                                    FieldFrontendName = almField.Name,
+                                    IsSystemField = almField.SystemFieled,
+                                    FieldType = almField.Type,
+                                    FieldValue = almField.SelectedValue
+                                };
+
+                                if (operationConfigPublishToALM.AlmFieldsConfig == null)
+                                    operationConfigPublishToALM.AlmFieldsConfig = new List<ALMFieldConfig>();
+
+                                operationConfigPublishToALM.AlmFieldsConfig.Add(almFieldConfig);
+                            }
+                        }
+                    }
+
+                    runset.Operations.Add(operationConfigPublishToALM);
                 }
             }
             executionConfig.Runset = runset;
@@ -1328,8 +1373,97 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     }
                     else if (runsetOperationConfig is AlmPublishOperationExecConfig)
                     {
+                        AlmPublishOperationExecConfig publishToALMOperationExecConfig = runsetOperationConfig as AlmPublishOperationExecConfig;
 
+                        RunSetActionPublishToQC runSetActionPublishToQC = null;
+                        if (dynamicRunsetConfigs.Exist)
+                        {
+                            try
+                            {
+                                RunSetActionBase oper = FindItemByIDAndName<RunSetActionBase>(
+                                                    new Tuple<string, Guid?>(nameof(RunSetActionBase.Guid), publishToALMOperationExecConfig.ID),
+                                                    new Tuple<string, string>(nameof(RunSetActionBase.Name), publishToALMOperationExecConfig.Name),
+                                                    runSetConfig.RunSetActions);
+                                if (oper != null)
+                                {
+                                    runSetActionPublishToQC = (RunSetActionPublishToQC)oper;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.INFO, string.Format("{0} operation was not found so configuring new one", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                            }
+                        }
+
+                        if (runSetActionPublishToQC == null)//Not Found
+                        {
+                            runSetActionPublishToQC = new RunSetActionPublishToQC();
+                        }
+
+                        runSetActionPublishToQC.PublishALMType = publishToALMOperationExecConfig.ALMType.ToString();
+
+                        if (publishToALMOperationExecConfig.AlmTestSetLevel != null)
+                        {
+                            runSetActionPublishToQC.ALMTestSetLevel = (GingerCore.ALM.PublishToALMConfig.eALMTestSetLevel)publishToALMOperationExecConfig.AlmTestSetLevel.Value;
+                        }
+
+                        if (publishToALMOperationExecConfig.ExportType != null)
+                        {
+                            runSetActionPublishToQC.ExportType = (GingerCore.ALM.PublishToALMConfig.eExportType)publishToALMOperationExecConfig.ExportType.Value;
+                        }
+
+                        if (!string.IsNullOrEmpty(publishToALMOperationExecConfig.TestsetExportDestination))
+                        {
+                            runSetActionPublishToQC.TestSetFolderDestination = publishToALMOperationExecConfig.TestsetExportDestination;
+                        }
+
+                        if (!string.IsNullOrEmpty(publishToALMOperationExecConfig.TestcasesExportDestination))
+                        {
+                            runSetActionPublishToQC.TestCaseFolderDestination = publishToALMOperationExecConfig.TestcasesExportDestination;
+                        }
+
+                        if (publishToALMOperationExecConfig.TestCasesResultsToExport != null)
+                        {
+                             runSetActionPublishToQC.FilterStatus = (GingerCore.ALM.FilterByStatus)publishToALMOperationExecConfig.TestCasesResultsToExport.Value;
+                        }
+
+                        runSetActionPublishToQC.toAttachActivitiesGroupReport = publishToALMOperationExecConfig.AttachActivitiesGroupsReport;
+
+                        runSetActionPublishToQC.isVariableInTCRunUsed = publishToALMOperationExecConfig.UseUserVariableInRunInstanceName;
+
+                        if (!string.IsNullOrEmpty(publishToALMOperationExecConfig.UserVariableInRunInstance))
+                        {
+                            runSetActionPublishToQC.VariableForTCRunName = publishToALMOperationExecConfig.UserVariableInRunInstance;
+                        }
+
+                        if(publishToALMOperationExecConfig.AlmFieldsConfig != null && publishToALMOperationExecConfig.AlmFieldsConfig.Count > 0)
+                        {
+                            foreach(var almFieldConfig in publishToALMOperationExecConfig.AlmFieldsConfig)
+                            {
+                                ExternalItemFieldBase extItemFieldBase;
+
+                                if (almFieldConfig.FieldParentType.HasValue)
+                                {
+                                    extItemFieldBase = new ExternalItemFieldBase()
+                                    {
+                                        ItemType = almFieldConfig.FieldParentType.Value.ToString()
+                                    };
+                                }
+                                else
+                                    continue;
+
+                                extItemFieldBase.ExternalID = almFieldConfig.FieldBackendName;
+                                extItemFieldBase.ID = almFieldConfig.FieldID;
+                                extItemFieldBase.Name = almFieldConfig.FieldFrontendName;
+                                extItemFieldBase.SystemFieled = almFieldConfig.IsSystemField;
+                                extItemFieldBase.Type = almFieldConfig.FieldType;
+                                extItemFieldBase.SelectedValue = almFieldConfig.FieldValue;
+
+                                runSetActionPublishToQC.AlmFields.Add(extItemFieldBase);
+                            }
+                        }
                     }
+
                     //Generic settings
                     if (runSetOperation != null)
                     {
