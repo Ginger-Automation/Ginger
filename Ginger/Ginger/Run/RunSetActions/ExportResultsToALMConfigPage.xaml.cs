@@ -187,15 +187,15 @@ namespace Ginger.Run
                     ObservableList<ExternalItemFieldBase> almItemFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.ALL, null);
                     if (almItemFields is not null)
                     {
-                        mPublishToALMConfig.AlmFields = ALMIntegration.Instance.AlmCore.RefreshALMItemFields(mPublishToALMConfig.AlmFields, almItemFields);
+                        almItemFields = ALMIntegration.Instance.AlmCore.RefreshALMItemFields(mPublishToALMConfig.AlmFields, almItemFields);
                     }
                     else
                     {
                         Reporter.ToUser(eUserMsgKey.ALMOperationFailed, "Failed get ALM items fields");
                         return;
                     }
-                    ALMIntegration.Instance.OpenALMItemsFieldsPage(eALMConfigType.Operation, AlmConfig.AlmType, mPublishToALMConfig.AlmFields);
-                    mPublishToALMConfig.AlmFields = ALMIntegration.Instance.GetUpdatedFields(mPublishToALMConfig.AlmFields, false);
+                    ALMIntegration.Instance.OpenALMItemsFieldsPage(eALMConfigType.Operation, AlmConfig.AlmType, almItemFields);
+                    mPublishToALMConfig.AlmFields = ALMIntegration.Instance.GetUpdatedFields(almItemFields, false);
                 }
                 catch (Exception ex)
                 {
@@ -212,7 +212,6 @@ namespace Ginger.Run
             if (xALMTestSetLevelCbx.ComboBoxSelectedValue is not null && xALMTestSetLevelCbx.ComboBoxSelectedValue.ToString().Equals(eALMTestSetLevel.BusinessFlow.ToString()))
             {
                 xExportTypePanel.Visibility = Visibility.Collapsed;
-                xExportTypeCbx.Visibility = Visibility.Collapsed;
                 xExportDestinationFolder.Visibility = Visibility.Collapsed;
                 return;
             }
