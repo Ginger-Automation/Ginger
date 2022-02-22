@@ -49,11 +49,11 @@ namespace Ginger.Run
         public ExportResultsToALMConfigPage(RunSetActionPublishToQC runSetActionPublishToQC)
         {
             InitializeComponent();
+            Context context = new Context() ;
             if (runSetActionPublishToQC.VariableForTCRunName == null)
             {
                 runSetActionPublishToQC.VariableForTCRunName = "GingerRun_{CS Exp=DateTime.Now}";
             }
-            mPublishToALMConfig.ActionGuid = runSetActionPublishToQC.Guid;
             mPublishToALMConfig.AlmFields = runSetActionPublishToQC.AlmFields;
             VariableForTCRunName.Init(null, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.VariableForTCRunName));
             BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.VariableForTCRunName));
@@ -65,10 +65,13 @@ namespace Ginger.Run
             xALMTestSetLevelCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ALMTestSetLevel), Enum.GetValues(typeof(eALMTestSetLevel)).Cast<eALMTestSetLevel>().ToList(), ComboBox.SelectedValueProperty);
             xALMTestSetLevelCbx.ComboBox.SelectionChanged += xALMTestSetLevelCbx_SelectionChanged;
             xExportTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ExportType), Enum.GetValues(typeof(eExportType)).Cast<eExportType>().ToList(), ComboBox.SelectedValueProperty);
+            xTestSetFolderDestination.Init(context, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.TestSetFolderDestination));
+            xTestCaseFolderDestination.Init(context, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.TestCaseFolderDestination));
             xExportTypeCbx.ComboBox.SelectionChanged += xExportTypeCbx_SelectionChanged;
+            xALMTypeCbx.ComboBox.SelectionChanged += xALMTypeCbx_SelectionChanged;
             xALMTestSetLevelCbx_SelectionChanged(this, null);
+            xALMTypeCbx_SelectionChanged(this, null);
         }
-
 
         private ExportResultsToALMConfigPage()
         {
@@ -155,7 +158,7 @@ namespace Ginger.Run
             
         }
 
-        private void xChangeTestSetBtn_Click(object sender, RoutedEventArgs e)
+        private void xSetFieldsBtn_Click(object sender, RoutedEventArgs e)
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = null;
             if (xALMTypeCbx.ComboBoxSelectedValue.ToString().Equals(RunSetActionPublishToQC.AlmTypeDefault))
@@ -177,22 +180,22 @@ namespace Ginger.Run
             }
             else
             {
-                ObservableList<ExternalItemFieldBase> almItemFields = null;
-                ObservableList<ExternalItemFieldBase> tempExternalItemsFields = WorkSpace.Instance.Solution.ExternalItemsFields;
+               
                 try
                 {
                     ALMIntegration.Instance.UpdateALMType(AlmConfig.AlmType, true);
-                    almItemFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.ALL, null);
+                    ObservableList<ExternalItemFieldBase> almItemFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.ALL, null);
                     if (almItemFields is not null)
                     {
-                        almItemFields = ALMIntegration.Instance.AlmCore.RefreshALMItemFields(mPublishToALMConfig.AlmFields, almItemFields);
+                        mPublishToALMConfig.AlmFields = ALMIntegration.Instance.AlmCore.RefreshALMItemFields(mPublishToALMConfig.AlmFields, almItemFields);
                     }
                     else
                     {
-                        almItemFields = mPublishToALMConfig.AlmFields;
+                        Reporter.ToUser(eUserMsgKey.ALMOperationFailed, "Failed get ALM items fields");
+                        return;
                     }
-                    WorkSpace.Instance.Solution.ExternalItemsFields = almItemFields;
-                    ALMIntegration.Instance.OpenALMItemsFieldsPage(eALMConfigType.Operation, AlmConfig.AlmType, almItemFields, this.mPublishToALMConfig.ActionGuid);
+                    ALMIntegration.Instance.OpenALMItemsFieldsPage(eALMConfigType.Operation, AlmConfig.AlmType, mPublishToALMConfig.AlmFields);
+                    mPublishToALMConfig.AlmFields = ALMIntegration.Instance.GetUpdatedFields(mPublishToALMConfig.AlmFields, false);
                 }
                 catch (Exception ex)
                 {
@@ -201,7 +204,6 @@ namespace Ginger.Run
                 finally
                 {
                     ALMIntegration.Instance.UpdateALMType(ALMCore.GetDefaultAlmConfig().AlmType);
-                    WorkSpace.Instance.Solution.ExternalItemsFields = tempExternalItemsFields;
                 }
             }
         }
@@ -226,6 +228,14 @@ namespace Ginger.Run
             }
             xExportDestinationFolder.Visibility = Visibility.Visible;
         }
-
+        private void xALMTypeCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(xALMTypeCbx.ComboBoxSelectedValue is not null && xALMTypeCbx.ComboBoxSelectedValue.ToString().Equals(RunSetActionPublishToQC.AlmTypeDefault))
+            {
+                xSetFieldsBtn.Visibility = Visibility.Collapsed;
+                return;
+            }
+            xSetFieldsBtn.Visibility = Visibility.Visible;
+        }
     }
 }

@@ -20,6 +20,7 @@ using System;
 using System.ComponentModel;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Run.RunSetActions;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace GingerCore.ALM
@@ -77,7 +78,6 @@ namespace GingerCore.ALM
         public eALMType PublishALMType { get; set; }
         public eALMTestSetLevel ALMTestSetLevel { get; set; } 
         public eExportType ExportType { get; set; }
-        public Guid ActionGuid { get; set; }
         private ObservableList<ExternalItemFieldBase> mAlmFields;
         public ObservableList<ExternalItemFieldBase> AlmFields
         {
@@ -90,10 +90,12 @@ namespace GingerCore.ALM
                 if (mAlmFields != value)
                 {
                     mAlmFields = value;
-                    OnPropertyChanged(nameof(AlmFields));
+                    OnPropertyChanged(nameof(RunSetActionPublishToQC.AlmFields));
                 }
             }
         }
+        public string TestSetFolderDestination { get; set; }
+        public string TestCaseFolderDestination { get; set; }
         public void CalculateTCRunName(IValueExpression ve)
         {          
             if (IsVariableInTCRunUsed && (VariableForTCRunName != null) && (VariableForTCRunName != string.Empty))

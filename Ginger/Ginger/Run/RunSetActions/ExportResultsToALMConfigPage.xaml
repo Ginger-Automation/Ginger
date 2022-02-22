@@ -17,8 +17,8 @@
             <StackPanel>
                 <Label Style="{StaticResource @LabelStyle}">ALM Type:</Label>
                 <DockPanel>
-                    <UserControlsLib:UCComboBox x:Name="xALMTypeCbx" ContextMenu="{x:Null}" Margin="10,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
-                    <usercontrols:ucButton x:Name="xChangeTestSetBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" Margin="20,0,0,0" ButtonText="Set Fields" ButtonImageType="ALM" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Click="xChangeTestSetBtn_Click"/>
+                    <UserControlsLib:UCComboBox x:Name="xALMTypeCbx" ContextMenu="{x:Null}" Margin="10,0,0,0" Width="300" HorizontalAlignment="Left" ></UserControlsLib:UCComboBox>
+                    <usercontrols:ucButton x:Name="xSetFieldsBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" Margin="20,0,0,0" ButtonText="Set Fields" ButtonImageType="ALM" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Click="xSetFieldsBtn_Click"/>
                 </DockPanel>
             </StackPanel>
             <StackPanel>

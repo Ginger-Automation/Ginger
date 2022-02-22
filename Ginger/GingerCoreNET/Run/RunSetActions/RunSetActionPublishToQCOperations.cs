@@ -78,9 +78,12 @@ namespace Ginger.Run.RunSetActions
             PublishToALMConfig.ALMTestSetLevel = RunSetActionPublishToQC.ALMTestSetLevel; 
             PublishToALMConfig.ExportType = RunSetActionPublishToQC.ExportType;
             PublishToALMConfig.AlmFields = RunSetActionPublishToQC.AlmFields;
+            PublishToALMConfig.TestSetFolderDestination = RunSetActionPublishToQC.TestSetFolderDestination;
+            PublishToALMConfig.TestCaseFolderDestination = RunSetActionPublishToQC.TestCaseFolderDestination;
         }
         public void Execute(IReportInfo RI)
         {
+
             string result = string.Empty;
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             SetExportToALMConfig();
@@ -93,7 +96,7 @@ namespace Ginger.Run.RunSetActions
                 {
                     if (bfs.Count > 0)
                     {
-                        TargetFrameworkHelper.Helper.ExportVirtualBusinessFlowToALM(bfs[0], false, eALMConnectType.Silence);
+                        TargetFrameworkHelper.Helper.ExportVirtualBusinessFlowToALM(bfs[0], false, eALMConnectType.Silence, PublishToALMConfig.TestSetFolderDestination, PublishToALMConfig.TestCaseFolderDestination);
                     }
                     else
                     {
@@ -133,7 +136,7 @@ namespace Ginger.Run.RunSetActions
                 BusinessFlow virtualBF = new BusinessFlow();
                 virtualBF.Name = runSetExec.RunSetConfig.Name;
                 virtualBF.Description = runSetExec.RunSetConfig.Description;
-                virtualBF.Status = BusinessFlow.eBusinessFlowStatus.Development;
+                virtualBF.Status = BusinessFlow.eBusinessFlowStatus.Unknown;
                 virtualBF.RunStatus = runSetExec.RunSetConfig.RunSetExecutionStatus;
                 virtualBF.Activities = new ObservableList<Activity>();
                 foreach (GingerRunner runSetrunner in runSetExec.Runners)
@@ -167,7 +170,7 @@ namespace Ginger.Run.RunSetActions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Export ALM test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert Run Set to BF for ALM Export" , ex);
                 return null;
             }
         }

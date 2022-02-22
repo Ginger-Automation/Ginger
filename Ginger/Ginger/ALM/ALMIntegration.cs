@@ -627,15 +627,15 @@ namespace Ginger.ALM
             return AlmRepo.ConnectALMServer(almConnectStyle);
         }
 
-        public void OpenALMItemsFieldsPage(eALMConfigType configType, eALMType type, ObservableList<ExternalItemFieldBase> ExternalItemsFields, Guid actionGuid = default(Guid))
+        public void OpenALMItemsFieldsPage(eALMConfigType configType, eALMType type, ObservableList<ExternalItemFieldBase> almItemsFields)
         {
             if (AlmRepo == null)
             {
                 UpdateALMType(type);
             }
-            AlmRepo.OpenALMItemsFieldsPage(configType, type, ExternalItemsFields, actionGuid);
+            AlmRepo.OpenALMItemsFieldsPage(configType, type, almItemsFields);
         }
-
+        
         public bool LoadALMConfigurations()
         {
             return AlmRepo.LoadALMConfigurations();
