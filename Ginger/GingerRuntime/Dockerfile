@@ -7,6 +7,8 @@ USER root
 RUN apk update
 RUN apk add git
 
+USER guest
+
 WORKDIR /GingerRuntime
 ENTRYPOINT ["dotnet", "GingerRuntime.dll"]
 

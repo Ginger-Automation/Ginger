@@ -2,7 +2,7 @@
 #FROM ghcr.io/ginger-automation/gingerruntime:latest
 #FROM ghcr.io/ginger-automation/gingerruntime:4.2
 
-FROM ghcr.io/ginger-automation/gingerruntime:latest
+FROM ghcr.io/ginger-automation/gingerruntime:4.2
 
 USER root
 
@@ -15,6 +15,8 @@ ENV CHROME_BIN=/usr/bin/chromium-browser \
     CHROME_PATH=/usr/lib/chromium/
 
 RUN export PATH=$PATH:/usr/lib/chromium/
+
+USER guest
 
 WORKDIR /GingerRuntime
 ENTRYPOINT ["dotnet", "GingerRuntime.dll"]
