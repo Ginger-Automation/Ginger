@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -35,7 +35,7 @@ namespace Amdocs.Ginger.Common.Repository.PlugInsLib
         public string Description { get; set; }
 
         [JsonProperty]
-        public string Interface { get; internal set; }
+        public string Interface { get; set; }
 
         readonly List<ActionInputValueInfo> mInputValues = new List<ActionInputValueInfo>();
 

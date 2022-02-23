@@ -94,8 +94,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             {
                 foreach (PluginPackage plugin in Plugins) 
                 {
-                    DriverInfo DI = new DriverInfo(plugin.PluginPackageInfo.Id, true);
-                    foreach (PluginServiceInfo PI in plugin.Services.Where(a => a.Interfaces.Contains(PlatformInterface)))
+                    plugin.PluginPackageOperations = new PluginPackageOperations(plugin);
+
+                    DriverInfo DI = new DriverInfo(plugin.PluginPackageOperations.PluginPackageInfo.Id, true);
+                    foreach (PluginServiceInfo PI in plugin.PluginPackageOperations.Services.Where(a => a.Interfaces.Contains(PlatformInterface)))
                     {
 
                         DI.services.Add(PI.ServiceId);
