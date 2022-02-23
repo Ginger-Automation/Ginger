@@ -980,7 +980,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             /// Checking Exist HasValue (Nullable) for supporting old request JSONs without 'Exist' field for this property
                             if (dynamicRunsetConfigs.Exist && (!businessFlowConfig.Exist.HasValue || businessFlowConfig.Exist.Value))
                             {
-                                bf = (BusinessFlow)FindItemByIDAndName<BusinessFlow>(
+                                bf = FindItemByIDAndName<BusinessFlow>(
                                 new Tuple<string, Guid?>(nameof(BusinessFlow.Guid), businessFlowConfig.ID),
                                 new Tuple<string, string>(nameof(BusinessFlow.Name), businessFlowConfig.Name),
                                 WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
