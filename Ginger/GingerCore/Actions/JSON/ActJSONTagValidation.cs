@@ -120,7 +120,7 @@ namespace GingerCore.Actions.JSON
                 //{
                 //    FilePath = FilePath.Replace("~\\", SolutionFolder);
                 //}
-                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(FilePath, amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
                 jsonContent = System.IO.File.ReadAllText(FilePath);
             }

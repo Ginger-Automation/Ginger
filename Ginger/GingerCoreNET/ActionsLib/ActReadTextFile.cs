@@ -24,6 +24,7 @@ using System.Text;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using System.Runtime.InteropServices;
+using amdocs.ginger.GingerCoreNET;
 // This class is for dummy act - good for agile, and to be replace later on when real
 //  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
@@ -135,7 +136,7 @@ namespace GingerCore.Actions
         {
             string FileText = String.Empty;
             string calculatedFilePath = GetInputParamCalculatedValue(Fields.TextFilePath);
-            calculatedFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedFilePath);
+            calculatedFilePath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(calculatedFilePath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
             string filePath = Path.GetDirectoryName(calculatedFilePath);
             bool isRootedPath = Path.IsPathRooted(filePath);
             if (!isRootedPath)

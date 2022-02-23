@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -78,11 +79,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             string SolutionFolder = mAct.SolutionFolder;
 
             //SoapUIDirectoryPath = SoapUIDirectoryPath.Replace(@"~\", SolutionFolder);
-            SoapUIDirectoryPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SoapUIDirectoryPath);
+            SoapUIDirectoryPath =WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(SoapUIDirectoryPath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
             //Creating Directory to extract the reports.
             //string targetPath = ReportExportDirectoryPath.Replace(@"~\", SolutionFolder);
-            string targetPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ReportExportDirectoryPath);
+            string targetPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(ReportExportDirectoryPath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
             if (!System.IO.Directory.Exists(targetPath))
             {
@@ -90,7 +91,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             
             //ReportPathWithXMLFolder = System.IO.Path.Combine(ReportExportDirectoryPath.Replace(@"~\", SolutionFolder), mAct.Description + mTimestamp);
-            ReportPathWithXMLFolder = System.IO.Path.Combine(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ReportExportDirectoryPath), mAct.Description + mTimestamp);
+            ReportPathWithXMLFolder = System.IO.Path.Combine(WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(ReportExportDirectoryPath, WorkSpace.Instance.SolutionRepository.SolutionFolder), mAct.Description + mTimestamp);
 
             ReportPath = ReportPathWithXMLFolder;
             Directory.CreateDirectory(ReportPath);

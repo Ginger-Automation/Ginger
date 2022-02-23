@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using GingerCore.DataSource;
@@ -1222,7 +1223,7 @@ namespace GingerCoreNET.DataSource
         {
             if (FilePath != null)
             {
-                FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+                FileFullPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(FilePath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
             }
         }
 

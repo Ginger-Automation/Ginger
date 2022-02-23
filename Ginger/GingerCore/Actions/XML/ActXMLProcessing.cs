@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Enums;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Actions.XML
 {
@@ -100,7 +101,7 @@ namespace GingerCore.Actions.XML
                 string txt = PrepareFile();
 
                 // Write to out file
-                string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TargetFileName.ValueForDriver);
+                string fileName = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(TargetFileName.ValueForDriver, WorkSpace.Instance.SolutionRepository.SolutionFolder);
                 
                 if(string.IsNullOrEmpty(fileName))
                 {
@@ -113,7 +114,7 @@ namespace GingerCore.Actions.XML
 
             private void ReadProcessedFile()
             {
-                string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TargetFileName.ValueForDriver);
+                string fileName = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(TargetFileName.ValueForDriver, WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
                 string fileContents = System.IO.File.ReadAllText(fileName);
                 XMLProcessor xmlProcessor = new XMLProcessor();
@@ -136,7 +137,7 @@ namespace GingerCore.Actions.XML
 
             private string PrepareFile()
             {
-                string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TemplateFileName.ValueForDriver);
+                string fileName = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(TemplateFileName.ValueForDriver, WorkSpace.Instance.SolutionRepository.SolutionFolder);
                 
                 if(string.IsNullOrEmpty(fileName))
                 {

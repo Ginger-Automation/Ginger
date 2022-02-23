@@ -18,6 +18,7 @@ limitations under the License.
 
 using AlmDataContractsStd.Abstraction;
 using AlmDataContractsStd.Contracts;
+using amdocs.ginger.GingerCoreNET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace GingerCore.ALM.JIRA
         }
         public void CreateJiraRepository()
         {
-            jiraRepositoryObj = new JiraRepositoryStd.JiraRepositoryStd(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath));
+            jiraRepositoryObj = new JiraRepositoryStd.JiraRepositoryStd(WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath, WorkSpace.Instance.SolutionRepository.SolutionFolder));
         }
         public bool SetJiraProjectFullDetails()
         {

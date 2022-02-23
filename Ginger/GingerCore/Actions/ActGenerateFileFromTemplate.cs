@@ -252,7 +252,7 @@ namespace GingerCore.Actions
             if (DataFileName.StartsWith("~"))
             {
                 //DataFilePath = System.IO.Path.Combine(SolutionFolder, DataFileName.Replace("~\\", ""));
-                DataFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataFileName);
+                DataFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(DataFileName, amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.SolutionFolder);
             }
             else
             {

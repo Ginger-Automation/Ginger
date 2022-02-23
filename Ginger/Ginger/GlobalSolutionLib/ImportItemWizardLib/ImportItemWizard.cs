@@ -206,7 +206,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                         if (itemToImport.ItemType == GlobalSolution.eImportItemType.DataSources)
                         {
                             DataSourceBase dataSource = (DataSourceBase)repoItem;
-                            string dsFile = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(dataSource.FilePath);
+                            string dsFile = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(dataSource.FilePath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
                             GlobalSolutionUtils.Instance.KeepBackupAndDeleteFile(dsFile);
                         }
                     }
@@ -230,7 +230,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 {
                     DataSourceBase dataSource = (DataSourceBase)repoItemToImport;
                     sourceFile = dataSource.FilePath.Replace("~", SolutionFolder);
-                    string dsFile = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(dataSource.FilePath);
+                    string dsFile = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(dataSource.FilePath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
                     string directory = Path.GetDirectoryName(dsFile);
                     string ext = Path.GetExtension(dsFile);
                     string fileName = Path.GetFileName(dsFile);

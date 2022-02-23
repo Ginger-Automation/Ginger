@@ -41,14 +41,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
-    <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Repository\ExecLib\" />
     <Folder Include="Repository\ReportsLib\" />
     <Folder Include="RunLib\Common\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

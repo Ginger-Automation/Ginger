@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -518,7 +519,7 @@ namespace GingerCore.Actions
             }
 
             //string FullPath = BaseLineFileName.Replace(@"~\", SolutionFolder);
-            string FullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(BaseLineFileName);
+            string FullPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(BaseLineFileName, WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
             // no need to ask user, + it might be at run time
             //TOOD: handle err 
@@ -534,7 +535,7 @@ namespace GingerCore.Actions
             //{
             //    return relativePath.Replace(@"~\", SolutionFolder);
             //}
-            relativePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(relativePath);
+            relativePath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(relativePath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
             return relativePath;
         }

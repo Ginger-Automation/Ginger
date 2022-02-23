@@ -99,7 +99,7 @@ namespace ScreenSnipApplication
                 {
                     gr.DrawImage(this.BackgroundImage, new Rectangle(0, 0, Image.Width, Image.Height),
                         rcSelect, GraphicsUnit.Pixel);
-                    string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+                    string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(FilePath, amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
                     Image.Save(fileName, System.Drawing.Imaging.ImageFormat.Bmp);
                     DialogResult = DialogResult.OK;

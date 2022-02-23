@@ -287,7 +287,7 @@ namespace GingerCore.Actions
             //{
             //    ExcelFileNameAbsolutue = ExcelFileNameAbsolutue.Replace(@"~\", SolutionFolder);
             //}
-            ExcelFileNameAbsolutue = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExcelFileNameAbsolutue);
+            ExcelFileNameAbsolutue = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(ExcelFileNameAbsolutue, amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
             return ExcelFileNameAbsolutue;
         }

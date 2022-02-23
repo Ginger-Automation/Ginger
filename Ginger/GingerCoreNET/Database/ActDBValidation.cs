@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Enums;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Actions
 {
@@ -359,7 +360,7 @@ namespace GingerCore.Actions
                 if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
                     //string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
-                    string filePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
+                    string filePath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile), WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
                     FileInfo scriptFile = new FileInfo(filePath);
                    SQL = scriptFile.OpenText().ReadToEnd();
@@ -401,7 +402,7 @@ namespace GingerCore.Actions
                 if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
                     //string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
-                    string filePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamCalculatedValue(ActDBValidation.Fields.QueryFile));
+                    string filePath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(GetInputParamCalculatedValue(ActDBValidation.Fields.QueryFile), WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
                     FileInfo scriptFile = new FileInfo(filePath);
                     SQL = scriptFile.OpenText().ReadToEnd();

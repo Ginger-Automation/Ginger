@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -18,9 +18,9 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.Utils;
 using GingerCore.Actions;
 using GingerCore.DataSource;
 
@@ -256,7 +256,7 @@ namespace GingerCore.FlowControlLib
                 {
                     if (VE.Value.Contains("{Actual}"))
                     {
-                        if ((ARC.Actual != null) && StringManager.IsNumeric(ARC.Actual))
+                        if ((ARC.Actual != null) && ARC.Actual.All(char.IsDigit))
                         {
                             VE.Value = VE.Value.Replace("{Actual}", ARC.Actual.ToString());
                         }

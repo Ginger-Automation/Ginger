@@ -46,7 +46,7 @@ namespace Ginger.Run.RunSetActions
             {
                 if (!string.IsNullOrEmpty(RunSetActionGenerateTestNGReport.SaveResultsInSolutionFolderName))
                 {
-                    testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(RunSetActionGenerateTestNGReport.SaveResultsInSolutionFolderName);
+                    testNGReportPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(RunSetActionGenerateTestNGReport.SaveResultsInSolutionFolderName, WorkSpace.Instance.SolutionRepository.SolutionFolder);
                 }
                 else if (!string.IsNullOrEmpty(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder))
                 {
@@ -54,7 +54,7 @@ namespace Ginger.Run.RunSetActions
                 }
                 else
                 {
-                    testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+                    testNGReportPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, WorkSpace.Instance.SolutionRepository.SolutionFolder);
                 }
                 if (!Directory.Exists(testNGReportPath))
                 {
@@ -64,7 +64,7 @@ namespace Ginger.Run.RunSetActions
                     }
                     catch (Exception ex)
                     {
-                        testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+                        testNGReportPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, WorkSpace.Instance.SolutionRepository.SolutionFolder);
                     }
                 }
                 SaveBFResults((ReportInfo)RI, testNGReportPath, RunSetActionGenerateTestNGReport.IsStatusByActivitiesGroup);

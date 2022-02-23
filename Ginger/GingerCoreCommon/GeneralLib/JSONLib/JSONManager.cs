@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -22,7 +22,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 
 
-namespace Ginger.Utils
+namespace Amdocs.Ginger.Common.GeneralLib
 {
     public class JSONManager
     {

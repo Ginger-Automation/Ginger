@@ -245,7 +245,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                 string requestBody = null;
                 if (!string.IsNullOrEmpty(actionToConvert.GetInputParamValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser)))
                 {
-                    string fileUri = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(actionToConvert.GetInputParamValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser));
+                    string fileUri = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(actionToConvert.GetInputParamValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), WorkSpace.Instance.SolutionRepository.SolutionFolder);
                     if (File.Exists(fileUri))
                     {
                         requestBody = System.IO.File.ReadAllText(fileUri);
@@ -293,7 +293,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                 string requestBody = string.Empty;
                 if (aPIModel.RequestBodyType == ApplicationAPIUtils.eRequestBodyType.TemplateFile)
                 {
-                    string fileUri = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(aPIModel.TemplateFileNameFileBrowser);
+                    string fileUri = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(aPIModel.TemplateFileNameFileBrowser, WorkSpace.Instance.SolutionRepository.SolutionFolder);
                     if (File.Exists(fileUri))
                     {
                         aPIModel.RequestBody = System.IO.File.ReadAllText(fileUri);

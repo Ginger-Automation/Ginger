@@ -130,7 +130,7 @@ namespace Ginger.DataSource
                     //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, ds.FileFullPath);
                     //}
                     //
-                    ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
+                    ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(ds.FilePath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
                     List<string> dsTableNames = new List<string>();
                     mDSTableList = ds.GetTablesList();

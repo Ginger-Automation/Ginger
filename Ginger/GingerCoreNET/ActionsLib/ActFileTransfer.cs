@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -184,7 +185,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamCalculatedValue("PCPath")).Replace(Environment.NewLine, "");
+                return WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(GetInputParamCalculatedValue("PCPath"), WorkSpace.Instance.SolutionRepository.SolutionFolder).Replace(Environment.NewLine, "");
             }
         }
 

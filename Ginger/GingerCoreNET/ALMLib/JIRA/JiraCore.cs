@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using AlmDataContractsStd.Enums;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
@@ -63,7 +64,7 @@ namespace GingerCore.ALM
 
         public JiraCore()
         {
-            string settingsPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DefaultAlmConfig.ALMConfigPackageFolderPath);
+            string settingsPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(DefaultAlmConfig.ALMConfigPackageFolderPath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
             JiraRepositoryStd.JiraRepositoryStd jiraRepObj = new JiraRepositoryStd.JiraRepositoryStd(settingsPath, (TestingALMType)Enum.Parse(typeof(TestingALMType), ALMCore.DefaultAlmConfig.JiraTestingALM.ToString()));
             exportMananger = new JIRA.Bll.JiraExportManager(jiraRepObj);
             jiraConnectObj = new JiraConnectManager(jiraRepObj);

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -168,7 +169,7 @@ namespace GingerCore.Actions
                 case eScriptInterpreterType.Other:
                     if (!string.IsNullOrEmpty(ScriptInterpreter))
                     {
-                        p.StartInfo.FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScriptInterpreter);
+                        p.StartInfo.FileName = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(ScriptInterpreter, WorkSpace.Instance.SolutionRepository.SolutionFolder);
                     }
                     break;
             }
@@ -193,7 +194,7 @@ namespace GingerCore.Actions
                     p.StartInfo.WorkingDirectory = Path.Combine(SolutionFolder, "Documents", "Scripts");
                 }
             }
-            p.StartInfo.WorkingDirectory = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(p.StartInfo.WorkingDirectory);
+            p.StartInfo.WorkingDirectory = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(p.StartInfo.WorkingDirectory, WorkSpace.Instance.SolutionRepository.SolutionFolder);
             try
             {
                 string Params = GetCommandText(this);
