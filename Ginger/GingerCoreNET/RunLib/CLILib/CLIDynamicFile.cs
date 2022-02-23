@@ -217,7 +217,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             foreach (AlmDetails almDetails in gingerExecConfig.AlmsDetails)
             {
                 ALMIntegrationEnums.eALMType almTypeToConfigure;
-                if (Enum.TryParse<ALMIntegrationEnums.eALMType>(almDetails.ALMType, out almTypeToConfigure))
+                if (Enum.TryParse(almDetails.ALMType.ToString(), out almTypeToConfigure))
                 {
                     try
                     {

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="bf285a86-6384-4b1f-acfb-e0c1b60eec12" ItemType="Activity" CreatedBy="prateekv" Created="202202080804" GingerVersion="4.2.0.0" Version="1" LastUpdateBy="prateekv" LastUpdate="202202080804" />
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="Test Activity" AutomationStatus="Automated" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="bf285a86-6384-4b1f-acfb-e0c1b60eec12" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="app1">
+<Acts>
+<ActDummy Active="True" Description="Test Action 1" Guid="f61791dd-c742-48a5-ab65-001e4e1b0e4c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="a4ee7e24-a7a7-4c21-bb80-05c3fcfd5ca7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActDummy>
+<ActDummy Active="True" Description="Test Action 2" Guid="e1bca003-d630-4719-8ece-9a20075297cf" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="c5948a4f-c8ce-4f2b-91b2-6f9ab072b999" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActDummy>
+</Acts>
+</Activity></GingerRepositoryItem>
