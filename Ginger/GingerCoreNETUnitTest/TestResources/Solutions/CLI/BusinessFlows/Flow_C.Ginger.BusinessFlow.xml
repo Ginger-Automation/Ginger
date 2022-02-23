@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="7277d999-fece-4d3a-9da7-d42da68a83d9" ItemType="BusinessFlow" CreatedBy="MENIK" Created="202004121459" GingerVersion="3.6.0.0" Version="20" LastUpdateBy="MENIK" LastUpdate="202004262016" />
+<GingerRepositoryItem><Header ItemGuid="7277d999-fece-4d3a-9da7-d42da68a83d9" ItemType="BusinessFlow" CreatedBy="MENIK" Created="202004121459" GingerVersion="4.2.0.0" Version="22" LastUpdateBy="prateekv" LastUpdate="202202080804" />
 <BusinessFlow Guid="7277d999-fece-4d3a-9da7-d42da68a83d9" Name="Flow_C" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
 <Activities>
 <Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Do-Work" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="app1">
 <Acts>
-<ActDummy Active="True" Description="Dummy Action 1" Guid="7eead893-8067-4fab-8d8a-6a5dd0309060" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<ActDummy Active="True" Description="Dummy Action 1" Guid="7eead893-8067-4fab-8d8a-6a5dd0309060" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
 <InputValues>
 <ActInputValue Guid="0c13c007-2692-4fe7-892a-41bbc4e80266" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </InputValues>
 </ActDummy>
-<ActDummy Active="True" Description="Dummy Action 2" Guid="43671660-6272-4f39-b342-b8762afed798" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<ActDummy Active="True" Description="Dummy Action 2" Guid="43671660-6272-4f39-b342-b8762afed798" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
 <InputValues>
 <ActInputValue Guid="f5914b29-562b-45b9-9890-9bd0430883a2" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </InputValues>
 </ActDummy>
-<ActDummy Active="True" Description="Dummy Action 3" Guid="8f8be004-ec65-42c7-9ced-344d53c87402" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<ActDummy Active="True" Description="Dummy Action 3" Guid="8f8be004-ec65-42c7-9ced-344d53c87402" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
 <InputValues>
 <ActInputValue Guid="d2eae862-3362-4740-9871-9b958da8d734" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </InputValues>
@@ -34,12 +34,31 @@
 </VariableSelectionList>
 </Variables>
 </Activity>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="TestGroup" ActivityName="Test Activity" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="bf285a86-6384-4b1f-acfb-e0c1b60eec12" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="app1">
+<Acts>
+<ActDummy Active="True" Description="Test Action 1" Guid="f61791dd-c742-48a5-ab65-001e4e1b0e4c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="a4ee7e24-a7a7-4c21-bb80-05c3fcfd5ca7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActDummy>
+<ActDummy Active="True" Description="Test Action 2" Guid="e1bca003-d630-4719-8ece-9a20075297cf" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="c5948a4f-c8ce-4f2b-91b2-6f9ab072b999" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActDummy>
+</Acts>
+</Activity>
 </Activities>
 
 <ActivitiesGroups>
 <ActivitiesGroup Guid="a4cff36e-b21d-48f3-98bd-f313b5470461" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ActivitiesIdentifiers>
-<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ActivityName="Do-Work" Guid="b558fd39-cca6-4306-9d3b-1f7433f0e065" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ActivityName="Do-Work" Guid="8ee2e94c-9e4b-4cac-8097-9b7f8eaa8b2b" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+<ActivitiesGroup Guid="b16ae229-bc1f-49a3-abea-3238ba67ff55" Name="TestGroup" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="bf285a86-6384-4b1f-acfb-e0c1b60eec12" ActivityName="Test Activity" Guid="6ad317bf-b242-4032-89a0-920e5f721e87" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </ActivitiesIdentifiers>
 </ActivitiesGroup>
 </ActivitiesGroups>
