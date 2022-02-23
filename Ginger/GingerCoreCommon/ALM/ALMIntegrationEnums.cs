@@ -47,5 +47,10 @@ namespace GingerCoreNET.ALMLib
             Xray = 2,
             Zephyr = 3
         }
+        public enum eALMConfigType
+        {
+            MainMenu,
+            Operation
+        }
     }
 }

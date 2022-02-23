@@ -37,6 +37,7 @@ using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using Ginger.User;
 using GingerCore;
+using GingerCore.ALM;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
@@ -561,7 +562,8 @@ namespace Ginger
 
         private void ALMFieldsConfiguration_Click(object sender, RoutedEventArgs e)
         {
-            ALMIntegration.Instance.OpenALMItemsFieldsPage();
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig(); 
+            ALMIntegration.Instance.OpenALMItemsFieldsPage(eALMConfigType.MainMenu, ALMIntegration.Instance.GetALMType(), WorkSpace.Instance.Solution.ExternalItemsFields);
         }
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
