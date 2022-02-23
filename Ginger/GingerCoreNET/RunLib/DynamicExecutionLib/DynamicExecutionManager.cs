@@ -1019,7 +1019,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 /// Fetch BF & use the same for execution
                                 if (businessFlowConfig.ID != null || !string.IsNullOrEmpty(businessFlowConfig.Name))
                                 {
-                                    bf = (BusinessFlow)FindItemByIDAndName<BusinessFlow>(
+                                    bf = FindItemByIDAndName<BusinessFlow>(
                                      new Tuple<string, Guid?>(nameof(BusinessFlow.Guid), businessFlowConfig.ID),
                                      new Tuple<string, string>(nameof(BusinessFlow.Name), businessFlowConfig.Name),
                                      WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
