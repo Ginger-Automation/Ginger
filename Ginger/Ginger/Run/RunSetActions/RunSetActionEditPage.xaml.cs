@@ -40,7 +40,7 @@ namespace Ginger.Run.RunSetActions
 
             xShowIDUC.Init(mRunSetAction);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NameTextBox, TextBox.TextProperty, RunSetAction, nameof(RunSetActionBase.Name));
-            RunAtComboBox.Init(mRunSetAction, nameof(RunSetActionBase.RunAt),mRunSetAction.GetRunOptions());
+            RunAtComboBox.Init(mRunSetAction, nameof(RunSetActionBase.RunAt),mRunSetAction.GetRunOptions(), ComboBox.SelectedValueProperty);
 
             GingerCore.General.FillComboFromEnumObj(ConditionComboBox, RunSetAction.Condition);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConditionComboBox, ComboBox.SelectedValueProperty, RunSetAction, nameof(RunSetActionBase.Condition));
