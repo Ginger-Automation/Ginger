@@ -76,7 +76,9 @@ namespace Amdocs.Ginger.Repository
                 throw new Exception("Plugin folder not found: " + folder);
             }            
 
-            PluginPackage pluginPackage = new PluginPackage(folder);          
+            PluginPackage pluginPackage = new PluginPackage(folder);
+            pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
+            pluginPackage.PluginPackageOperations.LoadPluginPackage(folder);
             mSolutionRepository.AddRepositoryItem(pluginPackage);            
         }
 
@@ -235,7 +237,7 @@ namespace Amdocs.Ginger.Repository
         {
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
             pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
-            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.PluginPackageOperations.Services where x.ServiceId == serviceId select x).SingleOrDefault();            
+            PluginServiceInfo pluginServiceInfo = (from x in ((PluginPackageOperations)pluginPackage.PluginPackageOperations).Services where x.ServiceId == serviceId select x).SingleOrDefault();            
             PluginServiceActionInfo actionInfo = (from x in pluginServiceInfo.Actions where x.ActionId == actionId select x).SingleOrDefault();
             return actionInfo.InputValues;
         }
@@ -279,7 +281,7 @@ namespace Amdocs.Ginger.Repository
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
             pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
 
-            PluginServiceInfo pluginServiceInfo = pluginPackage.PluginPackageOperations.GetService(serviceId);
+            PluginServiceInfo pluginServiceInfo = ((PluginPackageOperations)pluginPackage.PluginPackageOperations).GetService(serviceId);
             if (pluginServiceInfo != null)
             {
                 PluginServiceIsSeesionDictionary.Add(key, pluginServiceInfo.IsSession);

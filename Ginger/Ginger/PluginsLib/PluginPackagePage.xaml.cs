@@ -72,7 +72,7 @@ namespace Ginger.PlugInsWindows
 
             xServicesGrid.SetAllColumnsDefaultView(view);
             xServicesGrid.InitViewItems();
-            xServicesGrid.DataSourceList = mPluginPackage.PluginPackageOperations.Services;
+            xServicesGrid.DataSourceList = ((PluginPackageOperations)mPluginPackage.PluginPackageOperations).Services;
 
 
         }

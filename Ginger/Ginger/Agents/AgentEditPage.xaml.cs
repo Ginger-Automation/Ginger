@@ -95,15 +95,15 @@ namespace Ginger.Agents
                 p.PluginPackageOperations = new PluginPackageOperations(p);
             }
             p.PluginPackageOperations.LoadServicesFromJSON();
-            xServiceIdComboBox.ItemsSource = p.PluginPackageOperations.Services;
+            xServiceIdComboBox.ItemsSource = ((PluginPackageOperations)p.PluginPackageOperations).Services;
             xServiceIdComboBox.DisplayMemberPath = nameof(PluginServiceInfo.ServiceId);
             xServiceIdComboBox.SelectedValuePath = nameof(PluginServiceInfo.ServiceId);
             xServiceIdComboBox.BindControl(mAgent, nameof(Agent.ServiceId));
 
             // auto select if there is only one service in the plugin
-            if (p.PluginPackageOperations.Services.Count == 1)
+            if (((PluginPackageOperations)p.PluginPackageOperations).Services.Count == 1)
             {
-                xServiceIdComboBox.SelectedItem = p.PluginPackageOperations.Services[0];
+                xServiceIdComboBox.SelectedItem = ((PluginPackageOperations)p.PluginPackageOperations).Services[0];
             }
         }
 

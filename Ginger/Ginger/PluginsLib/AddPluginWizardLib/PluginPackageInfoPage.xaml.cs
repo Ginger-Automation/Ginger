@@ -67,8 +67,8 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
                         xVersionTextBox.Text = mPluginPackage.PluginPackageVersion;
                         FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
                         mPluginPackage.PluginPackageOperations.LoadServicesFromJSON();
-                        ServicesGrid.ItemsSource = mPluginPackage.PluginPackageOperations.Services;
-                        ActionsDataGrid.ItemsSource = mPluginPackage.PluginPackageOperations.Services[0].Actions;
+                        ServicesGrid.ItemsSource = ((PluginPackageOperations)mPluginPackage.PluginPackageOperations).Services;
+                        ActionsDataGrid.ItemsSource = ((PluginPackageOperations)mPluginPackage.PluginPackageOperations).Services[0].Actions;
                     }
                     break;
 

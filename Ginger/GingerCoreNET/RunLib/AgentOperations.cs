@@ -478,14 +478,14 @@ namespace GingerCore
             {
                 pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
             }
-            IEnumerable<PluginServiceInfo> Services = Plugins.SelectMany(x => x.PluginPackageOperations.Services);
+            IEnumerable<PluginServiceInfo> Services = Plugins.SelectMany(x => ((PluginPackageOperations)x.PluginPackageOperations).Services);
             PluginServiceInfo PSI = Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
 
-            PluginPackage PP = Plugins.Where(x => x.PluginPackageOperations.Services.Contains(PSI)).First();
+            PluginPackage PP = Plugins.Where(x => ((PluginPackageOperations)x.PluginPackageOperations).Services.Contains(PSI)).First();
             PP.PluginPackageOperations = new PluginPackageOperations(PP);
 
             PP.PluginPackageOperations.LoadServicesFromJSON();
-            PSI = PP.PluginPackageOperations.Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
+            PSI = ((PluginPackageOperations)PP.PluginPackageOperations).Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
 
             foreach (var config in PSI.Configs)
             {

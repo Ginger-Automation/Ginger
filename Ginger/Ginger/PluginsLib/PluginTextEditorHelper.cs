@@ -35,12 +35,12 @@ namespace Ginger.PlugInsWindows
         {
             List<ITextEditor> textEditors = new List<ITextEditor>();
 
-            if (string.IsNullOrEmpty(pluginPackage.PluginPackageOperations.PluginPackageInfo.UIDLL))
+            if (string.IsNullOrEmpty(((PluginPackageOperations)pluginPackage.PluginPackageOperations).PluginPackageInfo.UIDLL))
             {
                 return textEditors;
             }
 
-            string UIDLLFileName = Path.Combine(pluginPackage.Folder, "UI", pluginPackage.PluginPackageOperations.PluginPackageInfo.UIDLL);
+            string UIDLLFileName = Path.Combine(pluginPackage.Folder, "UI", ((PluginPackageOperations)pluginPackage.PluginPackageOperations).PluginPackageInfo.UIDLL);
             if (!File.Exists(UIDLLFileName))
             {
                 throw new Exception("Plugin UI DLL not found: " + UIDLLFileName);

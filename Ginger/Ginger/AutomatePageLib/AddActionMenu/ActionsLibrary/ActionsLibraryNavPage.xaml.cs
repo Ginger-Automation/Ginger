@@ -123,7 +123,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                 try
                 {
-                    foreach (PluginServiceInfo pluginServiceInfo in pluginPackage.PluginPackageOperations.Services)
+                    foreach (PluginServiceInfo pluginServiceInfo in ((PluginPackageOperations)pluginPackage.PluginPackageOperations).Services)
                     {
                         foreach (PluginServiceActionInfo pluginServiceAction in pluginServiceInfo.Actions)
                         {
