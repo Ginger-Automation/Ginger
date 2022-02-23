@@ -26,7 +26,7 @@
             "Active": true,
             "SharedActivities": [
               {
-                "SharedActivityName": "User Detail Activity",
+                "SharedActivityName": "User Detail Activity"
               }
             ]
           },
@@ -36,7 +36,7 @@
             "Active": true,
             "SharedActivities": [
               {
-                "SharedActivityName": "Test Activity",
+                "SharedActivityName": "Test Activity"
               }
             ]
           }
@@ -53,7 +53,7 @@
             "Active": true,
             "SharedActivities": [
               {
-                "SharedActivityName": "User Detail Activity",
+                "SharedActivityName": "User Detail Activity"
               }
             ]
           }

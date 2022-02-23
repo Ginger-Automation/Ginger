@@ -793,8 +793,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 };
 
                                 if (operationConfigPublishToALM.AlmFieldsConfig == null)
+                                {
                                     operationConfigPublishToALM.AlmFieldsConfig = new List<ALMFieldConfig>();
-
+                                }
                                 operationConfigPublishToALM.AlmFieldsConfig.Add(almFieldConfig);
                             }
                         }
@@ -898,7 +899,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         /// Populate GingerRunner's Active field with value of RunnerConfig's Active
                         /// Case : RunnerConfig's nullable field 'Active' is Not Null & has a valid value
                         if (runnerConfig.Active.HasValue)
+                        {
                             gingerRunner.Active = runnerConfig.Active.Value;
+                        }
                     }
 
                     if (runnerConfig.EnvironmentName != null || runnerConfig.EnvironmentID != null)
@@ -1450,7 +1453,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                     };
                                 }
                                 else
+                                {
                                     continue;
+                                }
 
                                 extItemFieldBase.ExternalID = almFieldConfig.FieldBackendName;
                                 extItemFieldBase.ID = almFieldConfig.FieldID;

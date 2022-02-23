@@ -37,7 +37,7 @@
             "Active": true,
             "SharedActivities": [
               {
-                "SharedActivityName": "Test Activity",
+                "SharedActivityName": "Test Activity"
               }
             ]
           }
