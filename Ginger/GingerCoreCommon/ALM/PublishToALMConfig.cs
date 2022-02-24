@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -16,13 +16,31 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.ComponentModel;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.Run.RunSetActions;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace GingerCore.ALM
 {
-    public class PublishToALMConfig
+    public class PublishToALMConfig : INotifyPropertyChanged
     {
+        public enum eALMTestSetLevel
+        {
+            [EnumValueDescription("Business Flow")]
+            BusinessFlow,
+            [EnumValueDescription("Run Set")]
+            RunSet
+        }
+        public enum eExportType
+        {
+            [EnumValueDescription("Results Only")]
+            ResultsOnly,
+            [EnumValueDescription("Entities and Results")]
+            EntitiesAndResults
+        }
         public bool IsVariableInTCRunUsed { get; set; }
 
         private string mVariableForTCRunName;        
@@ -57,7 +75,12 @@ namespace GingerCore.ALM
         public bool ToAttachActivitiesGroupReport { get; set; }
              
         public FilterByStatus FilterStatus { get; set; }
-                       
+        public eALMType PublishALMType { get; set; }
+        public eALMTestSetLevel ALMTestSetLevel { get; set; } 
+        public eExportType ExportType { get; set; }
+        public ObservableList<ExternalItemFieldBase> AlmFields { get; set; }
+        public string TestSetFolderDestination { get; set; }
+        public string TestCaseFolderDestination { get; set; }
         public void CalculateTCRunName(IValueExpression ve)
         {          
             if (IsVariableInTCRunUsed && (VariableForTCRunName != null) && (VariableForTCRunName != string.Empty))

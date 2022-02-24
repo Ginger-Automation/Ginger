@@ -587,6 +587,11 @@ namespace Ginger
         {
             Dispatcher.Run();
         }
+
+        public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, PublishToALMConfig publishToALMConfig, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
+        {
+            return ALMIntegration.Instance.ExportVirtualBusinessFlowToALM(businessFlow, publishToALMConfig, performSaveAfterExport, almConnectStyle, testPlanUploadPath, testLabUploadPath);
+        }
     }
 }
     

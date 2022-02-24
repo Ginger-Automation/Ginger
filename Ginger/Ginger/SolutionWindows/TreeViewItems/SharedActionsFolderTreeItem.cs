@@ -36,9 +36,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public enum eActionsItemsShowMode { ReadWrite, ReadOnly }
 
         RepositoryFolder<Act> mActionsFolder;
-        private ActionsRepositoryPage mActionsRepositoryPage;        
+        private ActionsRepositoryPage mActionsRepositoryPage;
         private eActionsItemsShowMode mShowMode;
-        
+
 
         public SharedActionsFolderTreeItem(RepositoryFolder<Act> actionsFolder, eActionsItemsShowMode showMode = eActionsItemsShowMode.ReadWrite)
         {
@@ -63,7 +63,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             return NewTVItemFolderHeaderStyle(mActionsFolder);
         }
-        
+
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             return GetChildrentGeneric<Act>(mActionsFolder);
@@ -100,7 +100,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActionsRepositoryPage == null)
             {
-                mActionsRepositoryPage = new ActionsRepositoryPage(mActionsFolder, null);
+                mActionsRepositoryPage = new ActionsRepositoryPage(mActionsFolder, new Context());
             }
             return mActionsRepositoryPage;
         }
@@ -125,13 +125,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 {
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Action", allowAddNew: false, allowRefresh: false);
                 }
-                
+
                 AddSourceControlOptions(mContextMenu, false, false);
             }
             else
             {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), false,false, false, false, false, false, false, false, false, false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), false, false, false, false, false, false, false, false, false, false);
             }
-        }       
+        }
     }
 }

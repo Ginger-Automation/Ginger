@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -25,7 +25,9 @@ using Ginger.SolutionAutoSaveAndRecover;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Amdocs.Ginger.Common
 {
@@ -93,5 +95,6 @@ namespace Amdocs.Ginger.Common
         DbConnection GetOracleConnection(string ConnectionString);
 
         bool IsSharedRepositoryItem(RepositoryItemBase item);
+        bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, PublishToALMConfig publishToALMConfig, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null);
     }
 }

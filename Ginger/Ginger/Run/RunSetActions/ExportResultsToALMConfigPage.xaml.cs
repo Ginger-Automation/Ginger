@@ -17,14 +17,21 @@ limitations under the License.
 #endregion
 
 //# Status=Cleaned; Comment=Cleaned on 05/11/18
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.ALM;
+using GingerCore.GeneralLib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static GingerCore.ALM.PublishToALMConfig;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.Run
@@ -42,18 +49,30 @@ namespace Ginger.Run
         public ExportResultsToALMConfigPage(RunSetActionPublishToQC runSetActionPublishToQC)
         {
             InitializeComponent();
+            Context context = new Context() ;
             if (runSetActionPublishToQC.VariableForTCRunName == null)
             {
                 runSetActionPublishToQC.VariableForTCRunName = "GingerRun_{CS Exp=DateTime.Now}";
             }
-
+            mPublishToALMConfig.AlmFields = runSetActionPublishToQC.AlmFields;
             VariableForTCRunName.Init(null, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.VariableForTCRunName));
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.VariableForTCRunName));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.isVariableInTCRunUsed));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.toAttachActivitiesGroupReport));
-            xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));            
+            BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.VariableForTCRunName));
+            BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.isVariableInTCRunUsed));
+            BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.toAttachActivitiesGroupReport));
+            xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));
+            xALMTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType), 
+                GingerCore.General.GetEnumValuesForComboAndAddExtraValues(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = RunSetActionPublishToQC.AlmTypeDefault, Value = RunSetActionPublishToQC.AlmTypeDefault } }), ComboBox.TextProperty);
+            xALMTestSetLevelCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ALMTestSetLevel), Enum.GetValues(typeof(eALMTestSetLevel)).Cast<eALMTestSetLevel>().ToList(), ComboBox.SelectedValueProperty);
+            xALMTestSetLevelCbx.ComboBox.SelectionChanged += xALMTestSetLevelCbx_SelectionChanged;
+            xExportTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ExportType), Enum.GetValues(typeof(eExportType)).Cast<eExportType>().ToList(), ComboBox.SelectedValueProperty);
+            xTestSetFolderDestination.Init(context, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.TestSetFolderDestination));
+            xTestCaseFolderDestination.Init(context, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.TestCaseFolderDestination));
+            xExportTypeCbx.ComboBox.SelectionChanged += xExportTypeCbx_SelectionChanged;
+            xALMTypeCbx.ComboBox.SelectionChanged += xALMTypeCbx_SelectionChanged;
+            xALMTestSetLevelCbx_SelectionChanged(this, null);
+            xALMTypeCbx_SelectionChanged(this, null);
         }
+
         private ExportResultsToALMConfigPage()
         {
             InitializeComponent();
@@ -137,6 +156,98 @@ namespace Ginger.Run
         private void AttachActivitiesGroupReportCbx_Checked(object sender, RoutedEventArgs e)
         {
             
+        }
+
+        private void xSetFieldsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = null;
+            if (xALMTypeCbx.ComboBoxSelectedValue.ToString().Equals(RunSetActionPublishToQC.AlmTypeDefault))
+            {
+                AlmConfig = ALMIntegration.Instance.GetDefaultAlmConfig();
+            }
+            else
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(alm => alm.AlmType.ToString().Equals(xALMTypeCbx.ComboBoxSelectedValue.ToString())).FirstOrDefault();
+            }
+            if (AlmConfig is null)
+            {
+                ALMConnectionPage almConnPage = new ALMConnectionPage(eALMConnectType.Auto, true);
+                almConnPage.ShowAsWindow();
+                if (ALMIntegration.Instance.TestALMProjectConn(eALMConnectType.Auto))
+                {
+                    return;
+                }
+            }
+            else
+            {
+               
+                try
+                {
+                    ALMIntegration.Instance.UpdateALMType(AlmConfig.AlmType, true);
+                    ObservableList<ExternalItemFieldBase> almItemFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.ALL, null);
+                    ObservableList<ExternalItemFieldBase> operationItemFields = new ObservableList<ExternalItemFieldBase>();
+                    foreach(ExternalItemFieldBase field in mPublishToALMConfig.AlmFields)
+                    {
+                        operationItemFields.Add(field);
+                    }
+                    foreach (ExternalItemFieldBase field in operationItemFields)
+                    {
+                        mPublishToALMConfig.AlmFields.Remove(field);
+                    }
+                    if (almItemFields is not null)
+                    {
+                        almItemFields = ALMIntegration.Instance.AlmCore.RefreshALMItemFields(operationItemFields, almItemFields);
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.ALMOperationFailed, "Failed get ALM items fields");
+                        return;
+                    }
+                    ALMIntegration.Instance.OpenALMItemsFieldsPage(eALMConfigType.Operation, AlmConfig.AlmType, almItemFields);
+                    operationItemFields = ALMIntegration.Instance.GetUpdatedFields(almItemFields, false);
+                    foreach (ExternalItemFieldBase field in operationItemFields)
+                    {
+                        mPublishToALMConfig.AlmFields.Add(field);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Fetching Fields", ex);
+                }
+                finally
+                {
+                    ALMIntegration.Instance.UpdateALMType(ALMCore.GetDefaultAlmConfig().AlmType);
+                }
+            }
+        }
+        private void xALMTestSetLevelCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xALMTestSetLevelCbx.ComboBoxSelectedValue is not null && xALMTestSetLevelCbx.ComboBoxSelectedValue.ToString().Equals(eALMTestSetLevel.BusinessFlow.ToString()))
+            {
+                xExportTypePanel.Visibility = Visibility.Collapsed;
+                xExportDestinationFolder.Visibility = Visibility.Collapsed;
+                return;
+            }
+            xExportTypePanel.Visibility = Visibility.Visible;
+            xExportTypeCbx_SelectionChanged(this, null);
+        }
+        private void xExportTypeCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xExportTypeCbx.ComboBoxSelectedValue is not null && xExportTypeCbx.ComboBoxSelectedValue.ToString().Equals(eExportType.ResultsOnly.ToString()))
+            {
+                xExportDestinationFolder.Visibility = Visibility.Collapsed;
+                return;
+            }
+            xExportDestinationFolder.Visibility = Visibility.Visible;
+        }
+        private void xALMTypeCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(xALMTypeCbx.ComboBoxSelectedValue is not null && xALMTypeCbx.ComboBoxSelectedValue.ToString().Equals(RunSetActionPublishToQC.AlmTypeDefault))
+            {
+                xSetFieldsBtn.Visibility = Visibility.Collapsed;
+                return;
+            }
+            xSetFieldsBtn.Visibility = Visibility.Visible;
         }
     }
 }
