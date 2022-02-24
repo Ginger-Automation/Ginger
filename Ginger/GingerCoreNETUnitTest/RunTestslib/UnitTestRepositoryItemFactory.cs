@@ -178,7 +178,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             //Not required
         }
 
-        public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegrationEnums.eALMConnectType almConnectStyle = ALMIntegrationEnums.eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
+        public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, PublishToALMConfig publishToALMConfig, bool performSaveAfterExport = false, ALMIntegrationEnums.eALMConnectType almConnectStyle = ALMIntegrationEnums.eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
             throw new NotImplementedException();
         }

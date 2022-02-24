@@ -83,7 +83,6 @@ namespace Ginger.Run.RunSetActions
         }
         public void Execute(IReportInfo RI)
         {
-
             string result = string.Empty;
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             SetExportToALMConfig();
@@ -96,7 +95,7 @@ namespace Ginger.Run.RunSetActions
                 {
                     if (bfs.Count > 0)
                     {
-                        TargetFrameworkHelper.Helper.ExportVirtualBusinessFlowToALM(bfs[0], false, eALMConnectType.Silence, PublishToALMConfig.TestSetFolderDestination, PublishToALMConfig.TestCaseFolderDestination);
+                        TargetFrameworkHelper.Helper.ExportVirtualBusinessFlowToALM(bfs[0], PublishToALMConfig, false, eALMConnectType.Silence, PublishToALMConfig.TestSetFolderDestination, PublishToALMConfig.TestCaseFolderDestination);
                     }
                     else
                     {
