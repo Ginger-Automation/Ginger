@@ -202,7 +202,7 @@ namespace Ginger.Run
         {
             RunSetActionPublishToQC RSAPTAC = new RunSetActionPublishToQC();
             RSAPTAC.Name = RSAPTAC.Type;
-            RSAPTAC.RunAt = RunSetActionBase.eRunAt.DuringExecution;
+            RSAPTAC.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(RSAPTAC);
             RunSetActionsGrid.Grid.SelectedItem = RSAPTAC;
 
