@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -106,9 +106,24 @@ namespace Ginger.Run.RunSetActions
                 OnPropertyChanged(nameof(RunSetActionPublishToQC.ExportType));
             }
         }
-
+       
+        private ObservableList<ExternalItemFieldBase> mAlmFields = new ObservableList<ExternalItemFieldBase>();
         [IsSerializedForLocalRepository]
-        public ObservableList<ExternalItemFieldBase> AlmFields = new ObservableList<ExternalItemFieldBase>();
+        public ObservableList<ExternalItemFieldBase> AlmFields
+        {
+            get
+            {
+                return mAlmFields;
+            }
+            set
+            {
+                if (mAlmFields != value)
+                {
+                    mAlmFields = value;
+                    OnPropertyChanged(nameof(AlmFields));
+                }
+            }
+        }
 
         private string mTestSetFolderDestination;
         [IsSerializedForLocalRepository]
