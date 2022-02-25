@@ -35,6 +35,7 @@ using GingerCoreNET.ALMLib;
 using GingerWPF.WizardLib;
 using System.Windows.Controls;
 using System.Threading.Tasks;
+using Ginger.Run.RunSetActions;
 
 namespace Ginger.ALM
 {
@@ -329,31 +330,43 @@ namespace Ginger.ALM
 
         public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false)
         {
-            ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-            if (AutoALMProjectConnect(almConnectionType, false))
+            ObservableList<ExternalItemFieldBase> solutionAlmFields = null;
+            try
             {
-                return AlmCore.ExportBusinessFlowsResultToALM(BusinessFlows, ref result, publishToALMConfig, almConnectionType, exectutedFromAutomateTab);
-            }
-            else
-            {
-                if (exectutedFromAutomateTab)
+                solutionAlmFields = SetALMTypeAndFieldsFromSolutionToOperation(publishToALMConfig, solutionAlmFields);
+                ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+                if (AutoALMProjectConnect(almConnectionType, false))
                 {
-                    result += "Execution results were not published, Failed to connect to ALM";
-                    Reporter.ToLog(eLogLevel.WARN, "Execution results were not published, Failed to connect to ALM");
+                    return AlmCore.ExportBusinessFlowsResultToALM(BusinessFlows, ref result, publishToALMConfig, almConnectionType, exectutedFromAutomateTab);
                 }
                 else
                 {
-                    foreach (BusinessFlow BizFlow in BusinessFlows)
+                    if (exectutedFromAutomateTab)
                     {
-                        BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
+                        result += "Execution results were not published, Failed to connect to ALM";
+                        Reporter.ToLog(eLogLevel.WARN, "Execution results were not published, Failed to connect to ALM");
                     }
-                    result += "Didn't execute " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " action 'Publish to ALM', Failed to connect to ALM";
-                    Reporter.ToLog(eLogLevel.WARN, "Didn't execute " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " action Publish to ALM, Failed to connect to ALM");
+                    else
+                    {
+                        foreach (BusinessFlow BizFlow in BusinessFlows)
+                        {
+                            BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
+                        }
+                        result += "Didn't execute " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " action 'Publish to ALM', Failed to connect to ALM";
+                        Reporter.ToLog(eLogLevel.WARN, "Didn't execute " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " action Publish to ALM, Failed to connect to ALM");
+                    }
+                    return false;
                 }
+            }
+            catch (Exception ex)
+            {
                 return false;
             }
+            finally
+            {
+                ResetALMTypeAndFieldsFromOperationToSolution(publishToALMConfig, solutionAlmFields);
+            }
         }
-
         public void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs)
         {
             Mouse.OverrideCursor = Cursors.Wait;
@@ -685,17 +698,69 @@ namespace Ginger.ALM
         {
             return AlmRepo.GetALMTestCasesToTestSetObject(almTestSet);
         }
-        public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
+        public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, PublishToALMConfig publishToALMConfig, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
-            // todo add task
-            Reporter.ToLog(eLogLevel.INFO, ("Exporting virtual " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
             bool isExportSucc = false;
-            if (AutoALMProjectConnect(eALMConnectType.Silence, false))
+            ObservableList<ExternalItemFieldBase> solutionAlmFields = null;
+            try
             {
-                isExportSucc = AlmRepo.ExportBusinessFlowToALM(businessFlow, performSaveAfterExport, almConnectStyle, testPlanUploadPath, testLabUploadPath);
-                DisconnectALMServer();
+                solutionAlmFields = SetALMTypeAndFieldsFromSolutionToOperation(publishToALMConfig, solutionAlmFields);
+                Reporter.ToLog(eLogLevel.INFO, ("Exporting virtual " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
+                if (AutoALMProjectConnect(eALMConnectType.Silence, false))
+                {
+                    isExportSucc = AlmRepo.ExportBusinessFlowToALM(businessFlow, performSaveAfterExport, almConnectStyle, testPlanUploadPath, testLabUploadPath);
+                    DisconnectALMServer();
+                }
+                return isExportSucc;
             }
-            return isExportSucc;
+            catch(Exception ex)
+            {
+                return isExportSucc;
+            }
+            finally
+            {
+                ResetALMTypeAndFieldsFromOperationToSolution(publishToALMConfig, solutionAlmFields);
+            }
+        }
+
+        private static void ResetALMTypeAndFieldsFromOperationToSolution(PublishToALMConfig publishToALMConfig, ObservableList<ExternalItemFieldBase> solutionAlmFields)
+        {
+            if (!publishToALMConfig.PublishALMType.ToString().Equals(RunSetActionPublishToQC.AlmTypeDefault)
+                                && publishToALMConfig.ALMTestSetLevel == PublishToALMConfig.eALMTestSetLevel.RunSet)
+            {
+                ALMIntegration.Instance.UpdateALMType(ALMCore.GetDefaultAlmConfig().AlmType);
+                foreach (ExternalItemFieldBase field in publishToALMConfig.AlmFields)
+                {
+                    WorkSpace.Instance.Solution.ExternalItemsFields.Remove(field);
+                }
+                foreach (ExternalItemFieldBase field in solutionAlmFields)
+                {
+                    WorkSpace.Instance.Solution.ExternalItemsFields.Add(field);
+                }
+            }
+            Reporter.ToLog(eLogLevel.INFO, "ALM Type and Fields change from operation to solution configuration");
+        }
+
+        private static ObservableList<ExternalItemFieldBase> SetALMTypeAndFieldsFromSolutionToOperation(PublishToALMConfig publishToALMConfig, ObservableList<ExternalItemFieldBase> solutionAlmFields)
+        {
+            // Set ALMType and Fields to operation publishToALMConfig selection, for Run Set only (virtual BF)
+            if (!publishToALMConfig.PublishALMType.ToString().Equals(RunSetActionPublishToQC.AlmTypeDefault)
+                && publishToALMConfig.ALMTestSetLevel == PublishToALMConfig.eALMTestSetLevel.RunSet)
+            {
+                ALMIntegration.Instance.UpdateALMType(publishToALMConfig.PublishALMType, true);
+                // Set ExternalItemsFields as selected publishToALMConfig ALMFields and at 'finally' return to the solution fields.
+                solutionAlmFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
+                foreach (ExternalItemFieldBase field in solutionAlmFields)
+                {
+                    WorkSpace.Instance.Solution.ExternalItemsFields.Remove(field);
+                }
+                foreach (ExternalItemFieldBase field in publishToALMConfig.AlmFields)
+                {
+                    WorkSpace.Instance.Solution.ExternalItemsFields.Add(field);
+                }
+            }
+            Reporter.ToLog(eLogLevel.INFO, "ALM Type and Fields change from solution to operation configuration");
+            return solutionAlmFields;
         }
     }
 }

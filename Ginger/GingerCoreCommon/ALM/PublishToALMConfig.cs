@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -78,22 +78,7 @@ namespace GingerCore.ALM
         public eALMType PublishALMType { get; set; }
         public eALMTestSetLevel ALMTestSetLevel { get; set; } 
         public eExportType ExportType { get; set; }
-        private ObservableList<ExternalItemFieldBase> mAlmFields;
-        public ObservableList<ExternalItemFieldBase> AlmFields
-        {
-            get
-            {
-                return mAlmFields;
-            }
-            set
-            {
-                if (mAlmFields != value)
-                {
-                    mAlmFields = value;
-                    OnPropertyChanged(nameof(RunSetActionPublishToQC.AlmFields));
-                }
-            }
-        }
+        public ObservableList<ExternalItemFieldBase> AlmFields { get; set; }
         public string TestSetFolderDestination { get; set; }
         public string TestCaseFolderDestination { get; set; }
         public void CalculateTCRunName(IValueExpression ve)
