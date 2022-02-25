@@ -87,18 +87,11 @@ namespace Amdocs.Ginger.Common.OS
             {
                 return relativePath;
             }
-            try
+            if (relativePath.TrimStart().StartsWith("~"))
             {
-                if (relativePath.TrimStart().StartsWith("~"))
-                {
-                    string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
-                    fullPath = Path.Combine(mSolutionFolderPath, fullPath);
-                    return CurrentOperatingSystem.AdjustFilePath(fullPath);
-                }
-            }
-            catch (Exception ex)
-            {
-                //Log Exception
+                string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
+                fullPath = Path.Combine(mSolutionFolderPath, fullPath);
+                return CurrentOperatingSystem.AdjustFilePath(fullPath);
             }
 
             return CurrentOperatingSystem.AdjustFilePath(relativePath);
