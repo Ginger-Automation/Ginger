@@ -95,23 +95,9 @@ namespace GingerCore.Actions.Tuxedo
         
         public ActInputValue UnixPath { get { return GetOrCreateInputParam(Fields.UnixPath); } }
 
-        //TODO: Test serialization works as expected -arvindgh
-        ObservableList<ActInputValue> mDynamicUDElements;
-        public override ObservableList<ActInputValue> DynamicUDElements 
-        {
-            get 
-            {
-                if (mDynamicUDElements == null)
-                {
-                    mDynamicUDElements = new ObservableList<ActInputValue>();
-                }
-                return mDynamicUDElements;
-            }
-            set 
-            {
-                mDynamicUDElements = value;
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> DynamicUDElements = new ObservableList<ActInputValue>();
+        
      
         public ActInputValue PreCommand { get { return GetOrCreateInputParam(Fields.PreCommand); } }
 

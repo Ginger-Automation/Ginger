@@ -52,7 +52,7 @@ namespace GingerCore.Actions
             get
             {
                 if (mPlatforms.Count == 0)
-                {                    
+                {
                     mPlatforms.Add(ePlatformType.WebServices);
                 }
                 return mPlatforms;
@@ -100,7 +100,7 @@ namespace GingerCore.Actions
             convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
             convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
 
-            if(!string.IsNullOrEmpty(this.URLDomain.Value) || (!string.IsNullOrEmpty(this.URLUser.Value) && !string.IsNullOrEmpty(this.URLPass.Value )))
+            if (!string.IsNullOrEmpty(this.URLDomain.Value) || (!string.IsNullOrEmpty(this.URLUser.Value) && !string.IsNullOrEmpty(this.URLPass.Value)))
             {
                 convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Custom.ToString());
                 convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.URLDomain, this.URLDomain.Value);
@@ -111,7 +111,7 @@ namespace GingerCore.Actions
             {
                 convertedActWebAPISoap.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
             }
-            
+
 
             if (!string.IsNullOrEmpty(this.XMLfileName.ToString()))
             {
@@ -128,7 +128,7 @@ namespace GingerCore.Actions
                 if (ARC != null)
                 {
                     ARC.Param = "Response:";
-                    if(!string.IsNullOrEmpty(ARC.Expected))
+                    if (!string.IsNullOrEmpty(ARC.Expected))
                     {
                         ARC.Expected = XMLDocExtended.PrettyXml(ARC.Expected);
                     }
@@ -157,50 +157,21 @@ namespace GingerCore.Actions
 
         public ActInputValue URL { get { return GetOrCreateInputParam(Fields.URL); } }
 
-        //[IsSerializedForLocalRepository]
-        //public ObservableList<ActInputValue> DynamicXMLElements = new ObservableList<ActInputValue>();
-
-        //TODO: Test serialization works as expected -arvindgh
-        ObservableList<ActInputValue> mDynamicXMLElements;
-        public override ObservableList<ActInputValue> DynamicXMLElements
-        {
-            get
-            {
-                if (mDynamicXMLElements == null)
-                {
-                    mDynamicXMLElements = new ObservableList<ActInputValue>();
-                }
-                return mDynamicXMLElements;
-            }
-            set
-            {
-                mDynamicXMLElements = value;
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> DynamicXMLElements = new ObservableList<ActInputValue>();
 
         public ActInputValue SOAPAction { get { return GetOrCreateInputParam(Fields.SOAPAction); } }
-         
+
         public ActInputValue XMLfileName { get { return GetOrCreateInputParam(Fields.XMLfileName); } }
-        
+
         public ActInputValue URLUser { get { return GetOrCreateInputParam(Fields.URLUser); } }
-       
+
         public ActInputValue URLPass { get { return GetOrCreateInputParam(Fields.URLPass); } }
-       
+
         public ActInputValue URLDomain { get { return GetOrCreateInputParam(Fields.URLDomain); } }
 
-        public bool DoValidationChkbox
-        {
-            get
-            {
-                bool value = false;
-                bool.TryParse(GetOrCreateInputParam(nameof(DoValidationChkbox)).Value, out value);
-                return value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(DoValidationChkbox), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public bool DoValidationChkbox { get; set; }
 
         public override String ActionType
         {

@@ -89,68 +89,14 @@ namespace GingerCore.Actions.WebServices
 
         }
 
-        //[IsSerializedForLocalRepository]
-        //public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
+        [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
 
-        //TODO: Test serialization works as expected -arvindgh
-        ObservableList<ActInputValue> mDynamicElements;
-        public override ObservableList<ActInputValue> DynamicElements
-        {
-            get
-            {
-                if (mDynamicElements == null)
-                {
-                    mDynamicElements = new ObservableList<ActInputValue>();
-                }
-                return mDynamicElements;
-            }
-            set
-            {
-                mDynamicElements = value;
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> HttpHeaders = new ObservableList<ActInputValue>();
 
-        //[IsSerializedForLocalRepository]
-        //public ObservableList<ActInputValue> HttpHeaders = new ObservableList<ActInputValue>();
-
-        //TODO: Test serialization works as expected -arvindgh
-        ObservableList<ActInputValue> mHttpHeaders;
-        public override ObservableList<ActInputValue> HttpHeaders
-        {
-            get
-            {
-                if (mHttpHeaders == null)
-                {
-                    mHttpHeaders = new ObservableList<ActInputValue>();
-                }
-                return mHttpHeaders;
-            }
-            set
-            {
-                mHttpHeaders = value;
-            }
-        }
-
-        //[IsSerializedForLocalRepository]
-        //public ObservableList<WebAPIKeyBodyValues> RequestKeyValues = new ObservableList<WebAPIKeyBodyValues>();
-
-        //TODO: Test serialization works as expected -arvindgh
-        ObservableList<WebAPIKeyBodyValues> mRequestKeyValues;
-        public override ObservableList<WebAPIKeyBodyValues> RequestKeyValues
-        {
-            get
-            {
-                if (mRequestKeyValues == null)
-                {
-                    mRequestKeyValues = new ObservableList<WebAPIKeyBodyValues>();
-                }
-                return mRequestKeyValues;
-            }
-            set
-            {
-                mRequestKeyValues = value;
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public ObservableList<WebAPIKeyBodyValues> RequestKeyValues = new ObservableList<WebAPIKeyBodyValues>();
 
         //CREATE LIST OF ActInputValue for each field which requires expression calculation
         private ObservableList<ActInputValue> FormDataToAIVConverter(ObservableList<WebAPIKeyBodyValues> BodyKeyValueList)
