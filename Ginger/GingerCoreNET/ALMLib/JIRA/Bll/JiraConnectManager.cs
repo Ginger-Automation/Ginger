@@ -42,7 +42,7 @@ namespace GingerCore.ALM.JIRA
         }
         public void CreateJiraRepository()
         {
-            jiraRepositoryObj = new JiraRepositoryStd.JiraRepositoryStd(WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath, WorkSpace.Instance.SolutionRepository.SolutionFolder));
+            jiraRepositoryObj = new JiraRepositoryStd.JiraRepositoryStd(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath));
         }
         public bool SetJiraProjectFullDetails()
         {

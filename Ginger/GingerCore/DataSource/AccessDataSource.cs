@@ -370,7 +370,7 @@ namespace GingerCore.DataSource
         }
         private bool ExportDSToExcel(DataTable table, string sFilePath, string sSheetName)
         {
-            sFilePath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(sFilePath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+            sFilePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(sFilePath);
             return GingerCoreNET.GeneralLib.General.ExportToExcel(table, sFilePath, sSheetName);
         }
 
@@ -424,7 +424,7 @@ namespace GingerCore.DataSource
         {
             if (FilePath != null)
             {
-                FileFullPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(FilePath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FilePath);
             }
         }
 

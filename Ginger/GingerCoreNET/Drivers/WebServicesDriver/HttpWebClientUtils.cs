@@ -236,7 +236,7 @@ namespace GingerCore.Actions.WebAPI
                 //Use Custom Certificate:
                 Handler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 //string path = (mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath).ToString().Replace(@"~\", mAct.SolutionFolder));
-                string path = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath), WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
 
                 if (!string.IsNullOrEmpty(path))
                 {
@@ -634,7 +634,7 @@ namespace GingerCore.Actions.WebAPI
                                 {
                                     string path = mAct.RequestKeyValues[i].ValueForDriver;
                                     //string FullPath = path.Replace("~\\", mAct.SolutionFolder);
-                                    string FullPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(path, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                                    string FullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(path);
 
                                     FileStream FileStream = File.OpenRead(FullPath);
                                     var streamContent = new StreamContent(FileStream);
@@ -809,7 +809,7 @@ namespace GingerCore.Actions.WebAPI
             string FileContent = string.Empty;
             string TemplateFileName = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser).ToString();
             //string TemplateFileNameFullPath = TemplateFileName.Replace(@"~\", mAct.SolutionFolder);
-            string TemplateFileNameFullPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(TemplateFileName, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+            string TemplateFileNameFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TemplateFileName);
 
             FileStream ReqStream = File.OpenRead(TemplateFileNameFullPath);
 

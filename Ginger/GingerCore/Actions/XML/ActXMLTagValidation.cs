@@ -149,7 +149,7 @@ namespace GingerCore.Actions.XML
 
                 if (FilePath.Contains("~"))
                 {
-                    FilePath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(FilePath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                    FilePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FilePath);
                 }
 
                 if (FilePath.EndsWith(".XML", StringComparison.OrdinalIgnoreCase) || FilePath.EndsWith(".JSON", StringComparison.OrdinalIgnoreCase))

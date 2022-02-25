@@ -519,7 +519,7 @@ namespace GingerCore.Actions
             }
 
             //string FullPath = BaseLineFileName.Replace(@"~\", SolutionFolder);
-            string FullPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(BaseLineFileName, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+            string FullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BaseLineFileName);
 
             // no need to ask user, + it might be at run time
             //TOOD: handle err 
@@ -535,7 +535,7 @@ namespace GingerCore.Actions
             //{
             //    return relativePath.Replace(@"~\", SolutionFolder);
             //}
-            relativePath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(relativePath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+            relativePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(relativePath);
 
             return relativePath;
         }

@@ -1571,7 +1571,7 @@ namespace Ginger.Actions
                     //    ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
                     //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, ds.FileFullPath);
                     //}
-                    ds.FileFullPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(ds.FilePath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                    ds.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ds.FilePath);
 
                     List<string> dsTableNames = new List<string>();
                     mDSTableList.Clear();

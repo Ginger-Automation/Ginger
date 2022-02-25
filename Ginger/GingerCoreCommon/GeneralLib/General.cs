@@ -26,6 +26,8 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using GingerCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {
@@ -458,6 +460,47 @@ namespace Amdocs.Ginger.Common.GeneralLib
             //TODO: move this func to General
             bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
             return designMode;
+        }
+
+        public static bool IsNumeric(string sValue)
+        {
+            // simple method to check is strign is number
+            // there are many other alternatives, just keep it simple and make sure it run fast as it is going to be used a lot, for every return value calc   
+            // regec and other are more expensive
+
+            foreach (char c in sValue)
+            {
+                if (!char.IsDigit(c) && c != '.')
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public static Dictionary<string, object> DeserializeJson(string json)
+        {
+            if (json.StartsWith("["))
+            {
+                Dictionary<string, object> dictionary = new Dictionary<string, object>();
+
+                JArray a = JArray.Parse(json);
+
+                int ArrayCount = 1;
+                foreach (JObject o in a.Children<JObject>())
+                {
+                    dictionary.Add(ArrayCount.ToString(), o);
+                    ArrayCount++;
+
+                }
+                return dictionary;
+            }
+            else
+            {
+                //JavaScriptSerializer serializer = new JavaScriptSerializer();
+                Dictionary<string, object> dictionary =
+                    JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                return dictionary;
+            }
         }
     }
 }

@@ -367,7 +367,7 @@ namespace Ginger.Run
         {
             try
             {
-                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, WorkSpace.Instance.SolutionRepository.SolutionFolder));
+                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
                 var result = dbManager.GetRunSetLiteData();
 
                 List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.All());

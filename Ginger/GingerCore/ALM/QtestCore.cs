@@ -81,7 +81,7 @@ namespace GingerCore.ALM
                 connObj.Configuration.ApiKey.Add("Authorization", accessToken);
                 connObj.Configuration.ApiKeyPrefix.Add("Authorization", tokenType);
 
-                string almConfigPackageFolderPathCalculated = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                string almConfigPackageFolderPathCalculated = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath);
                 if (General.IsConfigPackageExists(almConfigPackageFolderPathCalculated, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest))
                 {
                     connObj.Configuration.MyAPIConfig.LoadSettingsFromConfig(Path.Combine(almConfigPackageFolderPathCalculated, "QTestSettings", "QTestSettings.json"));

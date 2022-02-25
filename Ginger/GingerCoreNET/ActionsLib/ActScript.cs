@@ -169,7 +169,7 @@ namespace GingerCore.Actions
                 case eScriptInterpreterType.Other:
                     if (!string.IsNullOrEmpty(ScriptInterpreter))
                     {
-                        p.StartInfo.FileName = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(ScriptInterpreter, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                        p.StartInfo.FileName = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ScriptInterpreter);
                     }
                     break;
             }
@@ -194,7 +194,7 @@ namespace GingerCore.Actions
                     p.StartInfo.WorkingDirectory = Path.Combine(SolutionFolder, "Documents", "Scripts");
                 }
             }
-            p.StartInfo.WorkingDirectory = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(p.StartInfo.WorkingDirectory, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+            p.StartInfo.WorkingDirectory = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(p.StartInfo.WorkingDirectory);
             try
             {
                 string Params = GetCommandText(this);

@@ -1029,7 +1029,7 @@ namespace GingerCore.Actions
 
         public void ParseJSONToOutputValues(string ResponseMessage, int i)// added i especially for cassandra, for retrieving path , other cases give i=1
         {
-            Dictionary<string, object> outputValues = JSONManager.DeserializeJson(ResponseMessage);
+            Dictionary<string, object> outputValues = General.DeserializeJson(ResponseMessage);
             foreach (KeyValuePair<string, object> entry in outputValues)
             {
                 AddJsonKeyValueToOutputValue(entry.Value, entry.Key, i);

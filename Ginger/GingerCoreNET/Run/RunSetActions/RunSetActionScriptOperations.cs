@@ -42,7 +42,7 @@ namespace Ginger.Run.RunSetActions
             try
             {
                 ActScript act = new ActScript();
-                string FileName = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(RunSetActionScript.ScriptFileName, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                string FileName = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(RunSetActionScript.ScriptFileName);
                 VerifySolutionFloder(RunSetActionScript.SolutionFolder, FileName);
                 act.ScriptName = FileName;
                 act.ScriptInterpreterType = (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

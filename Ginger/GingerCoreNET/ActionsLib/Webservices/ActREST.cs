@@ -693,7 +693,7 @@ namespace GingerCore.Actions.REST
             //{
             //    DirectoryPath = DirectoryPath.Replace(@"~\", SolutionFolder);
             //}
-            DirectoryPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(DirectoryPath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+            DirectoryPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DirectoryPath);
 
             DirectoryPath = Path.Combine(DirectoryPath,fileType);
 
@@ -770,7 +770,7 @@ namespace GingerCore.Actions.REST
         {
             string ReqString = string.Empty;
             //FileStream ReqStream = System.IO.File.OpenRead(TemplateFile.ValueForDriver.Replace(@"~\", this.SolutionFolder));
-            FileStream ReqStream = System.IO.File.OpenRead(WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(TemplateFile.ValueForDriver, WorkSpace.Instance.SolutionRepository.SolutionFolder));
+            FileStream ReqStream = System.IO.File.OpenRead(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TemplateFile.ValueForDriver));
 
             using (StreamReader reader = new StreamReader(ReqStream))
             {

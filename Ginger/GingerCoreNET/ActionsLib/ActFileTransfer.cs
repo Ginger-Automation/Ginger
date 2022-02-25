@@ -185,7 +185,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(GetInputParamCalculatedValue("PCPath"), WorkSpace.Instance.SolutionRepository.SolutionFolder).Replace(Environment.NewLine, "");
+                return WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(GetInputParamCalculatedValue("PCPath")).Replace(Environment.NewLine, "");
             }
         }
 

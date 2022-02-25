@@ -76,25 +76,6 @@ namespace Amdocs.Ginger.Common.OS
             }
         }
 
-        /// <summary>
-        /// Convert Solution Relative Path to Full path
-        /// </summary>
-        /// <param name="relativePath">Path like "~\Documents\Scripts\aa.vbs"</param>
-        /// <returns></returns>
-        public string ConvertSolutionRelativePath(string relativePath, string mSolutionFolderPath)
-        {
-            if (String.IsNullOrWhiteSpace(relativePath))
-            {
-                return relativePath;
-            }
-            if (relativePath.TrimStart().StartsWith("~"))
-            {
-                string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
-                fullPath = Path.Combine(mSolutionFolderPath, fullPath);
-                return CurrentOperatingSystem.AdjustFilePath(fullPath);
-            }
-
-            return CurrentOperatingSystem.AdjustFilePath(relativePath);
-        }
+        
     }
 }

@@ -99,7 +99,7 @@ namespace GingerCore.Actions
             get
             {
                 string file = GetInputParamCalculatedValue(nameof(ExcelFileName)) ?? "";
-                return WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(file, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                return WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(file);
             }
         }
 

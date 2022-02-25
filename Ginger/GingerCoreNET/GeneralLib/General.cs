@@ -309,7 +309,7 @@ namespace GingerCoreNET.GeneralLib
 
             if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
-                DataSource.FileFullPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(DataSource.FileFullPath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                DataSource.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
 
                 foreach (DataSourceTable dst in dsTables)

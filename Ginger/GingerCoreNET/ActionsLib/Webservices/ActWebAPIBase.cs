@@ -351,7 +351,7 @@ namespace GingerCore.Actions.WebServices
                     string FileContent = string.Empty;
                     string TemplateFileName = GetInputParamCalculatedValue(Fields.TemplateFileNameFileBrowser).ToString();
 
-                    string TemplateFileNameFullPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(TemplateFileName, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                    string TemplateFileNameFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TemplateFileName);
 
                     FileStream ReqStream = File.OpenRead(TemplateFileNameFullPath);
 

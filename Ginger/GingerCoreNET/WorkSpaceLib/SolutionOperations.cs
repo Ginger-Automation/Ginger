@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
@@ -333,6 +335,28 @@ namespace Ginger.SolutionGeneral
             }
         }
 
+        public string ConvertSolutionRelativePath(string relativePath)
+        {
+            if (String.IsNullOrWhiteSpace(relativePath))
+            {
+                return relativePath;
+            }
+            try
+            {
+                if (relativePath.TrimStart().StartsWith("~"))
+                {
+                    string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
+                    fullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, fullPath);
+                    return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(fullPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
+            }
+
+            return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(relativePath);
+        }
 
     }
 }

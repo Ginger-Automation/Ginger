@@ -1343,7 +1343,7 @@ namespace Ginger.Run
                 if (DataSource == null)
                     return;
 
-                DataSource.FileFullPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(DataSource.FilePath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                DataSource.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FilePath);
 
                 ObservableList<DataSourceTable> dstTables = DataSource.GetTablesList();
                 foreach (DataSourceTable dst in dstTables)

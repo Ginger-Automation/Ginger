@@ -64,7 +64,7 @@ namespace GingerCore.ALM
 
         public JiraCore()
         {
-            string settingsPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(DefaultAlmConfig.ALMConfigPackageFolderPath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+            string settingsPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DefaultAlmConfig.ALMConfigPackageFolderPath);
             JiraRepositoryStd.JiraRepositoryStd jiraRepObj = new JiraRepositoryStd.JiraRepositoryStd(settingsPath, (TestingALMType)Enum.Parse(typeof(TestingALMType), ALMCore.DefaultAlmConfig.JiraTestingALM.ToString()));
             exportMananger = new JIRA.Bll.JiraExportManager(jiraRepObj);
             jiraConnectObj = new JiraConnectManager(jiraRepObj);

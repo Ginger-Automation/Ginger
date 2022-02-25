@@ -360,7 +360,7 @@ namespace GingerCore.Actions
                 if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
                     //string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
-                    string filePath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile), WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                    string filePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
 
                     FileInfo scriptFile = new FileInfo(filePath);
                    SQL = scriptFile.OpenText().ReadToEnd();
@@ -402,7 +402,7 @@ namespace GingerCore.Actions
                 if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
                     //string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
-                    string filePath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(GetInputParamCalculatedValue(ActDBValidation.Fields.QueryFile), WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                    string filePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(GetInputParamCalculatedValue(ActDBValidation.Fields.QueryFile));
 
                     FileInfo scriptFile = new FileInfo(filePath);
                     SQL = scriptFile.OpenText().ReadToEnd();

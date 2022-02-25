@@ -257,7 +257,7 @@ namespace GingerCore.FlowControlLib
                 {
                     if (VE.Value.Contains("{Actual}"))
                     {
-                        if ((ARC.Actual != null) && StringManager.IsNumeric(ARC.Actual))
+                        if ((ARC.Actual != null) && General.IsNumeric(ARC.Actual))
                         {
                             VE.Value = VE.Value.Replace("{Actual}", ARC.Actual.ToString());
                         }

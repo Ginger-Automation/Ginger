@@ -1223,7 +1223,7 @@ namespace GingerCoreNET.DataSource
         {
             if (FilePath != null)
             {
-                FileFullPath = WorkSpace.Instance.OSHelper.ConvertSolutionRelativePath(FilePath, WorkSpace.Instance.SolutionRepository.SolutionFolder);
+                FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FilePath);
             }
         }
 
