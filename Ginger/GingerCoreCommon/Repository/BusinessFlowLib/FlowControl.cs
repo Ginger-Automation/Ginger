@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.DataSource;
@@ -256,7 +257,7 @@ namespace GingerCore.FlowControlLib
                 {
                     if (VE.Value.Contains("{Actual}"))
                     {
-                        if ((ARC.Actual != null) && ARC.Actual.All(char.IsDigit))
+                        if ((ARC.Actual != null) && StringManager.IsNumeric(ARC.Actual))
                         {
                             VE.Value = VE.Value.Replace("{Actual}", ARC.Actual.ToString());
                         }
