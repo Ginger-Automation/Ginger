@@ -90,26 +90,104 @@ namespace GingerCore.Actions.REST
 
         public ActInputValue URLDomain { get { return GetOrCreateInputParam(Fields.URLDomain); }  }
 
-        [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
+        //[IsSerializedForLocalRepository]
+        //public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
+        //TODO: Test serialization works as expected -arvindgh
+        ObservableList<ActInputValue> mDynamicElements;
+        public override ObservableList<ActInputValue> DynamicElements
+        {
+            get
+            {
+                if (mDynamicElements == null)
+                {
+                    mDynamicElements = new ObservableList<ActInputValue>();
+                }
+                return mDynamicElements;
+            }
+            set
+            {
+                mDynamicElements = value;
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> HttpHeaders = new ObservableList<ActInputValue>();
+        //[IsSerializedForLocalRepository]
+        //public ObservableList<ActInputValue> HttpHeaders = new ObservableList<ActInputValue>();
+        //TODO: Test serialization works as expected -arvindgh
+        ObservableList<ActInputValue> mHttpHeaders;
+        public override ObservableList<ActInputValue> HttpHeaders
+        {
+            get
+            {
+                if (mHttpHeaders == null)
+                {
+                    mHttpHeaders = new ObservableList<ActInputValue>();
+                }
+                return mHttpHeaders;
+            }
+            set
+            {
+                mHttpHeaders = value;
+            }
+        }
 
-        private bool mRestRequestSave { get; set; }
-        [IsSerializedForLocalRepository]
-        public bool RestRequestSave { get { return mRestRequestSave; } set { mRestRequestSave = value; OnPropertyChanged(Fields.RestRequestSave); } }
+        public bool RestRequestSave 
+        {
+            get
+            {
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(RestRequestSave)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(RestRequestSave), value.ToString());
+                OnPropertyChanged(nameof(RestRequestSave));
+            }
+        }
 
-        private bool mRestResponseSave { get; set; }
-        [IsSerializedForLocalRepository]
-        public bool RestResponseSave { get { return mRestResponseSave; } set { mRestResponseSave = value; OnPropertyChanged(Fields.RestResponseSave); } }
+        public bool RestResponseSave 
+        {
+            get
+            {
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(RestResponseSave)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(RestResponseSave), value.ToString());
+                OnPropertyChanged(nameof(RestResponseSave));
+            }
+        }
 
 
-        [IsSerializedForLocalRepository]
-        public bool DoNotFailActionOnBadRespose { get; set; }
+        public bool DoNotFailActionOnBadRespose
+        {
+            get
+            {
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(DoNotFailActionOnBadRespose)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(DoNotFailActionOnBadRespose), value.ToString());
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public bool AcceptAllSSLCertificate { get; set; }
+        public bool AcceptAllSSLCertificate
+        {
+            get
+            {
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(AcceptAllSSLCertificate)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(AcceptAllSSLCertificate), value.ToString());
+            }
+        }
 
         private HttpWebResponse WebReqResponse = null;
         public HttpStatusCode ResponseCode
@@ -127,18 +205,31 @@ namespace GingerCore.Actions.REST
             }
         }
 
-        [IsSerializedForLocalRepository(true)]
         public bool UseTemplateFile
         {
-            get;
-            set;
+            get
+            {
+                bool value = true;
+                bool.TryParse(GetOrCreateInputParam(nameof(UseTemplateFile)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(UseTemplateFile), value.ToString());
+            }
         }
-
-        [IsSerializedForLocalRepository(true)]
         public bool UseRequestBody
         {
-            get;
-            set;
+            get
+            {
+                bool value = true;
+                bool.TryParse(GetOrCreateInputParam(nameof(UseRequestBody)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(UseRequestBody), value.ToString());
+            }
         }
 
         public enum eRequestType
@@ -176,8 +267,17 @@ namespace GingerCore.Actions.REST
             Tls12
         }
 
-        [IsSerializedForLocalRepository]
-        public eRequestType RequestType { set; get; }
+        public eRequestType RequestType
+        {
+            get
+            {
+                return (eRequestType)GetOrCreateInputParam<eRequestType>(nameof(RequestType), eRequestType.GET);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(RequestType), value.ToString());
+            }
+        }
 
         public enum eContentType
         {
@@ -190,21 +290,66 @@ namespace GingerCore.Actions.REST
             PDF
         }
 
-        [IsSerializedForLocalRepository]
-        public eContentType ContentType { set; get; }
+        public eContentType ContentType
+        {
+            get
+            {
+                return (eContentType)GetOrCreateInputParam<eContentType>(nameof(ContentType), eContentType.JSon);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ContentType), value.ToString());
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public eHttpVersion ReqHttpVersion { set; get; }
+        public eHttpVersion ReqHttpVersion
+        {
+            get
+            {
+                return (eHttpVersion)GetOrCreateInputParam<eHttpVersion>(nameof(ReqHttpVersion), eHttpVersion.HTTPV10);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ReqHttpVersion), value.ToString());
+            }
+        }
 
 
-        [IsSerializedForLocalRepository]
-        public eContentType ResponseContentType { set; get; }
+        public eContentType ResponseContentType
+        {
+            get
+            {
+                return (eContentType)GetOrCreateInputParam<eContentType>(nameof(ResponseContentType), eContentType.JSon);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ResponseContentType), value.ToString());
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public eCookieMode CookieMode { set; get; }
+        public eCookieMode CookieMode
+        {
+            get
+            {
+                return (eCookieMode)GetOrCreateInputParam<eCookieMode>(nameof(CookieMode), eCookieMode.Session);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(CookieMode), value.ToString());
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public eSercurityType SecurityType { set; get; }
+        public eSercurityType SecurityType
+        {
+            get
+            {
+                return (eSercurityType)GetOrCreateInputParam<eSercurityType>(nameof(SecurityType), eSercurityType.None);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(SecurityType), value.ToString());
+            }
+        }
         public bool UseLegacyJSONParsing
         {
             get

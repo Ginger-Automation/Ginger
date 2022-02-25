@@ -84,8 +84,17 @@ namespace GingerCore.Actions
             GetStyle = 24,
         }
 
-        [IsSerializedForLocalRepository]
-        public eActDropDownListAction ActDropDownListAction { get; set; }
+        public eActDropDownListAction ActDropDownListAction
+        {
+            get
+            {
+                return (eActDropDownListAction)GetOrCreateInputParam<eActDropDownListAction>(nameof(ActDropDownListAction), eActDropDownListAction.SetSelectedValueByValue);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ActDropDownListAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

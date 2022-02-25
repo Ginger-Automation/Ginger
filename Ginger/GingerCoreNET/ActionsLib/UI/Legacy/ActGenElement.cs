@@ -635,8 +635,17 @@ namespace GingerCore.Actions
             Expand = 67
         }
         
-        [IsSerializedForLocalRepository]
-        public eGenElementAction GenElementAction { get; set; }
+        public eGenElementAction GenElementAction
+        {
+            get
+            {
+                return (eGenElementAction)GetOrCreateInputParam<eGenElementAction>(nameof(GenElementAction), eGenElementAction.Click);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(GenElementAction), value.ToString());
+            }
+        }
 
         string mXoffset = string.Empty;
         public string Xoffset

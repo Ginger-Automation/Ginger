@@ -62,17 +62,15 @@ namespace GingerCore.Actions
             DeleteDirectoryFiles
         }
 
-        private eFileoperations mFileOperation = eFileoperations.CheckFileExists;
-        [IsSerializedForLocalRepository]
         public eFileoperations FileOperationMode
         {
             get
             {
-                return mFileOperation;
+                return (eFileoperations)GetOrCreateInputParam<eFileoperations>(nameof(FileOperationMode), eFileoperations.CheckFileExists);
             }
             set
             {
-                mFileOperation = value;
+                AddOrUpdateInputParamValue(nameof(FileOperationMode), value.ToString());
             }
         }
 

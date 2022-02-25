@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -1884,5 +1884,23 @@ namespace GingerCore.Actions
         {
             return "Action";
         }
+
+        [IsSerializedForLocalRepository]
+        public virtual ObservableList<ActInputValue> DynamicUDElements { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public virtual ObservableList<ActInputValue> DynamicElements { get; set; }
+        
+        [IsSerializedForLocalRepository]
+        public virtual ObservableList<ActInputValue> HttpHeaders { get; set; }
+        
+        [IsSerializedForLocalRepository]
+        public virtual ObservableList<WebAPIKeyBodyValues> RequestKeyValues { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public virtual ObservableList<EnhancedActInputValue> APIModelParamsValue { get; set; }
+        
+        [IsSerializedForLocalRepository]
+        public virtual ObservableList<ActInputValue> DynamicXMLElements { get; set; }
     }
 }

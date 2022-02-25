@@ -65,8 +65,17 @@ namespace GingerCore.Actions
         }
         private SftpClient UnixFTPClient;
         private string workdir;
-        [IsSerializedForLocalRepository]
-        public eFileTransferAction FileTransferAction { get; set; }
+        public eFileTransferAction FileTransferAction 
+        {
+            get
+            {
+                return (eFileTransferAction)GetOrCreateInputParam<eFileTransferAction>(nameof(FileTransferAction), eFileTransferAction.GetFile);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FileTransferAction), value.ToString());
+            }
+        }
 
 
         public string Host

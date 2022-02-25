@@ -78,25 +78,67 @@ namespace GingerCore.Actions
             SH,
             Other,
         }
-        [IsSerializedForLocalRepository]
-        public eScriptAct ScriptCommand { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public string ScriptInterpreter { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public eScriptInterpreterType ScriptInterpreterType { get; set; }
-
-
-        [IsSerializedForLocalRepository]
-        public string ScriptName
+        public eScriptAct ScriptCommand 
         {
-            get; set;
+            get
+            {
+                return (eScriptAct)GetOrCreateInputParam<eScriptAct>(nameof(ScriptCommand), eScriptAct.Script);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ScriptCommand), value.ToString());
+            }
+        }
+
+        public string ScriptInterpreter 
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ScriptInterpreter)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ScriptInterpreter), value.ToString());
+            }
+        }
+
+        public eScriptInterpreterType ScriptInterpreterType 
+        {
+            get
+            {
+                return (eScriptInterpreterType)GetOrCreateInputParam<eScriptInterpreterType>(nameof(ScriptInterpreterType), eScriptInterpreterType.VBS);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ScriptInterpreterType), value.ToString());
+            }
         }
 
 
-        [IsSerializedForLocalRepository]
-        public string ScriptPath { get; set; }
+        public string ScriptName
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ScriptName)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ScriptName), value.ToString());
+            }
+        }
+
+
+        public string ScriptPath 
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ScriptPath)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ScriptPath), value.ToString());
+            }
+        }
 
         string DataBuffer = "";
         string ErrorBuffer = "";

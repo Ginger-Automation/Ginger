@@ -156,10 +156,28 @@ namespace GingerCore.Actions
         }
 
         public ActInputValue URL { get { return GetOrCreateInputParam(Fields.URL); } }
-            
-        [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> DynamicXMLElements = new ObservableList<ActInputValue>();
-             
+
+        //[IsSerializedForLocalRepository]
+        //public ObservableList<ActInputValue> DynamicXMLElements = new ObservableList<ActInputValue>();
+
+        //TODO: Test serialization works as expected -arvindgh
+        ObservableList<ActInputValue> mDynamicXMLElements;
+        public override ObservableList<ActInputValue> DynamicXMLElements
+        {
+            get
+            {
+                if (mDynamicXMLElements == null)
+                {
+                    mDynamicXMLElements = new ObservableList<ActInputValue>();
+                }
+                return mDynamicXMLElements;
+            }
+            set
+            {
+                mDynamicXMLElements = value;
+            }
+        }
+
         public ActInputValue SOAPAction { get { return GetOrCreateInputParam(Fields.SOAPAction); } }
          
         public ActInputValue XMLfileName { get { return GetOrCreateInputParam(Fields.XMLfileName); } }
@@ -170,8 +188,19 @@ namespace GingerCore.Actions
        
         public ActInputValue URLDomain { get { return GetOrCreateInputParam(Fields.URLDomain); } }
 
-        [IsSerializedForLocalRepository]
-        public bool DoValidationChkbox { get; set; }
+        public bool DoValidationChkbox
+        {
+            get
+            {
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(DoValidationChkbox)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(DoValidationChkbox), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

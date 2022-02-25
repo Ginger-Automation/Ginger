@@ -90,8 +90,26 @@ namespace GingerCore.Actions.WebServices.WebAPI
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public ObservableList<EnhancedActInputValue> APIModelParamsValue = new ObservableList<EnhancedActInputValue>();
+        //[IsSerializedForLocalRepository]
+        //public ObservableList<EnhancedActInputValue> APIModelParamsValue = new ObservableList<EnhancedActInputValue>();
+
+        //TODO: Test serialization works as expected -arvindgh
+        ObservableList<EnhancedActInputValue> mAPIModelParamsValue;
+        public override ObservableList<EnhancedActInputValue> APIModelParamsValue
+        {
+            get
+            {
+                if (mAPIModelParamsValue == null)
+                {
+                    mAPIModelParamsValue = new ObservableList<EnhancedActInputValue>();
+                }
+                return mAPIModelParamsValue;
+            }
+            set
+            {
+                mAPIModelParamsValue = value;
+            }
+        }
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {

@@ -59,8 +59,17 @@ namespace GingerCore.Actions
             get { return "Clear All " + GingerDicser.GetTermResValue(eTermResKey.Variables); }
         }
 
-        [IsSerializedForLocalRepository]
-        public string VariableName { set; get; }
+        public string VariableName 
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(VariableName)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(VariableName), value.ToString());
+            }
+        }
 
         public override void Execute()
         {
