@@ -210,7 +210,6 @@
     <EmbeddedResource Include="Resources\JavaScripts\GingerLibXPath.js" />
     <EmbeddedResource Include="Resources\JavaScripts\GingerLiveSpy.js" />
     <EmbeddedResource Include="Resources\JavaScripts\html2canvas.js" />
-    <EmbeddedResource Include="Resources\JavaScripts\HTMLSpy.js" />
     <EmbeddedResource Include="Resources\JavaScripts\InjectJavaScript.js" />
     <EmbeddedResource Include="Resources\JavaScripts\jquery_min.js" />
     <EmbeddedResource Include="Resources\JavaScripts\PayLoad.js" />
