@@ -211,7 +211,10 @@ namespace Amdocs.Ginger.Repository
                                 }
                             }
 
-                            if (string.IsNullOrEmpty(action.ActionId)) continue;
+                            if (string.IsNullOrEmpty(action.ActionId))
+                            {
+                                continue;
+                            }
 
                             foreach (ParameterInfo PI in MI.GetParameters())
                             {
@@ -245,7 +248,6 @@ namespace Amdocs.Ginger.Repository
                         foreach (Type PluginInterface in interfaces)
                         {
                             // decide if we need Feature for service and/or Interfaces seperate
-                            // ServiceFeatureAttribute gingerInterfaceAttr = (ServiceFeatureAttribute)Attribute.GetCustomAttribute(PluginInterface, typeof(ServiceFeatureAttribute), true);
                             GingerInterfaceAttribute gingerInterfaceAttr = (GingerInterfaceAttribute)Attribute.GetCustomAttribute(PluginInterface, typeof(GingerInterfaceAttribute), true);
 
                             if (gingerInterfaceAttr != null)
@@ -264,7 +266,6 @@ namespace Amdocs.Ginger.Repository
                                 Config.Name = mconfig.Name;
                                 Config.Description = mconfig.Description;
                                 Config.Type = mconfig.GetType().Name;
-                                // Config.DefaultValue = mconfig.DefaultValue?.ToString();
 
                                 if (Attribute.GetCustomAttribute(mi, typeof(ValidValueAttribute), false) is ValidValueAttribute validValues)
                                 {
@@ -334,7 +335,6 @@ namespace Amdocs.Ginger.Repository
             string txt = JsonConvert.SerializeObject(mServices, Formatting.Indented);
             string fileName = PluginPackageServicesInfoFileName();
             File.WriteAllText(fileName, txt);
-            Console.WriteLine("Services file created at: " + fileName);
         }
 
 

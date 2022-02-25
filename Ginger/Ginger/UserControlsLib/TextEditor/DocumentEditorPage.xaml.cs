@@ -220,7 +220,10 @@ namespace Ginger.UserControlsLib.TextEditor
                 {
                     pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
 
-                    if (string.IsNullOrEmpty(((PluginPackageOperations)pluginPackage.PluginPackageOperations).PluginPackageInfo.UIDLL)) continue;
+                    if (string.IsNullOrEmpty(((PluginPackageOperations)pluginPackage.PluginPackageOperations).PluginPackageInfo.UIDLL))
+                    {
+                        continue;
+                    }
                     
                     foreach (ITextEditor TE in PluginTextEditorHelper.GetTextFileEditors(pluginPackage))
                     {

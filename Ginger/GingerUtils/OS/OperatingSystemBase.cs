@@ -98,7 +98,7 @@ namespace Amdocs.Ginger.Common.OS
             }
             catch (Exception ex)
             {
-                //Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
+                //Log Exception
             }
 
             return CurrentOperatingSystem.AdjustFilePath(relativePath);
