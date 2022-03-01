@@ -55,12 +55,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     }
                     if (!dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
                     {
-                        if (ColumnHeaderHasSpeicalCharacters(headerRow.GetCell(c).ToString()))
-                        {
-                            dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString().Replace(".", "").Replace("/", ""));
-                        }
-                        else
-                            dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString().Trim());
+                        dtExcelTable.Columns.Add(RemoveSpecialCharactersInColumnHeader(headerRow.GetCell(c).ToString()));
                     }
                 }
                 var i = 1;
@@ -364,14 +359,17 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             mWorkbook.Close();
             mWorkbook = null;
         }
-
-        private bool ColumnHeaderHasSpeicalCharacters(string columnHeader)
+        private string RemoveSpecialCharactersInColumnHeader(string columnHeader)
         {
-            if (columnHeader.Contains(".") || columnHeader.Contains("/"))
+            string specialCharactersToRemove = "./[]()";
+            foreach (char sc in specialCharactersToRemove)
             {
-                return true;
+                if (columnHeader.Contains(sc.ToString()))
+                {
+                    columnHeader = columnHeader.Replace(sc.ToString(), string.Empty);
+                }
             }
-            return false;
+            return columnHeader.Trim();
         }
     }
 }
