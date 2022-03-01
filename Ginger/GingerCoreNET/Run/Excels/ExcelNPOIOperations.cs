@@ -55,7 +55,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     }
                     if (!dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
                     {
-                        dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString().Trim());
+                        if (ColumnHeaderHasSpeicalCharacters(headerRow.GetCell(c).ToString()))
+                        {
+                            dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString().Replace(".", "").Replace("/", ""));
+                        }
+                        else
+                            dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString().Trim());
                     }
                 }
                 var i = 1;
@@ -358,6 +363,15 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             mSheet = null;
             mWorkbook.Close();
             mWorkbook = null;
+        }
+
+        private bool ColumnHeaderHasSpeicalCharacters(string columnHeader)
+        {
+            if (columnHeader.Contains(".") || columnHeader.Contains("/"))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
