@@ -87,8 +87,17 @@ namespace GingerCore.Actions
             IsExist
         }
 
-        [IsSerializedForLocalRepository]
-        public eWindowActionType WindowActionType { get; set; }
+        public eWindowActionType WindowActionType
+        {
+            get
+            {
+                return (eWindowActionType)GetOrCreateInputParam<eWindowActionType>(nameof(WindowActionType), eWindowActionType.Switch);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(WindowActionType), value.ToString());
+            }
+        }
 
         public override String ActionType {
             get

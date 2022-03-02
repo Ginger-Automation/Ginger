@@ -104,8 +104,17 @@ namespace GingerCore.Actions
             List =6
         }
 
-        [IsSerializedForLocalRepository]
-        public eControlAction ControlAction { get; set; }
+        public eControlAction ControlAction
+        {
+            get
+            {
+                return (eControlAction)GetOrCreateInputParam<eControlAction>(nameof(ControlAction), eControlAction.SetValue);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ControlAction), value.ToString());
+            }
+        }
         public eControlProperty ControlProperty { get; set; }
 
         public override String ToString()

@@ -69,8 +69,17 @@ namespace GingerCore.Actions
             CSVFromTemplate = 1,
         }
 
-        [IsSerializedForLocalRepository]
-        public eFileAction FileAction { get; set; }
+        public eFileAction FileAction
+        {
+            get
+            {
+                return (eFileAction)GetOrCreateInputParam<eFileAction>(nameof(FileAction), eFileAction.CSVFromTemplate);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FileAction), value.ToString());
+            }
+        }
 
 
         public new static partial class Fields
@@ -81,8 +90,17 @@ namespace GingerCore.Actions
             public static string DataFileName = "DataFileName";
         }
 
-        [IsSerializedForLocalRepository]
-        public string TemplateFileName { set; get; }
+        public string TemplateFileName
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(TemplateFileName)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(TemplateFileName), value);
+            }
+        }
 
         public string OutputFileName
         {
@@ -96,8 +114,17 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public string DataFileName { set; get; }
+        public string DataFileName
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(DataFileName)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(DataFileName), value);
+            }
+        }
 
         public override String ToString()
         {

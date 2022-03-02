@@ -55,36 +55,45 @@ namespace GingerCore.Actions.MainFrame
         }
         private eSetTextMode mSetTextMode = eSetTextMode.SetSingleField;
 
-        private bool mReloadvalue = true;
-
-        [IsSerializedForLocalRepository(true)]
         public bool ReloadValue
         {
             get
             {
-                return mReloadvalue;
+                bool value = true;
+                bool.TryParse(GetOrCreateInputParam(nameof(ReloadValue), value.ToString()).Value, out value);
+                return value;
             }
             set
             {
-                mReloadvalue = value;
+                AddOrUpdateInputParamValue(nameof(ReloadValue), value.ToString());
             }
         }
 
-        [IsSerializedForLocalRepository]
         public eSetTextMode SetTextMode
         {
             get
             {
-                return mSetTextMode;
+                return (eSetTextMode)GetOrCreateInputParam<eSetTextMode>(nameof(SetTextMode), eSetTextMode.SetSingleField);
             }
             set
             {
-                mSetTextMode = value;
+                AddOrUpdateInputParamValue(nameof(SetTextMode), value.ToString());
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public bool SendAfterSettingText { get; set; }
+        public bool SendAfterSettingText
+        {
+            get
+            {
+                bool value = true;
+                bool.TryParse(GetOrCreateInputParam(nameof(SendAfterSettingText)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(SendAfterSettingText), value.ToString());
+            }
+        }
 
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms

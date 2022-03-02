@@ -89,30 +89,55 @@ namespace GingerCore.Actions.Java
         }
 
         //------------------- Java version to use args
-        string mJavaWSEXEPath = string.Empty;
         string mJavaWSEXEPath_Calc = string.Empty;
-        [IsSerializedForLocalRepository]
         public string JavaWSEXEPath //contains the Java version path in case user do not want to use JAVA_HOME
         {
             get
             {
-                return mJavaWSEXEPath;
+                return GetOrCreateInputParam(nameof(JavaWSEXEPath)).Value;
             }
             set
             {
-                mJavaWSEXEPath = value;
-                OnPropertyChanged(Fields.JavaWSEXEPath);
+                AddOrUpdateInputParamValue(nameof(JavaWSEXEPath), value);
+                OnPropertyChanged(nameof(JavaWSEXEPath));
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public string ScriptName { get; set; }
+        public string ScriptName
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ScriptName)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ScriptName), value);
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public string ScriptPath { get; set; }
+        public string ScriptPath
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ScriptPath)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ScriptPath), value);
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public string ScriptDecription { get; set; }
+        public string ScriptDecription
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ScriptDecription)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ScriptDecription), value);
+            }
+        }
 
         string DataBuffer = "";
         string ErrorBuffer = "";
@@ -271,7 +296,7 @@ namespace GingerCore.Actions.Java
         {
             try
             {
-                mJavaWSEXEPath_Calc = ValueExpression.Calculate(mJavaWSEXEPath);
+                mJavaWSEXEPath_Calc = ValueExpression.Calculate(JavaWSEXEPath);
                 if (string.IsNullOrEmpty(mJavaWSEXEPath_Calc))
                     mJavaWSEXEPath_Calc = CommonLib.GetJavaHome();               
 
