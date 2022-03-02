@@ -72,7 +72,7 @@ namespace Ginger
 
             mHelpLayoutList.CollectionChanged += MHelpLayoutList_CollectionChanged;
 
-            Telemetry.eventHandler += TelemetryEventHandler;
+            //Telemetry.eventHandler += TelemetryEventHandler;
 
             DriverWindowHandler.Init();
 
@@ -405,7 +405,7 @@ namespace Ginger
 
         private void AppCleanUp()
         {
-            Telemetry.eventHandler -= TelemetryEventHandler;
+            //Telemetry.eventHandler -= TelemetryEventHandler;
 
             ClosingWindow CW = new ClosingWindow();
             CW.Show();
