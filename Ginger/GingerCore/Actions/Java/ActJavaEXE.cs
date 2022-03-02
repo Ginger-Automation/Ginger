@@ -35,7 +35,7 @@ using Amdocs.Ginger.Common.Enums;
 namespace GingerCore.Actions.Java
 {
     public class ActJavaEXE : ActWithoutDriver
-    {        
+    {
         public override string ActionDescription { get { return "Java Execution Action"; } }
         public override string ActionUserDescription { get { return "Execute Java Program with set of input params and process it output to be integrated with the entire flow."; } }
 
@@ -43,7 +43,7 @@ namespace GingerCore.Actions.Java
         {
             TBH.AddText("Use this action in case you want to execute java program (jar file using java.exe) and parse it results.");
             TBH.AddLineBreak();
-            TBH.AddLineBreak();            
+            TBH.AddLineBreak();
             TBH.AddText(@"Place the jar file with 'main' function in \Documents\Java - i.e: sum.jar");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
@@ -51,7 +51,7 @@ namespace GingerCore.Actions.Java
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddText(@"For more details and sample java code please look at ginger Support site.");
-            TBH.AddLineBreak();                        
+            TBH.AddLineBreak();
         }
 
         public override string ActionEditPage { get { return "Java.ActJavaEXEEditPage"; } }
@@ -89,59 +89,34 @@ namespace GingerCore.Actions.Java
         }
 
         //------------------- Java version to use args
+        string mJavaWSEXEPath = string.Empty;
         string mJavaWSEXEPath_Calc = string.Empty;
+        [IsSerializedForLocalRepository]
         public string JavaWSEXEPath //contains the Java version path in case user do not want to use JAVA_HOME
         {
             get
             {
-                return GetOrCreateInputParam(nameof(JavaWSEXEPath)).Value;
+                return mJavaWSEXEPath;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(JavaWSEXEPath), value);
-                OnPropertyChanged(nameof(JavaWSEXEPath));
+                mJavaWSEXEPath = value;
+                OnPropertyChanged(Fields.JavaWSEXEPath);
             }
         }
 
-        public string ScriptName
-        {
-            get
-            {
-                return GetOrCreateInputParam(nameof(ScriptName)).Value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ScriptName), value);
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public string ScriptName { get; set; }
 
-        public string ScriptPath
-        {
-            get
-            {
-                return GetOrCreateInputParam(nameof(ScriptPath)).Value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ScriptPath), value);
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public string ScriptPath { get; set; }
 
-        public string ScriptDecription
-        {
-            get
-            {
-                return GetOrCreateInputParam(nameof(ScriptDecription)).Value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ScriptDecription), value);
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public string ScriptDecription { get; set; }
 
         string DataBuffer = "";
         string ErrorBuffer = "";
-      
+
         protected void Process_Exited(object sender, EventArgs e)
         {
             ParseRC(DataBuffer);
@@ -174,7 +149,7 @@ namespace GingerCore.Actions.Java
                 if (!string.IsNullOrEmpty(p.ValueForDriver))
                     cmd += " " + p.ValueForDriver;
             }
-            return cmd;            
+            return cmd;
         }
 
         public string RunCommand(string parms)
@@ -189,7 +164,7 @@ namespace GingerCore.Actions.Java
             process.StartInfo.UseShellExecute = false;            // Do not use shell for execution
             process.StartInfo.RedirectStandardOutput = true;      // redirect standard output 
             process.StartInfo.RedirectStandardError = true;       // redirect standard error
-            
+
             string JavaEXE = Path.Combine(mJavaWSEXEPath_Calc, @"bin\java.exe");
             if (File.Exists(JavaEXE))
                 process.StartInfo.FileName = JavaEXE;
@@ -253,7 +228,7 @@ namespace GingerCore.Actions.Java
             }
 
             if (i >= 0 && i2 > 0)
-            {         
+            {
                 string[] RCValues = sRC.Split('\n');
                 foreach (string RCValue in RCValues)
                 {
@@ -287,18 +262,18 @@ namespace GingerCore.Actions.Java
 
         public string[] GetParamsWithGingerHelp()
         {
-            string output = RunCommand("-GingerHelp");           
+            string output = RunCommand("-GingerHelp");
             string[] lines = DataBuffer.Split('\n');
-            return lines;             
+            return lines;
         }
-        
+
         private bool CalculateArguments()
         {
             try
             {
-                mJavaWSEXEPath_Calc = ValueExpression.Calculate(JavaWSEXEPath);
+                mJavaWSEXEPath_Calc = ValueExpression.Calculate(mJavaWSEXEPath);
                 if (string.IsNullOrEmpty(mJavaWSEXEPath_Calc))
-                    mJavaWSEXEPath_Calc = CommonLib.GetJavaHome();               
+                    mJavaWSEXEPath_Calc = CommonLib.GetJavaHome();
 
                 return true;
             }

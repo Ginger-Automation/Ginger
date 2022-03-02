@@ -95,183 +95,206 @@ namespace GingerCore.Actions
         }
 
         //------------------- Java version to use args
+        string mJavaWSEXEPath = string.Empty;
         string mJavaWSEXEPath_Calc = string.Empty;
+        [IsSerializedForLocalRepository]
         public string JavaWSEXEPath //contains the Java version path in case user do not want to use JAVA_HOME
         {
             get
             {
-                return GetOrCreateInputParam(nameof(JavaWSEXEPath)).Value;
+                return mJavaWSEXEPath;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(JavaWSEXEPath), value);
-                OnPropertyChanged(nameof(JavaWSEXEPath));
+                mJavaWSEXEPath = value;
+                OnPropertyChanged(Fields.JavaWSEXEPath);
             }
-
         }
 
         //------------------- Launch Java Application args 
+        private bool mLaunchJavaApplication = true;
+        [IsSerializedForLocalRepository(true)]
         public bool LaunchJavaApplication //flag to determine if to launch java application
         {
             get
             {
-                bool value = true;
-                bool.TryParse(GetOrCreateInputParam(nameof(LaunchJavaApplication), value.ToString()).Value, out value);
-                return value;
+                return mLaunchJavaApplication;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(LaunchJavaApplication), value.ToString());
-                OnPropertyChanged(nameof(LaunchJavaApplication));
+                mLaunchJavaApplication = value;
+                OnPropertyChanged(Fields.LaunchJavaApplication);
             }
         }
 
+        private string mURL = string.Empty;
         string mURL_Calc = string.Empty;
+        [IsSerializedForLocalRepository]
         public string URL //the actual Java application path (jar/jnlp url)
         {
             get
             {
-                return GetInputParamValue("URL");
+                if (mURL == string.Empty)//backward support
+                {
+                    if (InputValues.Where(x => x.Param == "URL" && x.Value != string.Empty).FirstOrDefault() != null)
+                        mURL = GetInputParamValue("URL");
+                }
+                return mURL;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(URL), value);
-                OnPropertyChanged(nameof(URL));
+                mURL = value;
+                OnPropertyChanged(Fields.URL);
             }
         }
 
         //------------------- Attach Ginger Agent args 
+        private bool mLaunchWithAgent = false;
+        [IsSerializedForLocalRepository]
         public bool LaunchWithAgent //flag to determine if to Attach the Ginger Agent
         {
             get
             {
-                bool value = false;
-                bool.TryParse(GetOrCreateInputParam(nameof(LaunchWithAgent)).Value, out value);
-                return value;
+                return mLaunchWithAgent;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(LaunchWithAgent), value.ToString());
-                OnPropertyChanged(nameof(LaunchWithAgent));
-
+                mLaunchWithAgent = value;
+                OnPropertyChanged(Fields.LaunchWithAgent);
             }
         }
+        private bool mBlockingJavaWindow = false;
+        [IsSerializedForLocalRepository]
         public bool BlockingJavaWindow
         {
             get
             {
-                bool value = false;
-                bool.TryParse(GetOrCreateInputParam(nameof(BlockingJavaWindow)).Value, out value);
-                return value;
+                return mBlockingJavaWindow;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(BlockingJavaWindow), value.ToString());
-                OnPropertyChanged(nameof(BlockingJavaWindow));
+                mBlockingJavaWindow = value;
+                OnPropertyChanged(Fields.BlockingJavaWindow);
             }
         }
+        string mJavaAgentPath = string.Empty;
         string mJavaAgentPath_Calc = string.Empty;
+        [IsSerializedForLocalRepository]
         public string JavaAgentPath//contains the Ginger Agent jars Folder path in case user do not want to use the defualt folder
         {
             get
             {
-                return GetOrCreateInputParam(nameof(JavaAgentPath)).Value;
+                return mJavaAgentPath;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(JavaAgentPath), value);
-                OnPropertyChanged(nameof(JavaAgentPath));
+                mJavaAgentPath = value;
+                OnPropertyChanged(Fields.JavaAgentPath);
             }
         }
 
+        string mPort = string.Empty;
         string mPort_Calc = string.Empty;
+        [IsSerializedForLocalRepository]
         public string Port //the port to configure the Ginger Agent to listen on
         {
             get
             {
-                return GetOrCreateInputParam(nameof(Port), "8888").Value;
+                if (mPort == string.Empty)//backward support
+                {
+                    if (InputValues.Where(x => x.Param == "Port" && x.Value != string.Empty).FirstOrDefault() != null)
+                        mPort = GetInputParamValue("Port");
+                    else
+                        mPort = "8888";
+                }
+                return mPort;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(Port), value);
-                OnPropertyChanged(nameof(Port));
+                mPort = value;
+                OnPropertyChanged(Fields.Port);
             }
         }
 
+        private bool mShowAgent = true;
+        [IsSerializedForLocalRepository(true)]
         public bool ShowAgent //flag to determine if to show Ginger Agent Console
         {
             get
             {
-                bool value = true;
-                bool.TryParse(GetOrCreateInputParam(nameof(ShowAgent), value.ToString()).Value, out value);
-                return value;
+                return mShowAgent;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(ShowAgent), value.ToString());
+                mShowAgent = value;
                 OnPropertyChanged(nameof(ShowAgent));
             }
         }
 
         //------------------- Wait for Java application window args 
+        private bool mWaitForWindowWhenDoingLaunch = false;
+        [IsSerializedForLocalRepository]
         public bool WaitForWindowWhenDoingLaunch //flag to determine if to wait for java window application
         {
             get
             {
-                bool value;
-                bool.TryParse(GetOrCreateInputParam(nameof(WaitForWindowWhenDoingLaunch)).Value, out value);
-                return value;
+                return mWaitForWindowWhenDoingLaunch;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(WaitForWindowWhenDoingLaunch), value.ToString());
-                OnPropertyChanged(nameof(WaitForWindowWhenDoingLaunch));
+                mWaitForWindowWhenDoingLaunch = value;
+                OnPropertyChanged(Fields.WaitForWindowWhenDoingLaunch);
             }
         }
 
+        private string mWaitForWindowTitle = "Login";
         string mWaitForWindowTitle_Calc = string.Empty;
 
+        [IsSerializedForLocalRepository]
         public string WaitForWindowTitle //the title of the Java application to wait for
         {
             get
             {
-                return GetOrCreateInputParam(nameof(WaitForWindowTitle), "Login").Value;
+                return mWaitForWindowTitle;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(WaitForWindowTitle), value);
-                OnPropertyChanged(nameof(WaitForWindowTitle));
+                mWaitForWindowTitle = value;
+                OnPropertyChanged(Fields.WaitForWindowTitle);
             }
         }
 
         int mWaitForWindowTitleMaxTime_Calc_int = 60;
+        string mWaitForWindowTitleMaxTime = "60";
         string mWaitForWindowTitleMaxTime_Calc = string.Empty;
+        [IsSerializedForLocalRepository]
         public string WaitForWindowTitleMaxTime //the max time in seconds to wait for the window to load
         {
             get
             {
-                return GetOrCreateInputParam(nameof(WaitForWindowTitleMaxTime), "60").Value;
+                return mWaitForWindowTitleMaxTime;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(WaitForWindowTitleMaxTime), value);
-                OnPropertyChanged(nameof(WaitForWindowTitleMaxTime));
+                mWaitForWindowTitleMaxTime = value;
+                OnPropertyChanged(Fields.WaitForWindowTitleMaxTime);
             }
         }
 
         private int mAttachAgentProcessSyncTime_Calc_int = 120;
+        private string mAttachAgentProcessSyncTime = "120";
         private string mAttachAgentProcessSyncTime_Calc = string.Empty;
+        [IsSerializedForLocalRepository]
         public string AttachAgentProcessSyncTime //the max time in seconds to wait for the window to load
         {
             get
             {
-                return GetOrCreateInputParam(nameof(AttachAgentProcessSyncTime), "120").Value;
+                return mAttachAgentProcessSyncTime;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(AttachAgentProcessSyncTime), value);
-                OnPropertyChanged(nameof(AttachAgentProcessSyncTime));
-
+                mAttachAgentProcessSyncTime = value;
+                OnPropertyChanged(Fields.AttachAgentProcessSyncTime);
             }
         }
 
@@ -313,12 +336,12 @@ namespace GingerCore.Actions
             //validate the arguments
             if (!ValidateArguments()) return;
 
-            if (LaunchJavaApplication)
+            if (mLaunchJavaApplication)
             {
                 if (!PerformLaunchJavaApplication()) return;
             }
 
-            if (LaunchWithAgent)
+            if (mLaunchWithAgent)
             {
                 try
                 {
@@ -344,17 +367,17 @@ namespace GingerCore.Actions
 
                     mAttachAgentCancellationToken = new CancellationTokenSource();
                     mAttachAgentTask = Task.Run(() =>
-                       {
-                           mProcessIDForAttach = -1;
-                           if (!PerformAttachGingerAgent()) return;
+                    {
+                        mProcessIDForAttach = -1;
+                        if (!PerformAttachGingerAgent()) return;
 
-                           if (mPort_Calc.Equals(Fields.DynamicPortPlaceHolder) &&
-                               mPortValueAutoResetEvent != null)
-                           {
-                               mPortValueAutoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
-                           }
-                           AddOrUpdateReturnParamActual("Port", mPort_Calc);
-                       }, mAttachAgentCancellationToken.Token);
+                        if (mPort_Calc.Equals(Fields.DynamicPortPlaceHolder) &&
+                            mPortValueAutoResetEvent != null)
+                        {
+                            mPortValueAutoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
+                        }
+                        AddOrUpdateReturnParamActual("Port", mPort_Calc);
+                    }, mAttachAgentCancellationToken.Token);
 
                     mAttachAgentTask.Wait();
                     //Wait Max 30 secs for Attach agent to attach the jar or process to exit
@@ -409,7 +432,7 @@ namespace GingerCore.Actions
             ePortConfigType portConfigType = (ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam);
             if (portConfigType == ePortConfigType.Manual)
             {
-                mPort_Calc = CalculateValue(Port);
+                mPort_Calc = CalculateValue(mPort);
             }
             else
             {
@@ -427,7 +450,7 @@ namespace GingerCore.Actions
         {
             try
             {
-                mJavaWSEXEPath_Calc = CalculateValue(JavaWSEXEPath);
+                mJavaWSEXEPath_Calc = CalculateValue(mJavaWSEXEPath);
                 if (string.IsNullOrEmpty(mJavaWSEXEPath_Calc))
                 {
                     mJavaWSEXEPath_Calc = CommonLib.GetJavaHome();
@@ -437,17 +460,17 @@ namespace GingerCore.Actions
                     mJavaWSEXEPath_Calc = Path.Combine(mJavaWSEXEPath_Calc, @"bin");
                 }
 
-                mURL_Calc = CalculateValue(URL);
+                mURL_Calc = CalculateValue(mURL);
 
-                mJavaAgentPath_Calc = CalculateValue(JavaAgentPath);
+                mJavaAgentPath_Calc = CalculateValue(mJavaAgentPath);
                 if (string.IsNullOrEmpty(mJavaAgentPath_Calc))
                     mJavaAgentPath_Calc = GetGingerAgentsDefaultFolder();
 
                 CalculatePortValue();
 
-                mWaitForWindowTitle_Calc = CalculateValue(WaitForWindowTitle);
-                mWaitForWindowTitleMaxTime_Calc = CalculateValue(WaitForWindowTitleMaxTime);
-                mAttachAgentProcessSyncTime_Calc = CalculateValue(AttachAgentProcessSyncTime);
+                mWaitForWindowTitle_Calc = CalculateValue(mWaitForWindowTitle);
+                mWaitForWindowTitleMaxTime_Calc = CalculateValue(mWaitForWindowTitleMaxTime);
+                mAttachAgentProcessSyncTime_Calc = CalculateValue(mAttachAgentProcessSyncTime);
                 return true;
             }
             catch (Exception ex)
@@ -461,7 +484,7 @@ namespace GingerCore.Actions
         {
             try
             {
-                if (LaunchJavaApplication == false && LaunchWithAgent == false)
+                if (mLaunchJavaApplication == false && mLaunchWithAgent == false)
                 {
                     Error = "No action to perform was selected.";
                     return false;
@@ -473,7 +496,7 @@ namespace GingerCore.Actions
                     return false;
                 }
 
-                if (LaunchJavaApplication == true)
+                if (mLaunchJavaApplication == true)
                 {
                     bool isValidURL = SetURLExtensionType(mURL_Calc);
                     if (!isValidURL)
@@ -483,7 +506,7 @@ namespace GingerCore.Actions
                     }
                 }
 
-                if ((LaunchJavaApplication == true && WaitForWindowWhenDoingLaunch == true) || LaunchWithAgent == true)
+                if ((mLaunchJavaApplication == true && WaitForWindowWhenDoingLaunch == true) || mLaunchWithAgent == true)
                 {
                     if (string.IsNullOrEmpty(mWaitForWindowTitle_Calc))
                     {
@@ -498,7 +521,7 @@ namespace GingerCore.Actions
                     }
                 }
 
-                if (LaunchWithAgent == true)
+                if (mLaunchWithAgent == true)
                 {
                     if (string.IsNullOrEmpty(mAttachAgentProcessSyncTime_Calc) || int.TryParse(mAttachAgentProcessSyncTime_Calc, out mAttachAgentProcessSyncTime_Calc_int) == false)
                     {
@@ -646,7 +669,7 @@ namespace GingerCore.Actions
                 if (String.IsNullOrEmpty(Error) != true)
                     return false;
 
-                if (WaitForWindowWhenDoingLaunch && !LaunchWithAgent) // If wait for window is true and attach agent is false we wait for window to load. Else wait will be done when doing attach
+                if (mWaitForWindowWhenDoingLaunch && !mLaunchWithAgent) // If wait for window is true and attach agent is false we wait for window to load. Else wait will be done when doing attach
                 {
                     if (WaitForAppWindowTitle() == false)
                     {
@@ -823,7 +846,7 @@ namespace GingerCore.Actions
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, string.Concat("Error when checking window with processId: ", processId), ex);
             }

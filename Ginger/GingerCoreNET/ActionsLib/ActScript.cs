@@ -78,67 +78,25 @@ namespace GingerCore.Actions
             SH,
             Other,
         }
-        public eScriptAct ScriptCommand 
-        {
-            get
-            {
-                return (eScriptAct)GetOrCreateInputParam<eScriptAct>(nameof(ScriptCommand), eScriptAct.Script);
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ScriptCommand), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public eScriptAct ScriptCommand { get; set; }
 
-        public string ScriptInterpreter 
-        {
-            get
-            {
-                return GetOrCreateInputParam(nameof(ScriptInterpreter)).Value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ScriptInterpreter), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public string ScriptInterpreter { get; set; }
 
-        public eScriptInterpreterType ScriptInterpreterType 
-        {
-            get
-            {
-                return (eScriptInterpreterType)GetOrCreateInputParam<eScriptInterpreterType>(nameof(ScriptInterpreterType), eScriptInterpreterType.VBS);
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ScriptInterpreterType), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public eScriptInterpreterType ScriptInterpreterType { get; set; }
 
 
+        [IsSerializedForLocalRepository]
         public string ScriptName
         {
-            get
-            {
-                return GetOrCreateInputParam(nameof(ScriptName)).Value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ScriptName), value.ToString());
-            }
+            get; set;
         }
 
 
-        public string ScriptPath 
-        {
-            get
-            {
-                return GetOrCreateInputParam(nameof(ScriptPath)).Value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ScriptPath), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public string ScriptPath { get; set; }
 
         string DataBuffer = "";
         string ErrorBuffer = "";
@@ -226,7 +184,7 @@ namespace GingerCore.Actions
             }
             else
             {
-                if(Directory.Exists(Path.Combine(SolutionFolder, "Documents", "scripts")))
+                if (Directory.Exists(Path.Combine(SolutionFolder, "Documents", "scripts")))
                 {
                     p.StartInfo.WorkingDirectory = Path.Combine(SolutionFolder, "Documents", "scripts");
                 }
@@ -248,7 +206,7 @@ namespace GingerCore.Actions
                     }
                     else if (ScriptInterpreterType == eScriptInterpreterType.SH)
                     {
-                        string filePath = Path.Combine(p.StartInfo.WorkingDirectory,ScriptName);
+                        string filePath = Path.Combine(p.StartInfo.WorkingDirectory, ScriptName);
                         p.StartInfo.Arguments = filePath + Params;
                     }
                     else if (ScriptInterpreter != null && ScriptInterpreter.Contains("cmd.exe"))

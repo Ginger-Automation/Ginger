@@ -180,145 +180,39 @@ namespace GingerCore.Actions
             OnColNameWhereColName
         }
 
-        public eRunColSelectorValue ColSelectorValue
-        {
-            get
-            {
-                return (eRunColSelectorValue)GetOrCreateInputParam<eRunColSelectorValue>(nameof(ColSelectorValue), eRunColSelectorValue.ColTitle);
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ColSelectorValue), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public eRunColSelectorValue ColSelectorValue { get; set; }
+        
+        [IsSerializedForLocalRepository]
+        public eRunColPropertyValue WhereProperty { get; set; }
 
-        public eRunColPropertyValue WhereProperty
-        {
-            get
-            {
-                return (eRunColPropertyValue)GetOrCreateInputParam<eRunColPropertyValue>(nameof(WhereProperty), eRunColPropertyValue.Value);
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(WhereProperty), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public eRunColOperator WhereOperator { get; set; }
 
-        public eRunColOperator WhereOperator
-        {
-            get
-            {
-                return (eRunColOperator)GetOrCreateInputParam<eRunColOperator>(nameof(WhereOperator), eRunColOperator.Equals);
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(WhereOperator), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public eTableAction ControlAction { get; set; }
 
-        public eTableAction ControlAction
-        {
-            get
-            {
-                return (eTableAction)GetOrCreateInputParam<eTableAction>(nameof(ControlAction), eTableAction.SetValue);
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ControlAction), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public eRunActionOn RunActionOn { get; set; }
 
-        public eRunActionOn RunActionOn
-        {
-            get
-            {
-                return (eRunActionOn)GetOrCreateInputParam<eRunActionOn>(nameof(RunActionOn), eRunActionOn.OnCellRowNumColNum);
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(RunActionOn), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public bool ByRowNum { get; set; }
 
-        public bool ByRowNum
-        {
-            get
-            {
-                bool value = false;
-                bool.TryParse(GetOrCreateInputParam(nameof(ByRowNum)).Value, out value);
-                return value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ByRowNum), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public bool ByRandRow { get; set; }
 
-        public bool ByRandRow
-        {
-            get
-            {
-                bool value = false;
-                bool.TryParse(GetOrCreateInputParam(nameof(ByRandRow)).Value, out value);
-                return value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ByRandRow), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public bool BySelectedRow { get; set; }
 
-        public bool BySelectedRow
-        {
-            get
-            {
-                bool value = false;
-                bool.TryParse(GetOrCreateInputParam(nameof(BySelectedRow)).Value, out value);
-                return value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(BySelectedRow), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public bool ByWhere { get; set; }
 
-        public bool ByWhere
-        {
-            get
-            {
-                bool value = false;
-                bool.TryParse(GetOrCreateInputParam(nameof(ByWhere)).Value, out value);
-                return value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(ByWhere), value.ToString());
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public eRunColSelectorValue WhereColSelector { get; set; }
 
-        public eRunColSelectorValue WhereColSelector
-        {
-            get
-            {
-                return (eRunColSelectorValue)GetOrCreateInputParam<eRunColSelectorValue>(nameof(WhereColSelector), eRunColSelectorValue.ColTitle);
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(WhereColSelector), value.ToString());
-            }
-        }
-
-        public string WhereColumnTitle
-        {
-            get
-            {
-                return GetOrCreateInputParam(nameof(WhereColumnTitle)).Value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(WhereColumnTitle), value);
-            }
-        }
+        [IsSerializedForLocalRepository]
+        public string WhereColumnTitle { get; set; }
+        
 
         public string WhereColumnValue
         {
@@ -343,17 +237,10 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue("ColSelectorValue", value);
             }
         }
-        public string LocateColTitle
-        {
-            get
-            {
-                return GetOrCreateInputParam(nameof(LocateColTitle)).Value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(LocateColTitle), value);
-            }
-        }
+
+        [IsSerializedForLocalRepository]
+        public string LocateColTitle { get; set; }
+        
         public string LocateRowType
         {
             get
