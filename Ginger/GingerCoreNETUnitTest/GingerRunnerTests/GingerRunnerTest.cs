@@ -115,8 +115,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             SR.Open(path);
             WorkSpace.Instance.Solution = solution;
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder;
+            WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
 
-            
         }
 
         [ClassCleanup]
