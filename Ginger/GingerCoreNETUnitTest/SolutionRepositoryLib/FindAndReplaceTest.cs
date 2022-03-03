@@ -257,7 +257,7 @@ namespace UnitTests.NonUITests
             FindFieldsFromAllActionsOnBusinessFlowsList(foundItemsList, ValuesToFind, mSearchConfig1);
 
             Assert.AreEqual(foundItemsList.Count, 1, "Found items count");
-            Assert.AreEqual(foundItemsList[0].FieldName, "VariableName", "Name Validation");
+            Assert.AreEqual(foundItemsList[0].ItemObjectName, "VariableName", "Name Validation");
             Assert.AreEqual(foundItemsList[0].FieldValue, "My Variable is VTFStringField", "Value Validation");
 
         }
