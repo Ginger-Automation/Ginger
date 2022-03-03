@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     }
                     if (!dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
                     {
-                        dtExcelTable.Columns.Add(RemoveSpecialCharactersInColumnHeader(headerRow.GetCell(c).ToString()));
+                        dtExcelTable.Columns.Add(GingerCoreNET.GeneralLib.General.RemoveSpecialCharactersInColumnHeader(headerRow.GetCell(c).ToString()).Trim());
                     }
                 }
                 var i = 1;
@@ -358,18 +358,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             mSheet = null;
             mWorkbook.Close();
             mWorkbook = null;
-        }
-        private string RemoveSpecialCharactersInColumnHeader(string columnHeader)
-        {
-            string specialCharactersToRemove = "./[]()";
-            foreach (char sc in specialCharactersToRemove)
-            {
-                if (columnHeader.Contains(sc.ToString()))
-                {
-                    columnHeader = columnHeader.Replace(sc.ToString(), string.Empty);
-                }
-            }
-            return columnHeader.Trim();
         }
     }
 }
