@@ -52,7 +52,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
     {
         static BusinessFlow mBF;
         static GingerRunner mGR;
-        static SolutionRepository SR;
         static Solution solution;
         static ProjEnvironment environment;
 
@@ -111,8 +110,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" +Path.DirectorySeparatorChar + "BasicSimple"));
             string solutionFile = System.IO.Path.Combine(path, @"Ginger.Solution.xml");
             solution = SolutionOperations.LoadSolution(solutionFile);
-            SR = GingerSolutionRepository.CreateGingerSolutionRepository();
-            SR.Open(path);
+            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+            WorkSpace.Instance.SolutionRepository.Open(path);
             WorkSpace.Instance.Solution = solution;
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder;
             WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
@@ -269,7 +268,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public void RunsetConfigBFVariablesTest()
         {
             //Arrange
-            ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList<BusinessFlow> bfList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
             BusinessFlow BF1 = bfList[0];
 
             ObservableList<Activity> activityList = BF1.Activities;
@@ -294,7 +293,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             bfToAdd.InstanceGuid = Guid.NewGuid();
             mGR.Executor.BusinessFlows.Add(bfToAdd);
 
-            WorkSpace.Instance.SolutionRepository = SR;
+            WorkSpace.Instance.SolutionRepository = WorkSpace.Instance.SolutionRepository;
 
             //Act
             //Changing initial value of 2nd BF from BusinessFlow Config 
@@ -364,7 +363,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public void DynamicRunetExecutionTest()
         {
             //Arrange
-            ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList<BusinessFlow> bfList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
             BusinessFlow BF1 = bfList[0];
 
             ObservableList<Activity> activityList = BF1.Activities;
@@ -389,7 +388,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGRForRunset.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
 
             mGRForRunset.Executor.BusinessFlows.Add(BF1);
-            WorkSpace.Instance.SolutionRepository = SR;
+            WorkSpace.Instance.SolutionRepository = WorkSpace.Instance.SolutionRepository;
 
             mGRForRunset.SpecificEnvironmentName = environment.Name;
             mGRForRunset.UseSpecificEnvironment = false;
@@ -571,7 +570,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             Context context = new Context();
 
-            ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList<BusinessFlow> bfList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
             BusinessFlow BF1 = bfList[0];
 
             ObservableList<Activity> activityList = BF1.Activities;
