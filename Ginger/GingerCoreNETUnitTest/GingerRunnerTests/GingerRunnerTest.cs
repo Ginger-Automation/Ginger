@@ -50,13 +50,20 @@ namespace UnitTests.NonUITests.GingerRunnerTests
     [Level1]
     public class GingerRunnerTest
     {
-        static BusinessFlow mBF;
-        static GingerRunner mGR;
-        static Solution solution;
-        static ProjEnvironment environment;
+        BusinessFlow mBF;
+        GingerRunner mGR;
+        SolutionRepository SR;
+        Solution solution;
+        ProjEnvironment environment;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
+        {
+
+        }
+
+        [TestInitialize]
+        public void TestInitialize()
         {
             mBF = new BusinessFlow();
             mBF.Name = "BF Test Fire Fox";
@@ -110,11 +117,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" +Path.DirectorySeparatorChar + "BasicSimple"));
             string solutionFile = System.IO.Path.Combine(path, @"Ginger.Solution.xml");
             solution = SolutionOperations.LoadSolution(solutionFile);
-            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-            WorkSpace.Instance.SolutionRepository.Open(path);
+            SR = GingerSolutionRepository.CreateGingerSolutionRepository();
+            SR.Open(path);
             WorkSpace.Instance.Solution = solution;
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder;
             WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
+            WorkSpace.Instance.SolutionRepository = SR;
 
         }
 
@@ -268,7 +276,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public void RunsetConfigBFVariablesTest()
         {
             //Arrange
-            ObservableList<BusinessFlow> bfList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
             BusinessFlow BF1 = bfList[0];
 
             ObservableList<Activity> activityList = BF1.Activities;
@@ -293,7 +301,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             bfToAdd.InstanceGuid = Guid.NewGuid();
             mGR.Executor.BusinessFlows.Add(bfToAdd);
 
-            WorkSpace.Instance.SolutionRepository = WorkSpace.Instance.SolutionRepository;
+            WorkSpace.Instance.SolutionRepository = SR;
 
             //Act
             //Changing initial value of 2nd BF from BusinessFlow Config 
@@ -363,7 +371,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public void DynamicRunetExecutionTest()
         {
             //Arrange
-            ObservableList<BusinessFlow> bfList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
             BusinessFlow BF1 = bfList[0];
 
             ObservableList<Activity> activityList = BF1.Activities;
@@ -388,7 +396,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGRForRunset.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
 
             mGRForRunset.Executor.BusinessFlows.Add(BF1);
-            WorkSpace.Instance.SolutionRepository = WorkSpace.Instance.SolutionRepository;
+            WorkSpace.Instance.SolutionRepository = SR;
 
             mGRForRunset.SpecificEnvironmentName = environment.Name;
             mGRForRunset.UseSpecificEnvironment = false;
@@ -570,7 +578,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             Context context = new Context();
 
-            ObservableList<BusinessFlow> bfList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
             BusinessFlow BF1 = bfList[0];
 
             ObservableList<Activity> activityList = BF1.Activities;
