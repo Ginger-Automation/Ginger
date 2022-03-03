@@ -34,6 +34,7 @@ using Ginger.Run;
 using System.IO;
 using Amdocs.Ginger.CoreNET.Repository;
 using GingerCoreNETUnitTest.RunTestslib;
+using Ginger.SolutionGeneral;
 
 namespace GingerCoreNETUnitTests.ValueExpressionTest
 {
@@ -61,6 +62,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
             sol.ContainingFolderFullPath = TempRepositoryFolder;
             WorkSpace.Instance.Solution = sol;
+            if (WorkSpace.Instance.Solution.SolutionOperations == null)
+            {
+                WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
+            }
             mSolutionRepository.StopAllRepositoryFolderWatchers();
 
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder, "ExecutionResults");
