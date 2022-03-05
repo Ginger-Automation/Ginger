@@ -12,25 +12,21 @@
     "Runners": [
       {
         "Name": "Virtual Runner",
+        "Exist": false,
         "OnFailureRunOption": "ContinueToRunall",
         "BusinessFlows": [
           {
             "Name": "Flow 1",
-            "Active": true
+            "Exist": true,
+            "Active": true,
+            "SharedActivities": [
+              {
+                "SharedActivityName": "Test Activity"
+              }
+            ]
           },
           {
-            "Name": "Flow_D",
-            "Exist": false,
-            "Active": true
-          }
-        ]
-      },
-      {
-        "Name": "Virtual Runner Flows With Shared Activities",
-        "OnFailureRunOption": "ContinueToRunall",
-        "BusinessFlows": [
-          {
-            "Name": "Flow_D",
+            "Name": "Virtual BF",
             "Exist": false,
             "Active": true,
             "SharedActivities": [

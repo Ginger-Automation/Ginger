@@ -37,7 +37,7 @@
             ]
           },
           {
-            "Name": "Flow_D",
+            "Name": "Virtual Business Flow",
             "Exist": false,
             "ID": "86ad108b-bddc-4cce-ba17-c8bb50fe2c66",
             "Active": true,
@@ -57,7 +57,7 @@
         "BusinessFlows": [
           {
             "Name": "Flow_D",
-            "Exist": false,
+            "Exist": true,
             "Active": true,
             "SharedActivities": [
               {
