@@ -273,6 +273,57 @@ namespace Amdocs.Ginger.CoreNET
         //    return commandExecutor;
         //}
 
+        //private DriverOptions GetCapabilities()
+        //{
+        //    //see http://appium.io/slate/en/master/?csharp#appium-server-capabilities for full list of capabilities values
+        //    mDefaultURL = null;
+        //    DriverOptions driverOptions = new AppiumOptions();
+
+        //    //User customized capabilities
+        //    foreach (DriverConfigParam UserCapability in AppiumCapabilities)
+        //    {
+        //        if (String.IsNullOrWhiteSpace(UserCapability.Parameter))
+        //        {
+        //            continue;
+        //        }
+
+        //        if (UserCapability.Parameter.ToLower().Trim() == "defaulturl")
+        //        {
+        //            mDefaultURL = UserCapability.Value;
+        //            continue;
+        //        }
+
+        //        bool boolValue;
+        //        int intValue = 0;
+        //        if (bool.TryParse(UserCapability.Value, out boolValue))
+        //        {
+        //            driverOptions.AddAdditionalCapability(UserCapability.Parameter, boolValue);
+        //        }
+        //        else if (int.TryParse(UserCapability.Value, out intValue))
+        //        {
+        //            driverOptions.AddAdditionalCapability(UserCapability.Parameter, intValue);
+        //        }
+        //        else if (UserCapability.Value.Contains("{"))
+        //        {
+        //            try
+        //            {
+        //                JObject json = JObject.Parse(UserCapability.Value);
+        //                driverOptions.AddAdditionalCapability(UserCapability.Parameter, json);//for Json value to work properly, need to convert it into specific object type like: json.ToObject<selector>());
+        //            }
+        //            catch (Exception)
+        //            {
+        //                driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
+        //        }
+        //    }
+
+        //    return driverOptions;
+        //}
+
         private DriverOptions GetCapabilities()
         {
             //see http://appium.io/slate/en/master/?csharp#appium-server-capabilities for full list of capabilities values
