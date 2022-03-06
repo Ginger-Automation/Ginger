@@ -454,7 +454,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     {
                         ALMUserConfig userProfileAlmConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == solutionAlmConfig.AlmType);
                         AlmDetails almDetails = new AlmDetails();
-                        almDetails.ALMType = (eALMType)solutionAlmConfig.AlmType;
+                        almDetails.ALMType = solutionAlmConfig.AlmType.ToString();
                         if (solutionAlmConfig.JiraTestingALM != ALMIntegrationEnums.eTestingALMType.None)
                         {
                             almDetails.ALMSubType = solutionAlmConfig.JiraTestingALM.ToString();
@@ -545,6 +545,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runner.Name = gingerRunner.Name;
                 runner.ID = gingerRunner.Guid;
                 runner.Active = gingerRunner.Active;
+                runner.Exist = true;
                 if (gingerRunner.UseSpecificEnvironment == true && string.IsNullOrEmpty(gingerRunner.SpecificEnvironmentName) == false)
                 {
                     ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == gingerRunner.SpecificEnvironmentName).FirstOrDefault();
@@ -584,6 +585,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     businessFlow.Name = businessFlowRun.BusinessFlowName;
                     businessFlow.ID = businessFlowRun.BusinessFlowGuid;
                     businessFlow.InstanceID = businessFlowRun.BusinessFlowInstanceGuid;
+                    businessFlow.Exist = true;
 
                     if (gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid == businessFlowRun.BusinessFlowGuid).ToList().Count > 1)
                     {
@@ -760,7 +762,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                     AlmPublishOperationExecConfig operationConfigPublishToALM = new AlmPublishOperationExecConfig();
 
-                    operationConfigPublishToALM.ALMType = (eALMType)Enum.Parse(typeof(eALMType), publishToQCAction.PublishALMType, true);
+                    operationConfigPublishToALM.ALMType = publishToQCAction.PublishALMType;
                     operationConfigPublishToALM.Name = publishToQCAction.Name;
                     operationConfigPublishToALM.Condition = (OperationExecConfigBase.eOperationRunCondition?)publishToQCAction.Condition;
                     operationConfigPublishToALM.RunAt = (OperationExecConfigBase.eOperationRunAt?)publishToQCAction.RunAt;
@@ -783,7 +785,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             {
                                 almFieldConfig = new ALMFieldConfig()
                                 {
-                                    FieldParentType = (ALMFieldConfig.eALMItemType)Enum.Parse(typeof(ALMFieldConfig.eALMItemType), almField.ItemType, true),
+                                    FieldParentType = almField.ItemType,
                                     FieldID = almField.ID,
                                     FieldBackendName = almField.ExternalID,
                                     FieldFrontendName = almField.Name,
@@ -985,22 +987,36 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 new Tuple<string, string>(nameof(BusinessFlow.Name), businessFlowConfig.Name),
                                 WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
 
-                                businessFlowRun = FindItemByIDAndName<BusinessFlowRun>(
-                                                new Tuple<string, Guid?>(nameof(BusinessFlowRun.BusinessFlowGuid), bf.Guid),
-                                                new Tuple<string, string>(nameof(BusinessFlowRun.BusinessFlowName), bf.Name),
-                                                gingerRunner.BusinessFlowsRunList);
-
                                 List<BusinessFlowRun> businessFlowRunList = gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid == bf.Guid).ToList();
                                 if (businessFlowRunList == null || businessFlowRunList.Count == 0)
                                 {
                                     businessFlowRunList = gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowName == bf.Name).ToList();
                                 }
+
+                                /// Business Flow is already part of this Runner, fetch the existing BusinessFlowRun object from list of Runner's BusinessFlowRun
                                 if (businessFlowRunList != null && businessFlowRunList.Count > 0)
                                 {
                                     if (businessFlowConfig.Instance != null && businessFlowRunList.Count >= (int)businessFlowConfig.Instance)
                                     {
                                         businessFlowRun = businessFlowRunList[(int)businessFlowConfig.Instance - 1];
                                     }
+                                    else
+                                    {
+                                        businessFlowRun = FindItemByIDAndName<BusinessFlowRun>(
+                                                        new Tuple<string, Guid?>(nameof(BusinessFlowRun.BusinessFlowGuid), bf.Guid),
+                                                        new Tuple<string, string>(nameof(BusinessFlowRun.BusinessFlowName), bf.Name),
+                                                        gingerRunner.BusinessFlowsRunList);
+
+                                    }
+                                }
+                                /// Business Flow isn't part of this Runner but it does exist and found in the solution, create new BusinessFlowRun object for this BusinessFlow
+                                else
+                                {
+                                    businessFlowRun = new BusinessFlowRun();
+                                    businessFlowRun.BusinessFlowGuid = bf.Guid;
+                                    businessFlowRun.BusinessFlowName = bf.Name;
+                                    businessFlowRun.BusinessFlowIsActive = true;
+                                    businessFlowRun.BusinessFlowInstanceGuid = businessFlowConfig.InstanceID.HasValue ? businessFlowConfig.InstanceID.Value : Guid.NewGuid();
                                 }
 
                                 if (businessFlowRun == null)
@@ -1017,12 +1033,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             {
                                 /// Business Flow exist in the Solution but isn't already part of Runner/Runset
                                 /// Fetch BF & use the same for execution
-                                if (businessFlowConfig.ID != null || !string.IsNullOrEmpty(businessFlowConfig.Name))
+                                if (businessFlowConfig.ID != null)
                                 {
                                     bf = FindItemByIDAndName<BusinessFlow>(
                                      new Tuple<string, Guid?>(nameof(BusinessFlow.Guid), businessFlowConfig.ID),
                                      new Tuple<string, string>(nameof(BusinessFlow.Name), businessFlowConfig.Name),
                                      WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
+                                }
+                                else
+                                {
+                                    bf = new BusinessFlow() { Name = businessFlowConfig.Name };
+                                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(bf);
                                 }
 
                                 businessFlowRun = new BusinessFlowRun();
@@ -1045,7 +1066,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         Name = sharedActivity.SharedActivityName
                                     };
 
-                                    bf.ActivitiesGroups.Add(actGrp);
+                                    bf.AddActivitiesGroup(actGrp);
 
                                     var SolutionActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
@@ -1155,7 +1176,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 }
                             }
 
-                            if (!dynamicRunsetConfigs.Exist || (businessFlowConfig.Exist.HasValue && !businessFlowConfig.Exist.Value))
+                            if (!dynamicRunsetConfigs.Exist || (runnerConfig.Exist.HasValue && !runnerConfig.Exist.Value) 
+                                || (businessFlowConfig.Exist.HasValue && !businessFlowConfig.Exist.Value))
                             {
                                 gingerRunner.BusinessFlowsRunList.Add(businessFlowRun);
                             }
@@ -1378,7 +1400,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     {
                         AlmPublishOperationExecConfig publishToALMOperationExecConfig = runsetOperationConfig as AlmPublishOperationExecConfig;
 
-                        RunSetActionPublishToQC runSetActionPublishToQC = null;
+                        RunSetActionPublishToQC publishToQCRunSetOperation = null;
                         if (dynamicRunsetConfigs.Exist)
                         {
                             try
@@ -1389,7 +1411,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                                     runSetConfig.RunSetActions);
                                 if (oper != null)
                                 {
-                                    runSetActionPublishToQC = (RunSetActionPublishToQC)oper;
+                                    publishToQCRunSetOperation = (RunSetActionPublishToQC)oper;
                                 }
                             }
                             catch (Exception ex)
@@ -1398,45 +1420,45 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             }
                         }
 
-                        if (runSetActionPublishToQC == null)//Not Found
+                        if (publishToQCRunSetOperation == null)//Not Found
                         {
-                            runSetActionPublishToQC = new RunSetActionPublishToQC();
+                            publishToQCRunSetOperation = new RunSetActionPublishToQC();
                         }
 
-                        runSetActionPublishToQC.PublishALMType = publishToALMOperationExecConfig.ALMType.ToString();
+                        publishToQCRunSetOperation.PublishALMType = publishToALMOperationExecConfig.ALMType;
 
                         if (publishToALMOperationExecConfig.AlmTestSetLevel != null)
                         {
-                            runSetActionPublishToQC.ALMTestSetLevel = (GingerCore.ALM.PublishToALMConfig.eALMTestSetLevel)publishToALMOperationExecConfig.AlmTestSetLevel.Value;
+                            publishToQCRunSetOperation.ALMTestSetLevel = (GingerCore.ALM.PublishToALMConfig.eALMTestSetLevel)publishToALMOperationExecConfig.AlmTestSetLevel.Value;
                         }
 
                         if (publishToALMOperationExecConfig.ExportType != null)
                         {
-                            runSetActionPublishToQC.ExportType = (GingerCore.ALM.PublishToALMConfig.eExportType)publishToALMOperationExecConfig.ExportType.Value;
+                            publishToQCRunSetOperation.ExportType = (GingerCore.ALM.PublishToALMConfig.eExportType)publishToALMOperationExecConfig.ExportType.Value;
                         }
 
                         if (!string.IsNullOrEmpty(publishToALMOperationExecConfig.TestsetExportDestination))
                         {
-                            runSetActionPublishToQC.TestSetFolderDestination = publishToALMOperationExecConfig.TestsetExportDestination;
+                            publishToQCRunSetOperation.TestSetFolderDestination = publishToALMOperationExecConfig.TestsetExportDestination;
                         }
 
                         if (!string.IsNullOrEmpty(publishToALMOperationExecConfig.TestcasesExportDestination))
                         {
-                            runSetActionPublishToQC.TestCaseFolderDestination = publishToALMOperationExecConfig.TestcasesExportDestination;
+                            publishToQCRunSetOperation.TestCaseFolderDestination = publishToALMOperationExecConfig.TestcasesExportDestination;
                         }
 
                         if (publishToALMOperationExecConfig.TestCasesResultsToExport != null)
                         {
-                             runSetActionPublishToQC.FilterStatus = (GingerCore.ALM.FilterByStatus)publishToALMOperationExecConfig.TestCasesResultsToExport.Value;
+                             publishToQCRunSetOperation.FilterStatus = (GingerCore.ALM.FilterByStatus)publishToALMOperationExecConfig.TestCasesResultsToExport.Value;
                         }
 
-                        runSetActionPublishToQC.toAttachActivitiesGroupReport = publishToALMOperationExecConfig.AttachActivitiesGroupsReport;
+                        publishToQCRunSetOperation.toAttachActivitiesGroupReport = publishToALMOperationExecConfig.AttachActivitiesGroupsReport;
 
-                        runSetActionPublishToQC.isVariableInTCRunUsed = publishToALMOperationExecConfig.UseUserVariableInRunInstanceName;
+                        publishToQCRunSetOperation.isVariableInTCRunUsed = publishToALMOperationExecConfig.UseUserVariableInRunInstanceName;
 
                         if (!string.IsNullOrEmpty(publishToALMOperationExecConfig.UserVariableInRunInstance))
                         {
-                            runSetActionPublishToQC.VariableForTCRunName = publishToALMOperationExecConfig.UserVariableInRunInstance;
+                            publishToQCRunSetOperation.VariableForTCRunName = publishToALMOperationExecConfig.UserVariableInRunInstance;
                         }
 
                         if(publishToALMOperationExecConfig.AlmFieldsConfig != null && publishToALMOperationExecConfig.AlmFieldsConfig.Count > 0)
@@ -1445,11 +1467,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             {
                                 ExternalItemFieldBase extItemFieldBase;
 
-                                if (almFieldConfig.FieldParentType.HasValue)
+                                if (!string.IsNullOrEmpty(almFieldConfig.FieldParentType))
                                 {
                                     extItemFieldBase = new ExternalItemFieldBase()
                                     {
-                                        ItemType = almFieldConfig.FieldParentType.Value.ToString()
+                                        ItemType = almFieldConfig.FieldParentType
                                     };
                                 }
                                 else
@@ -1464,9 +1486,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 extItemFieldBase.Type = almFieldConfig.FieldType;
                                 extItemFieldBase.SelectedValue = almFieldConfig.FieldValue;
 
-                                runSetActionPublishToQC.AlmFields.Add(extItemFieldBase);
+                                publishToQCRunSetOperation.AlmFields.Add(extItemFieldBase);
                             }
                         }
+
+                        runSetOperation = publishToQCRunSetOperation;
                     }
 
                     //Generic settings

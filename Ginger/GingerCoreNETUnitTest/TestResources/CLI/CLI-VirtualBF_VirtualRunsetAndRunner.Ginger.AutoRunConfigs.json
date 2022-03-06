@@ -17,31 +17,22 @@
         "BusinessFlows": [
           {
             "Name": "Flow 1",
+            "Exist": false,
             "ID": "2db992cd-c5f7-43a6-beb6-cd4de10fece7",
-            "Active": true
-          },
-          {
-            "Name": "Flow_D",
-            "Exist": false,
-            "ID": "86ad108b-bddc-4cce-ba17-c8bb50fe2c66",
-            "Active": true
-          }
-        ]
-      },
-      {
-        "Name": "Virtual Runner Flows With Shared Activities",
-        "Exist": false,
-        "OnFailureRunOption": "ContinueToRunall",
-        "BusinessFlows": [
-          {
-            "Name": "Flow_D",
-            "Exist": false,
             "Active": true,
             "SharedActivities": [
               {
                 "SharedActivityName": "Test Activity",
                 "SharedActivityID": "bf285a86-6384-4b1f-acfb-e0c1b60eec12"
-              },
+              }
+            ]
+          },
+          {
+            "Name": "Flow_D",
+            "Exist": false,
+            "ID": "86ad108b-bddc-4cce-ba17-c8bb50fe2c66",
+            "Active": true,
+            "SharedActivities": [
               {
                 "SharedActivityName": "User Detail Activity",
                 "SharedActivityID": "01ee7e9c-4810-464d-872c-76cb1c0dda97"

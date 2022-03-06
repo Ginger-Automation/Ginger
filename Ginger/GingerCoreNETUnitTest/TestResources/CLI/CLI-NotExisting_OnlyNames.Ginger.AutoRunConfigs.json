@@ -22,6 +22,7 @@
         "BusinessFlows": [
           {
             "Name": "Calculator_Test",
+            "ID": "8d4572b1-0058-4bcd-8009-cf7f7be75d9c",
             "Instance": 1,
             "Active": true,
             "InputValues": [
@@ -39,10 +40,12 @@
           },
           {
             "Name": "Flow 1",
+            "ID": "2db992cd-c5f7-43a6-beb6-cd4de10fece7",
             "Active": true
           },
           {
             "Name": "Calculator_Test",
+            "ID": "8d4572b1-0058-4bcd-8009-cf7f7be75d9c",
             "Instance": 2,
             "Active": true,
             "InputValues": [
