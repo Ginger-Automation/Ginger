@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Repository;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.XML;
@@ -72,6 +73,10 @@ namespace UnitTests.NonUITests
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+            if (WorkSpace.Instance.Solution?.SolutionOperations == null)
+            {
+                WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
+            }
         }
 
         [ClassCleanup]
