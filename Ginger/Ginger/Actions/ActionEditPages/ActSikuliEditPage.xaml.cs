@@ -157,7 +157,7 @@ namespace Ginger.Actions
                 calculateValue = xPatternImageLocationTextBox.ValueTextBox.Text;
             }
             if (!string.IsNullOrEmpty(calculateValue)
-                && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculateValue)))
+                && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculateValue)))
             {
                 try
                 {

@@ -34,6 +34,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
 using GingerCore.Actions.WebServices;
 using Amdocs.Ginger.Common.GeneralLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Actions.REST
 {
@@ -692,7 +693,7 @@ namespace GingerCore.Actions.REST
             //{
             //    DirectoryPath = DirectoryPath.Replace(@"~\", SolutionFolder);
             //}
-            DirectoryPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DirectoryPath);
+            DirectoryPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DirectoryPath);
 
             DirectoryPath = Path.Combine(DirectoryPath,fileType);
 
@@ -769,7 +770,7 @@ namespace GingerCore.Actions.REST
         {
             string ReqString = string.Empty;
             //FileStream ReqStream = System.IO.File.OpenRead(TemplateFile.ValueForDriver.Replace(@"~\", this.SolutionFolder));
-            FileStream ReqStream = System.IO.File.OpenRead(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TemplateFile.ValueForDriver));
+            FileStream ReqStream = System.IO.File.OpenRead(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TemplateFile.ValueForDriver));
 
             using (StreamReader reader = new StreamReader(ReqStream))
             {

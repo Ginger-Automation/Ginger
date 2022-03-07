@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Repository;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.XML;
@@ -40,8 +41,7 @@ namespace UnitTests.NonUITests
     [TestClass]
     [Level3]
     public class NonDriverActionTest
-    {        
-
+    {
         static BusinessFlow mBF;
         static GingerRunner mGR;
         string Separator = Path.DirectorySeparatorChar.ToString();
@@ -72,6 +72,19 @@ namespace UnitTests.NonUITests
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+            
+            if (((Solution)mGR.Executor.CurrentSolution).SolutionOperations == null)
+            {
+                ((Solution)mGR.Executor.CurrentSolution).SolutionOperations = new SolutionOperations((Solution)mGR.Executor.CurrentSolution);
+            }
+            if (WorkSpace.Instance.Solution == null)
+            {
+                WorkSpace.Instance.Solution = (Solution)mGR.Executor.CurrentSolution;
+            }
+            if (WorkSpace.Instance.Solution.SolutionOperations == null)
+            {
+                WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
+            }
         }
 
         [ClassCleanup]

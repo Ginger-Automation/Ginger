@@ -128,7 +128,7 @@ namespace GingerCore.Actions
             string locatorImgFilePath;
 
             //locatorImgFilePath = LocatorImgFile.Replace("~\\", SolutionFolder);
-            locatorImgFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(LocatorImgFile);
+            locatorImgFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(LocatorImgFile);
 
             if (!File.Exists(LocatorImgFile))
             {

@@ -111,7 +111,7 @@ namespace Ginger.Actions
                 if (await UserKeepsTyping() || QueryFile.ValueTextBox.Text == null) return;
             }
             string FileName = QueryFile.ValueTextBox.Text;
-            if (FileName != "" && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName)))
+            if (FileName != "" && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FileName)))
             {  
                 parseScriptHeader(FileName);  
             }
@@ -120,7 +120,7 @@ namespace Ginger.Actions
         public void parseScriptHeader(string FileName)
         {
             mAct.QueryParams.Clear();
-            string[] script = File.ReadAllLines(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName));
+            string[] script = File.ReadAllLines(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FileName));
 
             foreach (string line in script)
             {

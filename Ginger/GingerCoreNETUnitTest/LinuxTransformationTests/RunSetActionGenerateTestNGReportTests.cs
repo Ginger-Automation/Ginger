@@ -82,7 +82,10 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             SR.Open(path);
             WorkSpace.Instance.Solution = solution;
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder;
-
+            if (WorkSpace.Instance.Solution.SolutionOperations == null)
+            {
+                WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
+            }
         }
         [TestMethod]
         [Timeout(60000)]
