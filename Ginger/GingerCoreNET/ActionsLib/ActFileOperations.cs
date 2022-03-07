@@ -24,6 +24,7 @@ using GingerCore.Helpers;
 using System.IO;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using amdocs.ginger.GingerCoreNET;
 //This class is for dummy act - good for agile, and to be replace later on when real
 //  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
@@ -120,7 +121,7 @@ namespace GingerCore.Actions
             bool IsSorcePathRelative = false;
             if (calculatedSourceFilePath.StartsWith(@"~"))
             {
-                calculatedSourceFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedSourceFilePath);
+                calculatedSourceFilePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedSourceFilePath);
                 IsSorcePathRelative = true;
             }
 
@@ -336,7 +337,7 @@ namespace GingerCore.Actions
         {
             string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
 
-            calculatedDestinationPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedDestinationPath);
+            calculatedDestinationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath);
             DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
             if (String.IsNullOrEmpty(DestinationFolder))
             {

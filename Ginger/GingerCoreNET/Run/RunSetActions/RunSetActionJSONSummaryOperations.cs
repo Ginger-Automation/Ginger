@@ -41,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
             string json = WorkSpace.Instance.RunsetExecutor.CreateSummary();
             string timestamp = DateTime.Now.ToString("MMddyyyy_HHmmss");
 
-            string jsonSummaryFolder = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+            string jsonSummaryFolder = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
             if (!string.IsNullOrEmpty(WorkSpace.Instance.TestArtifactsFolder))
             {
                 jsonSummaryFolder = WorkSpace.Instance.TestArtifactsFolder;

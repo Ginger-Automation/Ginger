@@ -198,7 +198,7 @@ namespace GingerCore.Actions
                 {
                     Screen sekuliScreen = new Screen();
 
-                    Pattern sikuliPattern = new Pattern(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(PatternPath));
+                    Pattern sikuliPattern = new Pattern(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(PatternPath));
 
                     System.Threading.Tasks.Task.Run(() => SetFocusToSelectedApplicationInstance());
 

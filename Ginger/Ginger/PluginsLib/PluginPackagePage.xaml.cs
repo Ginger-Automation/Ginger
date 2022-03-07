@@ -52,7 +52,7 @@ namespace Ginger.PlugInsWindows
             xPlugInPackageVersionLabel.BindControl(mPluginPackage, nameof(PluginPackage.PluginPackageVersion));
             xPlugInFolderLabel.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
 
-            mPluginPackage.LoadServicesFromJSON();
+            mPluginPackage.PluginPackageOperations.LoadServicesFromJSON();
             SetServicesGrid();
             SetActionsGrid();
             // SetTextEditorGrid();
@@ -72,7 +72,7 @@ namespace Ginger.PlugInsWindows
 
             xServicesGrid.SetAllColumnsDefaultView(view);
             xServicesGrid.InitViewItems();
-            xServicesGrid.DataSourceList = mPluginPackage.Services;
+            xServicesGrid.DataSourceList = ((PluginPackageOperations)mPluginPackage.PluginPackageOperations).Services;
 
 
         }

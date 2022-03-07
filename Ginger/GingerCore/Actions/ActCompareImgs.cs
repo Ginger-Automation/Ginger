@@ -170,7 +170,7 @@ namespace GingerCore.Actions
             //    ExpectedImgFile1 = ExpectedImgFile1.Replace("~\\", "");
             //    ExpectedImgFile1 = System.IO.Path.Combine(SolutionFolder1, ExpectedImgFile1);
             //}
-            ExpectedImgFile1 = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExpectedImgFile1);
+            ExpectedImgFile1 = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ExpectedImgFile1);
 
             if (WindowName == "FULLSCREEN")
             {
