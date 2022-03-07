@@ -22,12 +22,7 @@
         "BusinessFlows": [
           {
             "Name": "Flow 1",
-            "Active": true,
-            "SharedActivities": [
-              {
-                "SharedActivityName": "User Detail Activity"
-              }
-            ]
+            "Active": true
           },
           {
             "Name": "Flow_D",
@@ -37,23 +32,6 @@
             "SharedActivities": [
               {
                 "SharedActivityName": "Test Activity"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "Name": "Virtual Runner Flows With Shared Activities",
-        "Exist": false,
-        "OnFailureRunOption": "ContinueToRunall",
-        "BusinessFlows": [
-          {
-            "Name": "Flow_D",
-            "Exist": false,
-            "Active": true,
-            "SharedActivities": [
-              {
-                "SharedActivityName": "User Detail Activity"
               }
             ]
           }

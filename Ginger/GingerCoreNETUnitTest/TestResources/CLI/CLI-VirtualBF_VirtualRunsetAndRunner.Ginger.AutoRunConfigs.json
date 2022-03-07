@@ -17,15 +17,9 @@
         "BusinessFlows": [
           {
             "Name": "Flow 1",
-            "Exist": false,
+            "Exist": true,
             "ID": "2db992cd-c5f7-43a6-beb6-cd4de10fece7",
-            "Active": true,
-            "SharedActivities": [
-              {
-                "SharedActivityName": "Test Activity",
-                "SharedActivityID": "bf285a86-6384-4b1f-acfb-e0c1b60eec12"
-              }
-            ]
+            "Active": true
           },
           {
             "Name": "Flow_D",

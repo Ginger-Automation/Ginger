@@ -16,13 +16,8 @@
         "BusinessFlows": [
           {
             "Name": "Flow 1",
-            "Exist": false,
-            "Active": true,
-            "SharedActivities": [
-              {
-                "SharedActivityName": "Test Activity"
-              }
-            ]
+            "Exist": true,
+            "Active": true
           },
           {
             "Name": "Flow_D",

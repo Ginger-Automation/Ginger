@@ -124,12 +124,6 @@
     <None Update="TestResources\CLI\CLI-CheckExecutionIDSet.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\CLI\CLI-VirtualBF_VirtualRunset_ExistingRunner_OnlyName.Ginger.AutoRunConfigs.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\CLI\CLI-VirtualBF_VirtualRunset_ExistingRunner.Ginger.AutoRunConfigs.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="TestResources\CLI\CLI-VirtualBF_VirtualRunsetAndRunner_OnlyName.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
