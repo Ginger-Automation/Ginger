@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     }
                     if (!dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
                     {
-                        dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString().Trim());
+                        dtExcelTable.Columns.Add(GingerCoreNET.GeneralLib.General.RemoveSpecialCharactersInColumnHeader(headerRow.GetCell(c).ToString()).Trim());
                     }
                 }
                 var i = 1;
