@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.UIElement;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using OpenQA.Selenium;
 using System;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -32,5 +34,15 @@ namespace GingerCore.Actions.VisualTesting
         void ChangeAppWindowSize(int Width, int Height);
 
         Task<ElementInfo> GetElementAtPoint(long ptX, long ptY);
+
+        string GetApplitoolServerURL();
+
+        string GetApplitoolKey();
+
+        ePlatformType GetPlatform();
+
+        string GetEnvironment();
+
+        IWebDriver GetWebDriver();
     }
 }
