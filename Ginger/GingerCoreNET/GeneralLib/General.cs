@@ -444,6 +444,18 @@ namespace GingerCoreNET.GeneralLib
 
             return null;
         }
+        public static string RemoveSpecialCharactersInColumnHeader(string columnHeader)
+        {
+            string specialCharactersToRemove = "./[]()";
+            foreach (char sc in specialCharactersToRemove)
+            {
+                if (columnHeader.Contains(sc.ToString()))
+                {
+                    columnHeader = columnHeader.Replace(sc.ToString(), string.Empty);
+                }
+            }
+            return columnHeader;
+        }
     }
 
 }

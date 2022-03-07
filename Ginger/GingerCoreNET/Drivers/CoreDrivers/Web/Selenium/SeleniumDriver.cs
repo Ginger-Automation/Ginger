@@ -519,7 +519,7 @@ namespace GingerCore.Drivers
 
                         try
                         {
-                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));    
                         }
                         catch (Exception ex)
                         {
@@ -8372,6 +8372,27 @@ namespace GingerCore.Drivers
             {
                 options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Default;
             }
+        }
+
+
+        public string GetApplitoolServerURL()
+        {
+            return this.ApplitoolsServerUrl;
+        }
+
+        public string GetApplitoolKey()
+        {
+            return this.ApplitoolsViewKey;
+        }
+
+        public ePlatformType GetPlatform()
+        {
+            return this.Platform;
+        }
+
+        public string GetEnvironment()
+        {
+            return this.BusinessFlow.Environment;
         }
     }
 }

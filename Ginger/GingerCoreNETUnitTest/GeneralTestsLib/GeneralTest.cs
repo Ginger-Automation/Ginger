@@ -40,6 +40,17 @@ namespace GingerCoreNETUnitTests.GeneralTestsLib
         {
 
         }
+        [TestMethod]
+        public void RemoveSpecialCharactersInColumnHeader()
+        {
+            //Arrange
+            string stringWithSpecialCharactersToRemove = "First. Name";
+            //Act
+            string stringAfterRemoval = GingerCoreNET.GeneralLib.General.RemoveSpecialCharactersInColumnHeader(stringWithSpecialCharactersToRemove);
+
+            //Assert
+            Assert.AreEqual("First Name", stringAfterRemoval);
+        }
 
 
         // Put back after moving to .NET core 3
@@ -96,10 +107,10 @@ namespace GingerCoreNETUnitTests.GeneralTestsLib
         //        AssemblyName name = (from x in referencedAssemblies where x.Name == s select x).FirstOrDefault();                
         //        Assert.IsTrue(name != null, "Verify assembly ref exist - " + s);
         //    }
-            
-            
-            
+
+
+
         //}
-        
+
     }
 }

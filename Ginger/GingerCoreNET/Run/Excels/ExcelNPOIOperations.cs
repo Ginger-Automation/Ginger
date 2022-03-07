@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     }
                     if (!dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
                     {
-                        dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString().Trim());
+                        dtExcelTable.Columns.Add(GingerCoreNET.GeneralLib.General.RemoveSpecialCharactersInColumnHeader(headerRow.GetCell(c).ToString()).Trim());
                     }
                 }
                 var i = 1;
@@ -90,9 +90,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             switch(cellType)
             {
                 case CellType.Numeric:
-                    cellVal = DateUtil.IsCellDateFormatted(cell)
-                        ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
-                        : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
+                    cellVal = HandleNumericCellType(cell);
                     break;
                 case CellType.String:
                     cellVal = cell.StringCellValue;
@@ -358,6 +356,23 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             mSheet = null;
             mWorkbook.Close();
             mWorkbook = null;
+        }
+
+        private object HandleNumericCellType(ICell cell)
+        {
+            object cellVal;
+            if (cell.NumericCellValue.ToString().Length > 15 || String.Equals(cell.CellStyle.GetDataFormatString(),"General",StringComparison.OrdinalIgnoreCase))
+            {
+                cellVal = ((decimal)cell.NumericCellValue).ToString(CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                cellVal = DateUtil.IsCellDateFormatted(cell)
+                    ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
+                    : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
+            }
+
+            return cellVal;
         }
     }
 }
