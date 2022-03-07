@@ -30,6 +30,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace UnitTests.NonUITests
 {
@@ -41,7 +42,6 @@ namespace UnitTests.NonUITests
         static GingerRunner mGR;
         static Agent wsAgent;
         static WebServicesDriver mDriver = new WebServicesDriver(mBF);
-
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {            
@@ -62,6 +62,10 @@ namespace UnitTests.NonUITests
             ApplicationAgent mAG = new ApplicationAgent();
             mAG.Agent = wsAgent;
 
+            if (WorkSpace.Instance.Solution == null)
+            {
+                WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = Ginger.Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
+            }
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
 
@@ -170,6 +174,7 @@ namespace UnitTests.NonUITests
             
 
             mDriver.StartDriver();
+            mGR.RunInSimulationMode = true;
             mGR.Executor.RunRunner();
 
 
