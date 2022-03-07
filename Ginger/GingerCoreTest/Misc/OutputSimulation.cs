@@ -62,7 +62,7 @@ namespace UnitTests.NonUITests
             ApplicationAgent mAG = new ApplicationAgent();
             mAG.Agent = wsAgent;
 
-            if (WorkSpace.Instance.Solution == null)
+            if (WorkSpace.Instance.Solution != null)
             {
                 WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = Ginger.Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
             }
@@ -76,10 +76,9 @@ namespace UnitTests.NonUITests
 
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
-            mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             if (WorkSpace.Instance.Solution == null)
             {
-                WorkSpace.Instance.Solution = (Solution)mGR.Executor.CurrentSolution;
+                WorkSpace.Instance.Solution = new Solution();
             }
             if (WorkSpace.Instance.Solution.SolutionOperations == null)
             {
