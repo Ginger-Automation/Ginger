@@ -107,7 +107,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
 
             //Assert
             Assert.AreEqual(SelectedItemsListToImport.Count, 2);
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Applications Models\\POM Models\\Selenium Easy - Input Form Demo with Validations.Ginger.ApplicationPOMModel.xml"));
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Applications Models\\POM Models\\SeleniumDemoValid.Ginger.ApplicationPOMModel.xml"));
 
             Assert.AreEqual(VariableListToImport.Count, 1);
             Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarString"));
@@ -127,7 +127,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
 
             //Assert
             Assert.AreEqual(SelectedItemsListToImport.Count, 4);
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Applications Models\\POM Models\\Selenium Easy - Input Form Demo with Validations.Ginger.ApplicationPOMModel.xml"));
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Applications Models\\POM Models\\SeleniumDemoValid.Ginger.ApplicationPOMModel.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\Browser Action.Ginger.Action.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\UIElement Action.Ginger.Action.xml"));
 
@@ -151,7 +151,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
 
             //Assert
             Assert.AreEqual(SelectedItemsListToImport.Count, 12);
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\Applications Models\\POM Models\\Selenium Easy - Input Form Demo with Validations.Ginger.ApplicationPOMModel.xml"));
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\Applications Models\\POM Models\\SeleniumDemoValid.Ginger.ApplicationPOMModel.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\Browser Action.Ginger.Action.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\UIElement Action.Ginger.Action.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\SharedRepository\\Activities\\Activity 2.Ginger.Activity.xml"));
