@@ -496,7 +496,6 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
             else
             {
-                //JavaScriptSerializer serializer = new JavaScriptSerializer();
                 Dictionary<string, object> dictionary =
                     JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
                 return dictionary;
