@@ -80,7 +80,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(VariableName), value.ToString());
+                AddOrUpdateInputParamValue(nameof(VariableName), value);
             }
         }
 

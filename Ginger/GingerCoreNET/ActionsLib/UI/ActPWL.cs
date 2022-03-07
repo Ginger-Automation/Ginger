@@ -66,7 +66,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(OLocateValue), value.ToString());
+                AddOrUpdateInputParamValue(nameof(OLocateValue), value);
                 OnPropertyChanged(nameof(OLocateValue));
             }
         }

@@ -97,7 +97,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(AppendLineNumber), value.ToString());
+                AddOrUpdateInputParamValue(nameof(AppendLineNumber), value);
             }
         }
         private eTextFileActionMode mFileActionMode = eTextFileActionMode.Read;
