@@ -622,7 +622,7 @@
     <None Update="TestResources\Solutions\GlobalCrossSolution\Applications Models\POM Models\Facebook\Facebook.Ginger.ApplicationPOMModel.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\Solutions\GlobalCrossSolution\Applications Models\POM Models\Selenium Easy - Input Form Demo with Validations.Ginger.ApplicationPOMModel.xml">
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Applications Models\POM Models\SeleniumDemoValid.Ginger.ApplicationPOMModel.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\GlobalCrossSolution\BusinessFlows\API-Create Pet.Ginger.BusinessFlow.xml">

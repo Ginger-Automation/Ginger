@@ -894,6 +894,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     {
                         gingerRunner = new GingerRunner();
                         gingerRunner.Name = runnerConfig.Name;
+                        (runSetConfig).GingerRunners.Add(gingerRunner);
                     }
 
                     if (runnerConfig.Active.HasValue)
@@ -984,16 +985,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                     businessFlowRunList = gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowName == bf.Name).ToList();
                                 }
 
-                                /// Business Flow is already part of this Runner, fetch the existing BusinessFlowRun object from list of Runner's BusinessFlowRun
-                                if (businessFlowRunList.Count == 1)
+                                if (businessFlowRunList.Count > 0)
                                 {
-                                    businessFlowRun = businessFlowRunList[0];
-                                }
-                                else if (businessFlowRunList.Count > 1)
-                                {
-                                    if (businessFlowConfig.Instance != null && businessFlowRunList.Count >= (int)businessFlowConfig.Instance)
+                                    if (businessFlowConfig.Instance != null)
                                     {
-                                        businessFlowRun = businessFlowRunList[(int)businessFlowConfig.Instance - 1];
+                                        if (businessFlowRunList.Count >= (int)businessFlowConfig.Instance)
+                                        {
+                                            businessFlowRun = businessFlowRunList[(int)businessFlowConfig.Instance - 1];
+                                        }
                                     }
                                     else
                                     {
@@ -1039,6 +1038,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 businessFlowRun.BusinessFlowName = bf.Name;
                                 businessFlowRun.BusinessFlowIsActive = true;
                                 businessFlowRun.BusinessFlowInstanceGuid = businessFlowConfig.InstanceID.HasValue ? businessFlowConfig.InstanceID.Value : Guid.NewGuid();
+                                gingerRunner.BusinessFlowsRunList.Add(businessFlowRun);
                             }
                            
                             if (businessFlowConfig.Active != null)
@@ -1137,17 +1137,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                     }
                                 }
                             }
-
-                            if (!dynamicRunsetConfigs.Exist || (runnerConfig.Exist.HasValue && !runnerConfig.Exist.Value) 
-                                || (businessFlowConfig.Exist.HasValue && !businessFlowConfig.Exist.Value))
-                            {
-                                gingerRunner.BusinessFlowsRunList.Add(businessFlowRun);
-                            }
-                        }
-
-                        if (!dynamicRunsetConfigs.Exist || (runnerConfig.Exist.HasValue && !runnerConfig.Exist.Value))
-                        {
-                            (runSetConfig).GingerRunners.Add(gingerRunner);
                         }
                     }
                 }
