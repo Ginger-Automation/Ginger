@@ -185,7 +185,7 @@ namespace GingerCore.Actions
             }
             else
             {
-                if(Directory.Exists(Path.Combine(SolutionFolder, "Documents", "scripts")))
+                if (Directory.Exists(Path.Combine(SolutionFolder, "Documents", "scripts")))
                 {
                     p.StartInfo.WorkingDirectory = Path.Combine(SolutionFolder, "Documents", "scripts");
                 }
@@ -207,7 +207,7 @@ namespace GingerCore.Actions
                     }
                     else if (ScriptInterpreterType == eScriptInterpreterType.SH)
                     {
-                        string filePath = Path.Combine(p.StartInfo.WorkingDirectory,ScriptName);
+                        string filePath = Path.Combine(p.StartInfo.WorkingDirectory, ScriptName);
                         p.StartInfo.Arguments = filePath + Params;
                     }
                     else if (ScriptInterpreter != null && ScriptInterpreter.Contains("cmd.exe"))

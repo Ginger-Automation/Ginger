@@ -66,25 +66,51 @@ namespace GingerCore.Actions
         {
             UTF8, Unicode, UTF32, UTF7, ASCII, BigEndianUnicode
         }
-        [IsSerializedForLocalRepository]
-        public eTextFileEncodings TextFileEncoding { get; set; }
+        public eTextFileEncodings TextFileEncoding 
+        {
+            get
+            {
+                return (eTextFileEncodings)GetOrCreateInputParam<eTextFileEncodings>(nameof(TextFileEncoding), eTextFileEncodings.UTF8);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(TextFileEncoding), value.ToString());
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public eAppendAt AppendAt { get; set; }
+        public eAppendAt AppendAt 
+        {
+            get
+            {
+                return (eAppendAt)GetOrCreateInputParam<eAppendAt>(nameof(AppendAt), eAppendAt.End);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(AppendAt), value.ToString());
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public string AppendLineNumber { get; set; }
+        public string AppendLineNumber 
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(AppendLineNumber)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(AppendLineNumber), value);
+            }
+        }
         private eTextFileActionMode mFileActionMode = eTextFileActionMode.Read;
-        [IsSerializedForLocalRepository]
         public eTextFileActionMode FileActionMode
         {
             get
             {
-                return mFileActionMode;
+                return (eTextFileActionMode)GetOrCreateInputParam<eTextFileActionMode>(nameof(FileActionMode), eTextFileActionMode.Read);
             }
             set
             {
-                mFileActionMode = value;
+                AddOrUpdateInputParamValue(nameof(FileActionMode), value.ToString());
             }
         }
 

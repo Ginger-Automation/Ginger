@@ -183,11 +183,31 @@ namespace GingerCore.Actions
                 return setData == null ? setData : setData.Replace("\"", "'");
             }
         }
-        [IsSerializedForLocalRepository]
-        public eExcelActionType ExcelActionType { set; get; }
+        public eExcelActionType ExcelActionType
+        {
+            get
+            {
+                return (eExcelActionType)GetOrCreateInputParam<eExcelActionType>(nameof(ExcelActionType), eExcelActionType.ReadData);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ExcelActionType), value.ToString());
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public bool SelectAllRows { set; get; }
+        public bool SelectAllRows
+        {
+            get
+            {
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(SelectAllRows)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(SelectAllRows), value.ToString());
+            }
+        }
         public string ColMappingRules
         {
             get

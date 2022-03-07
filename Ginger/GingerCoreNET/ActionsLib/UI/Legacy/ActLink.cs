@@ -72,8 +72,17 @@ namespace GingerCore.Actions
             GetStyle = 24,
         }
 
-        [IsSerializedForLocalRepository]        
-        public eLinkAction LinkAction { get; set; }
+        public eLinkAction LinkAction
+        {
+            get
+            {
+                return (eLinkAction)GetOrCreateInputParam<eLinkAction>(nameof(LinkAction), eLinkAction.Click);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(LinkAction), value.ToString());
+            }
+        }
 
         public override String ToString()
         {            

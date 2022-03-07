@@ -62,8 +62,17 @@ namespace GingerCore.Actions
 
         public override string ActionDescription { get { return "UI Click On Point Action"; } }
 
-        [IsSerializedForLocalRepository]
-        public eUIAClickOnPointAction ActUIAClickOnPointAction { get; set; }
+        public eUIAClickOnPointAction ActUIAClickOnPointAction
+        {
+            get
+            {
+                return (eUIAClickOnPointAction)GetOrCreateInputParam<eUIAClickOnPointAction>(nameof(ActUIAClickOnPointAction), eUIAClickOnPointAction.ClickXY);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ActUIAClickOnPointAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

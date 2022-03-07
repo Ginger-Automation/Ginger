@@ -1,13 +1,10 @@
 #region License
 /*
 Copyright © 2014-2022 European Support Limited
-
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at 
-
 http://www.apache.org/licenses/LICENSE-2.0 
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -80,16 +77,16 @@ namespace GingerCore.Actions.REST
 
         public ActInputValue RequestBody { get { return GetOrCreateInputParam(Fields.RequestBody); } }
 
-        private string ReqBody=String.Empty;
+        private string ReqBody = String.Empty;
         public ActInputValue TemplateFile { get { return GetOrCreateInputParam(Fields.TemplateFile); } }
 
         public ActInputValue SaveRequestResponseFolderPath { get { return GetOrCreateInputParam(Fields.SaveRequestResponseFolderPath); } }
 
         public ActInputValue URLUser { get { return GetOrCreateInputParam(Fields.URLUser); } }
 
-        public ActInputValue URLPass { get { return GetOrCreateInputParam(Fields.URLPass); }  }
+        public ActInputValue URLPass { get { return GetOrCreateInputParam(Fields.URLPass); } }
 
-        public ActInputValue URLDomain { get { return GetOrCreateInputParam(Fields.URLDomain); }  }
+        public ActInputValue URLDomain { get { return GetOrCreateInputParam(Fields.URLDomain); } }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> DynamicElements = new ObservableList<ActInputValue>();
@@ -315,7 +312,7 @@ namespace GingerCore.Actions.REST
             try
             {
                 string strURL = EndPointURL.ValueForDriver;
-      
+
                 HttpWebRequest WebReq = (HttpWebRequest)WebRequest.Create(strURL);
                 SetHTTPHeaders(WebReq);
                 //Nathan added customizable Network Credentials
@@ -367,7 +364,7 @@ namespace GingerCore.Actions.REST
                 {
                     dataByte = GetBody();
                 }
-                else if(!string.IsNullOrEmpty(TemplateFile.ValueForDriver))
+                else if (!string.IsNullOrEmpty(TemplateFile.ValueForDriver))
                 {
                     dataByte = GetBodyFromFile();
                 }
@@ -384,7 +381,7 @@ namespace GingerCore.Actions.REST
                             Cookie ck = new Cookie();
                             ck.Name = cooki.Name;
                             ck.Value = cooki.Value;
-                            if (String.IsNullOrEmpty(cooki.Domain)||true)
+                            if (String.IsNullOrEmpty(cooki.Domain) || true)
                             {
                                 cooki.Domain = null;
                             }
@@ -429,7 +426,7 @@ namespace GingerCore.Actions.REST
                         WebReq.ProtocolVersion = HttpVersion.Version11;
                     }
                     WebReq.ContentLength = dataByte.Length;
-              
+
                     Stream Webstream = WebReq.GetRequestStream();
                     Webstream.Write(dataByte, 0, dataByte.Length);
                     Webstream.Close();
@@ -442,9 +439,9 @@ namespace GingerCore.Actions.REST
                 {
                     WebReqResponse = (HttpWebResponse)WebReq.GetResponse();
 
-                    for (int i=0;i<WebReqResponse.Headers.Count;i++)
+                    for (int i = 0; i < WebReqResponse.Headers.Count; i++)
                     {
-                        AddOrUpdateReturnParamActual("Header: "+ WebReqResponse.Headers.Keys[i], WebReqResponse.Headers[i]);
+                        AddOrUpdateReturnParamActual("Header: " + WebReqResponse.Headers.Keys[i], WebReqResponse.Headers[i]);
                     }
 
                     AddOrUpdateReturnParamActual("Header: Status Code ", WebReqResponse.StatusDescription);
@@ -456,7 +453,7 @@ namespace GingerCore.Actions.REST
                     this.ExInfo = WE.Message;
                     if (DoNotFailActionOnBadRespose != true)
                     {
-                        base.Status=Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                         base.Error = WE.Message;
                     }
 
@@ -481,13 +478,13 @@ namespace GingerCore.Actions.REST
                     {
                         if (WebReqResponse.Headers.Keys[k] == "Set-Cookie")
                         {
-                            foreach(string httpCookie in  WebReqResponse.Headers.GetValues(k))
+                            foreach (string httpCookie in WebReqResponse.Headers.GetValues(k))
                             {
 
-                                String[] cookiearray = httpCookie.Split(new char[] {';'}, 3);
+                                String[] cookiearray = httpCookie.Split(new char[] { ';' }, 3);
                                 String[] cookiearray2 = cookiearray[0].Split(new char[] { '=' }, 2);
 
-                                Cookie cks= new Cookie();
+                                Cookie cks = new Cookie();
                                 cks.Name = cookiearray2[0];
                                 cks.Value = cookiearray2[1];
                                 cks.Path = cookiearray[1].Split(new char[] { '=' }, 2)[1];
@@ -504,7 +501,7 @@ namespace GingerCore.Actions.REST
                                     if (cks.Path.StartsWith("."))
                                     {
 
-                                        Uri domainName = new Uri("http://"+ cks.Path.Substring(1));
+                                        Uri domainName = new Uri("http://" + cks.Path.Substring(1));
                                         cks.Domain = domainName.Host;
                                     }
                                     else
@@ -519,7 +516,7 @@ namespace GingerCore.Actions.REST
 
                                         else
                                         {
-                                            domainName = new Uri("http://"+ cks.Path);
+                                            domainName = new Uri("http://" + cks.Path);
                                         }
 
 
@@ -558,8 +555,8 @@ namespace GingerCore.Actions.REST
                 if (ResponseContentType != eContentType.PDF)
                 {
                     //TODO: check if UTF8 is good for all
-                 StreamReader reader = new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);                                  
-                 Reporter.ToLog(eLogLevel.DEBUG, "Response");
+                    StreamReader reader = new StreamReader(WebReqResponse.GetResponseStream(), Encoding.UTF8);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Response");
 
                     resp = reader.ReadToEnd();
                     Reporter.ToLog(eLogLevel.DEBUG, resp);
@@ -577,9 +574,9 @@ namespace GingerCore.Actions.REST
                 }
 
 
-                if (RestRequestSave==true && RequestType!=eRequestType.GET)
+                if (RestRequestSave == true && RequestType != eRequestType.GET)
                 {
-                    string fileName= createRequestOrResponseXMLInFolder("Request", ReqBody, ContentType);
+                    string fileName = createRequestOrResponseXMLInFolder("Request", ReqBody, ContentType);
                     AddOrUpdateReturnParamActual("Saved Request File Name", fileName);
                 }
                 if (RestResponseSave == true)
@@ -597,11 +594,11 @@ namespace GingerCore.Actions.REST
 
 
                 AddOrUpdateReturnParamActual("Respose", resp);
-                if(  String.IsNullOrEmpty(resp))
+                if (String.IsNullOrEmpty(resp))
                 {
                     return;
                 }
-                XmlDocument doc=null;
+                XmlDocument doc = null;
                 if (ResponseContentType == eContentType.JSon)
                 {
                     if (UseLegacyJSONParsing)
@@ -620,13 +617,13 @@ namespace GingerCore.Actions.REST
                         }
 
 
-                        if (((resp[0]=='[')&& (resp[resp.Length-1] ==']')))
+                        if (((resp[0] == '[') && (resp[resp.Length - 1] == ']')))
                         {
                             doc = Newtonsoft.Json.JsonConvert.DeserializeXmlNode("{\"root\":" + resp + "}", "root");
                         }
                         else
                         {
-                            doc= Newtonsoft.Json.JsonConvert.DeserializeXmlNode(resp, "root");
+                            doc = Newtonsoft.Json.JsonConvert.DeserializeXmlNode(resp, "root");
                         }
 
 
@@ -695,7 +692,7 @@ namespace GingerCore.Actions.REST
             //}
             DirectoryPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DirectoryPath);
 
-            DirectoryPath = Path.Combine(DirectoryPath,fileType);
+            DirectoryPath = Path.Combine(DirectoryPath, fileType);
 
             if (!Directory.Exists(DirectoryPath))
             {
@@ -704,7 +701,7 @@ namespace GingerCore.Actions.REST
             return DirectoryPath;
         }
 
-        private string CreateFileName(string fileType,string extension)
+        private string CreateFileName(string fileType, string extension)
         {
             String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
             string fileName = string.Empty;
@@ -715,22 +712,22 @@ namespace GingerCore.Actions.REST
             return fileName;
         }
 
-        public string createRequestOrResponseXMLInFolder(string fileType, string fileContent,eContentType CT)
+        public string createRequestOrResponseXMLInFolder(string fileType, string fileContent, eContentType CT)
         {
             string fileName = string.Empty;
             string fileExtension = string.Empty;
 
             string DirectoryPath = CreateFolder(fileType);
-           
+
             if (CT == eContentType.XML)
             {
                 XmlDocument xmlDoc = new XmlDocument();
 
                 xmlDoc.LoadXml(fileContent);
-               
+
                 try
                 {
-                    fileName= CreateFileName(fileType, "xml");
+                    fileName = CreateFileName(fileType, "xml");
                     xmlDoc.Save(Path.Combine(DirectoryPath, fileName));
                 }
                 catch (Exception e)
@@ -751,8 +748,8 @@ namespace GingerCore.Actions.REST
                     fileExtension = "txt";
                 }
 
-                 fileName = CreateFileName(fileType, fileExtension);
-               File.WriteAllText(Path.Combine(DirectoryPath, fileName), fileContent);
+                fileName = CreateFileName(fileType, fileExtension);
+                File.WriteAllText(Path.Combine(DirectoryPath, fileName), fileContent);
             }
 
             return fileName;
@@ -760,8 +757,8 @@ namespace GingerCore.Actions.REST
 
         private byte[] GetBody()
         {
-            ReqBody=   RequestBody.ValueForDriver;
-            ReqBody=SetDynamicValues(this,ReqBody);
+            ReqBody = RequestBody.ValueForDriver;
+            ReqBody = SetDynamicValues(this, ReqBody);
             byte[] b1 = System.Text.Encoding.UTF8.GetBytes(ReqBody);
             return b1;
         }
@@ -784,9 +781,9 @@ namespace GingerCore.Actions.REST
 
         private void SetHTTPHeaders(HttpWebRequest WebReq)
         {
-            ValueExpression Ve=new ValueExpression(this.RunOnEnvironment,this.RunOnBusinessFlow,this.DSList);
+            ValueExpression Ve = new ValueExpression(this.RunOnEnvironment, this.RunOnBusinessFlow, this.DSList);
 
-            foreach(ActInputValue httpHeader in HttpHeaders)
+            foreach (ActInputValue httpHeader in HttpHeaders)
             {
                 WebReq.PreAuthenticate = true;
                 Ve.Value = httpHeader.Value;
@@ -818,7 +815,7 @@ namespace GingerCore.Actions.REST
 
         private string SetDynamicValues(ActREST AR, string ReqBody)
         {
-            ValueExpression Ve=new ValueExpression(this.RunOnEnvironment,this.RunOnBusinessFlow,this.DSList);
+            ValueExpression Ve = new ValueExpression(this.RunOnEnvironment, this.RunOnBusinessFlow, this.DSList);
             string NewReqBody = ReqBody;
             foreach (ActInputValue AIV in AR.DynamicElements)
             {
@@ -827,8 +824,8 @@ namespace GingerCore.Actions.REST
 
                 if (String.IsNullOrEmpty(NewValue))
                 {
-                    Ve.Value=AIV.Value;
-                    AIV.ValueForDriver=Ve.ValueCalculated;
+                    Ve.Value = AIV.Value;
+                    AIV.ValueForDriver = Ve.ValueCalculated;
                     NewValue = AIV.ValueForDriver;
                 }
                 NewReqBody = NewReqBody.Replace(AIV.Param, NewValue);
@@ -840,7 +837,7 @@ namespace GingerCore.Actions.REST
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if(platform == ePlatformType.WebServices || platform == ePlatformType.NA)
+            if (platform == ePlatformType.WebServices || platform == ePlatformType.NA)
             {
                 return true;
             }
