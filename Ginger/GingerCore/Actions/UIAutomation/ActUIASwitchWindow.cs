@@ -64,8 +64,17 @@ namespace GingerCore.Actions
             TBH.AddText("2. For No Title window please provide string NoTitleWindow in locate value.");
         }        
 
-        [IsSerializedForLocalRepository]
-        public eWindow UIASwitchWindowAction { get; set; }
+        public eWindow UIASwitchWindowAction
+        {
+            get
+            {
+                return (eWindow)GetOrCreateInputParam<eWindow>(nameof(UIASwitchWindowAction), eWindow.Application);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(UIASwitchWindowAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

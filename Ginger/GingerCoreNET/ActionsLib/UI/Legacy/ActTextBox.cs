@@ -110,8 +110,17 @@ namespace GingerCore.Actions
             GetStyle = 24,
         }
 
-        [IsSerializedForLocalRepository]
-        public eTextBoxAction TextBoxAction { get; set; }
+        public eTextBoxAction TextBoxAction
+        {
+            get
+            {
+                return (eTextBoxAction)GetOrCreateInputParam<eTextBoxAction>(nameof(TextBoxAction), eTextBoxAction.SetValueFast);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(TextBoxAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

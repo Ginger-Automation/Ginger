@@ -67,9 +67,18 @@ namespace GingerCore.Actions.Common
             
         }
 
-        [IsSerializedForLocalRepository]
-        public eMediaAction MediaAction { get; set; }
-        
+        public eMediaAction MediaAction
+        {
+            get
+            {
+                return (eMediaAction)GetOrCreateInputParam<eMediaAction>(nameof(MediaAction), eMediaAction.RecordAudio);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MediaAction), value.ToString());
+            }
+        }
+
         public override String ActionType
         {
             get

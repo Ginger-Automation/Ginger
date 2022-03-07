@@ -128,7 +128,7 @@ namespace Ginger.DataSource
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             foreach(DataSourceBase ds in DSList)
             {
-                ds.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
+                ds.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ds.FilePath);
                 if (ds.FileFullPath.Trim() == mDSDetails.FileFullPath.Trim())
                 {
                     Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, FilePathTextBox.Text.Trim());

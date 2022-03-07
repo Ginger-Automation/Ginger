@@ -474,12 +474,18 @@ namespace GingerCore
         {
 
             ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
-            IEnumerable<PluginServiceInfo> Services = Plugins.SelectMany(x => x.Services);
+            foreach (PluginPackage pluginPackage in Plugins)
+            {
+                pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
+            }
+            IEnumerable<PluginServiceInfo> Services = Plugins.SelectMany(x => ((PluginPackageOperations)x.PluginPackageOperations).Services);
             PluginServiceInfo PSI = Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
 
-            PluginPackage PP = Plugins.Where(x => x.Services.Contains(PSI)).First();
-            PP.LoadServicesFromJSON();
-            PSI = PP.Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
+            PluginPackage PP = Plugins.Where(x => ((PluginPackageOperations)x.PluginPackageOperations).Services.Contains(PSI)).First();
+            PP.PluginPackageOperations = new PluginPackageOperations(PP);
+
+            PP.PluginPackageOperations.LoadServicesFromJSON();
+            PSI = ((PluginPackageOperations)PP.PluginPackageOperations).Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
 
             foreach (var config in PSI.Configs)
             {

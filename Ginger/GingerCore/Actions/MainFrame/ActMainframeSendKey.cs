@@ -64,7 +64,16 @@ namespace GingerCore.Actions.MainFrame
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public TnKey KeyToSend { get; set; }
+        public TnKey KeyToSend
+        {
+            get
+            {
+                return (TnKey)GetOrCreateInputParam<TnKey>(nameof(KeyToSend), TnKey.Key);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(KeyToSend), value.ToString());
+            }
+        }
     }
 }

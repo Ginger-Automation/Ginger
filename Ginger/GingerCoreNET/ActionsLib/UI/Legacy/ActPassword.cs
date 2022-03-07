@@ -74,8 +74,17 @@ namespace GingerCore.Actions
             GetStyle = 24,
         }
 
-        [IsSerializedForLocalRepository]
-        public ePasswordAction PasswordAction { get; set; }
+        public ePasswordAction PasswordAction
+        {
+            get
+            {
+                return (ePasswordAction)GetOrCreateInputParam<ePasswordAction>(nameof(PasswordAction), ePasswordAction.SetValue);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PasswordAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

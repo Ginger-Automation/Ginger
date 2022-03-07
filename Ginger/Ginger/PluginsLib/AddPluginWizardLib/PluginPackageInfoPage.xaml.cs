@@ -50,11 +50,15 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
                 case EventType.Active:
                     try
                     {
-                        wiz.PluginPackage = new PluginPackage(wiz.Folder);
+                        PluginPackage pluginPackage = new PluginPackage();
+                        pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
+                        pluginPackage.PluginPackageOperations.LoadPluginPackage(wiz.Folder);
+                        wiz.PluginPackage = pluginPackage;
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Failed to find the Plugin package, error: '{0}'", ex));
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to find the Plugin package", ex);
                     }
                     if (wiz.PluginPackage != null)
                     {
@@ -62,9 +66,9 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
                         xIDTextBox.Text = mPluginPackage.PluginId;
                         xVersionTextBox.Text = mPluginPackage.PluginPackageVersion;
                         FolderTextBox.BindControl(mPluginPackage, nameof(PluginPackage.Folder));
-                        mPluginPackage.LoadServicesFromJSON();
-                        ServicesGrid.ItemsSource = mPluginPackage.Services;
-                        ActionsDataGrid.ItemsSource = mPluginPackage.Services[0].Actions;
+                        mPluginPackage.PluginPackageOperations.LoadServicesFromJSON();
+                        ServicesGrid.ItemsSource = ((PluginPackageOperations)mPluginPackage.PluginPackageOperations).Services;
+                        ActionsDataGrid.ItemsSource = ((PluginPackageOperations)mPluginPackage.PluginPackageOperations).Services[0].Actions;
                     }
                     break;
 

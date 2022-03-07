@@ -70,10 +70,19 @@ namespace GingerCore.Actions.Common
             //TODO: add all battery info options: https://developer.android.com/reference/android/os/BatteryManager.html
         }
 
-        [IsSerializedForLocalRepository]
-        public eBatteryAction BatteryAction { get; set; }
+        public eBatteryAction BatteryAction
+        {
+            get
+            {
+                return (eBatteryAction)GetOrCreateInputParam<eBatteryAction>(nameof(BatteryAction), eBatteryAction.GetPowerStatus);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(BatteryAction), value.ToString());
+            }
+        }
 
-        
+
         public override String ActionType
         {
             get
