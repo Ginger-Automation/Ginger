@@ -53,6 +53,8 @@ namespace GingerCore.Actions.WebAPI
         string ContentType;
         ApplicationAPIUtils.eContentType eContentType;
         string ResponseMessage = null;
+        string RequestFileContent = null;
+        string ResponseFileContent = null;
 
         public bool RequestContstructor(ActWebAPIBase act, string ProxySettings,bool useProxyServerSettings)
         {
@@ -341,7 +343,7 @@ namespace GingerCore.Actions.WebAPI
 
         public void SaveRequest(bool RequestSave, string SaveDirectory)
         {
-            string RequestFileContent = string.Empty;
+            RequestFileContent = string.Empty;
             if (RequestSave)
             {
                 if (mAct.GetType() == typeof(ActWebAPISoap))
@@ -486,7 +488,7 @@ namespace GingerCore.Actions.WebAPI
         {
             if (saveResponse)
             {
-                string ResponseFileContent = string.Empty;
+                ResponseFileContent = string.Empty;
 
                 if (mAct.GetType() == typeof(ActWebAPISoap))
                 {

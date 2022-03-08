@@ -209,6 +209,50 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             return null;
         }
 
+        public void CreateRawRequest(Act act)
+        {
+            HttpWebClientUtils WebAPI = new HttpWebClientUtils();
+
+            if (act is ActWebAPISoap || act is ActWebAPIRest)
+            {
+                if (WebAPI.RequestContstructor((ActWebAPIBase)act, WebServicesProxy, UseServerProxySettings))
+                {
+                    WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
+                }
+            }
+            else if (act is ActWebAPIModel ActWAPIM)
+            {
+                //pull pointed API Model
+                ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == ((ActWebAPIModel)act).APImodelGUID).FirstOrDefault();
+                if (AAMB == null)
+                {
+                    act.Error = "Failed to find the pointed API Model";
+                    act.ExInfo = string.Format("API Model with the GUID '{0}' was not found", ((ActWebAPIModel)act).APImodelGUID);
+                    return;
+                }
+
+                //init matching real WebAPI Action
+                ActWebAPIBase actWebAPI = null;
+                if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.REST)
+                {
+                    actWebAPI = ActWAPIM.CreateActWebAPIREST((ApplicationAPIModel)AAMB, ActWAPIM);
+                }
+                else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
+                {
+                    actWebAPI = ActWAPIM.CreateActWebAPISOAP((ApplicationAPIModel)AAMB, ActWAPIM);
+                }
+                else
+                {
+                    throw new Exception("The Action from type '" + act.GetType().ToString() + "' is unknown/Not Implemented by the Driver - " + this.GetType().ToString());
+                }
+
+                if (WebAPI.RequestContstructor(actWebAPI, WebServicesProxy, UseServerProxySettings))
+                {
+                    WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
+                }
+            }
+        }
+
         public override void RunAction(Act act)
         {
             //TODO: add func to Act + Enum for switch
