@@ -942,7 +942,7 @@ namespace GingerCore
             get
             {
                 // no need to save actions and variables of activities which are marked as Link
-                return this.Type == eType.Link ? true : false;
+                return this.Type == eType.Link;
             }
         }
 

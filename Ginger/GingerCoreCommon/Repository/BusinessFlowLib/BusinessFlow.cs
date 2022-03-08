@@ -1722,12 +1722,12 @@ namespace GingerCore
 
         public void LoadLinkActivities()
         {
-            if (Activities.Any(act => act.IsLinkedItem == true))
+            if (Activities.Any(act => act.IsLinkedItem))
             {
                 try
                 {
                     var srActivities = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                    foreach (Activity activity in Activities.Where(act => act.IsLinkedItem == true))
+                    foreach (Activity activity in Activities.Where(act => act.IsLinkedItem))
                     {
                         activity.Acts = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Acts;
                         activity.Variables = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Variables;
