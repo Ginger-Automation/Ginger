@@ -102,16 +102,21 @@ namespace Ginger.Repository
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);
                 }     
 
-                itemToUpload.UsageItem.IsSharedRepositoryInstance = true;
+               
 
                 if (itemToUpload.ExistingItemType == UploadItemSelection.eExistingItemType.ExistingItemIsParent && itemToUpload.ItemUploadType == UploadItemSelection.eItemUploadType.New)
                 {
                     itemToUpload.UsageItem.ParentGuid = Guid.Empty;
                 }
-                if (itemToUpload.ReplaceAsLink)
+                if (itemToUpload.ReplaceAsLink && !itemToUpload.UsageItem.IsLinkedItem)
                 {
                     context.BusinessFlow.MarkActivityAsLink(itemToUpload.ItemGUID, itemCopy.Guid);
                 }
+                else if (!itemToUpload.ReplaceAsLink && itemToUpload.UsageItem.IsLinkedItem)
+                {
+                    context.BusinessFlow.UnMarkActivityAsLink(itemToUpload.ItemGUID, itemCopy.Guid);
+                }
+                itemToUpload.UsageItem.IsSharedRepositoryInstance = true;
                 itemToUpload.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.Uploaded;
                 return true;
             }

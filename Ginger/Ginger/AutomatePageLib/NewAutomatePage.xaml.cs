@@ -1203,6 +1203,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
+                mBusinessFlow.LoadLinkActivities();
                 Reporter.HideStatusMessage();
                 SwapLoadingPrefixText("Saving", true);
             }

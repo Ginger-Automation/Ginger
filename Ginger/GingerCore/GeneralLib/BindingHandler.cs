@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Repository;
 using System;
+using System.Drawing;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -168,7 +169,7 @@ namespace GingerCore.GeneralLib
     public class StringVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
+        {            
             if (value == null || string.IsNullOrEmpty(value.ToString()))
             {
                 return Visibility.Collapsed;
@@ -231,6 +232,26 @@ namespace GingerCore.GeneralLib
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null || (bool)value == false)
+            {
+                return Visibility.Collapsed;
+            }
+            else
+            {
+                return Visibility.Visible;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ActivityTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || (eType)value == eType.Regular)
             {
                 return Visibility.Collapsed;
             }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -376,7 +376,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public virtual bool ISLinkedItem
+        public virtual bool IsLinkedItem
         {
             get
             {

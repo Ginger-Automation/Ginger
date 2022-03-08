@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -1732,12 +1732,12 @@ namespace GingerCore
 
         public void LoadLinkActivities()
         {
-            if (Activities.Any(act => act.ISLinkedItem == true))
+            if (Activities.Any(act => act.IsLinkedItem == true))
             {
                 try
                 {
                     var srActivities = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                    foreach (Activity activity in Activities.Where(act => act.ISLinkedItem == true))
+                    foreach (Activity activity in Activities.Where(act => act.IsLinkedItem == true))
                     {
                         activity.Acts = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Acts;
                         activity.Variables = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Variables;
@@ -1753,6 +1753,17 @@ namespace GingerCore
             if (Activities.Any(act => act.Guid == activityGuid))
             {
                 Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().Type = eType.Link;
+                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().ParentGuid = parentGuid;
+                return true;
+            }
+            return false;
+        }
+
+        public bool UnMarkActivityAsLink(Guid activityGuid, Guid parentGuid)
+        {
+            if (Activities.Any(act => act.Guid == activityGuid))
+            {
+                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().Type = eType.Regular;
                 Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().ParentGuid = parentGuid;
                 return true;
             }

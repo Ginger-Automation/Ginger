@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -378,7 +378,7 @@ namespace Amdocs.Ginger.Repository
             {                
                 if (v is RepositoryItemBase)
                 {
-                    if (((RepositoryItemBase)v).ISLinkedItem)
+                    if (((RepositoryItemBase)v).IsLinkedItem)
                     {
                         ((GingerCore.Activity)v).Acts = null;
                         ((GingerCore.Activity)v).Variables = null;
