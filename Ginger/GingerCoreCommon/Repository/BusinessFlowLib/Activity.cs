@@ -941,11 +941,8 @@ namespace GingerCore
         {
             get
             {
-                // no need to save activities which were added dynamically
-                if (this.Type == eType.Link)
-                    return true;
-                else
-                    return false;
+                // no need to save actions and variables of activities which are marked as Link
+                return this.Type == eType.Link ? true : false;
             }
         }
 

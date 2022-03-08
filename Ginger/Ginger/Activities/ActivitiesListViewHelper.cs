@@ -159,10 +159,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 return new ListItemUniqueIdentifier() { Color = "Goldenrod", Tooltip = "This is a Gherkin Optimized " + GingerDicser.GetTermResValue(eTermResKey.Activity) };
             }
-            //else if (mActivity.Type == eType.Link)
-            //{
-            //    return new ListItemUniqueIdentifier() { Color = "Pink", Tooltip = "Added as a link from shared repository" + GingerDicser.GetTermResValue(eTermResKey.Activity) };
-            //}
             else
             {
                 return null;

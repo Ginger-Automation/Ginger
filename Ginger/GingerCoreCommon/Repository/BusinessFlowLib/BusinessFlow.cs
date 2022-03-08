@@ -1718,16 +1718,6 @@ namespace GingerCore
             {
                 AttachActivitiesGroupsAndActivities();//so attach will be done also in case BF will be reloaded by FileWatcher
             }
-
-            //if (Activities.Any(act => act.ISLinkedItem == true))
-            //{
-            //    var srActivities = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-            //    foreach (Activity activity in Activities.Where(act => act.ISLinkedItem == true))
-            //    {
-            //        activity.Acts = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Acts;
-            //        activity.Variables = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Variables;
-            //    }
-            //}
         }
 
         public void LoadLinkActivities()
@@ -1743,8 +1733,10 @@ namespace GingerCore
                         activity.Variables = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Variables;
                     }
                 }
-                catch
-                { }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error in Businessflow.cs/LoadLinkActivities", ex);
+                }
             }
         }
 
