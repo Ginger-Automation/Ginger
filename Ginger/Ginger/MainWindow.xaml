@@ -273,6 +273,11 @@
                                     <usercontrols:ImageMakerControl ImageType="Info" Width="16" SetAsFontImageWithSize="16"/>
                                 </MenuItem.Icon>
                             </MenuItem>
+                            <MenuItem  Header="Restart Application" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="btnRestart_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl ImageType="Reset" Width="16" SetAsFontImageWithSize="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
                             <MenuItem  Header="Close Application" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="btnExit_Click">
                                 <MenuItem.Icon>
                                     <usercontrols:ImageMakerControl ImageType="Close" Width="16" SetAsFontImageWithSize="16"/>

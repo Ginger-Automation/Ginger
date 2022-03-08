@@ -182,7 +182,7 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public eRunColSelectorValue ColSelectorValue { get; set; }
-
+        
         [IsSerializedForLocalRepository]
         public eRunColPropertyValue WhereProperty { get; set; }
 
@@ -212,7 +212,8 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public string WhereColumnTitle { get; set; }
-     
+        
+
         public string WhereColumnValue
         {
              get
@@ -236,8 +237,10 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue("ColSelectorValue", value);
             }
         }
+
         [IsSerializedForLocalRepository]
-        public string LocateColTitle{ get; set; }        
+        public string LocateColTitle { get; set; }
+        
         public string LocateRowType
         {
             get

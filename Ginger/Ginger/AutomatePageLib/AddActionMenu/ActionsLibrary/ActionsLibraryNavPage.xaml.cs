@@ -119,9 +119,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             ObservableList<Act> PlugInsActions = new ObservableList<Act>();
             foreach (PluginPackage pluginPackage in plugins)
             {
+                pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
+
                 try
                 {
-                    foreach (PluginServiceInfo pluginServiceInfo in pluginPackage.Services)
+                    foreach (PluginServiceInfo pluginServiceInfo in ((PluginPackageOperations)pluginPackage.PluginPackageOperations).Services)
                     {
                         foreach (PluginServiceActionInfo pluginServiceAction in pluginServiceInfo.Actions)
                         {

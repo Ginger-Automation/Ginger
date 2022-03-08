@@ -70,8 +70,17 @@ namespace GingerCore.Actions
             GetStyle = 24,
         }
 
-        [IsSerializedForLocalRepository]
-        public eLabelAction LabelAction{get;set;}
+        public eLabelAction LabelAction
+        {
+            get
+            {
+                return (eLabelAction)GetOrCreateInputParam<eLabelAction>(nameof(LabelAction), eLabelAction.IsVisible);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(LabelAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

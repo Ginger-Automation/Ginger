@@ -70,8 +70,17 @@ namespace GingerCore.Actions
             GetFullGridData = 25
         }
 
-        [IsSerializedForLocalRepository]
-        public eGridAction GridAction { get; set; }
+        public eGridAction GridAction
+        {
+            get
+            {
+                return (eGridAction)GetOrCreateInputParam<eGridAction>(nameof(GridAction), eGridAction.ClickCell);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(GridAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

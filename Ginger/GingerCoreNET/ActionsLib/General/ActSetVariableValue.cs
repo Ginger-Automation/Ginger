@@ -72,12 +72,30 @@ namespace GingerCore.Actions
             get { return "Set " + GingerDicser.GetTermResValue(eTermResKey.Variable); }
         }
 
-        [IsSerializedForLocalRepository]
-        public string VariableName { set; get; }
+        public string VariableName 
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(VariableName)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(VariableName), value);
+            }
+        }
 
 
-        [IsSerializedForLocalRepository]
-        public VariableBase.eSetValueOptions SetVariableValueOption { get; set; }
+        public VariableBase.eSetValueOptions SetVariableValueOption 
+        {
+            get
+            {
+                return (VariableBase.eSetValueOptions)GetOrCreateInputParam<VariableBase.eSetValueOptions>(nameof(SetVariableValueOption), VariableBase.eSetValueOptions.SetValue);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(SetVariableValueOption), value.ToString());
+            }
+        }
                
         public override void Execute()
         {

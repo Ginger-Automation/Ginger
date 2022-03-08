@@ -78,8 +78,17 @@ namespace GingerCore.Actions
             GetStyle = 24,
         }
 
-        [IsSerializedForLocalRepository]
-        public eCheckboxAction CheckboxAction { get; set; }
+        public eCheckboxAction CheckboxAction
+        {
+            get
+            {
+                return (eCheckboxAction)GetOrCreateInputParam<eCheckboxAction>(nameof(CheckboxAction), eCheckboxAction.Check);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(CheckboxAction), value.ToString());
+            }
+        }
 
         public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 

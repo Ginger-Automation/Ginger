@@ -81,10 +81,28 @@ namespace GingerCore.Actions
             MouseRightClick
         }
 
-        [IsSerializedForLocalRepository]
-        public string WindowTitle { get; set; }
-        [IsSerializedForLocalRepository]
-        public eActSikuliOperation ActSikuliOperation { get; set; }
+        public string WindowTitle
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(WindowTitle)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(WindowTitle), value);
+            }
+        }
+        public eActSikuliOperation ActSikuliOperation
+        {
+            get
+            {
+                return (eActSikuliOperation)GetOrCreateInputParam<eActSikuliOperation>(nameof(ActSikuliOperation), eActSikuliOperation.SetValue);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ActSikuliOperation), value.ToString());
+            }
+        }
 
         public override String ActionType
         {
@@ -94,12 +112,41 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public string PatternPath { get; set; }
-        [IsSerializedForLocalRepository]
-        public bool ShowSikuliConsole { get; set; }
-        [IsSerializedForLocalRepository]
-        public string SetTextValue { get; set; }
+        public string PatternPath
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(PatternPath)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PatternPath), value);
+            }
+        }
+        public bool ShowSikuliConsole
+        {
+            get
+            {
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(ShowSikuliConsole)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ShowSikuliConsole), value.ToString());
+            }
+        }
+        public string SetTextValue
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(SetTextValue)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(SetTextValue), value);
+            }
+        }
         public int ProcessIDForSikuliOperation
         {
             get
@@ -114,8 +161,17 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public string ProcessNameForSikuliOperation { get; set; }
+        public string ProcessNameForSikuliOperation
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ProcessNameForSikuliOperation)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ProcessNameForSikuliOperation), value);
+            }
+        }
 
         public override eImageType Image { get { return eImageType.BullsEye; } }
 
@@ -142,7 +198,7 @@ namespace GingerCore.Actions
                 {
                     Screen sekuliScreen = new Screen();
 
-                    Pattern sikuliPattern = new Pattern(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(PatternPath));
+                    Pattern sikuliPattern = new Pattern(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(PatternPath));
 
                     System.Threading.Tasks.Task.Run(() => SetFocusToSelectedApplicationInstance());
 
@@ -222,19 +278,84 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public override int ClickX { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int ClickY { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int StartX { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int StartY { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int EndX { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int EndY { get; set; }
-        [IsSerializedForLocalRepository]
+        public override int ClickX
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(ClickX)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ClickX), value.ToString());
+            }
+        }
+        public override int ClickY
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(ClickY)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ClickY), value.ToString());
+            }
+        }
+        public override int StartX
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(StartX)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(StartX), value.ToString());
+            }
+        }
+        public override int StartY
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(StartY)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(StartY), value.ToString());
+            }
+        }
+        public override int EndX
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(EndX)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(EndX), value.ToString());
+            }
+        }
+        public override int EndY
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(EndY)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(EndY), value.ToString());
+            }
+        }
         public override string LocatorImgFile { get; set; }
         public override string ImagePath
         {

@@ -46,7 +46,7 @@ namespace Ginger.Run.RunSetActions
             {
                 if (!string.IsNullOrEmpty(RunSetActionGenerateTestNGReport.SaveResultsInSolutionFolderName))
                 {
-                    testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(RunSetActionGenerateTestNGReport.SaveResultsInSolutionFolderName);
+                    testNGReportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(RunSetActionGenerateTestNGReport.SaveResultsInSolutionFolderName);
                 }
                 else if (!string.IsNullOrEmpty(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder))
                 {
@@ -54,7 +54,7 @@ namespace Ginger.Run.RunSetActions
                 }
                 else
                 {
-                    testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+                    testNGReportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                 }
                 if (!Directory.Exists(testNGReportPath))
                 {
@@ -64,7 +64,7 @@ namespace Ginger.Run.RunSetActions
                     }
                     catch (Exception ex)
                     {
-                        testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+                        testNGReportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                     }
                 }
                 SaveBFResults((ReportInfo)RI, testNGReportPath, RunSetActionGenerateTestNGReport.IsStatusByActivitiesGroup);

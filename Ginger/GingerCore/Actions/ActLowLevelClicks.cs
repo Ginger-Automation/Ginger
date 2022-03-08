@@ -72,24 +72,117 @@ namespace GingerCore.Actions
 
         }
 
-        [IsSerializedForLocalRepository]
-        public string WindowTitle { get; set; }
-        [IsSerializedForLocalRepository]
-        public eActLowLevelClicksAction ActLowLevelClicksAction { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int ClickX { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int ClickY { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int StartX { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int StartY { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int EndX { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int EndY { get; set; }
-        [IsSerializedForLocalRepository]
-        public override string LocatorImgFile { get; set; }
+        public string WindowTitle
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(WindowTitle)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(WindowTitle), value);
+            }
+        }
+        public eActLowLevelClicksAction ActLowLevelClicksAction
+        {
+            get
+            {
+                return (eActLowLevelClicksAction)GetOrCreateInputParam<eActLowLevelClicksAction>(nameof(ActLowLevelClicksAction), eActLowLevelClicksAction.MouseLeftClick);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ActLowLevelClicksAction), value.ToString());
+            }
+        }
+        public override int ClickX
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(ClickX)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ClickX), value.ToString());
+            }
+        }
+        public override int ClickY
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(ClickY)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ClickY), value.ToString());
+            }
+        }
+        public override int StartX
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(StartX)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(StartX), value.ToString());
+            }
+        }
+        public override int StartY
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(StartY)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(StartY), value.ToString());
+            }
+        }
+        public override int EndX
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(EndX)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(EndX), value.ToString());
+            }
+        }
+        public override int EndY
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(EndY)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(EndY), value.ToString());
+            }
+        }
+        public override string LocatorImgFile 
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(LocatorImgFile)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(LocatorImgFile), value);
+            }
+        }
 
         public override string ImagePath
         {
@@ -128,7 +221,7 @@ namespace GingerCore.Actions
             string locatorImgFilePath;
 
             //locatorImgFilePath = LocatorImgFile.Replace("~\\", SolutionFolder);
-            locatorImgFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(LocatorImgFile);
+            locatorImgFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(LocatorImgFile);
 
             if (!File.Exists(LocatorImgFile))
             {

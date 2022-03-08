@@ -74,8 +74,17 @@ namespace GingerCore.Actions
         {
         }
 
-        [IsSerializedForLocalRepository]
-        public eUIATextBoxAction UIATextBoxAction { get; set; }
+        public eUIATextBoxAction UIATextBoxAction
+        {
+            get
+            {
+                return (eUIATextBoxAction)GetOrCreateInputParam<eUIATextBoxAction>(nameof(UIATextBoxAction), eUIATextBoxAction.SetValue);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(UIATextBoxAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

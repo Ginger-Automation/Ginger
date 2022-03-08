@@ -84,10 +84,19 @@ namespace GingerCore.Actions.ASCF
                 SelectedIndex
             }
 
-            [IsSerializedForLocalRepository]
-            public eControlAction ControlAction { get; set; }
+        public eControlAction ControlAction
+        {
+            get
+            {
+                return (eControlAction)GetOrCreateInputParam<eControlAction>(nameof(ControlAction), eControlAction.SetValue);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ControlAction), value.ToString());
+            }
+        }
 
-            public override String ToString()
+        public override String ToString()
             {
                 return "ASCFBrowserControl - " + ControlAction;
             }

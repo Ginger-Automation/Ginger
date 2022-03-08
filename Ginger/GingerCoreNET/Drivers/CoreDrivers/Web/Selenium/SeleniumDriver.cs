@@ -193,6 +193,11 @@ namespace GingerCore.Drivers
         public int PageLoadTimeOut { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("normal")]
+        [UserConfiguredDescription("Defines the current session’s page loading strategy.you can change from the default parameter of normal to eager or none")]
+        public string PageLoadStrategy { get; set; }
+
+        [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Start BMP - Browser Mob Proxy (true/false)")]
         public bool StartBMP { get; set; }
@@ -375,6 +380,7 @@ namespace GingerCore.Drivers
                     #region Internet Explorer
                     case eBrowserType.IE:
                         InternetExplorerOptions ieoptions = new InternetExplorerOptions();
+                        SetCurrentPageLoadStrategy(ieoptions);
 
                         if (EnsureCleanSession == true)
                         {
@@ -418,6 +424,7 @@ namespace GingerCore.Drivers
 
                         FirefoxOptions FirefoxOption = new FirefoxOptions();
                         FirefoxOption.AcceptInsecureCertificates = true;
+                        SetCurrentPageLoadStrategy(FirefoxOption);
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
@@ -453,6 +460,7 @@ namespace GingerCore.Drivers
                     case eBrowserType.Chrome:
                         ChromeOptions options = new ChromeOptions();
                         options.AddArgument("--start-maximized");
+                        SetCurrentPageLoadStrategy(options);
 
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
@@ -511,7 +519,7 @@ namespace GingerCore.Drivers
 
                         try
                         {
-                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));    
                         }
                         catch (Exception ex)
                         {
@@ -554,6 +562,7 @@ namespace GingerCore.Drivers
                         EdgeOptions EDOpts = new EdgeOptions();
                         EDOpts.UseChromium = true;
                         EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                        SetCurrentPageLoadStrategy(EDOpts);
                         EdgeDriverService EDService = EdgeDriverService.CreateDefaultServiceFromOptions(EDOpts);
                         EDService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -575,6 +584,7 @@ namespace GingerCore.Drivers
                             ieoptions.Proxy = mProxy == null ? null : mProxy;
                             ieoptions.EnableNativeEvents = true;
                             ieoptions.IntroduceInstabilityByIgnoringProtectedModeSettings = true;
+                            SetCurrentPageLoadStrategy(ieoptions);
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), ieoptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -8342,6 +8352,47 @@ namespace GingerCore.Drivers
         public string GetCurrentPageSourceString()
         {
             return Driver.PageSource;
+        }
+
+        public void SetCurrentPageLoadStrategy(DriverOptions options)
+        {
+            if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Normal).ToLower())
+            {
+                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Normal;
+            }
+            else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Eager).ToLower())
+            {
+                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Eager;
+            }
+            else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.None).ToLower())
+            {
+                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.None;
+            }
+            else 
+            {
+                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Default;
+            }
+        }
+
+
+        public string GetApplitoolServerURL()
+        {
+            return this.ApplitoolsServerUrl;
+        }
+
+        public string GetApplitoolKey()
+        {
+            return this.ApplitoolsViewKey;
+        }
+
+        public ePlatformType GetPlatform()
+        {
+            return this.Platform;
+        }
+
+        public string GetEnvironment()
+        {
+            return this.BusinessFlow.Environment;
         }
     }
 }
