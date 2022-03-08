@@ -25,9 +25,16 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             File.Copy(excelPathWrite, excelPathWriteTemp,true);
-
-            if (WorkSpace.Instance.Solution?.SolutionOperations == null)
+            if (WorkSpace.Instance.Solution != null)
             {
+                if (WorkSpace.Instance.Solution.SolutionOperations == null)
+                {
+                    WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
+                }
+            }
+            else
+            {
+                WorkSpace.Instance.Solution = new Solution();
                 WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
             }
         }
@@ -269,6 +276,47 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 actual = string.Join(',', actual, current);
             }
             Assert.AreEqual(actual.TrimStart(','), "1,Simon,Cohen,2109 Fox Dr,4,Simon,Cohen,NY");
+        }
+
+        [TestMethod]
+        public void ReadExcelFirstRowWithLongDigitsTest()
+        {
+            //Arrange            
+            ActExcel actExcel = new ActExcel();
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ExcelFileName),
+                TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "LongDigitsTesting.xlsx"));
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SheetName), "Sheet1");
+            actExcel.ExcelActionType = ActExcel.eExcelActionType.ReadData;
+            actExcel.AddNewReturnParams = true;
+
+            //Act
+            actExcel.Execute();
+
+            //Assert
+            Assert.AreEqual(actExcel.ActReturnValues.Count, 2);
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "30465673520871400000,758480194459400");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "SIM,IMEI");
+        }
+
+        [TestMethod]
+        public void ReadCellDataExcelOneCellWithLongDigitsTest()
+        {
+            //Arrange            
+            ActExcel actExcel = new ActExcel();
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.ExcelFileName),
+                TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "LongDigitsTesting.xlsx"));
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SheetName), "Sheet1");
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue(nameof(ActExcel.SelectRowsWhere), "A2");
+            actExcel.ExcelActionType = ActExcel.eExcelActionType.ReadCellData;
+            actExcel.AddNewReturnParams = true;
+
+            //Act
+            actExcel.Execute();
+
+            //Assert
+            Assert.AreEqual(actExcel.ActReturnValues.Count, 1);
+            Assert.AreEqual(actExcel.ActReturnValues[0].Actual, "30465673520871400000");
+            Assert.AreEqual(actExcel.ActReturnValues[0].Param, "SIM");
         }
     }
 }
