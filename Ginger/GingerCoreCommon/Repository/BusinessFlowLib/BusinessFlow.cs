@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
@@ -1727,11 +1728,18 @@ namespace GingerCore
                 try
                 {
                     var srActivities = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                    foreach (Activity activity in Activities.Where(act => act.IsLinkedItem))
+                    Parallel.ForEach(Activities.Where(act => act.IsLinkedItem), activity =>
                     {
-                        activity.Acts = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Acts;
-                        activity.Variables = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Variables;
-                    }
+                        try
+                        {
+                            activity.Acts = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Acts;
+                            activity.Variables = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Variables;
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, String.Format("Error in Loading Actions for Linked Activity {0} in Businessflow.cs/LoadLinkActivities",activity.ActivityName), ex);
+                        }
+                    });
                 }
                 catch (Exception ex)
                 {

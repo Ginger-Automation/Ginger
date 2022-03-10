@@ -253,11 +253,11 @@ namespace GingerCore.GeneralLib
         {
             if (value == null || (eType)value == eType.Regular)
             {
-                return Visibility.Collapsed;
+                return Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
             }
             else
             {
-                return Visibility.Visible;
+                return Amdocs.Ginger.Common.Enums.eImageType.InstanceLink;
             }
         }
 

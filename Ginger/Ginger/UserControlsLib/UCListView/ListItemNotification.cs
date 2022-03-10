@@ -34,5 +34,8 @@ namespace Ginger.UserControlsLib.UCListView
         public object BindingObject;
         public string BindingFieldName;
         public IValueConverter BindingConverter;
+
+        public string ImageTypeBindingFieldName;
+        public IValueConverter ImageTypeBindingConverter;
     }
 }

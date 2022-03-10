@@ -323,23 +323,17 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 ListItemNotification sharedRepoInd = new ListItemNotification();
                 sharedRepoInd.AutomationID = "sharedRepoInd";
-                sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+                sharedRepoInd.ImageType = mActivity.IsLinkedItem ? Amdocs.Ginger.Common.Enums.eImageType.InstanceLink: Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
                 sharedRepoInd.ToolTip = string.Format("{0} source is from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
                 sharedRepoInd.ImageForeground = Brushes.Orange;
                 sharedRepoInd.BindingObject = mActivity;
                 sharedRepoInd.BindingFieldName = nameof(Activity.IsSharedRepositoryInstance);
                 sharedRepoInd.BindingConverter = new BoolVisibilityConverter();
-                notificationsList.Add(sharedRepoInd);
 
-                ListItemNotification linkedRepoInd = new ListItemNotification();
-                linkedRepoInd.AutomationID = "linkedRepoInd";
-                linkedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InstanceLink;
-                linkedRepoInd.ToolTip = string.Format("{0} source is Linked to Activity from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
-                linkedRepoInd.ImageForeground = Brushes.Orange;
-                linkedRepoInd.BindingObject = mActivity;
-                linkedRepoInd.BindingFieldName = nameof(Activity.Type);
-                linkedRepoInd.BindingConverter = new ActivityTypeConverter();
-                notificationsList.Add(linkedRepoInd);
+                sharedRepoInd.ImageTypeBindingFieldName = nameof(Activity.Type);
+                sharedRepoInd.ImageTypeBindingConverter = new ActivityTypeConverter();
+
+                notificationsList.Add(sharedRepoInd);
             }
             return notificationsList;
         }
