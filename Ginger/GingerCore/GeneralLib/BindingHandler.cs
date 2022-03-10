@@ -251,7 +251,7 @@ namespace GingerCore.GeneralLib
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null || (eType)value == eType.Regular)
+            if (value == null || (eSharedItemType)value == eSharedItemType.Regular)
             {
                 return Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
             }

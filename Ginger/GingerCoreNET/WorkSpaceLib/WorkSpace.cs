@@ -426,7 +426,7 @@ namespace amdocs.ginger.GingerCoreNET
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Creating Items Repository");
                 SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
                 //TODO: to find better solution
-                GingerCoreCommonWorkSpace.Instance.SolutionRepository = this.SolutionRepository;
+                //GingerCoreCommonWorkSpace.Instance.SolutionRepository = this.SolutionRepository;
                 SolutionRepository.Open(solutionFolder);
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Loading needed Plugins");

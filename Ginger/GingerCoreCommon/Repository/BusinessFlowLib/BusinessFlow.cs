@@ -1752,7 +1752,7 @@ namespace GingerCore
         {
             if (Activities.Any(act => act.Guid == activityGuid))
             {
-                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().Type = eType.Link;
+                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().Type = eSharedItemType.Link;
                 Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().ParentGuid = parentGuid;
                 return true;
             }
@@ -1763,7 +1763,7 @@ namespace GingerCore
         {
             if (Activities.Any(act => act.Guid == activityGuid))
             {
-                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().Type = eType.Regular;
+                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().Type = eSharedItemType.Regular;
                 Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().ParentGuid = parentGuid;
                 return true;
             }

@@ -346,10 +346,10 @@ namespace GingerCore
         }
 
         //Defines if activity is linked or regular
-        eType mType = eType.Regular;
+        eSharedItemType mType = eSharedItemType.Regular;
 
         [IsSerializedForLocalRepository]
-        public eType Type
+        public eSharedItemType Type
         {
             get { return mType; }
             set
@@ -942,7 +942,7 @@ namespace GingerCore
             get
             {
                 // no need to save actions and variables of activities which are marked as Link
-                return this.Type == eType.Link;
+                return this.Type == eSharedItemType.Link;
             }
         }
 

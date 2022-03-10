@@ -315,7 +315,7 @@ namespace Ginger.BusinessFlowPages
                     activityIns.Active = true;
                     if (copyAsLink)
                     {
-                        activityIns.Type = eType.Link;
+                        activityIns.Type = eSharedItemType.Link;
                     }
                     //map activities target application to BF if missing in BF
                     userSelection = businessFlow.MapTAToBF(userSelection, activityIns, WorkSpace.Instance.Solution.ApplicationPlatforms);

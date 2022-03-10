@@ -45,7 +45,7 @@ namespace Amdocs.Ginger.Repository
         PropertyNotFound,
         SetValueException   // if type changed, and we can add more handling...
     }
-    public enum eType
+    public enum eSharedItemType
     {
         [EnumValueDescription("Regular Item")]
         Regular = 0,
