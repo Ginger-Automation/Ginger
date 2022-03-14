@@ -53,8 +53,8 @@ namespace GingerCore.Actions.WebAPI
         string ContentType;
         ApplicationAPIUtils.eContentType eContentType;
         string ResponseMessage = null;
-        string RequestFileContent = null;
-        string ResponseFileContent = null;
+        public string RequestFileContent = null;
+        public string ResponseFileContent = null;
 
         public bool RequestContstructor(ActWebAPIBase act, string ProxySettings,bool useProxyServerSettings)
         {
@@ -348,14 +348,18 @@ namespace GingerCore.Actions.WebAPI
             {
                 if (mAct.GetType() == typeof(ActWebAPISoap))
                 {
-                    RequestFileContent = BodyString;
+                    RequestFileContent = $"{RequestMessage.Method} {RequestMessage.RequestUri.AbsolutePath} HTTP/{RequestMessage.Version}\r\n";
+                    RequestFileContent += $"{RequestMessage.Content.Headers}\r\n";
+                    RequestFileContent += BodyString;
                     mAct.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ContentType, "XML");
                 }
                 else if (mAct.GetType() == typeof(ActWebAPIRest))
                 {
                     if (!string.IsNullOrEmpty(BodyString))
                     {
-                        RequestFileContent = BodyString;
+                        RequestFileContent = $"{RequestMessage.Method} {RequestMessage.RequestUri.AbsolutePath} HTTP/{RequestMessage.Version}\r\n";
+                        RequestFileContent += $"{RequestMessage.Content.Headers}\r\n";
+                        RequestFileContent += BodyString;
                     }
                     else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "XwwwFormUrlEncoded"))
                     {
@@ -371,7 +375,8 @@ namespace GingerCore.Actions.WebAPI
                     }
                     else
                     {
-                        RequestFileContent = RequestMessage.ToString();
+                        RequestFileContent = $"{RequestMessage.Method} {RequestMessage.RequestUri.AbsolutePath} HTTP/{RequestMessage.Version}\r\n";
+                        RequestFileContent += $"{RequestMessage.Content.Headers}\r\n";
                     }
                 }
 
@@ -484,37 +489,46 @@ namespace GingerCore.Actions.WebAPI
             return true;
         }
 
+        public void creatRawRequestContent()
+        {
+            ResponseFileContent = string.Empty;
+
+            if (mAct.GetType() == typeof(ActWebAPISoap))
+            {
+                ResponseFileContent = $"HTTP/{Response.Version} {Response.ReasonPhrase}\r\n";
+                ResponseFileContent += $"{Response.Headers}\r\n";
+                ResponseFileContent += ResponseMessage;
+                mAct.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, "XML");
+            }
+            else if (mAct.GetType() == typeof(ActWebAPIRest))
+            {
+                if (!string.IsNullOrEmpty(ResponseMessage))
+                {
+                    ResponseFileContent = $"HTTP/{Response.Version} {Response.ReasonPhrase}\r\n";
+                    ResponseFileContent += $"{Response.Headers}\r\n";
+                    ResponseFileContent += ResponseMessage;
+                }
+                else
+                {
+                    if (Response != null && Response.Headers != null)
+                    {
+                        ResponseFileContent = $"HTTP/{Response.Version} {Response.ReasonPhrase}\r\n";
+                        ResponseFileContent += $"{Response.Headers}\r\n";
+                    }
+                    else
+                    {
+                        ResponseFileContent = string.Empty;
+                    }
+                }
+            }
+            ResponseFileContent = Amdocs.Ginger.Common.XMLDocExtended.PrettyXml(ResponseFileContent);
+        }
+
         public void SaveResponseToFile(bool saveResponse, string savePath)
         {
             if (saveResponse)
             {
-                ResponseFileContent = string.Empty;
-
-                if (mAct.GetType() == typeof(ActWebAPISoap))
-                {
-                    ResponseFileContent = ResponseMessage;
-                    mAct.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, "XML");
-                }
-                else if (mAct.GetType() == typeof(ActWebAPIRest))
-                {
-                    if (!string.IsNullOrEmpty(ResponseMessage))
-                    {
-                        ResponseFileContent = ResponseMessage;
-                    }
-                    else
-                    {
-                        if (Response != null && Response.Headers != null)
-                        {
-                            ResponseFileContent = Response.Headers.ToString();
-                        }
-                        else
-                        {
-                            ResponseFileContent = string.Empty;
-                        }
-                    }
-                }
-
-                ResponseFileContent = Amdocs.Ginger.Common.XMLDocExtended.PrettyXml(ResponseFileContent);
+                creatRawRequestContent();
 
                 string FileFullPath = Webserviceplatforminfo.SaveToFile("Response", ResponseFileContent, savePath, mAct);
                 mAct.AddOrUpdateReturnParamActual("Saved Response File Name", Path.GetFileName(FileFullPath));

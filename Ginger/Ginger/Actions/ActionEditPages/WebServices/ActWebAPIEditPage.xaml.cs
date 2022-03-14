@@ -594,5 +594,12 @@ namespace Ginger.Actions.WebServices
                 }
             }
         }
+
+        private void xViewRawRequestBtn_Click(object sender, RoutedEventArgs e)
+        {
+            HttpWebClientUtils webAPI = new HttpWebClientUtils();
+            webAPI.RequestContstructor(mAct, null, false);
+            webAPI.creatRawRequestContent();
+        }
     }
 }

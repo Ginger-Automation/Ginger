@@ -73,6 +73,7 @@
                 <StackPanel x:Name="JSON" Orientation="Horizontal" Visibility="Visible">
                     <CheckBox x:Name="UseLegacyJSONParsingCheckBox" VerticalAlignment="Center" Margin="1,10,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Use Legacy Parser"  />
                 </StackPanel>
+                <Button x:Name="xViewRawRequestBtn" Content="View Raw Request" Width="100" Click="xViewRawRequestBtn_Click"/>
                 <Actions:UCInputValuesGrid x:Name="HttpHeadersGrid" Margin="0,10,0,0"/>
             </StackPanel>
         </StackPanel>

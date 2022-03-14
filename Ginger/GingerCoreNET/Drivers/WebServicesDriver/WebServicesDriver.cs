@@ -134,6 +134,8 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         IWebserviceDriverWindow mDriverWindow;
         private ActWebService mActWebService;
         public ActWebAPIBase mActWebAPI;
+        public string mRawResponse;
+        public string mRawRequest;
 
         public override bool IsSTAThread()
         {
@@ -218,6 +220,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 if (WebAPI.RequestContstructor((ActWebAPIBase)act, WebServicesProxy, UseServerProxySettings))
                 {
                     WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
+
                 }
             }
             else if (act is ActWebAPIModel ActWAPIM)
@@ -251,7 +254,10 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
                 }
             }
+            mRawRequest = WebAPI.RequestFileContent;
         }
+
+
 
         public override void RunAction(Act act)
         {
@@ -361,7 +367,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             {
 
                 WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
-
+                mRawRequest = WebAPI.RequestFileContent;
                 Reporter.ToLog(eLogLevel.DEBUG, "RequestContstructor passed successfully");
 
                 if (WebAPI.SendRequest() == true)
@@ -377,6 +383,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     Reporter.ToLog(eLogLevel.DEBUG, "ValidateResponse passed successfully");
 
                     WebAPI.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath);
+                    mRawResponse = WebAPI.ResponseFileContent;
                     WebAPI.HandlePostExecutionOperations();
                     //Parse response
                     WebAPI.ParseRespondToOutputParams();

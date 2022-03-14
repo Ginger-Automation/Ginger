@@ -313,6 +313,7 @@ namespace UnitTests.NonUITests
         [TestMethod]  [Timeout(60000)]
         public void WebServices_WebAPIRest()
         {
+            //Arrange
             WebServicesDriver mDriver = new WebServicesDriver(mBF);
 
             Agent wsAgent = new Agent();
