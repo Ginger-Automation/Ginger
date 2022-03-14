@@ -544,7 +544,6 @@
     <Compile Include="GlobalSolutionLib\ImportItemWizardLib\SelectItemImportTypePage.xaml.cs">
       <DependentUpon>SelectItemImportTypePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Reports\HTMLReportTemplateNameValidationRule.cs" />
     <Compile Include="RunSetLib\CreateAutoRunWizardLib\ValidateJsonFormat.cs" />
     <Compile Include="RunSetLib\CreateAutoRunWizardLib\ValidateURLFormat.cs" />
     <Compile Include="RunSetPageLib\RunSetNameValidationRule.cs" />
