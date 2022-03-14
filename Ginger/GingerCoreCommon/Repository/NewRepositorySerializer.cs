@@ -192,6 +192,7 @@ namespace Amdocs.Ginger.Repository
             foreach (MemberInfo mi in attrs)
             {
                 IsSerializedForLocalRepositoryAttribute isSerialziedAttr = (IsSerializedForLocalRepositoryAttribute)mi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
+                //Skip actions and variables of linked Activity
                 if (isSerialziedAttr != null && !(((RepositoryItemBase)ri).IsLinkedItem && (mi.Name == "Acts" || mi.Name == "Variables")))
                 {
                     Type tt;
