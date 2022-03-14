@@ -87,6 +87,11 @@ namespace Ginger.Repository
                     return false;
                 }
 
+                if (itemCopy is Activity)
+                {
+                    ((Activity)itemCopy).Type = eSharedItemType.Regular;
+                }
+
                 if (isOverwrite)
                 {
                     WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(itemToUpload.ExistingItem);

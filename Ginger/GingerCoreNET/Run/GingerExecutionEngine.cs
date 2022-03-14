@@ -3636,8 +3636,6 @@ namespace Ginger.Run
                 if (businessFlow != null)
                 {
                     businessFlow.ExecutionParentGuid = this.GingerRunner.Guid;
-                    //Mkale: load linked activites from shared repository
-                    businessFlow.LoadLinkActivities();
                 }
                 if (doContinueRun == false)
                 {

@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Variables;
@@ -377,16 +378,39 @@ namespace GingerCore
                 if (mActs.LazyLoad)
                 {
                     mActs.LoadLazyInfo();
+                    //Check if linked activity and then load acts from SR
                     if (this.DirtyStatus != eDirtyStatus.NoTracked)
                     {
                         this.TrackObservableList(mActs);
                     }
+
+                }
+                else if (this.Type == eSharedItemType.Link)
+                {
+                    LoadLinkActions();
                 }
                 return mActs;
             }
             set
             {
                 mActs = value;
+            }
+        }
+
+        public void LoadLinkActions()
+        {
+            try
+            {
+                var sharedActivity = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(this.ParentGuid);
+                if (sharedActivity != null)
+                {
+                    this.Acts = sharedActivity.Acts;
+                    this.Variables = sharedActivity.Variables;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, String.Format("Error in Loading Actions for Linked Activity {0} in Activity.cs/LoadLinkActions  ", this.ActivityName), ex);
             }
         }
 

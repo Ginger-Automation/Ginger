@@ -394,7 +394,6 @@ namespace GingerWPF.BusinessFlowsLib
             SetEnvsCombo();
             if (mBusinessFlow != businessFlowToLoad)
             {
-                businessFlowToLoad.LoadLinkActivities();
                 RemoveCurrentBusinessFlow();
                 ResetPageUI();
                 
@@ -1203,7 +1202,6 @@ namespace GingerWPF.BusinessFlowsLib
             }
             finally
             {
-                mBusinessFlow.LoadLinkActivities();
                 Reporter.HideStatusMessage();
                 SwapLoadingPrefixText("Saving", true);
             }

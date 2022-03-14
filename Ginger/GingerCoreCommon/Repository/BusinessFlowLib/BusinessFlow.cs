@@ -1721,33 +1721,6 @@ namespace GingerCore
             }
         }
 
-        public void LoadLinkActivities()
-        {
-            if (Activities.Any(act => act.IsLinkedItem))
-            {
-                try
-                {
-                    var srActivities = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                    Parallel.ForEach(Activities.Where(act => act.IsLinkedItem), activity =>
-                    {
-                        try
-                        {
-                            activity.Acts = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Acts;
-                            activity.Variables = srActivities.Where(srAct => srAct.Guid == activity.ParentGuid).FirstOrDefault().Variables;
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, String.Format("Error in Loading Actions for Linked Activity {0} in Businessflow.cs/LoadLinkActivities",activity.ActivityName), ex);
-                        }
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error in Businessflow.cs/LoadLinkActivities", ex);
-                }
-            }
-        }
-
         public bool MarkActivityAsLink(Guid activityGuid, Guid parentGuid)
         {
             if (Activities.Any(act => act.Guid == activityGuid))

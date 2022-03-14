@@ -159,10 +159,7 @@ namespace Ginger.Run
             mItemChilds = new ObservableList<RunnerItemPage>();
             
             if (ItemObject.GetType() == typeof(BusinessFlow))
-            {
-                //Load shared activitied in case of linked activites
-                ((BusinessFlow)ItemObject).LoadLinkActivities();
-
+            {            
                 foreach (Activity ac in ((BusinessFlow)ItemObject).Activities)
                 {
                     if (ac.GetType() == typeof(ErrorHandler)) continue;//do not show Error Handler for now
