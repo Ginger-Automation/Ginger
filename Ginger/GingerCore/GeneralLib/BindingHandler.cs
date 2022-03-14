@@ -11,12 +11,12 @@ namespace GingerCore.GeneralLib
     public class BindingHandler
     {
         #region Binding
-        public static void ActInputValueBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, ActInputValue actInputValue, IValueConverter bindingConvertor=null, BindingMode BindingMode = BindingMode.TwoWay)
+        public static void ActInputValueBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, ActInputValue actInputValue, IValueConverter bindingConvertor = null, BindingMode BindingMode = BindingMode.TwoWay)
         {
             ObjFieldBinding(control, dependencyProperty, actInputValue, nameof(ActInputValue.Value), bindingConvertor, BindingMode);
         }
 
-        public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, IValueConverter bindingConvertor, BindingMode BindingMode = BindingMode.TwoWay, object converterParameter=null)
+        public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, IValueConverter bindingConvertor, BindingMode BindingMode = BindingMode.TwoWay, object converterParameter = null)
         {
             //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
             //TODO: check perf impact + reuse exisitng binding on same obj.prop
@@ -140,7 +140,7 @@ namespace GingerCore.GeneralLib
 
                 panelControl.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
             }
-        }       
+        }
         #endregion Binding
     }
 
@@ -159,7 +159,7 @@ namespace GingerCore.GeneralLib
             {
                 return long.Parse(value.ToString());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return 0;
             }
@@ -169,7 +169,7 @@ namespace GingerCore.GeneralLib
     public class StringVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {            
+        {
             if (value == null || string.IsNullOrEmpty(value.ToString()))
             {
                 return Visibility.Collapsed;
@@ -183,7 +183,7 @@ namespace GingerCore.GeneralLib
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
-        }       
+        }
     }
 
     public class OutPutValuesCountConverter : IValueConverter
@@ -267,15 +267,36 @@ namespace GingerCore.GeneralLib
         }
     }
 
+    public class TooltipConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || (eSharedItemType)value == eSharedItemType.Regular)
+            {
+                return string.Format("{0} source is instance from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
+            }
+            else
+            {
+                return string.Format("{0} source is linked to {0} from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
     public class InputValueToBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value.ToString().ToLower().Equals("true"))
+            if (value.ToString().ToLower().Equals("true"))
             {
                 return true;
             }
-            else if(value.ToString().ToLower().Equals("false"))
+            else if (value.ToString().ToLower().Equals("false"))
             {
                 return false;
             }

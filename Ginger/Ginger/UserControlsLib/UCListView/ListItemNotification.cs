@@ -37,5 +37,8 @@ namespace Ginger.UserControlsLib.UCListView
 
         public string ImageTypeBindingFieldName;
         public IValueConverter ImageTypeBindingConverter;
+
+        public string TooltipBindingFieldName;
+        public IValueConverter TooltipBindingConverter;
     }
 }

@@ -324,7 +324,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 ListItemNotification sharedRepoInd = new ListItemNotification();
                 sharedRepoInd.AutomationID = "sharedRepoInd";
                 sharedRepoInd.ImageType = mActivity.IsLinkedItem ? Amdocs.Ginger.Common.Enums.eImageType.InstanceLink: Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-                sharedRepoInd.ToolTip = string.Format("{0} source is from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                sharedRepoInd.ToolTip = mActivity.IsLinkedItem ? string.Format("{0} source is linked to {0} from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity)):string.Format("{0} source is instance from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
                 sharedRepoInd.ImageForeground = Brushes.Orange;
                 sharedRepoInd.BindingObject = mActivity;
                 sharedRepoInd.BindingFieldName = nameof(Activity.IsSharedRepositoryInstance);
@@ -332,6 +332,9 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
                 sharedRepoInd.ImageTypeBindingFieldName = nameof(Activity.Type);
                 sharedRepoInd.ImageTypeBindingConverter = new ActivityTypeConverter();
+
+                sharedRepoInd.TooltipBindingFieldName = nameof(Activity.Type);
+                sharedRepoInd.TooltipBindingConverter = new TooltipConverter();
 
                 notificationsList.Add(sharedRepoInd);
             }

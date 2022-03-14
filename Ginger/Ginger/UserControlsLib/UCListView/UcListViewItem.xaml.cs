@@ -370,6 +370,11 @@ namespace Ginger.UserControlsLib.UCListView
                             BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.ImageTypeProperty, notification.BindingObject, notification.ImageTypeBindingFieldName, bindingConvertor: notification.ImageTypeBindingConverter, BindingMode.OneWay);
                         }
 
+                        if (notification.TooltipBindingConverter != null)
+                        {
+                            BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.ToolTipProperty, notification.BindingObject, notification.TooltipBindingFieldName, bindingConvertor: notification.TooltipBindingConverter, BindingMode.OneWay);
+                        }
+
                         xItemNotificationsPnl.Children.Add(itemInd);
                         xItemNotificationsClm.Width = new GridLength(xItemNotificationsClm.Width.Value + itemInd.Width + 10);
                     }
