@@ -188,13 +188,28 @@ namespace Amdocs.Ginger.Repository
             List<RIAttr> SimpleAttrs = new List<RIAttr>();
             List<RIAttr> ListAttrs = new List<RIAttr>();
             // order by attrs with simple prop first then lists latest 
-
+            
             foreach (MemberInfo mi in attrs)
             {
                 IsSerializedForLocalRepositoryAttribute isSerialziedAttr = (IsSerializedForLocalRepositoryAttribute)mi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
                 //Skip actions and variables of linked Activity
-                if (isSerialziedAttr != null && !(((RepositoryItemBase)ri).IsLinkedItem && (mi.Name == "Acts" || mi.Name == "Variables")))
+
+                // !(((RepositoryItemBase)ri).IsLinkedItem && (
+                ////                mi.Name != nameof(ri.Guid) || mi.Name != nameof(ri.ParentGuid) || mi.Name != "Type"));
+                //this.Acts = sharedActivity.Acts;
+                //this.Variables = sharedActivity.Variables;
+                //this.Description = sharedActivity.Description;
+                //this.ActivityName = sharedActivity.ActivityName;
+                //this.Tags = sharedActivity.Tags;
+                //this.RunDescription = sharedActivity.RunDescription;
+                //this.Screen = sharedActivity.Screen;
+                //this.Expected = sharedActivity.Expected;
+                if (isSerialziedAttr != null)
                 {
+                    if (((RepositoryItemBase)ri).IsLinkedItem && (mi.Name != nameof(ri.Guid) && mi.Name != nameof(ri.ParentGuid) && mi.Name != "Type" && mi.Name != "ActivitiesGroupID" && mi.Name != "ActivityName"))
+                    {
+                        continue;
+                    }
                     Type tt;
                     object value;
                     if (mi.MemberType == MemberTypes.Property)
@@ -378,7 +393,7 @@ namespace Amdocs.Ginger.Repository
             foreach (var v in list)
             {
                 if (v is RepositoryItemBase)
-                {                    
+                {
                     if (!((RepositoryItemBase)v).IsTempItem) // Ignore temp items like dynamic activities or some output values if marked as temp
                     {
                         xml.WriteWhitespace("\n");

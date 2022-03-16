@@ -322,6 +322,7 @@ namespace GingerCore
                 mActivities.LoadLazyInfo();
                 mLazyLoadFlagForUnitTest = true;
                 AttachActivitiesGroupsAndActivities(mActivities);
+                LoadLinkActivity();
                 if (this.DirtyStatus != eDirtyStatus.NoTracked)
                 {
                     this.TrackObservableList(mActivities);
@@ -1023,6 +1024,30 @@ namespace GingerCore
                 {
                     ActivitiesGroups.Move(ActivitiesGroups.IndexOf(group), groupsOrderDic[group]);
                 }
+            }
+        }
+
+        private void LoadLinkActivity()
+        {
+            if (this.Activities.Any(f => f.IsLinkedItem))
+            {
+                //Activity sharedActivity;
+                //for (int i = 0; i < this.Activities.Count(); i++)
+                Parallel.For(0, this.Activities.Count(), i =>
+                {
+                    if (!this.Activities[i].IsLinkedItem)
+                        return;
+                    Activity sharedActivity = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(this.Activities[i].ParentGuid);
+
+                    if (sharedActivity != null)
+                    {
+                        Activity copyItem = (Activity)sharedActivity.CreateInstance(true);
+                        copyItem.Guid = this.Activities[i].Guid;
+                        copyItem.ActivitiesGroupID = this.Activities[i].ActivitiesGroupID;
+                        copyItem.Type = this.Activities[i].Type;
+                        this.Activities[i] = copyItem;
+                    }
+                });
             }
         }
 
