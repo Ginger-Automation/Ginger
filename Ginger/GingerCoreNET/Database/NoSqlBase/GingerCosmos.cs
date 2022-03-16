@@ -147,13 +147,9 @@ namespace GingerCore.NoSqlBase
                     SetOutputFromApiResponse(recordContainer, SQLCalculated);
                     break;
                 case eDBValidationType.UpdateDB:
-                    //int indexOf = SQLCalculated.LastIndexOf("where");
-                    //string whereQuery = SQLCalculated.Substring(indexOf).Replace("where", string.Empty);
-                    //string[] idAndPartitionKey = whereQuery.Split('&');
-                    //string id = idAndPartitionKey[0].Split('=')[1].Trim();
-                    //string partitionKey = idAndPartitionKey[1].Split('=')[1].Trim();
-                    //JObject objectInDb = GetObjectFromCosmosDb(dbName, containerName, id, partitionKey);
                     throw new NotImplementedException("Update not yet implemented for Cosmos Db");
+                default:
+                    break;
             }
         }
 
@@ -278,11 +274,6 @@ namespace GingerCore.NoSqlBase
                 return null;
             }
         }
-
-        //private object ExecuteQuery(string sqlQuery, string dbName, string containerId)
-        //{
-
-        //}
 
     }
 }
