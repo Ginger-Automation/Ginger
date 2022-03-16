@@ -38,13 +38,13 @@ namespace GingerCore.Actions
     {
         public override string ActionDescription { get { return "DataBase Action"; } }
         public override string ActionUserDescription { get { return "Run Select/Update SQL on Database"; } }
-        
+
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to pull/validate/update/etc. data from/on a database system.");
             TBH.AddLineBreak();
-            TBH.AddText("This action contains list of options which will allow you to run simple or complicated SQL.");            
-        }        
+            TBH.AddText("This action contains list of options which will allow you to run simple or complicated SQL.");
+        }
 
         public override string ActionEditPage { get { return "ValidationDBPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
@@ -57,7 +57,7 @@ namespace GingerCore.Actions
             {
                 if (mPlatforms.Count == 0)
                 {
-                    AddAllPlatforms();                    
+                    AddAllPlatforms();
                 }
                 return mPlatforms;
             }
@@ -71,7 +71,7 @@ namespace GingerCore.Actions
             public static string Column = "Column";
             public static string Where = "Where";
             public static string SQL = "SQL";
-            public static string DatabaseTye = "DatabaseTye";           
+            public static string DatabaseTye = "DatabaseTye";
             public static string CommitDB = "CommitDB";
             public static string DBValidationType = "DBValidationType";
             public static string QueryTypeRadioButton = "QueryTypeRadioButton";
@@ -124,8 +124,8 @@ namespace GingerCore.Actions
 
         public enum eDatabaseTye
         {
-            Relational=0,
-            NoSQL=1,
+            Relational = 0,
+            NoSQL = 1,
         }
 
         public eDatabaseTye mDatabaseType = eDatabaseTye.Relational;
@@ -136,9 +136,9 @@ namespace GingerCore.Actions
             {
                 try
                 {
-                    if (DB != null && (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase || DB.DBType == Database.eDBTypes.MongoDb))
+                    if (DB != null && (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase || DB.DBType == Database.eDBTypes.MongoDb || DB.DBType == Database.eDBTypes.CosmosDb))
                         return eDatabaseTye.NoSQL;
-                    else 
+                    else
                         return eDatabaseTye.Relational;
                 }
 
@@ -151,7 +151,7 @@ namespace GingerCore.Actions
 
         // No need to serialize - being calculated from env - App + DB
         public Database DB = null;
-        
+
         public enum eQueryType
         {
             [EnumValueDescription("Free Text ")]
@@ -171,7 +171,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Update DB")]
             UpdateDB = 4,     // Run SQL/PL procedure 
         }
-        
+
         public bool CommitDB_Value
         {
             get
@@ -197,7 +197,7 @@ namespace GingerCore.Actions
                 switch (DBValidationType)
                 {
                     case eDBValidationType.FreeSQL:
-                        s = s + "Free SQL - " + SQL ;
+                        s = s + "Free SQL - " + SQL;
                         break;
                     case eDBValidationType.SimpleSQLOneValue:
                         s = s + "Simple SQL One Value - Table=" + Table + ", Column=" + Column + ", Where=" + Where;
@@ -215,19 +215,19 @@ namespace GingerCore.Actions
 
         public override string ActionType
         {
-            get { return "DB Action - " + DBValidationType.ToString() ; }
+            get { return "DB Action - " + DBValidationType.ToString(); }
         }
 
         public override void Execute()
         {
-          if(String.IsNullOrEmpty(GetInputParamValue("SQL")))
+            if (String.IsNullOrEmpty(GetInputParamValue("SQL")))
             {
-             AddOrUpdateInputParamValue("SQL",GetInputParamValue("Value"));
+                AddOrUpdateInputParamValue("SQL", GetInputParamValue("Value"));
             }
-           
+
             if (SetDBConnection() == false)
                 return;//Failed to find the DB in the Environment
-           
+
             switch (DatabaseType)
             {
                 case eDatabaseTye.Relational:
@@ -252,7 +252,7 @@ namespace GingerCore.Actions
                             default:
                                 break;
                         }
-                        
+
                         if (!DB.KeepConnectionOpen)
                         {
                             DB.DatabaseOperations.CloseConnection();
@@ -311,7 +311,22 @@ namespace GingerCore.Actions
                         }
                     }
                     break;
+                case Database.eDBTypes.CosmosDb:
+
+                    if (NoSqlDriver == null)
+                    {
+                        NoSqlDriver = new GingerCosmos(DBValidationType, DB, this);
+                    }
+                    else
+                    {
+                        if (NoSqlDriver.GetType() != typeof(GingerMongoDb))
+                        {
+                            NoSqlDriver = new GingerCosmos(DBValidationType, DB, this);
+                        }
+                    }
+                    break;
             }
+            GetSqlValueFromFilePath();
             NoSqlDriver.MakeSureConnectionIsOpen();
             NoSqlDriver.PerformDBAction();
         }
@@ -323,13 +338,13 @@ namespace GingerCore.Actions
             EnvApplication App = (from a in RunOnEnvironment.Applications where a.Name == AppNameCalculated select a).FirstOrDefault();
             if (App == null)
             {
-                Error= "The mapped Environment Application '" + AppNameCalculated + "' was not found in the '" + RunOnEnvironment.Name +"' Environment which was selected for execution.";
+                Error = "The mapped Environment Application '" + AppNameCalculated + "' was not found in the '" + RunOnEnvironment.Name + "' Environment which was selected for execution.";
                 return false;
             }
-            
+
             string DBNameCalculated = ValueExpression.Calculate(DBName);
             DB = (Database)(from d in App.Dbs where d.Name == DBNameCalculated select d).FirstOrDefault();
-            if (DB ==null)
+            if (DB == null)
             {
                 Error = "The mapped DB '" + DBNameCalculated + "' was not found in the '" + AppNameCalculated + "' Environment Application.";
                 return false;
@@ -363,7 +378,7 @@ namespace GingerCore.Actions
                     string filePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
 
                     FileInfo scriptFile = new FileInfo(filePath);
-                   SQL = scriptFile.OpenText().ReadToEnd();
+                    SQL = scriptFile.OpenText().ReadToEnd();
                 }
                 else
                 {
@@ -372,45 +387,50 @@ namespace GingerCore.Actions
 
                 if (string.IsNullOrEmpty(SQL))
                     Error = "Fail to run Update SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error = Missing Query";
-               
+
                 string val = DB.DatabaseOperations.fUpdateDB(SQL, CommitDB_Value);
-                    this.AddOrUpdateReturnParamActual("Impacted Lines", val);
-                
+                this.AddOrUpdateReturnParamActual("Impacted Lines", val);
+
             }
             catch (Exception e)
             {
                 if (string.IsNullOrEmpty(Error))
                     this.Error = "Fail to run Update SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error= " + e.Message;
-                
+
             }
         }
         private void SimpleSQLOneValueHandler()
-        {            
+        {
             if (string.IsNullOrEmpty(Where))
                 Where = "rownum<2";
             string val = DB.DatabaseOperations.fTableColWhere(Table, Column, Where);
-            this.AddOrUpdateReturnParamActual(Column , val);
+            this.AddOrUpdateReturnParamActual(Column, val);
+        }
+
+        private void GetSqlValueFromFilePath()
+        {
+            if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
+            {
+                //string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
+                string filePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(GetInputParamCalculatedValue(ActDBValidation.Fields.QueryFile));
+
+                FileInfo scriptFile = new FileInfo(filePath);
+                SQL = scriptFile.OpenText().ReadToEnd();
+            }
+            else
+            {
+                SQL = GetInputParamCalculatedValue("SQL");
+            }
         }
 
         private void FreeSQLHandler()
         {
-            int? queryTimeout =  Timeout;
+            int? queryTimeout = Timeout;
             string SQL = string.Empty;
             string ErrorString = string.Empty;
             try
             {
-                if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
-                {
-                    //string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
-                    string filePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(GetInputParamCalculatedValue(ActDBValidation.Fields.QueryFile));
-
-                    FileInfo scriptFile = new FileInfo(filePath);
-                    SQL = scriptFile.OpenText().ReadToEnd();
-                }
-                else
-                {
-                    SQL = GetInputParamCalculatedValue("SQL");                
-                }
+                GetSqlValueFromFilePath();
                 if (string.IsNullOrEmpty(SQL))
                     this.Error = "Fail to run Free SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error= Missing SQL Query.";
 
@@ -418,39 +438,40 @@ namespace GingerCore.Actions
                 foreach (ActInputValue param in QueryParams)
                     SQL = SQL.Replace("<<" + param.ItemName + ">>", param.ValueForDriver);
 
-                List<object> DBResponse = DB.DatabaseOperations.FreeSQL(SQL, queryTimeout); 
-                
-                List<string> headers=( List<string>) DBResponse.ElementAt(0);
-                List<List<string>> Records = (List<List<string>>)DBResponse.ElementAt (1);
+                List<object> DBResponse = DB.DatabaseOperations.FreeSQL(SQL, queryTimeout);
+
+                List<string> headers = (List<string>)DBResponse.ElementAt(0);
+                List<List<string>> Records = (List<List<string>>)DBResponse.ElementAt(1);
 
 
                 if (Records.Count == 0) return;
-            
+
                 int recordcount = Records.Count;
                 for (int j = 0; j < Records.Count; j++)
-                   
-                {   List<string> currentrow = Records.ElementAt(j);
+
+                {
+                    List<string> currentrow = Records.ElementAt(j);
 
 
-                for (int k = 0; k < currentrow.Count; k++)
+                    for (int k = 0; k < currentrow.Count; k++)
                     {
-                        if (recordcount == 1 )
+                        if (recordcount == 1)
                         {
-                            this.AddOrUpdateReturnParamActual (headers.ElementAt (k), currentrow.ElementAt (k));
+                            this.AddOrUpdateReturnParamActual(headers.ElementAt(k), currentrow.ElementAt(k));
                         }
                         else
                         {
                             // Add the record number in the path col
-                            this.AddOrUpdateReturnParamActualWithPath (headers.ElementAt (k), currentrow.ElementAt (k), (j+1).ToString() + "");
+                            this.AddOrUpdateReturnParamActualWithPath(headers.ElementAt(k), currentrow.ElementAt(k), (j + 1).ToString() + "");
                         }
-                    }   
+                    }
                 }
-                
+
             }
             catch (Exception e)
             {
                 if (string.IsNullOrEmpty(ErrorString))
-                    this.Error = "Fail to run Free SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error= " + e.Message;  
+                    this.Error = "Fail to run Free SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error= " + e.Message;
                 else
                     this.Error = "Fail to execute query: " + Environment.NewLine + SQL + Environment.NewLine + "Error= " + ErrorString;
 
@@ -481,11 +502,11 @@ namespace GingerCore.Actions
             }
         }
         private void updateQueryParams()
-        {            
+        {
             foreach (ActInputValue AIV in QueryParams)
             {
                 if (!String.IsNullOrEmpty(AIV.Value))
-                {                    
+                {
                     AIV.ValueForDriver = ValueExpression.Calculate(AIV.Value);
                 }
             }
