@@ -967,6 +967,12 @@ namespace GingerCore.Drivers
             return null;
         }
 
+        public void RequestWillBeSent()
+        {
+
+        }
+
+       
         private void GotoURL(Act act, string sURL)
         {
             if (sURL.ToLower().StartsWith("www"))
@@ -982,12 +988,27 @@ namespace GingerCore.Drivers
                 Session = devTools.GetDevToolsSession();
                 var domains = Session.GetVersionSpecificDomains<DevToolsSessionDomains>();
                 domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
-                
-                Driver.Manage().Network.NetworkRequestSent += OnNetworkRequestSent;
+                domains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V96.Network.SetBlockedURLsCommandSettings()
+                {
+                    Urls = new string[] { "*://*/*.css", "*://*/*.jpg", "*://*/*.png" }
+                });
+               // Driver.Manage().Network.NetworkRequestSent += OnNetworkRequestSent;
                 Driver.Manage().Network.NetworkResponseReceived += OnNetworkResponseReceived;
-                Driver.Manage().Network.StartMonitoring();
+
+                Task.Run(async ()=>
+                {
+                    await Driver.Manage().Network.StartMonitoring();
+                });
+
+                //Driver.Manage().Network.StartMonitoring().ConfigureAwait(false);
                 Driver.Navigate().GoToUrl(uri.AbsoluteUri);
-                Driver.Manage().Network.StopMonitoring();
+                
+                //Driver.Manage().Network.StopMonitoring().ConfigureAwait(false); ;
+                Task.Run(async () =>
+                {
+                    await Driver.Manage().Network.StopMonitoring();
+                });
+                Driver.Manage().Network.NetworkResponseReceived -= OnNetworkResponseReceived;
             }
             else
             {
@@ -8418,7 +8439,9 @@ namespace GingerCore.Drivers
                 
                 await NetworkLogTestAsync(interceptor);
             }
-            catch { }
+            catch (Exception ex){ 
+
+            }
             finally
             {
                 await interceptor.StopMonitoring();
@@ -8428,8 +8451,8 @@ namespace GingerCore.Drivers
 
         public async Task NetworkLogTestAsync(INetwork interceptor)
         {
-            interceptor.NetworkRequestSent += OnNetworkRequestSent;
-            interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
+         //  interceptor.NetworkRequestSent += OnNetworkRequestSent;
+           // interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
             await interceptor.StartMonitoring();
            // Driver.Url = this.Driver.Url;
 
@@ -8487,7 +8510,8 @@ namespace GingerCore.Drivers
                     }
                     else if (e.ResponseResourceType == "Document")
                     {
-                        builder.AppendLine(e.ResponseBody);
+                        if(!string.IsNullOrEmpty(e.ResponseBody))
+                            builder.AppendLine(e.ResponseBody);
                     }
                     else if (e.ResponseResourceType == "Script")
                     {
