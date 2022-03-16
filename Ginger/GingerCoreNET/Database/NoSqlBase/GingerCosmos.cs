@@ -149,6 +149,7 @@ namespace GingerCore.NoSqlBase
                 case eDBValidationType.UpdateDB:
                     throw new NotImplementedException("Update not yet implemented for Cosmos Db");
                 default:
+                    //do nothing
                     break;
             }
         }
