@@ -16,6 +16,7 @@
             <RowDefinition Height="35"/>
             <RowDefinition Height="150"/>
             <RowDefinition Height="200"/>
+            <RowDefinition Height="200"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
@@ -79,6 +80,7 @@
                 <RowDefinition  Height="10"/>
                 <RowDefinition  Height="35"/>
                 <RowDefinition  Height="30"/>
+                
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250"/>
@@ -107,11 +109,34 @@
             <StackPanel x:Name="xDeleteLocalDataOnPublishPanel" Margin="-15,0,0,0" Orientation="Horizontal" Grid.Row="7" Grid.Column="1" >
                 <UserControlsLib:UCRadioButtons x:Name="xDeleteLocalDataRadioButton" ></UserControlsLib:UCRadioButtons>
             </StackPanel>
-            
-            
-        </Grid>
 
-    </Grid>
+        </Grid>
+        
+        
+
+        <Grid Margin="20,40,0,0" Grid.Row="5" Grid.ColumnSpan="2" x:Name="xSealightsExecutionLoggerGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition  Height="30"/>
+                    <RowDefinition  Height="10"/>
+                    <RowDefinition  Height="30"/>
+                    
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="200*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Sealights Execution Logger Settings" Grid.Row="0" Grid.ColumnSpan="2" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="16"></Label>
+
+                <Label Content="Execution logs to Sealights" Grid.Row="2" Grid.Column="0" Style="{StaticResource @LabelStyle}"  FontSize="12"></Label>
+
+                <StackPanel x:Name="xSealightsLogPanel" Margin="-15,0,0,0" Orientation="Horizontal" Grid.Row="2" Grid.Column="1" >
+                    <UserControlsLib:UCRadioButtons x:Name="xSealightsLogRadioButton" ></UserControlsLib:UCRadioButtons>
+                </StackPanel>
+
+            </Grid> 
+
+        </Grid>
 
 
 </Page>

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -52,7 +52,13 @@ namespace Ginger.Reports
             Yes,
             No
         }
-       
+
+        public enum eSealightsLog
+        {
+            Yes,
+            No
+        }
+
         public enum eDeleteLocalDataOnPublish
         {
             Yes,
@@ -127,6 +133,24 @@ namespace Ginger.Reports
                 mPublishLogToCentralDB = value;               
             }
         }
+
+
+        // Gideon
+        private eSealightsLog mSealightsLog = eSealightsLog.No;
+
+        [IsSerializedForLocalRepository]
+        public eSealightsLog SealightsLog
+        {
+            get
+            {
+                return mSealightsLog;
+            }
+            set
+            {
+                mSealightsLog = value;
+            }
+        }
+        // Gideon End
 
         private eDataPublishingPhase mDataPublishingPhase = eDataPublishingPhase.PostExecution;
 

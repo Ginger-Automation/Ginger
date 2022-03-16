@@ -80,6 +80,13 @@ namespace Ginger.Reports
                 xPublishingPhasePanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.DataPublishingPhase));
 
+
+            // Gideon
+            xSealightsLogRadioButton.Init(typeof(ExecutionLoggerConfiguration.eSealightsLog),
+                xSealightsLogPanel, _selectedExecutionLoggerConfiguration,
+                nameof(ExecutionLoggerConfiguration.SealightsLog));
+
+
             xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
                 xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
