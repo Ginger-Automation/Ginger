@@ -32,31 +32,19 @@ namespace Ginger.Environments
     {
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            //TODO: split to 2 rules name and unique
-            if (value ==null || string.IsNullOrEmpty(value.ToString()))
-            {
-                return new ValidationResult(false, "Environment name cannot be empty");
-            }
-            else if (IsEnvNameExist((string)value))
-            {
-                return new ValidationResult(false, "Environment with the same name already exist");
-            }
-            else
-            {
-                return new ValidationResult(true, null);
-            }        
+            return IsEnvNameValid(value)
+                ? new ValidationResult(false, "Environment name cannot be empty")
+                : IsEnvNameExist((string)value)
+                    ? new ValidationResult(false, "Environment with the same name already exist")
+                    : new ValidationResult(true, null);
         }
-
+        private bool IsEnvNameValid(object value)
+        {
+            return value == null || string.IsNullOrEmpty(value.ToString()) || string.IsNullOrWhiteSpace(value.ToString());
+        }
         private bool IsEnvNameExist(string value)
         {
-            if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where x.Name == value select x).SingleOrDefault() != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where x.Name == value select x).SingleOrDefault() != null;
         }
     }
     

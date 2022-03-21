@@ -605,6 +605,7 @@ namespace Ginger.Run
         void InitRunSetConfigurations()
         {
             BindingHandler.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
+            xRunSetNameTextBox.AddValidationRule(new RunSetNameValidationRule());
             xShowIDUC.Init(mRunSetConfig);
             BindingHandler.ObjFieldBinding(xRunSetDescriptionTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Description));
             TagsViewer.Init(mRunSetConfig.Tags);
