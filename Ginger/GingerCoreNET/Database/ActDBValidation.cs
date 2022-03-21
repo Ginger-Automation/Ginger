@@ -273,56 +273,28 @@ namespace GingerCore.Actions
             switch (this.DB.DBType)
             {
                 case Database.eDBTypes.Cassandra:
-                    if (NoSqlDriver == null)
+                    if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerCassandra))
                     {
                         NoSqlDriver = new GingerCassandra(DBValidationType, DB, this);
                     }
-                    else
-                    {
-                        if (NoSqlDriver.GetType() != typeof(GingerCassandra))
-                        {
-                            NoSqlDriver = new GingerCassandra(DBValidationType, DB, this);
-                        }
-                    }
                     break;
                 case Database.eDBTypes.Couchbase:
-                    if (NoSqlDriver == null)
+                    if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerCouchbase))
                     {
                         NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
                     }
-                    else
-                    {
-                        if (NoSqlDriver.GetType() != typeof(GingerCouchbase))
-                        {
-                            NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
-                        }
-                    }
                     break;
                 case Database.eDBTypes.MongoDb:
-                    if (NoSqlDriver == null)
+                    if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerMongoDb))
                     {
                         NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
-                    }
-                    else
-                    {
-                        if (NoSqlDriver.GetType() != typeof(GingerMongoDb))
-                        {
-                            NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
-                        }
                     }
                     break;
                 case Database.eDBTypes.CosmosDb:
 
-                    if (NoSqlDriver == null)
+                    if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerCosmos))
                     {
                         NoSqlDriver = new GingerCosmos(DBValidationType, DB, this);
-                    }
-                    else
-                    {
-                        if (NoSqlDriver.GetType() != typeof(GingerMongoDb))
-                        {
-                            NoSqlDriver = new GingerCosmos(DBValidationType, DB, this);
-                        }
                     }
                     break;
             }
