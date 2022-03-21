@@ -18,10 +18,10 @@
                 <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
                 <UserControlsLib:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
             </StackPanel>
-            <TextBox x:Name="NameTextBox" Style="{StaticResource $TextBoxStyle}" Height="25" DockPanel.Dock="Top" HorizontalAlignment="Stretch" FontWeight="Bold"/>
+            <TextBox x:Name="NameTextBox" Style="{StaticResource $TextBoxStyle}" Height="25" DockPanel.Dock="Top" HorizontalAlignment="Stretch" FontWeight="Bold" Margin="0,0,0,-2"/>
         </DockPanel>
 
-        <TabControl Grid.Row="1">
+        <TabControl Grid.Row="1" Margin="0, 5, 0, 0">
             <TabItem Header="Design" Height="23" VerticalAlignment="Top">
                 <ScrollViewer >
                     <Grid Background="{StaticResource $BackgroundColor_LightGray}">

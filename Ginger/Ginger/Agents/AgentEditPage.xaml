@@ -14,13 +14,13 @@
     <ScrollViewer>
         <Grid Background="{StaticResource $BackgroundColor_LightGray}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="150"/>
+                <RowDefinition Height="160"/>
                 <RowDefinition Height="160"/>
                 <RowDefinition Height="200*"/>
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Margin="5,0,0,0">
-                <StackPanel>
+                <StackPanel Margin="0,0,0,5">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
                         <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>

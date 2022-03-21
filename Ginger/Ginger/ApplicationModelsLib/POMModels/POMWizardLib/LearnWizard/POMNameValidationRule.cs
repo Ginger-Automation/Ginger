@@ -18,11 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
@@ -31,31 +27,19 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     {
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            //TODO: split to 2 rules name and unique
-            if (value == null || string.IsNullOrEmpty(value.ToString()))
-            {
-                return new ValidationResult(false, "POM Name cannot be empty");
-            }
-            else if (IsPOMNameExist(value.ToString()))
-            {
-                return new ValidationResult(false, "POM with the same name already exist");
-            }
-            else
-            {
-                return new ValidationResult(true, null);
-            }
+            return IsPOMNameValid(value)
+                ? new ValidationResult(false, "POM Name cannot be empty")
+                : IsPOMNameExist(value.ToString())
+                    ? new ValidationResult(false, "POM with the same name already exist")
+                    : new ValidationResult(true, null);
         }
-
+        private bool IsPOMNameValid(object value)
+        {
+            return value == null || string.IsNullOrEmpty(value.ToString()) || string.IsNullOrWhiteSpace(value.ToString());
+        }
         private bool IsPOMNameExist(string value)
         {
-            if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == value select x).FirstOrDefault() != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == value select x).FirstOrDefault() != null;
         }
     }
 }
