@@ -44,7 +44,8 @@ namespace Ginger.Environments
             SetGridView();
             SetGridData();
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EnvNameTextBox, TextBox.TextProperty, env, ProjEnvironment.Fields.Name);
+            BindingHandler.ObjFieldBinding(EnvNameTextBox, TextBox.TextProperty, env, ProjEnvironment.Fields.Name);
+            EnvNameTextBox.AddValidationRule(new EnvironemntNameValidationRule());
             xShowIDUC.Init(AppEnvironmnet);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, AppEnvironmnet, nameof(RepositoryItemBase.Publish));
 

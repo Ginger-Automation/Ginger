@@ -118,6 +118,7 @@ namespace Ginger.BusinessFlowPages
             xTagsViewer.Init(mActivity.Tags);
             xShowIDUC.Init(mActivity);
             BindingHandler.ObjFieldBinding(xActivityNameTxtBox, TextBox.TextProperty, mActivity, nameof(Activity.ActivityName));
+            xActivityNameTxtBox.AddValidationRule(new ActivityNameValidationRule());
             BindingHandler.ObjFieldBinding(xActivityDescriptionTxt, TextBox.TextProperty, mActivity, nameof(Activity.Description));
             BindingHandler.ObjFieldBinding(xExpectedTxt, TextBox.TextProperty, mActivity, nameof(Activity.Expected));
             BindingHandler.ObjFieldBinding(xScreenTxt, TextBox.TextProperty, mActivity, nameof(Activity.Screen));
