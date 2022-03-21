@@ -8,18 +8,8 @@
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="BitmapPixelsComaprePage">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50*"/>
-            <ColumnDefinition Width="50*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="81*"/>
-        </Grid.RowDefinitions>
-        <StackPanel>
-            <Label Style="{StaticResource @InputFieldLabelStyle}">Error Metric</Label>
-            <UserControlsLib:UCComboBox x:Name="ErrorMetricComboBox" />
-        </StackPanel>
-    </Grid>
+    <StackPanel Margin="10,0,0,0" Orientation="Horizontal" VerticalAlignment="Center">
+        <Label Style="{StaticResource @InputFieldLabelStyle}">Error Metric:</Label>
+        <UserControlsLib:UCComboBox x:Name="ErrorMetricComboBox" />
+    </StackPanel>
 </Page>
