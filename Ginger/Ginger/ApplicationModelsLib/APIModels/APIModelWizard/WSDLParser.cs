@@ -895,34 +895,37 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         {
             string AttributesString = string.Empty;
             string FullTagName = string.Empty;
-            if (string.IsNullOrEmpty(NameSapceName))
-                FullTagName = ComplexTypeChild.Name;
-            else
-                FullTagName = NameSapceName + ":" + ComplexTypeChild.Name;
-            if (Attributes != null && Attributes.Count != 0)
+            if (ComplexTypeChild != null)
             {
-                AttributesString = GetAttributeStringByAttributesList(Attributes);
-            }
+                if (string.IsNullOrEmpty(NameSapceName))
+                    FullTagName = ComplexTypeChild.Name;
+                else
+                    FullTagName = NameSapceName + ":" + ComplexTypeChild.Name;
+                if (Attributes != null && Attributes.Count != 0)
+                {
+                    AttributesString = GetAttributeStringByAttributesList(Attributes);
+                }
 
-            if (ComplexTypeChild.MinOccurs == 0 && ComplexTypeChild.MaxOccurs == 1)
-            {
-                RequestBody.Append(CurrentTab + "<!--Optional:-->" + Environment.NewLine);
-                AppendRow(RequestBody, CurrentTab, FullTagName, AttributesString);
-            }
-            else if (ComplexTypeChild.MaxOccurs != 1 && ComplexTypeChild.MinOccurs != ComplexTypeChild.MaxOccurs)
-            {
-                RequestBody.Append(CurrentTab + "<!--Zero or more repetitions:-->" + Environment.NewLine);
-                AppendRow(RequestBody, CurrentTab, FullTagName, AttributesString);
-            }
-            else if (ComplexTypeChild.MinOccurs == 0 && ComplexTypeChild.MaxOccurs == 0)
-            {
-                AppendRow(RequestBody, CurrentTab, FullTagName, AttributesString);
-            }
-            else if (ComplexTypeChild.MinOccurs == ComplexTypeChild.MaxOccurs)
-            {
-                for (int i = 1; i <= ComplexTypeChild.MaxOccurs; i++)
+                if (ComplexTypeChild.MinOccurs == 0 && ComplexTypeChild.MaxOccurs == 1)
+                {
+                    RequestBody.Append(CurrentTab + "<!--Optional:-->" + Environment.NewLine);
+                    AppendRow(RequestBody, CurrentTab, FullTagName, AttributesString);
+                }
+                else if (ComplexTypeChild.MaxOccurs != 1 && ComplexTypeChild.MinOccurs != ComplexTypeChild.MaxOccurs)
+                {
+                    RequestBody.Append(CurrentTab + "<!--Zero or more repetitions:-->" + Environment.NewLine);
+                    AppendRow(RequestBody, CurrentTab, FullTagName, AttributesString);
+                }
+                else if (ComplexTypeChild.MinOccurs == 0 && ComplexTypeChild.MaxOccurs == 0)
                 {
                     AppendRow(RequestBody, CurrentTab, FullTagName, AttributesString);
+                }
+                else if (ComplexTypeChild.MinOccurs == ComplexTypeChild.MaxOccurs)
+                {
+                    for (int i = 1; i <= ComplexTypeChild.MaxOccurs; i++)
+                    {
+                        AppendRow(RequestBody, CurrentTab, FullTagName, AttributesString);
+                    }
                 }
             }
         }
