@@ -260,23 +260,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     }
                     if (cell != null)
                     {
-                        switch (cell.CellType)
-                        {
-                            case CellType.Numeric:
-                                dr[dtColCount] = DateUtil.IsCellDateFormatted(cell)
-                                    ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
-                                    : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
-                                break;
-                            case CellType.String:
-                                dr[dtColCount] = cell.StringCellValue;
-                                break;
-                            case CellType.Blank:
-                                dr[dtColCount] = null;
-                                break;
-                            default:
-                                dr[dtColCount] = cell.RichStringCellValue;
-                                break;
-                        }
+                        dr[dtColCount] = GetCellValue(cell, cell.CellType);
                     }
                     dtColCount++;
                 }

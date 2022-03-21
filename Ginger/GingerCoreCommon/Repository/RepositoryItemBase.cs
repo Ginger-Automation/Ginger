@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -44,6 +44,13 @@ namespace Amdocs.Ginger.Repository
     {
         PropertyNotFound,
         SetValueException   // if type changed, and we can add more handling...
+    }
+    public enum eSharedItemType
+    {
+        [EnumValueDescription("Regular Item")]
+        Regular = 0,
+        [EnumValueDescription("Linked Item")]
+        Link = 1
     }
 
     public abstract class RepositoryItemBase : INotifyPropertyChanged, ISearchFilter
@@ -369,6 +376,13 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public virtual bool IsLinkedItem
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public bool ClearBackup(bool isLocalBackup = false)
         {

@@ -42,7 +42,7 @@ namespace GingerCore.Actions.VisualTesting
         }
 
         void IVisualAnalyzer.Compare()
-        {            
+        {
             MagickImage magickBaseImg = new MagickImage(BitmapToArray(mAct.baseImage));//Not tested after code change
             MagickImage magickTargetImg = new MagickImage(BitmapToArray(mAct.targetImage));//Not tested after code change
 
@@ -50,13 +50,9 @@ namespace GingerCore.Actions.VisualTesting
 
             double percentageDifference;
 
-            // TODO: add combo with list of options for user to choose the Error Matic and Cahnnels
-            ActInputValue AIV = mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ErrorMetric);
-            
-            //TODO: fix me - removed hard code
-            //caused build problem on build machine so temp fix for now
-            ErrorMetric EM = ErrorMetric.Fuzz;
-             percentageDifference = magickBaseImg.Compare(magickTargetImg, EM, diffImg, Channels.Red);
+            ErrorMetric eErrorMetric = ErrorMetric.Fuzz;
+            Enum.TryParse<ErrorMetric>(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ErrorMetric).Value, out eErrorMetric);
+             percentageDifference = magickBaseImg.Compare(magickTargetImg, eErrorMetric, diffImg, Channels.Red);
              percentageDifference = percentageDifference * 100;
              percentageDifference = Math.Round(percentageDifference, 2);
 

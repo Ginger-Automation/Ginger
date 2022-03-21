@@ -220,9 +220,9 @@ namespace Ginger.Environments
             view.GridColsView.Add(new GridColView() { Field = nameof(Database.DBType), WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = Database.DbTypes, Header = "DB Type" });
             view.GridColsView.Add(new GridColView() { Field = nameof(Database.TNS), Header = "TNS / File Path / Host ", WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = "VE1", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["TNSValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(Database.User), Header = "User Name", WidthWeight = 10 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Database.User), Header = "User Name/Endpoint URI", WidthWeight = 10 });
             view.GridColsView.Add(new GridColView() { Field = "VE2", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["UserValueExpressionButton"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(Database.Pass), Header = "User Password", WidthWeight = 10 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(Database.Pass), Header = "User Password/Primary Key", WidthWeight = 10 });
             view.GridColsView.Add(new GridColView() { Field = "VE3", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["PswdValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(Database.ConnectionString), WidthWeight = 20, Header = "Connection String (Optional)" });
             view.GridColsView.Add(new GridColView() { Field = "VE4", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["ConnStrValueExpressionButton"] });
@@ -236,7 +236,7 @@ namespace Ginger.Environments
             db.Name = "New";
             db.PropertyChanged += db_PropertyChanged;
             grdAppDbs.DataSourceList.Add(db);
-            
+
             DatabaseOperations databaseOperations = new DatabaseOperations(db);
             db.DatabaseOperations = databaseOperations;
         }

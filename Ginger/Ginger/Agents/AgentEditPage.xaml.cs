@@ -45,13 +45,14 @@ namespace Ginger.Agents
             InitializeComponent();
 
             if (agent != null)
-            {
+            {               
                 mAgent = agent;
 
                 xShowIDUC.Init(mAgent);
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Notes));
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentTypelbl, Label.ContentProperty, mAgent, nameof(Agent.AgentType));
+                BindingHandler.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
+                xAgentNameTextBox.AddValidationRule(new AgentNameValidationRule());
+                BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Notes));
+                BindingHandler.ObjFieldBinding(xAgentTypelbl, Label.ContentProperty, mAgent, nameof(Agent.AgentType));
                 BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mAgent, nameof(RepositoryItemBase.Publish));
                 TagsViewer.Init(mAgent.Tags);
 
@@ -62,7 +63,7 @@ namespace Ginger.Agents
 
                     xPlatformTxtBox.Text = mOriginalPlatformType.ToString();
                     SetDriverInformation();
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDriverTypeComboBox, ComboBox.TextProperty, mAgent, nameof(Agent.DriverType));
+                    BindingHandler.ObjFieldBinding(xDriverTypeComboBox, ComboBox.TextProperty, mAgent, nameof(Agent.DriverType));
                     xDriverTypeComboBox.SelectionChanged += driverTypeComboBox_SelectionChanged;
                 }
                 else//Plugin

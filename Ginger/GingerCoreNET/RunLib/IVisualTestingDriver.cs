@@ -28,7 +28,7 @@ namespace GingerCore.Actions.VisualTesting
     // Each driver which supports Visual testing should implement this interface, enable the action to take UI info and screen shot + change app window
     public interface IVisualTestingDriver
     {
-        Bitmap GetScreenShot(Tuple<int,int> setScreenSize=null);        
+        Bitmap GetScreenShot(Tuple<int,int> setScreenSize=null, bool IsFullPageScreenshot = false);        
 
         VisualElementsInfo GetVisualElementsInfo();
         void ChangeAppWindowSize(int Width, int Height);

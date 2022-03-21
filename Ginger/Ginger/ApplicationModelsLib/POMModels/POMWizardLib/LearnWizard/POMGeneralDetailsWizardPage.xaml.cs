@@ -18,10 +18,8 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowWindows;
-using GingerCore.Actions.VisualTesting;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
@@ -30,7 +28,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using static Ginger.ExtensionMethods;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {

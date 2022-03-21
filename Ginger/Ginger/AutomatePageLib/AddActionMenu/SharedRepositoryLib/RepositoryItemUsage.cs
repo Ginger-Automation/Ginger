@@ -43,8 +43,8 @@ namespace Ginger.Repository
         {
             [EnumValueDescription("Publish Instance")]
             PublishInstance,
-           // [EnumValueDescription("Publish Linked Instance")]
-           // PublishLinkedInstance
+            [EnumValueDescription("Publish Linked Instance")]
+            PublishLinkedInstance
         }
 
         public enum ePublishStatus
