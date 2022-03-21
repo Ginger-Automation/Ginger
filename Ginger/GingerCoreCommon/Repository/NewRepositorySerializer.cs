@@ -191,21 +191,11 @@ namespace Amdocs.Ginger.Repository
             
             foreach (MemberInfo mi in attrs)
             {
-                IsSerializedForLocalRepositoryAttribute isSerialziedAttr = (IsSerializedForLocalRepositoryAttribute)mi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
-                //Skip actions and variables of linked Activity
+                IsSerializedForLocalRepositoryAttribute isSerialziedAttr = (IsSerializedForLocalRepositoryAttribute)mi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));              
 
-                // !(((RepositoryItemBase)ri).IsLinkedItem && (
-                ////                mi.Name != nameof(ri.Guid) || mi.Name != nameof(ri.ParentGuid) || mi.Name != "Type"));
-                //this.Acts = sharedActivity.Acts;
-                //this.Variables = sharedActivity.Variables;
-                //this.Description = sharedActivity.Description;
-                //this.ActivityName = sharedActivity.ActivityName;
-                //this.Tags = sharedActivity.Tags;
-                //this.RunDescription = sharedActivity.RunDescription;
-                //this.Screen = sharedActivity.Screen;
-                //this.Expected = sharedActivity.Expected;
                 if (isSerialziedAttr != null)
                 {
+                    //Add only specific properties of linked activity
                     if (((RepositoryItemBase)ri).IsLinkedItem && (mi.Name != nameof(ri.Guid) && mi.Name != nameof(ri.ParentGuid) && mi.Name != "Type" && mi.Name != "ActivitiesGroupID" && mi.Name != "ActivityName"))
                     {
                         continue;

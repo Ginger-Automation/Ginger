@@ -322,7 +322,7 @@ namespace GingerCore
                 mActivities.LoadLazyInfo();
                 mLazyLoadFlagForUnitTest = true;
                 AttachActivitiesGroupsAndActivities(mActivities);
-                LoadLinkActivity();
+                LoadLinkedActivities();
                 if (this.DirtyStatus != eDirtyStatus.NoTracked)
                 {
                     this.TrackObservableList(mActivities);
@@ -1027,12 +1027,10 @@ namespace GingerCore
             }
         }
 
-        private void LoadLinkActivity()
+        private void LoadLinkedActivities()
         {
             if (this.Activities.Any(f => f.IsLinkedItem))
             {
-                //Activity sharedActivity;
-                //for (int i = 0; i < this.Activities.Count(); i++)
                 Parallel.For(0, this.Activities.Count(), i =>
                 {
                     if (!this.Activities[i].IsLinkedItem)

@@ -387,101 +387,11 @@ namespace GingerCore
                     }
 
                 }
-                else if (this.Type == eSharedItemType.Link)
-                {
-                  //  LoadLinkActions();
-                }
                 return mActs;
             }
             set
             {
                 mActs = value;
-            }
-        }
-
-        public void LoadLinkActions()
-        {
-            try
-            {
-                var sharedActivity = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(this.ParentGuid);
-                if (sharedActivity != null)
-                {
-                    var parentProperties = sharedActivity.GetType().GetProperties();
-                    var childProperties = this.GetType().GetProperties();
-                    foreach (var parentProperty in parentProperties)
-                    {
-                        foreach (var childProperty in childProperties)
-                        {
-                            if (parentProperty.Name == childProperty.Name && parentProperty.PropertyType == childProperty.PropertyType && childProperty.Name != nameof(this.ParentGuid) && childProperty.Name != nameof(this.Guid) && childProperty.Name != nameof(this.ActivitiesGroupID))
-                            {
-                                childProperty.SetValue(this, parentProperty.GetValue(sharedActivity));
-                                break;
-                            }
-                        }
-                    }
-                    //Activity copy = (Activity)sharedActivity.CreateCopy(false);
-
-                    //copy.Type = eSharedItemType.Link;
-                    //copy.ExternalID = sharedActivity.ExternalID;
-                    //copy.ExternalID2 = sharedActivity.ExternalID2;
-                    //this = copy;
-                    //this.Acts = sharedActivity.Acts;
-                    //this.Variables = sharedActivity.Variables;
-                    //this.Description = sharedActivity.Description;
-                    //this.ActivityName = sharedActivity.ActivityName;
-                    //this.Tags = sharedActivity.Tags;
-                    //this.RunDescription = sharedActivity.RunDescription;
-                    //this.Screen = sharedActivity.Screen;
-                    //this.Expected = sharedActivity.Expected;
-                    // var objMembers = sharedActivity.GetType().GetMembers().OrderBy(x => x.Name);
-
-                    //Parallel.ForEach(objMembers, mi =>
-                    ////foreach (var mi in objMembers)
-                    //{
-                    //    try
-                    //    {
-                    //        IsSerializedForLocalRepositoryAttribute isSerialziedAttr = (IsSerializedForLocalRepositoryAttribute)mi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
-                    //        if (isSerialziedAttr != null && mi.Name != nameof(this.Acts) && mi.Name != nameof(this.Variables) && mi.Name != nameof(this.Type) && mi.Name != nameof(this.ActivitiesGroupID) && mi.Name != nameof(this.Active)
-                    //            && mi.Name != nameof(this.ParentGuid) && mi.Name != nameof(this.Guid))
-                    //        {
-                    //            object memberValue = null;
-
-                    //            if (mi.MemberType == MemberTypes.Property)
-                    //            {
-                    //                var propInfo = sharedActivity.GetType().GetProperty(mi.Name);
-
-                    //                if (propInfo.CanWrite)
-                    //                {
-                    //                    memberValue = propInfo.GetValue(sharedActivity);
-                    //                    if (memberValue is IObservableList && typeof(IObservableList).IsAssignableFrom(propInfo.PropertyType))
-                    //                    {
-                    //                        return;
-                    //                    }
-                    //                    else
-                    //                    {
-                    //                        propInfo.SetValue(this, memberValue);
-                    //                    }
-                    //                }
-                    //            }
-                    //            else
-                    //            {
-                    //                FieldInfo fieldInfo = sharedActivity.GetType().GetField(mi.Name);
-                    //                memberValue = fieldInfo.GetValue(sharedActivity);
-                    //                fieldInfo.SetValue(this, memberValue);
-                    //            }
-                    //        }
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occured during object copy of the item: '{0}', type: '{1}', property/field: '{2}'", this.ItemName, this.GetType(), mi.Name), ex);
-                    //    }
-                    //});
-
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, String.Format("Error in Loading Actions for Linked Activity {0} in Activity.cs/LoadLinkActions  ", this.ActivityName), ex);
             }
         }
 
