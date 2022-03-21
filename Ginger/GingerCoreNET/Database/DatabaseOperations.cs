@@ -696,7 +696,6 @@ namespace GingerCore.Environments
 
                     while (reader.Read())
                     {
-
                         List<string> record = new List<string>();
                         for (int i = 0; i < reader.FieldCount; i++)
                         {

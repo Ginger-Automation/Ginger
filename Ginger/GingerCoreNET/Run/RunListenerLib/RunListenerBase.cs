@@ -24,6 +24,7 @@ using GingerCore.Environments;
 using System;
 using System.Diagnostics;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
+using Activity = GingerCore.Activity;
 
 namespace Amdocs.Ginger.Run
 {
