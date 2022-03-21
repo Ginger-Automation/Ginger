@@ -255,6 +255,8 @@
   
     <PackageReference Include="MedallionShell" Version="1.6.2" />
   
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.25.0" />
+  
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
