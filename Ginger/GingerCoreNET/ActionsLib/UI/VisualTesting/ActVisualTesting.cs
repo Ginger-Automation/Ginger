@@ -534,7 +534,6 @@ namespace GingerCore.Actions
                 BaseLineFileName = @"~\Documents\ScreenShots\" + Description + " - Baseline.png";
             }
 
-            //string FullPath = BaseLineFileName.Replace(@"~\", SolutionFolder);
             string FullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BaseLineFileName);
 
             // no need to ask user, + it might be at run time
@@ -555,10 +554,6 @@ namespace GingerCore.Actions
         // TODO: move from here to general or use general
         public string GetFullFilePath(string relativePath)
         {
-            //if (relativePath.StartsWith(@"~\"))
-            //{
-            //    return relativePath.Replace(@"~\", SolutionFolder);
-            //}
             relativePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(relativePath);
 
             return relativePath;
