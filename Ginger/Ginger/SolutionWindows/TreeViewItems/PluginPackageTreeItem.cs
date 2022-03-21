@@ -39,6 +39,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public PluginPackageTreeItem(PluginPackage pluginPackage)
         {
             mPluginPackage = pluginPackage;
+            if (mPluginPackage.PluginPackageOperations == null)
+            {
+                mPluginPackage.PluginPackageOperations = new PluginPackageOperations(mPluginPackage);
+            }
         }
 
         Object ITreeViewItem.NodeObject()

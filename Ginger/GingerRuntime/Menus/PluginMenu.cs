@@ -55,15 +55,17 @@ namespace Amdocs.Ginger.GingerRuntime
 
                 Console.WriteLine("Verify Ginger.PluginPackage.json");
                 PluginPackage p = new PluginPackage(folder);
+                p.PluginPackageOperations = new PluginPackageOperations(p);
+                p.PluginPackageOperations.LoadPluginPackage(folder);
                 Console.WriteLine("Plugin ID: " + p.PluginId);
                 Console.WriteLine("Plugin Version: " + p.PluginPackageVersion);
-                Console.WriteLine("StartupDLL: " + p.StartupDLL);
+                Console.WriteLine("StartupDLL: " + p.PluginPackageOperations.StartupDLL);
                 Console.WriteLine("---------------------------------------------------------");
                 Console.WriteLine("Creating ServicesInfo.json");
                 
-                p.CreateServicesInfo();
+                p.PluginPackageOperations.CreateServicesInfo();
 
-                string DLLFile = Path.Combine(folder, p.StartupDLL);                
+                string DLLFile = Path.Combine(folder, p.PluginPackageOperations.StartupDLL);                
                 FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(DLLFile);
 
                 string PackageVersion = myFileVersionInfo.ProductVersion.ToString();
@@ -105,7 +107,9 @@ namespace Amdocs.Ginger.GingerRuntime
             if (System.IO.Directory.Exists(folder))
             {
                 PluginPackage p = new PluginPackage(folder);
-                p.CreateServicesInfo();
+                p.PluginPackageOperations = new PluginPackageOperations(p);
+                p.PluginPackageOperations.LoadPluginPackage(folder);
+                p.PluginPackageOperations.CreateServicesInfo();
             }
             else
             {

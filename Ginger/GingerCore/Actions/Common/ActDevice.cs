@@ -75,10 +75,19 @@ namespace GingerCore.Actions.Common
             GetSystemInformation  // Battery, CPU etc...
         }
 
-        [IsSerializedForLocalRepository]
-        public eDeviceAction DeviceAction { get; set; }
+        public eDeviceAction DeviceAction
+        {
+            get
+            {
+                return (eDeviceAction)GetOrCreateInputParam<eDeviceAction>(nameof(DeviceAction), eDeviceAction.ScreenRecord);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(DeviceAction), value.ToString());
+            }
+        }
 
-        
+
         public override String ActionType
         {
             get

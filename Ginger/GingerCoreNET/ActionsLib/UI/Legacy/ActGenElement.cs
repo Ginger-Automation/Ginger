@@ -53,8 +53,10 @@ namespace GingerCore.Actions
             }
         }
 
-        public override List<ePlatformType> LegacyActionPlatformsList {
-            get {
+        public override List<ePlatformType> LegacyActionPlatformsList
+        {
+            get
+            {
                 var legacyPlatform = new List<ePlatformType>();
                 legacyPlatform.Add(ePlatformType.Web);
                 legacyPlatform.Add(ePlatformType.Java);
@@ -66,7 +68,7 @@ namespace GingerCore.Actions
         ePlatformType IObsoleteAction.GetTargetPlatform()
         {
             ePlatformType targetPlatform;
-            switch(this.Platform)
+            switch (this.Platform)
             {
                 case ePlatformType.Web:
                     targetPlatform = ePlatformType.Web;
@@ -112,7 +114,7 @@ namespace GingerCore.Actions
         Act IObsoleteAction.GetNewAction()
         {
             Act convertedUIElementAction = null;
-            switch(this.Platform)
+            switch (this.Platform)
             {
                 case ePlatformType.Web:
                     convertedUIElementAction = GetNewActionForWeb();
@@ -134,7 +136,7 @@ namespace GingerCore.Actions
 
         private Act GetNewActionForJava()
         {
-            if(GenElementAction.Equals(eGenElementAction.SwitchFrame) || GenElementAction.Equals(eGenElementAction.RunJavaScript))
+            if (GenElementAction.Equals(eGenElementAction.SwitchFrame) || GenElementAction.Equals(eGenElementAction.RunJavaScript))
             {
                 ActBrowserElement NewActBrowserElement = GetNewBrowserElementFromAutoMapper();
 
@@ -359,10 +361,10 @@ namespace GingerCore.Actions
                     }
                     else
                     {
-                        NewActUIElement.ElementLocateValue = String.Copy(this.LocateValue); 
+                        NewActUIElement.ElementLocateValue = String.Copy(this.LocateValue);
                     }
                 }
-               
+
                 if (!uIElementTypeAssigned)
                     NewActUIElement.ElementType = eElementType.Unknown;
                 if (!NewActUIElement.Platforms.Contains(this.Platform))
@@ -416,7 +418,7 @@ namespace GingerCore.Actions
                 case eGenElementAction.SwitchWindow:
                 case eGenElementAction.DeleteAllCookies:
                 case eGenElementAction.SwitchToDefaultFrame:
-                case eGenElementAction.Refresh:                
+                case eGenElementAction.Refresh:
                 case eGenElementAction.SwitchToParentFrame:
                 case eGenElementAction.AcceptMessageBox:
                 case eGenElementAction.GetWindowTitle:
@@ -463,11 +465,11 @@ namespace GingerCore.Actions
                 case eGenElementAction.FireMouseEvent:
                 case eGenElementAction.ScrollDown:
                 case eGenElementAction.ScrollUp:
-                    currentType =  typeof(ActUIElement);
+                    currentType = typeof(ActUIElement);
                     break;
 
-                //default:
-                //    throw new Exception("Converter error, missing Action translator for - " + GenElementAction);
+                    //default:
+                    //    throw new Exception("Converter error, missing Action translator for - " + GenElementAction);
             }
             return currentType;
         }
@@ -483,7 +485,7 @@ namespace GingerCore.Actions
             TBH.AddText("To use this action,select property type of label from Locate By drop down and then enter label property value and then select an action type.");
             TBH.AddLineBreak();
             TBH.AddText("For Using Set Attribute using javascript the format should be :  Attribute||Value ");
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActGenElementEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
@@ -521,14 +523,14 @@ namespace GingerCore.Actions
             [EnumValueDescription("Mouse Click")]
             MouseClick = 6,
             [EnumValueDescription("Keyboard Input")]
-            KeyboardInput = 7, 
+            KeyboardInput = 7,
             //SwipeUp= 6, //for mobile
             //SwipeDown = 7, //for mobile
             //SwipeRight = 8, //for mobile
             //SwipeLeft = 9, //for mobile
             //Press = 10, //for mobile
             Wait = 11, //for mobile
-            Back= 12, //for Browser
+            Back = 12, //for Browser
             [EnumValueDescription("Select From List Scr")]
             SelectFromListScr = 13, //for Browser
             [EnumValueDescription("Key Type")]
@@ -546,29 +548,29 @@ namespace GingerCore.Actions
             [EnumValueDescription("Dismiss Message Box")]
             DismissMessageBox = 20, //for Browser
             [EnumValueDescription("Switch Window")]
-            SwitchWindow=21,
+            SwitchWindow = 21,
             [EnumValueDescription("Get Width")]
-            GetWidth=22,
+            GetWidth = 22,
             [EnumValueDescription("Get Height")]
-            GetHeight=23,
+            GetHeight = 23,
             [EnumValueDescription("Get Style")]
-            GetStyle=24,
+            GetStyle = 24,
             [EnumValueDescription("Message Box")]
             MsgBox = 25,
             [EnumValueDescription("Get Custom Attribute")]
-            GetCustomAttribute=26,
+            GetCustomAttribute = 26,
             [EnumValueDescription("Start Browser")]
-            StartBrowser=28,
+            StartBrowser = 28,
             [EnumValueDescription("Async Click")]
             AsyncClick = 27, //used for clicking on elements which opening Dialog window- because if using regular click then the driver get stuck till the dialog been closed
             [EnumValueDescription("Scroll to Element")]
-            ScrollToElement= 29,
+            ScrollToElement = 29,
             [EnumValueDescription("Simple Click")]
-            SimpleClick=30,
+            SimpleClick = 30,
             [EnumValueDescription("Switch To Default Frame")]
-            SwitchToDefaultFrame=31,
+            SwitchToDefaultFrame = 31,
             [EnumValueDescription("Delete All Cookies")]
-            DeleteAllCookies=32,
+            DeleteAllCookies = 32,
             Refresh = 33,
             [EnumValueDescription("Get Contexts")]
             GetContexts = 34,
@@ -577,33 +579,33 @@ namespace GingerCore.Actions
             [EnumValueDescription("Select From Dijit List")]
             SelectFromDijitList = 36,//used for selecting from DropDown/Combobox which his values loaded using dijit (Dojo Toolkit)
             [EnumValueDescription("Run Java Script")]
-            RunJavaScript= 37,
+            RunJavaScript = 37,
             [EnumValueDescription("Double Click")]
-            DoubleClick= 38,
+            DoubleClick = 38,
             [EnumValueDescription("Right Click")]
-            RightClick= 39,
+            RightClick = 39,
             [EnumValueDescription("Switch To Parent Frame")]
-            SwitchToParentFrame=40,
+            SwitchToParentFrame = 40,
             [EnumValueDescription("Async Select From Drop Down (By Index)")]
             AsyncSelectFromDropDownByIndex = 41,
             [EnumValueDescription("Accept Message Box")]
             AcceptMessageBox = 42,
             [EnumValueDescription("Get Element Attribute Value")]
-            GetElementAttributeValue, 
-			//Dummy = 43,
+            GetElementAttributeValue,
+            //Dummy = 43,
             [EnumValueDescription("Batch Clicks")]
             BatchClicks = 44,
             [EnumValueDescription("Batch Set Values")]
             BatchSetValues = 45,
             [EnumValueDescription("Get Window Title")]
-			GetWindowTitle = 46,
-			Disabled=47,
+            GetWindowTitle = 46,
+            Disabled = 47,
             [EnumValueDescription("Set Attribute using JavaScript")]
-            SetAttributeUsingJs=48,
+            SetAttributeUsingJs = 48,
             [EnumValueDescription("Get Number of Elements")]
             GetNumberOfElements = 49,
             [EnumValueDescription("Send Keys")]
-            SendKeys=50,
+            SendKeys = 50,
             [EnumValueDescription("Click At")]
             ClickAt = 51,
             [EnumValueDescription("Is Enabled")]
@@ -620,7 +622,7 @@ namespace GingerCore.Actions
             Focus = 59,
             [EnumValueDescription("Simple Double Click")]
             Doubleclick2 = 61,
-            HighLightElement=60,
+            HighLightElement = 60,
             [EnumValueDescription("Fire Mouse Event")]
             FireMouseEvent = 62,
             [EnumValueDescription("Fire Special Event")]
@@ -634,7 +636,7 @@ namespace GingerCore.Actions
             [EnumValueDescription("Expand Drop Down")]
             Expand = 67
         }
-        
+
         [IsSerializedForLocalRepository]
         public eGenElementAction GenElementAction { get; set; }
 
@@ -644,7 +646,7 @@ namespace GingerCore.Actions
             get
             {
                 //nd for backworth support
-                if( GetInputParamValue(Fields.Xoffset) == null && mXoffset != string.Empty)
+                if (GetInputParamValue(Fields.Xoffset) == null && mXoffset != string.Empty)
                     AddOrUpdateInputParamValue(Fields.Xoffset, mXoffset);
 
                 return GetInputParamCalculatedValue(Fields.Xoffset);
@@ -674,7 +676,7 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(Fields.Yoffset, value);
             }
         }
-        
+
         public override String ToString()
         {
             return "Generic Web Element: " + GetInputParamValue("Value");
@@ -689,9 +691,9 @@ namespace GingerCore.Actions
         }
 
         public override eImageType Image { get { return eImageType.Screen; } }  // TODO: make me dynamic based on elem type
-        
+
         public override ActionDetails Details
-        {            
+        {
             get
             {
 
@@ -701,14 +703,14 @@ namespace GingerCore.Actions
                 // return params order by priority
                 d.Params.Clear();
 
-                d.Params.Add(new ActionParamInfo() { Param = "Action", Value = GenElementAction.ToString() });   
+                d.Params.Add(new ActionParamInfo() { Param = "Action", Value = GenElementAction.ToString() });
 
                 if (!string.IsNullOrEmpty(this.Value))
-                {                    
-                    d.Params.Add(new ActionParamInfo() { Param = "Value", Value = this.Value });   
+                {
+                    d.Params.Add(new ActionParamInfo() { Param = "Value", Value = this.Value });
                 }
                 return d;
             }
-        }      
+        }
     }
 }

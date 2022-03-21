@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -533,7 +534,8 @@ namespace GingerCore.Actions
                 BaseLineFileName = @"~\Documents\ScreenShots\" + Description + " - Baseline.png";
             }
 
-            string FullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(BaseLineFileName);
+            //string FullPath = BaseLineFileName.Replace(@"~\", SolutionFolder);
+            string FullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BaseLineFileName);
 
             // no need to ask user, + it might be at run time
             if (File.Exists(FullPath))
@@ -553,7 +555,12 @@ namespace GingerCore.Actions
         // TODO: move from here to general or use general
         public string GetFullFilePath(string relativePath)
         {
-            relativePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(relativePath);
+            //if (relativePath.StartsWith(@"~\"))
+            //{
+            //    return relativePath.Replace(@"~\", SolutionFolder);
+            //}
+            relativePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(relativePath);
+
             return relativePath;
         }
     }

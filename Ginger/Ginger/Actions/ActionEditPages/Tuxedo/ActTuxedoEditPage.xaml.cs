@@ -100,7 +100,7 @@ namespace Ginger.Actions.Tuxedo
             //{
             //    FileName = FileName.Replace("~",  WorkSpace.Instance.Solution.ContainingFolderFullPath);
             //}
-            FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName);
+            FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FileName);
 
             mAct.DynamicUDElements.Clear();
             string[] lines = System.IO.File.ReadAllLines(FileName);
