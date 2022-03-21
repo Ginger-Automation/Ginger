@@ -166,8 +166,8 @@ namespace GingerCore.Actions
         {
             get
             {
-                bool value = false;
-                bool.TryParse(GetOrCreateInputParam(nameof(IsFullPageScreenshot)).Value, out value);
+                bool value = true;
+                bool.TryParse(GetOrCreateInputParam(nameof(IsFullPageScreenshot), value.ToString()).Value, out value);
                 return value;
             }
             set
