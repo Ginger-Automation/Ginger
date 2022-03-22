@@ -84,8 +84,35 @@ namespace Ginger.Reports
             // Gideon
             xSealightsLogRadioButton.Init(typeof(ExecutionLoggerConfiguration.eSealightsLog),
                 xSealightsLogPanel, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.SealightsLog));
+                nameof(ExecutionLoggerConfiguration.SealightsLog), SealightsLogRadioButton_CheckedHandler);
 
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealightsURLTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
+                nameof(ExecutionLoggerConfiguration.SealightsURL));
+
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsAgentTokenTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
+                nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsLabIdTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
+                nameof(ExecutionLoggerConfiguration.SealightsLabId));
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealightsTestStageTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
+                nameof(ExecutionLoggerConfiguration.SealightsTestStage));
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsBuildSessionIDTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
+                nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsSessionTimeoutTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
+                nameof(ExecutionLoggerConfiguration.SealightsSessionTimeout));
+
+            xSealighsReportedEntityLevelComboBox.Items.Add("Business Flow");
+            xSealighsReportedEntityLevelComboBox.Items.Add("Activities Group");
+            xSealighsReportedEntityLevelComboBox.Items.Add("Activity");
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsReportedEntityLevelComboBox, ComboBox.SelectedItemProperty, _selectedExecutionLoggerConfiguration,
+                nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel ));
+
+            //------------
 
             xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
                 xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
@@ -258,6 +285,51 @@ namespace Ginger.Reports
                 xPublishingPhasePanel.Visibility = Visibility.Collapsed;
             }
         }
+
+        private void SealightsLogRadioButton_CheckedHandler(object sender, RoutedEventArgs e)
+        {
+            string value = ((RadioButton)sender).Tag?.ToString();
+
+            ExecutionLoggerConfiguration.eSealightsLog sealightsLog;
+
+            Enum.TryParse(value, out sealightsLog);
+
+            if (sealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
+            {
+                xSealightsURLLabel.Visibility = Visibility.Visible;
+                xSealightsURLTextBox.Visibility = Visibility.Visible;
+                xSealighsAgentTokenLabel.Visibility = Visibility.Visible;
+                xSealighsAgentTokenTextBox.Visibility = Visibility.Visible;
+                xSealighsLabIdLabel.Visibility = Visibility.Visible;
+                xSealighsLabIdTextBox.Visibility = Visibility.Visible;
+                xSealightsTestStageLabel.Visibility = Visibility.Visible;
+                xSealightsTestStageTextBox.Visibility = Visibility.Visible;
+                xSealighsBuildSessionIDLabel.Visibility = Visibility.Visible;
+                xSealighsBuildSessionIDTextBox.Visibility = Visibility.Visible;
+                xSealighsSessionTimeoutLabel.Visibility = Visibility.Visible;
+                xSealighsSessionTimeoutTextBox.Visibility = Visibility.Visible;
+                xSealighsReportedEntityLevelLabel.Visibility = Visibility.Visible;
+                xSealighsReportedEntityLevelComboBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xSealightsURLLabel.Visibility = Visibility.Collapsed;
+                xSealightsURLTextBox.Visibility = Visibility.Collapsed;
+                xSealighsAgentTokenLabel.Visibility = Visibility.Collapsed;
+                xSealighsAgentTokenTextBox.Visibility = Visibility.Collapsed;
+                xSealighsLabIdLabel.Visibility = Visibility.Collapsed;
+                xSealighsLabIdTextBox.Visibility = Visibility.Collapsed;
+                xSealightsTestStageLabel.Visibility = Visibility.Collapsed;
+                xSealightsTestStageTextBox.Visibility = Visibility.Collapsed;
+                xSealighsBuildSessionIDLabel.Visibility = Visibility.Collapsed;
+                xSealighsBuildSessionIDTextBox.Visibility = Visibility.Collapsed;
+                xSealighsSessionTimeoutLabel.Visibility = Visibility.Collapsed;
+                xSealighsSessionTimeoutTextBox.Visibility = Visibility.Collapsed;
+                xSealighsReportedEntityLevelLabel.Visibility = Visibility.Collapsed;
+                xSealighsReportedEntityLevelComboBox.Visibility = Visibility.Collapsed;
+            }
+        }
+        
 
         private void SetExecutionLoggerRadioButtonToOff()
         {

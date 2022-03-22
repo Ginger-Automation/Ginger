@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using AccountReport.Contracts;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
@@ -112,7 +113,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 restRequest.AddHeader("Content-Type", "application/json");
                 restRequest.AddHeader("Authorization", "Bearer " + Token);
 
-                restRequest.AddJsonBody(new { labId = "111", testStage = "Ginger Regression Test Gideon", bsId = "1624300311460", sessionTimeout = "10000" }); // Anonymous type object is converted to Json body
+                string labId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLabId;
+                string testStage = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsTestStage;
+                string bsId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID;
+                string sessionTimeout = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsSessionTimeout;
+
+                //restRequest.AddJsonBody(new { labId = "111", testStage = "Ginger Regression Test Gideon", bsId = "1624300311460", sessionTimeout = "10000" }); // Anonymous type object is converted to Json body
+                restRequest.AddJsonBody(new { labId = labId, testStage = testStage, bsId = bsId, sessionTimeout = sessionTimeout }); // Anonymous type object is converted to Json body
 
                 IRestResponse response = await restClient.ExecuteAsync(restRequest);
 
@@ -148,8 +155,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
                 restRequest.AddHeader("Content-Type", "application/json");
                 restRequest.AddHeader("Authorization", "Bearer " + Token);
-
-                //restRequest.AddParameter("testSessionId", TestSessionId);
 
                 IRestResponse response = await restClient.ExecuteAsync(restRequest);
 

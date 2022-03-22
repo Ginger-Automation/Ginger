@@ -41,7 +41,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             {
                 if (mSealightsApiHandler == null)
                 {
-                    mSealightsApiHandler = new SealightsReportApiHandler("https://amdocs.sealights.co");
+                    mSealightsApiHandler = new SealightsReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.SealightsURL);
+
+                    //mSealightsApiHandler = new SealightsReportApiHandler("https://amdocs.sealights.co");
                 }
                 return mSealightsApiHandler;
             }

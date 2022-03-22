@@ -198,6 +198,114 @@ namespace Ginger.Reports
             }
         }
 
+        private string mSealightsURL;
+        [IsSerializedForLocalRepository]
+        public string SealightsURL
+        {
+            get
+            {
+                return mSealightsURL;
+            }
+            set
+            {
+                mSealightsURL = value;
+                OnPropertyChanged(nameof(SealightsURL));
+            }
+        }
+
+
+        private string mSealightsAgentToken;
+        [IsSerializedForLocalRepository]
+        public string SealightsAgentToken
+        {
+            get
+            {
+                return mSealightsAgentToken;
+            }
+            set
+            {
+                mSealightsAgentToken = value;
+                OnPropertyChanged(nameof(SealightsAgentToken));
+            }
+        }
+
+        private string mSealightsLabId;
+        [IsSerializedForLocalRepository]
+        public string SealightsLabId
+        {
+            get
+            {
+                return mSealightsLabId;
+            }
+            set
+            {
+                mSealightsLabId = value;
+                OnPropertyChanged(nameof(SealightsLabId));
+            }
+        }
+
+        private string mSealightsTestStage;
+        [IsSerializedForLocalRepository]
+        public string SealightsTestStage
+        {
+            get
+            {
+                return mSealightsTestStage;
+            }
+            set
+            {
+                mSealightsTestStage = value;
+                OnPropertyChanged(nameof(SealightsTestStage));
+            }
+        }
+
+        private string mSealightsBuildSessionID;
+        [IsSerializedForLocalRepository]
+        public string SealightsBuildSessionID
+        {
+            get
+            {
+                return mSealightsBuildSessionID;
+            }
+            set
+            {
+                mSealightsBuildSessionID = value;
+                OnPropertyChanged(nameof(SealightsBuildSessionID));
+            }
+        }        
+
+        private string mSealightsSessionTimeout;
+        [IsSerializedForLocalRepository]
+        public string SealightsSessionTimeout
+        {
+            get
+            {
+                return mSealightsSessionTimeout;
+            }
+            set
+            {
+                mSealightsSessionTimeout = value;
+                OnPropertyChanged(nameof(SealightsSessionTimeout));
+            }
+        }
+
+        private string mSealightsReportedEntityLevel;
+        [IsSerializedForLocalRepository]
+        public string SealightsReportedEntityLevel
+        {
+            get
+            {
+                return mSealightsReportedEntityLevel;
+            }
+            set
+            {
+                mSealightsReportedEntityLevel = value;
+                OnPropertyChanged(nameof(SealightsReportedEntityLevel));
+            }
+        }
+
+        
+
         public bool IsPublishToCentralDBRunning { get; set; }
 
         public string ExecutionLoggerConfigurationHTMLReportsFolder { get; set; }
