@@ -310,7 +310,7 @@ namespace UnitTests.NonUITests
             }
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  [Timeout(600000)]
         public void WebServices_WebAPIRest()
         {
             //Arrange
@@ -346,10 +346,14 @@ namespace UnitTests.NonUITests
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.GET.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
 
             restAct.Active = true;
             restAct.EnableRetryMechanism = false;
             restAct.ItemName = "Web API REST";
+            restAct.AddNewReturnParams = true;
 
             mBF.Activities[0].Acts.Add(restAct);
 

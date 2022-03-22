@@ -32,6 +32,8 @@ using System.Windows;
 using System.Windows.Controls;
 using Ginger.DataSource;
 using GingerWPF.ApplicationModelsLib.APIModels;
+using GingerCore.Actions.WebAPI;
+using GingerCore.Actions.WebServices;
 
 namespace Ginger.Actions.WebServices
 {
@@ -278,6 +280,39 @@ namespace Ginger.Actions.WebServices
         {
             APIModelPage mAPIEditPage = new APIModelPage(AAMB);
             mAPIEditPage.ShowAsWindow(eWindowShowStyle.Dialog, e: APIModelPage.eEditMode.Edit, parentWindow: Window.GetWindow(this));
+        }
+
+        private void xViewRawRequestBtn_Click(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < mAct.APIModelParamsValue.Count; i++)
+            {
+                mAct.APIModelParamsValue[i].ValueForDriver = mAct.APIModelParamsValue[i].Value;
+            }
+            ActWebAPIBase actWebAPI = null;
+            if (mAct is ActWebAPIModel ActWAPIM)
+            {
+                //pull pointed API Model
+                ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == ((ActWebAPIModel)mAct).APImodelGUID).FirstOrDefault();
+                if (AAMB != null)
+                {
+                    //init matching real WebAPI Action
+                    if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.REST)
+                    {
+                        actWebAPI = ActWAPIM.CreateActWebAPIREST((ApplicationAPIModel)AAMB, ActWAPIM);
+                    }
+                    else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
+                    {
+                        actWebAPI = ActWAPIM.CreateActWebAPISOAP((ApplicationAPIModel)AAMB, ActWAPIM);
+                    }
+                }
+            }
+
+
+            HttpWebClientUtils webAPI = new HttpWebClientUtils();
+            webAPI.RequestContstructor(actWebAPI, null, false);
+            webAPI.CreateRawRequestContent();
+
+            xViewRawRequestTxtBlock.Text = webAPI.RequestFileContent;
         }
     }
 }

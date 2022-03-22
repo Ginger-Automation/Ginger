@@ -33,6 +33,8 @@
             </Grid>
 
             <Ginger:ucGrid x:Name="APIModelParamsValueUCGrid"  Visibility="Visible" Title="API Model Parameters" Margin="6,15,8,0" ShowRefresh="Visible" ShowEdit="Collapsed" ShowTagsFilter="Collapsed"  ShowAdd="Collapsed" ShowDelete="Collapsed"  ShowClearAll="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed"></Ginger:ucGrid>
+            <Button x:Name="xViewRawRequestBtn" Content="View Raw Request" Width="100" Click="xViewRawRequestBtn_Click"/>
+            <TextBlock x:Name="xViewRawRequestTxtBlock" Text="Testing" Background="White" />
         </StackPanel>
     </Grid>
 </Page>

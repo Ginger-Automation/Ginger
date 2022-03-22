@@ -599,7 +599,9 @@ namespace Ginger.Actions.WebServices
         {
             HttpWebClientUtils webAPI = new HttpWebClientUtils();
             webAPI.RequestContstructor(mAct, null, false);
-            webAPI.creatRawRequestContent();
+            webAPI.CreateRawRequestContent();
+
+            xViewRawRequestTxtBlock.Text = webAPI.RequestFileContent;
         }
     }
 }
