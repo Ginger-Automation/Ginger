@@ -4913,7 +4913,7 @@
       <Version>106.11.4</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.ChromeDriver">
-      <Version>98.0.4758.8000</Version>
+      <Version>99.0.4844.5100</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.GeckoDriver">
       <Version>0.30.0.1</Version>
