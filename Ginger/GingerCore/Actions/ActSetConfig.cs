@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -64,10 +64,28 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public string sValue { get; set; }
+        public string sValue
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(sValue)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(sValue), value);
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public string sParam { get; set; }
+        public string sParam
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(sParam)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(sParam), value);
+            }
+        }
     }
 }

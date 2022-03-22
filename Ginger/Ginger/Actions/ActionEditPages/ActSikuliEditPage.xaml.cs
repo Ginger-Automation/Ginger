@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,10 +23,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Ginger.Actions.UserControls;
+using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.ScreenCapture;
+using GingerCore.DataSource;
 using GingerCore.Drivers;
 using ScreenSnipApplication;
 
@@ -136,6 +140,7 @@ namespace Ginger.Actions
                 Filter = "Image Files (*.jpg, *.jpeg, *.png)|*.jpg;*.jpeg;*.png"
             }, false) is string fileName)
             {
+                fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(fileName);
                 actSikuli.PatternPath = fileName;
                 xPatternImageLocationTextBox.ValueTextBox.Text = fileName;
                 xRefreshPatternImage.DoClick();
@@ -144,24 +149,26 @@ namespace Ginger.Actions
 
         void ElementImageSourceChanged(bool IsFirstCall = false)
         {
-            if (!string.IsNullOrEmpty(xPatternImageLocationTextBox.ValueTextBox.Text)
-                && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(xPatternImageLocationTextBox.ValueTextBox.Text)))
+            ValueExpression mVE = new ValueExpression(Context.GetAsContext(actSikuli.Context).Environment, Context.GetAsContext(actSikuli.Context), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+            mVE.Value = xPatternImageLocationTextBox.ValueTextBox.Text;
+            string calculateValue = mVE.ValueCalculated;
+            if (string.IsNullOrEmpty(calculateValue))
+            {
+                calculateValue = xPatternImageLocationTextBox.ValueTextBox.Text;
+            }
+            if (!string.IsNullOrEmpty(calculateValue)
+                && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculateValue)))
             {
                 try
                 {
-                    var imgSrc = File.ReadAllBytes(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(xPatternImageLocationTextBox.ValueTextBox.Text));
-                    var bitmapSource = new BitmapImage();
-                    bitmapSource.BeginInit();
-                    bitmapSource.StreamSource = new MemoryStream(imgSrc);
-                    bitmapSource.EndInit();
-
-                    xElementImage.Source = bitmapSource;
-                    xElementImageCanvas.Visibility = Visibility.Visible;
+                    ScreenShotViewPage screenShotPage = new ScreenShotViewPage(calculateValue, calculateValue, 0.5);
+                    xScreenShotsViewFrame.Content = screenShotPage;
                 }
                 catch (Exception exc)
                 {
+                    actSikuli.PatternPath = string.Empty;
                     Reporter.ToLog(eLogLevel.ERROR, exc.Message, exc);
-                    xElementImageCanvas.Visibility = Visibility.Collapsed;
+                    xScreenShotsViewFrame.Content = null;
                 }
             }
             else
@@ -170,7 +177,8 @@ namespace Ginger.Actions
                 {
                     Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Valid Image file found. Please enter a valid Image path.");
                 }
-                xElementImageCanvas.Visibility = Visibility.Collapsed;
+                actSikuli.PatternPath = string.Empty;
+                xScreenShotsViewFrame.Content = null;
             }
         }
 

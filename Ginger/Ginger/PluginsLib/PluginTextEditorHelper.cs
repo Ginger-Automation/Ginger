@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,12 +35,12 @@ namespace Ginger.PlugInsWindows
         {
             List<ITextEditor> textEditors = new List<ITextEditor>();
 
-            if (string.IsNullOrEmpty(pluginPackage.PluginPackageInfo.UIDLL))
+            if (string.IsNullOrEmpty(((PluginPackageOperations)pluginPackage.PluginPackageOperations).PluginPackageInfo.UIDLL))
             {
                 return textEditors;
             }
 
-            string UIDLLFileName = Path.Combine(pluginPackage.Folder, "UI", pluginPackage.PluginPackageInfo.UIDLL);
+            string UIDLLFileName = Path.Combine(pluginPackage.Folder, "UI", ((PluginPackageOperations)pluginPackage.PluginPackageOperations).PluginPackageInfo.UIDLL);
             if (!File.Exists(UIDLLFileName))
             {
                 throw new Exception("Plugin UI DLL not found: " + UIDLLFileName);

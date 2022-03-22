@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,11 +20,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -320,6 +322,7 @@ namespace GingerCore
                 mActivities.LoadLazyInfo();
                 mLazyLoadFlagForUnitTest = true;
                 AttachActivitiesGroupsAndActivities(mActivities);
+                LoadLinkedActivities();
                 if (this.DirtyStatus != eDirtyStatus.NoTracked)
                 {
                     this.TrackObservableList(mActivities);
@@ -1024,6 +1027,28 @@ namespace GingerCore
             }
         }
 
+        private void LoadLinkedActivities()
+        {
+            if (this.Activities.Any(f => f.IsLinkedItem))
+            {
+                Parallel.For(0, this.Activities.Count(), i =>
+                {
+                    if (!this.Activities[i].IsLinkedItem)
+                        return;
+                    Activity sharedActivity = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(this.Activities[i].ParentGuid);
+
+                    if (sharedActivity != null)
+                    {
+                        Activity copyItem = (Activity)sharedActivity.CreateInstance(true);
+                        copyItem.Guid = this.Activities[i].Guid;
+                        copyItem.ActivitiesGroupID = this.Activities[i].ActivitiesGroupID;
+                        copyItem.Type = this.Activities[i].Type;
+                        this.Activities[i] = copyItem;
+                    }
+                });
+            }
+        }
+
         public int GetActionsCount()
         {
             int i = 0;
@@ -1717,6 +1742,28 @@ namespace GingerCore
             {
                 AttachActivitiesGroupsAndActivities();//so attach will be done also in case BF will be reloaded by FileWatcher
             }
+        }
+
+        public bool MarkActivityAsLink(Guid activityGuid, Guid parentGuid)
+        {
+            if (Activities.Any(act => act.Guid == activityGuid))
+            {
+                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().Type = eSharedItemType.Link;
+                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().ParentGuid = parentGuid;
+                return true;
+            }
+            return false;
+        }
+
+        public bool UnMarkActivityAsLink(Guid activityGuid, Guid parentGuid)
+        {
+            if (Activities.Any(act => act.Guid == activityGuid))
+            {
+                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().Type = eSharedItemType.Regular;
+                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().ParentGuid = parentGuid;
+                return true;
+            }
+            return false;
         }
 
         public override void PrepareItemToBeCopied()

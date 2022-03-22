@@ -751,6 +751,10 @@
       <Project>{d5329d81-7ff0-4af1-b186-a2fd65ef0583}</Project>
       <Name>GingerPlugIns</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GingerUtils\GingerUtils.csproj">
+      <Project>{80A06C2B-7DA2-4F78-BF2A-5C0234F2349E}</Project>
+      <Name>GingerUtils</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -787,7 +791,7 @@
       <Version>4.5.3.1</Version>
     </PackageReference>
     <PackageReference Include="Google.Protobuf">
-      <Version>3.8.0</Version>
+      <Version>3.15.0</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
       <Version>1.11.21</Version>

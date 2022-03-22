@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,18 +36,6 @@ namespace GingerCore.Platforms
             this.ApplicationAgent.ApplicationAgentOperations = this;   
         }
 
-        public Guid GetAppID(Guid appID)
-        {
-            if (appID == Guid.Empty)
-            {
-                ApplicationPlatform appPlat = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == ApplicationAgent.AppName).FirstOrDefault();
-                if (appPlat != null)
-                {
-                    return appPlat.Guid;
-                }
-            }
-            return appID;
-        }
         public List<IAgent> PossibleAgents
         {
             get
@@ -66,9 +54,10 @@ namespace GingerCore.Platforms
                     {
                         foreach (IAgent agent in agents)
                         {
-                            AgentOperations agentOperations = new AgentOperations((Agent)agent);
-                            ((Agent)agent).AgentOperations = agentOperations;
-
+                            if (((Agent)agent).AgentOperations == null)
+                            {
+                                ((Agent)agent).AgentOperations = new AgentOperations((Agent)agent);
+                            }
                             possibleAgents.Add(agent);
                         }
                     }

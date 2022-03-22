@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ using GingerCore.Drivers.Common;
 using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -75,6 +76,18 @@ namespace GingerCore.Drivers.JavaDriverLib
         [UserConfiguredDefault("30")]  // Local host 
         [UserConfiguredDescription("Implicit wait is to tell driver to sync for a certain amount of time when trying to find an element, if they are not immediately available")]
         public int ImplicitWait { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Applitool View Key number")]
+        public String ApplitoolsViewKey { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Applitool Server Url")]
+        public String ApplitoolsServerUrl { get; set; }
+
+        protected IWebDriver Driver;
 
 
         private IPEndPoint serverAddress;
@@ -453,7 +466,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             ObservableList<ElementLocator> locators = new ObservableList<ElementLocator>();
 
-            var pomExcutionUtil = new POMExecutionUtils(act);
+            var pomExcutionUtil = new POMExecutionUtils(act,act.ElementLocateValue);
 
             var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
@@ -3648,7 +3661,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return result;
         }
 
-        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null)
+        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
             return GetWindowScreenShot();
         }
@@ -4042,6 +4055,31 @@ namespace GingerCore.Drivers.JavaDriverLib
         public string GetCurrentPageSourceString()
         {
             return null;
+        }
+
+        public string GetApplitoolServerURL()
+        {
+            return this.ApplitoolsServerUrl;
+        }
+
+        public string GetApplitoolKey()
+        {
+            return this.ApplitoolsViewKey;
+        }
+
+        public ePlatformType GetPlatform()
+        {
+            return this.Platform;
+        }
+
+        public string GetEnvironment()
+        {
+            return this.BusinessFlow.Environment;
+        }
+
+        public IWebDriver GetWebDriver()
+        {
+            return Driver;
         }
     }
 }

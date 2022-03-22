@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -363,6 +363,16 @@ namespace Ginger.UserControlsLib.UCListView
                         else
                         {
                             BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.VisibilityProperty, notification.BindingObject, notification.BindingFieldName, bindingConvertor: notification.BindingConverter, BindingMode.OneWay);
+                        }
+
+                        if (notification.ImageTypeBindingConverter != null)
+                        {
+                            BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.ImageTypeProperty, notification.BindingObject, notification.ImageTypeBindingFieldName, bindingConvertor: notification.ImageTypeBindingConverter, BindingMode.OneWay);
+                        }
+
+                        if (notification.TooltipBindingConverter != null)
+                        {
+                            BindingHandler.ObjFieldBinding(itemInd, ImageMakerControl.ToolTipProperty, notification.BindingObject, notification.TooltipBindingFieldName, bindingConvertor: notification.TooltipBindingConverter, BindingMode.OneWay);
                         }
 
                         xItemNotificationsPnl.Children.Add(itemInd);

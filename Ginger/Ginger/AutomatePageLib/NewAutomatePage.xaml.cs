@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -96,6 +96,7 @@ namespace GingerWPF.BusinessFlowsLib
         RunSetReport mRunSetReport;
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public static event EventHandler RaiseEnvComboBoxChanged;
         public void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
@@ -127,19 +128,19 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 if (mRunSetReport == null)
                 {
-                    mRunSetReport = new RunSetReport();                    
+                    mRunSetReport = new RunSetReport();
                     mRunSetReport.SetDataForAutomateTab();
                     ExecutionLoggerManager.RunSetReport = mRunSetReport;
                     bool isAutoRunSetExists = SetOrClearPreviousAutoRunSetDocumentLiteDB(false);
                     if (!isAutoRunSetExists)
                     {
                         mExecutionEngine.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad, true);
-                        mExecutionEngine.ExecutionLoggerManager.RunnerRunEnd(0, mExecutionEngine.GingerRunner, offlineMode:true);
+                        mExecutionEngine.ExecutionLoggerManager.RunnerRunEnd(0, mExecutionEngine.GingerRunner, offlineMode: true);
                         ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).SetReportRunSet(mRunSetReport, "");
                         SetOrClearPreviousAutoRunSetDocumentLiteDB(false);
                         return;
                     }
-                    SetOrClearPreviousAutoRunSetDocumentLiteDB(true);                  
+                    SetOrClearPreviousAutoRunSetDocumentLiteDB(true);
                 }
             }
         }
@@ -168,25 +169,25 @@ namespace GingerWPF.BusinessFlowsLib
             var result = dbManager.GetRunSetLiteData();
             var filterData = result.FindOne(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString());
             if (filterData != null)
-            {               
-                if(isClear)
+            {
+                if (isClear)
                 {
                     LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mExecutionEngine.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder, "GingerExecutionResults.db"));
                     dbConnector.DeleteDocumentByLiteDbRunSet(filterData, eExecutedFrom.Automation);
-                }      
+                }
                 else
                 {
                     mRunSetLiteDbId = filterData._id;
                     mRunnerLiteDbId = filterData.RunnersColl[0]._id;
                 }
                 return true;
-            }            
+            }
             return false;
         }
         #endregion LiteDB
 
         private void SetUIControls()
-        {            
+        {
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Activities));
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Variables));
             xBusinessFlowItemComboBox.Items.Add("Details");
@@ -354,7 +355,7 @@ namespace GingerWPF.BusinessFlowsLib
             mExecutionEngine.Context = mContext;
             mContext.Runner = mExecutionEngine;
         }
-      
+
         private void MRunner_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(GingerRunner.SpecificEnvironmentName))
@@ -362,6 +363,10 @@ namespace GingerWPF.BusinessFlowsLib
                 if (!string.IsNullOrEmpty(mExecutionEngine.GingerRunner.SpecificEnvironmentName))
                 {
                     xEnvironmentComboBox.SelectedItem = (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == mExecutionEngine.GingerRunner.SpecificEnvironmentName).First());
+                    if (RaiseEnvComboBoxChanged != null)
+                    {
+                        RaiseEnvComboBoxChanged(null, null);
+                    }
                 }
             }
             //else if (e.PropertyName == nameof(GingerRunner.Status))
@@ -396,7 +401,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 RemoveCurrentBusinessFlow();
                 ResetPageUI();
-                
+
                 mBusinessFlow = businessFlowToLoad;
                 if (mBusinessFlow != null)
                 {
@@ -420,13 +425,13 @@ namespace GingerWPF.BusinessFlowsLib
                         }
                         UpdateApplicationsAgentsMapping();
 
-                        SetBusinessFlowTargetAppIfNeeded();                        
+                        SetBusinessFlowTargetAppIfNeeded();
                         mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
                         UpdateRunnerAgentsUsedBusinessFlow();
 
                         Ginger.General.DoEvents();//so UI will refresh
 
-                                                
+
                         mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
 
                         //--BF sections updates
@@ -542,8 +547,10 @@ namespace GingerWPF.BusinessFlowsLib
 
                 if (appAgent.Agent != null)
                 {
-                    AgentOperations agentOperations = new AgentOperations(appAgent.Agent);
-                    appAgent.Agent.AgentOperations = agentOperations;
+                    if (appAgent.Agent.AgentOperations == null)
+                    {
+                        appAgent.Agent.AgentOperations = new AgentOperations(appAgent.Agent);
+                    }
                     if (((AgentOperations)appAgent.Agent.AgentOperations).Status == Agent.eStatus.Running)
                     {
                         ((DriverBase)((AgentOperations)appAgent.Agent.AgentOperations).Driver).UpdateContext(mContext);
@@ -813,7 +820,7 @@ namespace GingerWPF.BusinessFlowsLib
                     break;
                 case AutomateEventArgs.eEventType.GenerateLastExecutedItemReport:
                     GenerateLastExecutedItemReport();
-                    break;               
+                    break;
                 default:
                     //Avoid other operations
                     break;
@@ -829,7 +836,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mExecutionEngine.ExecutionLoggerManager.mExecutionLogger = new LiteDBRepository();
             }
-            else if(dataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+            else if (dataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
             {
                 mExecutionEngine.ExecutionLoggerManager.mExecutionLogger = new TextFileRepository();
             }
@@ -865,7 +872,7 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         AnalyzerPage analyzerPage = new AnalyzerPage();
 
-                        analyzerPage.Init(WorkSpace.Instance.Solution, mBusinessFlow,WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
+                        analyzerPage.Init(WorkSpace.Instance.Solution, mBusinessFlow, WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
                         await analyzerPage.AnalyzeWithoutUI();
                         Reporter.HideStatusMessage();
                         if (analyzerPage.TotalHighAndCriticalIssues > 0)
@@ -882,7 +889,7 @@ namespace GingerWPF.BusinessFlowsLib
                 }
 
                 //execute preparations               
-                mExecutionEngine.ResetRunnerExecutionDetails(false,true);
+                mExecutionEngine.ResetRunnerExecutionDetails(false, true);
                 mExecutionEngine.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun;
 
                 //execute                
@@ -913,7 +920,7 @@ namespace GingerWPF.BusinessFlowsLib
                 //mExecutionIsInProgress = false;
                 //SetUIElementsBehaverDuringExecution();
                 mExecutionEngine.ResetFailedToStartFlagForAgents();
-               
+
             }
         }
 
@@ -954,7 +961,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        public async Task RunAutomatePageAction(Tuple<Activity,Act, bool> actionToExecuteInfo, bool moveToNextAction = true, bool checkIfActionAllowedToRun = true)
+        public async Task RunAutomatePageAction(Tuple<Activity, Act, bool> actionToExecuteInfo, bool moveToNextAction = true, bool checkIfActionAllowedToRun = true)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
@@ -1023,9 +1030,9 @@ namespace GingerWPF.BusinessFlowsLib
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in RunAutomatePageAction" , ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in RunAutomatePageAction", ex);
             }
             finally
             {
@@ -1054,7 +1061,7 @@ namespace GingerWPF.BusinessFlowsLib
                         await mExecutionEngine.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.LastStoppedAction);
                         break;
                     case eContinueFrom.SpecificAction:
-                        await mExecutionEngine.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificAction, mBusinessFlow, (Activity)((Tuple<Activity,Act>)executedItem).Item1, (Act)((Tuple<Activity, Act>)executedItem).Item2);
+                        await mExecutionEngine.ContinueRunAsync(eContinueLevel.StandalonBusinessFlow, eContinueFrom.SpecificAction, mBusinessFlow, (Activity)((Tuple<Activity, Act>)executedItem).Item1, (Act)((Tuple<Activity, Act>)executedItem).Item2);
                         break;
                     case eContinueFrom.SpecificActivity:
                         mBusinessFlow.CurrentActivity = (Activity)executedItem;
@@ -1089,7 +1096,7 @@ namespace GingerWPF.BusinessFlowsLib
                     return;
                 }
 
-                UpdateToNewSolution();                
+                UpdateToNewSolution();
             }
         }
 
@@ -1101,7 +1108,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void UpdateToNewSolution()
         {
             SetEnvsCombo();
-            UpdateAutomatePageRunner();            
+            UpdateAutomatePageRunner();
         }
 
         private void SetEnvsCombo()
@@ -1110,7 +1117,7 @@ namespace GingerWPF.BusinessFlowsLib
             xEnvironmentComboBox.SelectedValuePath = nameof(ProjEnvironment.Guid);
             xEnvironmentComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().AsCollectionViewOrderBy(nameof(ProjEnvironment.Name));
 
-            if(GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment())
+            if (GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment())
             {
                 xEnvironmentComboBox.SelectedIndex = 0;
             }
@@ -1315,7 +1322,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xBusinessFlowItemComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(xBusinessFlowItemComboBox.SelectedItem == GingerDicser.GetTermResValue(eTermResKey.Activities))
+            if (xBusinessFlowItemComboBox.SelectedItem == GingerDicser.GetTermResValue(eTermResKey.Activities))
             {
                 xItemsTabs.SelectedItem = xBfActiVitiesTab;
             }
@@ -1425,7 +1432,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             //create the execution logger files            
-            string exec_folder = mExecutionEngine.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(Path.Combine(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder,Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName));
+            string exec_folder = mExecutionEngine.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(Path.Combine(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder, Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName));
 
             if (Directory.Exists(exec_folder))
             {
@@ -1479,7 +1486,7 @@ namespace GingerWPF.BusinessFlowsLib
                 var selectedGuid = mRunSetLiteDbId;
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
                 webReporterRunner.RunNewHtmlReport(string.Empty, selectedGuid.ToString());
-            }            
+            }
         }
 
         private void ShowExecutionSummaryPage()
@@ -1578,7 +1585,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             //get logger files
-            string exec_folder = mExecutionEngine.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(Path.Combine(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder,Ginger.Run.ExecutionLoggerManager.defaultAutomationTabLogName));
+            string exec_folder = mExecutionEngine.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(Path.Combine(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder, Ginger.Run.ExecutionLoggerManager.defaultAutomationTabLogName));
             //create the report
             string reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), true, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
 

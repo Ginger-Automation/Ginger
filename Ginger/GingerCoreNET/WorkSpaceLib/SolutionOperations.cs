@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
@@ -333,18 +335,28 @@ namespace Ginger.SolutionGeneral
             }
         }
 
-
-
-        // SerializationError cant have access to workspace 
-        public ALMUserConfig GetALMConfig()
+        public string ConvertSolutionRelativePath(string relativePath)
         {
-            ALMUserConfig AlmUserConfig = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault();
-            if (AlmUserConfig == null)
+            if (String.IsNullOrWhiteSpace(relativePath))
             {
-                AlmUserConfig = new ALMUserConfig();
-                amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
+                return relativePath;
             }
-            return AlmUserConfig;
+            try
+            {
+                if (relativePath.TrimStart().StartsWith("~"))
+                {
+                    string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
+                    fullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, fullPath);
+                    return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(fullPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
+            }
+
+            return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(relativePath);
         }
+
     }
 }

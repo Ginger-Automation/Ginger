@@ -16,7 +16,7 @@
 
     <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Name="FirstRow" Height="235"/>
+            <RowDefinition Name="FirstRow" Height="280"/>
             <RowDefinition Name="SecondRow" Height="100*"/>
         </Grid.RowDefinitions>
 

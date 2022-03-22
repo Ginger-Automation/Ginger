@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -67,8 +67,17 @@ namespace GingerCore.Actions
             SendKeysAlertBox = 4,
         }
 
-        [IsSerializedForLocalRepository]
-        public eHandleBrowseAlert GenElementAction { get; set; }
+        public eHandleBrowseAlert GenElementAction
+        {
+            get
+            {
+                return (eHandleBrowseAlert)GetOrCreateInputParam<eHandleBrowseAlert>(nameof(GenElementAction), eHandleBrowseAlert.AcceptAlertBox);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(GenElementAction), value.ToString());
+            }
+        }
 
         public override String ToString()
         {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ using System.Windows.Automation;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
+using OpenQA.Selenium;
 
 namespace GingerCore.Drivers.WindowsLib
 {
@@ -90,6 +91,19 @@ namespace GingerCore.Drivers.WindowsLib
                 }
             }
         }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Applitool View Key number")]
+        public String ApplitoolsViewKey { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Applitool Server Url")]
+        public String ApplitoolsServerUrl { get; set; }
+
+        protected IWebDriver Driver;
+
 
         public WindowsDriver(BusinessFlow BF, eUIALibraryType type= eUIALibraryType.ComWrapper)
         {
@@ -220,6 +234,10 @@ namespace GingerCore.Drivers.WindowsLib
                     case "ActTableElement":
                         ActTableElement actTable = (ActTableElement)act;
                         HandleWindowsWidgetTableControlAction(actTable);
+                        break;
+                    case "ActVisualTesting":
+                        ActVisualTesting actVisual = (ActVisualTesting)act;
+                        actVisual.Execute(this);
                         break;
 
                     default:
@@ -619,7 +637,7 @@ namespace GingerCore.Drivers.WindowsLib
         private AutomationElement HandlePOMElememnt(ActUIElement act)
         {
             ObservableList<ElementLocator> locators = new ObservableList<ElementLocator>();
-            var pomExcutionUtil = new POMExecutionUtils(act);
+            var pomExcutionUtil = new POMExecutionUtils(act,act.ElementLocateValue);
             var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
             ElementInfo currentPOMElementInfo = null;
@@ -1445,7 +1463,7 @@ namespace GingerCore.Drivers.WindowsLib
             }
          }
 
-        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null)
+        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
             Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
             return bmp;
@@ -1769,6 +1787,32 @@ namespace GingerCore.Drivers.WindowsLib
         public string GetCurrentPageSourceString()
         {
             return null;
+        }
+
+
+        public string GetApplitoolServerURL()
+        {
+            return this.ApplitoolsServerUrl;
+        }
+
+        public string GetApplitoolKey()
+        {
+            return this.ApplitoolsViewKey;
+        }
+
+        public ePlatformType GetPlatform()
+        {
+            return this.Platform;
+        }
+
+        public string GetEnvironment()
+        {
+            return this.BusinessFlow.Environment;
+        }
+
+        public IWebDriver GetWebDriver()
+        {
+            return Driver;
         }
     }
 }

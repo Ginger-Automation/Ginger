@@ -24,7 +24,7 @@
                         <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
                         <usercontrols:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
                     </StackPanel>
-                    <TextBox x:Name="xActivityNameTxtBox" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Height="30"/>
+                    <TextBox x:Name="xActivityNameTxtBox" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Height="30" Margin="0,0,0,5"/>
                     <Label Style="{StaticResource $LabelStyle}" Content="Description:" DockPanel.Dock="Top"/>
                     <TextBox x:Name="xActivityDescriptionTxt" DockPanel.Dock="Top" Style="{StaticResource $MultiRowsTextBoxStyle}" Height="50"></TextBox>
                     <Ginger:ucTagsViewer x:Name="xTagsViewer" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Top"/>
@@ -55,7 +55,7 @@
                 <CheckBox x:Name="xMandatoryActivityCB" Margin="10,0,0,0" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Mandatory"/>
             </StackPanel>
 
-            <StackPanel x:Name="xHandlerTypeStack" Visibility="Collapsed" DockPanel.Dock="Top" Margin="0,10,0,0" Orientation="Horizontal">
+            <StackPanel x:Name="xHandlerTypeStack" Visibility="Visible" DockPanel.Dock="Top" Margin="0,10,0,0" Orientation="Horizontal">
                 <Label Content="Error Handler Type:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
                 <ComboBox x:Name="xHandlerTypeCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="15,0,0,0"/>
             </StackPanel>
@@ -66,7 +66,7 @@
                 <Button x:Name="xTriggerOnSpecificErrorBtn" Content="Configure Error" Click="xTriggerOnSpecificErrorBtn_Click"  Margin="10,-5,0,0" Visibility="Collapsed"  Style="{StaticResource $InputButtonStyle}"/>
             </StackPanel>
             <StackPanel x:Name="xHandlerPostExecutionActionStack" DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed" Orientation="Horizontal">
-                <Label Content="Post Exceution Action:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                <Label Content="Post Execution Action:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
                 <ComboBox x:Name="xHandlerPostExecutionCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="2,0,0,0"/>
             </StackPanel>
 

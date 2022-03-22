@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,15 +26,15 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Enums;
 // This class is for Grid actions
 namespace GingerCore.Actions
-{    
+{
     public class ActUIAGrid : Act
     {
         public override string ActionDescription { get { return "UI Grid Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "UI Grid Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActUIAGridEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
@@ -67,17 +67,28 @@ namespace GingerCore.Actions
             GetWidth = 22,
             GetHeight = 23,
             GetStyle = 24,
-            GetFullGridData =25
+            GetFullGridData = 25
         }
 
-        [IsSerializedForLocalRepository]
-        public eGridAction GridAction{get;set;}
+        public eGridAction GridAction
+        {
+            get
+            {
+                return (eGridAction)GetOrCreateInputParam<eGridAction>(nameof(GridAction), eGridAction.ClickCell);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(GridAction), value.ToString());
+            }
+        }
 
-        public override String ActionType { get
+        public override String ActionType
+        {
+            get
             {
                 return "Grid." + GridAction.ToString();
             }
-             }
+        }
 
         public override eImageType Image { get { return eImageType.Columns; } }
     }

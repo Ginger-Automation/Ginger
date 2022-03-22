@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -128,7 +128,7 @@ namespace Ginger.DataSource
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             foreach(DataSourceBase ds in DSList)
             {
-                ds.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
+                ds.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ds.FilePath);
                 if (ds.FileFullPath.Trim() == mDSDetails.FileFullPath.Trim())
                 {
                     Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, FilePathTextBox.Text.Trim());

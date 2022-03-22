@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -76,7 +76,9 @@ namespace Amdocs.Ginger.Repository
                 throw new Exception("Plugin folder not found: " + folder);
             }            
 
-            PluginPackage pluginPackage = new PluginPackage(folder);          
+            PluginPackage pluginPackage = new PluginPackage(folder);
+            pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
+            pluginPackage.PluginPackageOperations.LoadPluginPackage(folder);
             mSolutionRepository.AddRepositoryItem(pluginPackage);            
         }
 
@@ -173,22 +175,22 @@ namespace Amdocs.Ginger.Repository
                 throw new ArgumentNullException(nameof(pluginId));
             }
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
-
+            pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
             Console.WriteLine("Loading Plugin Services from JSON...");
 
             // TODO: only once !!!!!!!!!!!!!!!!!!!!!!!!! temp             
-            pluginPackage.LoadServicesFromJSON();
+            pluginPackage.PluginPackageOperations.LoadServicesFromJSON();
 
             if (pluginPackage == null)
             {                
                 throw new Exception("PluginPackage not found in solution PluginId=" + pluginId);
             }
-            if (string.IsNullOrEmpty(pluginPackage.StartupDLL))
+            if (string.IsNullOrEmpty(pluginPackage.PluginPackageOperations.StartupDLL))
             {
                 throw new Exception("StartupDLL is missing in the Ginger.PluginPackage.json for: " + pluginId);
             }
 
-            string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
+            string dll = Path.Combine(pluginPackage.Folder, pluginPackage.PluginPackageOperations.StartupDLL);
             Console.WriteLine("Plug-in dll path: " + dll);
             string nodeFileName = CreateNodeConfigFile(pluginId, serviceID);
             Console.WriteLine("nodeFileName: " + nodeFileName);
@@ -234,7 +236,8 @@ namespace Amdocs.Ginger.Repository
         public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
         {
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
-            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();            
+            pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
+            PluginServiceInfo pluginServiceInfo = (from x in ((PluginPackageOperations)pluginPackage.PluginPackageOperations).Services where x.ServiceId == serviceId select x).SingleOrDefault();            
             PluginServiceActionInfo actionInfo = (from x in pluginServiceInfo.Actions where x.ActionId == actionId select x).SingleOrDefault();
             return actionInfo.InputValues;
         }
@@ -276,7 +279,9 @@ namespace Amdocs.Ginger.Repository
             }
             
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
-            PluginServiceInfo pluginServiceInfo = pluginPackage.GetService(serviceId);
+            pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
+
+            PluginServiceInfo pluginServiceInfo = ((PluginPackageOperations)pluginPackage.PluginPackageOperations).GetService(serviceId);
             if (pluginServiceInfo != null)
             {
                 PluginServiceIsSeesionDictionary.Add(key, pluginServiceInfo.IsSession);

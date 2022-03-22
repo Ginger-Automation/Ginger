@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -59,8 +59,17 @@ namespace GingerCore.Actions
             get { return "Clear All " + GingerDicser.GetTermResValue(eTermResKey.Variables); }
         }
 
-        [IsSerializedForLocalRepository]
-        public string VariableName { set; get; }
+        public string VariableName 
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(VariableName)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(VariableName), value);
+            }
+        }
 
         public override void Execute()
         {

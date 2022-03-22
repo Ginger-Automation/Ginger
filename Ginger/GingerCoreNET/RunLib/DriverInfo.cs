@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -94,8 +94,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             {
                 foreach (PluginPackage plugin in Plugins) 
                 {
-                    DriverInfo DI = new DriverInfo(plugin.PluginPackageInfo.Id, true);
-                    foreach (PluginServiceInfo PI in plugin.Services.Where(a => a.Interfaces.Contains(PlatformInterface)))
+                    plugin.PluginPackageOperations = new PluginPackageOperations(plugin);
+
+                    DriverInfo DI = new DriverInfo(((PluginPackageOperations)plugin.PluginPackageOperations).PluginPackageInfo.Id, true);
+                    foreach (PluginServiceInfo PI in ((PluginPackageOperations)plugin.PluginPackageOperations).Services.Where(a => a.Interfaces.Contains(PlatformInterface)))
                     {
 
                         DI.services.Add(PI.ServiceId);

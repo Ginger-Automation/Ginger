@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -309,7 +309,7 @@ namespace GingerCoreNET.GeneralLib
 
             if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
-                DataSource.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
+                DataSource.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
 
                 foreach (DataSourceTable dst in dsTables)
@@ -443,6 +443,18 @@ namespace GingerCoreNET.GeneralLib
             }
 
             return null;
+        }
+        public static string RemoveSpecialCharactersInColumnHeader(string columnHeader)
+        {
+            string specialCharactersToRemove = "./[]()";
+            foreach (char sc in specialCharactersToRemove)
+            {
+                if (columnHeader.Contains(sc.ToString()))
+                {
+                    columnHeader = columnHeader.Replace(sc.ToString(), string.Empty);
+                }
+            }
+            return columnHeader;
         }
     }
 

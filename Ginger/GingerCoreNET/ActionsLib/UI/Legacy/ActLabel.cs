@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -70,8 +70,17 @@ namespace GingerCore.Actions
             GetStyle = 24,
         }
 
-        [IsSerializedForLocalRepository]
-        public eLabelAction LabelAction{get;set;}
+        public eLabelAction LabelAction
+        {
+            get
+            {
+                return (eLabelAction)GetOrCreateInputParam<eLabelAction>(nameof(LabelAction), eLabelAction.IsVisible);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(LabelAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

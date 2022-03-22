@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -105,7 +105,7 @@ namespace Ginger
 
         public static string GetFullFilePath(string filename)
         {
-            return WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(filename);
+            return WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(filename);
         }
 
         public static string OpenSelectFolderDialog(string Title)

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -76,8 +76,17 @@ namespace GingerCore.Actions
             Collapse=7
         }
 
-        [IsSerializedForLocalRepository]
-        public eMenuAction MenuAction { get; set; }
+        public eMenuAction MenuAction
+        {
+            get
+            {
+                return (eMenuAction)GetOrCreateInputParam<eMenuAction>(nameof(MenuAction), eMenuAction.Click);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MenuAction), value.ToString());
+            }
+        }
 
         public override String ToString()
         {

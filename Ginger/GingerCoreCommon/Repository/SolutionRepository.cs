@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.IO;
 
 namespace Amdocs.Ginger.Repository
@@ -378,34 +377,7 @@ namespace Amdocs.Ginger.Repository
             return FullPath;
         }
 
-        /// <summary>
-        /// Convert Solution Relative Path to Full path
-        /// </summary>
-        /// <param name="relativePath">Path like "~\Documents\Scripts\aa.vbs"</param>
-        /// <returns></returns>
-        public string ConvertSolutionRelativePath(string relativePath)
-        {
-            if(String.IsNullOrWhiteSpace(relativePath))
-            {
-                return relativePath;
-            }
-            try
-            {
-                if (relativePath.TrimStart().StartsWith("~"))
-                {
-                    string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
-                    fullPath = Path.Combine(mSolutionFolderPath, fullPath);
-                    return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(fullPath);
-                }
-            }
-            catch(Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
-            }
-
-            return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(relativePath);
-        }
-
+        
         /// <summary>
         /// Converts path of file inside the Solution to be relative
         /// </summary>

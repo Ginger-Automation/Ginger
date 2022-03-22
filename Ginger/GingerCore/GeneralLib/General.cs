@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -505,7 +505,16 @@ namespace GingerCore
             return list;
         }
 
-
+        public static List<ComboEnumItem> GetEnumValuesForComboAndAddExtraValues(Type listType, List<ComboEnumItem> comboEnumItemsValues = null)
+        {
+            List<ComboEnumItem> comboEnumItemsList = new List<ComboEnumItem>();
+            if (comboEnumItemsValues != null && comboEnumItemsValues.Count > 0)
+            {
+                comboEnumItemsList.AddRange(comboEnumItemsValues);
+            }
+            comboEnumItemsList.AddRange(GetEnumValuesForCombo(listType));
+            return comboEnumItemsList;
+        }
         public static List<ComboEnumItem> GetEnumValuesForComboFromList(Type Etype, List<Object> Items)
         {
             List<ComboEnumItem> list = new List<ComboEnumItem>();

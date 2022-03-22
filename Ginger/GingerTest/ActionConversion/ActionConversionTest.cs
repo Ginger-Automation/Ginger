@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -38,7 +39,7 @@ namespace GingerTest
     [TestClass]
     [Level1]
     public class ActionConversionTest
-    {        
+    {
 
         static SolutionRepository mSolutionRepository;
         static BusinessFlow mBF;
@@ -82,7 +83,7 @@ namespace GingerTest
                 AppName = "MyJavaApp",
                 Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Java
             });
-            
+
             sol.ApplicationPlatforms.Add(new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
             {
                 AppName = "Window-App",
@@ -227,7 +228,7 @@ namespace GingerTest
                 item.Selected = true;
             }
 
-            
+
             ObservableList<ConvertableTargetApplicationDetails> convertableTargetApplications = new ObservableList<ConvertableTargetApplicationDetails>();
             foreach (var act in mBF.Activities)
             {
@@ -247,7 +248,7 @@ namespace GingerTest
             utils.ConvertBusinessFlowLegacyActions(statusLst, addNewActivity, lst, convertableTargetApplications, convertToPOMAction, poms);
         }
 
-        private static void ExecuteActionConversionForMultipleBF(bool addNewActivity, bool convertoSameTA = true, 
+        private static void ExecuteActionConversionForMultipleBF(bool addNewActivity, bool convertoSameTA = true,
                                                                  bool convertToPOMAction = false, Guid selectedPOM = default(Guid))
         {
             ObservableList<BusinessFlowToConvert> ListOfBusinessFlowToConvert = new ObservableList<BusinessFlowToConvert>();
@@ -270,7 +271,7 @@ namespace GingerTest
                 ListOfBusinessFlowToConvert.Add(flowConversion);
             }
             ObservableList<Guid> poms = new ObservableList<Guid>() { selectedPOM };
-                        
+
             ObservableList<ConvertableTargetApplicationDetails> convertableTargetApplications = new ObservableList<ConvertableTargetApplicationDetails>();
             foreach (var bf in mListBF)
             {
@@ -280,20 +281,20 @@ namespace GingerTest
                     tas.SourceTargetApplicationName = act.TargetApplication;
                     if (convertoSameTA)
                     {
-                        tas.TargetTargetApplicationName = act.TargetApplication; 
+                        tas.TargetTargetApplicationName = act.TargetApplication;
                     }
                     else
                     {
                         tas.TargetTargetApplicationName = MAPPED_TA_FOR_CONVERSION;
                     }
                     convertableTargetApplications.Add(tas);
-                } 
+                }
             }
 
             utils.ListOfBusinessFlowsToConvert = ListOfBusinessFlowToConvert;
             utils.ConvertActionsOfMultipleBusinessFlows(lstCad, addNewActivity, convertableTargetApplications, convertToPOMAction, poms);
         }
-        
+
         private static bool ValidateMultipleBFConversionInSameActivity(bool isTASame = true, string mapTA = "")
         {
             bool isValid = true;
@@ -302,7 +303,7 @@ namespace GingerTest
                 foreach (var activity in bf.Activities)
                 {
                     string targetType = ((IObsoleteAction)activity.Acts[0]).TargetAction().ToString();
-                    string convertedType = ((GingerCore.Actions.Act)activity.Acts[1]).ActClass;                    
+                    string convertedType = ((GingerCore.Actions.Act)activity.Acts[1]).ActClass;
                     if (targetType != convertedType)
                     {
                         isValid = false;
@@ -325,7 +326,7 @@ namespace GingerTest
                         break;
                     }
 
-                    if(!isTASame)
+                    if (!isTASame)
                     {
                         string actTA = activity.TargetApplication;
                         if (mapTA != actTA)
@@ -392,7 +393,7 @@ namespace GingerTest
             GetMultipleBFActGenElementActions();
 
             ExecuteActionConversionForMultipleBF(false);
-                        
+
             bool isValid = ValidateMultipleBFConversionInSameActivity();
 
             ////Assert
@@ -502,7 +503,7 @@ namespace GingerTest
         public void SingleBFActionConversionToSameActivityTest()
         {
             GetActivityWithActGenElementActions();
-            
+
             ExecuteActionConversion(false, true, string.Empty);
 
             string targetType = ((IObsoleteAction)mBF.Activities[0].Acts[0]).TargetAction().ToString();
@@ -526,20 +527,20 @@ namespace GingerTest
         public void SingleBFNoActionConversionToSameActivityTest()
         {
             GetActivityWithActUIElementActions();
-            
+
             ExecuteActionConversion(false, true, string.Empty);
-            
+
             ////Assert
             Assert.IsFalse(mBF.Activities[0].Acts[0] is IObsoleteAction);
             Assert.AreEqual(mBF.Activities[0].Acts.Count(), 1);
-        }        
+        }
 
         [TestMethod]
         [Timeout(60000)]
         public void SingleBFActionConversionToNewActivityTest()
         {
             GetActivityWithActGenElementActions();
-            
+
             // add business flow to the solution repository
             mSolutionRepository.AddRepositoryItem(mBF);
 
@@ -566,7 +567,7 @@ namespace GingerTest
         public void SingleBFNoActionConversionToNewActivityTest()
         {
             GetActivityWithActUIElementActions();
-            
+
             // add business flow to the solution repository
             mSolutionRepository.AddRepositoryItem(mBF);
 
@@ -583,7 +584,7 @@ namespace GingerTest
         public void SingleBFActionConversionToSameActivityPOMActionTest()
         {
             GetActivityWithActGenElementActions();
-            
+
             ExecuteActionConversion(false, true, string.Empty, true);
 
             string targetType = ((IObsoleteAction)mBF.Activities[0].Acts[0]).TargetAction().ToString();
@@ -607,7 +608,7 @@ namespace GingerTest
         public void SingleBFNoActionConversionToSameActivityPOMActionTest()
         {
             GetActivityWithActUIElementActions();
-            
+
             ExecuteActionConversion(false, true, string.Empty, true);
 
             ////Assert
@@ -710,7 +711,7 @@ namespace GingerTest
 
             mBF.AddActivity(activity);
 
-           // Act & Assert
+            // Act & Assert
             JavaGenericToUIElementConversionActAndAssert(genAction);
         }
 
@@ -956,7 +957,7 @@ namespace GingerTest
             activity.Acts.Add(genAction);
 
             mBF.AddActivity(activity);
-            
+
             //Act
             ExecuteActionConversion(false, true, string.Empty);
 
@@ -1012,19 +1013,19 @@ namespace GingerTest
             NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
             var businessFlowFile = TestResources.GetTestResourcesFile(@"JavaLegacyToPOMxml" + Path.DirectorySeparatorChar + "Java_Legacy_Actions_BF.Ginger.BusinessFlow.xml");
             var javaPomFile = TestResources.GetTestResourcesFile(@"JavaLegacyToPOMxml\Java Swing Test App.Ginger.ApplicationPOMModel.xml");
-            
+
             //Load BF
-            mBF = (BusinessFlow)RepositorySerializer.DeserializeFromFile(businessFlowFile);           
+            mBF = (BusinessFlow)RepositorySerializer.DeserializeFromFile(businessFlowFile);
             mBF.Activities[0].SelectedForConversion = true;
 
             //Load POM
             ApplicationPOMModel applicationPOM = (ApplicationPOMModel)RepositorySerializer.DeserializeFromFile(javaPomFile);
             applicationPOM.FilePath = applicationPOM.Name;//so new file will be created for it
-            mSolutionRepository.AddRepositoryItem(applicationPOM);            
+            mSolutionRepository.AddRepositoryItem(applicationPOM);
             ExecuteActionConversion(true, true, string.Empty, true, applicationPOM.Guid);
 
             //Assert
-            Assert.AreEqual(((ActUIElement)mBF.Activities[1].Acts[1]).ElementLocateBy.ToString(),eLocateBy.POMElement.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[1].Acts[1]).ElementLocateBy.ToString(), eLocateBy.POMElement.ToString());
             Assert.AreEqual(((ActUIElement)mBF.Activities[1].Acts[1]).ElementAction.ToString(), ((ActJavaElement)mBF.Activities[0].Acts[1]).ControlAction.ToString());
         }
 
@@ -1054,7 +1055,11 @@ namespace GingerTest
             Assert.AreEqual(((ActBrowserElement)mBF.Activities[0].Acts[1]).Value, genAction.Value);
         }
 
-        
+        [TestMethod]
+        public void GetActionsWithoutDescription()
+        {
+        }
+
         #endregion
     }
 }

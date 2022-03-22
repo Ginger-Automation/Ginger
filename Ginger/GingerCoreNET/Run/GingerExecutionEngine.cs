@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -58,6 +58,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using Activity = GingerCore.Activity;
 
 namespace Ginger.Run
 {
@@ -81,7 +82,7 @@ namespace Ginger.Run
             }
         }
 
-        
+
 
         public PublishToALMConfig PublishToALMConfig = null;
 
@@ -320,7 +321,7 @@ namespace Ginger.Run
 
         public ISolution CurrentSolution { get; set; }
 
-        
+
 
         public Amdocs.Ginger.CoreNET.Execution.eRunStatus RunsetStatus
         {
@@ -571,7 +572,7 @@ namespace Ginger.Run
                     RunSetConfig runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
                     foreach (ApplicationAgent applicationAgent in mGingerRunner.ApplicationAgents)
                     {
-                        
+
 
                         if (applicationAgent.AgentName != null)
                         {
@@ -579,7 +580,7 @@ namespace Ginger.Run
 
                             var agent = (from a in agents where a.Name == applicationAgent.AgentName select a).FirstOrDefault();
 
-                            if(agent != null)
+                            if (agent != null)
                             {
                                 if (agent.AgentOperations == null)
                                 {
@@ -587,14 +588,14 @@ namespace Ginger.Run
                                     agent.AgentOperations = agentOperations;
                                 }
                                 //logic for if need to assign virtual agent
-                                if (agent.AgentOperations.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Where(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)).Count() > 0)
+                                if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Where(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)).Count() > 0)
                                 {
                                     var virtualagent = agent.CreateCopy(true) as Agent;
                                     virtualagent.AgentOperations = new AgentOperations(virtualagent);
                                     virtualagent.ParentGuid = agent.Guid;
                                     virtualagent.Name = agent.Name + " Virtual";
                                     virtualagent.IsVirtual = true;
-                                    ((AgentOperations)virtualagent.AgentOperations).DriverClass = ((AgentOperations)agent.AgentOperations).DriverClass;
+                                    virtualagent.DriverClass = agent.DriverClass;
                                     virtualagent.DriverType = agent.DriverType;
                                     applicationAgent.Agent = virtualagent;
                                     virtualagent.DriverConfiguration = agent.DriverConfiguration;
@@ -602,7 +603,7 @@ namespace Ginger.Run
 
                                 }
                             }
-                            
+
 
                             if (applicationAgent.Agent != null)
                             {
@@ -1154,9 +1155,10 @@ namespace Ginger.Run
 
                     // fetch all pop-up handlers
                     ObservableList<ErrorHandler> lstPopUpHandlers = GetAllErrorHandlersByType(eHandlerType.Popup_Handler);
-                    if (lstPopUpHandlers.Count > 0)
+                    if (lstPopUpHandlers.Count > 0 && !act.ErrorHandlerExecuted)
                     {
                         ExecuteErrorHandlerActivities(lstPopUpHandlers);
+                        continue;
                     }
 
                     if (!act.ErrorHandlerExecuted
@@ -1190,7 +1192,9 @@ namespace Ginger.Run
                         }
                     }
                     else
+                    {
                         break;
+                    }
 
                 }
                 // Run any code needed after the action executed, used in ACTScreenShot save to file after driver took screen shot
@@ -1340,7 +1344,7 @@ namespace Ginger.Run
                 if (DataSource == null)
                     return;
 
-                DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FilePath);
+                DataSource.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FilePath);
 
                 ObservableList<DataSourceTable> dstTables = DataSource.GetTablesList();
                 foreach (DataSourceTable dst in dstTables)
@@ -1723,8 +1727,8 @@ namespace Ginger.Run
                 }
                 else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginAction)
                 {
-                    orginAction.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
                     ResetAction(orginAction);
+                    orginAction.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
                     NotifyActionStart(orginAction);
                 }
                 CurrentBusinessFlow.CurrentActivity = originActivity;
@@ -3626,6 +3630,8 @@ namespace Ginger.Run
                     IsRunning = true;
                     mStopRun = false;
                 }
+                
+ 
 
                 //set the BF to execute
                 if (businessFlow != null)

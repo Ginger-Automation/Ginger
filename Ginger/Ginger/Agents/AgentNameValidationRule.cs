@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,11 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using GingerCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.Agents
@@ -31,32 +27,20 @@ namespace Ginger.Agents
     {
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            //TODO: split to 2 rules name and unique
-            if (value ==null || string.IsNullOrEmpty(value.ToString()))
-            {
-                return new ValidationResult(false, "Agent Name cannot be empty");
-            }
-            else if (IsAgentNameExist(value.ToString()))
-            {
-                return new ValidationResult(false, "Agent with the same name already exist");
-            }
-            else
-            {
-                return new ValidationResult(true, null);
-            }        
+            return IsAgentNameValid(value)
+                ? new ValidationResult(false, "Agent Name cannot be empty")
+                : IsAgentNameExist(value.ToString())
+                ? new ValidationResult(false, "Agent with the same name already exist")
+                : new ValidationResult(true, null);
         }
-
+        private bool IsAgentNameValid(object value)
+        {
+            return value == null || string.IsNullOrEmpty(value.ToString()) || string.IsNullOrWhiteSpace(value.ToString());
+        }
         private bool IsAgentNameExist(string value)
         {
-            if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == value select x).SingleOrDefault() != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == value select x).SingleOrDefault() != null;
         }
     }
-    
+
 }

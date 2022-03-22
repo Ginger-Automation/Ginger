@@ -11,7 +11,7 @@
     <!--Container Grid-->
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="50*"/>
             <RowDefinition Height="50*"/>
             <RowDefinition x:Name="xBaselineAndTargetImagesRow" Height="400"/>
             <RowDefinition x:Name="xResultImageHeaderRow" Height="30"/>
@@ -19,26 +19,23 @@
         </Grid.RowDefinitions>
 
 
-
         <!--Choose Visual Testing Engine - First Line-->
 
-        <StackPanel Orientation="Horizontal">
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
                 <Label Style="{StaticResource @LabelStyle}" Grid.Column="0" VerticalAlignment="Center" >Visual Testing Analyzer:</Label>
-                <UserControlsLib:UCComboBox x:Name="VisualTestingEngineComboBox" Grid.Column="1" Width="250" HorizontalAlignment="Left" Margin="30,0,0,0"/>
+                <UserControlsLib:UCComboBox x:Name="VisualTestingEngineComboBox" Grid.Column="1" Width="250" HorizontalAlignment="Left" Margin="40,0,0,0"/>
             </StackPanel>
-            <StackPanel Margin="60,2,0,-2" x:Name="xCompareOrCreateBaselinesRadioButtons">
+            <StackPanel Margin="10,0,0,0" x:Name="xCompareOrCreateBaselinesRadioButtons">
                 <Label Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left">Action</Label>
-                <RadioButton x:Name="CompareRadioButton" Content="Compare Baseline vs. Target" Checked="CompareRadioButton_Checked" GroupName="CompareOrBaseline" VerticalAlignment="Center" ></RadioButton>
-                <RadioButton x:Name="CreateBaselineRadioButton" Content="Create baseline at runtime" Checked="CreateBaselineRadioButton_Checked" GroupName="CompareOrBaseline" VerticalAlignment="Center" ></RadioButton>
+                <RadioButton x:Name="CompareRadioButton" Margin="10,0,0,0" Content="Compare Baseline vs. Target" Checked="CompareRadioButton_Checked" GroupName="CompareOrBaseline" VerticalAlignment="Center" ></RadioButton>
+                <RadioButton x:Name="CreateBaselineRadioButton" Margin="10,0,0,0" Content="Create baseline at runtime" Checked="CreateBaselineRadioButton_Checked" GroupName="CompareOrBaseline" VerticalAlignment="Center" ></RadioButton>
             </StackPanel>
-            <Border BorderBrush="LightGray" BorderThickness="1" Margin="50,0,0,0" x:Name="xLightGrayVerticalBorder">
-                
-                    <StackPanel x:Name="xSetApplicationScreenSize">
+            <!--<Border BorderBrush="LightGray" BorderThickness="1" Margin="10,0,0,0" x:Name="xLightGrayVerticalBorder">
+                    <DockPanel x:Name="xSetApplicationScreenSize">
                     <Label Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left">Change Application Screen Size:</Label>
                         <StackPanel Orientation="Horizontal">
-                            <UserControlsLib:UCComboBox x:Name="ChangeAppScreenSizeComboBox" Width="250" Margin="0,0,20,0"/>
-
+                            <UserControlsLib:UCComboBox x:Name="ChangeAppScreenSizeComboBox" Width="250" Margin="0,0,0,0"/>
                         <StackPanel x:Name="WidthHeightStackPanel" Orientation="Horizontal">
                             <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12">Width</Label>
                             <Actions:UCValueExpression x:Name="WidthUCVE" Width="100"/>
@@ -46,9 +43,23 @@
                             <Actions:UCValueExpression x:Name="HeightUCVE" Width="100"/>
                         </StackPanel>
                     </StackPanel>
-                    </StackPanel>
+                    </DockPanel>
                                     
-            </Border>
+            </Border>-->
+            <DockPanel x:Name="xSetApplicationScreenSize" Margin="10,0,0,0">
+                <Label Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left">Application Screen Size:</Label>
+                <StackPanel Orientation="Horizontal">
+                    <UserControlsLib:UCComboBox x:Name="ChangeAppScreenSizeComboBox" Width="250" Margin="0,0,0,0"/>
+                    <StackPanel x:Name="WidthHeightStackPanel" Orientation="Horizontal">
+                        <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12">Width</Label>
+                        <Actions:UCValueExpression x:Name="WidthUCVE" Width="100"/>
+                        <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12">Height</Label>
+                        <Actions:UCValueExpression x:Name="HeightUCVE" Width="100"/>
+                    </StackPanel>
+                </StackPanel>
+                <CheckBox x:Name="xFullPageScreenshotCheckbox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Capture full page screenshot" />
+            </DockPanel>
+
         </StackPanel>
 
         <Frame x:Name="EngineConfigFrame" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Auto"></Frame>
@@ -83,9 +94,9 @@
                     <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
                         <Label Content="Baseline Image" Style="{StaticResource @InputFieldLabelStyle}"></Label>
 
-                        <Button x:Name="CreateBaseline"  Margin="50,0,0,0" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1"  Click="CreateBaseline_Click"  Style="{StaticResource @InputImageButtonStyle}" >
-                            <StackPanel Orientation="Horizontal" >
-                                <Label>Create baseline from active window</Label>
+                        <Button x:Name="CreateBaseline" Margin="50,0,0,0" Height="30" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1" Click="CreateBaseline_Click" Style="{StaticResource @InputImageButtonStyle}" >
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                                <Label Style="{StaticResource @LabelStyle}">Create baseline from active window</Label>
                                 <Image Source="{StaticResource @Image_16x16}" Height="16" Width="16"/>
                             </StackPanel>
                         </Button>

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ using GingerCore.Actions;
 using Amdocs.Ginger.Common.InterfacesLib;
 using System.Runtime.InteropServices;
 using static Ginger.Run.RunSetActions.RunSetActionBase;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -41,7 +42,7 @@ namespace Ginger.Run.RunSetActions
             try
             {
                 ActScript act = new ActScript();
-                string FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(RunSetActionScript.ScriptFileName);
+                string FileName = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(RunSetActionScript.ScriptFileName);
                 VerifySolutionFloder(RunSetActionScript.SolutionFolder, FileName);
                 act.ScriptName = FileName;
                 act.ScriptInterpreterType = (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

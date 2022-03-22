@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -118,6 +118,7 @@ namespace Ginger.BusinessFlowPages
             xTagsViewer.Init(mActivity.Tags);
             xShowIDUC.Init(mActivity);
             BindingHandler.ObjFieldBinding(xActivityNameTxtBox, TextBox.TextProperty, mActivity, nameof(Activity.ActivityName));
+            xActivityNameTxtBox.AddValidationRule(new ActivityNameValidationRule());
             BindingHandler.ObjFieldBinding(xActivityDescriptionTxt, TextBox.TextProperty, mActivity, nameof(Activity.Description));
             BindingHandler.ObjFieldBinding(xExpectedTxt, TextBox.TextProperty, mActivity, nameof(Activity.Expected));
             BindingHandler.ObjFieldBinding(xScreenTxt, TextBox.TextProperty, mActivity, nameof(Activity.Screen));
@@ -138,7 +139,7 @@ namespace Ginger.BusinessFlowPages
 
             if (mActivity.GetType() == typeof(ErrorHandler))
             {
-                xHandlerTypeStack.Visibility = Visibility.Collapsed;
+                xHandlerTypeStack.Visibility = Visibility.Visible;
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Visible;
                 xHandlerPostExecutionCombo.BindControl(mActivity, nameof(ErrorHandler.ErrorHandlerPostExecutionAction));
 

@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -99,7 +99,7 @@ namespace GingerCore.Actions
             get
             {
                 string file = GetInputParamCalculatedValue(nameof(ExcelFileName)) ?? "";
-                return WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(file);
+                return WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(file);
             }
         }
 
@@ -183,11 +183,31 @@ namespace GingerCore.Actions
                 return setData == null ? setData : setData.Replace("\"", "'");
             }
         }
-        [IsSerializedForLocalRepository]
-        public eExcelActionType ExcelActionType { set; get; }
+        public eExcelActionType ExcelActionType
+        {
+            get
+            {
+                return (eExcelActionType)GetOrCreateInputParam<eExcelActionType>(nameof(ExcelActionType), eExcelActionType.ReadData);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ExcelActionType), value.ToString());
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public bool SelectAllRows { set; get; }
+        public bool SelectAllRows
+        {
+            get
+            {
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(SelectAllRows)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(SelectAllRows), value.ToString());
+            }
+        }
         public string ColMappingRules
         {
             get

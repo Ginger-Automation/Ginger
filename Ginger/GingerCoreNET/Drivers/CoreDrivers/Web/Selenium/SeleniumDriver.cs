@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -193,6 +193,11 @@ namespace GingerCore.Drivers
         public int PageLoadTimeOut { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("normal")]
+        [UserConfiguredDescription("Defines the current session’s page loading strategy.you can change from the default parameter of normal to eager or none")]
+        public string PageLoadStrategy { get; set; }
+
+        [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Start BMP - Browser Mob Proxy (true/false)")]
         public bool StartBMP { get; set; }
@@ -223,7 +228,7 @@ namespace GingerCore.Drivers
         //public Boolean UseApplitools { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("W3IBcWNoSAABDt21U3X3XpS2xpeV7Rgt990JwQz8th4A110")]
+        [UserConfiguredDefault("")]
         [UserConfiguredDescription("Applitool View Key number")]
         public String ApplitoolsViewKey { get; set; }
 
@@ -375,6 +380,7 @@ namespace GingerCore.Drivers
                     #region Internet Explorer
                     case eBrowserType.IE:
                         InternetExplorerOptions ieoptions = new InternetExplorerOptions();
+                        SetCurrentPageLoadStrategy(ieoptions);
 
                         if (EnsureCleanSession == true)
                         {
@@ -418,6 +424,7 @@ namespace GingerCore.Drivers
 
                         FirefoxOptions FirefoxOption = new FirefoxOptions();
                         FirefoxOption.AcceptInsecureCertificates = true;
+                        SetCurrentPageLoadStrategy(FirefoxOption);
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
@@ -453,6 +460,7 @@ namespace GingerCore.Drivers
                     case eBrowserType.Chrome:
                         ChromeOptions options = new ChromeOptions();
                         options.AddArgument("--start-maximized");
+                        SetCurrentPageLoadStrategy(options);
 
                         if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
@@ -511,7 +519,7 @@ namespace GingerCore.Drivers
 
                         try
                         {
-                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));    
                         }
                         catch (Exception ex)
                         {
@@ -554,6 +562,7 @@ namespace GingerCore.Drivers
                         EdgeOptions EDOpts = new EdgeOptions();
                         EDOpts.UseChromium = true;
                         EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                        SetCurrentPageLoadStrategy(EDOpts);
                         EdgeDriverService EDService = EdgeDriverService.CreateDefaultServiceFromOptions(EDOpts);
                         EDService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -575,6 +584,7 @@ namespace GingerCore.Drivers
                             ieoptions.Proxy = mProxy == null ? null : mProxy;
                             ieoptions.EnableNativeEvents = true;
                             ieoptions.IntroduceInstabilityByIgnoringProtectedModeSettings = true;
+                            SetCurrentPageLoadStrategy(ieoptions);
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), ieoptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -648,7 +658,7 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in start driver", ex);
                 ErrorMessageFromDriver = ex.Message;
 
-                if (RestartRetry && mBrowserTpe == eBrowserType.Chrome && ex.Message.Contains("version"))
+                if (RestartRetry && mBrowserTpe == eBrowserType.Chrome && (ex.Message.Contains("version") || ex.Message.Contains("chromedriver.exe does not exist")))
                 {
                     GingerCore.Drivers.Updater.ChromeDriverUpdater chromeupdater = new Updater.ChromeDriverUpdater();
 
@@ -656,6 +666,11 @@ namespace GingerCore.Drivers
                     if (chromeupdater.UpdateDriver())
                     {
                         StartDriver();
+                    }
+                    else
+                    {
+                        ErrorMessageFromDriver += " Chrome driver version mismatch. Please run Ginger as Admin to Auto update the chrome driver.";
+                        Reporter.ToLog(eLogLevel.ERROR, ErrorMessageFromDriver);
                     }
                 }
             }
@@ -3229,7 +3244,8 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                var pomExcutionUtil = new POMExecutionUtils(act);
+                var pomExcutionUtil = new POMExecutionUtils(act,act is ActUIElement ? ((ActUIElement)act).ElementLocateValue : ((ActVisualTesting)act).LocateValue);
+                
                 var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
                 if (currentPOM != null)
@@ -3280,6 +3296,8 @@ namespace GingerCore.Drivers
 
             return elem;
         }
+
+        
 
         private void SwitchFrame(ElementInfo EI)
         {
@@ -7424,14 +7442,85 @@ namespace GingerCore.Drivers
 
         public HtmlDocument SSPageDoc = null;
 
-        public Bitmap GetScreenShot()
+        public Bitmap GetScreenShot(bool IsFullPageScreenshot = false)
         {
             try
             {
-                Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
+                // If set to false only take screenshot of whats in view and not the whole page
+                if (!IsFullPageScreenshot)
+                {
+                    // return screenshot of what's visible currently in the viewport
+                    var screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
+                    return ScreenshotToImage(screenshot);
+                }
 
-                TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));
-                return (Bitmap)tc.ConvertFrom(ss.AsByteArray);
+                // Scroll to Top
+                ((IJavaScriptExecutor)Driver).ExecuteScript(string.Format("window.scrollTo(0,0)"));
+
+                // Get the total size of the page
+                var totalWidth = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return document.body.offsetWidth") + 380;
+                var totalHeight = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return  document.body.parentNode.scrollHeight");
+
+                // Get the size of the viewport
+                var viewportWidth = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return document.body.clientWidth") + 380;
+                var viewportHeight = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return window.innerHeight");
+
+                // We only care about taking multiple images together if it doesn't already fit
+                if ((totalWidth <= viewportWidth) && (totalHeight <= viewportHeight))
+                {
+                    var screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
+                    return ScreenshotToImage(screenshot);
+                }
+                // Split the screen in multiple Rectangles
+                var rectangles = new List<Rectangle>();
+                // Loop until the totalHeight is reached
+                for (var y = 0; y < totalHeight; y += viewportHeight)
+                {
+                    var newHeight = viewportHeight;
+                    // Fix if the height of the element is too big
+                    if (y + viewportHeight > totalHeight)
+                        newHeight = totalHeight - y;
+                    // Loop until the totalWidth is reached
+                    for (var x = 0; x < totalWidth; x += viewportWidth)
+                    {
+                        var newWidth = viewportWidth;
+                        // Fix if the Width of the Element is too big
+                        if (x + viewportWidth > totalWidth)
+                            newWidth = totalWidth - x;
+                        // Create and add the Rectangle
+                        var currRect = new Rectangle(x, y, newWidth, newHeight);
+                        rectangles.Add(currRect);
+                    }
+                }
+                // Build the Image
+                var stitchedImage = new Bitmap(totalWidth, totalHeight);
+                // Get all Screenshots and stitch them together
+                var previous = Rectangle.Empty;
+                foreach (var rectangle in rectangles)
+                {
+                    // Calculate the scrolling (if needed)
+                    if (previous != Rectangle.Empty)
+                    {
+                        var xDiff = rectangle.Right - previous.Right;
+                        var yDiff = rectangle.Bottom - previous.Bottom;
+                        // Scroll
+                        ((IJavaScriptExecutor)Driver).ExecuteScript(string.Format("window.scrollBy({0}, {1})", xDiff, yDiff));
+                    }
+                    // Take Screenshot
+                    var screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
+                    // Build an Image out of the Screenshot
+                    var screenshotImage = ScreenshotToImage(screenshot);
+                    // Calculate the source Rectangle
+                    var sourceRectangle = new Rectangle(viewportWidth - rectangle.Width, viewportHeight - rectangle.Height, rectangle.Width, rectangle.Height);
+                    // Copy the Image
+                    using (var graphics = Graphics.FromImage(stitchedImage))
+                    {
+                        graphics.DrawImage(screenshotImage, rectangle, sourceRectangle, GraphicsUnit.Pixel);
+                    }
+                    // Set the Previous Rectangle
+                    previous = rectangle;
+                }
+                return stitchedImage;
             }
             catch (Exception ex)
             {
@@ -7439,7 +7528,11 @@ namespace GingerCore.Drivers
                 return null;
             }
         }
-
+        private Bitmap ScreenshotToImage(Screenshot screenshot)
+        {
+            TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));
+            return (Bitmap)tc.ConvertFrom(screenshot.AsByteArray);
+        }
         async Task<ElementInfo> IVisualTestingDriver.GetElementAtPoint(long ptX, long ptY)
         {
             HTMLElementInfo elemInfo = null;
@@ -7570,7 +7663,7 @@ namespace GingerCore.Drivers
                              i_Elem.Location.Y - s32_ScrollY);
         }
 
-        Bitmap IVisualTestingDriver.GetScreenShot(Tuple<int, int> setScreenSize = null)
+        Bitmap IVisualTestingDriver.GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
             if (setScreenSize != null)
             {
@@ -7589,11 +7682,11 @@ namespace GingerCore.Drivers
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to set browser screen size before taking screen shot", ex);
-                    return GetScreenShot();
+                    return GetScreenShot(IsFullPageScreenshot);
                 }
             }
 
-            return GetScreenShot();
+            return GetScreenShot(IsFullPageScreenshot);
         }
 
         VisualElementsInfo IVisualTestingDriver.GetVisualElementsInfo()
@@ -8334,6 +8427,47 @@ namespace GingerCore.Drivers
         public string GetCurrentPageSourceString()
         {
             return Driver.PageSource;
+        }
+
+        public void SetCurrentPageLoadStrategy(DriverOptions options)
+        {
+            if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Normal).ToLower())
+            {
+                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Normal;
+            }
+            else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Eager).ToLower())
+            {
+                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Eager;
+            }
+            else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.None).ToLower())
+            {
+                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.None;
+            }
+            else 
+            {
+                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Default;
+            }
+        }
+
+
+        public string GetApplitoolServerURL()
+        {
+            return this.ApplitoolsServerUrl;
+        }
+
+        public string GetApplitoolKey()
+        {
+            return this.ApplitoolsViewKey;
+        }
+
+        public ePlatformType GetPlatform()
+        {
+            return this.Platform;
+        }
+
+        public string GetEnvironment()
+        {
+            return this.BusinessFlow.Environment;
         }
     }
 }

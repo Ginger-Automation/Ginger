@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -94,10 +94,13 @@ namespace Ginger.ALM.MapToALMWizard
         {
             foreach (ActivitiesGroup ag in mapBusinessFlow.ActivitiesGroups)
             {
-                testCasesMappingList.Add(new ALMTestCaseManualMappingConfig() { activitiesGroup = ag });
-                if (!String.IsNullOrEmpty(ag.ExternalID))
+                if (ag.ActivitiesIdentifiers.Count > 0)
                 {
-                    SetReMapAGSDic(ag.ExternalID, null);
+                    testCasesMappingList.Add(new ALMTestCaseManualMappingConfig() { activitiesGroup = ag });
+                    if (!String.IsNullOrEmpty(ag.ExternalID))
+                    {
+                        SetReMapAGSDic(ag.ExternalID, null);
+                    }
                 }
             }
         }

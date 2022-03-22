@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Variables;
@@ -29,6 +30,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 
 
@@ -96,7 +98,7 @@ namespace GingerCore
         eHandlerMappingType mErrorHandlerMappingType;
 
         [IsSerializedForLocalRepository]
-        public eHandlerMappingType  ErrorHandlerMappingType
+        public eHandlerMappingType ErrorHandlerMappingType
         {
             get { return mErrorHandlerMappingType; }
             set
@@ -116,7 +118,7 @@ namespace GingerCore
         public bool AGSelected { get { return mAGSelected; } set { if (mAGSelected != value) { mAGSelected = value; OnPropertyChanged(nameof(AGSelected)); } } }
 
         public List<string> VariablesBeforeExec { get; set; }
-        
+
         public Activity()
         {
             //set fields default values
@@ -146,7 +148,7 @@ namespace GingerCore
                     OnPropertyChanged(nameof(ActivityName));
                 }
             }
-        }        
+        }
         private bool mMandatory;
         [IsSerializedForLocalRepository]
         public bool Mandatory
@@ -217,6 +219,7 @@ namespace GingerCore
             {
                 double iAuto = 0;
                 double percent = 0;
+                
                 if (Acts.Count != 0)
                 {
                     foreach (GingerCore.Actions.Act act in Acts)
@@ -257,7 +260,7 @@ namespace GingerCore
                 OnPropertyChanged(nameof(PercentAutomated));
             }
         }
-        
+
         eActivityAutomationStatus? mAutomationStatus;
         /// <summary>
         /// Automation development status of the Activity
@@ -299,16 +302,16 @@ namespace GingerCore
         //TODO: check if status is different
         public Amdocs.Ginger.CoreNET.Execution.eRunStatus? Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(nameof(Status)); } }
         //TODO: add change history log in class and save it
-        
+
 
         private String mActivitiesGroupID;
         /// <summary>
         /// Used to store the Activities Group ID/Name which this Activity is belong to in the Business Flow
         /// </summary>
         [IsSerializedForLocalRepository]
-        public String ActivitiesGroupID 
-        { 
-            get { return mActivitiesGroupID; } 
+        public String ActivitiesGroupID
+        {
+            get { return mActivitiesGroupID; }
             set
             {
                 if (mActivitiesGroupID != value)
@@ -316,7 +319,7 @@ namespace GingerCore
                     mActivitiesGroupID = value;
                     OnPropertyChanged(nameof(ActivitiesGroupID));
                 }
-            } 
+            }
         }
 
         //private String mActivitiesGroupColor;
@@ -331,8 +334,8 @@ namespace GingerCore
 
 
         private string mTargetApplication;
-        [IsSerializedForLocalRepository]        
-        public string TargetApplication          
+        [IsSerializedForLocalRepository]
+        public string TargetApplication
         {
             get { return mTargetApplication; }
             set
@@ -345,12 +348,26 @@ namespace GingerCore
             }
         }
 
+        //Defines if activity is linked or regular
+        eSharedItemType mType = eSharedItemType.Regular;
+
+        [IsSerializedForLocalRepository]
+        public eSharedItemType Type
+        {
+            get { return mType; }
+            set
+            {
+                mType = value;
+                OnPropertyChanged(nameof(Type));
+            }
+        }
+
         private ObservableList<IAct> mActs;
         /// <summary>
         /// Been used to identify if Acts were lazy loaded already or not
         /// </summary>
-        public bool ActsLazyLoad { get { return (mActs != null) ? mActs.LazyLoad : false; } }                           
-        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.StringData)]
+        public bool ActsLazyLoad { get { return (mActs != null) ? mActs.LazyLoad : false; } }
+        [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.StringData)]
         [IsSerializedForLocalRepository]
         public ObservableList<IAct> Acts
         {
@@ -363,10 +380,12 @@ namespace GingerCore
                 if (mActs.LazyLoad)
                 {
                     mActs.LoadLazyInfo();
+                    //Check if linked activity and then load acts from SR
                     if (this.DirtyStatus != eDirtyStatus.NoTracked)
                     {
                         this.TrackObservableList(mActs);
                     }
+
                 }
                 return mActs;
             }
@@ -381,7 +400,7 @@ namespace GingerCore
         /// Been used to identify if Activity Variables were lazy loaded already or not
         /// </summary>
         public bool VariablesLazyLoad { get { return (mVariables != null) ? mVariables.LazyLoad : false; } }
-        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.StringData)]
+        [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.StringData)]
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables
         {
@@ -448,7 +467,7 @@ namespace GingerCore
                 string varsNames = string.Empty;
                 foreach (VariableBase var in Variables)
                     varsNames += var.Name + ", ";
-                return (varsNames.TrimEnd(new char[] {',', ' '}));                
+                return (varsNames.TrimEnd(new char[] { ',', ' ' }));
             }
         }
         public void RefreshVariablesNames() { OnPropertyChanged(nameof(VariablesNames)); }
@@ -498,7 +517,7 @@ namespace GingerCore
                 counter++;
             var.Name = var.Name + "_" + counter.ToString();
         }
-        
+
 
         private long? mElapsed;
         //[IsSerializedForLocalRepository]
@@ -548,10 +567,10 @@ namespace GingerCore
 
 
         public override string GetNameForFileName() { return ActivityName; }
-      
+
         [IsSerializedForLocalRepository]
         public ObservableList<VariableDependency> VariablesDependencies { get; set; } = new ObservableList<VariableDependency>();
-        
+
         /// <summary>
         /// Check if the Activity supposed to be executed according to it variables dependencies configurations
         /// </summary>
@@ -720,7 +739,7 @@ namespace GingerCore
             Activity activityInstance = (Activity)instance;
             //Create new instance of source
             Activity newInstance = (Activity)this.CreateInstance();
-            
+
 
             newInstance.IsSharedRepositoryInstance = true;
 
@@ -737,14 +756,14 @@ namespace GingerCore
                     //newInstance.ActivitiesGroupColor = activityInstance.ActivitiesGroupColor;
                     newInstance.TargetApplication = activityInstance.TargetApplication;
                     newInstance.Active = activityInstance.Active;
-                    newInstance.VariablesDependencies = activityInstance.VariablesDependencies;                   
+                    newInstance.VariablesDependencies = activityInstance.VariablesDependencies;
                     if (ePartToUpdate == eItemParts.Details)
                     {
                         //keep other parts
                         newInstance.Acts = activityInstance.Acts;
                         newInstance.Variables = activityInstance.Variables;
                     }
-                    if (instance.ExternalID == this.ExternalID) 
+                    if (instance.ExternalID == this.ExternalID)
                         AddExistingSelectionListVariabelesValues(newInstance, activityInstance);//increase selection list vars values- needed for GingerATS integration so based on External ID
                     if (hostItem != null)
                     {
@@ -755,7 +774,7 @@ namespace GingerCore
                     }
                     break;
                 case eItemParts.Actions:
-                    if(hostItem != null)
+                    if (hostItem != null)
                     {
                         activityInstance.Acts = newInstance.Acts;
                         BusinessFlow currentBF = hostItem as BusinessFlow;
@@ -774,31 +793,31 @@ namespace GingerCore
         public override RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase itemToUpload, RepositoryItemBase existingRepoItem, string itemPartToUpdate)
         {
             Activity updatedActivity = null;
-            
+
             //update required part
             eItemParts ePartToUpdate = (eItemParts)Enum.Parse(typeof(eItemParts), itemPartToUpdate);
 
             switch (ePartToUpdate)
             {
-                case eItemParts.All:                 
+                case eItemParts.All:
 
                 case eItemParts.Details:
-                    updatedActivity= (Activity)itemToUpload.CreateCopy(false);                 
+                    updatedActivity = (Activity)itemToUpload.CreateCopy(false);
 
                     if (ePartToUpdate == eItemParts.Details)
                     {
                         updatedActivity.Acts = ((Activity)existingRepoItem).Acts;
                         updatedActivity.Variables = ((Activity)existingRepoItem).Variables;
                     }
-              
+
                     break;
                 case eItemParts.Actions:
-                    updatedActivity= (Activity)existingRepoItem.CreateCopy(false);
+                    updatedActivity = (Activity)existingRepoItem.CreateCopy(false);
                     updatedActivity.Acts = ((Activity)itemToUpload).Acts;
                     break;
                 case eItemParts.Variables:
                     updatedActivity = (Activity)existingRepoItem.CreateCopy(false);
-                    updatedActivity.Variables = ((Activity)itemToUpload).Variables;                   
+                    updatedActivity.Variables = ((Activity)itemToUpload).Variables;
                     break;
             }
 
@@ -830,7 +849,7 @@ namespace GingerCore
                                 if (val == null)
                                 {
                                     //add the val
-                                    repoVarList.OptionalValuesList.Add(usageValue);                                    
+                                    repoVarList.OptionalValuesList.Add(usageValue);
                                     repositoryItem.AutomationStatus = eActivityAutomationStatus.Development;//reset the status because new variable optional value was added
                                 }
                             }
@@ -865,7 +884,7 @@ namespace GingerCore
             {
                 guidToLookBy = Guid.Parse(guidToLookByString);
             }
-           
+
             List<IAct> lstActions = null;
             if (guidToLookBy != Guid.Empty)
                 lstActions = Acts.Where(x => x.Guid == guidToLookBy).ToList();
@@ -883,7 +902,7 @@ namespace GingerCore
                     return firstActive;
                 else
                     return lstActions[0];//no one is Active so returning the first one
-            }            
+            }
         }
 
         public bool AddDynamicly { get; set; }
@@ -923,6 +942,15 @@ namespace GingerCore
             }
         }
 
+        public override bool IsLinkedItem
+        {
+            get
+            {
+                // no need to save actions and variables of activities which are marked as Link
+                return this.Type == eSharedItemType.Link;
+            }
+        }
+
         public override eImageType ItemImageType
         {
             get
@@ -941,7 +969,7 @@ namespace GingerCore
         public void OfflinePropertiesPrep(string executionLogFolder, int executionLogActivityCounter, string activityName)
         {
             ExecutionLogActionCounter = 0;
-            ExecutionLogFolder = Path.Combine(executionLogFolder,executionLogActivityCounter + " " + activityName);
+            ExecutionLogFolder = Path.Combine(executionLogFolder, executionLogActivityCounter + " " + activityName);
             VariablesBeforeExec = Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
         }
 
@@ -963,7 +991,7 @@ namespace GingerCore
 
         public override void PrepareItemToBeCopied()
         {
-            this.IsSharedRepositoryInstance= TargetFrameworkHelper.Helper.IsSharedRepositoryItem(this);
+            this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper.IsSharedRepositoryItem(this);
         }
 
         public override string GetItemType()

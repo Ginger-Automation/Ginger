@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -50,14 +50,20 @@ namespace UnitTests.NonUITests.GingerRunnerTests
     [Level1]
     public class GingerRunnerTest
     {
-        static BusinessFlow mBF;
-        static GingerRunner mGR;
-        static SolutionRepository SR;
-        static Solution solution;
-        static ProjEnvironment environment;
+        BusinessFlow mBF;
+        GingerRunner mGR;
+        SolutionRepository SR;
+        Solution solution;
+        ProjEnvironment environment;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
+        {
+
+        }
+
+        [TestInitialize]
+        public void TestInitialize()
         {
             mBF = new BusinessFlow();
             mBF.Name = "BF Test Fire Fox";
@@ -115,8 +121,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             SR.Open(path);
             WorkSpace.Instance.Solution = solution;
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder;
+            WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
+            WorkSpace.Instance.SolutionRepository = SR;
 
-            
         }
 
         [ClassCleanup]

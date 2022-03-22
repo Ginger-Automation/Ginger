@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -60,20 +60,81 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public int StartX { get; set; }
-        [IsSerializedForLocalRepository]
-        public int StartY { get; set; }
-        [IsSerializedForLocalRepository]
-        public int EndX { get; set; }
-        [IsSerializedForLocalRepository]
-        public int EndY { get; set; }
-        [IsSerializedForLocalRepository]
-        public string ExpectedImgFile { get; set; }
-        [IsSerializedForLocalRepository]
-        public string Coordinates { get { return StartX + ", " + StartY + ", " + EndX + ", " + EndY; } }
-        [IsSerializedForLocalRepository]
-        public string WindowName { get; set; }
+        public int StartX
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(StartX)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(StartX), value.ToString());
+            }
+        }
+        public int StartY
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(StartY)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(StartY), value.ToString());
+            }
+        }
+        public int EndX
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(EndX)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(EndX), value.ToString());
+            }
+        }
+        public int EndY
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(EndY)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(EndY), value.ToString());
+            }
+        }
+        public string ExpectedImgFile
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ExpectedImgFile)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ExpectedImgFile), value);
+            }
+        }
+        
+        public string WindowName
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(WindowName)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(WindowName), value);
+            }
+        }
 
         public override String ActionType
         {
@@ -109,7 +170,7 @@ namespace GingerCore.Actions
             //    ExpectedImgFile1 = ExpectedImgFile1.Replace("~\\", "");
             //    ExpectedImgFile1 = System.IO.Path.Combine(SolutionFolder1, ExpectedImgFile1);
             //}
-            ExpectedImgFile1 = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExpectedImgFile1);
+            ExpectedImgFile1 = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ExpectedImgFile1);
 
             if (WindowName == "FULLSCREEN")
             {

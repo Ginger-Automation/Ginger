@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ using Ginger.Run;
 using System.IO;
 using Amdocs.Ginger.CoreNET.Repository;
 using GingerCoreNETUnitTest.RunTestslib;
+using Ginger.SolutionGeneral;
 
 namespace GingerCoreNETUnitTests.ValueExpressionTest
 {
@@ -61,6 +62,10 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
             sol.ContainingFolderFullPath = TempRepositoryFolder;
             WorkSpace.Instance.Solution = sol;
+            if (WorkSpace.Instance.Solution.SolutionOperations == null)
+            {
+                WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
+            }
             mSolutionRepository.StopAllRepositoryFolderWatchers();
 
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder, "ExecutionResults");

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ namespace GingerCore.Actions.MainFrame
     public class ActMainframeSetText : Act
     {
         public override string ActionDescription { get { return "Set Text Main Frame"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Set Text Main Frame"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -55,33 +55,45 @@ namespace GingerCore.Actions.MainFrame
         }
         private eSetTextMode mSetTextMode = eSetTextMode.SetSingleField;
 
-       private bool mReloadvalue = true;
-
-        [IsSerializedForLocalRepository(true)]
-        public bool ReloadValue{
-            get{
-                return mReloadvalue;
+        public bool ReloadValue
+        {
+            get
+            {
+                bool value = true;
+                bool.TryParse(GetOrCreateInputParam(nameof(ReloadValue), value.ToString()).Value, out value);
+                return value;
             }
-            set{
-                mReloadvalue=value;
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ReloadValue), value.ToString());
             }
         }
 
-        [IsSerializedForLocalRepository]
         public eSetTextMode SetTextMode
         {
             get
             {
-                return mSetTextMode;
+                return (eSetTextMode)GetOrCreateInputParam<eSetTextMode>(nameof(SetTextMode), eSetTextMode.SetSingleField);
             }
             set
             {
-                mSetTextMode = value;
+                AddOrUpdateInputParamValue(nameof(SetTextMode), value.ToString());
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public bool SendAfterSettingText { get; set; }
+        public bool SendAfterSettingText
+        {
+            get
+            {
+                bool value = true;
+                bool.TryParse(GetOrCreateInputParam(nameof(SendAfterSettingText)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(SendAfterSettingText), value.ToString());
+            }
+        }
 
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
@@ -103,44 +115,44 @@ namespace GingerCore.Actions.MainFrame
         }
 
 
-       public void LoadCaretValueList()
+        public void LoadCaretValueList()
         {
-             ObservableList<ActInputValue> mCaretValueList = new ObservableList<ActInputValue> ();
-            String LoadText =ValueForDriver;
-            if (String.IsNullOrWhiteSpace (LoadText))
+            ObservableList<ActInputValue> mCaretValueList = new ObservableList<ActInputValue>();
+            String LoadText = ValueForDriver;
+            if (String.IsNullOrWhiteSpace(LoadText))
                 return;
-            XmlDocument XD = new XmlDocument ();
-            XD.LoadXml (LoadText);
+            XmlDocument XD = new XmlDocument();
+            XD.LoadXml(LoadText);
             foreach (XmlNode xn in XD.ChildNodes)
             {
                 if (xn.Name == "EditableFields")
                 {
                     foreach (XmlNode xns in xn.ChildNodes)
                     {
-                        ActInputValue aiv = new ActInputValue ();
+                        ActInputValue aiv = new ActInputValue();
                         foreach (XmlAttribute XA in xns.Attributes)
                         {
-                                if (XA.Name == "Caret")
-                                {
-                                    aiv.Param = XA.Value;
-                                }
-                                else if (XA.Name == "Text")
-                                {
-                                    aiv.Value = XA.Value;
-                                }
+                            if (XA.Name == "Caret")
+                            {
+                                aiv.Param = XA.Value;
                             }
+                            else if (XA.Name == "Text")
+                            {
+                                aiv.Value = XA.Value;
+                            }
+                        }
 
-                        if (CaretValueList.Any (av => av.Param == aiv.Param) || CaretValueList.Count () == 0)
+                        if (CaretValueList.Any(av => av.Param == aiv.Param) || CaretValueList.Count() == 0)
                         {
-                                mCaretValueList.Add (aiv);
+                            mCaretValueList.Add(aiv);
                         }
                     }
                 }
             }
-           CaretValueList=mCaretValueList;
+            CaretValueList = mCaretValueList;
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> CaretValueList = new ObservableList<ActInputValue> ();
+        public ObservableList<ActInputValue> CaretValueList = new ObservableList<ActInputValue>();
     }
 }

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -272,74 +272,6 @@ namespace GingerCore
         public CancellationTokenSource CTS = null;
         BackgroundWorker CancelTask;
 
-
-
-        /// <summary>
-        /// Set AGent Configuration with default values in addition to the configurations asked by Service 
-        /// </summary>
-        /// <param name="PSI"></param>
-        private void SetPlatformParameters(PluginServiceInfo PSI)
-        {
-            if (PSI.Interfaces.Where(x => x == "IWebPlatform").Count() > 0)
-            {
-                DriverConfigParam DI = new DriverConfigParam();
-                DI.Parameter = "Max Agent Load Time";
-                DI.Value = "30";
-                DI.Description = "Max Time allowed in seconds to start the agent0";
-
-                DI.IsPlatformParameter = true;
-
-                DriverConfiguration.Add(DI);
-
-
-                DriverConfigParam DI2 = new DriverConfigParam();
-                DI2.Parameter = "Auto Switch Frame";
-                DI2.Value = bool.TrueString;
-                DI2.Description = "Automatic Switch Frame for POM Element";
-
-                DI2.IsPlatformParameter = true;
-
-                DriverConfiguration.Add(DI2);
-
-
-            }
-            else if (PSI.Interfaces.Where(x => x == "IWebServicePlatform").Count() > 0)
-            {
-                DriverConfigParam DI = new DriverConfigParam();
-                DI.Parameter = "Save Request";
-                DI.Value = bool.FalseString;
-                DI.Description = "Save Request";
-
-                DI.IsPlatformParameter = true;
-
-                DriverConfiguration.Add(DI);
-
-
-                DriverConfigParam DI2 = new DriverConfigParam();
-                DI2.Parameter = "Save Response";
-                DI2.Value = bool.TrueString;
-                DI2.Description = "Save Response";
-
-                DI2.IsPlatformParameter = true;
-
-                DriverConfiguration.Add(DI2);
-
-
-                DriverConfigParam DI3 = new DriverConfigParam();
-                DI3.Parameter = "Path To Save";
-                DI3.Value = @"~\Documents";
-                DI3.Description = "Path to Save Request/Response Files";
-
-                DI3.IsPlatformParameter = true;
-
-                DriverConfiguration.Add(DI3);
-
-
-
-
-            }
-        }
-     
         public override string GetNameForFileName()
         {
             return Name;
@@ -565,6 +497,40 @@ namespace GingerCore
 
         public bool IsVirtual { get; set; }
 
+        public Type DriverClass = null;
+
+        /// <summary>
+        /// Check if agent support virtual drivers 
+        /// </summary>
+        /// <returns></returns>
+        public bool SupportVirtualAgent()
+        {
+            try
+            {
+
+                if (DriverClass == null)
+                {
+                    DriverClass = TargetFrameworkHelper.Helper.GetDriverType(this);
+                    if (DriverClass == null)
+                    {
+                        return false;
+                    }
+                }
+
+
+                if (DriverClass.GetInterfaces().Contains(typeof(IVirtualDriver)))
+                {
+                    return true;
+                }
+            }
+            //if the exceptions are throws we consider it to be not supportable for virtual agents
+            catch (Exception e)
+            {
+
+
+            }
+            return false;
+        }
 
         public override void PostDeserialization()
         {

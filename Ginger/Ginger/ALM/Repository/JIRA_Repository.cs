@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -181,13 +181,13 @@ namespace Ginger.ALM.Repository
                             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                             Reporter.HideStatusMessage();
                         }
-                        if (almConectStyle != eALMConnectType.Auto)
+                        if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
                         {
                             Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                         }
                         return true;
                     }
-                    else if (almConectStyle != eALMConnectType.Auto)
+                    else if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
                     {
                         Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, responseStr);
                     }

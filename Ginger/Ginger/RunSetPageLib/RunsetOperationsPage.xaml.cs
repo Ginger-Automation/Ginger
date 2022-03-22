@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -202,7 +202,7 @@ namespace Ginger.Run
         {
             RunSetActionPublishToQC RSAPTAC = new RunSetActionPublishToQC();
             RSAPTAC.Name = RSAPTAC.Type;
-            RSAPTAC.RunAt = RunSetActionBase.eRunAt.DuringExecution;
+            RSAPTAC.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             mRunSetConfig.RunSetActions.Add(RSAPTAC);
             RunSetActionsGrid.Grid.SelectedItem = RSAPTAC;
 

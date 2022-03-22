@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -183,6 +183,20 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
             if (PartToUpload.Count > 0)
                 SelectedItemPart = PartToUpload[0];
+        }
+
+        bool mReplaceAsLink;
+        public bool ReplaceAsLink
+        {
+            get
+            {
+                return mReplaceAsLink;
+            }
+            set
+            {
+                mReplaceAsLink = value;
+                OnPropertyChanged(nameof(ReplaceAsLink));
+            }
         }
     }
 }

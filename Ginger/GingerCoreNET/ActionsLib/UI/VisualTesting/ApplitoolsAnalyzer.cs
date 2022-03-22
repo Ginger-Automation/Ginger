@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ using System.Threading;
 using System.IO;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Run;
+using OpenQA.Selenium.Appium.Windows;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -106,11 +107,6 @@ namespace GingerCore.Actions.VisualTesting
             Region
         }
 
-        public enum eLocateByElement
-        {
-            ByXpath
-        }
-
         private void SetEyesMatchLevel()
         {
             eMatchLevel matchLevel = (eMatchLevel)mAct.GetInputParamCalculatedValue<eMatchLevel>(ApplitoolsMatchLevel);
@@ -153,6 +149,7 @@ namespace GingerCore.Actions.VisualTesting
 
         void IVisualAnalyzer.Execute()
         {
+            //TODO:Remove hardcoded string and use typeof
             if (mDriver.GetType().Name == "SeleniumDriver")
             {
                 switch (GetSelectedApplitoolsActionEnum())
@@ -204,12 +201,12 @@ namespace GingerCore.Actions.VisualTesting
                 mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
                 mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
                 mAct.CheckSetAppWindowSize();
-                mEyes.ApiKey = ((SeleniumDriver)mDriver).ApplitoolsViewKey;
-                mEyes.ServerUrl = string.IsNullOrEmpty(((SeleniumDriver)mDriver).ApplitoolsServerUrl) ? mEyes.ServerUrl : ((SeleniumDriver)mDriver).ApplitoolsServerUrl;
+                mEyes.ApiKey = mDriver.GetApplitoolKey();
+                mEyes.ServerUrl = string.IsNullOrEmpty(mDriver.GetApplitoolServerURL()) ? mEyes.ServerUrl : mDriver.GetApplitoolServerURL();
                 OperatingSystem Os_info = System.Environment.OSVersion;
                 mEyes.HostOS = Os_info.VersionString;
-                mEyes.HostApp = ((SeleniumDriver)mDriver).GetBrowserType().ToString();
-                mEyes.AddProperty("Environment ID", ((SeleniumDriver)mDriver).BusinessFlow.Environment);
+                mEyes.HostApp = mDriver is SeleniumDriver ? ((SeleniumDriver)mDriver).GetBrowserType().ToString() : mDriver.GetPlatform().ToString();
+                mEyes.AddProperty("Environment ID", mDriver.GetEnvironment());
                 mResolution = mAct.GetWindowResolution();
                 mEyes.Open(mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
             }
@@ -238,27 +235,19 @@ namespace GingerCore.Actions.VisualTesting
 
             SetEyesMatchLevel();
             AppImage response = mEyes.CheckImage(mDriver.GetScreenShot());
-            mAct.AddOrUpdateReturnParamActual("ExactMatches", response.IsMatch.ToString());
+            mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
 
-            bool FailActionOnMistmach = Boolean.Parse(mAct.GetInputParamValue(ApplitoolsAnalyzer.FailActionOnMistmach));
-            if (response.IsMatch == true || !FailActionOnMistmach)
-            {
-                mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
-                if (!FailActionOnMistmach)
-                    mAct.ExInfo = "Created new baseline in Applitools or Mismatch between saved baseline and target checkpoint image";
-            }
-            else if (response.IsMatch == false)
-            {
-                mAct.Error = "Created new baseline in Applitools or Mismatch between saved baseline and target checkpoint image";
-            }
         }
 
         private void CloseEyes()
         {
+            
             try
             {
                 TestResults TR = mEyes.Close(false);
                 // Update results info into outputs
+
+                SaveApplitoolsImages(TR);
                 mAct.ExInfo = "URL to view results: " + TR.Url;
                 mAct.AddOrUpdateReturnParamActual("ResultsURL", TR.Url + "");
                 mAct.AddOrUpdateReturnParamActual("Steps", TR.Steps + "");
@@ -269,6 +258,47 @@ namespace GingerCore.Actions.VisualTesting
                 mAct.AddOrUpdateReturnParamActual("LayoutMatches", TR.LayoutMatches + "");
                 mAct.AddOrUpdateReturnParamActual("ExactMatches", TR.ExactMatches + "");
                 mAct.AddOrUpdateReturnParamActual("IsNew", TR.IsNew + "");
+
+                if (!TR.IsNew)
+                {
+                    foreach (StepInfo step in TR.StepsInfo)
+                    {
+                        if (!step.HasCurrentImage)
+                        {
+                            mAct.AddOrUpdateReturnParamActual(step.Name, "Failed with Missing Image" + "");
+                        }
+                        else
+                        {
+                            mAct.AddOrUpdateReturnParamActual(step.Name, step.IsDifferent ? "Failed" : "Passed" + "");
+                        }
+                    }
+                }
+                mAct.AddOrUpdateReturnParamActual("IsNew", TR.IsNew + "");
+                if ((TR.Mismatches == 0 || TR.IsNew) && TR.Missing == 0)
+                {
+                    mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                    if (TR.IsNew)
+                    {
+                        mAct.ExInfo = "Created new baseline in Applitools.";
+                    }
+                    else
+                    {
+                        mAct.ExInfo = TR.Matches + " steps Matched with saved baseline in Applitools.";
+                    }
+
+                }
+                else
+                {
+                    mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                    if (TR.Mismatches != 0)
+                    {
+                        mAct.Error = TR.Mismatches + " steps Mismatched with saved baseline image in Applitools. ";
+                    }
+                    if (TR.Missing != 0)
+                    {
+                        mAct.Error += TR.Missing + " steps missing current images.";
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -294,10 +324,10 @@ namespace GingerCore.Actions.VisualTesting
                 mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
                 mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
                 
-                SetUp(newmEyes, ((SeleniumDriver)mDriver).ApplitoolsServerUrl, ((SeleniumDriver)mDriver).ApplitoolsViewKey, ((SeleniumDriver)mDriver).GetBrowserType(), ((SeleniumDriver)mDriver).BusinessFlow.Environment);
+                SetUp(newmEyes, mDriver.GetApplitoolServerURL(), mDriver.GetApplitoolKey(), eBrowserType.Chrome, mDriver.GetEnvironment());
                 mAct.CheckSetAppWindowSize();
                 mResolution = mAct.GetWindowResolution();
-                newmEyes.Open(((SeleniumDriver)mDriver).GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
+                newmEyes.Open(mDriver.GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
             }
             catch (Exception ex)
             {
@@ -310,6 +340,7 @@ namespace GingerCore.Actions.VisualTesting
                     mAct.Error += "Eyes Open Failed, Error: " + ex.Message;
                 }
             }
+
             
         }
 
@@ -335,7 +366,8 @@ namespace GingerCore.Actions.VisualTesting
                     ElementLocator locator = new ElementLocator();
                     locator.LocateBy = GetLocateBy();
                     locator.LocateValue = GetLocateValue();
-                    IWebElement webElement = ((SeleniumDriver)mDriver).LocateElementByLocator(locator, true);
+                    IWebElement webElement = ((SeleniumDriver)mDriver).LocateElement(mAct, false,null,null);
+                    //IWebElement webElement = ((SeleniumDriver)mDriver).LocateElementByLocator(locator, true);
                     newmEyes.Check(Target.Region(webElement).Fully().WithName(mAct.ItemName));
                 }
                     
@@ -513,7 +545,7 @@ namespace GingerCore.Actions.VisualTesting
             for (int i = 1; i <= numOfImages; i++)
             {
                 String currImagePath = Act.GetScreenShotRandomFileName();
-                String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + i.ToString() + "/images/diff?ApiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
+                String currImageURL = this.ServerURL + "/api/sessions/batches/" + this.batchID + "/" + this.sessionID + "/steps/" + i.ToString() + "/images/diff?ApiKey=" + mDriver.GetApplitoolKey();// ((SeleniumDriver)mDriver).ApplitoolsViewKey;
                 try
                 {
                     HttpResponseMessage response = runLongRequest(currImageURL);
@@ -528,10 +560,6 @@ namespace GingerCore.Actions.VisualTesting
                         mAct.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
                         mAct.ScreenShots.Add(currImagePath);
                         
-                    }
-                    else if (response.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        mAct.Error = mAct.Error + " File Not Found";
                     }
                 }
                 catch(Exception ex)
@@ -655,7 +683,6 @@ namespace GingerCore.Actions.VisualTesting
                     return sendRequest(request, 1, false);
 
                 case HttpStatusCode.NotFound:
-                    mAct.Error = mAct.Error + "Unknown error during long request: " + status;
                     return responseReceived;
 
                 case HttpStatusCode.Gone:

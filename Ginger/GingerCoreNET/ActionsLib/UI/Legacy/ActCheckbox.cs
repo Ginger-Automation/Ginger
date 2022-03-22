@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -78,8 +78,17 @@ namespace GingerCore.Actions
             GetStyle = 24,
         }
 
-        [IsSerializedForLocalRepository]
-        public eCheckboxAction CheckboxAction { get; set; }
+        public eCheckboxAction CheckboxAction
+        {
+            get
+            {
+                return (eCheckboxAction)GetOrCreateInputParam<eCheckboxAction>(nameof(CheckboxAction), eCheckboxAction.Check);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(CheckboxAction), value.ToString());
+            }
+        }
 
         public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 

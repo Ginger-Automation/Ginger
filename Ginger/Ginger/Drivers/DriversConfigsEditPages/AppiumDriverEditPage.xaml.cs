@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -43,6 +43,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         DriverConfigParam mAppType;
         DriverConfigParam mAppiumCapabilities;
         DriverConfigParam mDeviceAutoScreenshotRefreshMode;
+        DriverConfigParam mApplitoolKey;
+        DriverConfigParam mApplitoolURL;
 
         public AppiumDriverEditPage(Agent appiumAgent)
         {
@@ -65,6 +67,15 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             xProxyTextBox.Init(null, proxy, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xProxyTextBox, TextBox.ToolTipProperty, proxy, nameof(DriverConfigParam.Description));
             xUseProxyChkBox.IsChecked = !string.IsNullOrEmpty(proxy.Value);
+
+            mApplitoolKey = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ApplitoolsViewKey));
+            xApplitoolKeyTxtBox.Init(null, mApplitoolKey, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xApplitoolKeyTxtBox, TextBox.ToolTipProperty, mApplitoolKey, nameof(DriverConfigParam.Description));
+
+            mApplitoolURL = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ApplitoolsServerUrl));
+            xApplitoolURLTxtBox.Init(null, mApplitoolURL, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xApplitoolURLTxtBox, TextBox.ToolTipProperty, mApplitoolURL, nameof(DriverConfigParam.Description));
+
 
             xLoadTimeoutTxtbox.Init(null, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));           

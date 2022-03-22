@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using AlmDataContractsStd.Abstraction;
 using AlmDataContractsStd.Contracts;
+using amdocs.ginger.GingerCoreNET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace GingerCore.ALM.JIRA
         }
         public void CreateJiraRepository()
         {
-            jiraRepositoryObj = new JiraRepositoryStd.JiraRepositoryStd(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath));
+            jiraRepositoryObj = new JiraRepositoryStd.JiraRepositoryStd(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath));
         }
         public bool SetJiraProjectFullDetails()
         {

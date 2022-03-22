@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.UIElement;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using OpenQA.Selenium;
 using System;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -26,11 +28,21 @@ namespace GingerCore.Actions.VisualTesting
     // Each driver which supports Visual testing should implement this interface, enable the action to take UI info and screen shot + change app window
     public interface IVisualTestingDriver
     {
-        Bitmap GetScreenShot(Tuple<int,int> setScreenSize=null);        
+        Bitmap GetScreenShot(Tuple<int,int> setScreenSize=null, bool IsFullPageScreenshot = false);        
 
         VisualElementsInfo GetVisualElementsInfo();
         void ChangeAppWindowSize(int Width, int Height);
 
         Task<ElementInfo> GetElementAtPoint(long ptX, long ptY);
+
+        string GetApplitoolServerURL();
+
+        string GetApplitoolKey();
+
+        ePlatformType GetPlatform();
+
+        string GetEnvironment();
+
+        IWebDriver GetWebDriver();
     }
 }

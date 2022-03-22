@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ namespace GingerCore.Actions
     public class ActUIALabel : Act
     {
         public override string ActionDescription { get { return "UI Label Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "UI Label Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -68,8 +68,17 @@ namespace GingerCore.Actions
         }
 
 
-        [IsSerializedForLocalRepository]
-        public eLabelAction LabelAction { get; set; }
+        public eLabelAction LabelAction
+        {
+            get
+            {
+                return (eLabelAction)GetOrCreateInputParam<eLabelAction>(nameof(LabelAction), eLabelAction.Click);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(LabelAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

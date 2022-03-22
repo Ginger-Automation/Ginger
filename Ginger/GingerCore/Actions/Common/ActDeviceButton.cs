@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -86,8 +86,17 @@ namespace GingerCore.Actions.Common
             RecentApps
         }
 
-        [IsSerializedForLocalRepository]
-        public eDeviceButtonAction DeviceButtonAction { get; set; }
+        public eDeviceButtonAction DeviceButtonAction
+        {
+            get
+            {
+                return (eDeviceButtonAction)GetOrCreateInputParam<eDeviceButtonAction>(nameof(DeviceButtonAction), eDeviceButtonAction.Press);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(DeviceButtonAction), value.ToString());
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public ePressKey PressKey { get; set; }

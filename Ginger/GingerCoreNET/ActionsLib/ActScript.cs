@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -168,7 +169,7 @@ namespace GingerCore.Actions
                 case eScriptInterpreterType.Other:
                     if (!string.IsNullOrEmpty(ScriptInterpreter))
                     {
-                        p.StartInfo.FileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScriptInterpreter);
+                        p.StartInfo.FileName = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ScriptInterpreter);
                     }
                     break;
             }
@@ -184,7 +185,7 @@ namespace GingerCore.Actions
             }
             else
             {
-                if(Directory.Exists(Path.Combine(SolutionFolder, "Documents", "scripts")))
+                if (Directory.Exists(Path.Combine(SolutionFolder, "Documents", "scripts")))
                 {
                     p.StartInfo.WorkingDirectory = Path.Combine(SolutionFolder, "Documents", "scripts");
                 }
@@ -193,7 +194,7 @@ namespace GingerCore.Actions
                     p.StartInfo.WorkingDirectory = Path.Combine(SolutionFolder, "Documents", "Scripts");
                 }
             }
-            p.StartInfo.WorkingDirectory = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(p.StartInfo.WorkingDirectory);
+            p.StartInfo.WorkingDirectory = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(p.StartInfo.WorkingDirectory);
             try
             {
                 string Params = GetCommandText(this);
@@ -206,7 +207,7 @@ namespace GingerCore.Actions
                     }
                     else if (ScriptInterpreterType == eScriptInterpreterType.SH)
                     {
-                        string filePath = Path.Combine(p.StartInfo.WorkingDirectory,ScriptName);
+                        string filePath = Path.Combine(p.StartInfo.WorkingDirectory, ScriptName);
                         p.StartInfo.Arguments = filePath + Params;
                     }
                     else if (ScriptInterpreter != null && ScriptInterpreter.Contains("cmd.exe"))

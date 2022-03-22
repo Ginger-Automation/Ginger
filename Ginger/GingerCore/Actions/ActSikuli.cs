@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ namespace GingerCore.Actions
     public class ActSikuli : ActImageCaptureSupport
     {
         public override string ActionDescription { get { return "Sikuli Operation"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Sikuli Operation"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -81,10 +81,28 @@ namespace GingerCore.Actions
             MouseRightClick
         }
 
-        [IsSerializedForLocalRepository]
-        public string WindowTitle { get; set; }
-        [IsSerializedForLocalRepository]
-        public eActSikuliOperation ActSikuliOperation { get; set; }
+        public string WindowTitle
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(WindowTitle)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(WindowTitle), value);
+            }
+        }
+        public eActSikuliOperation ActSikuliOperation
+        {
+            get
+            {
+                return (eActSikuliOperation)GetOrCreateInputParam<eActSikuliOperation>(nameof(ActSikuliOperation), eActSikuliOperation.SetValue);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ActSikuliOperation), value.ToString());
+            }
+        }
 
         public override String ActionType
         {
@@ -94,12 +112,41 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public string PatternPath { get; set; }
-        [IsSerializedForLocalRepository]
-        public bool ShowSikuliConsole { get; set; }
-        [IsSerializedForLocalRepository]
-        public string SetTextValue { get; set; }
+        public string PatternPath
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(PatternPath)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PatternPath), value);
+            }
+        }
+        public bool ShowSikuliConsole
+        {
+            get
+            {
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(ShowSikuliConsole)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ShowSikuliConsole), value.ToString());
+            }
+        }
+        public string SetTextValue
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(SetTextValue)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(SetTextValue), value);
+            }
+        }
         public int ProcessIDForSikuliOperation
         {
             get
@@ -114,8 +161,17 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public string ProcessNameForSikuliOperation { get; set; }
+        public string ProcessNameForSikuliOperation
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ProcessNameForSikuliOperation)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ProcessNameForSikuliOperation), value);
+            }
+        }
 
         public override eImageType Image { get { return eImageType.BullsEye; } }
 
@@ -131,48 +187,51 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
-            string logMessage = string.Empty;
-            APILauncher sikuliLauncher = new APILauncher(out logMessage, ShowSikuliConsole);
-            sikuliLauncher.EvtLogMessage += sikuliLauncher_EvtLogMessage;
-            sikuliLauncher.Start();
-
-            try
+            if (CheckIfImageValid())
             {
-                Screen sekuliScreen = new Screen();
+                string logMessage = string.Empty;
+                APILauncher sikuliLauncher = new APILauncher(out logMessage, ShowSikuliConsole);
+                sikuliLauncher.EvtLogMessage += sikuliLauncher_EvtLogMessage;
+                sikuliLauncher.Start();
 
-                Pattern sikuliPattern = new Pattern(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(PatternPath));
-
-                System.Threading.Tasks.Task.Run(() => SetFocusToSelectedApplicationInstance());
-
-                switch (ActSikuliOperation)
+                try
                 {
-                    case eActSikuliOperation.Click:
-                        sekuliScreen.Click(sikuliPattern);
-                        break;
-                    case eActSikuliOperation.SetValue:
-                        sekuliScreen.Type(sikuliPattern, SetTextValue);
-                        break;
-                    case eActSikuliOperation.DoubleClick:
-                        sekuliScreen.DoubleClick(sikuliPattern);
-                        break;
-                    case eActSikuliOperation.MouseRightClick:
-                        sekuliScreen.RightClick(sikuliPattern);
-                        break;
-                    case eActSikuliOperation.Exist:
-                        sekuliScreen.Exists(sikuliPattern);
-                        break;
-                    default:
-                        break;
+                    Screen sekuliScreen = new Screen();
+
+                    Pattern sikuliPattern = new Pattern(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(PatternPath));
+
+                    System.Threading.Tasks.Task.Run(() => SetFocusToSelectedApplicationInstance());
+
+                    switch (ActSikuliOperation)
+                    {
+                        case eActSikuliOperation.Click:
+                            sekuliScreen.Click(sikuliPattern);
+                            break;
+                        case eActSikuliOperation.SetValue:
+                            sekuliScreen.Type(sikuliPattern, SetTextValue);
+                            break;
+                        case eActSikuliOperation.DoubleClick:
+                            sekuliScreen.DoubleClick(sikuliPattern);
+                            break;
+                        case eActSikuliOperation.MouseRightClick:
+                            sekuliScreen.RightClick(sikuliPattern);
+                            break;
+                        case eActSikuliOperation.Exist:
+                            sekuliScreen.Exists(sikuliPattern);
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message + Environment.NewLine + ex.Source, ex);
-                Error = string.Format("Error Occured while executing Sikuli Operation {0} : {1}", ActSikuliOperation, ex.Message);
-            }
-            finally
-            {
-                sikuliLauncher.Stop();
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, ex.Message + Environment.NewLine + ex.Source, ex);
+                    Error = string.Format("Error Occured while executing Sikuli Operation {0} : {1}", ActSikuliOperation, ex.Message);
+                }
+                finally
+                {
+                    sikuliLauncher.Stop();
+                }
             }
         }
 
@@ -219,19 +278,84 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public override int ClickX { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int ClickY { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int StartX { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int StartY { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int EndX { get; set; }
-        [IsSerializedForLocalRepository]
-        public override int EndY { get; set; }
-        [IsSerializedForLocalRepository]
+        public override int ClickX
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(ClickX)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ClickX), value.ToString());
+            }
+        }
+        public override int ClickY
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(ClickY)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ClickY), value.ToString());
+            }
+        }
+        public override int StartX
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(StartX)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(StartX), value.ToString());
+            }
+        }
+        public override int StartY
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(StartY)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(StartY), value.ToString());
+            }
+        }
+        public override int EndX
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(EndX)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(EndX), value.ToString());
+            }
+        }
+        public override int EndY
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(EndY)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(EndY), value.ToString());
+            }
+        }
         public override string LocatorImgFile { get; set; }
         public override string ImagePath
         {
@@ -239,6 +363,23 @@ namespace GingerCore.Actions
             {
                 return @"Documents\SikuliImages\";
             }
+        }
+
+        private bool CheckIfImageValid()
+        {
+            if (string.IsNullOrEmpty(PatternPath))
+            {
+                Error = "File Path is Empty";
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Empty");
+                return false;
+            }
+            if (!File.Exists(PatternPath))
+            {
+                Error = "File Path is Invalid";
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Invalid");
+                return false;
+            }
+            return true;
         }
     }
 }

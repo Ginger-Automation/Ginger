@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -245,7 +245,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                 string requestBody = null;
                 if (!string.IsNullOrEmpty(actionToConvert.GetInputParamValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser)))
                 {
-                    string fileUri = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(actionToConvert.GetInputParamValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser));
+                    string fileUri = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(actionToConvert.GetInputParamValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser));
                     if (File.Exists(fileUri))
                     {
                         requestBody = System.IO.File.ReadAllText(fileUri);
@@ -293,7 +293,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                 string requestBody = string.Empty;
                 if (aPIModel.RequestBodyType == ApplicationAPIUtils.eRequestBodyType.TemplateFile)
                 {
-                    string fileUri = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(aPIModel.TemplateFileNameFileBrowser);
+                    string fileUri = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(aPIModel.TemplateFileNameFileBrowser);
                     if (File.Exists(fileUri))
                     {
                         aPIModel.RequestBody = System.IO.File.ReadAllText(fileUri);

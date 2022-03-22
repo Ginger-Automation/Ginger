@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -351,7 +351,7 @@ namespace GingerCore.Actions.WebServices
                     string FileContent = string.Empty;
                     string TemplateFileName = GetInputParamCalculatedValue(Fields.TemplateFileNameFileBrowser).ToString();
 
-                    string TemplateFileNameFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TemplateFileName);
+                    string TemplateFileNameFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TemplateFileName);
 
                     FileStream ReqStream = File.OpenRead(TemplateFileNameFullPath);
 

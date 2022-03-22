@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.MainFrame
 {
-   public class ActMainframeSendKey : Act
+    public class ActMainframeSendKey : Act
     {
         public override string ActionDescription { get { return "Send Key to MainFrame"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Send Key to MainFrame"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -64,7 +64,16 @@ namespace GingerCore.Actions.MainFrame
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public TnKey KeyToSend { get; set; }
+        public TnKey KeyToSend
+        {
+            get
+            {
+                return (TnKey)GetOrCreateInputParam<TnKey>(nameof(KeyToSend), TnKey.Key);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(KeyToSend), value.ToString());
+            }
+        }
     }
 }

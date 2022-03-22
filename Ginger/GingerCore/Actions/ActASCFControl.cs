@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ namespace GingerCore.Actions
     public class ActASCFControl : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "ASCF Control Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "ASCF Control Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -437,12 +437,30 @@ namespace GingerCore.Actions
             ToolTip=9
         }
 
-        [IsSerializedForLocalRepository]
-        public eControlAction ControlAction { get; set; }
+        public eControlAction ControlAction
+        {
+            get
+            {
+                return (eControlAction)GetOrCreateInputParam<eControlAction>(nameof(ControlAction), eControlAction.SetValue);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ControlAction), value.ToString());
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public eControlProperty ControlProperty { get; set; }
-        
+        public eControlProperty ControlProperty
+        {
+            get
+            {
+                return (eControlProperty)GetOrCreateInputParam<eControlProperty>(nameof(ControlProperty), eControlProperty.NA);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ControlProperty), value.ToString());
+            }
+        }
+
         public bool WaitForIdle { get; set; }
         
 

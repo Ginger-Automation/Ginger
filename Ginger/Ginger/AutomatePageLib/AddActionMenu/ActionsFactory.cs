@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ namespace Ginger.BusinessFlowPages
             {
                 mContext.BusinessFlow.CurrentActivity = mContext.Activity;//so new Actions will be added to correct Activity
             }
-            
+
             if (mItem is Act)
             {
                 Act selectedAction = mItem as Act;
@@ -72,6 +72,10 @@ namespace Ginger.BusinessFlowPages
                 {
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Activity target platform is \"" + currentActivityPlatform + "\", where as action platform is \"" + selectedAction.Platform + "\"" + System.Environment.NewLine + "Please select same platform actions only.");
                     return -1;
+                }
+                if (!(selectedAction is ActWithoutDriver))
+                {
+                    selectedAction.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
                 }
                 instance = GenerateSelectedAction(selectedAction, mContext);
             }
@@ -290,13 +294,16 @@ namespace Ginger.BusinessFlowPages
         public static void AddActivitiesFromSRHandler(List<Activity> sharedActivitiesToAdd, BusinessFlow businessFlow, string ActivitiesGroupID = null, int insertIndex = -1)
         {
             ActivitiesGroup parentGroup = null;
+            bool copyAsLink = true;
             if (!string.IsNullOrWhiteSpace(ActivitiesGroupID))
             {
                 parentGroup = businessFlow.ActivitiesGroups.Where(g => g.Name == ActivitiesGroupID).FirstOrDefault();
             }
             else
             {
-                parentGroup = (new ActivitiesGroupSelectionPage(businessFlow)).ShowAsWindow();
+                var activitiesGroupSelectionPage = new ActivitiesGroupSelectionPage(businessFlow);
+                parentGroup = activitiesGroupSelectionPage.ShowAsWindow();
+                copyAsLink = activitiesGroupSelectionPage.xCopyAsLink.IsChecked.Value;
             }
 
             if (parentGroup != null)
@@ -306,10 +313,16 @@ namespace Ginger.BusinessFlowPages
                 {
                     Activity activityIns = (Activity)sharedActivity.CreateInstance(true);
                     activityIns.Active = true;
+                    if (copyAsLink)
+                    {
+                        activityIns.Type = eSharedItemType.Link;
+                    }
                     //map activities target application to BF if missing in BF
                     userSelection = businessFlow.MapTAToBF(userSelection, activityIns, WorkSpace.Instance.Solution.ApplicationPlatforms);
                     businessFlow.SetActivityTargetApplication(activityIns);
                     businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
+
+
                 }
             }
         }

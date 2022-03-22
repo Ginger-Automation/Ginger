@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ namespace GingerCore.Actions.JSON
 
         public override bool IsSelectableAction { get { return false; } }
         public override string ActionDescription { get { return "JSON Tag Validation Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "JSON Tag Validation Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -120,7 +120,7 @@ namespace GingerCore.Actions.JSON
                 //{
                 //    FilePath = FilePath.Replace("~\\", SolutionFolder);
                 //}
-                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FilePath);
 
                 jsonContent = System.IO.File.ReadAllText(FilePath);
             }
@@ -129,7 +129,7 @@ namespace GingerCore.Actions.JSON
             {
                 jsonContent = JsonInput.ValueForDriver.ToString();
             }
-            
+
             XmlDocument doc = null;
             if (((jsonContent[0] == '[') && (jsonContent[jsonContent.Length - 1] == ']')))
             {
@@ -147,7 +147,7 @@ namespace GingerCore.Actions.JSON
             foreach (Amdocs.Ginger.Common.GeneralLib.General.XmlNodeItem outputItem in outputTagsList)
             {
                 foreach (ActInputValue aiv in DynamicElements)
-                {                    
+                {
                     string calculatedValue = ValueExpression.Calculate(@aiv.Param);
                     if (outputItem.path == "/root/" + calculatedValue)
                     {

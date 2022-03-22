@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -106,6 +106,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xShowIDUC.Init(mPOM);
             xFirstRowExpanderLabel.Content = string.Format("'{0}' Details", mPOM.Name);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
+            xNameTextBox.AddValidationRule(new AddEditPOMWizardLib.POMNameValidationRule());
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
             xPageURLTextBox.Init(null, mPOM, nameof(mPOM.PageURL));
 
@@ -166,6 +167,22 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 if (key != null)
                 {
                     mPOM.TargetApplicationKey = key;
+                }
+                else if (mPOM.TargetApplicationKey.ItemName != null && key == null)//if POM is imported/copied from other solution
+                {
+                    var platform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
+                    if (platform != ePlatformType.NA)
+                    {
+                        mPOM.TargetApplicationKey = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform == platform).Select(x => x.Key).FirstOrDefault();
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mPOM.Key.ItemName + " Target Application was not found, please select new Target Application");
+                    }
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mPOM.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
 
@@ -431,7 +448,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void xEditPageExpander_Expanded(object sender, RoutedEventArgs e)
         {
-            FirstRow.Height = new GridLength(235, GridUnitType.Pixel);
+            FirstRow.Height = new GridLength(280, GridUnitType.Pixel);
             SecondRow.Height = new GridLength(100, GridUnitType.Star);
         }
 

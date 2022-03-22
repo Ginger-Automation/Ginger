@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -59,8 +59,10 @@ namespace Ginger.AnalyzerLib
                     {
                         if (AA.Agent != null)
                         {
-                            AgentOperations agentOperations = new AgentOperations(AA.Agent);
-                            AA.Agent.AgentOperations = agentOperations;
+                            if (AA.Agent.AgentOperations == null)
+                            {
+                                AA.Agent.AgentOperations = new AgentOperations(AA.Agent);
+                            }
                         }
                         if (AA.Agent == null) continue;//no Agent so skip it
 
@@ -69,7 +71,7 @@ namespace Ginger.AnalyzerLib
                             Agents.Add(AA.Agent.Guid);
                         else
                         {
-                            if (!AA.Agent.AgentOperations.SupportVirtualAgent())
+                            if (!AA.Agent.SupportVirtualAgent())
                             {
                                 //create error
                                 RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);

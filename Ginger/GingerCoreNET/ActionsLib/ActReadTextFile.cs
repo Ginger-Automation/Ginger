@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using System.Text;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using System.Runtime.InteropServices;
+using amdocs.ginger.GingerCoreNET;
 // This class is for dummy act - good for agile, and to be replace later on when real
 //  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
@@ -65,25 +66,51 @@ namespace GingerCore.Actions
         {
             UTF8, Unicode, UTF32, UTF7, ASCII, BigEndianUnicode
         }
-        [IsSerializedForLocalRepository]
-        public eTextFileEncodings TextFileEncoding { get; set; }
+        public eTextFileEncodings TextFileEncoding 
+        {
+            get
+            {
+                return (eTextFileEncodings)GetOrCreateInputParam<eTextFileEncodings>(nameof(TextFileEncoding), eTextFileEncodings.UTF8);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(TextFileEncoding), value.ToString());
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public eAppendAt AppendAt { get; set; }
+        public eAppendAt AppendAt 
+        {
+            get
+            {
+                return (eAppendAt)GetOrCreateInputParam<eAppendAt>(nameof(AppendAt), eAppendAt.End);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(AppendAt), value.ToString());
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public string AppendLineNumber { get; set; }
+        public string AppendLineNumber 
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(AppendLineNumber)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(AppendLineNumber), value);
+            }
+        }
         private eTextFileActionMode mFileActionMode = eTextFileActionMode.Read;
-        [IsSerializedForLocalRepository]
         public eTextFileActionMode FileActionMode
         {
             get
             {
-                return mFileActionMode;
+                return (eTextFileActionMode)GetOrCreateInputParam<eTextFileActionMode>(nameof(FileActionMode), eTextFileActionMode.Read);
             }
             set
             {
-                mFileActionMode = value;
+                AddOrUpdateInputParamValue(nameof(FileActionMode), value.ToString());
             }
         }
 
@@ -135,7 +162,7 @@ namespace GingerCore.Actions
         {
             string FileText = String.Empty;
             string calculatedFilePath = GetInputParamCalculatedValue(Fields.TextFilePath);
-            calculatedFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedFilePath);
+            calculatedFilePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedFilePath);
             string filePath = Path.GetDirectoryName(calculatedFilePath);
             bool isRootedPath = Path.IsPathRooted(filePath);
             if (!isRootedPath)

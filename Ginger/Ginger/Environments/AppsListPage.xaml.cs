@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,7 +44,8 @@ namespace Ginger.Environments
             SetGridView();
             SetGridData();
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EnvNameTextBox, TextBox.TextProperty, env, ProjEnvironment.Fields.Name);
+            BindingHandler.ObjFieldBinding(EnvNameTextBox, TextBox.TextProperty, env, ProjEnvironment.Fields.Name);
+            EnvNameTextBox.AddValidationRule(new EnvironemntNameValidationRule());
             xShowIDUC.Init(AppEnvironmnet);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, AppEnvironmnet, nameof(RepositoryItemBase.Publish));
 

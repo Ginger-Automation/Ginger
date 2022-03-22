@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -71,6 +71,8 @@ namespace Ginger.Actions.VisualTesting
             WidthUCVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActVisualTesting.Fields.SetAppWindowWidth);
             HeightUCVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActVisualTesting.Fields.SetAppWindowHeight);
 
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFullPageScreenshotCheckbox, CheckBox.IsCheckedProperty, mAct, nameof(mAct.IsFullPageScreenshot));
+            
             if (mAct.IsTargetSourceFromScreenshot)
             {
                 TargetScreenShotRadioButton.IsChecked = true;
@@ -97,7 +99,6 @@ namespace Ginger.Actions.VisualTesting
             switch (EventArgs.EventType)
             {
                 case VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility:
-                    xLightGrayVerticalBorder.Visibility = ConvertVisibility(EventArgs.visibility);
                     xSetApplicationScreenSize.Visibility = ConvertVisibility(EventArgs.visibility);
                     break;
 
@@ -272,7 +273,6 @@ namespace Ginger.Actions.VisualTesting
 
                 default:
                     EngineConfigFrame.Content = null;
-                    xLightGrayVerticalBorder.Visibility = Visibility.Collapsed;
                     xSetApplicationScreenSize.Visibility = Visibility.Collapsed;
                     xCompareOrCreateBaselinesRadioButtons.Visibility = Visibility.Collapsed;
                     xBaselineAndTargetImages.Visibility = Visibility.Collapsed;

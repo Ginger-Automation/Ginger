@@ -58,6 +58,23 @@
                                 </StackPanel>
                             </Expander.Content>
                         </Expander>
+                        <Expander x:Name="xApplitoolSettingExpander" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,10" BorderThickness="0">
+                            <Expander.Header>
+                                <Label Content="Applitool" Style="{StaticResource $HorizontalExpanderLabelStyle}" FontWeight="Normal"></Label>
+                            </Expander.Header>
+                            <Expander.Content>
+                                <StackPanel Margin="10,0,0,0">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
+                                        <Label Style="{StaticResource $LabelStyle}" Content="Applitool Key:" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                                        <Actions:UCValueExpression x:Name="xApplitoolKeyTxtBox" Width="450" Margin="10,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
+                                        <Label Style="{StaticResource $LabelStyle}" Content="Applitool URL:" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                                        <Actions:UCValueExpression x:Name="xApplitoolURLTxtBox" Width="450" Margin="10,0,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
                     </StackPanel>
                 </Expander.Content>
             </Expander>

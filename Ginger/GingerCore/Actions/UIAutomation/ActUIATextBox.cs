@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -50,32 +50,41 @@ namespace GingerCore.Actions
         }
 
         public enum eUIATextBoxAction
-        {            
+        {
             SetValue = 1,
             SetFocus = 2,
             Clear = 3,
             GetValue = 4,
-            IsDisabled=5,
+            IsDisabled = 5,
             IsRequired = 6,
             GetFont = 7,
-            IsPrepopulated= 8,
+            IsPrepopulated = 8,
             IsDisplayed = 9,
             GetInputLength = 10,
             GetWidth = 22,
             GetHeight = 23,
             //GetStyle = 24, not sure how to do this in UIA
-            IsKeyboardFocusable =25,
+            IsKeyboardFocusable = 25,
         }
 
         public override string ActionDescription { get { return "UI TextBox Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "UI TextBox Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-        }        
+        }
 
-        [IsSerializedForLocalRepository]
-        public eUIATextBoxAction UIATextBoxAction { get; set; }
+        public eUIATextBoxAction UIATextBoxAction
+        {
+            get
+            {
+                return (eUIATextBoxAction)GetOrCreateInputParam<eUIATextBoxAction>(nameof(UIATextBoxAction), eUIATextBoxAction.SetValue);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(UIATextBoxAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {
@@ -84,6 +93,6 @@ namespace GingerCore.Actions
                 return "UIATextBox:" + UIATextBoxAction.ToString();
             }
         }
-        public override eImageType Image { get { return eImageType.TextBox; } } 
+        public override eImageType Image { get { return eImageType.TextBox; } }
     }
 }

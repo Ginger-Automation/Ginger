@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ using System.IO;
 using System.Reflection;
 using Amdocs.Ginger.Repository;
 using System.Runtime.CompilerServices;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.DataSource
 {
@@ -369,7 +370,7 @@ namespace GingerCore.DataSource
         }
         private bool ExportDSToExcel(DataTable table, string sFilePath, string sSheetName)
         {
-            sFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sFilePath);
+            sFilePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(sFilePath);
             return GingerCoreNET.GeneralLib.General.ExportToExcel(table, sFilePath, sSheetName);
         }
 
@@ -423,7 +424,7 @@ namespace GingerCore.DataSource
         {
             if (FilePath != null)
             {
-                FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+                FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FilePath);
             }
         }
 

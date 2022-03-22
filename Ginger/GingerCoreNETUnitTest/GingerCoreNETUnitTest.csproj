@@ -124,6 +124,18 @@
     <None Update="TestResources\CLI\CLI-CheckExecutionIDSet.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\CLI\CLI-VirtualBF_VirtualRunsetAndRunner_OnlyName.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-VirtualBF_VirtualRunsetAndRunner.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-VirtualBF_ExistingRunsetRunner_OnlyName.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-VirtualBF_ExistingRunsetRunner.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\CLI\CLIDynamicJSON_Existing_ALM_Details.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -171,6 +183,9 @@
     </None>
     <None Update="TestResources\Excel\ExportedDS.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Excel\LongDigitsTesting.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Excel\NamesWrite.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -574,6 +589,12 @@
     <None Update="TestResources\Solutions\CLI\RunSetConfigs\Runset_DataPass.Ginger.RunSetConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Solutions\CLI\SharedRepository\Activities\Test Activity.Ginger.Activity.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\SharedRepository\Activities\User Detail Activity.Ginger.Activity.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Solutions\EmailWebReport\BusinessFlows\Jira Demo.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -604,7 +625,7 @@
     <None Update="TestResources\Solutions\GlobalCrossSolution\Applications Models\POM Models\Facebook\Facebook.Ginger.ApplicationPOMModel.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\Solutions\GlobalCrossSolution\Applications Models\POM Models\Selenium Easy - Input Form Demo with Validations.Ginger.ApplicationPOMModel.xml">
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Applications Models\POM Models\SeleniumDemoValid.Ginger.ApplicationPOMModel.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\GlobalCrossSolution\BusinessFlows\API-Create Pet.Ginger.BusinessFlow.xml">

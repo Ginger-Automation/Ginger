@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -206,10 +206,13 @@ namespace Amdocs.Ginger.CoreNET
             {
                 uniqueName = pageTitle;
                 int appendCount = 2;
-                while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(x => x.Name.Trim().ToLower() == uniqueName.Trim().ToLower()).FirstOrDefault() != null)
+                if (WorkSpace.Instance.SolutionRepository != null)//check for unit tests
                 {
-                    uniqueName = string.Format("{0}_{1}", pageTitle, appendCount);
-                    appendCount++;
+                    while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(x => x.Name.Trim().ToLower() == uniqueName.Trim().ToLower()).FirstOrDefault() != null)
+                    {
+                        uniqueName = string.Format("{0}_{1}", pageTitle, appendCount);
+                        appendCount++;
+                    }
                 }
             }
             catch (Exception ex)

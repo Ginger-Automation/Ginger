@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -74,8 +74,17 @@ namespace GingerCore.Actions
             GetStyle = 24,
         }
 
-        [IsSerializedForLocalRepository]
-        public ePasswordAction PasswordAction { get; set; }
+        public ePasswordAction PasswordAction
+        {
+            get
+            {
+                return (ePasswordAction)GetOrCreateInputParam<ePasswordAction>(nameof(PasswordAction), ePasswordAction.SetValue);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PasswordAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

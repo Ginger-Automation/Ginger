@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using GingerCore.Helpers;
 using System.IO;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using amdocs.ginger.GingerCoreNET;
 //This class is for dummy act - good for agile, and to be replace later on when real
 //  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
@@ -62,17 +63,15 @@ namespace GingerCore.Actions
             DeleteDirectoryFiles
         }
 
-        private eFileoperations mFileOperation = eFileoperations.CheckFileExists;
-        [IsSerializedForLocalRepository]
         public eFileoperations FileOperationMode
         {
             get
             {
-                return mFileOperation;
+                return (eFileoperations)GetOrCreateInputParam<eFileoperations>(nameof(FileOperationMode), eFileoperations.CheckFileExists);
             }
             set
             {
-                mFileOperation = value;
+                AddOrUpdateInputParamValue(nameof(FileOperationMode), value.ToString());
             }
         }
 
@@ -122,7 +121,7 @@ namespace GingerCore.Actions
             bool IsSorcePathRelative = false;
             if (calculatedSourceFilePath.StartsWith(@"~"))
             {
-                calculatedSourceFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedSourceFilePath);
+                calculatedSourceFilePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedSourceFilePath);
                 IsSorcePathRelative = true;
             }
 
@@ -338,7 +337,7 @@ namespace GingerCore.Actions
         {
             string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
 
-            calculatedDestinationPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedDestinationPath);
+            calculatedDestinationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath);
             DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
             if (String.IsNullOrEmpty(DestinationFolder))
             {

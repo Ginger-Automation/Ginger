@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -78,11 +79,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             string SolutionFolder = mAct.SolutionFolder;
 
             //SoapUIDirectoryPath = SoapUIDirectoryPath.Replace(@"~\", SolutionFolder);
-            SoapUIDirectoryPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SoapUIDirectoryPath);
+            SoapUIDirectoryPath =WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(SoapUIDirectoryPath);
 
             //Creating Directory to extract the reports.
             //string targetPath = ReportExportDirectoryPath.Replace(@"~\", SolutionFolder);
-            string targetPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ReportExportDirectoryPath);
+            string targetPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ReportExportDirectoryPath);
 
             if (!System.IO.Directory.Exists(targetPath))
             {
@@ -90,7 +91,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             
             //ReportPathWithXMLFolder = System.IO.Path.Combine(ReportExportDirectoryPath.Replace(@"~\", SolutionFolder), mAct.Description + mTimestamp);
-            ReportPathWithXMLFolder = System.IO.Path.Combine(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ReportExportDirectoryPath), mAct.Description + mTimestamp);
+            ReportPathWithXMLFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ReportExportDirectoryPath), mAct.Description + mTimestamp);
 
             ReportPath = ReportPathWithXMLFolder;
             Directory.CreateDirectory(ReportPath);

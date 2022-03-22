@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ namespace Ginger.Run.RunSetActions
             {
                 if (!string.IsNullOrEmpty(RunSetActionGenerateTestNGReport.SaveResultsInSolutionFolderName))
                 {
-                    testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(RunSetActionGenerateTestNGReport.SaveResultsInSolutionFolderName);
+                    testNGReportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(RunSetActionGenerateTestNGReport.SaveResultsInSolutionFolderName);
                 }
                 else if (!string.IsNullOrEmpty(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder))
                 {
@@ -54,7 +54,7 @@ namespace Ginger.Run.RunSetActions
                 }
                 else
                 {
-                    testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+                    testNGReportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                 }
                 if (!Directory.Exists(testNGReportPath))
                 {
@@ -64,7 +64,7 @@ namespace Ginger.Run.RunSetActions
                     }
                     catch (Exception ex)
                     {
-                        testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+                        testNGReportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                     }
                 }
                 SaveBFResults((ReportInfo)RI, testNGReportPath, RunSetActionGenerateTestNGReport.IsStatusByActivitiesGroup);

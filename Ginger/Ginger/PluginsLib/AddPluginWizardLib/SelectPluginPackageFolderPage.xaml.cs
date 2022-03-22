@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,16 +33,25 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
         AddPluginPackageWizard wiz;
         public SelectPlugPackageinFolderPage()
         {
-            InitializeComponent();     
+            InitializeComponent();
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
-        {       
+        {
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
                     wiz = (AddPluginPackageWizard)WizardEventArgs.Wizard;
                     xPluginFolderUC.Init(null, wiz, nameof(AddPluginPackageWizard.Folder), false, true, UCValueExpression.eBrowserType.Folder);
+                    break;
+                case EventType.LeavingForNextPage:
+                    string folderName = xPluginFolderUC.ValueTextBox.Text;
+                    if (string.IsNullOrEmpty(folderName))
+                    {
+                        WizardEventArgs.CancelEvent = true;
+                        Amdocs.Ginger.Common.Reporter.ToUser(Amdocs.Ginger.Common.eUserMsgKey.StaticErrorMessage,
+                                                            "Folder path cannot be empty");
+                    }
                     break;
             }
         }

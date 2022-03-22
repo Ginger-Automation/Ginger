@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,6 +39,17 @@ namespace GingerCoreNETUnitTests.GeneralTestsLib
         public void TestCleanUp()
         {
 
+        }
+        [TestMethod]
+        public void RemoveSpecialCharactersInColumnHeader()
+        {
+            //Arrange
+            string stringWithSpecialCharactersToRemove = "First. Name";
+            //Act
+            string stringAfterRemoval = GingerCoreNET.GeneralLib.General.RemoveSpecialCharactersInColumnHeader(stringWithSpecialCharactersToRemove);
+
+            //Assert
+            Assert.AreEqual("First Name", stringAfterRemoval);
         }
 
 
@@ -96,10 +107,10 @@ namespace GingerCoreNETUnitTests.GeneralTestsLib
         //        AssemblyName name = (from x in referencedAssemblies where x.Name == s select x).FirstOrDefault();                
         //        Assert.IsTrue(name != null, "Verify assembly ref exist - " + s);
         //    }
-            
-            
-            
+
+
+
         //}
-        
+
     }
 }

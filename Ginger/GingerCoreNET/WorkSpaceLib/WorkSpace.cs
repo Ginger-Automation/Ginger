@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run.RunSetActions;
 using Amdocs.Ginger.Common.SelfHealingLib;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -100,7 +101,6 @@ namespace amdocs.ginger.GingerCoreNET
             lockit = false;
             Reporter.ToLog(eLogLevel.DEBUG, "Workspace released");
         }
-
 
         public static void Init(IWorkSpaceEventHandler WSEH, bool startLocalGrid = true)
         {
@@ -196,7 +196,11 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public SolutionRepository SolutionRepository;
+        public SolutionRepository SolutionRepository
+        {
+            get { return GingerCoreCommonWorkSpace.Instance.SolutionRepository; }
+            set { GingerCoreCommonWorkSpace.Instance.SolutionRepository = value; }
+        }
 
         public SourceControlBase SourceControl;
 
@@ -216,11 +220,13 @@ namespace amdocs.ginger.GingerCoreNET
         {
             get
             {
+                mSolution = GingerCoreCommonWorkSpace.Instance.Solution;
                 return mSolution;
             }
             set
             {
                 mSolution = value;
+                GingerCoreCommonWorkSpace.Instance.Solution = value;
                 OnPropertyChanged(nameof(Solution));
             }
         }
@@ -430,11 +436,11 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     HandleSolutionLoadSourceControl(solution);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "exception occured while doing Solution Source Control Configurations", ex);
                 }
-            
+
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Updating Application Functionalities to Work with Loaded Solution");
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables;
@@ -466,6 +472,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
                 // PlugInsManager = new PluginsManager();
                 // mPluginsManager.Init(SolutionRepository);
+
 
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
                 return true;
@@ -535,8 +542,10 @@ namespace amdocs.ginger.GingerCoreNET
                 List<Agent> Agents = SolutionRepository.GetAllRepositoryItems<Agent>().ToList();
                 foreach (Agent agent in Agents)
                 {
-                    AgentOperations agentOperations = new AgentOperations(agent);
-                    agent.AgentOperations = agentOperations;
+                    if (agent.AgentOperations == null)
+                    {
+                        agent.AgentOperations = new AgentOperations(agent);
+                    }
                 }
                 List<Agent> runningAgents = Agents.Where(x => ((AgentOperations)x.AgentOperations).Status == Agent.eStatus.Running).ToList();
                 if (runningAgents != null && runningAgents.Count > 0)
@@ -610,10 +619,16 @@ namespace amdocs.ginger.GingerCoreNET
             EventHandler.SolutionClosed();
         }
 
-        public UserProfile UserProfile 
-        { 
-            get;
-            set;
+        public UserProfile UserProfile
+        {
+            get
+            {
+                return GingerCoreCommonWorkSpace.Instance.UserProfile;
+            }
+            set
+            {
+                GingerCoreCommonWorkSpace.Instance.UserProfile = value;
+            }
         }
 
 

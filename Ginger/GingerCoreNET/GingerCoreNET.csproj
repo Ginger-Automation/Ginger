@@ -210,7 +210,6 @@
     <EmbeddedResource Include="Resources\JavaScripts\GingerLibXPath.js" />
     <EmbeddedResource Include="Resources\JavaScripts\GingerLiveSpy.js" />
     <EmbeddedResource Include="Resources\JavaScripts\html2canvas.js" />
-    <EmbeddedResource Include="Resources\JavaScripts\HTMLSpy.js" />
     <EmbeddedResource Include="Resources\JavaScripts\InjectJavaScript.js" />
     <EmbeddedResource Include="Resources\JavaScripts\jquery_min.js" />
     <EmbeddedResource Include="Resources\JavaScripts\PayLoad.js" />
@@ -241,7 +240,7 @@
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.1" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="1.3.0" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="4.3.1" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   
@@ -255,6 +254,8 @@
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.22.0" />
   
     <PackageReference Include="MedallionShell" Version="1.6.2" />
+  
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.25.0" />
   
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>

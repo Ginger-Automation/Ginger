@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -218,7 +218,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 mActWebService = (ActWebService)act;
                 string ReqXML = String.Empty;
                 //FileStream ReqXMLStream = System.IO.File.OpenRead(mActWebService.XMLfileName.ValueForDriver.Replace(@"~\", mActWebService.SolutionFolder));
-                FileStream ReqXMLStream = System.IO.File.OpenRead(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mActWebService.XMLfileName.ValueForDriver));
+                FileStream ReqXMLStream = System.IO.File.OpenRead(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mActWebService.XMLfileName.ValueForDriver));
 
                 using (StreamReader reader = new StreamReader(ReqXMLStream))
                 {
@@ -611,7 +611,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             try
             {
                 //xmlFilesDir = SavedXMLDirectoryPath.Replace(@"~\", mActWebService.SolutionFolder) + @"\" + fileType + "XMLs";
-                xmlFilesDir = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SavedXMLDirectoryPath) + @"\" + fileType + "XMLs";
+                xmlFilesDir = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(SavedXMLDirectoryPath) + @"\" + fileType + "XMLs";
 
                 if (!Directory.Exists(xmlFilesDir))
                     Directory.CreateDirectory(xmlFilesDir);

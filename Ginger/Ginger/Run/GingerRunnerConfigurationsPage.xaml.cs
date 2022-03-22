@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ namespace Ginger.Run
 {
     public partial class GingerRunnerConfigurationsPage : Page
     {
-        public enum ePageViewMode { AutomatePage,RunsetPage}
+        public enum ePageViewMode { AutomatePage, RunsetPage }
         ePageViewMode mPageViewMode;
         GingerExecutionEngine mRunner;
         Context mContext;
@@ -41,8 +41,9 @@ namespace Ginger.Run
             mRunner = runner;
             mPageViewMode = pageViewMode;
             mContext = context;
-           
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mRunner.GingerRunner, nameof(GingerRunner.Name));
+            xNameTextBox.AddValidationRule(new RunnerNameValidationRule());
             xShowIDUC.Init(mRunner.GingerRunner);
 
             mRunner.UpdateApplicationAgents();
@@ -68,11 +69,11 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUseSpecificEnvChkbox, CheckBox.IsCheckedProperty, mRunner.GingerRunner, nameof(GingerRunner.UseSpecificEnvironment));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSpecificEnvComboBox, ComboBox.SelectedItemProperty, mRunner.GingerRunner, nameof(GingerRunner.ProjEnvironment));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSpecificEnvComboBox, ComboBox.SelectedValueProperty, mRunner.GingerRunner, nameof(GingerRunner.SpecificEnvironmentName));
-            
+
 
             xExecutionTags.Init(mRunner.GingerRunner.FilterExecutionTags);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecutionTagsChkbox, CheckBox.IsCheckedProperty, mRunner.GingerRunner, nameof(GingerRunner.FilterExecutionByTags));
-           
+
             if (mPageViewMode == ePageViewMode.AutomatePage)
             {
                 xNamePnl.Visibility = Visibility.Collapsed;
@@ -91,7 +92,7 @@ namespace Ginger.Run
             if (xUseSpecificEnvChkbox.IsChecked == true)
             {
                 xUseSpecificEnvChkbox.Content = "Use Specific Environment:";
-                xSpecificEnvComboBox.Visibility = System.Windows.Visibility.Visible;                               
+                xSpecificEnvComboBox.Visibility = System.Windows.Visibility.Visible;
             }
             else
             {
@@ -136,7 +137,7 @@ namespace Ginger.Run
             {
                 xExecutionTagsChkbox.Content = "Filter Execution by Tags:";
                 xExecutionTags.Visibility = Visibility.Visible;
-            }            
+            }
         }
 
         private void ExecutionTagsChkbox_Unchecked(object sender, RoutedEventArgs e)

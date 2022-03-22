@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -80,14 +80,14 @@ namespace Ginger.UserControlsLib
             BindVEAndSelectionChangedEvent(false, UCselectionChange);
         }
 
-        public void Init(object bindedObject, string AttrName, dynamic comboBoxEnumItemsList)
+        public void Init(object bindedObject, string AttrName, dynamic comboBoxEnumItemsList, DependencyProperty dependencyProperty)
         {
             this.obj = bindedObject;
             this.AttrName = AttrName;
 
             FillComboBoxFromDynamicList(comboBoxEnumItemsList);
             ComboBox.IsEditable = false;
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, bindedObject, AttrName);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, dependencyProperty, bindedObject, AttrName);
            
         }
 

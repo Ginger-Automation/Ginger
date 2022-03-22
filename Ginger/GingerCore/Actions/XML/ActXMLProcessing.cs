@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Enums;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Actions.XML
 {
@@ -100,7 +101,7 @@ namespace GingerCore.Actions.XML
                 string txt = PrepareFile();
 
                 // Write to out file
-                string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TargetFileName.ValueForDriver);
+                string fileName = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TargetFileName.ValueForDriver);
                 
                 if(string.IsNullOrEmpty(fileName))
                 {
@@ -113,7 +114,7 @@ namespace GingerCore.Actions.XML
 
             private void ReadProcessedFile()
             {
-                string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TargetFileName.ValueForDriver);
+                string fileName = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TargetFileName.ValueForDriver);
 
                 string fileContents = System.IO.File.ReadAllText(fileName);
                 XMLProcessor xmlProcessor = new XMLProcessor();
@@ -136,7 +137,7 @@ namespace GingerCore.Actions.XML
 
             private string PrepareFile()
             {
-                string fileName = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TemplateFileName.ValueForDriver);
+                string fileName = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TemplateFileName.ValueForDriver);
                 
                 if(string.IsNullOrEmpty(fileName))
                 {

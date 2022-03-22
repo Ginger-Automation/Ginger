@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
@@ -1028,7 +1029,7 @@ namespace GingerCore.Actions
 
         public void ParseJSONToOutputValues(string ResponseMessage, int i)// added i especially for cassandra, for retrieving path , other cases give i=1
         {
-            Dictionary<string, object> outputValues = Ginger.Utils.JSONManager.DeserializeJson(ResponseMessage);
+            Dictionary<string, object> outputValues = General.DeserializeJson(ResponseMessage);
             foreach (KeyValuePair<string, object> entry in outputValues)
             {
                 AddJsonKeyValueToOutputValue(entry.Value, entry.Key, i);
@@ -1884,5 +1885,7 @@ namespace GingerCore.Actions
         {
             return "Action";
         }
+
+        
     }
 }

@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -65,8 +66,17 @@ namespace GingerCore.Actions
         }
         private SftpClient UnixFTPClient;
         private string workdir;
-        [IsSerializedForLocalRepository]
-        public eFileTransferAction FileTransferAction { get; set; }
+        public eFileTransferAction FileTransferAction 
+        {
+            get
+            {
+                return (eFileTransferAction)GetOrCreateInputParam<eFileTransferAction>(nameof(FileTransferAction), eFileTransferAction.GetFile);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FileTransferAction), value.ToString());
+            }
+        }
 
 
         public string Host
@@ -184,7 +194,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamCalculatedValue("PCPath")).Replace(Environment.NewLine, "");
+                return WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(GetInputParamCalculatedValue("PCPath")).Replace(Environment.NewLine, "");
             }
         }
 

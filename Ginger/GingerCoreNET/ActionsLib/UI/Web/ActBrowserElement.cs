@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ namespace GingerCore.Actions
         }
 
         public override string ActionDescription { get { return "Browser Action"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "Browser Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -98,15 +98,18 @@ namespace GingerCore.Actions
         }
 
 
-        private int mImplicitWait = 60;
-        [IsSerializedForLocalRepository]
         public int ImplicitWait
         {
-            get { return mImplicitWait; }
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(ImplicitWait)).Value, out value);
+                return value;
+            }
             set
             {
-                mImplicitWait = value;
-                OnPropertyChanged(Fields.ImplicitWait);
+                AddOrUpdateInputParamValue(nameof(ImplicitWait), value.ToString());
+                OnPropertyChanged(nameof(ImplicitWait));
             }
         }
 

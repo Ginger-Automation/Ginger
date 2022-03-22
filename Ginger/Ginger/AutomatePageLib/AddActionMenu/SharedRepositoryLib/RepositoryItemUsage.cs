@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -43,8 +43,8 @@ namespace Ginger.Repository
         {
             [EnumValueDescription("Publish Instance")]
             PublishInstance,
-           // [EnumValueDescription("Publish Linked Instance")]
-           // PublishLinkedInstance
+            [EnumValueDescription("Publish Linked Instance")]
+            PublishLinkedInstance
         }
 
         public enum ePublishStatus

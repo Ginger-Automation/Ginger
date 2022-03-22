@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@ namespace GingerCore.Actions
     public class ActUIAClickOnPoint : Act
     {
         public override string ActionEditPage { get { return "ActUIAClickOnPointEditPage"; } }
-        public override string ActionUserDescription { get { return string.Empty; } }
+        public override string ActionUserDescription { get { return "ActUIAClickOnPointEditPage"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-        }        
+        }
 
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
@@ -56,14 +56,23 @@ namespace GingerCore.Actions
         }
 
         public enum eUIAClickOnPointAction
-        {            
-            ClickXY = 1,            
+        {
+            ClickXY = 1,
         }
 
         public override string ActionDescription { get { return "UI Click On Point Action"; } }
 
-        [IsSerializedForLocalRepository]
-        public eUIAClickOnPointAction ActUIAClickOnPointAction { get; set; }
+        public eUIAClickOnPointAction ActUIAClickOnPointAction
+        {
+            get
+            {
+                return (eUIAClickOnPointAction)GetOrCreateInputParam<eUIAClickOnPointAction>(nameof(ActUIAClickOnPointAction), eUIAClickOnPointAction.ClickXY);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ActUIAClickOnPointAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {
@@ -72,6 +81,6 @@ namespace GingerCore.Actions
                 return "UIAClickOnPoint:" + ActUIAClickOnPointAction.ToString();
             }
         }
-        public override eImageType Image { get { return eImageType.MousePointer; } } 
+        public override eImageType Image { get { return eImageType.MousePointer; } }
     }
 }

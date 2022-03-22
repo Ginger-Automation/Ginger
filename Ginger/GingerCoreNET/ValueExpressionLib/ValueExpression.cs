@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -223,7 +223,7 @@ namespace GingerCore
 
                 if (WorkSpace.Instance != null && WorkSpace.Instance.SolutionRepository != null)
                 {
-                    mValueCalculated = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mValueCalculated);
+                    mValueCalculated = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mValueCalculated);
                 }
                 else if (!string.IsNullOrWhiteSpace(SolutionFolder))
                 {
@@ -660,7 +660,7 @@ namespace GingerCore
                 //    DataSource.FileFullPath = DataSource.FileFullPath.Replace(@"~\","").Replace("~", "");
                 //    DataSource.FileFullPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, DataSource.FileFullPath);
                 //}
-                DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
+                DataSource.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 try
                 {
                     DSTable = p.Substring(p.IndexOf("DST=") + 4, p.IndexOf(" ") - 4);
@@ -929,7 +929,7 @@ namespace GingerCore
                 {
                     //DataBase connection 
                     GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();
-                    liteDB.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
+                    liteDB.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FileFullPath);
 
                     // Getting all values to execute query
                     int rowNumber = 0;

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,7 +25,9 @@ using Ginger.SolutionAutoSaveAndRecover;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Amdocs.Ginger.Common
 {
@@ -93,5 +95,6 @@ namespace Amdocs.Ginger.Common
         DbConnection GetOracleConnection(string ConnectionString);
 
         bool IsSharedRepositoryItem(RepositoryItemBase item);
+        bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, PublishToALMConfig publishToALMConfig, bool performSaveAfterExport = false, eALMConnectType almConnectStyle = eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null);
     }
 }

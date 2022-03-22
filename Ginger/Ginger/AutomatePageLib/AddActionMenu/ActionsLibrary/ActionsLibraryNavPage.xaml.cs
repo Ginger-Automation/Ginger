@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -119,9 +119,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             ObservableList<Act> PlugInsActions = new ObservableList<Act>();
             foreach (PluginPackage pluginPackage in plugins)
             {
+                pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
+
                 try
                 {
-                    foreach (PluginServiceInfo pluginServiceInfo in pluginPackage.Services)
+                    foreach (PluginServiceInfo pluginServiceInfo in ((PluginPackageOperations)pluginPackage.PluginPackageOperations).Services)
                     {
                         foreach (PluginServiceActionInfo pluginServiceAction in pluginServiceInfo.Actions)
                         {

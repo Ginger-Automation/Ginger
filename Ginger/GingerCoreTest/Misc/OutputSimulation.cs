@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions.WebServices;
 using GingerCore.Drivers.WebServicesDriverLib;
@@ -29,6 +30,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace UnitTests.NonUITests
 {
@@ -40,7 +42,6 @@ namespace UnitTests.NonUITests
         static GingerRunner mGR;
         static Agent wsAgent;
         static WebServicesDriver mDriver = new WebServicesDriver(mBF);
-
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {            
@@ -61,6 +62,10 @@ namespace UnitTests.NonUITests
             ApplicationAgent mAG = new ApplicationAgent();
             mAG.Agent = wsAgent;
 
+            if (WorkSpace.Instance.Solution != null)
+            {
+                WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = Ginger.Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
+            }
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
 
@@ -71,7 +76,14 @@ namespace UnitTests.NonUITests
 
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
-            //WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+            if (WorkSpace.Instance.Solution == null)
+            {
+                WorkSpace.Instance.Solution = new Solution();
+            }
+            if (WorkSpace.Instance.Solution.SolutionOperations == null)
+            {
+                WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
+            }
 
         }
 
@@ -161,6 +173,7 @@ namespace UnitTests.NonUITests
             
 
             mDriver.StartDriver();
+            mGR.RunInSimulationMode = true;
             mGR.Executor.RunRunner();
 
 

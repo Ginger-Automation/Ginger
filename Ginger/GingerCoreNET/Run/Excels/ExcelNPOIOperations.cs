@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     }
                     if (!dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
                     {
-                        dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString().Trim());
+                        dtExcelTable.Columns.Add(GingerCoreNET.GeneralLib.General.RemoveSpecialCharactersInColumnHeader(headerRow.GetCell(c).ToString()).Trim());
                     }
                 }
                 var i = 1;
@@ -90,9 +90,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             switch(cellType)
             {
                 case CellType.Numeric:
-                    cellVal = DateUtil.IsCellDateFormatted(cell)
-                        ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
-                        : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
+                    cellVal = HandleNumericCellType(cell);
                     break;
                 case CellType.String:
                     cellVal = cell.StringCellValue;
@@ -262,23 +260,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     }
                     if (cell != null)
                     {
-                        switch (cell.CellType)
-                        {
-                            case CellType.Numeric:
-                                dr[dtColCount] = DateUtil.IsCellDateFormatted(cell)
-                                    ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
-                                    : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
-                                break;
-                            case CellType.String:
-                                dr[dtColCount] = cell.StringCellValue;
-                                break;
-                            case CellType.Blank:
-                                dr[dtColCount] = null;
-                                break;
-                            default:
-                                dr[dtColCount] = cell.RichStringCellValue;
-                                break;
-                        }
+                        dr[dtColCount] = GetCellValue(cell, cell.CellType);
                     }
                     dtColCount++;
                 }
@@ -358,6 +340,23 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             mSheet = null;
             mWorkbook.Close();
             mWorkbook = null;
+        }
+
+        private object HandleNumericCellType(ICell cell)
+        {
+            object cellVal;
+            if (cell.NumericCellValue.ToString().Length > 15 || String.Equals(cell.CellStyle.GetDataFormatString(),"General",StringComparison.OrdinalIgnoreCase))
+            {
+                cellVal = ((decimal)cell.NumericCellValue).ToString(CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                cellVal = DateUtil.IsCellDateFormatted(cell)
+                    ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
+                    : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
+            }
+
+            return cellVal;
         }
     }
 }

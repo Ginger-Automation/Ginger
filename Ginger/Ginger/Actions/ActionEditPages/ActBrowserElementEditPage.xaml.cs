@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -79,6 +79,12 @@ namespace Ginger.Actions
             xImplicitWaitPnl.Visibility = System.Windows.Visibility.Collapsed;
         }
 
+        private void ResetPOMView()
+        {
+            xPOMUrlFrame.Visibility = System.Windows.Visibility.Collapsed;
+            ValueUC.Visibility = System.Windows.Visibility.Visible;
+        }
+
         private void ControlActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SetVisibleControlsForAction();
@@ -128,14 +134,18 @@ namespace Ginger.Actions
                         }
 
                     }
+                    else
+                    {
+                        ResetPOMView();
+                    }
                     xValueGrid.Visibility = System.Windows.Visibility.Visible;
 
                     xValueLabel.Content = "URL:";
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.InjectJS || mAct.ControlAction == ActBrowserElement.eControlAction.RunJavaScript)
                 {
-
-                    if((ActivityPlatform == ePlatformType.Java))
+                    ResetPOMView();
+                    if (ActivityPlatform == ePlatformType.Java)
                     {
                         xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
                         SetLocateValueControls();

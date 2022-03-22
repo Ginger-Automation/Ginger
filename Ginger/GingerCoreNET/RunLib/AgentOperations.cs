@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2021 European Support Limited
+Copyright © 2014-2022 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -65,7 +65,6 @@ namespace GingerCore
                 else return false;
             }
         }
-        internal Type DriverClass = null;
         public bool IsShowWindowExplorerOnStart
         {
             get
@@ -324,38 +323,8 @@ namespace GingerCore
                 Agent.OnPropertyChanged(nameof(AgentOperations.Status));
             }
         }
-        /// <summary>
-        /// Check if agent support virtual drivers 
-        /// </summary>
-        /// <returns></returns>
-        public bool SupportVirtualAgent()
-        {
-            try
-            {
-
-                if (DriverClass == null)
-                {
-                    DriverClass = TargetFrameworkHelper.Helper.GetDriverType(Agent);
-                    if (DriverClass == null)
-                    {
-                        return false;
-                    }
-                }
-
-
-                if (DriverClass.GetInterfaces().Contains(typeof(IVirtualDriver)))
-                {
-                    return true;
-                }
-            }
-            //if the exceptions are throws we consider it to be not supportable for virtual agents
-            catch (Exception e)
-            {
-
-
-            }
-            return false;
-        }
+        
+       
         public void SetDriverConfiguration()
         {
             if (Agent.DriverConfiguration == null)
@@ -379,9 +348,9 @@ namespace GingerCore
             }
             else
             {
-                DriverClass = TargetFrameworkHelper.Helper.GetDriverType(Agent);
+                Agent.DriverClass = TargetFrameworkHelper.Helper.GetDriverType(Agent);
 
-                SetDriverMissingParams(DriverClass);
+                SetDriverMissingParams(Agent.DriverClass);
 
 
                 foreach (DriverConfigParam DCP in Agent.DriverConfiguration)
@@ -505,12 +474,18 @@ namespace GingerCore
         {
 
             ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
-            IEnumerable<PluginServiceInfo> Services = Plugins.SelectMany(x => x.Services);
+            foreach (PluginPackage pluginPackage in Plugins)
+            {
+                pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
+            }
+            IEnumerable<PluginServiceInfo> Services = Plugins.SelectMany(x => ((PluginPackageOperations)x.PluginPackageOperations).Services);
             PluginServiceInfo PSI = Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
 
-            PluginPackage PP = Plugins.Where(x => x.Services.Contains(PSI)).First();
-            PP.LoadServicesFromJSON();
-            PSI = PP.Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
+            PluginPackage PP = Plugins.Where(x => ((PluginPackageOperations)x.PluginPackageOperations).Services.Contains(PSI)).First();
+            PP.PluginPackageOperations = new PluginPackageOperations(PP);
+
+            PP.PluginPackageOperations.LoadServicesFromJSON();
+            PSI = ((PluginPackageOperations)PP.PluginPackageOperations).Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
 
             foreach (var config in PSI.Configs)
             {
@@ -854,6 +829,10 @@ namespace GingerCore
                 if (Status == Agent.eStatus.Running)
                 {
                     Reporter.ToUser(eUserMsgKey.TestagentSucceed);
+                }
+                else if(Driver.ErrorMessageFromDriver.Contains("Chrome driver version mismatch"))
+                {
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Chrome driver version mismatch. Please run Ginger as Admin to Auto update the chrome driver.");
                 }
                 else
                 {
