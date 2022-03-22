@@ -1,0 +1,63 @@
+    <Page xmlns:Ginger="clr-namespace:Ginger"  x:Class="Ginger.Run.RunSetActions.RunSetActionSendFreeEmailEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Actions="clr-namespace:Ginger.Actions" 
+       xmlns:h="clr-namespace:Ginger.Help" 
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="600"
+	Title="RunSetActionSendFreeEmailEditPage">
+
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="399*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TabControl Grid.RowSpan="2">
+            <TabItem Name="xMessage">
+                <TabItem.Header>
+                    <Label Content="Message" 
+                MouseLeftButtonDown="Label_MouseLeftButtonDown" 
+                HorizontalAlignment="Stretch"/>
+                </TabItem.Header>
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="57*"/>
+                        <ColumnDefinition Width="238*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="368" />
+                        <RowDefinition Height="0*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.ColumnSpan="2">
+                        <Label Style="{StaticResource @LabelStyle}" x:Name="LabelFrom" Content="From:" />
+                        <Actions:UCValueExpression x:Name="MailFromTextBox" ToolTip="From"/>
+                        <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelMailFromDisplayName" Content="From Display Name:" />
+                        <Actions:UCValueExpression x:Name="xMailFromDisplayNameTextBox" ToolTip="From Display Name" />
+                        <Label Style="{StaticResource @LabelStyle}" Content="To:" />
+                        <Actions:UCValueExpression x:Name="MailToTextBox" ToolTip="To"/>
+
+                        <Label Style="{StaticResource @LabelStyle}" Content="CC:" />
+                        <Actions:UCValueExpression x:Name="MailCCTextBox" ToolTip="CC"/>
+
+                        <Label Style="{StaticResource @LabelStyle}" Content="Subject:" Margin="0,6,0,0"  />
+                        <Actions:UCValueExpression x:Name="SubjectTextBox" ToolTip="Subject"/>
+
+                        <Label Style="{StaticResource @LabelStyle}" Content="Body Text:" Margin="0,6,0,0"  />
+                        <Actions:UCValueExpression x:Name="BodyTextBox"  ToolTip="Body Text" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                        
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Frame x:Name="RunsetActionDeliveryMethodConfigPageFrame"></Frame>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>
+

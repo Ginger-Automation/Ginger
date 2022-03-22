@@ -1,0 +1,43 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" 
+        x:Class="Ginger.ReporterLib.UserMessageBox"
+        mc:Ignorable="d"
+        Title="Ginger Message" Height="200" Width="400" WindowStyle="ToolWindow" ShowInTaskbar="False"  
+        WindowStartupLocation="CenterScreen" Topmost="True" 
+        Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $amdocsLogoRadialGradientBrush}"
+        KeyUp="Window_KeyUp">
+
+    <Border BorderBrush="DarkGray" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="45"/>
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="100*"/>
+                </Grid.ColumnDefinitions>
+
+                <UserControls:ImageMakerControl x:Name="xMessageImage" Grid.Column="0" ImageType="Info" Width="32" Height="32"/>
+                <TextBlock x:Name="xMessageTextBlock" Grid.Column="1" Style="{StaticResource $DetailsTextBlockStyle}"
+                   Text="Message Text Can be also long text - no issue and is really fun aaaa bbbb"                    
+                   VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,20,0"/>
+            </Grid>
+
+            <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="1">
+                <StackPanel  Orientation="Horizontal"  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" >
+                    <UserControls:ucButton x:Name="xOKButton" Click="xOKButton_Click" ButtonText="Ok" ButtonType="RoundTextAndImageButton"  ButtonImageType="Approve"  ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_UserMessage}" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"/>
+                    <UserControls:ucButton x:Name="xYesButton" Click="XYesButton_Click" ButtonText="Yes" ButtonType="RoundTextAndImageButton" ButtonImageType="Approve"  ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_UserMessage}" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" />
+                    <UserControls:ucButton x:Name="xNoButton" Click="XNoButton_Click" ButtonText="No" ButtonType="RoundTextAndImageButton" ButtonImageType="Reject"  ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_UserMessage}" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" />
+                    <UserControls:ucButton x:Name="xCancelButton" ButtonText="Cancel" Click="XCancelButton_Click" ButtonType="RoundTextAndImageButton" ButtonImageType="Cancel"  ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_UserMessage}" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

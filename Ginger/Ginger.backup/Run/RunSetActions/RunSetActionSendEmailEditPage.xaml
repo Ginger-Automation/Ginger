@@ -1,0 +1,90 @@
+    <Page xmlns:Ginger="clr-namespace:Ginger"  x:Class="Ginger.Run.RunSetActions.RunSetActionSendEmailEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="600"
+	Title="RunSetActionEmailReportEditPage">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <TabControl Grid.RowSpan="2">
+            <TabItem Header="Message">
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="230" />
+                        <RowDefinition Height="90*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel>
+                        <Label Style="{StaticResource @LabelStyle}" x:Name="LabelFrom" Content="From:" />
+                        <TextBox x:Name="MailFromTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}"/>
+
+                        <Label Style="{StaticResource @LabelStyle}" Content="To:" />
+                        <TextBox x:Name="MailToTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" />
+
+                        <Label Style="{StaticResource @LabelStyle}" Content="CC:" />
+                        <TextBox x:Name="MailCCTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}"/>
+
+                        <Label Style="{StaticResource @LabelStyle}" Content="Subject:"  />
+                        <TextBox x:Name="SubjectTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}"/>
+                        
+                        
+                        <DockPanel >
+                            <Label Style="{StaticResource @LabelStyle}" Content="Body:" DockPanel.Dock="Left"/>
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="10,10,0,0">
+                                <Label Style="{StaticResource @LabelStyle}" Content="HTML Report:" VerticalAlignment="Center" />
+                                <ComboBox x:Name="HTMLReportComboBox" Margin="5" Width="150" SelectionChanged="HTMLReportComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"/>
+                            </StackPanel>
+                            
+                            <StackPanel Name="CustomReportSection" Orientation="Horizontal" DockPanel.Dock="Left" Margin="10,10,0,0" HorizontalAlignment="Left">
+                                <Label Style="{StaticResource @LabelStyle}" Content="Custom HTML Report:" VerticalAlignment="Center" />
+                                <ComboBox x:Name="CustomHTMLReportComboBox" Margin="5" Width="150" SelectionChanged="CustomHTMLReportComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                                <Button x:Name="rfsrh" Click="rfsrh_Click" usercontrols:ImageMaker.Content="Refresh"  Width="16"  Style="{StaticResource @InputImageButtonStyle_NoBorder}" ToolTip="Change Agent Mapping">                                    
+                                </Button>
+                            </StackPanel>                                                        
+                        </DockPanel>
+                    </StackPanel>
+
+                    <WebBrowser Grid.Row="1" x:Name="BodyWebBrowser" Visibility="Visible"></WebBrowser>
+                    <TextBox Grid.Row="1" x:Name="BodyTextBox" TextWrapping="Wrap" AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Auto" Style="{StaticResource @MultiRowsTextBoxStyle}" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Attachments" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                    <StackPanel>
+                        <Ginger:ucGrid x:Name="AttachmentsGrid" Title="Attachments" ShowAdd="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+
+            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Style="{StaticResource @LabelStyle}"  VerticalAlignment="Center" Margin="-2,10,0,10" Width="118">E-mail Method:</Label>
+                            <ComboBox x:Name="EmailMethodComboBox" Style="{StaticResource @InputComboBoxStyle}" Width="120" Height="25" SelectionChanged="EmailMethodComboBox_SelectionChanged"/>
+                            
+                        </StackPanel>
+                        <StackPanel x:Name="SMTPConfig">
+                            <Label Style="{StaticResource @LabelStyle}" x:Name="LabelMailHost">SMTP Mail Host:</Label>
+                            <TextBox x:Name="SMTPMailHostTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left"/>
+
+                            <Label Style="{StaticResource @LabelStyle}" x:Name="LabelPort">SMTP Port:</Label>
+                            <TextBox x:Name="SMTPPortTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left"/>
+
+                            <Label Style="{StaticResource @LabelStyle}" x:Name="LabelUser">SMTP User:</Label>
+                            <TextBox x:Name="SMTPUserTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left"/>
+
+                            <Label Style="{StaticResource @LabelStyle}" x:Name="LabelPass">SMTP Password:</Label>
+                            <TextBox x:Name="SMTPPassTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left"/>
+                            <CheckBox x:Name="cbEnableSSL" Style="{StaticResource @InputCheckBoxStyle}"  VerticalAlignment="Center" Content="Enable SSL" Margin="10"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>

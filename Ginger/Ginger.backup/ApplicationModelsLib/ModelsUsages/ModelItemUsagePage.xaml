@@ -1,0 +1,22 @@
+    <Page x:Class="Ginger.ApplicationsModels.ModelsUsages.ModelItemUsagePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"  
+      xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:local="clr-namespace:Ginger.ApplicationsModels.ModelsUsages"
+      mc:Ignorable="d" 
+      Height="500" Width="850"
+      Title="ModelItemUsagePage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="35"/>
+        </Grid.RowDefinitions>
+        <Ginger:ucGrid x:Name="usageGrid" Grid.Row="0" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
+        
+        <usercontrols:ImageMakerControl x:Name="xProcessingImage" Grid.Row="1" ImageType="Processing" Height="30" Width="30" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Visibility="Collapsed"/>
+    </Grid>
+</Page>

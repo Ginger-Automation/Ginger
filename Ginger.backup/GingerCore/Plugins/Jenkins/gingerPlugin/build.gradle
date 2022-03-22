@@ -1,0 +1,24 @@
+   apply from:"https://raw.github.com/jenkinsci/gradle-jpi-plugin/master/install"
+   // ...or copy the contents of that URL into your build.gradle directly.
+
+   // Whatever other plugins you need to load.
+
+   group = "com.amdocs.devops"
+   version = "0.0.1-SNAPSHOT"    // Or whatever your version is.
+   description = "A description of your plugin"
+
+   jenkinsPlugin {
+       coreVersion = '1.420'                                               // Version of Jenkins core this plugin depends on.
+       displayName = 'Hello World plugin built with Gradle'                // Human-readable name of plugin.
+       url = 'http://wiki.jenkins-ci.org/display/JENKINS/SomePluginPage'   // URL for plugin on Jenkins wiki or elsewhere.
+       gitHubUrl = 'https://github.com/jenkinsci/some-plugin'              // Plugin URL on GitHub. Optional.
+
+       // The developers section is optional, and corresponds to the POM developers section.
+       developers {
+           developer {
+               id 'abayer'
+               name 'Andrew Bayer'
+               email 'andrew.bayer@gmail.com'
+           }
+       }                           
+   }

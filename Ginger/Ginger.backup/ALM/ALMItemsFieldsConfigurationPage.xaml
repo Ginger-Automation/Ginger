@@ -1,0 +1,24 @@
+    <Page x:Class="Ginger.ALM.ALMItemsFieldsConfigurationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      Height="600" Width="800"
+	Title="ALM Items Fields Configuration">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <Label x:Name="LoadFieldsStatusLbl" Grid.Column="0" Grid.Row="0" Visibility="Collapsed" Content="Started Loading Fields..."  Foreground="SaddleBrown" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+
+        <Ginger:ucGrid x:Name="grdQCFields" Grid.Column="0" Grid.Row="0" Visibility="Visible" Title="ALM Items Fields" ShowRefresh="Visible" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed"></Ginger:ucGrid>
+
+    </Grid>
+</Page>

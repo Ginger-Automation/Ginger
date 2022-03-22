@@ -1,0 +1,68 @@
+    <Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Ginger="clr-namespace:Ginger"
+    x:Class="Ginger.Agents.NewAgentEditPage" 
+      mc:Ignorable="d"     
+      d:DesignHeight="600" d:DesignWidth="800"
+	Title="AgentEditPage">
+
+    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}" Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="145"/>
+            <ColumnDefinition Width="363*"/>
+            <ColumnDefinition Width="272*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="125"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="159*"/>
+            <RowDefinition Height="111*"/>
+            <RowDefinition Height="95*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0">
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Agent Name"/>
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Driver" Margin="0,10,0,0"/>
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Platform Type" Margin="0,10,0,0"/>
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
+            <TextBox x:Name="AgentNameTextBox" Style="{StaticResource @TextBoxStyle}" FontSize="14" FontWeight="Bold"/>
+            <ComboBox x:Name="DriverComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource @InputComboBoxStyle}" Margin="0,15,0,0"/>
+            <TextBox x:Name="PlatformComboBox" Style="{StaticResource @TextBoxStyle}" Width="250" HorizontalAlignment="Left"  Margin="0,15,0,0" IsReadOnly="True" IsEnabled="False"/>
+
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Orientation="Vertical">
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Description:"/>
+            <TextBox x:Name="NotesTextBox" Text="" Height="50" Style="{StaticResource @MultiRowsTextBoxStyle}" />
+            <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="0,0,0,0" HorizontalAlignment="Left" />
+        </StackPanel>
+
+        <Frame x:Name="DriverConfigurationFrame" Grid.Row="2" Grid.ColumnSpan="3" Visibility="Collapsed" Grid.RowSpan="3"></Frame>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Ginger Grid" />
+                <ComboBox x:Name="GingerGridComboBox" Width="200" Margin="10"></ComboBox>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Orientation="Vertical">
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Script:"/>
+            <TextBox x:Name="ScriptTextBox" Text="" Height="50" Style="{StaticResource @MultiRowsTextBoxStyle}" IsReadOnly="True"/>
+            <Button x:Name="CreatePackageButton" Height="30">Create Package</Button>
+        </StackPanel>
+
+        <Button Grid.Row="5" x:Name="TestButton" Click="TestButton_Click" Content="Test Agent Configurations" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource @WindowButtonStyle}" Grid.Column="1" Height="24" Margin="177,8,270,8" Width="188" Grid.ColumnSpan="2" />
+
+        <Grid.Resources>
+            <DataTemplate x:Key="ParamValueExpressionButton">
+                <Button x:Name="ParamsGridVEButton" Content="..." Click="ParamsGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
+        </Grid.Resources>
+    </Grid>
+</Page>

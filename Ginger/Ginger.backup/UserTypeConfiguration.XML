@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Ginger>
+	<UserType Name="Regular">
+		<Functionality Name="Automate" Enable="true">  <!-- Agents Environments DataSource Automate Tab -->
+		</Functionality>
+		<Functionality Name="Execution" Enable="true"> <!-- Run Tab Execution result  -->
+		</Functionality>
+		<Functionality Name="Reports" Enable="true"> <!-- Report template  -->
+		</Functionality>
+		<Functionality Name="SourceControl" Enable="true">  <!-- Source Control Buttons -->
+		</Functionality>
+		<Functionality Name="ALM" Enable="true"> <!-- ALM Ribbon  -->
+		</Functionality>
+		<Functionality Name="Support" Enable="true"> <!-- Support Tab  -->
+		</Functionality>
+    <Functionality Name="Analyzer" Enable="true"> <!-- Analyzer  -->
+		</Functionality>
+	</UserType>
+	<UserType Name ="Business">
+		<Functionality Name="Automate" Enable="false">  <!-- Agents Environments DataSource Automate Tab -->
+		</Functionality>
+		<Functionality Name="Execution" Enable="false"> <!-- Run Tab Execution result  -->
+		</Functionality>
+		<Functionality Name="Reports" Enable="true"> <!-- Repost template  -->
+		</Functionality>
+		<Functionality Name="SourceControl" Enable="true">
+		</Functionality>
+		<Functionality Name="ALM" Enable="false"> <!-- ALM Ribbon  -->
+		</Functionality>
+		<Functionality Name="Support" Enable="true"> <!-- Support Tab  -->
+		</Functionality>
+    <Functionality Name="Analyzer" Enable="false"><!-- Analyzer  -->
+    </Functionality>
+	</UserType>
+</Ginger>

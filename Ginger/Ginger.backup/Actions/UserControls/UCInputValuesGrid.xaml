@@ -1,0 +1,26 @@
+    <UserControl x:Class="Ginger.Actions.UCInputValuesGrid" xmlns:Actions="clr-namespace:Ginger.Actions" xmlns:Ginger="clr-namespace:Ginger"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" 
+      xmlns:local="clr-namespace:Ginger.Actions"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="700">
+
+    <Grid  Name="controlGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+
+        <Grid.Resources>
+            <DataTemplate x:Key="VEGridValueExpressionButton">
+                <Button x:Name="VEGridInputGridVEButton" Content="..." Click="VEGridInputGridVEButton_Click" Style="{DynamicResource DataGridCellButtonStyle}" />
+            </DataTemplate>
+        </Grid.Resources>
+
+        <StackPanel Orientation="Vertical" >
+
+            <Ginger:ucGrid x:Name="VEGrid" Title="Input Values List" />
+           
+        </StackPanel>
+
+    </Grid>
+</UserControl>

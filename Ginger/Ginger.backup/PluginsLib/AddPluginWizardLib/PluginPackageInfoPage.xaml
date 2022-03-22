@@ -1,0 +1,37 @@
+<Page x:Class="GingerWPF.PluginsLib.AddPluginWizardLib.PlugPackageinInfoPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:GingerWPF.PluginsLib.AddPluginWizardLib"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="800"
+      Title="PluginInfoPage">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="164"/>
+            <RowDefinition Height="99*"/>
+            <RowDefinition Height="317*"/>
+        </Grid.RowDefinitions>
+        <StackPanel >
+            <Label HorizontalAlignment="Left">Plugin Package ID</Label>
+            <TextBox x:Name="xIDTextBox" IsReadOnly="True"></TextBox>
+            <Label HorizontalAlignment="Left">Version</Label>
+            <TextBox x:Name="xVersionTextBox" IsReadOnly="true"></TextBox>
+            <Label HorizontalAlignment="Left">Folder</Label>
+            <TextBox x:Name="FolderTextBox" IsReadOnly="True" IsEnabled="False"></TextBox>
+
+            <Label HorizontalAlignment="Left">Services</Label>
+        </StackPanel>
+
+        <DataGrid x:Name="ServicesGrid" IsReadOnly="True" SelectionChanged="ServicesGrid_SelectionChanged" Grid.Row="1"></DataGrid>
+
+        <TabControl Grid.Row="2">
+            <TabItem Header="Actions">
+                <DataGrid x:Name="ActionsDataGrid" IsReadOnly="True"/>
+            </TabItem>
+            <TabItem Header="Text Editors"></TabItem>
+        </TabControl>
+    </Grid>
+</Page>

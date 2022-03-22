@@ -1,0 +1,14 @@
+ 
+FROM mcr.microsoft.com/dotnet/framework/runtime:4.7.1 AS runtime
+
+COPY ./bin/Release/ ./Ginger
+
+#COPY AccessDatabaseEngine.exe AccessDatabaseEngine.exe
+#COPY vcredist_x86.exe vcredist_x86.exe
+#USER ContainerAdministrator
+#RUN setx /M PATH "%PATH%;Ginger"
+#RUN  AccessDatabaseEngine.exe /quiet /passive
+#RUN  vcredist_x86.exe /q /norestart
+#USER ContainerUser
+
+ENTRYPOINT ["Ginger/ginger.exe"]

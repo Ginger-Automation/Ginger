@@ -1,0 +1,106 @@
+﻿<Page x:Class="Ginger.BusinessFlowsLibNew.AddActionMenu.ActionsLibraryNavPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:Ginger="clr-namespace:Ginger"      
+      mc:Ignorable="d"
+      xmlns:h="clr-namespace:Ginger.Help" xmlns:userControlsLib1="clr-namespace:Ginger.UserControlsLib.UCListView"
+      h:GingerHelpProvider.HelpString="Action"
+      Title="ActionsLibraryNavAction">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="59*" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="39*" />
+        </Grid.RowDefinitions>
+
+        <TabControl x:Name="ActionsTabs" Grid.Row="0" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="ActionsTabs_SelectionChanged" Loaded="Tab_GotFocus" >
+            <TabControl.Resources>
+                <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                    <Setter Property="Height" Value="25"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="False" >
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True" >
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+
+            </TabControl.Resources>
+            <TabItem x:Name="PlatformActionsTab"  Margin="0,0,0,0" GotFocus="Tab_GotFocus">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="{StaticResource @PlatformAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
+                        <TextBlock Text="Platform Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                    </StackPanel>
+                </TabItem.Header>
+
+                <userControlsLib1:UcListView x:Name="xPlatformActionsListView" AllowDrop="True"/>
+
+            </TabItem>
+            <TabItem x:Name="GeneralActionsTab"  Margin="2,0,-6,0" GotFocus="Tab_GotFocus">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="{StaticResource @GeneralAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
+                        <TextBlock Text="General Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                    </StackPanel>
+                </TabItem.Header>
+                
+                <userControlsLib1:UcListView x:Name="xPlatformGenericActionsListView" AllowDrop="True"/>
+
+            </TabItem>
+            <TabItem x:Name="PlugInsActionsTab" Margin="8,0,-12,0"  GotFocus="Tab_GotFocus">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="{StaticResource @PluginAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
+                        <TextBlock Text="PlugIns Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                    </StackPanel>
+                </TabItem.Header>
+                
+                <userControlsLib1:UcListView x:Name="xPlatformPlugInsActionsListView" AllowDrop="True"/>
+                
+            </TabItem>
+            <TabItem x:Name="LegacyActionsTab"  Margin="15,0,-18,0" GotFocus="Tab_GotFocus" >
+                <TabItem.Resources>
+                    <Style TargetType="{x:Type TabItem}">
+                        <Setter Property="Background" Value="LightGray"/>
+                        <Setter Property="Height" Value="25"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="False" >
+                                <Setter Property="Background"  Value="LightGray"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True" >
+                                <Setter Property="Background"  Value="LightGray"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TabItem.Resources>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="Legacy Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="SemiBold" />
+                    </StackPanel>
+                </TabItem.Header>
+               
+                <userControlsLib1:UcListView x:Name="xPlatformLegacyActionListView" AllowDrop="True"/>
+
+            </TabItem>
+        </TabControl>
+
+        <GridSplitter ResizeDirection="Rows" Grid.Row="1" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" />
+
+        <Frame x:Name="ActDescriptionFrm" Content="Action Description" Grid.Row="2" Margin="0,0,0,0"
+               NavigationUIVisibility="Hidden"                                  
+               ScrollViewer.VerticalScrollBarVisibility="Auto"
+               ScrollViewer.HorizontalScrollBarVisibility="Auto"
+               ScrollViewer.CanContentScroll="True"/>
+
+    </Grid>
+</Page>

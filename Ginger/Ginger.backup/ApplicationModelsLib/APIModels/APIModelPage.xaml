@@ -1,0 +1,288 @@
+﻿<Page x:Class="GingerWPF.ApplicationModelsLib.APIModels.APIModelPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ginger="clr-namespace:Ginger"
+      xmlns:UserControlsLib1="clr-namespace:Ginger.UserControlsLib"
+      mc:Ignorable="d" 
+       d:DesignWidth="750"
+      Title="APIModelPage">
+
+    <ScrollViewer>
+        <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="215"/>
+                <RowDefinition Name="SecondRow" Height="700"/>
+            </Grid.RowDefinitions>
+
+
+            <StackPanel Orientation="Vertical">
+                <StackPanel  Margin="5,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
+                        <UserControlsLib1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                    </StackPanel>
+                    <TextBox x:Name="txtName" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="Bold" />
+                </StackPanel>
+
+                <StackPanel Margin="5,5,10,0">
+                    <Label Style="{StaticResource $LabelStyle}" Content="Description:"/>
+                    <TextBox x:Name="txtDescription" TextWrapping="WrapWithOverflow" Height="50" Style="{StaticResource $TextBoxStyle}" />
+                    <ginger:ucTagsViewer x:Name="xTagsViewer" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-5,5,10,0" />
+                </StackPanel>
+
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,5,0,0" >
+                    <Label Style="{StaticResource @LabelStyle}" Content="Target Application:" VerticalAlignment="Center"/>
+                    <UserControlsLib1:UCComboBox x:Name="xTargetApplicationComboBox" Width="250" VerticalAlignment="Center"></UserControlsLib1:UCComboBox>
+                </StackPanel>
+            </StackPanel>
+
+
+            <TabControl x:Name="APIModelTabs" Grid.Row="1" Background="{StaticResource $BackgroundColor_LightGray}"  HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" Margin="5,0,10,0" >
+                <TabControl.Resources>
+                    <Style TargetType="{x:Type TabItem}">
+                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        <Setter Property="Height" Value="25"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="False" >
+                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True" >
+                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TabControl.Resources>
+
+                <TabItem Margin="0,0,0,0" >
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Image Source="{StaticResource  @Config_20x20.png }" Height="20" Width="20" />
+                            <TextBlock Text="Configurations" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <Grid Name="APIConfigurationsTab" Background="{StaticResource $BackgroundColor_LightGray}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="400*"/>
+                                <RowDefinition Height="350*"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" VerticalAlignment="Top">
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
+                                    <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,10,0">API Type:</Label>
+                                    <UserControlsLib1:UCComboBox x:Name="xAPITypeComboBox" Width="120"></UserControlsLib1:UCComboBox>
+                                </StackPanel>
+                                <StackPanel  VerticalAlignment="Top" Margin="0,0,0,0">
+                                    <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,10,0">End Point URL:</Label>
+                                    <TextBox x:Name="EndPointURLTextBox"></TextBox>
+                                </StackPanel>
+
+                                <StackPanel x:Name="RestHeader"  Orientation="Horizontal" Visibility="Visible" Margin="0,10,0,0">
+                                    <StackPanel Width="160" Margin="0,0,0,0">
+                                        <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">Request Type:</Label>
+                                        <UserControlsLib1:UCComboBox x:Name="RequestTypeComboBox"></UserControlsLib1:UCComboBox>
+                                    </StackPanel>
+                                    <StackPanel Width="160" Margin="10,0,10,0">
+                                        <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">HTTP Version:</Label>
+                                        <UserControlsLib1:UCComboBox x:Name="HttpVersioncombobox"></UserControlsLib1:UCComboBox>
+                                    </StackPanel>
+                                    <StackPanel Width="160" Margin="10,0,10,0">
+                                        <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">Response Content Type:</Label>
+                                        <UserControlsLib1:UCComboBox x:Name="ResponseTypeComboBox"></UserControlsLib1:UCComboBox>
+                                    </StackPanel>
+                                    <StackPanel Width="195" Margin="10,0,10,0">
+                                        <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">Cookies:</Label>
+                                        <UserControlsLib1:UCComboBox x:Name="CookieMode"></UserControlsLib1:UCComboBox>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Margin="0,10,0,0">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Label HorizontalAlignment="Left"  VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}" >Network Credentials:</Label>
+                                        <StackPanel x:Name="NetworkCeredentials" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,0,0">
+                                            <RadioButton x:Name="DefaultNetworkCredentialsRadioButton" Content="Default" Checked="NetworkCreds_SelectionChanged" GroupName="NetworkCredentialsSelectionRadioButtonGroup" Margin="0,0,10,0" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+                                            <RadioButton x:Name="CustomNetworkCredentialsRadioButton" Content="Custom" Checked="NetworkCreds_SelectionChanged" GroupName="NetworkCredentialsSelectionRadioButtonGroup" Margin="0,0,10,0" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel x:Name="SP_CustomCreds" Visibility="Collapsed" Margin="20,0,0,0">
+                                        <Label Style="{StaticResource @InputFieldLabelStyle}" >Custom End Point URL User:</Label>
+                                        <!--TODO: Replace to UCValueExpression when needed-->
+                                        <!--<Actions:UCValueExpression x:Name="URLUserUCValueExpression" Margin="0,0,0,0"/>-->
+                                        <TextBox x:Name="URLUserTextBox"></TextBox>
+                                        <Label Style="{StaticResource @InputFieldLabelStyle}">Custom End Point URL Password:</Label>
+                                        <!--TODO: Replace to UCValueExpression when needed-->
+                                        <!--<Actions:UCValueExpression x:Name="URLPasswordUCValueExpression" Margin="0,0,0,0"/>-->
+                                        <TextBox x:Name="URLPasswordTextBox"></TextBox>
+                                        <Label Style="{StaticResource @InputFieldLabelStyle}">Custom End Point URL Domain (optional):</Label>
+                                        <TextBox x:Name="URLDomainTextBox"></TextBox>
+                                    </StackPanel>
+
+                                    <StackPanel x:Name="PanelSoap" Margin="0,5,0,0" Visibility="Visible">
+                                        <Label x:Name="SoapActionLabel" Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">Soap Action:</Label>
+                                        <TextBox x:Name="SoapActionTextBox"></TextBox>
+                                    </StackPanel>
+
+                                    <StackPanel>
+                                        <StackPanel>
+                                            <CheckBox x:Name="DoNotFailActionOnBadRespose" VerticalAlignment="Center" Margin="1,10,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Do Not Fail Action on Bad Response" />
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <ginger:ucGrid x:Name="HttpHeadersGrid" Margin="0,10,0,0"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" VerticalAlignment="Top">
+                                <Expander x:Name="BodyExpander" Margin="0,15,0,0" Expanded="BodyExpanded" Collapsed="BodyCollapsed" IsExpanded="False">
+                                    <Expander.Header>
+                                        <Label x:Name="BodyExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">Request Body</Label>
+                                    </Expander.Header>
+                                    <Expander.Content>
+                                        <StackPanel>
+                                            <Grid>
+                                                <StackPanel Orientation="Vertical">
+                                                    <StackPanel x:Name="RequestContent" Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Left" >
+                                                        <Label Style="{StaticResource @InputFieldLabelStyle}">Body Content Type:</Label>
+                                                        <UserControlsLib1:UCComboBox x:Name="ContentTypeComboBox" Width="250" Margin="35,0,0,0"></UserControlsLib1:UCComboBox>
+                                                    </StackPanel>
+                                                    <StackPanel x:Name="ContentTypeParameters" Orientation="Vertical">
+                                                        <StackPanel x:Name="RequestBodyTypePanel" Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,0">
+                                                            <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Row="0">Body Content Source:</Label>
+                                                            <StackPanel  Orientation="Horizontal" x:Name="BodySelection" VerticalAlignment="Center">
+                                                                <RadioButton x:Name="FreeTextRadioButton" Content="Free Text" Checked="RequestBodyType_Selection" GroupName="BodySelectionRadioButtonsGroup" Margin="0,0,10,0" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+                                                                <RadioButton x:Name="TemplateFileRadioButton" Content="From File" Checked="RequestBodyType_Selection" GroupName="BodySelectionRadioButtonsGroup" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+                                                            </StackPanel>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                    <StackPanel x:Name="FreeStackPanel">
+                                                        <Label Style="{StaticResource @InputFieldLabelStyle}">Body Content:</Label>
+                                                        <Button  Grid.Row="0" x:Name="UseWSSecurityHeader" Content="Insert WS Security" 
+                                                Click="ReplaceWSSecurityHeader_Click" ToolTip="Insert WS Security Settings" 
+                                                Style="{DynamicResource DataGridCellButtonStyle}" Width="120" HorizontalAlignment="Right" Margin="0,0,30,0" Height="25"/>
+                                                        <TextBox x:Name="RequestBodyTextBox" ToolTip="Request Body" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" AcceptsReturn="True" Grid.Column="1" Margin="0,5,0,0"/>
+
+                                                    </StackPanel>
+
+                                                    <StackPanel x:Name="TemplateStackPanel" Visibility="Hidden">
+                                                        <Label Style="{StaticResource @InputFieldLabelStyle}">Template File Path:</Label>
+                                                        <StackPanel Orientation="Vertical">
+                                                            <Grid Name="TemplateFileGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="200*"/>
+                                                                    <ColumnDefinition Width="55"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBox x:Name="TemplateFileNameFileBrowser" HorizontalAlignment="Stretch" Grid.Column="0" Margin="0,0,0,0" />
+                                                                <Button x:Name="TemplateFileBrowseButton"  HorizontalAlignment="Right" Grid.Column="1" VerticalAlignment="Center" Content="Browse" Margin="0,0,0,0" Style="{StaticResource @InputButtonStyle}" Click="TemplateFileBrowseButton_Click" />
+                                                            </Grid>
+
+                                                            <CheckBox x:Name="DoNotImportRequestFile" Content="Import Request file to Solution folder" ToolTip="If checked the selected file will be imported to ~Documents\" HorizontalAlignment="Left" Margin="0,1,0,0" Style="{StaticResource @InputCheckBoxStyle}"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                    <StackPanel x:Name="BodyInputGridPannel" Visibility="Visible">
+                                                        <Grid  Name="controlGrid" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Visible">
+                                                            <Grid.Resources>
+                                                                <DataTemplate x:Key="BrowseValueFilesButton">
+                                                                    <Button x:Name="GridInputGridBrowseButton" Content="Browse" Click="GridInputGridBrowseButton_Click" Style="{DynamicResource DataGridCellButtonStyle}"  IsEnabled="{Binding IsBrowseNeeded,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"/>
+                                                                </DataTemplate>
+                                                            </Grid.Resources>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                    <StackPanel x:Name="FormDataGridPanel">
+                                                        <ginger:ucGrid x:Name="FormDataGrid" Title="Request Body Values" Margin="0,10,0,0"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Expander.Content>
+                                </Expander>
+
+                                <Expander x:Name="SecurityExpander" Margin="0,15,0,0" Expanded="SecExpanded" Collapsed="SecCollapsed" IsExpanded="False">
+                                    <Expander.Header>
+                                        <Label x:Name="SecurityExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">Security Configurations</Label>
+                                    </Expander.Header>
+                                    <Expander.Content>
+                                        <StackPanel>
+                                            <StackPanel>
+                                                <Frame x:Name="Certificates"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Label Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Left" Margin="0,0,0,0">SSL Certificates:</Label>
+                                                    <StackPanel Orientation="Horizontal" x:Name="CertificateSelection" VerticalAlignment="Center">
+                                                        <RadioButton x:Name="SSLCertificateTypeAllCertificatesRadioButton" Content="All Certificates" Checked="CertificateSelection_Changed" GroupName="CertificatesSelectionRadioButtonGroup" Margin="0,0,10,0" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+                                                        <RadioButton x:Name="SSLCertificateTypeCustomRadioButton" Content="Custom" Checked="CertificateSelection_Changed" GroupName="CertificatesSelectionRadioButtonGroup" Margin="0,0,10,0" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </StackPanel>
+
+                                            <StackPanel x:Name="CertificateStackPanel" Visibility="Collapsed" Orientation="Vertical" Margin="20,0,0,0" >
+                                                <Label Style="{StaticResource @InputFieldLabelStyle}">Certificate Path:</Label>
+                                                <StackPanel Orientation="Vertical">
+
+                                                    <StackPanel Orientation="Vertical">
+                                                        <Grid Name="CertificateFileGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="200*"/>
+                                                                <ColumnDefinition Width="55"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBox x:Name="CertificatePath" HorizontalAlignment="Stretch" Grid.Column="0" Margin="0,0,0,0" />
+                                                            <Button x:Name="CertificatePathBrowseButton"  HorizontalAlignment="Right" Grid.Column="1" VerticalAlignment="Center" Content="Browse" Margin="0,0,0,0" Style="{StaticResource @InputButtonStyle}" Click="CertificatePathBrowseButton_Click" />
+                                                        </Grid>
+                                                    </StackPanel>
+
+                                                    <CheckBox x:Name="DoNotCertificateImportFile" Content="Import Certificate file to Solution folder" ToolTip="If checked the selected certificate file will be imported to ~Documents\Certificates\" HorizontalAlignment="Left" Margin="0,1,0,0" Style="{StaticResource @InputCheckBoxStyle}"/>
+                                                </StackPanel>
+                                                <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,5,0,0">Certificate Password:</Label>
+
+                                                <TextBox x:Name="CertificatePasswordUCValueExpression" Margin="0,0,0,0" />
+                                            </StackPanel>
+                                            <StackPanel Width="175" HorizontalAlignment="Left" Margin="0,5,0,0">
+                                                <Label Style="{StaticResource @InputFieldLabelStyle}">Security Type:</Label>
+                                                <UserControlsLib1:UCComboBox x:Name="SecurityTypeComboBox" ></UserControlsLib1:UCComboBox>
+                                            </StackPanel>
+                                            <StackPanel Width="175" HorizontalAlignment="Left" Margin="0,5,0,0">
+                                                <Label Style="{StaticResource @InputFieldLabelStyle}">Authorization:</Label>
+                                                <UserControlsLib1:UCComboBox x:Name="AuthTypeComboBox" Grid.Column="0" ></UserControlsLib1:UCComboBox>
+                                            </StackPanel>
+                                            <StackPanel x:Name="Auth_Creds" Visibility="Collapsed" Margin="20,0,0,0" HorizontalAlignment="Left">
+                                                <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">User:</Label>
+
+                                                <TextBox x:Name="AuthUserTextBox" Width="600" Margin="0,0,0,0"/>
+                                                <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">Password:</Label>
+
+                                                <TextBox x:Name="AuthPasswordTextBox" Width="600" Margin="0,0,0,0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Expander.Content>
+                                </Expander>
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+                </TabItem>
+
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+                            <Image Source="{StaticResource  @Grid_24x24.png }" Height="20" Width="20"/>
+                            <TextBlock x:Name="xDynamicParamsTab" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <Frame x:Name="xDynamicParamsFrame" HorizontalAlignment="Stretch"/>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+                            <Image Source="{StaticResource  @Outputs_32x32.png }" Height="20" Width="20"/>
+                            <TextBlock x:Name="xOutputTemplateTab" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <Frame x:Name="xOutputTemplateFrame" HorizontalAlignment="Stretch"/>
+                </TabItem>
+            </TabControl>
+
+        </Grid>
+    </ScrollViewer>
+</Page>

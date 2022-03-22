@@ -1,0 +1,16 @@
+    <Page x:Class="Ginger.Actions.ActMenuItemEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+	Title="ActSmartSyncEditPage">
+
+    <Grid>
+        <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
+            <Label HorizontalAlignment="Left">Action Type</Label>
+            <ComboBox x:Name="ActionNameComboBox" Width="300"  Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+        </StackPanel>
+    </Grid>
+</Page>

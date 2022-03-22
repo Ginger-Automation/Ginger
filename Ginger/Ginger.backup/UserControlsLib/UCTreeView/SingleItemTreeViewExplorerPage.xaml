@@ -1,0 +1,23 @@
+    <Page x:Class="GingerWPF.UserControlsLib.SingleItemTreeViewExplorerPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
+      mc:Ignorable="d" 
+      d:DesignHeight="500" d:DesignWidth="500"
+      Title="SingleItemTreeViewExplorerPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="275*"/>
+        </Grid.ColumnDefinitions>
+
+        <UCTreeView:TreeView1 x:Name="xTreeView" TreeTitle="Title"  />
+
+        <GridSplitter ResizeDirection="Columns" Grid.Column="1" Width="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="DarkGray" IsEnabled="True"/>
+
+        <Frame x:Name="DetailsFrame" Grid.Column="1" Margin="5,0,0,0"/>
+    </Grid>
+</Page>

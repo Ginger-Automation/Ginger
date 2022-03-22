@@ -1,0 +1,29 @@
+    <Page x:Class="Ginger.Run.RunSetActions.RunSetActionAutomatedALMDefectsEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Actions="clr-namespace:Ginger.Actions" 
+      mc:Ignorable="d" 
+      d:DesignHeight="150" d:DesignWidth="600"
+	Title="RunSetActionAutomatedALMDefectsEditPage">
+
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                <Label Margin="0,0,10,0" Style="{StaticResource @LabelStyle}" Content="Select Defect's Profile:"/>
+                <ComboBox x:Name="CurrentProfilePickerCbx"  ContextMenu="{x:Null}" Width="250" Style="{DynamicResource @InputComboBoxStyle}" SelectionChanged="CurrentProfilePickerCbx_SelectionChanged" ></ComboBox>
+            </StackPanel>
+            <StackPanel Margin="0,0,0,15" Orientation="Vertical">
+                <StackPanel Orientation="Vertical">
+                    <Label Style="{StaticResource @LabelStyle}" Content="Defect's opening mode:" DockPanel.Dock="Left"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" x:Name="DefectsOpeningMode">
+                    <RadioButton x:Name="RadioDefectsOpeningModeForAll" Margin="30,0,0,0" Tag="Open Defects For All Failures"  GroupName="DefectsOpeningModeRadio" Content="Open Defects For All Failures" VerticalAlignment="Center" Style="{StaticResource @InputRadioButtonStyle}"/>
+                    <RadioButton x:Name="RadioDefectsOpeningModeForMarked" Margin="30,5,0,0" Tag="Open Defects For All Failures that marked at Action's Flow Control" GroupName="DefectsOpeningModeRadio" Content="Open Defects For All Failures that marked at Action's Flow Control" VerticalAlignment="Center" Style="{StaticResource @InputRadioButtonStyle}"/>
+                    <RadioButton x:Name="RadioDefectsOpeningModeReviewOnly" Margin="30,5,0,0" Tag="Present Defects Suggestions For Review Only" GroupName="DefectsOpeningModeRadio" Content="Present Defects Suggestions For Review Only" VerticalAlignment="Center" Style="{StaticResource @InputRadioButtonStyle}"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

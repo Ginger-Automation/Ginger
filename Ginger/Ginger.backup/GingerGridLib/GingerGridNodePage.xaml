@@ -1,0 +1,24 @@
+    <Page x:Class="Ginger.GingerGridLib.GingerGridNodePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"       
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="GingerGridNodePage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*"/>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="81*"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="GingerNodeNameLabel">Ginger Node Name</Label>
+        <Frame x:Name="ScreenShotViewFrame" Content="Frame" Grid.Row="2" BorderThickness="3" BorderBrush="Yellow" />
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button x:Name="ScreenShotButton" Click="ScreenShotButton_Click" Content="Screen shot" />
+            <Button x:Name="StartDriverButton" Click="StartDriverButton_Click" Content="Start Driver" />
+        </StackPanel>
+
+    </Grid>
+</Page>

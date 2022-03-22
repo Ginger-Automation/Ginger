@@ -32,7 +32,6 @@ using LiteDB;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -661,8 +660,8 @@ namespace Ginger.Run
                         string fileName = Path.GetFileName(txt_file);
                         if (fileName.Contains(".html"))
                         {
-                            Process.Start(reportsResultFolder);
-                            Process.Start(reportsResultFolder + "\\" + fileName);
+                            System.Diagnostics.Process.Start(reportsResultFolder);
+                            System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
                         }
                     }
                 }
@@ -697,8 +696,8 @@ namespace Ginger.Run
                     string fileName = System.IO.Path.GetFileName(txt_file);
                     if (fileName.Contains(".html"))
                     {
-                        Process.Start(reportsResultFolder);
-                        Process.Start(reportsResultFolder + "\\" + fileName);
+                        System.Diagnostics.Process.Start(reportsResultFolder);
+                        System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
                     }
                 }
             }

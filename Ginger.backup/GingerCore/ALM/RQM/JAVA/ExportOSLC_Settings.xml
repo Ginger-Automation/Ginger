@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Root>
+  <Actions>
+    <NameSpaces>
+      <OslcQMNameSpace name="oslc_qm">http://open-services.net/ns/qm#</OslcQMNameSpace>
+      <OslcNameSpace name="oslc">http://open-services.net/ns/core#</OslcNameSpace>
+      <DctermsNameSpace name="dcterms">http://purl.org/dc/terms/</DctermsNameSpace>
+      <IdNameSpace name="ID">http://www.w3.org/1999/02/22-rdf-syntax-ns#</IdNameSpace>
+      <ResourceNameSpace name="resource">http://www.w3.org/1999/02/22-rdf-syntax-ns#</ResourceNameSpace>
+      <OslcRmNameSpace name="oslc_rm">http://open-services.net/ns/rm#</OslcRmNameSpace>
+      <RdfNameSpace name="rdf">http://www.w3.org/1999/02/22-rdf-syntax-ns#</RdfNameSpace>
+      <RdfsNameSpace name="rdfs">http://www.w3.org/2000/01/rdf-schema#</RdfsNameSpace>
+    </NameSpaces>
+    <functions>
+      <GetTestCaseUrlWithSlugId>
+        <Step name="validateReqProp">//oslc_qm:TestCaseQuery/oslc_qm:testCase/oslc_qm:TestCase</Step>
+        <Step name="aboutProp">rdf:about</Step>
+      </GetTestCaseUrlWithSlugId>
+      <GetQueryCapabilityResource>
+        <Step name="parentNode">//oslc:ServiceProvider/oslc:service/oslc:Service/oslc:queryCapability/oslc:QueryCapability</Step>
+        <Step name="childName">oslc:queryBase</Step>
+        <Step name="childAttribute">rdf:resource</Step>
+      </GetQueryCapabilityResource>
+      <UpdateTestCaseXMLWithReq>
+        <Step name="parentNode">//oslc_qm:TestCase/oslc_qm:validatesRequirement</Step>
+        <Step name="parentSpesificNodeNumberOfReqZero">//oslc_qm:TestCase/dcterms:title</Step>
+        <Step name="parentSpesificNodeNumberOfReqPositive">//oslc_qm:TestCase/oslc_qm:validatesRequirement</Step>
+        <Step name="testCaseNode">//oslc_qm:TestCase</Step>
+      </UpdateTestCaseXMLWithReq>
+      <GetRequirementResource>
+        <Step name="parentNode">//rdf:RDF/rdf:Description</Step>
+        <Step name="reqResource">rdf:about</Step>
+      </GetRequirementResource>
+    </functions>
+  </Actions>
+</Root>

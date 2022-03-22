@@ -1,0 +1,169 @@
+    <Window x:Class="GingerCore.Drivers.InternalBrowserWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:Extenders="clr-namespace:GingerCore.Drivers"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"   
+        xmlns:GingerCore="clr-namespace:GingerCore"
+        Title="Ginger Internal Browser - IE" Height="600" Width="1200" WindowState="Maximized" WindowStartupLocation="CenterScreen" SizeChanged="Window_SizeChanged"
+        Unloaded="Window_Unloaded"
+        >
+
+    <Grid Background="#DFE9F5" ClipToBounds="True">
+        <Grid.Resources>
+            <Extenders:ListBoxExtenders x:Key="ListBoxExtenders"/>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="Col_0" Width="400*"/>
+            <ColumnDefinition x:Name="Col_1" Width="334*"/>
+            <ColumnDefinition Width="97*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="140"/>
+            <RowDefinition Height="400*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <!--URL Panel-->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Height="30" VerticalAlignment="Center">
+            <Button x:Name="btnBack" Click="btnBack_Click" ToolTip="Back" VerticalAlignment="Center" Style="{StaticResource @InputImageButtonStyle_NoBorder}" Margin="2,0,0,2">
+                <Image Source="{StaticResource @RoundArrowLeft_24x24.png}"/>
+            </Button>
+            <Button x:Name="btnRefresh" Click="btnRefresh_Click" ToolTip="Refresh" VerticalAlignment="Center" Style="{StaticResource @InputImageButtonStyle_NoBorder}" Margin="2,0,0,2">
+                <Image Source="{StaticResource @RoundRefresh_24x24.png}"/>
+            </Button>
+            <TextBox x:Name="txtURL" Width="600" Text="http://" KeyUp="txtURL_KeyUp" VerticalAlignment="Center" Style="{StaticResource @TextBoxStyle}" Height="24"></TextBox>
+            <Button x:Name="btnGotoURL" Click="btnGotoURL_Click" ToolTip="Go to URL" Width="30" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Height="24" Margin="2,2,0,2">Go!</Button>
+        </StackPanel>
+        <!--Window Tools-->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" Height="30" VerticalAlignment="Center" HorizontalAlignment="Right">
+            <ToggleButton x:Name="btnPin" Click="btnPin_Click" ToolTip="Pin Window" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,5,0">
+                <Image Source="{StaticResource @Pin_24x24.png}"/>
+            </ToggleButton>
+        </StackPanel>
+
+        <!--<Ribbon>-->
+        <Ribbon x:Name="MainRibbon" Grid.Row="1" Grid.ColumnSpan="3"  SelectionChanged="MainRibbon_SelectionChanged" Loaded="RibbonLoaded">
+            <Ribbon.ApplicationMenu>
+                <RibbonApplicationMenu KeyTip="F" Visibility="Collapsed">
+                    <RibbonApplicationMenuItem x:Name="ExitBtn" Header="Exit" Click="ExitBtn_Click" />
+                </RibbonApplicationMenu>
+            </Ribbon.ApplicationMenu>
+
+            <!-- Browser Tab-->
+            <RibbonTab x:Name="IB_Ribbon" Header="Browser" KeyTip="H">
+                <RibbonGroup x:Name="Actions" Header="Actions">
+                    <RibbonToggleButton x:Name="btnRecord" Click="btnRecord_Click" Label="Record" SmallImageSource="{StaticResource @Record_32x32.png}" LargeImageSource="{StaticResource @Record_32x32.png}"></RibbonToggleButton>
+                    <RibbonToggleButton x:Name="btnEmenu" Click="btnEmenu_Click" Label="eMenu" SmallImageSource="{StaticResource @EMenu_32x32.png}" LargeImageSource="{StaticResource @EMenu_32x32.png}"></RibbonToggleButton>
+                    <RibbonButton x:Name="btnScreenShot" Click="btnScreenShot_Click" Label="Screen Shot" SmallImageSource="{StaticResource @Camera_32x32.png}" LargeImageSource="{StaticResource @Camera_32x32.png}"></RibbonButton>
+                </RibbonGroup>
+                <RibbonGroup Header="Device">
+                    <StackPanel>
+                        <ComboBox x:Name="DeviceComboBox" SelectionChanged="DeviceComboBox_Changed" Width="150" Style="{DynamicResource @InputComboBoxStyle}" Margin="5,5,5,3"></ComboBox>
+                    </StackPanel>
+                </RibbonGroup >
+                <RibbonGroup Header="View">
+                    <CheckBox x:Name="ActsCheckBox" Checked="ActsCheckBox_Checked" Unchecked="ActsCheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" IsChecked="True">Acts</CheckBox>
+                    <CheckBox x:Name="eHTMLCheckBox" Checked="eHTMLCheckBox_Checked" Unchecked="eHTMLCheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}">eHTML</CheckBox>
+                    <CheckBox x:Name="MHTCheckBox" Checked="MHTCheckBox_Checked" Unchecked="MHTCheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}">MHT</CheckBox>
+                </RibbonGroup>
+
+                <RibbonGroup x:Name="ActsRibbonGroup">
+                    <RibbonGroup.Header>
+                        <GingerCore:ucTextDicResource Text="[Activities] / [Actions]"/>
+                    </RibbonGroup.Header>
+                    <ListBox x:Name="lstActivities" Width="150" Height="65" SelectionChanged="lstActivities_SelectionChanged" Style="{StaticResource @ListBoxStyle}" FontSize="10"/>
+                    <Button x:Name="btnAddActivity" Click="btnAddActivity_Click" Style="{StaticResource @InputImageButtonStyle_NoBorder}" Margin="2,0,0,2">
+                        <Button.ToolTip>
+                            <GingerCore:ucTextDicResource Text="Add [Activity]"/>
+                        </Button.ToolTip>
+                        <Image Source="{StaticResource @AddActivity_16x16.png}"/>
+                    </Button>
+                    <ListBox x:Name="lstActions" Width="200" Height="65"  SelectionChanged="lstActions_SelectionChanged" Extenders:ListBoxExtenders.AutoScrollToEnd="True" Style="{StaticResource @ListBoxStyle}" FontSize="10"/>
+                    <Button x:Name="btnRunStep" Click="btnRunStep_Click" ToolTip="Run Action" Style="{StaticResource @InputImageButtonStyle_NoBorder}" Margin="2,-2,2,0">
+                        <Image Source="{StaticResource @PlayAction_16x16.png}"/>
+                    </Button>
+                </RibbonGroup>
+
+                <RibbonGroup x:Name="CreateNewAction" Header="Create New Action">
+                    <RibbonToggleButton x:Name="btnMarker" Label="Marker" Click="btnMarker_Click" SmallImageSource="{StaticResource @Marker_32x32.png}" LargeImageSource="{StaticResource @Marker_32x32.png}"></RibbonToggleButton>
+                    <StackPanel Orientation="Horizontal" Height="22">
+                        <Label Style="{StaticResource @LabelStyle}" FontSize="10" Width="70" Height="20">Locate By:</Label>
+                        <ComboBox x:Name="LocateByComboBox" SelectionChanged="LocateByComboBox_SelectionChanged" Width="150" Style="{StaticResource @InputComboBoxStyle}" Height="20"></ComboBox>
+                        <Button x:Name="NewActionConfigButton" FontSize="10" Height="20" Click="NewActionConfigButton_Click" Style="{StaticResource @InputButtonStyle}" Width="40" Margin="2,0.3,2,0">More</Button>
+                        <Button x:Name="TestButton" FontSize="10" Height="20" Click="TestButton_Click" Style="{StaticResource @InputButtonStyle}" Width="28" Margin="2,0.3,2,0">Test</Button>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Height="22">
+                        <Label Height="20" Style="{StaticResource @LabelStyle}" FontSize="10" Width="70">Locate Value:</Label>
+                        <TextBox x:Name="LocateValueTextBox" Width="201" KeyDown="LocateValueTextBox_KeyDown" Style="{StaticResource @TextBoxStyle}" Height="20" FontSize="10"></TextBox>
+                        <Button x:Name="LocateValueButton" FontSize="10" Height="19" Width="20" Click="LocateValueButton_Click" Style="{StaticResource @InputButtonStyle}" Margin="2,0.3,2,0">...</Button>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  Height="22">
+                        <Label Style="{StaticResource @LabelStyle}" FontSize="10" Width="70" Height="20">Action:</Label>
+                        <ComboBox x:Name="ActionCombotBox" Width="150" Style="{StaticResource @InputComboBoxStyle}" Height="20"></ComboBox>
+                        <Button x:Name="CretaeActionButton" Width="70" FontSize="10" Height="20" Click="CreateActionButton_Click" Style="{StaticResource @InputButtonStyle}" Margin="2,0.3,2,0">Create Action</Button>
+                    </StackPanel>
+                </RibbonGroup>
+
+                <RibbonGroup x:Name="eHTMLRibbonGroup" Header="Element HTML" Visibility="Collapsed">
+                    <TextBox x:Name="txtOuterHTML" Height="65" Width="350" TextWrapping="Wrap" Style="{StaticResource @TextBoxStyle}"></TextBox>
+                </RibbonGroup>
+
+                <RibbonGroup x:Name="MHTRibbonGroup" Header="MHT" Visibility="Collapsed">
+                    <StackPanel Orientation="Horizontal"  Height="22">
+                        <ComboBox x:Name="mhtComboBox" Width="150" SelectionChanged="mhtComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" Height="20"></ComboBox>
+                        <Button x:Name="BrowseMHTButton" Click="BrowseMHTButton_Click" Width="20" Style="{StaticResource @InputButtonStyle}" Height="20" Margin="2,0,2,0">...</Button>
+                    </StackPanel>
+                    <Button x:Name="SaveMHTButton" Click="SaveMHTButton_Click" Style="{StaticResource @InputButtonStyle}" Height="20" Margin="0,2,0,0">Save as MHT</Button>
+                </RibbonGroup>
+            </RibbonTab>
+
+            <!--HTML  Tab-->
+            <RibbonTab x:Name="HTMLRibbon" Header="HTML" >
+                <RibbonGroup x:Name="HTML" Header="HTML">
+                    <RibbonButton Name="btnViewSource" Click="btnViewSource_Click" Label="View Source" SmallImageSource="{StaticResource @MagnifyingGlass_32x32.png}" LargeImageSource="{StaticResource @MagnifyingGlass_32x32.png}"></RibbonButton>
+                    
+                </RibbonGroup>
+
+                <RibbonGroup Header="Search"  Margin="0,1" Width="461">
+                    <Grid HorizontalAlignment="Left" Height="81" Margin="0,0,-451,-81" VerticalAlignment="Top" Width="451"/>
+                    <TextBox HorizontalAlignment="Left" Height="23" Margin="0,1,-402,-5"  x:Name="txtSourceSearch" TextWrapping="Wrap"  VerticalAlignment="Top" Width="451"/>
+                    <RibbonButton  x:Name="btnSearchSource" Click="btnSearchSource_Clik" Label="Search" SmallImageSource="{StaticResource @MagnifyingGlass_24x24.png}" LargeImageSource="{StaticResource @MagnifyingGlass_32x32.png}" IsEnabled="False" Height="Auto" Margin="-50,23,71,-14"></RibbonButton>
+                    <RibbonButton  x:Name="btnPrevSearchSource" Click="btnSearchSourcePrevious_Click" Label="Previous" SmallImageSource="{StaticResource @LeftArrow_16x16.png}" LargeImageSource="{StaticResource @LeftArrow_16x16.png}" IsEnabled="False" Height="Auto" Margin="-50,23,71,-14"></RibbonButton>
+                    <RibbonButton  x:Name="btnNxtSearchSource" Click="btnSearchSourceNext_Clik" Label="Next" SmallImageSource="{StaticResource @RightArrow_16x16.png}" LargeImageSource="{StaticResource @RightArrow_16x16.png}" IsEnabled="False" Height="Auto" Margin="-50,23,71,-14"></RibbonButton>
+                </RibbonGroup>              
+          
+            </RibbonTab>
+        </Ribbon>
+
+        <Frame x:Name="frmBrowser" NavigationUIVisibility="Hidden"  Content="Web Browser Frame"  Grid.Row="2" Grid.ColumnSpan="3"></Frame>
+
+        <TextBox Name="frmHTML" Grid.Row="2" Grid.ColumnSpan="3" Visibility="Collapsed" SelectionBrush="Red" SelectionOpacity="0.8" ></TextBox>
+
+        <Popup x:Name="puOverlay" AllowsTransparency="True" Placement="top" IsOpen="False" PlacementTarget="{Binding ElementName=IB_Ribbon}">
+            <Border x:Name="bdrOverLay" CornerRadius="30" BorderBrush="{StaticResource $SelectionColor_Pink}" Height="50" BorderThickness="2" Margin="0,120" Width="50">
+                <StackPanel>
+                    
+                    <Label FontSize="40" Foreground="{StaticResource $SelectionColor_Pink}" FontWeight="ExtraBold" FontFamily="Wingdings"></Label>
+                </StackPanel>
+            </Border>
+        </Popup>
+
+        <Popup x:Name="puEmenu" AllowsTransparency="true" Placement="top" IsOpen="False" PlacementTarget="{Binding ElementName=IB_Ribbon}">
+            <Border x:Name="bdrEmenu" CornerRadius="10" BorderBrush="{StaticResource $Color_DarkBlue}" Background="{StaticResource $BackgroundColor_LightGray}" Height="150" BorderThickness="2" Margin="0,120" Width="170" >
+                <StackPanel>
+                    <Label x:Name="eTagName" Style="{StaticResource @InputFieldLabelStyle}" Width="160" FontWeight="Bold" HorizontalAlignment="Center">TagName</Label>
+                    <Button x:Name="btnAction1" FontSize="11" Content="Action 1"  Width="160" Click="btnAction1_Click" Style="{StaticResource @WindowButtonStyle}" Margin="0,2,0,2"/>
+                    <Button x:Name="btnAction2" FontSize="11" Content="Action 2"  Width="160" Click="btnAction2_Click" Style="{StaticResource @WindowButtonStyle}" Margin="0,2,0,2"/>
+                    <Button x:Name="btnAddAction" FontSize="11" Content="Add Action"  Width="160" Click="btnAddAction_Click" Style="{StaticResource @WindowButtonStyle}" Margin="0,2,0,2"/>
+                    <Button x:Name="btnAddPWLAction" FontSize="11" Content="Add PWL Orig Element"  Width="160" Click="btnAddPWLAction_Click" Style="{StaticResource @WindowButtonStyle}" Margin="0,2,0,2"/>
+                    
+                </StackPanel>
+            </Border>
+        </Popup>
+
+        <StatusBar Grid.Row="3" Grid.ColumnSpan="3" Background="{StaticResource $BackgroundColor_LightGray}">
+            <Label x:Name="lblStatus" Grid.ColumnSpan="3" Style="{StaticResource @LabelStyle}">Status</Label>
+        </StatusBar>
+
+    </Grid>
+</Window>

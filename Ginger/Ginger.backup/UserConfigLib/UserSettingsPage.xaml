@@ -1,0 +1,37 @@
+﻿<Page x:Class="Ginger.User.UserSettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.User"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="UserSettings">
+
+    <ScrollViewer Background="{StaticResource $BackgroundColor_LightGray}">
+        <StackPanel>
+            <Label Content="Terminology Type:" Style="{StaticResource $LabelStyle}" Margin="-5,20,0,0"/>
+            <ComboBox x:Name="xTerminologyTypeComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="xTerminologyTypeComboBox_SelectionChanged"/>
+            <Label x:Name="xTerminologyTypeNoteLbl" Content="Note: Terminology Type selection change will effect items names on UI, changes will fully take effect only after Ginger re-start." Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" FontSize="9" />
+
+            <Label Content="Logging Level:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="-5,5,0,0"/>
+            <ComboBox x:Name="xLoggingLevelComboBox" Style="{StaticResource $FlatInputComboBoxStyle}"/>
+            
+            <CheckBox x:Name="xAutoLoadLastSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Auto load last Solution"  Margin="0,10,0,0"/>
+            
+            <CheckBox x:Name="xAskToUpgradeSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Do not ask to upgrade Solution"  Margin="0,5,0,0"/>
+            
+            <CheckBox x:Name="xAskToRecoverSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Do not offer to recover un-saved items"  Margin="0,5,0,0"/>
+
+            <CheckBox x:Name="xAutoLoadLastRunSetCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Auto load last Run Set"  Margin="0,5,0,0"/>
+            
+            <!--<CheckBox x:Name="xShowBFSaveWarnCheckBox" Style="{StaticResource $CeckBoxStyle}"  Margin="0,5,0,0">
+                <CheckBox.Content>
+                    <GingerCore:ucTextDicResource Text="Show [BusinessFlow] change save warning when shifting to automate other [BusinessFlow]"/>
+                </CheckBox.Content>
+            </CheckBox>-->
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

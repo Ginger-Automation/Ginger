@@ -1,0 +1,29 @@
+    <Page x:Class="GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard.AdAPIModelMappingPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"   
+      xmlns:GingerWPF="clr-namespace:GingerWPF.UserControlsLib"
+      xmlns:ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="AdAPIModelMappingPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+   
+            <RowDefinition Height="200*"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="150*"/>
+        </Grid.ColumnDefinitions>
+
+        <ginger:ucGrid x:Name="ApplicationModelsGrid" Grid.Row="0" Grid.Column="0"  Title="API Models" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowUndo="Collapsed" EnableTagsPanel="False" ShowUpDown="Collapsed"></ginger:ucGrid>
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
+        <ginger:ucGrid x:Name="XMLOptionalValuesTemplatesGrid" Grid.Row="0" Grid.Column="2" Title="Sample Request Files" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowAdd="Visible" ShowDelete="Visible" ShowClearAll="Visible" ShowUndo="Collapsed" EnableTagsPanel="False" ShowUpDown="Collapsed"></ginger:ucGrid>
+        
+    </Grid>
+</Page>

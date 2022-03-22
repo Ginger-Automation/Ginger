@@ -1,0 +1,19 @@
+    <Page x:Class="Ginger.SourceControl.ResolveConflictPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      Height="350" Width="700"
+	Title="ResolveConflictPage">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <StackPanel Margin="0,10,0,10">
+            <Image HorizontalAlignment="Right" Source="{StaticResource  @BrokenFile_Orange_32x32 }" Height="32" Width="32" Margin="5,0,30,5" />
+            <TextBlock x:Name="UserMessaheTextBlock" Style="{StaticResource @TextBlockStyle}" Text="Conflict has been identified..." Margin="5,0,0,20" Height="Auto"></TextBlock>
+            <Label Content="Conflict Resolve Operation:" Style="{StaticResource @LabelStyle}"></Label>
+            <ComboBox x:Name="ConflictResolveOperationCombo" Style="{StaticResource @InputComboBoxStyle}" Width="250" HorizontalAlignment="Left"></ComboBox>
+        </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

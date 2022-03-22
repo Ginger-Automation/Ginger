@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns2:testscript xmlns:ns2="http://jazz.net/xmlns/alm/qm/v0.1/"
+    xmlns:ns1="http://schema.ibm.com/vega/2008/" xmlns:ns3="http://purl.org/dc/elements/1.1/"
+    xmlns:ns4="http://jazz.net/xmlns/prod/jazz/process/0.6/"
+    xmlns:ns5="http://jazz.net/xmlns/alm/v0.1/" xmlns:ns6="http://purl.org/dc/terms/"
+    xmlns:ns7="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:ns8="http://jazz.net/xmlns/alm/qm/v0.1/tsl/v0.1/"
+    xmlns:ns9="http://jazz.net/xmlns/alm/qm/v0.1/testscript/v0.1/"
+    xmlns:ns10="http://jazz.net/xmlns/alm/qm/qmadapter/task/v0.1"
+    xmlns:ns11="http://jazz.net/xmlns/alm/qm/qmadapter/v0.1"
+    xmlns:ns12="http://jazz.net/xmlns/alm/qm/v0.1/executionworkitem/v0.1"
+    xmlns:ns13="http://open-services.net/ns/core#" xmlns:ns14="http://open-services.net/ns/qm#"
+    xmlns:ns15="http://jazz.net/xmlns/prod/jazz/rqm/process/1.0/"
+    xmlns:ns16="http://www.w3.org/2002/07/owl#"
+    xmlns:ns17="http://jazz.net/xmlns/alm/qm/v0.1/executionresult/v0.1"
+    xmlns:ns18="http://jazz.net/xmlns/alm/qm/v0.1/catalog/v0.1"
+    xmlns:ns20="http://jazz.net/xmlns/alm/qm/styleinfo/v0.1/"
+    xmlns:ns21="http://www.w3.org/1999/XSL/Transform">
+  <ns2:projectArea
+      href="{ALM.Domain}/{ALM.manageType}/resource/itemOid/com.ibm.team.process.ProjectArea/{ALM.ProjectGUID}"
+      alias="{ALM.ProjectName}"/>
+  <ns3:title>{ALM.TestScriptName}</ns3:title>
+  <ns3:description>{ALM.TestScriptDesc}</ns3:description>
+  <ns5:state
+      ns7:resource="{ALM.Domain}/{ALM.manageType}/service/com.ibm.rqm.integration.service.IIntegrationService/process-info/{ALM.ProjectGUID}/workflowstate/com.ibm.rqm.process.testscript.workflow/com.ibm.rqm.planning.common.new">com.ibm.rqm.planning.common.new</ns5:state>
+  <ns3:creator
+      ns7:resource="{ALM.Domain}/jts/resource/itemName/com.ibm.team.repository.Contributor/{ALM.UserName}">{ALM.UserName}</ns3:creator>
+  <ns5:owner>unassigned</ns5:owner>
+  <ns2:locked>false</ns2:locked>
+  <ns2:scripttype>com.ibm.rqm.planning.common.scripttype.manual</ns2:scripttype>
+  <ns2:variables >
+    <ns2:variable ALM.id="loop_variable">
+      <ns2:name>{ALM.ParamName}</ns2:name>
+      <ns2:value>{ALM.ParamValue}</ns2:value>
+    </ns2:variable>
+    {ALM.TestScriptVariables}
+  </ns2:variables>
+  <ns2:includeBuiltInVars>false</ns2:includeBuiltInVars>
+  <ns2:steps>
+    {ALM.StepScriptContent}
+    <ns9:step ALM.id="loop_Step" stepIndex="{ALM.StepOrder}" type="variable" >
+      <ns9:name>{ALM.StepName}</ns9:name>
+      <ns9:title>{ALM.StepTitle}</ns9:title>
+      <ns9:description >
+        <div:div xmlns:div="http://www.w3.org/1999/xhtml"
+            xmlns="http://www.w3.org/1999/xhtml"
+            xmlns:o="urn:schemas-microsoft-com:office:office"
+            xmlns:st1="urn:schemas-microsoft-com:office:smarttags"
+            xmlns:v="urn:schemas-microsoft-com:vml"
+            xmlns:w="urn:schemas-microsoft-com:office:word">
+          <div> {ALM.StepDesc} </div>
+          <button class="executionVariable" ALM.id="loop_Step_Param" disabled="true" id="{ALM.step.ParamName}" name="ExecVariable" style="border:solid thin #D8D8D8;background:#EEFFFF;font-size:10pt;font-family:monospace;margin:0 0.5em;" type="button">
+            {ALM.step.ParamName}
+          </button>
+          <button class="executionVariable" ALM.id="loop_Step_Param_Value" disabled="true" id="{ALM.step.ParamValue}" name="ExecVariableValue" style="border:solid thin #D8D8D8;background:#EEFFFF;font-size:10pt;font-family:monospace;font-style:italic;margin:0 0.5em;" type="button">
+            {ALM.step.ParamValue}
+          </button>
+        </div:div>
+      </ns9:description>
+      <ns9:expectedResult>
+        <div:div xmlns:div="http://www.w3.org/1999/xhtml"
+            xmlns="http://www.w3.org/1999/xhtml">{ALM.StepExpextedResult}</div:div>
+      </ns9:expectedResult>
+      <ns9:comment/>
+      <ns9:compare/>
+    </ns9:step>
+  </ns2:steps>
+</ns2:testscript>
+

@@ -1,0 +1,325 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>Ginger Execution Report</title>
+
+    <meta name="description" content="Static &amp; Dynamic Tables" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    {css_path}
+    <style type="text/css">
+        {css_to_place}
+    </style>
+    {canvas_path}
+    {js_path}
+    {js_path}
+    <script type="text/javascript">
+        {js_to_place}
+    </script>
+</head>
+<body class="no-skin">
+    <div style="background-color:#EBEFF2">
+        <div style="height:50px;background-color:#AAD0EE">
+        </div>
+        <div id="navbar" class="navbar navbar-default">
+            <div class="navbar-container" id="navbar-container">
+                <div class="navbar-header pull-left" style="margin-top:10px" >
+                    {beat_logo}
+                </div>
+                <div style="float:left;display:block;width:47%">
+                    {ginger_logo}
+                </div>
+                <div class="navbar-buttons navbar-header pull-right" style="margin-right:80px;">
+                    {company_logo}
+                </div>
+            </div>
+        </div>
+        <div class="main-container" id="main-container">
+            <div class="main-content">
+                <div class="main-content-inner">
+                    <div class="breadcrumbs" id="breadcrumbs">
+
+                    </div>
+                    <div class="page-content">
+                        <div class="page-header">
+                            <h1 class="clss1" id="breadcum">
+                                <a href=".\GingerExecutionReport.html">{Parent_RunSetReport_Name_Link}</a>
+                            </h1>
+                            <h1 id="clsh1">
+                                Ginger Execution Report
+                            </h1>
+                            <span class="clsb1" id="b1"> Summary View </span>
+                        </div>                        
+                    </div>                    
+                    <div class="page-content" style="margin-top:0 auto">
+                        <div class="row">
+                            <div class="col-xs-12">                          
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="panel-heading">
+                                            <a class="accordion-toggle" data-toggle="collapse" href="#collapseRunset">
+                                                <i class="ace-icon fa fa-angle-down bigger202" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+                                                <h4 class="orangetxt"> Execution General Details </h4>
+                                            </a>
+                                        </div>
+                                        <div class="collapse in tableScroll" id="collapseRunset">
+                                            <div>
+                                                <table class="table table-striped table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            {ExecutionGeneralDetails_Headers}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            {ExecutionGeneralDetails_Data}
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!--GeneralDetails_Start-->
+                                            <div>
+                                                <table class="table table-striped table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            {GeneralDetails_Headers}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            {GeneralDetails_Data}
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!--GeneralDetails_End-->
+                                        </div>
+                                    </div>
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--ExecutionStatisticsDetails_Start-->
+                    <div class="page-content">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <!--TEMP!!!-->
+                                        <div class="panel-heading">
+                                            <a class="accordion-toggle" data-toggle="collapse" href="#collapseExecutionStatistics">
+                                                <i class="{ExecutionStatisticscollapseStyle}" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+                                                <h4 class="orangetxt"> Execution Statistics </h4>
+                                            </a>
+                                        </div>
+                                        <div class="{ExecutionStatisticsIscollapse}" id="collapseExecutionStatistics">
+                                            <div class="row">                                                
+                                                <div class="percentSpace" style="position:relative;left:3%;width:100%">
+                                                    <div class="col-xs-12">
+                                                        <div style='height: 250px; float:left;'>
+                                                            <div id="GingerContainer" style="height: 100%; width: 100%;">
+                                                                <script type="text/jsx"
+                                                                        data-presets="es2017,react,stage-0"
+                                                                        data-plugins="transform-decorators-legacy">
+                                                                    const GingerRunnerStat = [{name: 'Passed', value: {GingerRunnersTotalPass}},
+                                                                    {name: 'Failed', value: {GingerRunnersTotalFail}},
+                                                                    {name: 'Stopped', value: {GingerRunnersTotalStopped}},
+                                                                    {name: 'Other', value: {GingerRunnersTotalOther}},
+                                                                    ]
+                                                                    var TotalGingerRunner = 0;
+                                                                    for (var i = 0; i< GingerRunnerStat.length; i++)
+                                                                    {
+                                                                    TotalGingerRunner += GingerRunnerStat[i].value;
+                                                                    }
+                                                                    CreateChart(GingerRunnerStat, 'GingerContainer', 'Ginger Runner', TotalGingerRunner );
+                                                                </script>
+                                                            </div>                                                            
+                                                        </div>
+                                                        <div style='height: 250px; float:left;'>
+                                                            <div id="BusinessFlowContainer" style="height: 100%; width: 100%;">
+                                                                <script type="text/jsx"
+                                                                        data-presets="es2017,react,stage-0"
+                                                                        data-plugins="transform-decorators-legacy">
+                                                                    var BusinessflowStat = [{name: 'Passed', value: {BusinessFlowsTotalPass}},
+                                                                    {name: 'Failed', value: {BusinessFlowsTotalFail}},
+                                                                    {name: 'Stopped', value: {BusinessFlowsTotalStopped}},
+                                                                    {name: 'Other', value: {BusinessFlowsTotalOther}},
+                                                                    ]
+                                                                    var TotalBusinessflow = 0;
+                                                                    for (var i = 0; i< BusinessflowStat.length; i++)
+                                                                    {
+                                                                    TotalBusinessflow += BusinessflowStat[i].value;
+                                                                    }
+                                                                    CreateChart(BusinessflowStat, 'BusinessFlowContainer', 'Business Flows', TotalBusinessflow );
+                                                                </script>
+                                                            </div>                                                            
+                                                        </div>
+                                                        <div style='height: 250px; float:left;'>
+                                                            <div id="ActivitiesContainer" style="height: 100%; width: 100%;">
+                                                                <script type="text/jsx"
+                                                                        data-presets="es2017,react,stage-0"
+                                                                        data-plugins="transform-decorators-legacy">
+                                                                    var ActivitiesStat = [{name: 'Passed', value: {ActivitiesTotalPass}},
+                                                                    {name: 'Failed', value: {ActivitiesTotalFail}},
+                                                                    {name: 'Stopped', value: {ActivitiesTotalStopped}},
+                                                                    {name: 'Other', value: {ActivitiesTotalOther}},
+                                                                    ]
+                                                                    var TotalActivities = 0;
+                                                                    for (var i = 0; i< ActivitiesStat.length; i++)
+                                                                    {
+                                                                     TotalActivities += ActivitiesStat[i].value;
+                                                                    }
+                                                                    CreateChart(ActivitiesStat, 'ActivitiesContainer', 'Activities', TotalActivities );
+                                                                </script>
+                                                            </div>                                                            
+                                                        </div>
+                                                        <div style='height: 250px; float:left;'>                                                           
+                                                            <div id="ActionContainer" style="height: 100%; width: 100%;">
+                                                                <script type="text/jsx"
+                                                                        data-presets="es2017,react,stage-0"
+                                                                        data-plugins="transform-decorators-legacy">
+                                                                    var ActionsStat = [{name: 'Passed', value: {ActionsTotalPass}},
+                                                                    {name: 'Failed', value: {ActionsTotalFail}},
+                                                                    {name: 'Stopped', value: {ActionsTotalStopped}},
+                                                                    {name: 'Other', value: {ActionsTotalOther}},
+                                                                    ]
+                                                                    var TotalActions = 0;
+                                                                    for (var i = 0; i< ActionsStat.length; i++)
+                                                                    {
+                                                                      TotalActions += ActionsStat[i].value;
+                                                                    }
+                                                                    CreateChart(ActionsStat, 'ActionContainer', 'Actions', TotalActions );
+                                                                </script>
+                                                            </div>                                                                                                    
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>                                                                                        
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--ExecutionStatisticsDetails_End-->
+                  
+                    <!--ExecutionBusinessFlowsDetails_Start-->
+                    <div class="page-content" style="margin-top:0 auto">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="panel-heading">
+                                            <a class="accordion-toggle" data-toggle="collapse" href="#collapseExecutionBusinessFlowsDetails">
+                                                <i class="{BusinessFlowsDetailsStyle}" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+                                                <h4 class="orangetxt">Executed Business Flows Details</h4>
+                                            </a>
+                                        </div>
+                                        <div class="{BusinessFlowsDetailsIscollapse}" id="collapseExecutionBusinessFlowsDetails">
+                                            <div class="tableScroll">
+                                                <table class="table table-striped table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            {BusinessFlowsDetails_Headers}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            {BusinessFlowsDetails_Data}
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--ExecutionBusinessFlowsDetails_End-->
+
+                    <!--FailuresDetails_Start-->
+                    <div class="page-content" style="margin-top:0 auto">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="panel-heading">
+                                            <a class="accordion-toggle" data-toggle="collapse" href="#collapseFailuresDetails">
+                                                <i class="{FailuresDetailsStyle}" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+                                                <h4 class="orangetxt">Failed Actions Details</h4>
+                                            </a>
+                                        </div>
+                                        <div class="{FailuresDetailsIscollapse}" id="collapseFailuresDetails">
+                                            <div class="tableScroll">
+                                                <table class="table table-striped table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            {FailuresDetails_Headers}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            {FailuresDetails_Data}
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--FailuresDetails_End-->
+
+                    <div class="alert alert-info" style="margin-top:10px">{ReportCreated}</div>                    
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-inner">                    
+                    <div class="footer-content">
+
+                    </div>
+                </div>
+            </div>
+            <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+                <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+            </a>
+        </div>
+        <!-- basic scripts -->                
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <span class="close">&times;</span>
+            <img class="modal-content" id="current_image_in_modal">
+            <div id="caption">sdafasd asdfasdf</div>
+        </div>
+
+        <script>
+    // Get the modal
+    var modal = document.getElementById('myModal');
+
+    function show_modal(image_id) {
+        var img = document.getElementById(image_id);
+        var modalImg = document.getElementById("current_image_in_modal");
+        var captionText = document.getElementById("caption");
+
+        modal.style.display = "block";
+        modalImg.src = img.src;
+        captionText.innerHTML = img.alt;
+    }
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+        </script>
+
+    </div>
+</body>
+</html>

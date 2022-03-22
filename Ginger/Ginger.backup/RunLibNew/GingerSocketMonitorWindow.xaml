@@ -1,0 +1,128 @@
+    <Window x:Class="Ginger.Drivers.CommunicationProtocol.GingerSocketMonitorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+        xmlns:local1="clr-namespace:GingerWPF.GeneralLib"
+        Title="Ginger Socket Monitor" Height="400" Width="600">
+    <Window.Resources>
+        <local1:ListItemIndexConverter x:Key="RowNumberConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+            <RowDefinition Height="32"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="70*"/>
+            <ColumnDefinition Width="30*"/>
+        </Grid.ColumnDefinitions>
+        
+
+        <StackPanel Orientation="Horizontal">
+            <Button x:Name="ClearButton" Click="ClearButton_Click">Clear</Button>
+            <Button x:Name="ResendButton" Click="ResendButton_Click">Resend</Button>
+            <Button x:Name="SendButton" Click="SendButton_Click">Send</Button>
+            <TextBox x:Name="PayLoadNameTextBox" Margin="10" Width="100"></TextBox>
+        </StackPanel>
+
+
+        <ListView x:Name="MainListView" Grid.Row="1" HorizontalContentAlignment="Stretch" SelectionChanged="MainListView_SelectionChanged">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="4">
+                        <Grid.ColumnDefinitions>
+                            <!--Row Number-->
+                            <ColumnDefinition Width="40"/>
+                            <!--Time Stamp-->
+                            <ColumnDefinition Width="100"/>
+                            <!--Log Type-->
+                            <ColumnDefinition Width="30"/>
+                            <!--Status Icon-->
+                            <ColumnDefinition Width="50"/>
+                            <!--Name-->
+                            <ColumnDefinition Width="100"/>
+                            <!--Info-->
+                            <ColumnDefinition Width="250*"/>
+                            <!--Len-->
+                            <ColumnDefinition Width="50"/>
+                            <!--Elapsed-->
+                            <ColumnDefinition Width="50"/>
+
+
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35"/>
+                            <RowDefinition Height="5"/>
+                        </Grid.RowDefinitions>
+
+
+                        <!--Show round button with row number-->
+                        <Button Height="35" Width="35" Grid.Column="0">
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Grid>
+                                                    <Path Name="Ellipse" Stroke="#FF3EA7FC" StrokeThickness="1" Fill="#FFF5EFED">
+                                                        <Path.Data>
+                                                            <RectangleGeometry Rect="2,2,30,30" RadiusX="15" RadiusY="15"/>
+                                                        </Path.Data>
+                                                    </Path>
+
+                                                    <!--Show Row Number-->
+                                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF3EA7FC" FontSize="12" Text="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource RowNumberConverter}}" />
+
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Ellipse" Property="Fill">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush Color="LightBlue"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+
+                        </Button>
+
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding TimeStamp}" Foreground="Black"/>
+
+                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding LogType}" Foreground="Black"/>
+
+                        <UserControls:ImageMakerControl Grid.Column="3" ImageType="{Binding StatusIcon}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        
+                        <TextBlock Grid.Column="4" VerticalAlignment="Center" Text="{Binding Name}" Foreground="Black"/>
+                        <TextBlock Grid.Column="5" VerticalAlignment="Center" Text="{Binding ascii}" Foreground="Black"/>
+                        <TextBlock Grid.Column="6" VerticalAlignment="Center" Text="{Binding Len}" ToolTip="Actual packet length" HorizontalAlignment="Right" Foreground="Black"/>
+                        <TextBlock Grid.Column="7" VerticalAlignment="Center" Text="{Binding Elapsed}" ToolTip="Elapsed milliseconds" HorizontalAlignment="Right" Foreground="Black"/>
+
+
+                        <!--show line between rows-->
+                        <Rectangle Grid.Row="1" Grid.ColumnSpan="5" HorizontalAlignment="Stretch"  VerticalAlignment="Center" Fill="LightGray" Height="1"/>
+
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+        </ListView>
+
+        <!--<StackPanel x:Name="FloatingStackPanel" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
+            <Button x:Name="EditButton" UserControls:ImageMaker.Content="Edit"  Width="32" Height="32"/>
+            <Button x:Name="DeleteButton" UserControls:ImageMaker.Content="Delete"  Width="32" Height="32"/>
+        </StackPanel>-->
+
+
+        <Label x:Name="MessageLabel" Grid.Row="2" Foreground="Red" FontWeight="Bold">Window is closing</Label>
+
+        <TextBlock x:Name="PacketInfoTextBlock" Grid.Row="1" Grid.Column="1"></TextBlock>
+        
+    </Grid>
+</Window>

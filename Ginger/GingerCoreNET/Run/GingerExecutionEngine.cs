@@ -58,6 +58,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using Activity = GingerCore.Activity;
 
 namespace Ginger.Run
 {

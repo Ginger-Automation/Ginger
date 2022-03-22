@@ -1,0 +1,51 @@
+    <Window x:Class="Ginger.GenericWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="" 
+        WindowStyle="None"
+        BorderThickness="1"
+        BorderBrush="{DynamicResource $Color_DarkBlue}"     
+        Height="300" Width="300"
+        StateChanged="Window_StateChanged" 
+        WindowStartupLocation="CenterScreen"
+        SizeChanged="Window_SizeChanged"
+        AutomationProperties.AutomationId="GenericWindow"
+        AutomationProperties.Name="GenericWindow"
+        Closed="Window_Closed"
+        >
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel x:Name="HeaderPanel" Grid.Row="0" Background="{DynamicResource $BackgroundColor_DarkBlue}" MouseLeftButtonDown="HeaderPanel_MouseLeftButtonDown" >
+            <Label x:Name="winTitle" Content="Page Title" Foreground="{StaticResource $BackgroundColor_LightGray}" FontWeight="Bold" FontSize="14" FontFamily="Open Sans" VerticalAlignment="Center" Margin="0,0,0,0"/>
+            <Button x:Name="UpperCloseBtn" ToolTip="Close Window" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" Click="CloseBtn_Click" Background="Transparent" Width="20" BorderBrush="Transparent">
+                <Image Source="{DynamicResource @CloseWhite_20x20.png}" />
+            </Button>
+            <Button x:Name="MaximizeBtn" ToolTip="Maximize Window" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,2,0" Click="MaximizeBtn_Click" Background="Transparent" Width="20" BorderBrush="Transparent">
+                <Image Source="{DynamicResource @MaximaizeWin2_20x20.png}" />
+            </Button>
+            <Button x:Name="RestoreBtn" ToolTip="Restore Window" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,2,0" Click="RestoreBtn_Click" Visibility="Collapsed" Background="Transparent" Width="20" BorderBrush="Transparent">
+                <Image Source="{DynamicResource @ShrinkWinWhite_20x20.png}" />
+            </Button>
+            <Button x:Name="MinimizeBtn" ToolTip="Minimize Window" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,2,0" Click="MinimizeBtn_Click" Background="Transparent" Width="20" BorderBrush="Transparent">
+                <Image Source="{DynamicResource @MinimaizWinWhite_20x20.png}" />
+            </Button>
+            <Button x:Name="PinBtn" ToolTip="Un-Pin Window" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,8,0" Click="PinBtn_Click" Background="Transparent" Width="20" BorderBrush="Transparent">
+                <Image Source="{DynamicResource @PinWhite_20x20.png}" />
+            </Button>
+        </DockPanel>
+
+        <ScrollViewer x:Name="WindowScrollViewer" Grid.Row="1" VerticalScrollBarVisibility="Hidden"  HorizontalScrollBarVisibility="Hidden">
+            <Frame x:Name="PageFrame" AutomationProperties.AutomationId="PageFrame AID"  Background="white" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden" ></Frame>
+        </ScrollViewer>
+
+        <DockPanel x:Name="BottomPanel" Grid.Row="2" Background="{DynamicResource $BackgroundColor_LightGray}">
+            <Button x:Name="CloseBtn" IsCancel="True" Content="Close" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" Click="CloseBtn_Click" Style="{StaticResource $RoundTextButtonStyle_Generic}" />
+        </DockPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,42 @@
+    <Page xmlns:Actions="clr-namespace:Ginger.Actions"  x:Class="Ginger.Actions.Java.ActJavaEXEEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+	Title="ActJavaEXEEditPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <StackPanel>
+            <StackPanel>
+                <Label  Style="{StaticResource @LabelStyle}" FontWeight="Bold">Java Version Path:</Label>
+                <StackPanel Margin="20,7,0,0">
+                    <RadioButton x:Name="JavaPathHomeRdb" GroupName="JavaPathGroup" Content="Use JAVA HOME Environment Variable"></RadioButton>
+                    <Grid Margin="0,2,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="200*"/>
+                            <ColumnDefinition Width="55"/>
+                        </Grid.ColumnDefinitions>
+                        <RadioButton x:Name="JavaPathOtherRdb" GroupName="JavaPathGroup" Grid.Column="0" Content="Use Other: " VerticalAlignment="Center" Checked="JavaPathOtherRdb_CheckedUnchecked" Unchecked="JavaPathOtherRdb_CheckedUnchecked" ></RadioButton>
+                        <Actions:UCValueExpression x:Name="JavaPathTextBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="False"/>
+                        <Button x:Name="BrowseJavaPath" Content="Browse" Grid.Column="2" Click="BrowseJavaPath_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0" IsEnabled="False"/>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+
+            <!--Selected Script-->
+            <StackPanel x:Name="ScriptStackPanel" Margin="0,10,0,0">
+                <Label  Style="{StaticResource @LabelStyle}" FontWeight="Bold">Selected Jar:</Label>
+                <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="10">Optional Jars supposed to be located in Solution ~\Documents\Java\ folder.</Label>
+                <ComboBox x:Name="ScriptNameComboBox" Style="{StaticResource @InputComboBoxStyle}" Width="250" Margin="5,0,0,0" HorizontalAlignment="Left" ></ComboBox>
+            </StackPanel>
+
+            <!--Selected Script Description-->
+            <StackPanel Margin="0,10,0,0">
+                <Label x:Name="ScriptDescriptionLabel" Style="{StaticResource @InputFieldLabelStyle}">Script Description: aa bb cc</Label>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

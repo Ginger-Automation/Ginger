@@ -1,0 +1,91 @@
+<Page xmlns:Ginger="clr-namespace:Ginger"  x:Class="Ginger.Run.RunSetActions.RunSetActionHTMLReportSendEmailEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Actions="clr-namespace:Ginger.Actions" 
+       xmlns:h="clr-namespace:Ginger.Help" 
+      mc:Ignorable="d" 
+      d:DesignHeight="460" d:DesignWidth="600"
+	Title="RunSetActionHTMLReportEmailEditPage">
+
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="399*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TabControl Grid.RowSpan="2">
+            <TabItem Name="xMessage">
+                <TabItem.Header>
+                    <Label Content="Message" 
+                MouseLeftButtonDown="TabItem_MouseLeftButtonDown" 
+                HorizontalAlignment="Stretch"/>
+                </TabItem.Header>
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="57*"/>
+                        <ColumnDefinition Width="238*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="368*" />
+                        <RowDefinition Height="0*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.ColumnSpan="2">
+                        <Label Style="{StaticResource @LabelStyle}" x:Name="LabelFrom" Content="From:" />
+                        <Actions:UCValueExpression x:Name="MailFromTextBox" ToolTip="From" />
+                        <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelMailFromDisplayName" Content="From Display Name:" />
+                        <Actions:UCValueExpression x:Name="xMailFromDisplayNameTextBox" ToolTip="Provide Display Name to show if it has not configured for sender email." />
+
+                        <Label Style="{StaticResource @LabelStyle}" Content="To:" />
+                        <Actions:UCValueExpression x:Name="MailToTextBox" ToolTip="To"/>
+
+                        <Label Style="{StaticResource @LabelStyle}" Content="CC:" />
+                        <Actions:UCValueExpression x:Name="MailCCTextBox" ToolTip="CC" />
+
+                        <Label Style="{StaticResource @LabelStyle}" Content="Subject:" Margin="0,6,0,0"  />
+                        <Actions:UCValueExpression x:Name="SubjectTextBox" ToolTip="Subject"/>
+
+                        <DockPanel Margin="0,6,0,0" >
+                            <Label Style="{StaticResource @LabelStyle}" Content="Body Content:" DockPanel.Dock="Left"/>
+                            <StackPanel Orientation="Horizontal" x:Name="Panel">
+                                <RadioButton x:Name="RadioHTMLMailOption" Tag="HTMLReport"  GroupName="HTMLMailOptionRadio" Content="HTML report" Width="100" VerticalAlignment="Center" Margin="0,15" Checked="RadioHTMLMailOption_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>
+                                <RadioButton x:Name="RadioFreeTextOption" Tag="FreeText" GroupName="HTMLMailOptionRadio" Content="Free Text" Width="119" VerticalAlignment="Center" Margin="0,15" Checked="RadioFreeTextOption_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>
+                            </StackPanel>
+                        </DockPanel>
+                        <StackPanel x:Name="comment">
+                            <Label Style="{StaticResource @LabelStyle}" Content="Email Body Report Template:" Margin="0,6,0,0"  />
+                            <ComboBox x:Name="DefaultTemplatePickerCbx"  ContextMenu="{x:Null}" Width="250" Style="{DynamicResource @InputComboBoxStyle}" HorizontalAlignment="Left" SelectionChanged="DefaultTemplatePickerCbx_SelectionChanged" ></ComboBox>
+                            <Label Style="{StaticResource @LabelStyle}" Content="Comments:" Margin="0,6,0,0"  />
+                            <Actions:UCValueExpression x:Name="CommentTextBox"   ToolTip="Subject"/>
+                        </StackPanel>
+                        <Actions:UCValueExpression x:Name="BodyTextBox"  ToolTip="Subject" Visibility="Collapsed"  ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Attachments" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="GridAttachment">
+                    <Grid.Resources>
+                        <DataTemplate x:Key="ReportAttachment">
+                            <CheckBox x:Name="AttachmentsGrid_TemplateIsReport" Style="{StaticResource @CheckBoxStyle}" IsEnabled="{Binding IsReport}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="{Binding ZipIt,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                        <DataTemplate x:Key="ParamValueExpressionButton" >
+                            <Button x:Name="GridParamVEButton" Content="..." Click="GridParamVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}" IsEnabled="True" />
+                        </DataTemplate>
+                    </Grid.Resources>
+                    <StackPanel>
+                        <Ginger:ucGrid x:Name="AttachmentsGrid" Title="Attachments" ShowAdd="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+
+            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Frame x:Name="RunsetActionDeliveryMethodConfigPageFrame"></Frame>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>
+

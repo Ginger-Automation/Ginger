@@ -8,12 +8,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AssemblyVersion>4.1.0.0</AssemblyVersion>
     <FileVersion>4.1.0.0</FileVersion>
     <RootNamespace>Amdocs.Ginger.CoreNET</RootNamespace>
     <GenerateResourceUsePreserializedResources>True</GenerateResourceUsePreserializedResources>
     <Version>4.1.0</Version>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

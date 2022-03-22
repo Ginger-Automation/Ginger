@@ -1,0 +1,27 @@
+    <Page x:Class="Ginger.Actions._Common.ActUIElementLib.LocateByXPathEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+	Title="LocateByXPathEditPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="33*"/>
+            <RowDefinition Height="70*"/>
+            <RowDefinition Height="67*"/>
+            <RowDefinition Height="52*"/>
+            <RowDefinition Height="78*"/>
+        </Grid.RowDefinitions>
+        <Label Content="XPath Editor" HorizontalAlignment="Left" Grid.Row="0" Width="75"/>
+        <TextBox x:Name="XPathTextBox" Grid.Row="1"></TextBox>
+        <DataGrid x:Name="XPathGrid" Grid.Row="2"></DataGrid>
+
+        <Button x:Name="VerifyButton" Content="Verify" Grid.Row="3" Height="22" Margin="112,20,112,10" Width="76" Click="VerifyButton_Click" />
+        
+        <Label x:Name="ResultLabel" Grid.Row="4">Result</Label>
+
+    </Grid>
+</Page>
