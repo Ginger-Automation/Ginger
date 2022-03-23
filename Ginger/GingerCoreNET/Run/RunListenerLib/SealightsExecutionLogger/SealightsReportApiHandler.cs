@@ -51,14 +51,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             restClient.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;            
         }
            
-        public async Task SendCreationTestSessionToSealightsAsync()
+        public void SendCreationTestSessionToSealightsAsync()
         {
             if (restClient != null)
             {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Starting execution data to Sealights"));
 
                 string message = string.Format("execution data to Sealights");
-                bool responseIsSuccess = await SendRestRequestCreateSession(SEND_CREATEION_TEST_SESSION, Method.POST).ConfigureAwait(false);
+                bool responseIsSuccess = SendRestRequestCreateSession(SEND_CREATEION_TEST_SESSION, Method.POST);
                 if (responseIsSuccess)
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Successfully sent " + message);
@@ -80,7 +80,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             {
                 if (TestSessionId == null)
                 {
-                    await SendCreationTestSessionToSealightsAsync();
+                    SendCreationTestSessionToSealightsAsync();
                 }
 
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Starting to Send Test Events to Sealights"));
@@ -127,7 +127,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
 
 
-        private async Task<bool> SendRestRequestCreateSession(string api, Method apiMethod)
+        private bool SendRestRequestCreateSession(string api, Method apiMethod)
         {
             try
             {
@@ -153,7 +153,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 //restRequest.AddJsonBody(new { labId = "111", testStage = "Ginger Regression Test Gideon", bsId = "1624300311460", sessionTimeout = "10000" }); // Anonymous type object is converted to Json body
                 restRequest.AddJsonBody(new { labId = labId, testStage = testStage, bsId = bsId, sessionTimeout = sessionTimeout }); // Anonymous type object is converted to Json body
 
-                IRestResponse response = await restClient.ExecuteAsync(restRequest);
+                IRestResponse response = restClient.Execute(restRequest);
 
                 dynamic objResponse = JsonConvert.DeserializeObject(response.Content);
                 TestSessionId = objResponse.data.testSessionId.ToString(); 

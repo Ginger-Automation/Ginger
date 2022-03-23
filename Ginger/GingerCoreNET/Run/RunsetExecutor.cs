@@ -476,7 +476,7 @@ namespace Ginger.Run
                 // Gideon
                 if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes && Runners.Count > 0)
                 {
-                    await ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetStart(RunSetConfig);
+                    ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetStart(RunSetConfig);
                 }
 
                 //Start Run 

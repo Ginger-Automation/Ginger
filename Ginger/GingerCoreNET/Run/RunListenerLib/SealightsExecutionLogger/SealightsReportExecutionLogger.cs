@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         }
 
         #region RunSet
-        public async Task RunSetStart(RunSetConfig runsetConfig)
+        public void RunSetStart(RunSetConfig runsetConfig)
         {
             Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Sealights Session Creation");
             if (WorkSpace.Instance.RunsetExecutor != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null
@@ -64,7 +64,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             {
                 runsetConfig.ExecutionID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
             }
-             await SealightsReportApiHandler.SendCreationTestSessionToSealightsAsync();
+             SealightsReportApiHandler.SendCreationTestSessionToSealightsAsync();
         }
 
     
