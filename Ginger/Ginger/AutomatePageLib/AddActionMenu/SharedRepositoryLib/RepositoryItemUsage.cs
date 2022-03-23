@@ -37,14 +37,15 @@ namespace Ginger.Repository
             UpdateFailed,
             UpdatedAndSaved,
             SaveFailed,
+            NA
         }
 
         public enum eRepositoryItemPublishType
         {
-            [EnumValueDescription("Publish Instance")]
-            PublishInstance,
-            [EnumValueDescription("Publish Linked Instance")]
-            PublishLinkedInstance
+            [EnumValueDescription("Instance")]
+            Instance = 1,
+            [EnumValueDescription("Link")]
+            Link = 0
         }
 
         public enum ePublishStatus
@@ -71,6 +72,15 @@ namespace Ginger.Repository
             Original,
             Instance,
             None,
+            Link
+        }
+
+        public bool IsDisabled
+        {
+            get
+            {
+                return !UsageItem.IsLinkedItem;
+            }
         }
 
         public static class Fields

@@ -61,7 +61,7 @@ namespace Ginger.Repository
             else
                 mOriginalItem = mRepoItem;
 
-      
+
             usageGrid.DataSourceList = RepoItemUsages;
             RepoItemUsages.CollectionChanged += RepoItemUsages_CollectionChanged;
             SetUsagesGridView();
@@ -81,11 +81,11 @@ namespace Ginger.Repository
             {
                 await Task.Run(() =>
                 {
-                   StartProcessingIcon();
-                   SetStatus("Loading Business flows....");
-                 
-                   ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                               
+                    StartProcessingIcon();
+                    SetStatus("Loading Business flows....");
+
+                    ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+
                     Parallel.ForEach(BizFlows, BF =>
                     {
                         string businessFlowName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(BF.Name);
@@ -104,14 +104,22 @@ namespace Ginger.Repository
                                         if (a.Guid == mOriginalItem.Guid) continue;
 
                                     Ginger.Repository.RepositoryItemUsage.eUsageTypes type;
-                                    if (a.Guid == mRepoItem.Guid)
+                                    if (a.Type == eSharedItemType.Link)
+                                    {
+                                        type = RepositoryItemUsage.eUsageTypes.Link;
+                                    }
+                                    else if (a.Guid == mRepoItem.Guid)
+                                    {
                                         type = RepositoryItemUsage.eUsageTypes.Original;
+                                    }
                                     else
+                                    {
                                         type = RepositoryItemUsage.eUsageTypes.Instance;
+                                    }
 
-                                    RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), UsageItem = a, UsageItemName = a.ActivityName, UsageExtraDetails = "Number of Actions: " + a.Acts.Count().ToString(), UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
+                                    RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), UsageItem = a, UsageItemName = a.ActivityName, UsageExtraDetails = "Number of Actions: " + a.Acts.Count().ToString(), UsageItemType = type, Selected = a.Type != eSharedItemType.Link, Status = a.Type == eSharedItemType.Link ? RepositoryItemUsage.eStatus.NA : RepositoryItemUsage.eStatus.NotUpdated };
                                     itemUsage.SetItemPartesFromEnum(typeof(eItemParts));
-                                
+
 
                                     AddUsage(RepoItemUsages, itemUsage);
 
@@ -137,7 +145,7 @@ namespace Ginger.Repository
 
                                     RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Number of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": " + a.ActivitiesIdentifiers.Count().ToString(), UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                     itemUsage.SetItemPartesFromEnum(typeof(ActivitiesGroup.eItemParts));
-                                
+
                                     AddUsage(RepoItemUsages, itemUsage);
                                 }
                             }
@@ -163,7 +171,7 @@ namespace Ginger.Repository
 
                                         RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), HostActivity = activity, HostActivityName = activity.ActivityName, UsageItem = a, UsageItemName = a.Description, UsageExtraDetails = "", UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                         itemUsage.SetItemPartesFromEnum(typeof(Act.eItemParts));
-                                   
+
                                         AddUsage(RepoItemUsages, itemUsage);
                                     }
                                 }
@@ -189,7 +197,7 @@ namespace Ginger.Repository
 
                                     RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Current Value: " + a.Value, UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                     itemUsage.SetItemPartesFromEnum(typeof(VariableBase.eItemParts));
-                         
+
                                     AddUsage(RepoItemUsages, itemUsage);
                                 }
                             }
@@ -213,14 +221,14 @@ namespace Ginger.Repository
 
                                         RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), HostActivity = activity, HostActivityName = activity.ActivityName, UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Current Value: " + a.Value, UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                         itemUsage.SetItemPartesFromEnum(typeof(VariableBase.eItemParts));
-                                  
+
                                         AddUsage(RepoItemUsages, itemUsage);
                                     }
                                 }
                             }
                         }
                     });
-                 });
+                });
             }
             catch (Exception ex)
             {
@@ -253,7 +261,7 @@ namespace Ginger.Repository
                    new Action(
                        delegate ()
                        {
-                           xProcessingIcon.Visibility = Visibility.Visible;                          
+                           xProcessingIcon.Visibility = Visibility.Visible;
                        }
            ));
         }
@@ -292,14 +300,15 @@ namespace Ginger.Repository
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.Selected, StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
+            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.Selected, StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10});
+
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.HostBizFlowPath, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), WidthWeight = 25, ReadOnly = true });
             if (mRepoItem is Act || mRepoItem is VariableBase)
                 view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.HostActivityName, Header = GingerDicser.GetTermResValue(eTermResKey.Activity), WidthWeight = 25, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.UsageItemName, Header = "Usage Name", WidthWeight = 25, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.UsageExtraDetails, Header = "Usage Extra Details", WidthWeight = 20, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.UsageItemType, Header = "Usage Type", WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.SelectedItemPart, Header = "Part to Update ", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(RepositoryItemUsage.Fields.ItemParts, RepositoryItemUsage.Fields.SelectedItemPart, false), WidthWeight = 20 });
+            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.SelectedItemPart, Header = "Part to Update ", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(RepositoryItemUsage.Fields.ItemParts, RepositoryItemUsage.Fields.SelectedItemPart, false, true, nameof(RepositoryItemUsage.IsDisabled), true), WidthWeight = 20 });
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.Status, WidthWeight = 15, ReadOnly = true });
 
             usageGrid.SetAllColumnsDefaultView(view);
@@ -329,7 +338,7 @@ namespace Ginger.Repository
             if (RepoItemUsages.Count > 0)
             {
                 selectValue = !RepoItemUsages[0].Selected;//decide if to take or not
-                foreach (RepositoryItemUsage usage in RepoItemUsages)
+                foreach (RepositoryItemUsage usage in RepoItemUsages.Where(f => !f.UsageItem.IsLinkedItem))
                     usage.Selected = selectValue;
             }
         }
@@ -355,22 +364,22 @@ namespace Ginger.Repository
         {
             await Task.Run(() =>
             {
-                 StartProcessingIcon();
-         
-                foreach(var usage in RepoItemUsages)
+                StartProcessingIcon();
+
+                foreach (var usage in RepoItemUsages)
                 {
                     try
                     {
-                        if (usage.Selected && (usage.Status == RepositoryItemUsage.eStatus.NotUpdated || usage.Status == RepositoryItemUsage.eStatus.UpdateFailed || usage.Status == RepositoryItemUsage.eStatus.Pending))
+                        if (usage.Selected && !usage.UsageItem.IsLinkedItem && (usage.Status == RepositoryItemUsage.eStatus.NotUpdated || usage.Status == RepositoryItemUsage.eStatus.UpdateFailed || usage.Status == RepositoryItemUsage.eStatus.Pending))
                         {
                             if (usage.HostActivity != null)
                             {
-                                SetStatus("Updating: " + usage.HostActivity.ActivityName);                               
+                                SetStatus("Updating: " + usage.HostActivity.ActivityName);
                                 mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostActivity);
                             }
                             else
                             {
-                                SetStatus("Updating: " + usage.HostBusinessFlow.Name);                                
+                                SetStatus("Updating: " + usage.HostBusinessFlow.Name);
                                 mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostBusinessFlow);
                             }
 
@@ -391,17 +400,17 @@ namespace Ginger.Repository
 
         private async void SaveAllBizFlowsButton_Click(object sender, RoutedEventArgs e)
         {
-            
+
             await Task.Run(() =>
-            {            
-                foreach(var usage in RepoItemUsages)
+            {
+                foreach (var usage in RepoItemUsages)
                 {
                     StartProcessingIcon();
                     if (usage.Status == RepositoryItemUsage.eStatus.Updated ||
                            usage.Status == RepositoryItemUsage.eStatus.SaveFailed)
                     {
                         try
-                        {                            
+                        {
                             SetStatus("Saving...: " + usage.HostBusinessFlow.Name);
                             WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(usage.HostBusinessFlow);
                             usage.Status = RepositoryItemUsage.eStatus.UpdatedAndSaved;
@@ -424,6 +433,6 @@ namespace Ginger.Repository
         private async void RepositoryItemUsagePageLoaded(object sender, RoutedEventArgs e)
         {
             await FindUsages().ConfigureAwait(false);
-        }     
+        }
     }
 }

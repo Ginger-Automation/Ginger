@@ -65,12 +65,28 @@ namespace Ginger.Repository
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.Selected, Header = "Selected", StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 5 });
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.UsageItemName, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name", WidthWeight = 15, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.HostBizFlowPath, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Path", WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.RepositoryItemPublishType, Header = "Publish Type", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eRepositoryItemPublishType)) });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.InsertRepositoryInsatncePosition, Header = "Insert At", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template,
-                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eInsertRepositoryInsatncePosition)), nameof(RepositoryItemUsage.InsertRepositoryInsatncePosition), comboSelectionChangedHandler: InsertPositionCobmo_SelectionChanged) });
+
+            view.GridColsView.Add(new GridColView()
+            {
+                Field = RepositoryItemUsage.Fields.RepositoryItemPublishType,
+                Header = "Publish Type",
+                WidthWeight = 10,
+                StyleType = GridColView.eGridColStyleType.Template,
+                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eRepositoryItemPublishType)), nameof(RepositoryItemUsage.RepositoryItemPublishType),false,true)
+            });
+
+
+            view.GridColsView.Add(new GridColView()
+            {
+                Field = RepositoryItemUsage.Fields.InsertRepositoryInsatncePosition,
+                Header = "Insert At",
+                WidthWeight = 10,
+                StyleType = GridColView.eGridColStyleType.Template,
+                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eInsertRepositoryInsatncePosition)), nameof(RepositoryItemUsage.InsertRepositoryInsatncePosition), comboSelectionChangedHandler: InsertPositionCobmo_SelectionChanged)
+            });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemUsage.IndexActivityName), Header = "Index Activity", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(RepositoryItemUsage.ActivityNameList), nameof(RepositoryItemUsage.IndexActivityName), true) });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.PublishStatus, Header = "Status", WidthWeight = 20, ReadOnly = true,StyleType = GridColView.eGridColStyleType.ComboBox,CellValuesList = GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.ePublishStatus)) });
+            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.PublishStatus, Header = "Status", WidthWeight = 20, ReadOnly = true, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.ePublishStatus)) });
 
             xRepoItemPublisIngoGrid.SetAllColumnsDefaultView(view);
             xRepoItemPublisIngoGrid.InitViewItems();
@@ -79,7 +95,7 @@ namespace Ginger.Repository
             xRepoItemPublisIngoGrid.AddToolbarTool("@DropDownList_16x16.png", "Set Same Selected Part to All", new RoutedEventHandler(SetSamePartToAll));
         }
 
-         private void InsertPositionCobmo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void InsertPositionCobmo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var currentItem = (RepositoryItemUsage)xRepoItemPublisIngoGrid.CurrentItem;
 
@@ -167,14 +183,14 @@ namespace Ginger.Repository
                         {
                             Activity activityCopy = (Activity)mRepoItem.CreateInstance(true);
                             activityCopy.Active = true;
-                            
-                            if(repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd)
+
+                            if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd)
                             {
-                                repositoryItem.HostBusinessFlow.AddActivity(activityCopy,repositoryItem.HostBusinessFlow.ActivitiesGroups.Last());
+                                repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.Last());
                             }
                             else if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.Beginning)
                             {
-                                repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(),insertIndex:0);
+                                repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(), insertIndex: 0);
                             }
                             else if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AfterSpecificActivity)
                             {
@@ -190,9 +206,9 @@ namespace Ginger.Repository
                             }
                             if (!errorOccured)
                             {
-                                if (repositoryItem.RepositoryItemPublishType == RepositoryItemUsage.eRepositoryItemPublishType.PublishLinkedInstance)
+                                if (repositoryItem.RepositoryItemPublishType == RepositoryItemUsage.eRepositoryItemPublishType.Link)
                                 {
-                                    repositoryItem.HostBusinessFlow.MarkActivityAsLink(activityCopy.Guid,activityCopy.ParentGuid);
+                                    repositoryItem.HostBusinessFlow.MarkActivityAsLink(activityCopy.Guid, activityCopy.ParentGuid);
                                 }
                                 repositoryItem.PublishStatus = RepositoryItemUsage.ePublishStatus.Published;
                                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(repositoryItem.HostBusinessFlow);
@@ -248,7 +264,7 @@ namespace Ginger.Repository
                             }
                             if (!isPublishedInBF)
                             {
-                                itemUsage = new() { HostBusinessFlow = BF, HostBizFlowPath = System.IO.Path.Combine(BF.ContainingFolder, businessFlowName), UsageItemName = businessFlowName, UsageItemType = usageType, Selected = false, RepositoryItemPublishType = RepositoryItemUsage.eRepositoryItemPublishType.PublishLinkedInstance, InsertRepositoryInsatncePosition = RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd };
+                                itemUsage = new() { HostBusinessFlow = BF, HostBizFlowPath = System.IO.Path.Combine(BF.ContainingFolder, businessFlowName), UsageItemName = businessFlowName, UsageItemType = usageType, Selected = false, RepositoryItemPublishType = RepositoryItemUsage.eRepositoryItemPublishType.Link, InsertRepositoryInsatncePosition = RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd };
                                 AddBFUsageInList(itemUsage);
                             }
                         }
