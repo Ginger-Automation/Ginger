@@ -502,8 +502,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivity);
                     Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating and Saving Linked Activity instanced in Businessflows...");
-                    await UpdateLinkedInstances();
-                    Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating and Saving Linked Activity instanced in Bussinessflows...");
+                    await UpdateLinkedInstances(); 
                     mSaveWasDone = true;
                     mGenericWin.Close();
                     Reporter.HideStatusMessage();
@@ -552,11 +551,12 @@ namespace GingerWPF.BusinessFlowsLib
                                         mActivity.UpdateInstance(BF.Activities[i], eItemParts.All.ToString(), BF);
                                     }
                                 }
+                                lock (saveLock)
+                                {
+                                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BF);
+                                }
                             }
-                            lock (saveLock)
-                            {
-                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BF);
-                            }
+                           
                         }
                         catch (Exception ex)
                         {
