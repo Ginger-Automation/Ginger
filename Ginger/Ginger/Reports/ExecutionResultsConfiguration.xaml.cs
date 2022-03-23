@@ -105,12 +105,13 @@ namespace Ginger.Reports
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsSessionTimeoutTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.SealightsSessionTimeout));
 
-            xSealighsReportedEntityLevelComboBox.Items.Add("Business Flow");
-            xSealighsReportedEntityLevelComboBox.Items.Add("Activities Group");
-            xSealighsReportedEntityLevelComboBox.Items.Add("Activity");
+            //xSealighsReportedEntityLevelComboBox.Items.Add("Business Flow");
+            //xSealighsReportedEntityLevelComboBox.Items.Add("Activities Group");
+            //xSealighsReportedEntityLevelComboBox.Items.Add("Activity");
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsReportedEntityLevelComboBox, ComboBox.SelectedItemProperty, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel ));
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsReportedEntityLevelComboBox, ComboBox.SelectedItemProperty, _selectedExecutionLoggerConfiguration,
+            //    nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel ));
+            xSealighsReportedEntityLevelComboBox.BindControl(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
 
             //------------
 

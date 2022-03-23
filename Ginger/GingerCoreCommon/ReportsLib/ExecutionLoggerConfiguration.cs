@@ -23,6 +23,16 @@ using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Reports
 {
+    public enum eSealightsEntityLevel
+    {
+        [EnumValueDescription("Business Flow")]
+        BusinessFlow,
+        [EnumValueDescription("Activities Group")]
+        ActivitiesGroup,
+        [EnumValueDescription("Activity")]
+        Activity
+    }
+
     public class ExecutionLoggerConfiguration : RepositoryItemBase
     {
         public static partial class Fields
@@ -72,6 +82,8 @@ namespace Ginger.Reports
             [EnumValueDescription("During Execution")]
             DuringExecution
         }
+
+ 
 
         // Why we serialzie!!?
 
@@ -289,9 +301,9 @@ namespace Ginger.Reports
             }
         }
 
-        private string mSealightsReportedEntityLevel;
+        private eSealightsEntityLevel mSealightsReportedEntityLevel;
         [IsSerializedForLocalRepository]
-        public string SealightsReportedEntityLevel
+        public eSealightsEntityLevel SealightsReportedEntityLevel
         {
             get
             {

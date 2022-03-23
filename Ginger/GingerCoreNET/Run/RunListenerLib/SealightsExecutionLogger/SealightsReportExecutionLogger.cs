@@ -20,6 +20,7 @@ using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Run;
+using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -32,7 +33,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 {
     public class SealightsReportExecutionLogger : RunListenerBase
     {
-        public Context mContext; 
+        public Context mContext;
+        private long StartTime;
+        private long EndTime;
 
         private SealightsReportApiHandler mSealightsApiHandler;
         public SealightsReportApiHandler SealightsReportApiHandler
@@ -41,9 +44,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             {
                 if (mSealightsApiHandler == null)
                 {
-                    mSealightsApiHandler = new SealightsReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.SealightsURL);
-
-                    //mSealightsApiHandler = new SealightsReportApiHandler("https://amdocs.sealights.co");
+                    mSealightsApiHandler = new SealightsReportApiHandler();
                 }
                 return mSealightsApiHandler;
             }
@@ -63,49 +64,31 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             {
                 runsetConfig.ExecutionID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
             }
-            await SendCreationTestSessionToSealightsAsync(runsetConfig);
+             await SealightsReportApiHandler.SendCreationTestSessionToSealightsAsync();
         }
 
-        public async Task SendCreationTestSessionToSealightsAsync(RunSetConfig runsetConfig)
-        {
-            await SealightsReportApiHandler.SendCreationTestSessionToSealightsAsync();
-
-        }
+    
 
         public async Task RunSetEnd(RunSetConfig runsetConfig)
         {
-            await SendDeleteTestSessionToSealightsAsync(runsetConfig);
-        }
-
-        public async Task SendDeleteTestSessionToSealightsAsync(RunSetConfig runsetConfig)
-        {
             await SealightsReportApiHandler.SendDeleteSessionToSealightsAsync();
         }
+
         #endregion RunSet   
 
 
         #region Runner
         public override async void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
-            await RunnerRunStartTask(gingerRunner);
-        }
-
-        private async Task RunnerRunStartTask(GingerRunner gingerRunner)
-        {
-            
+            //await RunnerRunStartTask(gingerRunner);
         }
 
         public override async void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
-            if (!gingerRunner.Active || gingerRunner.Executor.ExecutionId == Guid.Empty || gingerRunner.Status == Execution.eRunStatus.Blocked)
+            if (!gingerRunner.Active || gingerRunner.Status == Execution.eRunStatus.Blocked)
             {
                 return;
             }
-            await RunnerRunEndTask((GingerExecutionEngine)gingerRunner.Executor);
-        }
-
-        private async Task RunnerRunEndTask(GingerExecutionEngine gingerRunner)
-        {
             await SealightsReportApiHandler.SendDeleteSessionToSealightsAsync();
         }
 
@@ -114,26 +97,22 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         #region BusinessFlow
         public override async void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
-           await BusinessFlowStartTask(businessFlow);
+           //await BusinessFlowStartTask(businessFlow);
         }
 
-        private async Task BusinessFlowStartTask(BusinessFlow businessFlow)
-        {
-            
-        }
+        
 
         public override async void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
-            if (!businessFlow.Active || businessFlow.ExecutionId == Guid.Empty || businessFlow.RunStatus == Execution.eRunStatus.Blocked)
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.BusinessFlow)
             {
-                return;
-            }
-           await BusinessFlowEndTask(businessFlow);
-        }
+                if (!businessFlow.Active || businessFlow.RunStatus == Execution.eRunStatus.Blocked)
+                {
+                    return;
+                }
 
-        private async Task BusinessFlowEndTask(BusinessFlow businessFlow)
-        {
-            
+                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, businessFlow.Status.ToString());
+            }
         }
 
         #endregion BusinessFlow
@@ -141,83 +120,66 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         #region Activity
         public override async void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
         {
-            await ActivityStartTask(activity);
+            //await ActivityStartTask(activity);
         }
 
-        private async Task ActivityStartTask(Activity activity)
-        {
-            //AccountReportActivity accountReportActivity = AccountReportEntitiesDataMapping.MapActivityStartData(activity, mContext);
-            //await AccountReportApiHandler.SendActivityExecutionDataToCentralDBAsync(accountReportActivity);
-        }
-
+      
         public override async void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
-            if (!activity.Active || activity.ExecutionId == Guid.Empty || activity.Status == Execution.eRunStatus.Blocked)
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.Activity)
             {
-                return;
+                if (!activity.Active || activity.Status == Execution.eRunStatus.Blocked)
+                {
+                    return;
+                }
+
+                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activity.ActivityName, activity.StartTimeStamp, activity.EndTimeStamp, activity.Status.ToString());
             }
-
-            await ActivityEndTask(activity);
         }
 
-        private async Task ActivityEndTask(Activity activity)
-        {
-            
-        }
+     
 
         #endregion Activity
 
         #region Activity Group 
         public override async void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)
         {
-            await ActivityGroupStartTask(activityGroup);
+            //await ActivityGroupStartTask(activityGroup);
         }
-
-        private async Task ActivityGroupStartTask(ActivitiesGroup activityGroup)
-        {
-            
-        }
-
+ 
         public override async void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
         {
-            if (activityGroup.ExecutionId == Guid.Empty || activityGroup.RunStatus == Common.InterfacesLib.eActivitiesGroupRunStatus.Blocked)
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.ActivitiesGroup)
             {
-                return;
+                if (activityGroup.RunStatus == Common.InterfacesLib.eActivitiesGroupRunStatus.Blocked)
+                {
+                    return;
+                }
+
+                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activityGroup.Name, activityGroup.StartTimeStamp, activityGroup.EndTimeStamp, activityGroup.RunStatus.ToString());
             }
-            await SendActivityGroupDataActionTask(activityGroup);
         }
 
-        private async Task SendActivityGroupDataActionTask(ActivitiesGroup activityGroup)
-        {
-            
-        }
+      
 
         #endregion Activity Group
 
         #region Action
         public override async void ActionStart(uint eventTime, Act action)
         {
-            await ActionStartTask(action);
+            //await ActionStartTask(action);
         }
 
-        private async Task ActionStartTask(Act action)
-        {
-            
-        }
-
+ 
         public override async void ActionEnd(uint eventTime, Act action, bool offlineMode = false)
         {
             if (!action.Active || action.ExecutionId == Guid.Empty || action.Status == Execution.eRunStatus.Blocked)
             {
                 return;
             }
-            await SendDataOnActionEndTask(action);
+            //await SendDataOnActionEndTask(action);
         }
 
-        private async Task SendDataOnActionEndTask(Act action)
-        {
-            
-        }
 
         #endregion Action       
     }

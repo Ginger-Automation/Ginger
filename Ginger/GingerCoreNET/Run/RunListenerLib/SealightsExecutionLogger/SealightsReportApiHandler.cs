@@ -31,6 +31,8 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 {
+
+
     public class SealightsReportApiHandler
     {
 
@@ -42,20 +44,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         RestClient restClient;
         private const string SEND_CREATEION_TEST_SESSION = "sl-api/v1/test-sessions";
 
-        public SealightsReportApiHandler(string apiUrl)
-        {
-            if (!string.IsNullOrEmpty(apiUrl))
-            {
-                EndPointUrl = apiUrl;
-                restClient = new RestClient(apiUrl);
-                restClient.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-            }
-        }
         public SealightsReportApiHandler()
-        {
-            //created deafult constructor to access only MapDataToAccountReportObject
+        {           
+            EndPointUrl = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsURL;
+            restClient = new RestClient(EndPointUrl);
+            restClient.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;            
         }
-        
+           
         public async Task SendCreationTestSessionToSealightsAsync()
         {
             if (restClient != null)
@@ -64,6 +59,34 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
                 string message = string.Format("execution data to Sealights");
                 bool responseIsSuccess = await SendRestRequestCreateSession(SEND_CREATEION_TEST_SESSION, Method.POST).ConfigureAwait(false);
+                if (responseIsSuccess)
+                {
+                    Reporter.ToLog(eLogLevel.INFO, "Successfully sent " + message);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message);
+                }
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Rest Client is null as endpoint url is not provided");
+            }
+        }
+
+        public async Task SendingTestEventsToSealightsAsync(string name, DateTime startTime, DateTime endTime, string status)
+        {
+            if (restClient != null)
+            {
+                if (TestSessionId == null)
+                {
+                    await SendCreationTestSessionToSealightsAsync();
+                }
+
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Starting to Send Test Events to Sealights"));
+
+                string message = string.Format("Sending Test Events to Sealights");
+                bool responseIsSuccess = await SendRestRequestTestEvents(SEND_CREATEION_TEST_SESSION, Method.POST, name, startTime, endTime, status).ConfigureAwait(false);
                 if (responseIsSuccess)
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Successfully sent " + message);
@@ -114,6 +137,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 restRequest.AddHeader("Authorization", "Bearer " + Token);
 
                 string labId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLabId;
+
+                // Gideon, TODO, Get the custome data, if any 
+                /*
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId != null)
+                {
+                    labId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId;
+                }
+                */
+               
                 string testStage = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsTestStage;
                 string bsId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID;
                 string sessionTimeout = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsSessionTimeout;
@@ -126,6 +158,43 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 dynamic objResponse = JsonConvert.DeserializeObject(response.Content);
                 TestSessionId = objResponse.data.testSessionId.ToString(); 
                 
+                if (response.IsSuccessful)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + api);
+                    return true;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + api + "Response: " + response.Content);
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception when sending " + api, ex);
+                return false;
+            }
+        }
+
+
+        private async Task<bool> SendRestRequestTestEvents(string api, Method apiMethod, string name, DateTime startTime, DateTime endTime, string status)
+        {
+            try
+            {
+                api += "/" + TestSessionId;
+
+                RestRequest restRequest = (RestRequest)new RestRequest(api, apiMethod) { RequestFormat = RestSharp.DataFormat.Json };
+
+                restRequest.AddHeader("Content-Type", "application/json");
+                restRequest.AddHeader("Authorization", "Bearer " + Token);
+
+                long unixStartTime = new DateTimeOffset(startTime).ToUnixTimeMilliseconds();
+                long unixEndTime = new DateTimeOffset(endTime).ToUnixTimeMilliseconds();
+
+                restRequest.AddJsonBody(new { name = name, start = unixStartTime, end = unixEndTime, status = status }); // Anonymous type object is converted to Json body
+
+                IRestResponse response = await restClient.ExecuteAsync(restRequest);
+
                 if (response.IsSuccessful)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + api);
@@ -160,6 +229,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
                 if (response.IsSuccessful)
                 {
+                    TestSessionId = null;
+
                     Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + api);
                     return true;
                 }

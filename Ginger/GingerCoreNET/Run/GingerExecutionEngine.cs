@@ -295,6 +295,12 @@ namespace Ginger.Run
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
+
+            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes)
+            {
+                RunListeners.Add(new SealightsReportExecutionLogger(mContext));
+            }
+
             if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
             {
                 RunListeners.Add(new TelemetryRunListener());
