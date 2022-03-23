@@ -34,6 +34,8 @@ using GingerCore.Helpers;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -492,15 +494,20 @@ namespace GingerWPF.BusinessFlowsLib
             mGenericWin.Close();
         }
 
-        private void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
+        private async void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
         {
             if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry)
             {
                 if (SharedRepositoryOperations.CheckIfSureDoingChange(mActivity, "change") == true)
                 {
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivity);
+                    await FindUsages().ConfigureAwait(false);
                     mSaveWasDone = true;
-                    mGenericWin.Close();
+                    Dispatcher.Invoke(() =>
+                    {
+                        mGenericWin.Close();
+                    });
+                     
                 }
             }
         }
@@ -523,5 +530,40 @@ namespace GingerWPF.BusinessFlowsLib
         {
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
+        private async Task FindUsages()
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    //  StartProcessingIcon();
+                    //SetStatus("Loading Business flows....");
+                    
+                    ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+
+                    Parallel.ForEach(BizFlows, BF =>
+                    {
+                        // SetStatus("Finding Usages in " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, //suffixString: ":  ") + businessFlowName + "...");
+                        if (BF.Activities.Any(f => f.IsLinkedItem && f.ParentGuid == mActivity.Guid))
+                        {
+                            for (int i = 0; i < BF.Activities.Count(); i++)
+                            {
+                                if (BF.Activities[i].IsLinkedItem && BF.Activities[i].ParentGuid == mActivity.Guid)
+                                {
+                                    mActivity.UpdateInstance(BF.Activities[i], eItemParts.All.ToString(), BF);
+                                }
+                            }
+                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BF);
+                        }
+                    });
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to update the Activity in businessFlow", ex);
+            }
+
+        }
     }
+
 }
