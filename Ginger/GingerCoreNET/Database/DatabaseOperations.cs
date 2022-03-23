@@ -198,6 +198,10 @@ namespace GingerCore.Environments
             {
                 Database.ConnectionString = "Server=" + Database.TNS + ";Database=" + Database.Name + ";UID={USER};PWD={PASS}";
             }
+            else if (Database.DBType == eDBTypes.CosmosDb)
+            {
+                Database.ConnectionString = string.Format("AccountEndpoint={0};AccountKey={1}", Database.User, Database.Pass);
+            }
             return ConnectionStringCalculated;
         }
 
@@ -365,6 +369,19 @@ namespace GingerCore.Environments
                         {
                             return false;
                         }
+                    case eDBTypes.CosmosDb:
+                        GingerCosmos objGingerCosmos = new GingerCosmos();
+                        Database.ConnectionString = GetConnectionString();
+                        objGingerCosmos.Db = Database;
+                        if (objGingerCosmos.Connect())
+                        {
+                            LastConnectionUsedTime = DateTime.Now;
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     default:
                         //not implemented
                         break;
@@ -473,6 +490,13 @@ namespace GingerCore.Environments
                         NoSqlDriver = new GingerMongoDb(Database);
                         rc = NoSqlDriver.GetTableList(Keyspace);
                     }
+                    else if (Database.DBType == eDBTypes.CosmosDb)
+                    {
+                        GingerCosmos objGingerCosmos = new GingerCosmos();
+                        Database.ConnectionString = GetConnectionString();
+                        objGingerCosmos.Db = Database;
+                        rc = objGingerCosmos.GetTableList(Keyspace);
+                    }
                     else
                     {
                         DataTable table = oConn.GetSchema("Tables");
@@ -522,7 +546,8 @@ namespace GingerCore.Environments
         {
             DbDataReader reader = null;
             List<string> rc = new List<string>() { "" };
-            if ((oConn == null || string.IsNullOrEmpty(table)) && (Database.DBType != Database.eDBTypes.Cassandra) && (Database.DBType != Database.eDBTypes.MongoDb))
+            if ((oConn == null || string.IsNullOrEmpty(table)) && (Database.DBType != Database.eDBTypes.Cassandra) && (Database.DBType != Database.eDBTypes.MongoDb)
+                && (Database.DBType != Database.eDBTypes.CosmosDb))
             {
                 return rc;
             }
@@ -542,6 +567,14 @@ namespace GingerCore.Environments
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerMongoDb(Database);
+                rc = NoSqlDriver.GetColumnList(table);
+            }
+            else if (Database.DBType == Database.eDBTypes.CosmosDb)
+            {
+                NoSqlBase.NoSqlBase NoSqlDriver = null;
+                NoSqlDriver = new GingerCosmos();
+                Database.ConnectionString = GetConnectionString();
+                NoSqlDriver.Db = Database;
                 rc = NoSqlDriver.GetColumnList(table);
             }
             else
@@ -625,37 +658,38 @@ namespace GingerCore.Environments
 
         public string fTableColWhere(string Table, string Column, string Where)
         {
-
-
-            string sql = "SELECT {0} FROM {1} WHERE {2}";
-            sql = String.Format(sql, Column, Table, Where);
             String rc = null;
-            DbDataReader reader = null;
-            if (MakeSureConnectionIsOpen())
+            if (!Database.DBType.Equals(eDBTypes.CosmosDb))
             {
-                try
+                string sql = "SELECT {0} FROM {1} WHERE {2}";
+                sql = String.Format(sql, Column, Table, Where);
+                DbDataReader reader = null;
+                if (MakeSureConnectionIsOpen())
                 {
-                    DbCommand command = oConn.CreateCommand();
-                    command.CommandText = sql;
-                    command.CommandType = CommandType.Text;
+                    try
+                    {
+                        DbCommand command = oConn.CreateCommand();
+                        command.CommandText = sql;
+                        command.CommandType = CommandType.Text;
 
-                    // Retrieve the data.
-                    reader = command.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        rc = reader[0].ToString();
-                        break; // We read only first row
+                        // Retrieve the data.
+                        reader = command.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            rc = reader[0].ToString();
+                            break; // We read only first row
+                        }
                     }
-                }
-                catch (Exception e)
-                {
-                    throw e;
-                }
-                finally
-                {
-                    if (reader != null)
+                    catch (Exception e)
                     {
-                        reader.Close();
+                        throw e;
+                    }
+                    finally
+                    {
+                        if (reader != null)
+                        {
+                            reader.Close();
+                        }
                     }
                 }
             }
