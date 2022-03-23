@@ -291,7 +291,6 @@ namespace GingerCore.Actions
                     }
                     break;
                 case Database.eDBTypes.CosmosDb:
-
                     if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerCosmos))
                     {
                         NoSqlDriver = new GingerCosmos(DBValidationType, DB, this);
@@ -333,7 +332,7 @@ namespace GingerCore.Actions
 
         private void RecordCountHandler()
         {
-            string SQL = GetInputParamCalculatedValue("SQL");
+            SQL = GetInputParamCalculatedValue("SQL");
             if (string.IsNullOrEmpty(SQL))
                 Error = "Fail to run Update SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error = Missing Query";
             string val = DB.DatabaseOperations.GetRecordCount(SQL);
@@ -341,7 +340,7 @@ namespace GingerCore.Actions
         }
         private void UpdateSqlHndler()
         {
-            string SQL = string.Empty;
+            SQL = string.Empty;
             try
             {
                 if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
@@ -398,7 +397,7 @@ namespace GingerCore.Actions
         private void FreeSQLHandler()
         {
             int? queryTimeout = Timeout;
-            string SQL = string.Empty;
+            SQL = string.Empty;
             string ErrorString = string.Empty;
             try
             {
