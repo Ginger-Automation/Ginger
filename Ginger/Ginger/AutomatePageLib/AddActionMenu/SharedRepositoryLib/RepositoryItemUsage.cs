@@ -42,10 +42,10 @@ namespace Ginger.Repository
 
         public enum eRepositoryItemPublishType
         {
-            [EnumValueDescription("Instance")]
-            Instance = 1,
-            [EnumValueDescription("Link")]
-            Link = 0
+            [EnumValueDescription("Regular Instance")]
+            RegularInstance = 1,
+            [EnumValueDescription("Link Instance")]
+            LinkInstance = 0
         }
 
         public enum ePublishStatus
@@ -70,9 +70,11 @@ namespace Ginger.Repository
         public enum eUsageTypes
         {
             Original,
-            Instance,
+            [EnumValueDescription("Regular Instance")]
+            RegularInstance,
             None,
-            Link
+            [EnumValueDescription("Link Instance")]
+            LinkInstance
         }
 
         public bool IsDisabled
