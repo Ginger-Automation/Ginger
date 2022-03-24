@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         #region RunSet
         public async Task RunSetStart(RunSetConfig runsetConfig)
         {
-            Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Publishing Execution data to central DB");
+            Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, null, "Publishing Execution data to central DB");
             if (WorkSpace.Instance.RunsetExecutor != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null
                 && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID != null)
             {
