@@ -767,10 +767,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     operationConfigPublishToALM.Condition = (OperationExecConfigBase.eOperationRunCondition?)publishToQCAction.Condition;
                     operationConfigPublishToALM.RunAt = (OperationExecConfigBase.eOperationRunAt?)publishToQCAction.RunAt;
                     operationConfigPublishToALM.AlmTestSetLevel = (AlmPublishOperationExecConfig.eAlmTestSetLevel?)publishToQCAction.ALMTestSetLevel;
-                    operationConfigPublishToALM.ExportType = (AlmPublishOperationExecConfig.eExportType?)publishToQCAction.ExportType;
+                    operationConfigPublishToALM.ExportType = (AlmPublishOperationExecConfig.eExportType?)Enum.Parse(typeof(AlmPublishOperationExecConfig.eExportType), publishToQCAction.ExportType.ToString());
                     operationConfigPublishToALM.TestsetExportDestination= publishToQCAction.TestCaseFolderDestination;
                     operationConfigPublishToALM.TestcasesExportDestination = publishToQCAction.TestCaseFolderDestination;
-                    operationConfigPublishToALM.TestCasesResultsToExport = (AlmPublishOperationExecConfig.eTestCasesResultsToExport?)publishToQCAction.FilterStatus;
+                    operationConfigPublishToALM.TestCasesResultsToExport = (AlmPublishOperationExecConfig.eTestCasesResultsToExport?)Enum.Parse(typeof(AlmPublishOperationExecConfig.eTestCasesResultsToExport), publishToQCAction.FilterStatus.ToString());
                     operationConfigPublishToALM.AttachActivitiesGroupsReport = publishToQCAction.toAttachActivitiesGroupReport;
                     operationConfigPublishToALM.UseUserVariableInRunInstanceName = publishToQCAction.isVariableInTCRunUsed;
                     operationConfigPublishToALM.UserVariableInRunInstance = publishToQCAction.VariableForTCRunName;
