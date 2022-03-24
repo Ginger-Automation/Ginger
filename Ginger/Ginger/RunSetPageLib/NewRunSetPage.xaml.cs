@@ -602,6 +602,7 @@ namespace Ginger.Run
             }
         }
 
+
         void InitRunSetConfigurations()
         {
             BindingHandler.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
@@ -609,6 +610,96 @@ namespace Ginger.Run
             BindingHandler.ObjFieldBinding(xRunSetDescriptionTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Description));
             TagsViewer.Init(mRunSetConfig.Tags);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mRunSetConfig, nameof(RepositoryItemBase.Publish));
+
+            //Gideon
+            BindingHandler.ObjFieldBinding(xDefaultTestStageRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.DefaultTestStageYN));
+            BindingHandler.ObjFieldBinding(xCustomTestStageRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.CustomTestStageYN));
+
+            BindingHandler.ObjFieldBinding(xDefaultLabIdRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.DefaultLabIdYN));
+            BindingHandler.ObjFieldBinding(xCustomLabIdRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.CustomLabIdYN));
+
+            BindingHandler.ObjFieldBinding(xDefaultSessionIdRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.DefaultSessionIdYN));
+            BindingHandler.ObjFieldBinding(xCustomSessionIdRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.CustomSessionIdYN));
+
+
+            BindingHandler.ObjFieldBinding(xSealightsTestStageTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealightsTestStage));
+            BindingHandler.ObjFieldBinding(xSealighsLabIdTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealighsLabId));
+            BindingHandler.ObjFieldBinding(xSealighsBuildSessionIDTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID));
+
+            xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
+            xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
+            xDefaultSessionIdRadioBtn.Checked += XDefaultSessionIdRadioBtn_Checked;
+
+            xCustomTestStageRadioBtn.Checked += XCustomTestStageRadioBtn_Checked;
+            xCustomLabIdRadioBtn.Checked += XCustomLabIdRadioBtn_Checked;
+            xCustomSessionIdRadioBtn.Checked += XCustomSessionIdRadioBtn_Checked;
+
+            if (RunSetConfig.DefaultTestStageYN == false && RunSetConfig.CustomTestStageYN == false) // init values
+            {
+                RunSetConfig.DefaultTestStageYN = true;                
+            }
+            else
+            {
+                if (RunSetConfig.DefaultTestStageYN == true)
+                    XDefaultTestStageRadioBtn_Checked(null, null);
+                else
+                    XCustomTestStageRadioBtn_Checked(null, null);
+            }
+
+            if (RunSetConfig.DefaultLabIdYN == false && RunSetConfig.CustomLabIdYN == false) // init values
+            {
+                RunSetConfig.DefaultLabIdYN = true;
+            }
+            else
+            {
+                if (RunSetConfig.DefaultLabIdYN == true)
+                    XDefaultLabIdRadioBtn_Checked(null, null);
+                else
+                    XCustomLabIdRadioBtn_Checked(null, null);
+            }
+
+            if (RunSetConfig.DefaultSessionIdYN == false && RunSetConfig.CustomSessionIdYN == false) // init values
+            {
+                RunSetConfig.DefaultSessionIdYN = true;
+            }
+            else
+            {
+                if (RunSetConfig.DefaultSessionIdYN == true)
+                    XDefaultSessionIdRadioBtn_Checked(null, null);
+                else
+                    XCustomSessionIdRadioBtn_Checked(null, null);
+            }
+
+        }
+
+        private void XCustomSessionIdRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            xSealighsBuildSessionIDTextBox.Visibility = Visibility.Visible;
+        }
+
+        private void XCustomLabIdRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            xSealighsLabIdTextBox.Visibility = Visibility.Visible;
+        }
+
+        private void XCustomTestStageRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            xSealightsTestStageTextBox.Visibility = Visibility.Visible;
+        }
+
+        private void XDefaultTestStageRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            xSealightsTestStageTextBox.Visibility = Visibility.Collapsed;
+        }
+
+        private void XDefaultLabIdRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            xSealighsLabIdTextBox.Visibility = Visibility.Collapsed;
+        }
+
+        private void XDefaultSessionIdRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            xSealighsBuildSessionIDTextBox.Visibility = Visibility.Collapsed;
         }
 
         void InitRunSetInfoSection()

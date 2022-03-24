@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -85,6 +85,148 @@ namespace Ginger.Run
                 }
             }
         }
+
+        //Gideon
+        private bool mDefaultTestStageRadioBtn;
+        [IsSerializedForLocalRepository]
+        public bool DefaultTestStageYN
+        {
+            get { return mDefaultTestStageRadioBtn; }
+            set
+            {
+                if (mDefaultTestStageRadioBtn != value)
+                {
+                    mDefaultTestStageRadioBtn = value;
+                    OnPropertyChanged(nameof(DefaultTestStageYN));
+                }
+            }
+        }
+
+        private bool mCustomTestStageRadioBtn;
+        [IsSerializedForLocalRepository]
+        public bool CustomTestStageYN
+        {
+            get { return mCustomTestStageRadioBtn; }
+            set
+            {
+                if (mCustomTestStageRadioBtn != value)
+                {
+                    mCustomTestStageRadioBtn = value;
+                    OnPropertyChanged(nameof(CustomTestStageYN));
+                }
+            }
+        }
+
+        private bool mDefaultLabIdRadioBtn;
+        [IsSerializedForLocalRepository]
+        public bool DefaultLabIdYN
+        {
+            get { return mDefaultLabIdRadioBtn; }
+            set
+            {
+                if (mDefaultLabIdRadioBtn != value)
+                {
+                    mDefaultLabIdRadioBtn = value;
+                    OnPropertyChanged(nameof(DefaultLabIdYN));
+                }
+            }
+        }
+
+        private bool mCustomLabIdRadioBtn;
+        [IsSerializedForLocalRepository]
+        public bool CustomLabIdYN
+        {
+            get { return mCustomLabIdRadioBtn; }
+            set
+            {
+                if (mCustomLabIdRadioBtn != value)
+                {
+                    mCustomLabIdRadioBtn = value;
+                    OnPropertyChanged(nameof(CustomLabIdYN));
+                }
+            }
+        }
+
+        private bool mDefaultSessionIdRadioBtn;
+        [IsSerializedForLocalRepository]
+        public bool DefaultSessionIdYN
+        {
+            get { return mDefaultSessionIdRadioBtn; }
+            set
+            {
+                if (mDefaultSessionIdRadioBtn != value)
+                {
+                    mDefaultSessionIdRadioBtn = value;
+                    OnPropertyChanged(nameof(DefaultSessionIdYN));
+                }
+            }
+        }
+
+        private bool mCustomSessionIdRadioBtn;
+        [IsSerializedForLocalRepository]
+        public bool CustomSessionIdYN
+        {
+            get { return mCustomSessionIdRadioBtn; }
+            set
+            {
+                if (mCustomSessionIdRadioBtn != value)
+                {
+                    mCustomSessionIdRadioBtn = value;
+                    OnPropertyChanged(nameof(CustomSessionIdYN));
+                }
+            }
+        }
+
+
+
+        private string mSealightsTestStageTextBox;
+        [IsSerializedForLocalRepository]
+        public string SealightsTestStage
+        {
+            get { return mSealightsTestStageTextBox; }
+            set
+            {
+                if (mSealightsTestStageTextBox != value)
+                {
+                    mSealightsTestStageTextBox = value;
+                    OnPropertyChanged(nameof(SealightsTestStage));
+                }
+            }
+        }
+
+        private string mSealighsLabIdTextBox;
+        [IsSerializedForLocalRepository]
+        public string SealighsLabId
+        {
+            get { return mSealighsLabIdTextBox; }
+            set
+            {
+                if (mSealighsLabIdTextBox != value)
+                {
+                    mSealighsLabIdTextBox = value;
+                    OnPropertyChanged(nameof(SealighsLabId));
+                }
+            }
+        }
+
+        private string mSealighsBuildSessionIDTextBox;
+        [IsSerializedForLocalRepository]
+        public string SealighsBuildSessionID
+        {
+            get { return mSealighsBuildSessionIDTextBox; }
+            set
+            {
+                if (mSealighsBuildSessionIDTextBox != value)
+                {
+                    mSealighsBuildSessionIDTextBox = value;
+                    OnPropertyChanged(nameof(SealighsBuildSessionID));
+                }
+            }
+        }
+
+        //-------------------
+
+        
 
         private string mRunDescription;
         /// <summary>

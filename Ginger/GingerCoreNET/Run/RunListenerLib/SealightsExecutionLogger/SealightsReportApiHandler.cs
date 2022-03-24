@@ -137,18 +137,23 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 restRequest.AddHeader("Authorization", "Bearer " + Token);
 
                 string labId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLabId;
-
-                // Gideon, TODO, Get the custome data, if any 
-                /*
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId != null)
-                {
-                    labId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId;
-                }
-                */
-               
                 string testStage = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsTestStage;
                 string bsId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID;
                 string sessionTimeout = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsSessionTimeout;
+
+                //  Check Sealights's values on run-set levels
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomLabIdYN == true)
+                {
+                    labId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId;
+                }
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomSessionIdYN == true)
+                {
+                    bsId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID;
+                }
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomTestStageYN == true)
+                {
+                    testStage = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage;
+                }
 
                 //restRequest.AddJsonBody(new { labId = "111", testStage = "Ginger Regression Test Gideon", bsId = "1624300311460", sessionTimeout = "10000" }); // Anonymous type object is converted to Json body
                 restRequest.AddJsonBody(new { labId = labId, testStage = testStage, bsId = bsId, sessionTimeout = sessionTimeout }); // Anonymous type object is converted to Json body
