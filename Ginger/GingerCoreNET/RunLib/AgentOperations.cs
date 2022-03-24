@@ -135,7 +135,7 @@ namespace GingerCore
 
         public void StartDriver()
         {
-            WorkSpace.Instance.Telemetry.Add("startagent", new { AgentType = Agent.AgentType.ToString(), DriverType = Agent.DriverType.ToString() });
+            //WorkSpace.Instance.Telemetry.Add("startagent", new { AgentType = Agent.AgentType.ToString(), DriverType = Agent.DriverType.ToString() });
 
             if (Agent.AgentType == Agent.eAgentType.Service)
             {
