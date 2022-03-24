@@ -1477,6 +1477,34 @@ namespace Ginger.Run
                 mRunSetConfig.AllowAutoSave = false;
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
+
+                // Gideon
+
+                //  Check Sealights's values on run-set levels
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomLabIdYN == true)
+                {
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId.Trim() == "")
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please fill out the Sealights Lab ID");
+                        return;
+                    }
+                }
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomSessionIdYN == true)
+                {
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID.Trim() == "")
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please fill out the Sealights Session ID");
+                        return;
+                    }
+                }
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomTestStageYN == true)
+                {
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage.Trim() == "")
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please fill out the Sealights Test Stage");
+                        return;
+                    }
+                }
             }
             finally
             {
