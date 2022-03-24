@@ -841,8 +841,8 @@ namespace GingerCoreNET.DataSource
             object result = null;
             using (LiteDatabase db = new LiteDatabase(FileFullPath))
             {
-                var resultdxs = db.Engine.Run(query);
-                foreach (BsonDocument bs in resultdxs)
+                IList<BsonValue> resultdxs = db.Engine.Run(query);
+                foreach (BsonValue bs in resultdxs)
                 {
                     result = bs.AsString;
                 }
