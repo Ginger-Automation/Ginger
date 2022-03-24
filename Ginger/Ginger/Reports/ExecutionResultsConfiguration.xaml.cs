@@ -105,12 +105,6 @@ namespace Ginger.Reports
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsSessionTimeoutTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.SealightsSessionTimeout));
 
-            //xSealighsReportedEntityLevelComboBox.Items.Add("Business Flow");
-            //xSealighsReportedEntityLevelComboBox.Items.Add("Activities Group");
-            //xSealighsReportedEntityLevelComboBox.Items.Add("Activity");
-
-            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsReportedEntityLevelComboBox, ComboBox.SelectedItemProperty, _selectedExecutionLoggerConfiguration,
-            //    nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel ));
             xSealighsReportedEntityLevelComboBox.BindControl(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
 
             //------------
@@ -214,6 +208,20 @@ namespace Ginger.Reports
                         return;
                     }
                 }
+
+
+
+                if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
+                {
+                    if (xSealightsURLTextBox.Text.Trim() == "" || xSealighsAgentTokenTextBox.Text.Trim() == "" ||
+                        xSealighsLabIdTextBox.Text.Trim() == "" || xSealightsTestStageTextBox.Text.Trim() == "" ||
+                        xSealighsReportedEntityLevelComboBox.SelectedIndex < 0)
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide all Sealights required information");
+                        return;
+                    }
+                }
+
             }
             catch
             {
@@ -311,6 +319,12 @@ namespace Ginger.Reports
                 xSealighsSessionTimeoutTextBox.Visibility = Visibility.Visible;
                 xSealighsReportedEntityLevelLabel.Visibility = Visibility.Visible;
                 xSealighsReportedEntityLevelComboBox.Visibility = Visibility.Visible;
+
+                xSealightsURLLabelValidation.Visibility = Visibility.Visible;
+                xSealighsAgentTokenLabelValidation.Visibility = Visibility.Visible;
+                xSealighsLabIdLabelValidation.Visibility = Visibility.Visible;
+                xSealightsTestStageLabelValidation.Visibility = Visibility.Visible;
+                xSealighsReportedEntityLevelLabelValidation.Visibility = Visibility.Visible;
             }
             else
             {
@@ -328,6 +342,12 @@ namespace Ginger.Reports
                 xSealighsSessionTimeoutTextBox.Visibility = Visibility.Collapsed;
                 xSealighsReportedEntityLevelLabel.Visibility = Visibility.Collapsed;
                 xSealighsReportedEntityLevelComboBox.Visibility = Visibility.Collapsed;
+
+                xSealightsURLLabelValidation.Visibility = Visibility.Collapsed;
+                xSealighsAgentTokenLabelValidation.Visibility = Visibility.Collapsed;
+                xSealighsLabIdLabelValidation.Visibility = Visibility.Collapsed;
+                xSealightsTestStageLabelValidation.Visibility = Visibility.Collapsed;
+                xSealighsReportedEntityLevelLabelValidation.Visibility = Visibility.Collapsed;
             }
         }
         
