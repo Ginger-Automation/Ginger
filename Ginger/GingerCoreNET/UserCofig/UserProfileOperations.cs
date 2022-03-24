@@ -287,7 +287,7 @@ namespace Ginger
             {
                 userProfile.SourceControlPass = EncryptionHandler.DecryptwithKey(userProfile.EncryptedSourceControlPass);
             }
-            else
+            else if(userProfile.SourceControlType != SourceControlBase.eSourceControlType.None)
             {
                 userProfile.SourceControlPass = WinCredentialUtil.GetCredential("Ginger_SourceControl_" + userProfile.SourceControlType);
             }
