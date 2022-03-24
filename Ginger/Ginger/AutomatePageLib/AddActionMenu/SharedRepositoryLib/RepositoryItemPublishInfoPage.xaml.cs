@@ -163,11 +163,11 @@ namespace Ginger.Repository
                 {
                     try
                     {
-                        if (repositoryItem.Selected && repositoryItem.RepositoryItemPublishType == RepositoryItemUsage.eRepositoryItemPublishType.PublishInstance && repositoryItem.PublishStatus != RepositoryItemUsage.ePublishStatus.Published)
+                        if (repositoryItem.Selected && repositoryItem.PublishStatus != RepositoryItemUsage.ePublishStatus.Published)
                         {
                             Activity activityCopy = (Activity)mRepoItem.CreateInstance(true);
                             activityCopy.Active = true;
-
+                            
                             if(repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd)
                             {
                                 repositoryItem.HostBusinessFlow.AddActivity(activityCopy,repositoryItem.HostBusinessFlow.ActivitiesGroups.Last());
@@ -190,6 +190,10 @@ namespace Ginger.Repository
                             }
                             if (!errorOccured)
                             {
+                                if (repositoryItem.RepositoryItemPublishType == RepositoryItemUsage.eRepositoryItemPublishType.PublishLinkedInstance)
+                                {
+                                    repositoryItem.HostBusinessFlow.MarkActivityAsLink(activityCopy.Guid,activityCopy.ParentGuid);
+                                }
                                 repositoryItem.PublishStatus = RepositoryItemUsage.ePublishStatus.Published;
                                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(repositoryItem.HostBusinessFlow);
                             }
@@ -244,7 +248,7 @@ namespace Ginger.Repository
                             }
                             if (!isPublishedInBF)
                             {
-                                itemUsage = new() { HostBusinessFlow = BF, HostBizFlowPath = System.IO.Path.Combine(BF.ContainingFolder, businessFlowName), UsageItemName = businessFlowName, UsageItemType = usageType, Selected = false, RepositoryItemPublishType = RepositoryItemUsage.eRepositoryItemPublishType.PublishInstance, InsertRepositoryInsatncePosition = RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd };
+                                itemUsage = new() { HostBusinessFlow = BF, HostBizFlowPath = System.IO.Path.Combine(BF.ContainingFolder, businessFlowName), UsageItemName = businessFlowName, UsageItemType = usageType, Selected = false, RepositoryItemPublishType = RepositoryItemUsage.eRepositoryItemPublishType.PublishLinkedInstance, InsertRepositoryInsatncePosition = RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd };
                                 AddBFUsageInList(itemUsage);
                             }
                         }

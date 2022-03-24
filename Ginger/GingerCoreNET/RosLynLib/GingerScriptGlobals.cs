@@ -48,6 +48,8 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
         {
             Console.WriteLine("* Loading Plugin - " + folder);
             P = new PluginPackage(folder);
+            P.PluginPackageOperations = new PluginPackageOperations(P);
+            P.PluginPackageOperations.LoadPluginPackage(folder);
             Console.WriteLine("* Plugin Loaded");
         }
 

@@ -124,12 +124,6 @@
     <None Update="TestResources\CLI\CLI-CheckExecutionIDSet.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\CLI\CLI-VirtualBF_VirtualRunset_ExistingRunner_OnlyName.Ginger.AutoRunConfigs.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\CLI\CLI-VirtualBF_VirtualRunset_ExistingRunner.Ginger.AutoRunConfigs.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="TestResources\CLI\CLI-VirtualBF_VirtualRunsetAndRunner_OnlyName.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -189,6 +183,9 @@
     </None>
     <None Update="TestResources\Excel\ExportedDS.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Excel\LongDigitsTesting.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Excel\NamesWrite.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -628,7 +625,7 @@
     <None Update="TestResources\Solutions\GlobalCrossSolution\Applications Models\POM Models\Facebook\Facebook.Ginger.ApplicationPOMModel.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\Solutions\GlobalCrossSolution\Applications Models\POM Models\Selenium Easy - Input Form Demo with Validations.Ginger.ApplicationPOMModel.xml">
+    <None Update="TestResources\Solutions\GlobalCrossSolution\Applications Models\POM Models\SeleniumDemoValid.Ginger.ApplicationPOMModel.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\GlobalCrossSolution\BusinessFlows\API-Create Pet.Ginger.BusinessFlow.xml">

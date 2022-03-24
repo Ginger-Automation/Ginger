@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.SolutionGeneral;
 
@@ -42,6 +43,12 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
         }
 
         public Solution Solution
+        {
+            get;
+            set;
+        }
+
+        public SolutionRepository SolutionRepository
         {
             get;
             set;

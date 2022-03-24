@@ -92,11 +92,31 @@ namespace GingerCore.Actions
 
         }
 
-        [IsSerializedForLocalRepository]
-        public eTextSpeechAction TextSpeechAction { get; set; }
+        public eTextSpeechAction TextSpeechAction
+        {
+            get
+            {
+                return (eTextSpeechAction)GetOrCreateInputParam<eTextSpeechAction>(nameof(TextSpeechAction), eTextSpeechAction.TextToSpeech);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(TextSpeechAction), value.ToString());
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public int Interval { get; set; }
+        public int Interval
+        {
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(Interval)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Interval), value.ToString());
+            }
+        }
         public string WaveLocation { get; set; }
         public string TextToSayLoud { get; set; }
 

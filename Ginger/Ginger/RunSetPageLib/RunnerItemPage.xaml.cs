@@ -159,7 +159,7 @@ namespace Ginger.Run
             mItemChilds = new ObservableList<RunnerItemPage>();
             
             if (ItemObject.GetType() == typeof(BusinessFlow))
-            {               
+            {            
                 foreach (Activity ac in ((BusinessFlow)ItemObject).Activities)
                 {
                     if (ac.GetType() == typeof(ErrorHandler)) continue;//do not show Error Handler for now

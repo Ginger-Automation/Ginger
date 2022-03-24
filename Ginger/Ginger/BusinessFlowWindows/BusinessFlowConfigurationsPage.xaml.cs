@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
 using GingerCore;
+using Ginger;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
@@ -124,11 +125,12 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
+            xNameTxtBox.AddValidationRule(new BusinessFlowNameValidationRule());
             xShowIDUC.Init(mBusinessFlow);
             BindingHandler.ObjFieldBinding(xDescriptionTxt, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Description));
             xTagsViewer.Init(mBusinessFlow.Tags);
             xRunDescritpion.Init(mContext, mBusinessFlow, nameof(BusinessFlow.RunDescription));
-            General.FillComboFromEnumObj(xStatusComboBox, mBusinessFlow.Status);
+            GingerCore.General.FillComboFromEnumObj(xStatusComboBox, mBusinessFlow.Status);
             BindingHandler.ObjFieldBinding(xStatusComboBox, ComboBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Status));
             BindingHandler.ObjFieldBinding(xCreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader, nameof(RepositoryItemHeader.CreatedBy));
             BindingHandler.ObjFieldBinding(xAutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.AutomationPrecentage), System.Windows.Data.BindingMode.OneWay);

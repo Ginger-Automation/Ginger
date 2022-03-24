@@ -36,6 +36,7 @@ using Castle.Components.DictionaryAdapter;
 using Amdocs.Ginger.CoreNET.RunLib;
 using System.Threading.Tasks;
 using GingerCore.Actions.VisualTesting;
+using OpenQA.Selenium;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -75,6 +76,20 @@ namespace GingerCore.Drivers.PBDriver
                 mImplicitWait = value;
             }
         }
+
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Applitool View Key number")]
+        public String ApplitoolsViewKey { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Applitool Server Url")]
+        public String ApplitoolsServerUrl { get; set; }
+
+        protected IWebDriver Driver;
+
         //Check why it is needed?
         public PBDriver()
         {
@@ -1147,7 +1162,7 @@ namespace GingerCore.Drivers.PBDriver
         /// IVisualTestingDriver's Overloaded Method o get device screenshot
         /// </summary>
         /// <returns>Application Screenshot in Bitmap format</returns>
-        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null)
+        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
             Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
             return bmp;
@@ -1245,6 +1260,32 @@ namespace GingerCore.Drivers.PBDriver
         public string GetCurrentPageSourceString()
         {
             return null;
+        }
+
+
+        public string GetApplitoolServerURL()
+        {
+            return this.ApplitoolsServerUrl;
+        }
+
+        public string GetApplitoolKey()
+        {
+            return this.ApplitoolsViewKey;
+        }
+
+        public ePlatformType GetPlatform()
+        {
+            return this.Platform;
+        }
+
+        public string GetEnvironment()
+        {
+            return this.BusinessFlow.Environment;
+        }
+
+        public IWebDriver GetWebDriver()
+        {
+            return Driver;
         }
     }
 }

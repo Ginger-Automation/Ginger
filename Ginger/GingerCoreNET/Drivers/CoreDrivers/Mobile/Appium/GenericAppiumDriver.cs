@@ -122,6 +122,19 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredDescription("Appium capabilities")]
         public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Applitool View Key number")]
+        public String ApplitoolsViewKey { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Applitool Server Url")]
+        public String ApplitoolsServerUrl { get; set; }
+
+        protected IWebDriver webDriver;
+
+
         bool mIsDeviceConnected = false;
         string mDefaultURL = null;
 
@@ -434,6 +447,12 @@ namespace Amdocs.Ginger.CoreNET
                 if (actionType == typeof(ActGenElement))
                 {
                     GenElementHandler((ActGenElement)act);
+                    return;
+                }
+
+                if (actionType == typeof(ActVisualTesting))
+                {
+                    ((ActVisualTesting)act).Execute(this);
                     return;
                 }
 
@@ -2377,7 +2396,7 @@ namespace Amdocs.Ginger.CoreNET
             return (eDeviceOrientation)Enum.Parse(typeof(eDeviceOrientation), Driver.Orientation.ToString());
         }
 
-        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null)
+        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
             Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
             string filename = Path.GetTempFileName();
@@ -2817,6 +2836,31 @@ namespace Amdocs.Ginger.CoreNET
                     Driver.ActivateApp("com.apple.Preferences");
                     break;
             }
+        }
+
+        public string GetApplitoolServerURL()
+        {
+            return this.ApplitoolsServerUrl;
+        }
+
+        public string GetApplitoolKey()
+        {
+            return this.ApplitoolsViewKey;
+        }
+
+        public ePlatformType GetPlatform()
+        {
+            return this.Platform;
+        }
+
+        public string GetEnvironment()
+        {
+            return this.BusinessFlow.Environment;
+        }
+
+        public IWebDriver GetWebDriver()
+        {
+            return Driver;
         }
     }
 }
