@@ -41,12 +41,13 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         ImportOptionalValuesForParameters impParams;
         public DataSet ExcelImportData;
         WizardEventArgs mWizardEventArgs;
-                
+
         private string Path;
         private string SheetName;
         private bool HeadingRow;
         private bool IsModelParamsFile;
         private bool IsImportEmptyColumns;
+        public EventHandler ExcelWhereConditionUpdated;
 
         private List<TabItem> _tabItems;
 
@@ -61,7 +62,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             {
                 case EventType.Init:
                     break;
-                case EventType.Active:                    
+                case EventType.Active:
                     Path = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).Path;
                     SheetName = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).SheetName;
                     HeadingRow = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).HeadingRow;
@@ -71,11 +72,10 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     impParams.ExcelFileName = Path;
                     impParams.ExcelSheetName = SheetName;
                     DisplayData();
-                    break;                
+                    break;
                 case EventType.LeavingForNextPage:
                     if (xSelectRowTextBox.Text != null && !(string.IsNullOrWhiteSpace(xSelectRowTextBox.Text)))
                     {
-                        impParams.ExcelWhereCondition = Convert.ToString(xSelectRowTextBox.Text);
                         DataTable dt = impParams.GetExceSheetlData(true);
                         if (dt != null)
                         {
@@ -92,7 +92,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     {
                         ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).ExcelImportData = ExcelImportData;
                     }
-                    
+
 
                     break;
                 default:
@@ -104,7 +104,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         /// Constructor for ImportDataSourceDisplayData class
         /// </summary>
         public ImportDataSourceDisplayData()
-        {           
+        {
             InitializeComponent();
             impParams = new ImportOptionalValuesForParameters();
             ShowRelevantPanel();
@@ -128,7 +128,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-        
+
         /// <summary>
         /// This event is used to view the data from excel
         /// </summary>
@@ -172,7 +172,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                             xExcelDataGrid.ItemsSource = ExcelImportData.Tables[0].AsDataView();
                             xExcelDataGridDockPanel.Visibility = Visibility.Visible;
                         }
-                    }                    
+                    }
                 }
                 else
                 {
@@ -242,7 +242,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 {
                     xExcelDataGrid.ItemsSource = dt.AsDataView();
                     xExcelDataGridDockPanel.Visibility = Visibility.Visible;
-                    
+
                 }
 
                 mWizardEventArgs.Wizard.ProcessEnded();
@@ -251,6 +251,19 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             catch (System.Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// This event is used to view the data from excel with the condition
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void xSelectRowTextBox_TextChanged(object sender, RoutedEventArgs e)
+        {
+            if (ExcelWhereConditionUpdated != null && !string.IsNullOrEmpty(xSelectRowTextBox.Text))
+            {
+                ExcelWhereConditionUpdated(xSelectRowTextBox.Text, null);
             }
         }
     }

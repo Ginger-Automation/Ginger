@@ -232,6 +232,12 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
+            if (!CalculatedFileName.EndsWith("csv") && !CalculatedFileName.EndsWith("xlsx"))
+            {
+                this.Error += "Invalid File Name or Extension";
+                return;
+            }
+
             if (!CheckMandatoryFieldsExists(new List<string>() { nameof(CalculatedFileName), nameof(CalculatedSheetName) }))
             {
                 return;

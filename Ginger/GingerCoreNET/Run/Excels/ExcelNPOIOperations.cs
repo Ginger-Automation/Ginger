@@ -37,6 +37,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         DataTable mFilteredDataTable { get; set; }
         IWorkbook mWorkbook { get; set; }
         ISheet mSheet { get; set; }
+        bool bIsValidExtension { get; set; }
         private DataTable ConvertSheetToDataTable(ISheet sheet)
         {
             try
@@ -87,7 +88,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         private object GetCellValue(ICell cell, CellType cellType)
         {
             object cellVal;
-            switch(cellType)
+            switch (cellType)
             {
                 case CellType.Numeric:
                     cellVal = HandleNumericCellType(cell);
@@ -159,6 +160,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             IWorkbook workbook = null;
             try
             {
+                var fileExtension = Path.GetExtension(fullFilePath);
+                if (string.IsNullOrEmpty(fileExtension) || (fileExtension != ".xlsx" && fileExtension != ".csv"))
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path does not have valid extension");
+                    bIsValidExtension = false;
+                    return null;
+                }
+                bIsValidExtension = true;
                 using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
                 {
                     workbook = WorkbookFactory.Create(fs);
@@ -324,15 +333,23 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             List<string> sheets = new List<string>();
             mFileName = fileName;
             var wb = GetExcelWorkbook(mFileName);
-            if (wb == null)
+            if (bIsValidExtension)
             {
+                if (wb == null)
+                {
+                    return sheets;
+                }
+                for (int i = 0; i < wb.NumberOfSheets; i++)
+                {
+                    sheets.Add(wb.GetSheetAt(i).SheetName);
+                }
+                return sheets.OrderBy(itm => itm).ToList();
+            }
+            else
+            {
+                sheets.Add("Invalid Extension");
                 return sheets;
             }
-            for (int i = 0; i < wb.NumberOfSheets; i++)
-            {
-                sheets.Add(wb.GetSheetAt(i).SheetName);
-            }
-            return sheets.OrderBy(itm => itm).ToList();
         }
 
         public void Dispose()
@@ -345,7 +362,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         private object HandleNumericCellType(ICell cell)
         {
             object cellVal;
-            if (cell.NumericCellValue.ToString().Length > 15 || String.Equals(cell.CellStyle.GetDataFormatString(),"General",StringComparison.OrdinalIgnoreCase))
+            if (cell.NumericCellValue.ToString().Length > 15 || String.Equals(cell.CellStyle.GetDataFormatString(), "General", StringComparison.OrdinalIgnoreCase))
             {
                 cellVal = ((decimal)cell.NumericCellValue).ToString(CultureInfo.InvariantCulture);
             }

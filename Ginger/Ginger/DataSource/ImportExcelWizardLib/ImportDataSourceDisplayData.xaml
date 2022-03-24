@@ -39,7 +39,7 @@
                 <DockPanel Grid.Row="0" Grid.ColumnSpan="3" Name="SelectPanel">
                     <StackPanel Margin="10,10,0,0">
                         <Label Name="xSelectRowLable"  Style="{StaticResource @InputFieldLabelStyle}"  Content="Select Row(s) Where:" VerticalAlignment="Center"  />
-                        <TextBox x:Name="xSelectRowTextBox" Background="White" Margin="5,0,0,0" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1 or [Team Name]='Ginger'."  Style="{StaticResource @MultiRowsTextBoxStyle}" Text ="" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" IsEnabled="true"/>
+                        <TextBox x:Name="xSelectRowTextBox" Background="White" Margin="5,0,0,0" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1 or [Team Name]='Ginger'."  Style="{StaticResource @MultiRowsTextBoxStyle}" Text ="" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" IsEnabled="true" TextChanged="xSelectRowTextBox_TextChanged"/>
                     </StackPanel>
                     <usercontrols:ucButton x:Name="xExcelViewWhereButton" ButtonType="ImageButton" ToolTip="View Filtered Data" ButtonFontImageSize="20" ButtonImageType="Filter" Click="xExcelViewWhereButton_Click"  HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,25,0,0" />
                     <usercontrols:ucButton x:Name="xExcelViewDataButton" ToolTip="View All Data" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="View" Click="xExcelViewDataButton_Click"  HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,20,0,0"/>

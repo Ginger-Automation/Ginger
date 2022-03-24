@@ -88,7 +88,7 @@ namespace GingerWPF.BusinessFlowsLib
                 mActionBeenEdit.Context = mContext;
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.TextProperty, mActionBeenEdit, nameof(Act.Description));
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, mActionBeenEdit, nameof(Act.Description));
-                if(mPageViewMode == Ginger.General.eRIPageViewMode.View)
+                if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
                 {
                     xEditAndRunOperationsPnl.Visibility = Visibility.Collapsed;
                 }
@@ -98,13 +98,13 @@ namespace GingerWPF.BusinessFlowsLib
                     mActionBeenEdit.SaveBackup();
                     BindingHandler.ObjFieldBinding(xActiveBtn, ucButton.ButtonImageTypeProperty, mActionBeenEdit, nameof(Act.Active), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
                     BindingHandler.ObjFieldBinding(xBreakPointMenuItemIcon, ImageMaker.ContentProperty, mActionBeenEdit, nameof(Act.BreakPoint), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-                }               
+                }
 
                 mActionEditPage = new ActionEditPage(mActionBeenEdit, mPageViewMode);
                 xMainFrame.SetContent(mActionEditPage);
                 if (ShiftToActionEditEvent != null)
                 {
-                    ShiftToActionEditEvent.Invoke(this,null);
+                    ShiftToActionEditEvent.Invoke(this, null);
                 }
             }
             else
@@ -151,7 +151,7 @@ namespace GingerWPF.BusinessFlowsLib
         //{
         //    xMainFrame.Content = null;
         //    xMainFrame.NavigationService.RemoveBackEntry();
-            
+
         //    ClearListViewBindings();
 
         //    BindingOperations.ClearAllBindings(xSelectedItemTitleText);
@@ -174,7 +174,7 @@ namespace GingerWPF.BusinessFlowsLib
                 mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
 
                 mActionsListView.ListSelectionMode = SelectionMode.Extended;
-                
+
                 mActionsListView.PreviewDragItem += listActions_PreviewDragItem;
                 mActionsListView.ItemDropped += listActions_ItemDropped;
 
@@ -183,7 +183,7 @@ namespace GingerWPF.BusinessFlowsLib
                 // Enable Virtualization for Actions ListView to improve the loading time/performance
                 mActionsListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
 
-                if(mPageViewMode == Ginger.General.eRIPageViewMode.View)
+                if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
                 {
                     mActionsListView.IsDragDropCompatible = false;
                 }
@@ -203,7 +203,7 @@ namespace GingerWPF.BusinessFlowsLib
                         }
                         else
                         {
-                           act.Platform = platform;
+                            act.Platform = platform;
                         }
                     }
                 });
@@ -309,6 +309,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xGoToActionsList_Click(object sender, RoutedEventArgs e)
         {
+            if (mActionBeenEdit.ActClass.Equals("GingerCore.Actions.ActDSTableElement"))
+            {
+                mActionEditPage.UpdateDataSourceOnBack();
+            }
             ShowHideEditPage(null);
         }
 
@@ -326,7 +330,7 @@ namespace GingerWPF.BusinessFlowsLib
                 int selectedTabIndx = mActionEditPage.SelectedTabIndx;
                 ShowHideEditPage(mActionBeenEdit);
                 mActionEditPage.SelectedTabIndx = selectedTabIndx;
-            }            
+            }
         }
 
         private void xPreviousActionBtn_Click(object sender, RoutedEventArgs e)
@@ -416,10 +420,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xExpandActionBtn_Click(object sender, RoutedEventArgs e)
         {
-            mActionEditPage.ShowAsWindow(windowStyle:eWindowShowStyle.OnlyDialog);
+            mActionEditPage.ShowAsWindow(windowStyle: eWindowShowStyle.OnlyDialog);
             mActionEditPage.Width = xMainFrame.ActualWidth;
             mActionEditPage.HorizontalAlignment = HorizontalAlignment.Stretch;
-            xMainFrame.Refresh();            
+            xMainFrame.Refresh();
         }
 
         private void xMainFrame_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -34,8 +34,8 @@ namespace Ginger.Actions
     /// <summary>
     /// Interaction logic for XLSReadDataToVariablesPage.xaml
     /// </summary>
-    public partial class ActExcelEditPage 
-    {       
+    public partial class ActExcelEditPage
+    {
         public ActionEditPage actp;
         private ActExcel mAct;
         private IExcelOperations mExcelOperations = new ExcelNPOIOperations();
@@ -44,22 +44,24 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
             Bind();
-            mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            mAct.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+            ExcelFileNameTextBox.LostFocus -= ExcelFileNameTextBox_LostFocus;
+            ExcelFileNameTextBox.LostFocus += ExcelFileNameTextBox_LostFocus;
         }
-        
+
         public void Bind()
-        {            
+        {
             ExcelActionComboBox.BindControl(mAct, nameof(ActExcel.ExcelActionType));
             ExcelFileNameTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ExcelFileName));
             SheetNamComboBox.BindControl(mAct, nameof(ActExcel.SheetName));
             SelectRowsWhereTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SelectRowsWhere));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SelectAllRows,CheckBox.IsCheckedProperty,mAct, nameof(ActExcel.SelectAllRows));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SelectAllRows, CheckBox.IsCheckedProperty, mAct, nameof(ActExcel.SelectAllRows));
             PrimaryKeyColumnTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.PrimaryKeyColumn));
             SetDataUsedTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SetDataUsed));
             ColMappingRulesTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ColMappingRules));
-            
+
             if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData)
-            {                
+            {
                 this.ColMappingRulesSection.Visibility = Visibility.Collapsed;
                 SetDataUsedSection.Visibility = Visibility.Visible;
             }
@@ -73,7 +75,7 @@ namespace Ginger.Actions
             {
                 FillSheetCombo();
                 if (mAct.SheetName != null)
-                {                        
+                {
                     SheetNamComboBox.Items.Add(mAct.SheetName);
                     SheetNamComboBox.SelectedValue = mAct.SheetName;
                 }
@@ -103,6 +105,10 @@ namespace Ginger.Actions
                 Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
                 return;
             }
+            if (SheetsList[0].Equals("Invalid Extension"))
+            {
+                return;
+            }
             GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
         }
 
@@ -130,7 +136,7 @@ namespace Ginger.Actions
 
         private void ViewWhereButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!mAct.CheckMandatoryFieldsExists(new List<string>() { 
+            if (!mAct.CheckMandatoryFieldsExists(new List<string>() {
                 nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName),  nameof(mAct.SelectRowsWhere)}))
             {
                 Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
@@ -147,7 +153,7 @@ namespace Ginger.Actions
         }
         DataTable GetExcelSheetData(bool isViewAllData)
         {
-            if(!mAct.CheckMandatoryFieldsExists(new List<string>() { nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName) }))
+            if (!mAct.CheckMandatoryFieldsExists(new List<string>() { nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName) }))
             {
                 return null;
             }
@@ -207,6 +213,13 @@ namespace Ginger.Actions
             }
             Process.Start(mAct.CalculatedFileName);
         }
-            
+
+        private void ExcelFileNameTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            string fileName = ExcelFileNameTextBox.ValueTextBox.Text;
+
+        }
+
+
     }
 }

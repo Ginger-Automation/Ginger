@@ -188,7 +188,7 @@ namespace Ginger.Actions
             {
                 SetViewMode();
             }
-            else if(EditMode == General.eRIPageViewMode.Explorer)
+            else if (EditMode == General.eRIPageViewMode.Explorer)
             {
                 SetExplorerMode();
             }
@@ -308,7 +308,7 @@ namespace Ginger.Actions
 
             xDataSourceConfigGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All", new RoutedEventHandler(CheckUnCheckGridRow));
 
- 
+
             BindingHandler.ObjFieldBinding(xAddOutToDSCheckbox, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutputDS));
             BindingHandler.ObjFieldBinding(xDataSourceNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceName));
             BindingHandler.ObjFieldBinding(xDataSourceTableNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceTableName));
@@ -338,7 +338,7 @@ namespace Ginger.Actions
             xDataSourceConfigGrid.LostFocus += DataSourceConfigGrid_LostFocus;
 
             //Output Values
-           
+
 
             SetActReturnValuesGrid();
 
@@ -1433,7 +1433,7 @@ namespace Ginger.Actions
                 Enum.TryParse(mAction.OutDSParamMapType, out Act.eOutputDSParamMapType selecedEnumVal);
                 xdsOutputParamMapType.SelectedValue = selecedEnumVal;
             }
-               
+
 
             SetDataSourceConfigTabView();
 
@@ -1508,7 +1508,7 @@ namespace Ginger.Actions
             {
                 aOutDSConfigParam.Add(aOutDSConfig);
             }
-                
+
 
             xDataSourceConfigGrid.Visibility = Visibility.Visible;
 
@@ -1610,7 +1610,7 @@ namespace Ginger.Actions
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    if (mAction.Status== Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
+                    if (mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
                     {
                         mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
                         xOutputValuesGrid.DataSourceList = null;
@@ -1786,5 +1786,12 @@ namespace Ginger.Actions
             updateDSOutGrid();
             SetDSGridVisibility();
         }
+
+        public void UpdateDataSourceOnBack()
+        {
+            ActDataSourcePage objAct = xActionPrivateConfigsFrame.Content as Ginger.Actions.ActDataSourcePage;
+            objAct.UpdateValueExpression();
+        }
+
     }
 }

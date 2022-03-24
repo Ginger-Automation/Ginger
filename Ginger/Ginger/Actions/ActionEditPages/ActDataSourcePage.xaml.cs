@@ -967,7 +967,7 @@ namespace Ginger.Actions
             }
         }
         
-        private void UpdateValueExpression()
+        public void UpdateValueExpression()
         {
             DataSourceBase DataSource = null;
             

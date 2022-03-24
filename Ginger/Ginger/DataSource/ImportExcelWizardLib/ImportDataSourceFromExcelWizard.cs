@@ -45,6 +45,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         public string Path { get; set; }
         public string SheetName { get; set; }
         public DataSet ExcelImportData { get; set; }
+        public string SelectDataWhere { get; set; }
 
         /// <summary>
         /// Gets sets the HeadingRow
@@ -74,35 +75,38 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         public ImportDataSourceFromExcelWizard(DataSourceBase DSDetails)
         {
             mDSDetails = DSDetails;
+            ImportDataSourceDisplayData newDataSourceDisplayPage = new ImportDataSourceDisplayData();
+            newDataSourceDisplayPage.ExcelWhereConditionUpdated += NewDataSourceDisplayPage_ExcelWhereConditionUpdated;
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Import DataSource From Excel File", Page: new WizardIntroPage("/DataSource/ImportExcelWizardLib/ImportDataSourceIntro.md"));
             AddPage(Name: "Browse File", Title: "Browse File", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceBrowseFile());
             AddPage(Name: "Sheet Selection", Title: "Sheet Selection", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceSheetSelection());
-            AddPage(Name: "Display Data", Title: "Display Data", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceDisplayData());            
+            AddPage(Name: "Display Data", Title: "Display Data", SubTitle: "Import DataSource From Excel File", Page: newDataSourceDisplayPage);
         }
 
         /// <summary>
         /// This method is the final finish method
         /// </summary>
         public override void Finish()
-        {   
+        {
             try
             {
                 ImportOptionalValuesForParameters impParams = new ImportOptionalValuesForParameters();
-                
+
                 impParams.ExcelFileName = Path;
-                impParams.ExcelSheetName = SheetName;                
+                impParams.ExcelSheetName = SheetName;
+                impParams.ExcelWhereCondition = SelectDataWhere;
 
                 if (ExcelImportData == null || ExcelImportData.Tables.Count <= 0)
                 {
-                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsImportEmptyColumns, IsModelParamsFile);
+                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsImportEmptyColumns, IsModelParamsFile, true);
                 }
                 foreach (DataTable dt in ExcelImportData.Tables)
                 {
                     string cols = GetColumnNameListForTableCreation(dt);
                     AddDefaultColumn(dt);
-                    CreateTable(dt.TableName, cols);                    
+                    CreateTable(dt.TableName, cols);
                     mDSDetails.SaveTable(dt);
-                }                
+                }
             }
             catch (System.Exception ex)
             {
@@ -120,15 +124,15 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             try
             {
                 StringBuilder colList = new StringBuilder();
-                colList.Append(mDSDetails.AddNewCustomizedTableQuery()+",");
+                colList.Append(mDSDetails.AddNewCustomizedTableQuery() + ",");
                 foreach (DataColumn col in dt.Columns)
                 {
-                    if(col.ColumnName == "GINGER_ID" || col.ColumnName == "GINGER_USED" || col.ColumnName == "GINGER_LAST_UPDATED_BY" || col.ColumnName == "GINGER_LAST_UPDATE_DATETIME")
+                    if (col.ColumnName == "GINGER_ID" || col.ColumnName == "GINGER_USED" || col.ColumnName == "GINGER_LAST_UPDATED_BY" || col.ColumnName == "GINGER_LAST_UPDATE_DATETIME")
                     {
                         continue;
                     }
                     colList.Append(mDSDetails.AddColumnName(col.ColumnName));
-                    
+
                 }
                 cols = colList.ToString().Remove(colList.ToString().LastIndexOf(","), 1);
             }
@@ -199,6 +203,11 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
             return fileName;
+        }
+
+        private void NewDataSourceDisplayPage_ExcelWhereConditionUpdated(object sender, EventArgs e)
+        {
+            SelectDataWhere = (string)sender;
         }
     }
 }
