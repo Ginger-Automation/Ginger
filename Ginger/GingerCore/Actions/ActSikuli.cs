@@ -181,7 +181,14 @@ namespace GingerCore.Actions
         {
             if (!string.IsNullOrEmpty(ProcessNameForSikuliOperation))
             {
-                WinAPIAutomation.ShowWindow(lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).First());
+                if (lstWindows.Count == 0)
+                {
+                    RefreshActiveProcessesTitles();
+                }
+                if (lstWindows.Count != 0)
+                {
+                    WinAPIAutomation.ShowWindow(lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).First());
+                }
             }
         }
 
