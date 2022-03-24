@@ -267,10 +267,10 @@ namespace Ginger.Run
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
 
-            if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
-            {
-                RunListeners.Add(new TelemetryRunListener());
-            }
+            //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
+            //{
+            //    RunListeners.Add(new TelemetryRunListener());
+            //}
 
         }
 
@@ -288,10 +288,10 @@ namespace Ginger.Run
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
-            if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
-            {
-                RunListeners.Add(new TelemetryRunListener());
-            }
+            //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
+            //{
+            //    RunListeners.Add(new TelemetryRunListener());
+            //}
 
         }
 
