@@ -1556,21 +1556,35 @@ namespace GingerCore.ALM
         }
         public string GetLastTestPlanIdFromPath(string path)
         {
-            string[] separatePath = path.Split('\\');
-
-            separatePath[0] = ExploredApplicationModule.ContainsKey("Application Modules") ? ExploredApplicationModule["Application Modules"] : GetRootFolderId();
-
-            if (!ExploredApplicationModule.ContainsKey("Application Modules"))
+            string[] separatePath;
+            if (!string.IsNullOrEmpty(path))
             {
-                ExploredApplicationModule.Add("Application Modules", separatePath[0]);
+                if(!path.Contains("Application Modules"))
+                { 
+                    path =@"Application Modules\"+path;
+                }
+                separatePath = path.Split('\\');
+                separatePath[0] = ExploredApplicationModule.ContainsKey("Application Modules") ? ExploredApplicationModule["Application Modules"] : GetRootFolderId();
+
+                if (!ExploredApplicationModule.ContainsKey("Application Modules"))
+                {
+                    ExploredApplicationModule.Add("Application Modules", separatePath[0]);
+                }
+               for (int i = 1; i < separatePath.Length; i++)
+                {
+                    separatePath[i] = GetTestLabFolderId(separatePath[i], separatePath[i - 1]);
+                }
+
+                return separatePath.Last();
+            }
+            else
+            {
+                return ExploredApplicationModule.ContainsKey("Application Modules") ? ExploredApplicationModule["Application Modules"] : GetRootFolderId();
             }
 
-            for (int i = 1; i < separatePath.Length; i++)
-            {
-                separatePath[i] = GetTestLabFolderId(separatePath[i], separatePath[i - 1]);
-            }
+            
 
-            return separatePath.Last();
+            
         }
 
         public string CreateApplicationModule(string appModuleNameTobeCreated, string desc, string paraentId)
