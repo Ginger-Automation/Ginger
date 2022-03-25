@@ -209,8 +209,6 @@ namespace Ginger.Reports
                     }
                 }
 
-
-
                 if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
                 {
                     if (xSealightsURLTextBox.Text.Trim() == "" || xSealighsAgentTokenTextBox.Text.Trim() == "" ||
@@ -221,7 +219,6 @@ namespace Ginger.Reports
                         return;
                     }
                 }
-
             }
             catch
             {

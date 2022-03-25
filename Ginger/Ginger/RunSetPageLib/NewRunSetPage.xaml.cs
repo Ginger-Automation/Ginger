@@ -611,6 +611,7 @@ namespace Ginger.Run
             TagsViewer.Init(mRunSetConfig.Tags);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mRunSetConfig, nameof(RepositoryItemBase.Publish));
 
+                        
             //Gideon
             BindingHandler.ObjFieldBinding(xDefaultTestStageRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.DefaultTestStageYN));
             BindingHandler.ObjFieldBinding(xCustomTestStageRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.CustomTestStageYN));
@@ -670,22 +671,44 @@ namespace Ginger.Run
                     XCustomSessionIdRadioBtn_Checked(null, null);
             }
 
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.No)
+            {
+                xSealighsExpander.Visibility = Visibility.Collapsed;
+            }
+
         }
 
         private void XCustomSessionIdRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
             xSealighsBuildSessionIDTextBox.Visibility = Visibility.Visible;
+
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID.Trim() == "")
+            {
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID;
+            }
         }
 
         private void XCustomLabIdRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
             xSealighsLabIdTextBox.Visibility = Visibility.Visible;
+
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId.Trim() == "")
+            {
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLabId;
+            }
         }
 
         private void XCustomTestStageRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
             xSealightsTestStageTextBox.Visibility = Visibility.Visible;
+
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage.Trim() == "")
+            {
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsTestStage;
+            }
         }
+
+
 
         private void XDefaultTestStageRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
@@ -1473,17 +1496,11 @@ namespace Ginger.Run
         internal void SaveRunSetConfig()
         {
             try
-            {
-                mRunSetConfig.AllowAutoSave = false;
-                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
-                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
-
-                // Gideon
-
+            {                
                 //  Check Sealights's values on run-set levels
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomLabIdYN == true)
                 {
-                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId.Trim() == "")
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId.Trim() == "")
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please fill out the Sealights Lab ID");
                         return;
@@ -1491,7 +1508,7 @@ namespace Ginger.Run
                 }
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomSessionIdYN == true)
                 {
-                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID.Trim() == "")
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID.Trim() == "")
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please fill out the Sealights Session ID");
                         return;
@@ -1499,12 +1516,16 @@ namespace Ginger.Run
                 }
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomTestStageYN == true)
                 {
-                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage.Trim() == "")
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage.Trim() == "")
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please fill out the Sealights Test Stage");
                         return;
                     }
                 }
+
+                mRunSetConfig.AllowAutoSave = false;
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
             }
             finally
             {
