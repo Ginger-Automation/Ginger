@@ -2199,7 +2199,7 @@ namespace Ginger.Run
         public void viewActivity(Activity activitytoView)
         {
             Activity ac = activitytoView;
-            GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(ac, new Context() { BusinessFlow = mCurrentBusinessFlowRunnerItemObject, Activity = ac }, General.eRIPageViewMode.View);
+            GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(ac, new Context() { BusinessFlow = mCurrentBusinessFlowRunnerItemObject, Activity = ac, Environment = mContext.Environment }, General.eRIPageViewMode.View);
             mContext.BusinessFlow.CurrentActivity = activitytoView;
             w.ShowAsWindow();
         }
