@@ -34,8 +34,8 @@ namespace GingerCore.GeneralLib
             try
             {
                 // Get a credential from the credential manager
-                var cred = CredentialManager.ReadCredential(applicationName: target);
-                return cred.Password;
+                var cred = CredentialManager.ReadCredential(applicationName: target);                
+                return cred?.Password;
             }
             catch (Exception ex)
             {

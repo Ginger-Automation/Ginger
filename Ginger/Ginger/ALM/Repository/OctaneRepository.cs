@@ -197,11 +197,6 @@ namespace Ginger.ALM.Repository
                 {
                     testPlanUploadPath = SelectALMTestPlanPath();
                 }
-                if (String.IsNullOrEmpty(testPlanUploadPath))
-                {
-                    //no path to upload to
-                    return false;
-                }
                 //create upload path if checked to create separete folder
                 if (QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder)
                 {
