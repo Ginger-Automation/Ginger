@@ -136,7 +136,7 @@ namespace GingerCore.ALM
                 {
                     return octaneRepository.GetEntities<ApplicationModule>(GetLoginDTO(), filter);
                 }).Result;
-
+                
                 ExploredApplicationModule.Add(listnodes.FirstOrDefault().Name, listnodes.FirstOrDefault().Id);
                 return listnodes.FirstOrDefault().Id;
             }
@@ -148,8 +148,8 @@ namespace GingerCore.ALM
 
         private LoginDTO GetLoginDTO()
         {
-            if (this.loginDto == null)
-            {
+            //if (this.loginDto == null)
+            //{
                 AlmResponseWithData<AlmDomainColl> domains = Task.Run(() =>
                 {
                     return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
@@ -164,7 +164,7 @@ namespace GingerCore.ALM
                     SharedSpaceId = domain.DomainId,
                     WorkSpaceId = project.ProjectId
                 };
-            }
+            //}
             return this.loginDto;
         }
 
