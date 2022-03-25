@@ -106,7 +106,7 @@ namespace Ginger.Repository
                                     Ginger.Repository.RepositoryItemUsage.eUsageTypes type;
                                     if (a.Type == eSharedItemType.Link)
                                     {
-                                        type = RepositoryItemUsage.eUsageTypes.Link;
+                                        type = RepositoryItemUsage.eUsageTypes.LinkInstance;
                                     }
                                     else if (a.Guid == mRepoItem.Guid)
                                     {
@@ -114,7 +114,7 @@ namespace Ginger.Repository
                                     }
                                     else
                                     {
-                                        type = RepositoryItemUsage.eUsageTypes.Instance;
+                                        type = RepositoryItemUsage.eUsageTypes.RegularInstance;
                                     }
 
                                     RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), UsageItem = a, UsageItemName = a.ActivityName, UsageExtraDetails = "Number of Actions: " + a.Acts.Count().ToString(), UsageItemType = type, Selected = a.Type != eSharedItemType.Link, Status = a.Type == eSharedItemType.Link ? RepositoryItemUsage.eStatus.NA : RepositoryItemUsage.eStatus.NotUpdated };
@@ -141,7 +141,7 @@ namespace Ginger.Repository
                                     if (a.Guid == mRepoItem.Guid)
                                         type = RepositoryItemUsage.eUsageTypes.Original;
                                     else
-                                        type = RepositoryItemUsage.eUsageTypes.Instance;
+                                        type = RepositoryItemUsage.eUsageTypes.RegularInstance;
 
                                     RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Number of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": " + a.ActivitiesIdentifiers.Count().ToString(), UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                     itemUsage.SetItemPartesFromEnum(typeof(ActivitiesGroup.eItemParts));
@@ -167,7 +167,7 @@ namespace Ginger.Repository
                                         if (a.Guid == mRepoItem.Guid)
                                             type = RepositoryItemUsage.eUsageTypes.Original;
                                         else
-                                            type = RepositoryItemUsage.eUsageTypes.Instance;
+                                            type = RepositoryItemUsage.eUsageTypes.RegularInstance;
 
                                         RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), HostActivity = activity, HostActivityName = activity.ActivityName, UsageItem = a, UsageItemName = a.Description, UsageExtraDetails = "", UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                         itemUsage.SetItemPartesFromEnum(typeof(Act.eItemParts));
@@ -193,7 +193,7 @@ namespace Ginger.Repository
                                     if (a.Guid == mRepoItem.Guid)
                                         type = RepositoryItemUsage.eUsageTypes.Original;
                                     else
-                                        type = RepositoryItemUsage.eUsageTypes.Instance;
+                                        type = RepositoryItemUsage.eUsageTypes.RegularInstance;
 
                                     RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Current Value: " + a.Value, UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                     itemUsage.SetItemPartesFromEnum(typeof(VariableBase.eItemParts));
@@ -217,7 +217,7 @@ namespace Ginger.Repository
                                         if (a.Guid == mRepoItem.Guid)
                                             type = RepositoryItemUsage.eUsageTypes.Original;
                                         else
-                                            type = RepositoryItemUsage.eUsageTypes.Instance;
+                                            type = RepositoryItemUsage.eUsageTypes.RegularInstance;
 
                                         RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), HostActivity = activity, HostActivityName = activity.ActivityName, UsageItem = a, UsageItemName = a.Name, UsageExtraDetails = "Current Value: " + a.Value, UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                         itemUsage.SetItemPartesFromEnum(typeof(VariableBase.eItemParts));
@@ -300,15 +300,25 @@ namespace Ginger.Repository
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.Selected, StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10});
+
+            view.GridColsView.Add(new GridColView()
+            {
+                Field = RepositoryItemUsage.Fields.Selected,
+                WidthWeight = 1,
+                StyleType = GridColView.eGridColStyleType.Template,
+                CellTemplate = ucGrid.GetGridCheckBoxTemplate(nameof(RepositoryItemUsage.Fields.Selected), nameof(RepositoryItemUsage.IsDisabled), FindResource("@GridCellCheckBoxStyle") as Style)               
+            });
 
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.HostBizFlowPath, Header = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), WidthWeight = 25, ReadOnly = true });
             if (mRepoItem is Act || mRepoItem is VariableBase)
                 view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.HostActivityName, Header = GingerDicser.GetTermResValue(eTermResKey.Activity), WidthWeight = 25, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.UsageItemName, Header = "Usage Name", WidthWeight = 25, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.UsageExtraDetails, Header = "Usage Extra Details", WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.UsageItemType, Header = "Usage Type", WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.SelectedItemPart, Header = "Part to Update ", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(RepositoryItemUsage.Fields.ItemParts, RepositoryItemUsage.Fields.SelectedItemPart, false, true, nameof(RepositoryItemUsage.IsDisabled), true), WidthWeight = 20 });
+            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.UsageExtraDetails, Header = "Usage Extra Details", WidthWeight = 20, ReadOnly = true});
+
+            view.GridColsView.Add(new GridColView() { AllowSorting = true, SortDirection= System.ComponentModel.ListSortDirection.Descending, Field = RepositoryItemUsage.Fields.UsageItemType, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eUsageTypes)), Header = "Usage Type", WidthWeight = 20, ReadOnly = true });
+
+            view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.SelectedItemPart, Header = "Part to Update ", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(RepositoryItemUsage.Fields.ItemParts, RepositoryItemUsage.Fields.SelectedItemPart, false, true, nameof(RepositoryItemUsage.IsDisabled), true,null, true), WidthWeight = 20 });
+
             view.GridColsView.Add(new GridColView() { Field = RepositoryItemUsage.Fields.Status, WidthWeight = 15, ReadOnly = true });
 
             usageGrid.SetAllColumnsDefaultView(view);
@@ -433,6 +443,9 @@ namespace Ginger.Repository
         private async void RepositoryItemUsagePageLoaded(object sender, RoutedEventArgs e)
         {
             await FindUsages().ConfigureAwait(false);
+            RepoItemUsages = new ObservableList<RepositoryItemUsage>(RepoItemUsages.OrderBy(a => a.UsageItemType));
+            usageGrid.DataSourceList = RepoItemUsages;
+            
         }
     }
 }
