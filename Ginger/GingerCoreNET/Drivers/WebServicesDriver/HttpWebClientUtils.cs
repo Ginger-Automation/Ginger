@@ -346,14 +346,17 @@ namespace GingerCore.Actions.WebAPI
             string rawMsg = string.Empty;
             if (msgType == "request")
             {
-                rawMsg = $"{RequestMessage.Method} {RequestMessage.RequestUri} HTTP/{RequestMessage.Version}\r\n";
-                rawMsg += !string.IsNullOrEmpty(RequestMessage.Content.Headers.ToString()) ? $"{RequestMessage.Content.Headers}" : string.Empty;
-                if (!RequestMessage.Content.Headers.ToString().Contains("Content-Length"))
-                {
-                    rawMsg += $"Content-Length: {RequestMessage.Content.Headers.ContentLength}\r\n";
+                if (RequestMessage != null) {
+                    rawMsg = $"{RequestMessage.Method} {RequestMessage.RequestUri} HTTP/{RequestMessage.Version}\r\n";
+                    rawMsg += $"{Client.DefaultRequestHeaders}";
+                    rawMsg += RequestMessage.Content != null ? $"{RequestMessage.Content.Headers}" : string.Empty;
+                    if (RequestMessage.Method.ToString() != "GET" && !RequestMessage.Content.Headers.ToString().Contains("Content-Length"))
+                    {
+                        rawMsg += $"Content-Length: {RequestMessage.Content.Headers.ContentLength}\r\n";
+                    }
+                    rawMsg += $"Host: {RequestMessage.RequestUri.Authority}\r\n\r\n";
+                    rawMsg += BodyString;
                 }
-                rawMsg += $"Host: {RequestMessage.RequestUri.Authority}\r\n\r\n";
-                rawMsg += BodyString;
             }
             else
             {
@@ -380,7 +383,7 @@ namespace GingerCore.Actions.WebAPI
                 {
                     RequestFileContent = CreateRawRequestAndResponse("request");
                 }
-                if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "XwwwFormUrlEncoded"))
+                else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "XwwwFormUrlEncoded"))
                 {
                     HttpContent UrlEncoded = new FormUrlEncodedContent(ConstructURLEncoded((ActWebAPIRest)mAct));
                     RequestFileContent = UrlEncoded.ToString();
@@ -391,6 +394,10 @@ namespace GingerCore.Actions.WebAPI
                     for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
                         FormDataContent.Add(new StringContent(mAct.RequestKeyValues[i].ValueForDriver), mAct.RequestKeyValues[i].ItemName.ToString());
                     RequestFileContent = FormDataContent.ToString();
+                }
+                else
+                {
+                    RequestFileContent = CreateRawRequestAndResponse("request");
                 }
             }
         }

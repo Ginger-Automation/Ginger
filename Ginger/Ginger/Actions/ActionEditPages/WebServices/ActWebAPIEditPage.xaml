@@ -73,8 +73,7 @@
                 <StackPanel x:Name="JSON" Orientation="Horizontal" Visibility="Visible">
                     <CheckBox x:Name="UseLegacyJSONParsingCheckBox" VerticalAlignment="Center" Margin="1,10,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Use Legacy Parser"  />
                 </StackPanel>
-                <Button x:Name="xViewRawRequestBtn" Content="View Raw Request" Width="100" Click="xViewRawRequestBtn_Click"/>
-                <TextBlock x:Name="xViewRawRequestTxtBlock" Width="200" Text="Testing" Background="White" Height="150"/>
+                <Button x:Name="xViewRawRequestBtn" Content="View Raw Request" Width="120" Style="{StaticResource $InputButtonStyle}" Click="xViewRawRequestBtn_Click"/>
                 <Actions:UCInputValuesGrid x:Name="HttpHeadersGrid" Margin="0,10,0,0"/>
             </StackPanel>
         </StackPanel>
@@ -91,7 +90,7 @@
                                 <StackPanel x:Name="ContentTypeParameters" Orientation="Vertical">
                                     <StackPanel x:Name="RequestContent" Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Left" >
                                         <Label Style="{StaticResource @InputFieldLabelStyle}">Body Content Type:</Label>
-                                        <UserControlsLib:UCComboBox x:Name="ContentTypeComboBox" Width="250" Margin="35,0,0,0"></UserControlsLib:UCComboBox>
+                                        <UserControlsLib:UCComboBox x:Name="ContentTypeComboBox" Width="250" Margin="35,0,0,0" DataContextChanged="ContentTypeComboBox_DataContextChanged" ></UserControlsLib:UCComboBox>
                                     </StackPanel>
                                     <StackPanel x:Name="RequestBodyTypePanel" Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,0">
                                         <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Row="0">Body Content Source:</Label>

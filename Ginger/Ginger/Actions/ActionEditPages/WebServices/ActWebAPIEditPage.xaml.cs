@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Actions.ActionEditPages.WebServices;
 using Ginger.UserControls;
 using GingerCore.Actions;
 using GingerCore.Actions.WebAPI;
@@ -597,11 +598,23 @@ namespace Ginger.Actions.WebServices
 
         private void xViewRawRequestBtn_Click(object sender, RoutedEventArgs e)
         {
+            for (int i = 0; i < mAct.ActInputValues.Count; i++)
+            {
+                mAct.ActInputValues[i].ValueForDriver = mAct.ActInputValues[i].Value;
+            }
+
             HttpWebClientUtils webAPI = new HttpWebClientUtils();
             webAPI.RequestContstructor(mAct, null, false);
             webAPI.CreateRawRequestContent();
 
-            xViewRawRequestTxtBlock.Text = webAPI.RequestFileContent;
+            APIViewRawRequest mAPIViewRawRequest = new APIViewRawRequest(webAPI.RequestFileContent);
+            mAPIViewRawRequest.ShowAsWindow(eWindowShowStyle.Dialog);
+
+        }
+
+        private void ContentTypeComboBox_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+
         }
     }
 }

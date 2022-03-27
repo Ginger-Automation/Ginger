@@ -34,6 +34,7 @@ using Ginger.DataSource;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerCore.Actions.WebAPI;
 using GingerCore.Actions.WebServices;
+using Ginger.Actions.ActionEditPages.WebServices;
 
 namespace Ginger.Actions.WebServices
 {
@@ -312,7 +313,9 @@ namespace Ginger.Actions.WebServices
             webAPI.RequestContstructor(actWebAPI, null, false);
             webAPI.CreateRawRequestContent();
 
-            xViewRawRequestTxtBlock.Text = webAPI.RequestFileContent;
+            APIViewRawRequest mAPIViewRawRequest = new APIViewRawRequest(webAPI.RequestFileContent);
+            mAPIViewRawRequest.ShowAsWindow(eWindowShowStyle.Dialog);
+
         }
     }
 }
