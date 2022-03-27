@@ -58,6 +58,9 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using OpenQA.Selenium.DevTools;
+using DevToolsSessionDomains = OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains;
+using System.Text;
 
 namespace GingerCore.Drivers
 {
@@ -238,6 +241,7 @@ namespace GingerCore.Drivers
         public bool HandelIFramShiftAutomaticallyForPomElement { get; set; }
 
         protected IWebDriver Driver;
+        protected IDevToolsSession Session;
 
         protected eBrowserType mBrowserTpe;
         protected NgWebDriver ngDriver;
@@ -513,6 +517,7 @@ namespace GingerCore.Drivers
                         try
                         {
                             Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            
                         }
                         catch (Exception ex)
                         {
@@ -962,6 +967,12 @@ namespace GingerCore.Drivers
             return null;
         }
 
+        public void RequestWillBeSent()
+        {
+
+        }
+
+       
         private void GotoURL(Act act, string sURL)
         {
             if (sURL.ToLower().StartsWith("www"))
@@ -972,7 +983,32 @@ namespace GingerCore.Drivers
             Uri uri = ValidateURL(sURL);
             if (uri != null)
             {
+               
+                IDevTools devTools = Driver as IDevTools;
+                Session = devTools.GetDevToolsSession();
+                var domains = Session.GetVersionSpecificDomains<DevToolsSessionDomains>();
+                domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
+                domains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V96.Network.SetBlockedURLsCommandSettings()
+                {
+                    Urls = new string[] { "*://*/*.css", "*://*/*.jpg", "*://*/*.png" }
+                });
+               // Driver.Manage().Network.NetworkRequestSent += OnNetworkRequestSent;
+                Driver.Manage().Network.NetworkResponseReceived += OnNetworkResponseReceived;
+
+                Task.Run(async ()=>
+                {
+                    await Driver.Manage().Network.StartMonitoring();
+                });
+
+                //Driver.Manage().Network.StartMonitoring().ConfigureAwait(false);
                 Driver.Navigate().GoToUrl(uri.AbsoluteUri);
+                
+                //Driver.Manage().Network.StopMonitoring().ConfigureAwait(false); ;
+                Task.Run(async () =>
+                {
+                    await Driver.Manage().Network.StopMonitoring();
+                });
+                Driver.Manage().Network.NetworkResponseReceived -= OnNetworkResponseReceived;
             }
             else
             {
@@ -6537,7 +6573,17 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
+                        //IDevTools devTools = Driver as IDevTools;
+                        //Session = devTools.GetDevToolsSession();
+                        //var domains = Session.GetVersionSpecificDomains<DevToolsSessionDomains>();
+                        //domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
+                        ////Driver.Manage().Network.NetworkRequestSent += OnNetworkRequestSent;
+                        //Driver.Manage().Network.NetworkResponseReceived += OnNetworkResponseReceived;
+                        //Driver.Manage().Network.StartMonitoring();
                         GotoURL(act, act.GetInputParamCalculatedValue("Value"));
+                        //Driver.Manage().Network.StopMonitoring();
+                        //Driver.Manage().Network.NetworkRequestSent -= OnNetworkRequestSent;
+                        //Driver.Manage().Network.NetworkResponseReceived -= OnNetworkResponseReceived;
                     }
                     break;
 
@@ -6687,6 +6733,12 @@ namespace GingerCore.Drivers
                         }
 
                     }
+
+                    //if(ActBrowserElement.Fields.xNetworkEnableCheckBox == "true")
+                    //{
+                        NetwrokSetup(Driver);
+                    //}
+
 
                     break;
                 case ActBrowserElement.eControlAction.NavigateBack:
@@ -8364,6 +8416,128 @@ namespace GingerCore.Drivers
         public string GetCurrentPageSourceString()
         {
             return Driver.PageSource;
+        }
+
+        public void NetwrokSetup(IWebDriver Driver)
+        {
+            IDevTools devTools = Driver as IDevTools;
+            Session = devTools.GetDevToolsSession();
+            var domains = Session.GetVersionSpecificDomains<DevToolsSessionDomains>();
+            domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
+            NetworkInterception();
+            
+        }
+        public async Task NetworkInterception()
+        {
+            //domains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V96.Network.SetBlockedURLsCommandSettings()
+            //{
+            //    Urls = new string[] {"*://*/*.css", "*://*/*.jpg", "*://*/*.png" }
+            //});
+            INetwork interceptor = Driver.Manage().Network;
+            try
+            {
+                
+                await NetworkLogTestAsync(interceptor);
+            }
+            catch (Exception ex){ 
+
+            }
+            finally
+            {
+                await interceptor.StopMonitoring();
+            }
+
+        }
+
+        public async Task NetworkLogTestAsync(INetwork interceptor)
+        {
+         //  interceptor.NetworkRequestSent += OnNetworkRequestSent;
+           // interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
+            await interceptor.StartMonitoring();
+           // Driver.Url = this.Driver.Url;
+
+            // webDriver.Url = "http://the-internet.herokuapp.com/redirect";
+            //Driver.Url = "https://my.smart.com.ph/smart";
+             
+        }
+        private readonly object balanceLock = new object();
+        private readonly object RecievedbalanceLock = new object();
+        private void OnNetworkRequestSent(object sender, NetworkRequestSentEventArgs e)
+        {
+            lock (balanceLock)
+            {
+                try
+                {
+                    StringBuilder builder = new StringBuilder();
+                    builder.AppendFormat("Request {0}", e.RequestId).AppendLine();
+                    builder.AppendLine("--------------------------------");
+                    builder.AppendFormat("{0} {1}", e.RequestMethod, e.RequestUrl).AppendLine();
+                    foreach (KeyValuePair<string, string> header in e.RequestHeaders)
+                    {
+                        builder.AppendFormat("{0}: {1}", header.Key, header.Value).AppendLine();
+                    }
+                    builder.AppendLine("--------------------------------");
+                    builder.AppendLine();
+                    Console.WriteLine(builder.ToString());
+                }
+                catch(Exception ex)
+                {
+
+                }
+                
+            }
+            
+        }
+        public string MyProperty { get; set; }
+        private void OnNetworkResponseReceived(object sender, NetworkResponseReceivedEventArgs e)
+        {
+            lock (RecievedbalanceLock)
+            {
+                try
+                {
+                    StringBuilder builder = new StringBuilder();
+                    builder.AppendFormat("Response {0}", e.RequestId).AppendLine();
+                    builder.AppendLine("--------------------------------");
+                    builder.AppendFormat("{0} {1}", e.ResponseStatusCode, e.ResponseUrl).AppendLine();
+                    foreach (KeyValuePair<string, string> header in e.ResponseHeaders)
+                    {
+                        builder.AppendFormat("{0}: {1}", header.Key, header.Value).AppendLine();
+                    }
+
+                    if (e.ResponseResourceType == "XHR")
+                    {
+                        Console.WriteLine(e.ResponseBody);
+                    }
+                    else if (e.ResponseResourceType == "Document")
+                    {
+                        if(!string.IsNullOrEmpty(e.ResponseBody))
+                            builder.AppendLine(e.ResponseBody);
+                    }
+                    else if (e.ResponseResourceType == "Script")
+                    {
+                        builder.AppendLine("<JavaScript content>");
+                    }
+                    else if (e.ResponseResourceType == "Stylesheet")
+                    {
+                        builder.AppendLine("<stylesheet content>");
+                    }
+                    else if (e.ResponseResourceType == "Image")
+                    {
+                        builder.AppendLine("<image>");
+                    }
+                    else
+                    {
+                        builder.AppendFormat("Content type: {0}", e.ResponseResourceType).AppendLine();
+                    }
+
+                    builder.AppendLine("--------------------------------");
+                    MyProperty = builder.ToString();
+                    Console.WriteLine(builder.ToString());
+                }
+                catch (Exception ex)
+                {
+                }
+            }
         }
     }
 }

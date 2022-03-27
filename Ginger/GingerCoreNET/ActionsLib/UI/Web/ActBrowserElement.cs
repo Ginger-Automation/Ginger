@@ -44,6 +44,7 @@ namespace GingerCore.Actions
             public static string ImplicitWait = "ImplicitWait";
             public static string URLSrc = "URLSrc";
             public static string PomGUID = "PomGUID";
+            public static string xNetworkEnableCheckBox = "xNetworkEnableCheckBox";
         }
 
         public override string ActionDescription { get { return "Browser Action"; } }
