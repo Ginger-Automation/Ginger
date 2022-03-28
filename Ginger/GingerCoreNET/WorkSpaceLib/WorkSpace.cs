@@ -113,8 +113,8 @@ namespace amdocs.ginger.GingerCoreNET
             {
                 mWorkSpace.InitLocalGrid();
             }
-            Telemetry.Init();
-            mWorkSpace.Telemetry.SessionStarted();
+            //Telemetry.Init();
+            //mWorkSpace.Telemetry.SessionStarted();
         }
 
         public void StartLocalGrid()
@@ -173,7 +173,7 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     WorkSpace.Instance.LocalGingerGrid.Stop();
                 }
-                WorkSpace.Instance.Telemetry.SessionEnd();
+                //WorkSpace.Instance.Telemetry.SessionEnd();
                 mWorkSpace = null;
             }
             catch (Exception ex)
