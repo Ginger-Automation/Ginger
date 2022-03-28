@@ -24,6 +24,8 @@ using System.Windows.Controls;
 using GingerCore;
 using Ginger.UserControls;
 using amdocs.ginger.GingerCoreNET;
+using System.Windows.Input;
+using System.Text.RegularExpressions;
 
 namespace Ginger.Reports
 {
@@ -184,6 +186,11 @@ namespace Ginger.Reports
             }
         }
 
+        private void PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
 
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
         {

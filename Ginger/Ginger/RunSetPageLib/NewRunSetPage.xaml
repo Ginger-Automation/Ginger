@@ -418,7 +418,7 @@
                                     </Grid.ColumnDefinitions>
                                   
                              
-                                    <Label x:Name="xSealighsLabIdLabel" Content="Lab Id:"  Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
+                                    <Label x:Name="xSealighsLabIdLabel" Content="Lab ID:"  Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
                                     <RadioButton x:Name="xDefaultLabIdRadioBtn" GroupName="radSealightsLabId"  IsChecked="True" Height="20" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="10,5,0,0"   >
                                         <RadioButton.Content>
                                             <GingerCore:ucTextDicResource Text="Default"/>
@@ -429,10 +429,10 @@
                                             <GingerCore:ucTextDicResource Text="Custom"/>
                                         </RadioButton.Content>
                                     </RadioButton>
-                                    <TextBox x:Name="xSealighsLabIdTextBox" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Left" ToolTip="Sealights Lab Id" Margin="10,0,0,0"  Width="400" VerticalScrollBarVisibility="Auto"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   Text="" />
+                                    <TextBox x:Name="xSealighsLabIdTextBox" PreviewTextInput="PreviewTextInput" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Left" ToolTip="Sealights Lab Id" Margin="10,0,0,0"  Width="400" VerticalScrollBarVisibility="Auto"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   Text="" />
 
 
-                                    <Label x:Name="xSealighsBuildSessionIDLabel" Content="Build Session Id:"  Grid.Column="0" Grid.Row="2" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
+                                    <Label x:Name="xSealighsBuildSessionIDLabel" Content="Build Session ID:"  Grid.Column="0" Grid.Row="2" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
                                     <RadioButton x:Name="xDefaultSessionIdRadioBtn" GroupName="radSealightsSessionId"  IsChecked="True" Height="20" Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Left" Margin="10,5,0,0"   >
                                         <RadioButton.Content>
                                             <GingerCore:ucTextDicResource Text="Default"/>
@@ -443,7 +443,7 @@
                                             <GingerCore:ucTextDicResource Text="Custom"/>
                                         </RadioButton.Content>
                                     </RadioButton>
-                                    <TextBox x:Name="xSealighsBuildSessionIDTextBox" Grid.Column="3" Grid.Row="2" HorizontalAlignment="Left" ToolTip="Sealights Session Id" Margin="10,0,0,0"  Width="400" VerticalScrollBarVisibility="Auto"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   Text="" />
+                                    <TextBox x:Name="xSealighsBuildSessionIDTextBox" PreviewTextInput="PreviewTextInput" Grid.Column="3" Grid.Row="2" HorizontalAlignment="Left" ToolTip="Sealights Session Id" Margin="10,0,0,0"  Width="400" VerticalScrollBarVisibility="Auto"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   Text="" />
 
                                     
                                     <Label x:Name="xSealightsTestStageLabel" Content="Test Stage:"  Grid.Column="0" Grid.Row="4" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
