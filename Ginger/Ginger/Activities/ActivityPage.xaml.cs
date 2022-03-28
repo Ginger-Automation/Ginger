@@ -501,11 +501,9 @@ namespace GingerWPF.BusinessFlowsLib
                 if (SharedRepositoryOperations.CheckIfSureDoingChange(mActivity, "change") == true)
                 {
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivity);
-                    Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating and Saving Linked Activity instanced in Businessflows...");
-                    await UpdateLinkedInstances(); 
+                    await SharedRepositoryOperations.UpdateLinkedInstances(mActivity); 
                     mSaveWasDone = true;
                     mGenericWin.Close();
-                    Reporter.HideStatusMessage();
                 }
             }
         }
@@ -527,50 +525,6 @@ namespace GingerWPF.BusinessFlowsLib
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-        }
-
-        private readonly object saveLock = new object();
-        private async Task UpdateLinkedInstances()
-        {
-            try
-            {
-                await Task.Run(() =>
-                {
-                    ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-
-                    Parallel.ForEach(BizFlows, BF =>
-                    {
-                        try
-                        {
-                            if (BF.Activities.Any(f => f.IsLinkedItem && f.ParentGuid == mActivity.Guid))
-                            {
-                                for (int i = 0; i < BF.Activities.Count(); i++)
-                                {
-                                    if (BF.Activities[i].IsLinkedItem && BF.Activities[i].ParentGuid == mActivity.Guid)
-                                    {
-                                        mActivity.UpdateInstance(BF.Activities[i], eItemParts.All.ToString(), BF);
-                                    }
-                                }
-                                lock (saveLock)
-                                {
-                                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BF);
-                                }
-                            }
-                           
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to update the Activity in businessFlow " + BF.Name, ex);
-                        }
-                    });
-                });
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to update the Activity in businessFlow", ex);
-            }
-
-        }
+        }       
     }
-
 }
