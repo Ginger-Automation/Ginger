@@ -326,7 +326,6 @@ namespace Ginger.Reports
 
                 xSealightsURLLabelValidation.Visibility = Visibility.Visible;
                 xSealighsAgentTokenLabelValidation.Visibility = Visibility.Visible;
-                xSealighsLabIdLabelValidation.Visibility = Visibility.Visible;
                 xSealightsTestStageLabelValidation.Visibility = Visibility.Visible;
                 xSealighsReportedEntityLevelLabelValidation.Visibility = Visibility.Visible;
             }
@@ -349,7 +348,6 @@ namespace Ginger.Reports
 
                 xSealightsURLLabelValidation.Visibility = Visibility.Collapsed;
                 xSealighsAgentTokenLabelValidation.Visibility = Visibility.Collapsed;
-                xSealighsLabIdLabelValidation.Visibility = Visibility.Collapsed;
                 xSealightsTestStageLabelValidation.Visibility = Visibility.Collapsed;
                 xSealighsReportedEntityLevelLabelValidation.Visibility = Visibility.Collapsed;
             }
