@@ -296,7 +296,7 @@ namespace Ginger.Run
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
 
-            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes)
+            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes)
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
