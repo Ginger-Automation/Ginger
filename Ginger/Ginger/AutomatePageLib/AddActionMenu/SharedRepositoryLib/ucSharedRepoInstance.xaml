@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Ginger.Repository"
+             xmlns:local="clr-namespace:Ginger.Repository" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="55" d:DesignWidth="50">
     <Grid Background="Transparent">
@@ -17,13 +17,13 @@
         </Grid.ColumnDefinitions>
 
         <Button x:Name="LinkStatusImageBtn" Grid.Row="0" Grid.ColumnSpan="2" Click="LinkStatusImageBtn_Click" MouseEnter="Image_MouseEnter" Style="{StaticResource @InputImageButtonStyle_NoBorder_NoBackground}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-            <Image x:Name="LinkStatusImage" Source="{StaticResource @Star_24x24}"  Height="24" Width="24" HorizontalAlignment="Center" VerticalAlignment="Center"  />
+            <UserControls:ImageMakerControl x:Name="LinkStatusImage" ImageType="InstanceLink" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Button>
         
         <Button x:Name="EditLinkedRepoItemBtn" Grid.Row="1" Grid.Column="0" Click="EditLinkedRepoItemBtn_Click" ToolTip="View/Edit the Linked Shared Repository Item" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
             <Image Source="{StaticResource @Link_16x16.png}" Height="16" Width="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Button>
-        <Button x:Name="UpdateRepoBtn" Grid.Row="1" Grid.Column="1" Visibility="Visible" Click="UpdateRepoBtn_Click" ToolTip="Upload Changes to Shared Repository" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+        <Button x:Name="UpdateRepoBtn" Grid.Row="1" Grid.Column="1" Visibility="Visible" Click="UpdateRepoBtn_Click" ToolTip="Upload Changes to Shared Repository" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Image Source="{StaticResource @UploadStar_16x16}" Height="16" Width="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Button>
     </Grid>

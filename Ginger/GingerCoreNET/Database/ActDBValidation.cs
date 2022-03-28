@@ -291,7 +291,6 @@ namespace GingerCore.Actions
                     }
                     break;
                 case Database.eDBTypes.CosmosDb:
-
                     if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerCosmos))
                     {
                         NoSqlDriver = new GingerCosmos(DBValidationType, DB, this);
@@ -333,15 +332,15 @@ namespace GingerCore.Actions
 
         private void RecordCountHandler()
         {
-            string SQL = GetInputParamCalculatedValue("SQL");
-            if (string.IsNullOrEmpty(SQL))
-                Error = "Fail to run Update SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error = Missing Query";
-            string val = DB.DatabaseOperations.GetRecordCount(SQL);
+            string calcSQL = GetInputParamCalculatedValue("SQL");
+            if (string.IsNullOrEmpty(calcSQL))
+                Error = "Fail to run Update SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error = Missing Query";
+            string val = DB.DatabaseOperations.GetRecordCount(calcSQL);
             this.AddOrUpdateReturnParamActual("Record Count", val);
         }
         private void UpdateSqlHndler()
         {
-            string SQL = string.Empty;
+            string calcSQL = string.Empty;
             try
             {
                 if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
@@ -350,24 +349,24 @@ namespace GingerCore.Actions
                     string filePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
 
                     FileInfo scriptFile = new FileInfo(filePath);
-                    SQL = scriptFile.OpenText().ReadToEnd();
+                    calcSQL = scriptFile.OpenText().ReadToEnd();
                 }
                 else
                 {
-                    SQL = GetInputParamCalculatedValue("SQL");
+                    calcSQL = GetInputParamCalculatedValue("SQL");
                 }
 
-                if (string.IsNullOrEmpty(SQL))
-                    Error = "Fail to run Update SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error = Missing Query";
+                if (string.IsNullOrEmpty(calcSQL))
+                    Error = "Fail to run Update SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error = Missing Query";
 
-                string val = DB.DatabaseOperations.fUpdateDB(SQL, CommitDB_Value);
+                string val = DB.DatabaseOperations.fUpdateDB(calcSQL, CommitDB_Value);
                 this.AddOrUpdateReturnParamActual("Impacted Lines", val);
 
             }
             catch (Exception e)
             {
                 if (string.IsNullOrEmpty(Error))
-                    this.Error = "Fail to run Update SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error= " + e.Message;
+                    this.Error = "Fail to run Update SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= " + e.Message;
 
             }
         }
@@ -389,28 +388,24 @@ namespace GingerCore.Actions
                 FileInfo scriptFile = new FileInfo(filePath);
                 SQL = scriptFile.OpenText().ReadToEnd();
             }
-            else
-            {
-                SQL = GetInputParamCalculatedValue("SQL");
-            }
         }
 
         private void FreeSQLHandler()
         {
             int? queryTimeout = Timeout;
-            string SQL = string.Empty;
+            string calcSQL = GetInputParamCalculatedValue("SQL");
             string ErrorString = string.Empty;
             try
             {
                 GetSqlValueFromFilePath();
-                if (string.IsNullOrEmpty(SQL))
-                    this.Error = "Fail to run Free SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error= Missing SQL Query.";
+                if (string.IsNullOrEmpty(calcSQL))
+                    this.Error = "Fail to run Free SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= Missing SQL Query.";
 
                 updateQueryParams();
                 foreach (ActInputValue param in QueryParams)
-                    SQL = SQL.Replace("<<" + param.ItemName + ">>", param.ValueForDriver);
+                    calcSQL = calcSQL.Replace("<<" + param.ItemName + ">>", param.ValueForDriver);
 
-                List<object> DBResponse = DB.DatabaseOperations.FreeSQL(SQL, queryTimeout);
+                List<object> DBResponse = DB.DatabaseOperations.FreeSQL(calcSQL, queryTimeout);
 
                 List<string> headers = (List<string>)DBResponse.ElementAt(0);
                 List<List<string>> Records = (List<List<string>>)DBResponse.ElementAt(1);
@@ -443,9 +438,9 @@ namespace GingerCore.Actions
             catch (Exception e)
             {
                 if (string.IsNullOrEmpty(ErrorString))
-                    this.Error = "Fail to run Free SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error= " + e.Message;
+                    this.Error = "Fail to run Free SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= " + e.Message;
                 else
-                    this.Error = "Fail to execute query: " + Environment.NewLine + SQL + Environment.NewLine + "Error= " + ErrorString;
+                    this.Error = "Fail to execute query: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= " + ErrorString;
 
                 if (e.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                 {

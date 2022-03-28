@@ -228,8 +228,6 @@
   
     <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
   
-    <PackageReference Include="CredentialManagement.Standard" Version="1.0.4" />
-  
     <PackageReference Include="EPPlus" Version="4.5.3.1" />
   
     <PackageReference Include="Eyes.Images" Version="2.32.0" />
@@ -240,7 +238,7 @@
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.1" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="4.3.1" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="4.3.2" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   
@@ -254,6 +252,8 @@
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.22.0" />
   
     <PackageReference Include="MedallionShell" Version="1.6.2" />
+  
+    <PackageReference Include="Meziantou.Framework.Win32.CredentialManager" Version="1.4.2" />
   
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.25.0" />
   

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -25,21 +25,13 @@ namespace GingerCore.Actions
 {
     public abstract class ActImageCaptureSupport : ActWithoutDriver
     {
-        [IsSerializedForLocalRepository]
         public abstract int ClickX { get; set; }
-        [IsSerializedForLocalRepository]
         public abstract int ClickY { get; set; }
-        [IsSerializedForLocalRepository]
         public abstract int StartX { get; set; }
-        [IsSerializedForLocalRepository]
         public abstract int StartY { get; set; }
-        [IsSerializedForLocalRepository]
         public abstract int EndX { get; set; }
-        [IsSerializedForLocalRepository]
         public abstract int EndY { get; set; }
-        [IsSerializedForLocalRepository]
         public abstract string LocatorImgFile { get; set; }
-        [IsSerializedForLocalRepository]
         public abstract string ImagePath { get; }
 
         public string Coordinates { get { return StartX + ", " + StartY; } }

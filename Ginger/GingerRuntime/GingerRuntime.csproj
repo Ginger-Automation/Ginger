@@ -40,10 +40,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="4.3.1" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="4.3.2" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.1" />
     <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="5.8.64" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="98.0.4758.8000" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="99.0.4844.5100" />
     <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.30.0.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
     <PackageReference Include="System.Security.Permissions" Version="5.0.0" />
