@@ -74,32 +74,30 @@ jobs:
       sealightsToken: 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL1BST0QtQ1VTVE9NRVJTMi5hdXRoLnNlYWxpZ2h0cy5pby8iLCJqd3RpZCI6IlBST0QtQ1VTVE9NRVJTMixpLTA0NzIzMTI0MjU2NTg5OTM4LEFQSUdXLTU0ZGRjYjgyLTM4ZDMtNDRkMC04OGI3LTVhMThkZTliZDNhNSwxNjEyNzgwMzY3NjA1Iiwic3ViamVjdCI6ImFtZG9jc0BhZ2VudCIsImF1ZGllbmNlIjpbImFnZW50cyJdLCJ4LXNsLXJvbGUiOiJhZ2VudCIsIngtc2wtc2VydmVyIjoiaHR0cHM6Ly9hbWRvY3Muc2VhbGlnaHRzLmNvL2FwaSIsInNsX2ltcGVyX3N1YmplY3QiOiIiLCJpYXQiOjE2MTI3ODAzNjd9.AISEOpET7FyCSnchXkjMm-aCC3A91bV9myXs7SFu_fMKIJfQzH3maYs9_6rZQTVKoX9SnqMkdUz4lm8RpTx4vOcFutyOyHrFo8hNKFqJEpG87T07y93QTl2coKz2x_4-IOu5i_lxDg_RPpLJkClMD2nyN8DwXYW_0w_3C-JS9asPFDjDAjEEQJDA8oMbstVAm72uaEyS2xVuBYJLuXVP-A47t-nREGuiWKc0Zpq64RMT85Jla7IJdnn6-GFtvGeLQN2INz3RrbjAHS1pWgAm83S--chp8izHQ85BU4reYtyNXa_v8eaidc3x8fjTAwp8_DGbw1hgKETf_znzeWpSeYO5TREHUxLOTY7qtkDBhlspA-ztUI8wewJerykCf_h9Pbdd_olLs0DQgotYgfxYKwDCm2xxpcfOdzxAcPDSA8bE0o_HZJNDfyXdwe9xMco4NGwcfMZUU5mS_cOQ1snBajHPoAxzZbPEb9uN8iAiO1s5jiUuNH4GyLe7hRrC6YAR1zQUhuZ-2iZ7rLJKoOfYOKhTR71wQPOflna-xGnc7hrhTUlA2nAe2Wdzmx-yx-n0lHicywq57m2j2yCLLjdRyfbW-TLqUh7jga34mxMse-zAyIwSfevZ0u8ng8Wm6QsX4A-W26obXHAjdSZcXLoHgzoTN_MVwvA3uUA-QrD_fNg'
       sealightsIgnoreCertErrors: true
       sealightsIncludeNamespaces: 'Amdocs.*,ginger.*'
-      
-
       $sldomain="amdocs.sealights.co" 
-$slagenttoken="eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL1BST0QtQ1VTVE9NRVJTMi5hdXRoLnNlYWxpZ2h0cy5pby8iLCJqd3RpZCI6IlBST0QtQ1VTVE9NRVJTMixpLTA0NzIzMTI0MjU2NTg5OTM4LEFQSUdXLTU0ZGRjYjgyLTM4ZDMtNDRkMC04OGI3LTVhMThkZTliZDNhNSwxNjEyNzgwMzY3NjA1Iiwic3ViamVjdCI6ImFtZG9jc0BhZ2VudCIsImF1ZGllbmNlIjpbImFnZW50cyJdLCJ4LXNsLXJvbGUiOiJhZ2VudCIsIngtc2wtc2VydmVyIjoiaHR0cHM6Ly9hbWRvY3Muc2VhbGlnaHRzLmNvL2FwaSIsInNsX2ltcGVyX3N1YmplY3QiOiIiLCJpYXQiOjE2MTI3ODAzNjd9.AISEOpET7FyCSnchXkjMm-aCC3A91bV9myXs7SFu_fMKIJfQzH3maYs9_6rZQTVKoX9SnqMkdUz4lm8RpTx4vOcFutyOyHrFo8hNKFqJEpG87T07y93QTl2coKz2x_4-IOu5i_lxDg_RPpLJkClMD2nyN8DwXYW_0w_3C-JS9asPFDjDAjEEQJDA8oMbstVAm72uaEyS2xVuBYJLuXVP-A47t-nREGuiWKc0Zpq64RMT85Jla7IJdnn6-GFtvGeLQN2INz3RrbjAHS1pWgAm83S--chp8izHQ85BU4reYtyNXa_v8eaidc3x8fjTAwp8_DGbw1hgKETf_znzeWpSeYO5TREHUxLOTY7qtkDBhlspA-ztUI8wewJerykCf_h9Pbdd_olLs0DQgotYgfxYKwDCm2xxpcfOdzxAcPDSA8bE0o_HZJNDfyXdwe9xMco4NGwcfMZUU5mS_cOQ1snBajHPoAxzZbPEb9uN8iAiO1s5jiUuNH4GyLe7hRrC6YAR1zQUhuZ-2iZ7rLJKoOfYOKhTR71wQPOflna-xGnc7hrhTUlA2nAe2Wdzmx-yx-n0lHicywq57m2j2yCLLjdRyfbW-TLqUh7jga34mxMse-zAyIwSfevZ0u8ng8Wm6QsX4A-W26obXHAjdSZcXLoHgzoTN_MVwvA3uUA-QrD_fNg"
-$APP_NAME='$(Build.DefinitionName)'
-$APP_NAMESPACE="CAmdocs.*,ginger.*"
+      $slagenttoken="eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL1BST0QtQ1VTVE9NRVJTMi5hdXRoLnNlYWxpZ2h0cy5pby8iLCJqd3RpZCI6IlBST0QtQ1VTVE9NRVJTMixpLTA0NzIzMTI0MjU2NTg5OTM4LEFQSUdXLTU0ZGRjYjgyLTM4ZDMtNDRkMC04OGI3LTVhMThkZTliZDNhNSwxNjEyNzgwMzY3NjA1Iiwic3ViamVjdCI6ImFtZG9jc0BhZ2VudCIsImF1ZGllbmNlIjpbImFnZW50cyJdLCJ4LXNsLXJvbGUiOiJhZ2VudCIsIngtc2wtc2VydmVyIjoiaHR0cHM6Ly9hbWRvY3Muc2VhbGlnaHRzLmNvL2FwaSIsInNsX2ltcGVyX3N1YmplY3QiOiIiLCJpYXQiOjE2MTI3ODAzNjd9.AISEOpET7FyCSnchXkjMm-aCC3A91bV9myXs7SFu_fMKIJfQzH3maYs9_6rZQTVKoX9SnqMkdUz4lm8RpTx4vOcFutyOyHrFo8hNKFqJEpG87T07y93QTl2coKz2x_4-IOu5i_lxDg_RPpLJkClMD2nyN8DwXYW_0w_3C-JS9asPFDjDAjEEQJDA8oMbstVAm72uaEyS2xVuBYJLuXVP-A47t-nREGuiWKc0Zpq64RMT85Jla7IJdnn6-GFtvGeLQN2INz3RrbjAHS1pWgAm83S--chp8izHQ85BU4reYtyNXa_v8eaidc3x8fjTAwp8_DGbw1hgKETf_znzeWpSeYO5TREHUxLOTY7qtkDBhlspA-ztUI8wewJerykCf_h9Pbdd_olLs0DQgotYgfxYKwDCm2xxpcfOdzxAcPDSA8bE0o_HZJNDfyXdwe9xMco4NGwcfMZUU5mS_cOQ1snBajHPoAxzZbPEb9uN8iAiO1s5jiUuNH4GyLe7hRrC6YAR1zQUhuZ-2iZ7rLJKoOfYOKhTR71wQPOflna-xGnc7hrhTUlA2nAe2Wdzmx-yx-n0lHicywq57m2j2yCLLjdRyfbW-TLqUh7jga34mxMse-zAyIwSfevZ0u8ng8Wm6QsX4A-W26obXHAjdSZcXLoHgzoTN_MVwvA3uUA-QrD_fNg"
+      $APP_NAME='$(Build.DefinitionName)'
+      $APP_NAMESPACE="CAmdocs.*,ginger.*"
 
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-Write-Output "Download the Sealights DotNet agent version set in settings..." 
-$agentversion = ((iwr -Uri https://$($sldomain)/api/v2/agents/dotnet/recommended -Headers @{'Accept' = 'application/json'; 'Authorization' = "Bearer $($slagenttoken)"}).Content | ConvertFrom-Json | Select-Object agent).agent.version
-iwr -OutFile sealights-dotnet-agent.zip -Uri http://agents.sealights.co/SL.DotNet/SL.DotNet-$($agentversion).zip
-Expand-Archive .\sealights-dotnet-agent.zip -DestinationPath SL.DotNet -Force
-Write-Output "Sealights agent version used is: $(Get-Content .\SL.DotNet\version.txt)" 
+      [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+      Write-Output "Download the Sealights DotNet agent version set in settings..." 
+      $agentversion = ((iwr -Uri https://$($sldomain)/api/v2/agents/dotnet/recommended -Headers @{'Accept' = 'application/json'; 'Authorization' = "Bearer $($slagenttoken)"}).Content | ConvertFrom-Json | Select-Object agent).agent.version
+      iwr -OutFile sealights-dotnet-agent.zip -Uri http://agents.sealights.co/SL.DotNet/SL.DotNet-$($agentversion).zip
+      Expand-Archive .\sealights-dotnet-agent.zip -DestinationPath SL.DotNet -Force
+      Write-Output "Sealights agent version used is: $(Get-Content .\SL.DotNet\version.txt)" 
 
-#Retrieve the same name of target branch as reported in Sealights Dashboard by removing the uncecessary prefix
-$PR_TARGET_BRANCH="$(System.PullRequest.TargetBranch)".Replace("refs/heads/","")
-#Retrieve the last Commit Hash from the PR branch and not the one from the ADO local Merge (via git log history)
-$PR_LAST_COMMIT=$(git log -2 --format=%H).Split(" ")[1]
-$PR_NUMBER="$(System.PullRequest.PullRequestId)"
-$REPO_URL="$(System.PullRequest.SourceRepositoryURI)"
+      #Retrieve the same name of target branch as reported in Sealights Dashboard by removing the uncecessary prefix
+      $PR_TARGET_BRANCH="$(System.PullRequest.TargetBranch)".Replace("refs/heads/","")
+      #Retrieve the last Commit Hash from the PR branch and not the one from the ADO local Merge (via git log history)
+      $PR_LAST_COMMIT=$(git log -2 --format=%H).Split(" ")[1]
+      $PR_NUMBER="$(System.PullRequest.PullRequestId)"
+      $REPO_URL="$(System.PullRequest.SourceRepositoryURI)"
 
-Write-Output "`n*** Create PR BSID ***"
-.\SL.DotNet\x64\SL.DotNet.exe prConfig --appName $APP_NAME --pullRequestNumber $PR_NUMBER --targetBranch $PR_TARGET_BRANCH --latestCommit $PR_LAST_COMMIT --repositoryUrl $REPO_URL --includeNamespace $APP_NAMESPACE --buildSessionIdFile $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt --token $(AgentToken.Sandbox) --logEnabled true --logAppendConsole true --ignoreCertificateErrors true
+      Write-Output "`n*** Create PR BSID ***"
+      .\SL.DotNet\x64\SL.DotNet.exe prConfig --appName $APP_NAME --pullRequestNumber $PR_NUMBER --targetBranch $PR_TARGET_BRANCH --latestCommit $PR_LAST_COMMIT --repositoryUrl $REPO_URL --includeNamespace $APP_NAMESPACE --buildSessionIdFile $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt --token $(AgentToken.Sandbox) --logEnabled true --logAppendConsole true --ignoreCertificateErrors true
 
-Write-Output "`n*** Prepare for MSBuild ***"
-.\SL.DotNet\x64\SL.DotNet.exe prepareForMsBuild --buildSessionIdFile $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt --workspacePath $(Build.Repository.LocalPath)\src --baseDir  $(Build.Repository.LocalPath) --ignoreGeneratedCode true --debugMode true --logEnabled true --logAppendConsole true --ignoreCertificateErrors true --token $($slagenttoken) --scm git --scmProvider vsts 
+      Write-Output "`n*** Prepare for MSBuild ***"
+      .\SL.DotNet\x64\SL.DotNet.exe prepareForMsBuild --buildSessionIdFile $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt --workspacePath $(Build.Repository.LocalPath)\src --baseDir  $(Build.Repository.LocalPath) --ignoreGeneratedCode true --debugMode true --logEnabled true --logAppendConsole true --ignoreCertificateErrors true --token $($slagenttoken) --scm git --scmProvider vsts 
 
   - task: VSBuild@1
     inputs:
