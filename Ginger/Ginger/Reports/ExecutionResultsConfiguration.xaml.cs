@@ -26,6 +26,7 @@ using Ginger.UserControls;
 using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
+using Ginger.Sealights;
 
 namespace Ginger.Reports
 {
@@ -86,11 +87,10 @@ namespace Ginger.Reports
             // Gideon
             xSealightsLogRadioButton.Init(typeof(ExecutionLoggerConfiguration.eSealightsLog),
                 xSealightsLogPanel, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.SealightsLog), SealightsLogRadioButton_CheckedHandler);
+                nameof(ExecutionLoggerConfiguration.SealightsLog), SealightsLogRadioButton_CheckedHandler);            
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealightsURLTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.SealightsURL));
-
+                nameof(ExecutionLoggerConfiguration.SealightsURL));            
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsAgentTokenTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
@@ -110,6 +110,11 @@ namespace Ginger.Reports
             xSealighsReportedEntityLevelComboBox.BindControl(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
 
             //------------
+
+            xSealightsURLTextBox.AddValidationRule(new SealightsValidationRule("URL"));
+            xSealighsAgentTokenTextBox.AddValidationRule(new SealightsValidationRule("Agent Token"));
+            xSealightsTestStageTextBox.AddValidationRule(new SealightsValidationRule("Test Stage"));
+            xSealighsReportedEntityLevelComboBox.AddValidationRule(new SealightsValidationRule("Reported Entity Level"));
 
             xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
                 xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
@@ -219,10 +224,15 @@ namespace Ginger.Reports
                 if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
                 {
                     if (xSealightsURLTextBox.Text.Trim() == "" || xSealighsAgentTokenTextBox.Text.Trim() == "" ||
-                        xSealighsLabIdTextBox.Text.Trim() == "" || xSealightsTestStageTextBox.Text.Trim() == "" ||
-                        xSealighsReportedEntityLevelComboBox.SelectedIndex < 0)
+                        xSealightsTestStageTextBox.Text.Trim() == "" || xSealighsReportedEntityLevelComboBox.SelectedIndex < 0)
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide all Sealights required information");
+                        return;
+                    }
+
+                    if (xSealighsLabIdTextBox.Text.Trim() == "" && xSealighsBuildSessionIDTextBox.Text.Trim() == "")
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide Lab ID or Session ID");
                         return;
                     }
                 }

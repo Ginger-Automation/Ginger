@@ -31,6 +31,7 @@ using Ginger.Functionalities;
 using Ginger.MoveToGingerWPF.Run_Set_Pages;
 using Ginger.Reports;
 using Ginger.RunSetLib.CreateCLIWizardLib;
+using Ginger.Sealights;
 using Ginger.SolutionCategories;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControlsLib.VisualFlow;
@@ -628,10 +629,13 @@ namespace Ginger.Run
             BindingHandler.ObjFieldBinding(xDefaultSessionIdRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.DefaultSessionIdYN));
             BindingHandler.ObjFieldBinding(xCustomSessionIdRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.CustomSessionIdYN));
 
-
             BindingHandler.ObjFieldBinding(xSealightsTestStageTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealightsTestStage));
             BindingHandler.ObjFieldBinding(xSealighsLabIdTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealighsLabId));
             BindingHandler.ObjFieldBinding(xSealighsBuildSessionIDTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID));
+
+            xSealightsTestStageTextBox.AddValidationRule(new SealightsValidationRule("Test Stage"));
+            xSealighsLabIdTextBox.AddValidationRule(new SealightsValidationRule("Lab ID"));
+            xSealighsBuildSessionIDTextBox.AddValidationRule(new SealightsValidationRule("Session ID"));
 
             xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
             xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;

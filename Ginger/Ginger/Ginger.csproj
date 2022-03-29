@@ -542,6 +542,7 @@
     <Compile Include="GlobalSolutionLib\ImportItemWizardLib\SelectItemImportTypePage.xaml.cs">
       <DependentUpon>SelectItemImportTypePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Reports\Validation\SealightsValidationRule.cs" />
     <Compile Include="RunSetLib\CreateAutoRunWizardLib\ValidateJsonFormat.cs" />
     <Compile Include="RunSetLib\CreateAutoRunWizardLib\ValidateURLFormat.cs" />
     <Compile Include="RunSetPageLib\RunsetRunnersConfigPage.xaml.cs">

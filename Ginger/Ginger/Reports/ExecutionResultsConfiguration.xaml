@@ -125,7 +125,9 @@
                     <RowDefinition  Height="00"/>
                     <RowDefinition  Height="30"/>                
                     <RowDefinition  Height="30"/>
-                    <RowDefinition  Height="10"/>
+                    <RowDefinition  Height="25"/>
+                    <RowDefinition  Height="30"/>
+                    <RowDefinition  Height="25"/>
                     <RowDefinition  Height="30"/>
                     <RowDefinition  Height="10"/>
                     <RowDefinition  Height="30"/>
@@ -133,9 +135,7 @@
                     <RowDefinition  Height="30"/>
                     <RowDefinition  Height="10"/>
                     <RowDefinition  Height="30"/>
-                    <RowDefinition  Height="10"/>
-                    <RowDefinition  Height="30"/>
-                    <RowDefinition  Height="10"/>
+                    <RowDefinition  Height="25"/>
                     <RowDefinition  Height="30"/>
                     <RowDefinition  Height="30"/>
                     <RowDefinition  Height="30"/>

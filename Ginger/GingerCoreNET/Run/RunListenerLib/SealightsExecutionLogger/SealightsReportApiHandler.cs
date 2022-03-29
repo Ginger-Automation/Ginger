@@ -190,8 +190,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
                 long unixStartTime = new DateTimeOffset(startTime).ToUnixTimeMilliseconds();
                 long unixEndTime = new DateTimeOffset(endTime).ToUnixTimeMilliseconds();
-
-                restRequest.AddJsonBody(new { name = name, start = unixStartTime, end = unixEndTime, status = status }); // Anonymous type object is converted to Json body
+                             
+                restRequest.AddJsonBody( new[] { new { name = name, start = unixStartTime, end = unixEndTime, status = status } } ); // Anonymous type object is converted to Json body
 
                 IRestResponse response = await restClient.ExecuteAsync(restRequest);
 
