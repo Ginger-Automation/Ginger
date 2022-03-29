@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
@@ -443,6 +444,53 @@ namespace Ginger.Repository
                 }
             }
             //TODO - find better way to get unique name
+        }
+
+        private static readonly object saveLock = new object();
+        public static async Task UpdateLinkedInstances(Activity mActivity)
+        {
+            try
+            {
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating and Saving Linked Activity instanced in Businessflows...");
+                await Task.Run(() =>
+                {
+                    ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+
+                    Parallel.ForEach(BizFlows, BF =>
+                    {
+                        try
+                        {
+                            if (BF.Activities.Any(f => f.IsLinkedItem && f.ParentGuid == mActivity.Guid))
+                            {
+                                for (int i = 0; i < BF.Activities.Count(); i++)
+                                {
+                                    if (BF.Activities[i].IsLinkedItem && BF.Activities[i].ParentGuid == mActivity.Guid)
+                                    {
+                                        mActivity.UpdateInstance(BF.Activities[i], eItemParts.All.ToString(), BF);
+                                    }
+                                }
+                                lock (saveLock)
+                                {
+                                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BF);
+                                }
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to update the Activity in businessFlow " + BF.Name, ex);
+                        }
+                    });
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to update the Activity in businessFlow", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
         }
 
     }
