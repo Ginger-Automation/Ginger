@@ -349,7 +349,7 @@ namespace GingerCore.Actions.WebAPI
                 if (RequestMessage != null) {
                     rawMsg = $"{RequestMessage.Method} {RequestMessage.RequestUri} HTTP/{RequestMessage.Version}\r\n";
                     rawMsg += $"{Client.DefaultRequestHeaders}";
-                    rawMsg += RequestMessage.Content != null ? $"{RequestMessage.Content.Headers}" : string.Empty;
+                    rawMsg += RequestMessage.Content != null && RequestMessage.Content.Headers != null ? $"{RequestMessage.Content.Headers}" : string.Empty;
                     if (RequestMessage.Method.ToString() != "GET" && !RequestMessage.Content.Headers.ToString().Contains("Content-Length"))
                     {
                         rawMsg += $"Content-Length: {RequestMessage.Content.Headers.ContentLength}\r\n";

@@ -285,10 +285,7 @@ namespace Ginger.Actions.WebServices
 
         private void xViewRawRequestBtn_Click(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < mAct.APIModelParamsValue.Count; i++)
-            {
-                mAct.APIModelParamsValue[i].ValueForDriver = mAct.APIModelParamsValue[i].Value;
-            }
+
             ActWebAPIBase actWebAPI = null;
             if (mAct is ActWebAPIModel ActWAPIM)
             {
@@ -309,13 +306,11 @@ namespace Ginger.Actions.WebServices
             }
 
 
-            HttpWebClientUtils webAPI = new HttpWebClientUtils();
-            webAPI.RequestContstructor(actWebAPI, null, false);
-            webAPI.CreateRawRequestContent();
+            APIViewRawRequestPage mAPIViewRawRequestPage = new APIViewRawRequestPage(actWebAPI);
+            mAPIViewRawRequestPage.PrepareActionValues();
+            mAPIViewRawRequestPage.CreateRawRequestContent();
 
-            APIViewRawRequest mAPIViewRawRequest = new APIViewRawRequest(webAPI.RequestFileContent);
-            mAPIViewRawRequest.ShowAsWindow(eWindowShowStyle.Dialog);
-
+            mAPIViewRawRequestPage.ShowAsWindow(eWindowShowStyle.Dialog);
         }
     }
 }

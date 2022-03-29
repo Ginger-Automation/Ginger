@@ -598,17 +598,11 @@ namespace Ginger.Actions.WebServices
 
         private void xViewRawRequestBtn_Click(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < mAct.ActInputValues.Count; i++)
-            {
-                mAct.ActInputValues[i].ValueForDriver = mAct.ActInputValues[i].Value;
-            }
+            APIViewRawRequestPage mAPIViewRawRequestPage = new APIViewRawRequestPage(mAct);
+            mAPIViewRawRequestPage.PrepareActionValues();
+            mAPIViewRawRequestPage.CreateRawRequestContent();
 
-            HttpWebClientUtils webAPI = new HttpWebClientUtils();
-            webAPI.RequestContstructor(mAct, null, false);
-            webAPI.CreateRawRequestContent();
-
-            APIViewRawRequest mAPIViewRawRequest = new APIViewRawRequest(webAPI.RequestFileContent);
-            mAPIViewRawRequest.ShowAsWindow(eWindowShowStyle.Dialog);
+            mAPIViewRawRequestPage.ShowAsWindow(eWindowShowStyle.Dialog);
 
         }
 

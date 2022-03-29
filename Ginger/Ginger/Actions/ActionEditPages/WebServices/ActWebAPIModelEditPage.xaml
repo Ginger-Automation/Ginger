@@ -27,13 +27,13 @@
                     <ColumnDefinition Width="35"/>
                 </Grid.ColumnDefinitions>
                 <Label Name="APIModel" Grid.Row="0" Grid.Column="0" Margin="3,0,0,0" FontSize="14" HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}"  Content="API Model:" VerticalAlignment="Center" />
+                <Button x:Name="xViewRawRequestBtn" Grid.Row="0" Grid.Column="1" Content="View Raw API Request" Width="130" Style="{StaticResource $RoundTextButtonStyle_Generic}" Click="xViewRawRequestBtn_Click"/>
                 <TextBox Grid.Row="1" Grid.Column="0" Margin="6,0,0,0" Height="23"  x:Name="APIModelTextBox" Style="{StaticResource $TextBoxStyle}" VerticalAlignment="Center" IsEnabled="false"/>
                 <usercontrols:ucButton x:Name="xChangeButton" Grid.Row="1" Grid.Column="1" Margin="0" ToolTip="Change API Model" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Edit" Click="ChangeButtonClicked" Visibility="Visible" HorizontalAlignment="Left" />
                 <usercontrols:ucButton x:Name="xViewAPIBtn" Grid.Row="1" Grid.Column="2" Margin="0" ToolTip="View/Edit API Model" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="View" Click="xViewAPIBtn_Click" Visibility="Visible" HorizontalAlignment="Left" />
             </Grid>
 
             <Ginger:ucGrid x:Name="APIModelParamsValueUCGrid"  Visibility="Visible" Title="API Model Parameters" Margin="6,15,8,0" ShowRefresh="Visible" ShowEdit="Collapsed" ShowTagsFilter="Collapsed"  ShowAdd="Collapsed" ShowDelete="Collapsed"  ShowClearAll="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed"></Ginger:ucGrid>
-            <Button x:Name="xViewRawRequestBtn" Content="View Raw Request" Width="120" Style="{StaticResource $InputButtonStyle}" Click="xViewRawRequestBtn_Click"/>
         </StackPanel>
     </Grid>
 </Page>

@@ -226,8 +226,8 @@
     <Compile Include="Actions\ActionEditPages\ActValidationEditPage.xaml.cs">
       <DependentUpon>ActValidationEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActionEditPages\WebServices\APIViewRawRequest.xaml.cs">
-      <DependentUpon>APIViewRawRequest.xaml</DependentUpon>
+    <Compile Include="Actions\ActionEditPages\WebServices\APIViewRawRequestPage.xaml.cs">
+      <DependentUpon>APIViewRawRequestPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
       <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
@@ -2626,7 +2626,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActionEditPages\WebServices\APIViewRawRequest.xaml">
+    <Page Include="Actions\ActionEditPages\WebServices\APIViewRawRequestPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
