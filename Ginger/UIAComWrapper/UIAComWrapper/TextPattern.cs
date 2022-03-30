@@ -19,6 +19,7 @@ limitations under the License.
 using System.Diagnostics;
 using System.Windows.Automation.Text;
 using UIAComWrapperInternal;
+using Windows.Foundation;
 
 namespace System.Windows.Automation
 {

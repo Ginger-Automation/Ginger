@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="6e915523-c746-43ba-9b7e-ea6069a1bc23" ItemType="BusinessFlow" CreatedBy="aditijag" Created="202001171311" GingerVersion="3.5.0.0" Version="9" LastUpdateBy="aditijag" LastUpdate="202001171324" />
+<BusinessFlow Guid="6e915523-c746-43ba-9b7e-ea6069a1bc23" Name="ConditionVal" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="2639a218-5372-4339-af05-a2b2b40cad9f" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="Amdo CSP">
+<Acts>
+<ActValidation Active="True" Description="Condition Validation Action" Guid="16d014d8-9f34-40ff-85ab-17ecc3662ff6" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="b7a289c0-7bb2-4c04-a1ea-4c153eca8e3b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="1=1" />
+</InputValues>
+</ActValidation>
+</Acts>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="460a1b8b-1776-4cb3-b2b4-f76f7ee50db6" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="2639a218-5372-4339-af05-a2b2b40cad9f" ActivityName="Activity 1" Guid="1994eb6a-8aeb-4095-ac03-7a9d8a5d1319" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="Amdo CSP" Guid="6b2b18fc-9c01-4b79-9b7c-8a33c495de46" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>

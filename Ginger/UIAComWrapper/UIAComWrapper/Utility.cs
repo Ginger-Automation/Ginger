@@ -19,8 +19,8 @@ limitations under the License.
 using System;
 using System.Collections;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Automation;
+using Windows.Foundation;
 
 namespace UIAComWrapperInternal
 {
@@ -48,9 +48,9 @@ namespace UIAComWrapperInternal
             return (b) ? 1 : 0;
         }
 
-        internal static System.Windows.Rect ConvertToRect(UIAutomationClient.tagRECT rc)
+        internal static Rect ConvertToRect(UIAutomationClient.tagRECT rc)
         {
-            return new System.Windows.Rect(rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top);
+            return new Rect(rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top);
         }
 
         internal static AutomationElement[] ConvertToElementArray(UIAutomationClient.IUIAutomationElementArray array)
@@ -144,7 +144,7 @@ namespace UIAComWrapperInternal
             return destinationArray;
         }
 
-        internal static UIAutomationClient.tagPOINT PointManagedToNative(System.Windows.Point pt)
+        internal static UIAutomationClient.tagPOINT PointManagedToNative(Point pt)
         {
             UIAutomationClient.tagPOINT nativePoint = new UIAutomationClient.tagPOINT();
             nativePoint.x = (int)pt.X;

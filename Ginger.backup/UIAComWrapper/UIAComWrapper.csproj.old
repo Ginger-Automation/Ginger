@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1DD63894-DBB9-40EF-BFF2-55624CB285AF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>UIAComWrapper</RootNamespace>
+    <AssemblyName>UIAComWrapper</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>UIAComWrapper.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>UIAComWrapper.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility" />
+    <Reference Include="Interop.UIAutomationClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Automation.cs" />
+    <Compile Include="AutomationElement.cs" />
+    <Compile Include="AutomationElementCollection.cs" />
+    <Compile Include="AutomationTypes.cs" />
+    <Compile Include="BasePattern.cs" />
+    <Compile Include="CacheRequest.cs" />
+    <Compile Include="ClientEventList.cs" />
+    <Compile Include="ClientSideProviders.cs" />
+    <Compile Include="Conditions.cs" />
+    <Compile Include="DockPattern.cs" />
+    <Compile Include="Events.cs" />
+    <Compile Include="ExpandCollapsePattern.cs" />
+    <Compile Include="GridPattern.cs" />
+    <Compile Include="InternalSchema.cs" />
+    <Compile Include="InternalTypes.cs" />
+    <Compile Include="InvokePattern.cs" />
+    <Compile Include="AutomationInteropProvider.cs" />
+    <Compile Include="LegacyIAccessiblePattern.cs" />
+    <Compile Include="ProviderInterfaces.cs" />
+    <Compile Include="SynchronizedInput.cs" />
+    <Compile Include="UiaCoreProviderApi.cs" />
+    <Compile Include="Utility.cs" />
+    <Compile Include="MultipleViewPattern.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextPattern.cs" />
+    <Compile Include="TextRange.cs" />
+    <Compile Include="TextTypes.cs" />
+    <Compile Include="TreeWalker.cs" />
+    <Compile Include="ValuePattern.cs" />
+    <Compile Include="ScrollPattern.cs" />
+    <Compile Include="SelectionPattern.cs" />
+    <Compile Include="TablePattern.cs" />
+    <Compile Include="TogglePattern.cs" />
+    <Compile Include="TransformPattern.cs" />
+    <Compile Include="VirtualizedPatterns.cs" />
+    <Compile Include="WindowPattern.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BatchScriptWithArgs.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="CustomInterop.UIAutomationClient.il" />
+    <None Include="UIAComWrapper.ruleset" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DLLs\Interop.UIAutomationClient.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -19,6 +19,7 @@ limitations under the License.
 using System.Runtime.InteropServices;
 using System.Windows.Automation.Text;
 using UIAComWrapperInternal;
+using Windows.Foundation;
 
 // Provider interfaces.
 // IRawElementProviderSimple is defined in the interop DLL,

@@ -19,6 +19,7 @@ limitations under the License.
 using System.Collections.Generic;
 using System.Diagnostics;
 using UIAComWrapperInternal;
+using Windows.Foundation;
 
 namespace System.Windows.Automation
 {

@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
-using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Platforms.PlatformsInfo;
