@@ -89,6 +89,17 @@
             <StackPanel x:Name="DoCommit">
                 <CheckBox x:Name="CommitDB"  Content="Do Commit after Update"  HorizontalAlignment="Left" Margin="10,10,0,0"/>
             </StackPanel>
+            <StackPanel x:Name="DoUpdate" Visibility="Collapsed" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,10,10">
+                    <Label Style="{StaticResource @InputFieldLabelStyle}">Primary Key:</Label>
+                    <Actions:UCValueExpression Height="25" Margin="3,0" x:Name="txtPrimaryKey" Width="300" HorizontalAlignment="Left"></Actions:UCValueExpression>
+
+                    <Label Style="{StaticResource @InputFieldLabelStyle}">Partition Key:</Label>
+                    <Actions:UCValueExpression Height="25" Margin="1,0" x:Name="txtPartitionKey" Width="295" HorizontalAlignment="Left"></Actions:UCValueExpression>
+                </StackPanel>
+
+                <Ginger:ucGrid x:Name="CosmosParametersGrid" Title="Cosmos Update Parameters"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>
