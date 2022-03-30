@@ -124,7 +124,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
-
+            cliHelper.SetSealights();
         }
 
         public async Task Execute(RunsetExecutor runsetExecutor)

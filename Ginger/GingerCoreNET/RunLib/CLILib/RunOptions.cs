@@ -83,6 +83,37 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         [Option('b', "selfHealingCheckInConfigured", Required = false, HelpText = "SelfHealing setting for save and check-in changes.")]
         public bool SelfHealingCheckInConfigured { get; set; }
+
+
+        // Gideon
+        [Option("sealightsUrl", Required = false, HelpText = "Set Sealights URL")]
+        public string SealightsUrl { get; set; }
+
+        [Option("sealightsAgentToken", Required = false, HelpText = "Set Sealights Agent Token")]
+        public string SealightsAgentToken { get; set; }
+
+        [Option("sealightsLabId", Required = false, HelpText = "Set Sealights Lab ID")]
+        public string SealightsLabID { get; set; }
+
+        [Option("sealightsBSId", Required = false, HelpText = "Set Sealights Session ID")]
+        public string SealightsSessionID { get; set; }
+
+        [Option("sealightsSessionTimeout", Required = false, HelpText = "Set Sealights Session Time-out")]
+        public string SealightsSessionTimeOut { get; set; }
+
+        [Option("sealightsTestStage", Required = false, HelpText = "Set Sealights Test Stage")]
+        public string SealightsTestStage { get; set; }
+
+        [Option("sealightsEntityLevel", Required = false, HelpText = "Set Sealights Entity Level")]
+        public ReportEntityLevel SealightsEntityLevel { get; set; }
+
+        public enum ReportEntityLevel
+        {
+            None,
+            Activity,
+            ActivityGroup,
+            BusinsessFLow
+        }
     }
 
 }

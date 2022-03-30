@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.AnalyzerLib;
+using Ginger.Reports;
 using Ginger.Run;
 using Ginger.SourceControl;
 using GingerCore;
@@ -51,6 +52,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public bool sourceControlPassEncrypted;
         public eAppReporterLoggingLevel AppLoggingLevel;
         public string ExecutionId;
+
+        public string SealightsUrl;
+        public string SealightsAgentToken;
+        public string SealightsLabID;
+        public string SealightsSessionID;
+        public string SealightsSessionTimeOut;
+        public string SealightsTestStage;
+        public string SealightsEntityLevel;
+        
 
         public bool SelfHealingCheckInConfigured;
 
@@ -329,6 +339,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlBranch: '" + value + "'");
             WorkSpace.Instance.UserProfile.SolutionSourceControlBranch = value;
+        }
+
+        internal void SetSealights()
+        {
+            if (SealightsUrl != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsURL = SealightsUrl;
+            if (SealightsAgentToken != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsAgentToken = SealightsAgentToken;
+            if (SealightsLabID != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLabId = SealightsLabID;
+            if (SealightsSessionID != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID = SealightsSessionID;
+            if (SealightsTestStage != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsTestStage = SealightsTestStage;
+            if (SealightsSessionTimeOut != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsSessionTimeout = SealightsSessionTimeOut;
+            if (SealightsEntityLevel != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel = (eSealightsEntityLevel)Enum.Parse(typeof(eSealightsEntityLevel), SealightsEntityLevel); 
         }
 
         internal void SetSourceControlPassword(string value)

@@ -63,32 +63,39 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private async Task ParseArgs(string[] args)
         {
-            // FIXME: failing with exc of obj state
-            // Do not show default version
-            // Parser.Default.Settings.AutoVersion = false;
-            var parser = new Parser(settings =>
-            {                
-                settings.IgnoreUnknownArguments = true;
-            });
-            
-            int result = await parser.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions, DoOptions>(args).MapResult(
-                    async (RunOptions opts) => await HandleRunOptions(opts),
-                    async (GridOptions opts) => await HanldeGridOption(opts),
-                    async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
-                    async (DynamicOptions opts) => await HandleFileOptions("dynamic", opts.FileName, opts.VerboseLevel),
-                    async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
-                    async (VersionOptions opts) => await HandleVersionOptions(opts),
-                    async (ExampleOptions opts) => await HandleExampleOptions(opts),
-                    async (DoOptions opts) => await HandleDoOptions(opts),
-
-
-                    async errs => await HandleCLIParseError(errs)
-            );
-
-            if (result != 0)
+            try
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
-                Environment.ExitCode = 1; // error
+                // FIXME: failing with exc of obj state
+                // Do not show default version
+                // Parser.Default.Settings.AutoVersion = false;
+                var parser = new Parser(settings =>
+                {
+                    settings.IgnoreUnknownArguments = true;
+                });
+
+                int result = await parser.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions, DoOptions>(args).MapResult(
+                        async (RunOptions opts) => await HandleRunOptions(opts),
+                        async (GridOptions opts) => await HanldeGridOption(opts),
+                        async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
+                        async (DynamicOptions opts) => await HandleFileOptions("dynamic", opts.FileName, opts.VerboseLevel),
+                        async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
+                        async (VersionOptions opts) => await HandleVersionOptions(opts),
+                        async (ExampleOptions opts) => await HandleExampleOptions(opts),
+                        async (DoOptions opts) => await HandleDoOptions(opts),
+                        
+
+                        async errs => await HandleCLIParseError(errs)
+                );
+
+                if (result != 0)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
+                    Environment.ExitCode = 1; // error
+                }
+            }
+            catch (Exception err)
+            {
+
             }
         }
 
@@ -350,6 +357,41 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         }
 
+        private async Task<int> HandleSealightsOptions(SealightsOptions sealightOptions)
+        {
+            WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.grid;
+            return await Task.Run(() =>
+            {
+                //SetVerboseLevel(gridOptions.VerboseLevel);
+
+                Reporter.ToLog(eLogLevel.INFO, "Starting Ginger Grid at port: " + sealightOptions.SealURL);
+                //GingerGrid gingerGrid = new GingerGrid(gridOptions.Port);
+                //gingerGrid.Start();
+
+                //if (gridOptions.Tracker)
+                //{
+                //    ServiceGridTracker serviceGridTracker = new ServiceGridTracker(gingerGrid);
+                //}
+
+                Console.WriteLine();
+                Console.WriteLine("---------------------------------------------------");
+                Console.WriteLine("-               Press 'q' exit                    -");
+                Console.WriteLine("---------------------------------------------------");
+
+                if (!Console.IsInputRedirected && !WorkSpace.Instance.RunningFromUnitTest)  // for example unit test redirect input, or we can run without input like from Jenkins
+                {
+                    ConsoleKey consoleKey = ConsoleKey.A;
+                    while (consoleKey != ConsoleKey.Q)
+                    {
+                        ConsoleKeyInfo consoleKeyInfo = Console.ReadKey();
+                        consoleKey = consoleKeyInfo.Key;
+                    }
+                }
+
+                return 0;
+            });
+        }
+
         private async Task<int> HandleRunOptions(RunOptions runOptions)
         {
             WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.run;
@@ -379,6 +421,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.SourceControlProxyServer(runOptions.SourceControlProxyServer);
             mCLIHelper.SourceControlProxyPort(runOptions.SourceControlProxyPort);
             mCLIHelper.SelfHealingCheckInConfigured = runOptions.SelfHealingCheckInConfigured;
+
+            //Gideon
+            mCLIHelper.SealightsUrl = runOptions.SealightsUrl;
+            mCLIHelper.SealightsAgentToken = runOptions.SealightsAgentToken;
+            mCLIHelper.SealightsLabID = runOptions.SealightsLabID;
+            mCLIHelper.SealightsSessionID = runOptions.SealightsSessionID;
+            mCLIHelper.SealightsSessionTimeOut = runOptions.SealightsSessionTimeOut;
+            mCLIHelper.SealightsTestStage = runOptions.SealightsTestStage;
+            mCLIHelper.SealightsEntityLevel = runOptions.SealightsEntityLevel.ToString() == "None" ? null : runOptions.SealightsEntityLevel.ToString();
 
             if (!string.IsNullOrEmpty(runOptions.RunSetExecutionId))
             {
@@ -543,10 +594,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     return false;//failed to load Solution;
                 }
 
-                if (!string.IsNullOrEmpty(runsetConfigs))
-                {
-                    mCLIHandler.LoadRunsetConfigurations(runsetConfigs, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
-                }
+                //if (!string.IsNullOrEmpty(runsetConfigs))
+                //{
+                mCLIHandler.LoadRunsetConfigurations(runsetConfigs, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
+                //}
+
                 if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
                 {
                     return false;//failed to load Run set
@@ -556,6 +608,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 {
                     return false; //Failed to perform execution preparations
                 }
+
+
 
                 mCLIHelper.SetTestArtifactsFolder();
                 WorkSpace.Instance.StartLocalGrid();
