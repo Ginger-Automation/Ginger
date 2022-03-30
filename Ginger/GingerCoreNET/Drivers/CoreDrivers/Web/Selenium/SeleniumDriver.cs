@@ -168,7 +168,7 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Only for Chrome & Firefox | Full path for the User Profile folder")]
+        [UserConfiguredDescription("Only for Chrome, Firefox & Edge | Full path for the User Profile folder")]
         public string UserProfileFolderPath { get; set; }
 
         [UserConfigured]
@@ -431,7 +431,7 @@ namespace GingerCore.Drivers
                             FirefoxOption.AddArgument("--headless");
                         }
 
-                        if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
+                        if (IsUserProfileFolderPathValid())
                         {
                             FirefoxProfile ffProfile2 = new FirefoxProfile();
                             ffProfile2 = new FirefoxProfile(UserProfileFolderPath);
@@ -462,7 +462,7 @@ namespace GingerCore.Drivers
                         options.AddArgument("--start-maximized");
                         SetCurrentPageLoadStrategy(options);
 
-                        if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
+                        if (IsUserProfileFolderPathValid())
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
                         else if (!string.IsNullOrEmpty(ExtensionPath))
                             options.AddExtension(Path.GetFullPath(ExtensionPath));
@@ -562,6 +562,8 @@ namespace GingerCore.Drivers
                         EdgeOptions EDOpts = new EdgeOptions();
                         EDOpts.UseChromium = true;
                         EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                        if (IsUserProfileFolderPathValid())
+                            EDOpts.AddArguments("user-data-dir=" + UserProfileFolderPath);
                         SetCurrentPageLoadStrategy(EDOpts);
                         EdgeDriverService EDService = EdgeDriverService.CreateDefaultServiceFromOptions(EDOpts);
                         EDService.HideCommandPromptWindow = HideConsoleWindow;
@@ -8213,6 +8215,10 @@ namespace GingerCore.Drivers
             ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
             evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
             return LocateElementByLocator(evaluatedLocator, true);
+        }
+        private bool IsUserProfileFolderPathValid()
+        {
+            return !string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath);
         }
 
         void IWindowExplorer.CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> mOriginalList)
