@@ -173,7 +173,7 @@ namespace GingerCore.Actions
 
         public static new partial class Fields
         {
-            public static string ChangeAppWindowSize = "ChangeAppWindowSize";
+            public static readonly string ChangeAppWindowSize = "ChangeAppWindowSize";
         }
 
         public enum eChangeAppWindowSize
@@ -216,9 +216,13 @@ namespace GingerCore.Actions
             {
                 eChangeAppWindowSize eVal = eChangeAppWindowSize.None;
                 if (Enum.TryParse(GetInputParamValue(Fields.ChangeAppWindowSize), out eVal))
+                {
                     return eVal;
+                }
                 else
+                {
                     return eChangeAppWindowSize.None;
+                }
             }
 
             set
