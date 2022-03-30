@@ -111,6 +111,11 @@ namespace Ginger.Reports
 
             //------------
 
+            if (xSealighsSessionTimeoutTextBox.Text.Trim() == "")
+            {
+                xSealighsSessionTimeoutTextBox.Text = "14400";
+            }
+
             xSealightsURLTextBox.AddValidationRule(new SealightsValidationRule("URL"));
             xSealighsAgentTokenTextBox.AddValidationRule(new SealightsValidationRule("Agent Token"));
             xSealightsTestStageTextBox.AddValidationRule(new SealightsValidationRule("Test Stage"));
