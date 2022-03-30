@@ -99,6 +99,16 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string Where { set; get; }
 
+        private string mPrimaryKey = string.Empty;
+
+        [IsSerializedForLocalRepository]
+        public string CosmosPrimaryKey { get; set; }
+
+        private string mPartitionKey = string.Empty;
+
+        [IsSerializedForLocalRepository]
+        public string CosmosPartitionKey { get; set; }
+
         public string SQL
         {
             get
@@ -121,6 +131,9 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> QueryParams = new ObservableList<ActInputValue>();
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<CosmosPatchInputValues> CosmosPatchInputValues = new ObservableList<CosmosPatchInputValues>();
 
         public enum eDatabaseTye
         {
@@ -304,7 +317,17 @@ namespace GingerCore.Actions
 
         private bool SetDBConnection()
         {
-            //TODO: add on null or not found throw exception so it will fail            
+            //TODO: add on null or not found throw exception so it will fail
+
+            if (string.IsNullOrEmpty(CosmosPrimaryKey))
+            {
+                CosmosPrimaryKey = string.Empty;
+            }
+            if (string.IsNullOrEmpty(CosmosPartitionKey))
+            {
+                CosmosPartitionKey = string.Empty;
+            }
+
             string AppNameCalculated = ValueExpression.Calculate(this.AppName);
             EnvApplication App = (from a in RunOnEnvironment.Applications where a.Name == AppNameCalculated select a).FirstOrDefault();
             if (App == null)
@@ -478,5 +501,16 @@ namespace GingerCore.Actions
                 }
             }
         }
+    }
+
+    public class CosmosPatchInputValues : RepositoryItemBase
+    {
+        [IsSerializedForLocalRepository]
+        public string Param { get; set; }
+        [IsSerializedForLocalRepository]
+        public string Value { get; set; }
+
+        private string mItemName = string.Empty;
+        public override string ItemName { get { return mItemName; } set { mItemName = value; } }
     }
 }
