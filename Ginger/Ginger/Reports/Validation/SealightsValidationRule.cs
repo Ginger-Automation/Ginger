@@ -56,11 +56,17 @@ namespace Ginger.Sealights
 
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            //TODO: split to 2 rules name and unique
-            if (value ==null || string.IsNullOrEmpty(value.ToString()))
+            if (value == null || string.IsNullOrEmpty(value.ToString()))
             {
-                return new ValidationResult(false, FieldName + " cannot be empty");
-            }            
+                if (FieldName == "Lab ID" || FieldName == "Build Session ID")
+                {
+                    return new ValidationResult(false, "Lab ID or Build Session ID must be provided");
+                }
+                else
+                {
+                    return new ValidationResult(false, FieldName + " cannot be empty");
+                }
+            }
             else
             {
                 return new ValidationResult(true, null);

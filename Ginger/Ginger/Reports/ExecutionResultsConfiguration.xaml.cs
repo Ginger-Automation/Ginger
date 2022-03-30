@@ -121,6 +121,9 @@ namespace Ginger.Reports
             xSealightsTestStageTextBox.AddValidationRule(new SealightsValidationRule("Test Stage"));
             xSealighsReportedEntityLevelComboBox.AddValidationRule(new SealightsValidationRule("Reported Entity Level"));
 
+            xSealighsLabIdTextBox.AddValidationRule(new SealightsValidationRule("Lab ID"));
+            xSealighsBuildSessionIDTextBox.AddValidationRule(new SealightsValidationRule("Build Session ID"));
+
             xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
                 xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
