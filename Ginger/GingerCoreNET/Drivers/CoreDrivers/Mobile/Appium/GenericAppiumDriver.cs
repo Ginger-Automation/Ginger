@@ -351,7 +351,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, boolValue);
                 }
-                else if (int.TryParse(UserCapability.Value, out intValue))
+                else if (UserCapability.Parameter != "uftm:tenantId" && int.TryParse(UserCapability.Value, out intValue))
                 {
                     driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, intValue);
                 }
