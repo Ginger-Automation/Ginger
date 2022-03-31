@@ -344,17 +344,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         private object HandleNumericCellType(ICell cell)
         {
-            object cellVal;
-            if (cell.NumericCellValue.ToString().Length > 15 || String.Equals(cell.CellStyle.GetDataFormatString(),"General",StringComparison.OrdinalIgnoreCase))
-            {
-                cellVal = ((decimal)cell.NumericCellValue).ToString(CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                cellVal = DateUtil.IsCellDateFormatted(cell)
-                    ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
-                    : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
-            }
+            object cellVal = DateUtil.IsCellDateFormatted(cell)
+                ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
+                : (cell.NumericCellValue.ToString().Length > 15 || String.Equals(cell.CellStyle.GetDataFormatString(), "General", StringComparison.OrdinalIgnoreCase))
+                ? ((decimal)cell.NumericCellValue).ToString(CultureInfo.InvariantCulture)
+                : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
 
             return cellVal;
         }
