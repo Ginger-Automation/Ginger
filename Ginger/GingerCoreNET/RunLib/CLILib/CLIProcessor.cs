@@ -423,6 +423,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.SelfHealingCheckInConfigured = runOptions.SelfHealingCheckInConfigured;
 
             //Gideon
+            mCLIHelper.SealightsEnable = runOptions.SealightsEnable;
             mCLIHelper.SealightsUrl = runOptions.SealightsUrl;
             mCLIHelper.SealightsAgentToken = runOptions.SealightsAgentToken;
             mCLIHelper.SealightsLabID = runOptions.SealightsLabID;
@@ -594,10 +595,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     return false;//failed to load Solution;
                 }
 
-                //if (!string.IsNullOrEmpty(runsetConfigs))
-                //{
-                mCLIHandler.LoadRunsetConfigurations(runsetConfigs, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
-                //}
+                if (!string.IsNullOrEmpty(runsetConfigs))
+                {
+                    mCLIHandler.LoadRunsetConfigurations(runsetConfigs, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
+                }
 
                 if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
                 {
@@ -609,6 +610,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     return false; //Failed to perform execution preparations
                 }
 
+                // Check for any Sealights Settings
+                if (!mCLIHelper.SetSealights())
+                {
+                    return false;
+                }    
 
 
                 mCLIHelper.SetTestArtifactsFolder();

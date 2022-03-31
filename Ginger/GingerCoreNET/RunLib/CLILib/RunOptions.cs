@@ -86,6 +86,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
 
         // Gideon
+        [Option("sealightsEnable", Required = false, HelpText = "Set Sealights Enable")]
+        public bool SealightsEnable { get; set; }
+
         [Option("sealightsUrl", Required = false, HelpText = "Set Sealights URL")]
         public string SealightsUrl { get; set; }
 
