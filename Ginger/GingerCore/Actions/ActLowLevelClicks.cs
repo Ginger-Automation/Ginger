@@ -33,10 +33,11 @@ using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET;
 
 namespace GingerCore.Actions
 {
-    public class ActLowLevelClicks : ActImageCaptureSupport
+    public class ActLowLevelClicks : ActImageCaptureSupport, IObsoleteAction
     {
         public override string ActionDescription { get { return "Image search and click on screen"; } }
         public override string ActionUserDescription { get { return "Image search and click on screen"; } }
@@ -172,7 +173,7 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(EndY), value.ToString());
             }
         }
-        public override string LocatorImgFile 
+        public override string LocatorImgFile
         {
             get
             {
@@ -208,6 +209,7 @@ namespace GingerCore.Actions
         }
 
         public override eImageType Image { get { return eImageType.MousePointer; } }
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 
         public override void Execute()
         {
@@ -491,6 +493,33 @@ namespace GingerCore.Actions
             byte g = data[pos + 1];
             byte b = data[pos + 0];
             return MyColor.FromARGB(a, r, g, b);
+        }
+
+        public bool IsObsoleteForPlatform(ePlatformType platform)
+        {
+            return true;
+        }
+
+        public Act GetNewAction()
+        {
+            AutoMapper.MapperConfiguration mapConfigBrowserElementt = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActSikuli>(); });
+            ActSikuli newActSikuli = mapConfigBrowserElementt.CreateMapper().Map<Act, ActSikuli>(this);
+            return newActSikuli;
+        }
+
+        public Type TargetAction()
+        {
+            return typeof(ActSikuli);
+        }
+
+        public string TargetActionTypeName()
+        {
+            return new ActSikuli().ActionDescription;
+        }
+
+        public ePlatformType GetTargetPlatform()
+        {
+            return ePlatformType.Web;
         }
 
         struct MyColor
