@@ -22,6 +22,7 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using System;
 using System.Threading.Tasks;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -74,6 +75,31 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl)
             {
                 options.SelfHealingCheckInConfigured = true;
+            }
+
+            if (cliHelper.SetSealightsSettings)
+            {
+                options.SealightsEnable = solution.LoggerConfigurations.SealightsLog == eSealightsLog.Yes ? true : false;
+                options.SealightsLabID = solution.LoggerConfigurations.SealightsLabId;
+                options.SealightsSessionID = solution.LoggerConfigurations.SealightsBuildSessionID;
+                options.SealightsTestStage = solution.LoggerConfigurations.SealightsTestStage;
+                options.SealightsSessionTimeOut = solution.LoggerConfigurations.SealightsSessionTimeout;
+                options.SealightsEntityLevel = solution.LoggerConfigurations.SealightsReportedEntityLevel.ToString();
+                options.SealightsAgentToken = solution.LoggerConfigurations.SealightsAgentToken;
+
+                //  Check Sealights's values on run-set levels
+                if (runsetExecutor.RunSetConfig.CustomLabIdYN == true)
+                {
+                    options.SealightsLabID = runsetExecutor.RunSetConfig.SealighsLabId;
+                }
+                if (runsetExecutor.RunSetConfig.CustomSessionIdYN == true)
+                {
+                    options.SealightsSessionID = runsetExecutor.RunSetConfig.SealighsBuildSessionID;
+                }
+                if (runsetExecutor.RunSetConfig.CustomTestStageYN == true)
+                {
+                    options.SealightsTestStage = runsetExecutor.RunSetConfig.SealightsTestStage;
+                }
             }
 
             var args = CommandLine.Parser.Default.FormatCommandLine<RunOptions>(options);

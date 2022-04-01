@@ -108,6 +108,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        bool mSetSealightsSettings;
+        public bool SetSealightsSettings
+        {
+            get
+            {
+                return mSetSealightsSettings;
+            }
+            set
+            {
+                mSetSealightsSettings = value;
+                OnPropertyChanged(nameof(SetSealightsSettings));
+            }
+        }
+
+        
+
         bool mRunAnalyzer;
         public bool RunAnalyzer
         {

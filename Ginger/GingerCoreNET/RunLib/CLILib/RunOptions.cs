@@ -108,15 +108,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SealightsTestStage { get; set; }
 
         [Option("sealightsEntityLevel", Required = false, HelpText = "Set Sealights Entity Level")]
-        public ReportEntityLevel SealightsEntityLevel { get; set; }
+        public string SealightsEntityLevel { get; set; }
 
-        public enum ReportEntityLevel
-        {
-            None,
-            Activity,
-            ActivityGroup,
-            BusinsessFLow
-        }
     }
 
 }
