@@ -233,7 +233,7 @@ namespace Ginger.Run
         }
         private void xExportTypeCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xExportTypeCbx.ComboBoxSelectedValue is not null && xExportTypeCbx.ComboBoxSelectedValue.ToString().Equals(eExportType.ResultsOnly.ToString()))
+            if (xExportTypeCbx.ComboBoxSelectedValue is null) //&& xExportTypeCbx.ComboBoxSelectedValue.ToString().Equals(eExportType.ResultsOnly.ToString()))
             {
                 xExportDestinationFolder.Visibility = Visibility.Collapsed;
                 return;

@@ -61,15 +61,8 @@ namespace Ginger.ALM.Repository
 
         public void OpenALMItemsFieldsPage(eALMConfigType configType, eALMType type, ObservableList<ExternalItemFieldBase> ExternalItemsFields)
         {
-            if (mALMFieldsPage == null)
-            {
-                mALMFieldsPage = new ALMItemsFieldsConfigurationPage(configType, type, ExternalItemsFields);
-                mALMFieldsPage.ShowAsWindow(false);
-            }
-            else
-            {
-                mALMFieldsPage.ShowAsWindow(true);
-            }
+            mALMFieldsPage = new ALMItemsFieldsConfigurationPage(configType, type, ExternalItemsFields);
+            mALMFieldsPage.ShowAsWindow(true);
         }
         public void ALMDefectsProfilesPage()
         {

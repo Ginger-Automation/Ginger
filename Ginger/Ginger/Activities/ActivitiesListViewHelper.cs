@@ -387,7 +387,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             ViewLinkedInstances.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
             ViewLinkedInstances.AutomationID = "ViewLinkedInstances";
             ViewLinkedInstances.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InstanceLink;
-            ViewLinkedInstances.ToolTip = "View Linked Instances";
+            ViewLinkedInstances.ToolTip = "View Item Usage";
             ViewLinkedInstances.OperationHandler = ViewRepositoryItemUsage;
             operationsList.Add(ViewLinkedInstances);
 

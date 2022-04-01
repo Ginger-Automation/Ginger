@@ -109,48 +109,96 @@ namespace GingerCore.NoSqlBase
 
         public override void PerformDBAction()
         {
-            ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
-            VE.Value = Act.SQL;
-            string SQLCalculated = VE.ValueCalculated;
-            string dbName = "";
-            string containerName = "";
-            if (Action == eDBValidationType.SimpleSQLOneValue || Action == eDBValidationType.UpdateDB)
+            try
             {
-                dbName = DatabaseName;
-                containerName = Act.Table;
+                ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
+                VE.Value = Act.SQL;
+                string SQLCalculated = VE.ValueCalculated;
+                string dbName = "";
+                string containerName = "";
+                if (Action == eDBValidationType.SimpleSQLOneValue || Action == eDBValidationType.UpdateDB)
+                {
+                    dbName = DatabaseName;
+                    containerName = Act.Table;
+                }
+                switch (Action)
+                {
+                    case eDBValidationType.FreeSQL:
+                        dbName = DatabaseName;
+                        containerName = SQLCalculated.Split(' ')[SQLCalculated.Split(' ').Length - 1];
+                        Container container = GetContainer(dbName, containerName);
+                        SetOutputFromApiResponse(container, SQLCalculated);
+                        break;
+                    case eDBValidationType.SimpleSQLOneValue:
+                        Container objContainer = GetContainer(dbName, containerName);
+                        SQLCalculated = "select * from " + containerName + " where " + Act.Where;
+                        SetOutputFromApiResponse(objContainer, SQLCalculated);
+                        break;
+                    case eDBValidationType.RecordCount:
+                        dbName = DatabaseName;
+                        if (SQLCalculated.Contains("where"))
+                        {
+                            containerName = SQLCalculated.Substring(0, SQLCalculated.IndexOf("where"));
+                        }
+                        else
+                        {
+                            containerName = SQLCalculated;
+                        }
+                        Container recordContainer = GetContainer(dbName, containerName);
+                        SQLCalculated = "select Count(1) from " + SQLCalculated;
+                        SetOutputFromApiResponse(recordContainer, SQLCalculated);
+                        break;
+                    case eDBValidationType.UpdateDB:
+                        Container objRecordContainer = GetContainer(DatabaseName, containerName);
+                        string primaryKey = Act.GetInputParamCalculatedValue("CosmosPrimaryKey");
+                        string partitionKey = Act.GetInputParamCalculatedValue("CosmosPartitionKey");
+                        if (string.IsNullOrEmpty(primaryKey))
+                        {
+                            Act.Error = "Primary Key cannot be empty";
+                            return;
+                        }
+                        if (string.IsNullOrEmpty(partitionKey))
+                        {
+                            Act.Error = "Partition Key cannot be empty";
+                            return;
+                        }
+                        if (Act.CosmosPatchInputValues == null || Act.CosmosPatchInputValues.Count == 0)
+                        {
+                            Act.Error = "Please provide fields to be modified";
+                            return;
+                        }
+                        if (objRecordContainer == null)
+                        {
+                            Act.Error = "Please select valid container/table";
+                            return;
+                        }
+                        List<PatchOperation> lstPatchOperations = new List<PatchOperation>();
+                        foreach (CosmosPatchInputValues cosmosPatch in Act.CosmosPatchInputValues)
+                        {
+                            lstPatchOperations.Add(PatchOperation.Replace(cosmosPatch.Param, cosmosPatch.Value));
+                        }
+                        IReadOnlyList<PatchOperation> enumerablePatchOps = lstPatchOperations;
+                        ItemResponse<object> response = objRecordContainer.PatchItemAsync<object>(id: primaryKey, partitionKey: new PartitionKey(partitionKey), patchOperations: enumerablePatchOps
+                            , null, default).Result;
+                        if (response != null && response.Resource != null)
+                        {
+                            object outputVals = response.Resource;
+                            JObject parsed = JObject.Parse(outputVals.ToString());
+                            string key = parsed.GetValue("id").ToString();
+                            Dictionary<string, object> dctOutputVals = new Dictionary<string, object>();
+                            dctOutputVals.Add(key, outputVals);
+                            Act.AddToOutputValues(dctOutputVals);
+                        }
+                        break;
+                    default:
+                        //do nothing
+                        break;
+                }
             }
-            switch (Action)
+            catch (Exception ex)
             {
-                case eDBValidationType.FreeSQL:
-                    dbName = DatabaseName;
-                    containerName = SQLCalculated.Split(' ')[SQLCalculated.Split(' ').Length - 1];
-                    Container container = GetContainer(dbName, containerName);
-                    SetOutputFromApiResponse(container, SQLCalculated);
-                    break;
-                case eDBValidationType.SimpleSQLOneValue:
-                    Container objContainer = GetContainer(dbName, containerName);
-                    SQLCalculated = "select * from " + containerName + " where " + Act.Where;
-                    SetOutputFromApiResponse(objContainer, SQLCalculated);
-                    break;
-                case eDBValidationType.RecordCount:
-                    dbName = DatabaseName;
-                    if (SQLCalculated.Contains("where"))
-                    {
-                        containerName = SQLCalculated.Substring(0, SQLCalculated.IndexOf("where"));
-                    }
-                    else
-                    {
-                        containerName = SQLCalculated;
-                    }
-                    Container recordContainer = GetContainer(dbName, containerName);
-                    SQLCalculated = "select Count(1) from " + SQLCalculated;
-                    SetOutputFromApiResponse(recordContainer, SQLCalculated);
-                    break;
-                case eDBValidationType.UpdateDB:
-                    throw new NotImplementedException("Update not yet implemented for Cosmos Db");
-                default:
-                    //do nothing
-                    break;
+                Act.Error = ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
         }
 
