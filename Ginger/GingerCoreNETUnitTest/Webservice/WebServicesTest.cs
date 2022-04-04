@@ -27,6 +27,7 @@ using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.REST;
+using GingerCore.Actions.WebAPI;
 using GingerCore.Actions.WebServices;
 using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Drivers.WebServicesDriverLib;
@@ -310,6 +311,131 @@ namespace UnitTests.NonUITests
             }
         }
 
+        [TestMethod][Timeout(6000000)]
+        public void WebServices_RawRequestWebAPIRest() 
+        {
+            //Arrange
+            WebServicesDriver mDriver = new WebServicesDriver(mBF);
+
+            Agent wsAgent = new Agent();
+            AgentOperations agentOperations = new AgentOperations(wsAgent);
+            wsAgent.AgentOperations = agentOperations;
+
+            wsAgent.DriverType = Agent.eDriverType.WebServices;
+            ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
+            ApplicationAgent mAG = new ApplicationAgent();
+            mAG.Agent = wsAgent;
+
+            mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
+
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
+
+            mGR.Executor.BusinessFlows.Add(mBF);
+
+            Activity Activity2 = new Activity();
+            Activity2.Active = true;
+            Activity2.ActivityName = "Web API REST";
+            Activity2.CurrentAgent = wsAgent;
+            mBF.Activities.Add(Activity2);
+
+            ActWebAPIRest restAct = new ActWebAPIRest();
+            Context context = new Context();
+            context.Activity = Activity2;
+            context.Agent = wsAgent;
+            context.AgentStatus = wsAgent.Status.ToString();
+            context.BusinessFlow = mBF;
+            context.Environment = wsAgent.ProjEnvironment;
+            context.ExecutedFrom = eExecutedFrom.Automation;
+            context.Platform = ePlatformType.WebServices;
+            context.Runner = mGR.Executor;
+            restAct.Context = context;
+
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://petstore.swagger.io/v2/pet");
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.POST.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
+
+            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.URLUser, ApplicationAPIUtils.);
+            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.URLDomain, );
+            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.URLPass, );
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, Boolean.FalseString);
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.UseLegacyJSONParsing, Boolean.FalseString);
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"{CS Exp=System.Environment.UserName}\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.ImportRequestFile, Boolean.FalseString);
+            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificatePath,);
+            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificatePassword,);
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile, Boolean.FalseString);
+            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthUsername,);
+            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthPassword,);
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString());
+            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser,);
+
+            context = Context.GetAsContext(restAct.Context);
+            if (context != null && context.Runner != null)
+            {
+                context.Runner.PrepActionValueExpression(restAct, context.BusinessFlow);
+            }
+
+            HttpWebClientUtils webAPI = new HttpWebClientUtils();
+            webAPI.RequestContstructor(restAct, null, false);
+            webAPI.CreateRawRequestContent();
+
+            string rawRequestContent = webAPI.RequestFileContent;
+            Assert.AreEqual(rawRequestContent, "POST https://petstore.swagger.io/v2/pet HTTP/1.1\r\nAccept: application/json\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: 232\r\nHost: petstore.swagger.io\r\n\r\n{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"tomse\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
+        }
+
+        [TestMethod]
+        [Timeout(600000)]
+        public void WebServices_RawRequestWebAPISoap()
+        {
+            Activity Activity1 = new Activity();
+            Activity1.Active = true;
+            Activity1.ActivityName = "Web API Soap";
+            Activity1.CurrentAgent = wsAgent;
+            mBF.Activities.Add(Activity1);
+
+            ActWebAPISoap soapAct = new ActWebAPISoap();
+            ActWebAPIBase act = new ActWebAPIBase();
+            //HttpWebClientUtils testClient = new HttpWebClientUtils();
+
+            //Build SOAP Request:
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "http://www.thomas-bayer.com/axis2/services/BLZService");
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
+            soapAct.AddOrUpdateInputParamValue(ActWebAPISoap.Fields.SOAPAction, "UnitTest");
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            //Set Request body content:
+            soapAct.mUseRequestBody = true;
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, getXML());
+            soapAct.Active = true;
+            soapAct.EnableRetryMechanism = false;
+            soapAct.ItemName = "Web API Soap";
+
+            //BusinessFlow bzFlow = new BusinessFlow();
+            //WebServicesDriver testDriver = new WebServicesDriver(bzFlow);
+            //testDriver.RunAction(soapAct);
+            //Act Act1 = new Act();
+
+
+            mBF.Activities[0].Acts.Add(soapAct);
+        }
+
+        [TestMethod]
+        [Timeout(600000)]
+        public void WebServices_RawRequestWebAPIModel()
+        {
+
+        }
+
+
         [TestMethod]  [Timeout(600000)]
         public void WebServices_WebAPIRest()
         {
@@ -370,6 +496,10 @@ namespace UnitTests.NonUITests
                 }
             }
         }       
+
+
+
+
         [TestMethod]  [Timeout(60000)]
         public void TestXMLReader()
         {

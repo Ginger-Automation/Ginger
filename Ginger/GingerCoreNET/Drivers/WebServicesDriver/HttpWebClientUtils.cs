@@ -347,6 +347,7 @@ namespace GingerCore.Actions.WebAPI
             if (msgType == "request")
             {
                 if (RequestMessage != null) {
+
                     rawMsg = $"{RequestMessage.Method} {RequestMessage.RequestUri} HTTP/{RequestMessage.Version}\r\n";
                     rawMsg += $"{Client.DefaultRequestHeaders}";
                     rawMsg += RequestMessage.Content != null && RequestMessage.Content.Headers != null ? $"{RequestMessage.Content.Headers}" : string.Empty;
@@ -386,14 +387,26 @@ namespace GingerCore.Actions.WebAPI
                 else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "XwwwFormUrlEncoded"))
                 {
                     HttpContent UrlEncoded = new FormUrlEncodedContent(ConstructURLEncoded((ActWebAPIRest)mAct));
-                    RequestFileContent = UrlEncoded.ToString();
+                    //RequestFileContent = UrlEncoded.ToString();
+                    RequestFileContent = CreateRawRequestAndResponse("request");
+                    foreach(KeyValuePair<string, string> keyValue in ConstructURLEncoded((ActWebAPIRest)mAct))
+                    {
+                        RequestFileContent += $"{keyValue.Key}={keyValue.Value}&";
+                    }
+                    RequestFileContent = RequestFileContent.Remove(RequestFileContent.Length - 1);
+
                 }
                 else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "FormData"))
                 {
                     MultipartFormDataContent FormDataContent = new MultipartFormDataContent();
                     for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
                         FormDataContent.Add(new StringContent(mAct.RequestKeyValues[i].ValueForDriver), mAct.RequestKeyValues[i].ItemName.ToString());
-                    RequestFileContent = FormDataContent.ToString();
+                    RequestFileContent = CreateRawRequestAndResponse("request");
+                    foreach(HttpContent strContent in FormDataContent)
+                    {
+                        RequestFileContent += $"Content-Disposition: {strContent.Headers.ContentDisposition}\n";
+                    }
+                    //RequestFileContent = FormDataContent.ToString();
                 }
                 else
                 {
