@@ -87,42 +87,50 @@ namespace Ginger.Reports
             // Gideon
             xSealightsLogRadioButton.Init(typeof(ExecutionLoggerConfiguration.eSealightsLog),
                 xSealightsLogPanel, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.SealightsLog), SealightsLogRadioButton_CheckedHandler);            
+                nameof(ExecutionLoggerConfiguration.SealightsLog), SealightsLogRadioButton_CheckedHandler);
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealightsURLTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.SealightsURL));            
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsAgentTokenTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsLabIdTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.SealightsLabId));
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealightsTestStageTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.SealightsTestStage));
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsBuildSessionIDTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsSessionTimeoutTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.SealightsSessionTimeout));
+            Context mContext = new Context();
+            xSealightsURLTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsURL));
+            xSealighsAgentTokenTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
+            xSealighsLabIdTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId));
+            xSealightsTestStageTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsTestStage));
+            xSealighsBuildSessionIDTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
+            xSealighsSessionTimeoutTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsSessionTimeout));
 
             xSealighsReportedEntityLevelComboBox.BindControl(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
 
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealightsURLTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
+            //    nameof(ExecutionLoggerConfiguration.SealightsURL));            
+
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsAgentTokenTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
+            //    nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
+
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsLabIdTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
+            //    nameof(ExecutionLoggerConfiguration.SealightsLabId));
+
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealightsTestStageTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
+            //    nameof(ExecutionLoggerConfiguration.SealightsTestStage));
+
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsBuildSessionIDTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
+            //    nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
+
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsSessionTimeoutTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
+            //    nameof(ExecutionLoggerConfiguration.SealightsSessionTimeout));
+
             //------------
 
-            if (xSealighsSessionTimeoutTextBox.Text.Trim() == "")
+            if (xSealighsSessionTimeoutTextBox.ValueTextBox.Text.Trim() == "")
             {
-                xSealighsSessionTimeoutTextBox.Text = "14400";
+                xSealighsSessionTimeoutTextBox.ValueTextBox.Text = "14400";
             }
 
-            xSealightsURLTextBox.AddValidationRule(new SealightsValidationRule("URL"));
-            xSealighsAgentTokenTextBox.AddValidationRule(new SealightsValidationRule("Agent Token"));
-            xSealightsTestStageTextBox.AddValidationRule(new SealightsValidationRule("Test Stage"));
+            //xSealightsURLTextBox.AddValidationRule(new SealightsValidationRule("URL"));
+            //xSealighsAgentTokenTextBox.AddValidationRule(new SealightsValidationRule("Agent Token"));
+            //xSealightsTestStageTextBox.AddValidationRule(new SealightsValidationRule("Test Stage"));
             xSealighsReportedEntityLevelComboBox.AddValidationRule(new SealightsValidationRule("Reported Entity Level"));
 
-            xSealighsLabIdTextBox.AddValidationRule(new SealightsValidationRule("Lab ID"));
-            xSealighsBuildSessionIDTextBox.AddValidationRule(new SealightsValidationRule("Build Session ID"));
+            //xSealighsLabIdTextBox.AddValidationRule(new SealightsValidationRule("Lab ID"));
+            //xSealighsBuildSessionIDTextBox.AddValidationRule(new SealightsValidationRule("Build Session ID"));
 
             xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
                 xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
@@ -231,14 +239,14 @@ namespace Ginger.Reports
 
                 if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
                 {
-                    if (xSealightsURLTextBox.Text.Trim() == "" || xSealighsAgentTokenTextBox.Text.Trim() == "" ||
-                        xSealightsTestStageTextBox.Text.Trim() == "" || xSealighsReportedEntityLevelComboBox.SelectedIndex < 0)
+                    if (xSealightsURLTextBox.ValueTextBox.Text.Trim() == "" || xSealighsAgentTokenTextBox.ValueTextBox.Text.Trim() == "" ||
+                        xSealightsTestStageTextBox.ValueTextBox.Text.Trim() == "" || xSealighsReportedEntityLevelComboBox.SelectedIndex < 0)
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide all Sealights required information");
                         return;
                     }
 
-                    if (xSealighsLabIdTextBox.Text.Trim() == "" && xSealighsBuildSessionIDTextBox.Text.Trim() == "")
+                    if (xSealighsLabIdTextBox.ValueTextBox.Text.Trim() == "" && xSealighsBuildSessionIDTextBox.ValueTextBox.Text.Trim() == "")
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide Lab ID or Session ID");
                         return;

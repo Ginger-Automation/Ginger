@@ -4,12 +4,12 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
-      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" xmlns:Activities="clr-namespace:Ginger.BusinessFlowWindows"
       mc:Ignorable="d" 
       MinHeight="500" MinWidth="585"
 	Title="Execution Logger Configuration">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" Height="885">
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" Height="920">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="35"/>
@@ -125,17 +125,17 @@
                     <RowDefinition  Height="00"/>
                     <RowDefinition  Height="30"/>                
                     <RowDefinition  Height="30"/>
-                    <RowDefinition  Height="25"/>
+                    <RowDefinition  Height="15"/>
                     <RowDefinition  Height="30"/>
-                    <RowDefinition  Height="25"/>
+                    <RowDefinition  Height="15"/>
                     <RowDefinition  Height="30"/>
-                    <RowDefinition  Height="25"/>
+                    <RowDefinition  Height="15"/>
                     <RowDefinition  Height="30"/>
-                    <RowDefinition  Height="25"/>
+                    <RowDefinition  Height="15"/>
                     <RowDefinition  Height="30"/>
                     <RowDefinition  Height="10"/>
                     <RowDefinition  Height="30"/>
-                    <RowDefinition  Height="25"/>
+                    <RowDefinition  Height="15"/>
                     <RowDefinition  Height="30"/>
                     <RowDefinition  Height="30"/>
                     <RowDefinition  Height="30"/>
@@ -159,29 +159,30 @@
                     <Label x:Name="xSealightsURLLabel" Content="URL"   Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
                     <Label x:Name="xSealightsURLLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}"  Foreground="Red" FontWeight="Bold" FontSize="12"/>
                 </StackPanel>
-                <TextBox x:Name="xSealightsURLTextBox" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" ToolTip="Sealights end point Url" Margin="10,0,0,0"  Width="400" VerticalScrollBarVisibility="Auto"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   Text="" />
+                <Activities:UCValueExpression x:Name="xSealightsURLTextBox" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" ToolTip="Sealights Lab Id" Margin="10,0,0,0"  Width="400"/>
 
+                    
                 <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="4">
                     <Label x:Name="xSealighsAgentTokenLabel" Content="Agent Token" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
                     <Label x:Name="xSealighsAgentTokenLabelValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}"  Foreground="Red" FontWeight="Bold" FontSize="12"/>
                 </StackPanel>
-                <TextBox x:Name="xSealighsAgentTokenTextBox" Grid.Column="2" Grid.Row="4" HorizontalAlignment="Left" ToolTip="Sealights Agent Token" Margin="10,0,0,0"  Width="400" VerticalScrollBarVisibility="Auto"  Style="{StaticResource @TextBoxStyle}" TextWrapping="NoWrap" AcceptsReturn="False"   Text="" />
-
+                <Activities:UCValueExpression x:Name="xSealighsAgentTokenTextBox" Grid.Column="2" Grid.Row="4" HorizontalAlignment="Left" ToolTip="Sealights Lab Id" Margin="10,0,0,0"  Width="400"/>
+                    
                 <Label x:Name="xSealighsLabIdLabel" Content="Lab ID"  Grid.Column="0" Grid.Row="6" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
-                <TextBox x:Name="xSealighsLabIdTextBox" PreviewTextInput="PreviewTextInput" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Left" ToolTip="Sealights Lab ID" Margin="10,0,0,0"  Width="400" VerticalScrollBarVisibility="Auto"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   Text="" />
-        
+                <Activities:UCValueExpression x:Name="xSealighsLabIdTextBox" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Left" ToolTip="Sealights Lab Id" Margin="10,0,0,0"  Width="400"/>
+                    
                 <Label x:Name="xSealighsBuildSessionIDLabel" Content="Build Session ID"  Grid.Column="0" Grid.Row="8" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
-                <TextBox x:Name="xSealighsBuildSessionIDTextBox" PreviewTextInput="PreviewTextInput" Grid.Column="2" Grid.Row="8" HorizontalAlignment="Left" ToolTip="Sealights Session ID" Margin="10,0,0,0"  Width="400" VerticalScrollBarVisibility="Auto"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   Text="" />
+                <Activities:UCValueExpression x:Name="xSealighsBuildSessionIDTextBox" Grid.Column="2" Grid.Row="8" HorizontalAlignment="Left" ToolTip="Sealights Lab Id" Margin="10,0,0,0"  Width="400"/>
 
                 <Label x:Name="xSealighsSessionTimeoutLabel" Content="Session Timeout (seconds)"  Grid.Column="0" Grid.Row="10" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
-                <TextBox x:Name="xSealighsSessionTimeoutTextBox" PreviewTextInput="PreviewTextInput" Grid.Column="2" Grid.Row="10" HorizontalAlignment="Left" ToolTip="Sealights Session Timeout (seconds)" Margin="10,0,0,0"  Width="400" VerticalScrollBarVisibility="Auto"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   Text="" />
-
+                <Activities:UCValueExpression x:Name="xSealighsSessionTimeoutTextBox" Grid.Column="2" Grid.Row="10" HorizontalAlignment="Left" ToolTip="Sealights Lab Id" Margin="10,0,0,0"  Width="400"/>
+                    
                 <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="12">
                     <Label x:Name="xSealightsTestStageLabel" Content="Test Stage"   Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
                     <Label x:Name="xSealightsTestStageLabelValidation" Content="*"  Style="{StaticResource @InputFieldLabelStyle}"  Foreground="Red" FontWeight="Bold" FontSize="12"/>
                 </StackPanel>
-                <TextBox x:Name="xSealightsTestStageTextBox" Grid.Column="2" Grid.Row="12" HorizontalAlignment="Left" ToolTip="Sealights Test Stage" Margin="10,0,0,0"  Width="400" VerticalScrollBarVisibility="Auto"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   Text="" />
-
+                <Activities:UCValueExpression x:Name="xSealightsTestStageTextBox" Grid.Column="2" Grid.Row="12" HorizontalAlignment="Left" ToolTip="Sealights Lab Id" Margin="10,0,0,0"  Width="400"/>
+                    
                 <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="14">
                     <Label x:Name="xSealighsReportedEntityLevelLabel" Content="Reported Entity Level"   Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
                     <Label x:Name="xSealighsReportedEntityLevelLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}"  Foreground="Red" FontWeight="Bold" FontSize="12"/>

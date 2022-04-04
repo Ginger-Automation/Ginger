@@ -629,13 +629,20 @@ namespace Ginger.Run
             BindingHandler.ObjFieldBinding(xDefaultSessionIdRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.DefaultSessionIdYN));
             BindingHandler.ObjFieldBinding(xCustomSessionIdRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.CustomSessionIdYN));
 
-            BindingHandler.ObjFieldBinding(xSealightsTestStageTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealightsTestStage));
-            BindingHandler.ObjFieldBinding(xSealighsLabIdTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealighsLabId));
-            BindingHandler.ObjFieldBinding(xSealighsBuildSessionIDTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID));
+            // Value expression textboxes
+            xSealightsTestStageTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealightsTestStage));
+            xSealighsLabIdTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealighsLabId));
+            xSealighsBuildSessionIDTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID));
 
-            xSealightsTestStageTextBox.AddValidationRule(new SealightsValidationRule("Test Stage"));
-            xSealighsLabIdTextBox.AddValidationRule(new SealightsValidationRule("Lab ID"));
-            xSealighsBuildSessionIDTextBox.AddValidationRule(new SealightsValidationRule("Session ID"));
+            // Regular Textboxes
+            //BindingHandler.ObjFieldBinding(xSealightsTestStageTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealightsTestStage));
+            //BindingHandler.ObjFieldBinding(xSealighsLabIdTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealighsLabId));
+            //BindingHandler.ObjFieldBinding(xSealighsBuildSessionIDTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID));
+
+            // check if fields have been populated (font-end validation)
+            //xSealightsTestStageTextBox.AddValidationRule(new SealightsValidationRule("Test Stage"));
+            //xSealighsLabIdTextBox.AddValidationRule(new SealightsValidationRule("Lab ID"));
+            //xSealighsBuildSessionIDTextBox.AddValidationRule(new SealightsValidationRule("Session ID"));
 
             xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
             xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
@@ -681,6 +688,7 @@ namespace Ginger.Run
                     XCustomSessionIdRadioBtn_Checked(null, null);
             }
 
+            //Sealights Logger configuration settings should be visible only if the Sealight logger is set to yes in Configurations tab
             if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.No)
             {
                 xSealighsExpander.Visibility = Visibility.Collapsed;
