@@ -136,6 +136,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public ActWebAPIBase mActWebAPI;
         public string mRawResponse;
         public string mRawRequest;
+        private HttpWebClientUtils mWebAPI;
 
         public override bool IsSTAThread()
         {
@@ -328,6 +329,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
                 //Post Execution Copy execution result fields from actWebAPI to ActWebAPIModel (act)
                 CopyExecutionAttributes(act, actWebAPI);
+
+
+
             }
             else if (act is ActScreenShot)
             {
@@ -336,6 +340,12 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             {
                 throw new Exception("The Action from type '" + act.GetType().ToString() + "' is unknown/Not Implemented by the Driver - " + this.GetType().ToString());
             }
+            //act.ExInfo += System.Environment.NewLine;
+            act.ExInfo += "REQUEST:";
+            act.ExInfo += mWebAPI.RequestFileContent;
+            act.ExInfo += System.Environment.NewLine;
+            act.ExInfo += "RESPONSE:";
+            act.ExInfo += mWebAPI.ResponseFileContent;
         }
 
         private string ReplacePlaceHolderParameneterWithActual(string ValueBeforeReplacing, ObservableList<EnhancedActInputValue> APIModelDynamicParamsValue)
@@ -360,17 +370,17 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         private void HandleWebApiRequest(ActWebAPIBase act)
         {
-            HttpWebClientUtils WebAPI = new HttpWebClientUtils();
+            mWebAPI = new HttpWebClientUtils();
 
             //Call for Request Construction
-            if (WebAPI.RequestContstructor(act, WebServicesProxy, UseServerProxySettings))
+            if (mWebAPI.RequestContstructor(act, WebServicesProxy, UseServerProxySettings))
             {
 
-                WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
-                mRawRequest = WebAPI.RequestFileContent;
+                mWebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
+                mRawRequest = mWebAPI.RequestFileContent;
                 Reporter.ToLog(eLogLevel.DEBUG, "RequestContstructor passed successfully");
 
-                if (WebAPI.SendRequest() == true)
+                if (mWebAPI.SendRequest() == true)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "SendRequest passed successfully");
 
@@ -378,15 +388,15 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     bool dontFailActionOnBadResponse = false;
                     Boolean.TryParse(act.GetInputParamCalculatedValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose), out dontFailActionOnBadResponse);
                     if (!dontFailActionOnBadResponse)
-                        WebAPI.ValidateResponse();
+                        mWebAPI.ValidateResponse();
 
                     Reporter.ToLog(eLogLevel.DEBUG, "ValidateResponse passed successfully");
 
-                    WebAPI.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath);
-                    mRawResponse = WebAPI.ResponseFileContent;
-                    WebAPI.HandlePostExecutionOperations();
+                    mWebAPI.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath);
+                    mRawResponse = mWebAPI.ResponseFileContent;
+                    mWebAPI.HandlePostExecutionOperations();
                     //Parse response
-                    WebAPI.ParseRespondToOutputParams();
+                    mWebAPI.ParseRespondToOutputParams();
 
                     Reporter.ToLog(eLogLevel.DEBUG, "ParseRespondToOutputParams passed successfully");
                 }

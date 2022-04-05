@@ -312,43 +312,36 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod][Timeout(6000000)]
-        public void WebServices_RawRequestWebAPIRest() 
+        public void WebServices_RawRequestWebAPIRestWithJSON() 
         {
-            //Arrange
-            WebServicesDriver mDriver = new WebServicesDriver(mBF);
+            ////Arrange
+            //WebServicesDriver mDriver = new WebServicesDriver(mBF);
 
-            Agent wsAgent = new Agent();
-            AgentOperations agentOperations = new AgentOperations(wsAgent);
-            wsAgent.AgentOperations = agentOperations;
+            //Agent wsAgent = new Agent();
+            //AgentOperations agentOperations = new AgentOperations(wsAgent);
+            //wsAgent.AgentOperations = agentOperations;
 
-            wsAgent.DriverType = Agent.eDriverType.WebServices;
-            ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
-            ApplicationAgent mAG = new ApplicationAgent();
-            mAG.Agent = wsAgent;
+            //wsAgent.DriverType = Agent.eDriverType.WebServices;
+            //((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
+            //ApplicationAgent mAG = new ApplicationAgent();
+            //mAG.Agent = wsAgent;
 
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
 
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
+            //((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            //((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
 
-            mGR.Executor.BusinessFlows.Add(mBF);
+            //mGR.Executor.BusinessFlows.Add(mBF);
 
-            Activity Activity2 = new Activity();
-            Activity2.Active = true;
-            Activity2.ActivityName = "Web API REST";
-            Activity2.CurrentAgent = wsAgent;
-            mBF.Activities.Add(Activity2);
+            //Activity Activity2 = new Activity();
+            //Activity2.Active = true;
+            //Activity2.ActivityName = "Web API REST";
+            //Activity2.CurrentAgent = wsAgent;
+            //mBF.Activities.Add(Activity2);
 
             ActWebAPIRest restAct = new ActWebAPIRest();
             Context context = new Context();
-            context.Activity = Activity2;
-            context.Agent = wsAgent;
-            context.AgentStatus = wsAgent.Status.ToString();
-            context.BusinessFlow = mBF;
-            context.Environment = wsAgent.ProjEnvironment;
-            context.ExecutedFrom = eExecutedFrom.Automation;
-            context.Platform = ePlatformType.WebServices;
             context.Runner = mGR.Executor;
             restAct.Context = context;
 
@@ -393,48 +386,82 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-        [Timeout(600000)]
+        [Timeout(6000000)]
         public void WebServices_RawRequestWebAPISoap()
         {
-            Activity Activity1 = new Activity();
-            Activity1.Active = true;
-            Activity1.ActivityName = "Web API Soap";
-            Activity1.CurrentAgent = wsAgent;
-            mBF.Activities.Add(Activity1);
 
             ActWebAPISoap soapAct = new ActWebAPISoap();
-            ActWebAPIBase act = new ActWebAPIBase();
-            //HttpWebClientUtils testClient = new HttpWebClientUtils();
+            mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
+            Context context = new Context();
+            context.Runner = mGR.Executor;
+            soapAct.Context = context;
 
             //Build SOAP Request:
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "http://www.thomas-bayer.com/axis2/services/BLZService");
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "http://www.dneonline.com/calculator.asmx");
             soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
-            soapAct.AddOrUpdateInputParamValue(ActWebAPISoap.Fields.SOAPAction, "UnitTest");
+            soapAct.AddOrUpdateInputParamValue(ActWebAPISoap.Fields.SOAPAction, "http://tempuri.org/Multiply");
             soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
             soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
+
+
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, bool.FalseString);
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.UseLegacyJSONParsing, bool.FalseString);
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\r\n  <soapenv:Header />\r\n  <soapenv:Body>\r\n    <tem:Multiply>\r\n      <tem:intA>2</tem:intA>\r\n      <tem:intB>3</tem:intB>\r\n    </tem:Multiply>\r\n  </soapenv:Body>\r\n</soapenv:Envelope>");
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.ImportRequestFile, bool.FalseString);
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile, bool.FalseString);
+            //soapAct.AddOrUpdateInputParamValue(ActWebAPISoap.Fields., ApplicationAPIUtils.eContentType.XML.ToString());
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+
+
             //Set Request body content:
             soapAct.mUseRequestBody = true;
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, getXML());
+            //soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, getXML());
             soapAct.Active = true;
             soapAct.EnableRetryMechanism = false;
             soapAct.ItemName = "Web API Soap";
 
-            //BusinessFlow bzFlow = new BusinessFlow();
-            //WebServicesDriver testDriver = new WebServicesDriver(bzFlow);
-            //testDriver.RunAction(soapAct);
-            //Act Act1 = new Act();
+            context = Context.GetAsContext(soapAct.Context);
+            if (context != null && context.Runner != null)
+            {
+                context.Runner.PrepActionValueExpression(soapAct, context.BusinessFlow);
+            }
 
+            HttpWebClientUtils webAPI = new HttpWebClientUtils();
+            webAPI.RequestContstructor(soapAct, null, false);
+            webAPI.CreateRawRequestContent();
 
-            mBF.Activities[0].Acts.Add(soapAct);
+            string rawRequestContent = webAPI.RequestFileContent;
+            Assert.AreEqual(rawRequestContent, "POST http://www.dneonline.com/calculator.asmx HTTP/1.1\r\nContent-Type: text/xml; charset=utf-8\r\nContent-Length: 289\r\nHost: www.dneonline.com\r\n\r\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\r\n  <soapenv:Header />\r\n  <soapenv:Body>\r\n    <tem:Multiply>\r\n      <tem:intA>2</tem:intA>\r\n      <tem:intB>3</tem:intB>\r\n    </tem:Multiply>\r\n  </soapenv:Body>\r\n</soapenv:Envelope>");
         }
 
         [TestMethod]
         [Timeout(600000)]
-        public void WebServices_RawRequestWebAPIModel()
+        public void WebServices_RawRequestWebAPIRestWithXML()
         {
 
         }
 
+        [TestMethod]
+        [Timeout(600000)]
+        public void WebServices_RawRequestWebAPIRestWithFormData()
+        {
+
+        }
+
+        public void WebServices_RawRequestWebAPIRestWithHeaders()
+        {
+
+        }
+
+        public void WebServices_RawRequestWebAPIRestWithAuthentication()
+        {
+
+        }
 
         [TestMethod]  [Timeout(600000)]
         public void WebServices_WebAPIRest()

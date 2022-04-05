@@ -35,6 +35,7 @@ using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerCore.Actions.WebAPI;
 using GingerCore.Actions.WebServices;
 using Ginger.Actions.ActionEditPages.WebServices;
+using Ginger.UserControlsLib.TextEditor;
 
 namespace Ginger.Actions.WebServices
 {
@@ -285,7 +286,6 @@ namespace Ginger.Actions.WebServices
 
         private void xViewRawRequestBtn_Click(object sender, RoutedEventArgs e)
         {
-
             ActWebAPIBase actWebAPI = null;
             if (mAct is ActWebAPIModel ActWAPIM)
             {
@@ -306,11 +306,22 @@ namespace Ginger.Actions.WebServices
             }
 
 
-            APIViewRawRequestPage mAPIViewRawRequestPage = new APIViewRawRequestPage(actWebAPI);
-            mAPIViewRawRequestPage.PrepareActionValues();
-            mAPIViewRawRequestPage.CreateRawRequestContent();
+            //APIViewRawRequestPage mAPIViewRawRequestPage = new APIViewRawRequestPage(actWebAPI);
+            //mAPIViewRawRequestPage.PrepareActionValues();
+            //mAPIViewRawRequestPage.CreateRawRequestContent();
 
-            mAPIViewRawRequestPage.ShowAsWindow(eWindowShowStyle.Dialog);
+            //mAPIViewRawRequestPage.ShowAsWindow(eWindowShowStyle.Dialog);
+
+
+            HttpWebClientUtils webAPI = new HttpWebClientUtils();
+            webAPI.RequestContstructor(actWebAPI, null, false);
+            webAPI.CreateRawRequestContent();
+
+            string rawRequestContent = webAPI.RequestFileContent;
+
+            DocumentEditorPage documentEditorPage = new DocumentEditorPage(rawRequestContent, true, false, "Raw Request Editor");
+            documentEditorPage.ShowAsWindow();
+
         }
     }
 }

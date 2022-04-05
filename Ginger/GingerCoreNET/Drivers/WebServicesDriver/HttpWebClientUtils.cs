@@ -348,22 +348,22 @@ namespace GingerCore.Actions.WebAPI
             {
                 if (RequestMessage != null) {
 
-                    rawMsg = $"{RequestMessage.Method} {RequestMessage.RequestUri} HTTP/{RequestMessage.Version}\r\n";
+                    rawMsg = $"{RequestMessage.Method} {RequestMessage.RequestUri} HTTP/{RequestMessage.Version}{Environment.NewLine}";
                     rawMsg += $"{Client.DefaultRequestHeaders}";
                     rawMsg += RequestMessage.Content != null && RequestMessage.Content.Headers != null ? $"{RequestMessage.Content.Headers}" : string.Empty;
                     if (RequestMessage.Method.ToString() != "GET" && !RequestMessage.Content.Headers.ToString().Contains("Content-Length"))
                     {
-                        rawMsg += $"Content-Length: {RequestMessage.Content.Headers.ContentLength}\r\n";
+                        rawMsg += $"Content-Length: {RequestMessage.Content.Headers.ContentLength}{Environment.NewLine}";
                     }
-                    rawMsg += $"Host: {RequestMessage.RequestUri.Authority}\r\n\r\n";
+                    rawMsg += $"Host: {RequestMessage.RequestUri.Authority}{Environment.NewLine}{Environment.NewLine}";
                     rawMsg += BodyString;
                 }
             }
             else
             {
-                rawMsg = $"HTTP/{Response.Version} {Response.ReasonPhrase}\r\n";
+                rawMsg = $"HTTP/{Response.Version} {Response.ReasonPhrase}{Environment.NewLine}";
                 rawMsg += $"{Response.Headers}";
-                rawMsg += $"{Response.Content.Headers}\r\n";
+                rawMsg += $"{Response.Content.Headers}{Environment.NewLine}";
                 rawMsg += ResponseMessage;
             }
 
@@ -399,13 +399,15 @@ namespace GingerCore.Actions.WebAPI
                 else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "FormData"))
                 {
                     MultipartFormDataContent FormDataContent = new MultipartFormDataContent();
-                    for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
-                        FormDataContent.Add(new StringContent(mAct.RequestKeyValues[i].ValueForDriver), mAct.RequestKeyValues[i].ItemName.ToString());
+
                     RequestFileContent = CreateRawRequestAndResponse("request");
-                    foreach(HttpContent strContent in FormDataContent)
+                    for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
                     {
-                        RequestFileContent += $"Content-Disposition: {strContent.Headers.ContentDisposition}\n";
+                        FormDataContent.Add(new StringContent(mAct.RequestKeyValues[i].ValueForDriver), mAct.RequestKeyValues[i].ItemName.ToString());
+                        RequestFileContent += $"Content-Disposition: form-data; name=\"{mAct.RequestKeyValues[i].Param}\"{Environment.NewLine}";
+                        RequestFileContent += $"{mAct.RequestKeyValues[i].ValueForDriver}{Environment.NewLine}";
                     }
+
                     //RequestFileContent = FormDataContent.ToString();
                 }
                 else
