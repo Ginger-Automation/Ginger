@@ -693,6 +693,11 @@ namespace Ginger.Run
             {
                 xSealighsExpander.Visibility = Visibility.Collapsed;
             }
+            else if (RunSetConfig.DefaultTestStageYN == true && RunSetConfig.DefaultLabIdYN == true && RunSetConfig.DefaultSessionIdYN == true)
+            {
+                xSealighsExpander.IsExpanded = false; //Sealight expand control should collapsed if all 3 Sealights' settings are in ‘Default’ mode.
+            }
+
 
         }
 
