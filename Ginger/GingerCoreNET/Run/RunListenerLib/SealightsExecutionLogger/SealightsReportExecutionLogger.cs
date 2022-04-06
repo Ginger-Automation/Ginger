@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             {
                 if (mSealightsApiHandler == null)
                 {
-                    mSealightsApiHandler = new SealightsReportApiHandler();
+                    mSealightsApiHandler = new SealightsReportApiHandler(mContext);
                                     }
                 return mSealightsApiHandler;
             }
@@ -58,13 +58,20 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         #region RunSet
         public void RunSetStart(RunSetConfig runsetConfig)
         {
-            Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Sealights Session Creation");
-            if (WorkSpace.Instance.RunsetExecutor != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null
-                && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID != null)
+            try
             {
-                runsetConfig.ExecutionID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
+                Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Sealights Session Creation");
+                if (WorkSpace.Instance.RunsetExecutor != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null
+                    && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID != null)
+                {
+                    runsetConfig.ExecutionID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
+                }
+                SealightsReportApiHandler.SendCreationTestSessionToSealightsAsync();
             }
-             SealightsReportApiHandler.SendCreationTestSessionToSealightsAsync();
+            catch(Exception err)
+            {
+                string error = err.Message;
+            }
         }
 
     

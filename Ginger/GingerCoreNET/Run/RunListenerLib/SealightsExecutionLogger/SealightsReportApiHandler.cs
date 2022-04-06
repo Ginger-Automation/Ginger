@@ -36,7 +36,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
     public class SealightsReportApiHandler
     {
 
-
+        public Context mContext;
+        IValueExpression mVE;
         private string EndPointUrl { get; set; }
         public string TestSessionId;
         private const string Token = "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL1BST0QtQ1VTVE9NRVJTMi5hdXRoLnNlYWxpZ2h0cy5pby8iLCJqd3RpZCI6IlBST0QtQ1VTVE9NRVJTMixpLTA0NzIzMTI0MjU2NTg5OTM4LEFQSUdXLTU0ZGRjYjgyLTM4ZDMtNDRkMC04OGI3LTVhMThkZTliZDNhNSwxNjEyNzgwMzY3NjA1Iiwic3ViamVjdCI6ImFtZG9jc0BhZ2VudCIsImF1ZGllbmNlIjpbImFnZW50cyJdLCJ4LXNsLXJvbGUiOiJhZ2VudCIsIngtc2wtc2VydmVyIjoiaHR0cHM6Ly9hbWRvY3Muc2VhbGlnaHRzLmNvL2FwaSIsInNsX2ltcGVyX3N1YmplY3QiOiIiLCJpYXQiOjE2MTI3ODAzNjd9.AISEOpET7FyCSnchXkjMm-aCC3A91bV9myXs7SFu_fMKIJfQzH3maYs9_6rZQTVKoX9SnqMkdUz4lm8RpTx4vOcFutyOyHrFo8hNKFqJEpG87T07y93QTl2coKz2x_4-IOu5i_lxDg_RPpLJkClMD2nyN8DwXYW_0w_3C-JS9asPFDjDAjEEQJDA8oMbstVAm72uaEyS2xVuBYJLuXVP-A47t-nREGuiWKc0Zpq64RMT85Jla7IJdnn6-GFtvGeLQN2INz3RrbjAHS1pWgAm83S--chp8izHQ85BU4reYtyNXa_v8eaidc3x8fjTAwp8_DGbw1hgKETf_znzeWpSeYO5TREHUxLOTY7qtkDBhlspA-ztUI8wewJerykCf_h9Pbdd_olLs0DQgotYgfxYKwDCm2xxpcfOdzxAcPDSA8bE0o_HZJNDfyXdwe9xMco4NGwcfMZUU5mS_cOQ1snBajHPoAxzZbPEb9uN8iAiO1s5jiUuNH4GyLe7hRrC6YAR1zQUhuZ-2iZ7rLJKoOfYOKhTR71wQPOflna-xGnc7hrhTUlA2nAe2Wdzmx-yx-n0lHicywq57m2j2yCLLjdRyfbW-TLqUh7jga34mxMse-zAyIwSfevZ0u8ng8Wm6QsX4A-W26obXHAjdSZcXLoHgzoTN_MVwvA3uUA-QrD_fNg";
@@ -44,9 +45,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         RestClient restClient;
         private const string SEND_CREATEION_TEST_SESSION = "sl-api/v1/test-sessions";
 
-        public SealightsReportApiHandler()
-        {           
+        public SealightsReportApiHandler(Context context)
+        {
+            mContext = context;
+            mVE = new GingerCore.ValueExpression(mContext.Environment, mContext.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+
             EndPointUrl = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsURL;
+            mVE.Value = EndPointUrl;  // Calculate the value Expression
+            EndPointUrl = mVE.ValueCalculated;
+
             restClient = new RestClient(EndPointUrl);
             restClient.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;            
         }
@@ -126,6 +133,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             try
             {
+                mVE = new GingerCore.ValueExpression(mContext.Environment, mContext.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+
                 RestRequest restRequest = (RestRequest)new RestRequest(api, apiMethod) { RequestFormat = RestSharp.DataFormat.Json };
 
                 restRequest.AddHeader("Content-Type", "application/json");
@@ -136,18 +145,37 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 string bsId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID;
                 string sessionTimeout = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsSessionTimeout;
 
+                // Calculate the value Expression
+                mVE.Value = labId;  
+                labId = mVE.ValueCalculated;
+                mVE.Value = testStage;
+                testStage = mVE.ValueCalculated;
+                mVE.Value = bsId;
+                bsId = mVE.ValueCalculated;
+                mVE.Value = sessionTimeout;
+                sessionTimeout = mVE.ValueCalculated;
+
                 //  Check Sealights's values on run-set levels
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomLabIdYN == true)
                 {
                     labId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId;
+
+                    mVE.Value = labId;
+                    labId = mVE.ValueCalculated;
                 }
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomSessionIdYN == true)
                 {
                     bsId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID;
+
+                    mVE.Value = bsId;
+                    bsId = mVE.ValueCalculated;
                 }
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomTestStageYN == true)
                 {
                     testStage = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage;
+
+                    mVE.Value = testStage;
+                    testStage = mVE.ValueCalculated;
                 }
 
                 //restRequest.AddJsonBody(new { labId = "111", testStage = "Ginger Regression Test Gideon", bsId = "1624300311460", sessionTimeout = "10000" }); // Anonymous type object is converted to Json body

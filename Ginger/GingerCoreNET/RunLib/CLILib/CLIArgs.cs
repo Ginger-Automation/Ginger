@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using CommandLine;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
@@ -78,7 +79,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
 
             if (cliHelper.SetSealightsSettings)
-            {
+            {               
                 options.SealightsEnable = solution.LoggerConfigurations.SealightsLog == eSealightsLog.Yes ? true : false;
                 options.SealightsLabID = solution.LoggerConfigurations.SealightsLabId;
                 options.SealightsSessionID = solution.LoggerConfigurations.SealightsBuildSessionID;
@@ -108,10 +109,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 args = args.Replace(options.Pass, "\"" + options.Pass + "\"");
             }
-
-            //Gideon 3/31
-            //string labId = runsetExecutor.RunSetConfig.SealighsLabId;
-            //string labId2 = solution.LoggerConfigurations.SealightsLabId;
 
             // !!!!!!!!!!!!!!!!!!!
             // TODO: we want to move SCM to another verb/action !!!!!
