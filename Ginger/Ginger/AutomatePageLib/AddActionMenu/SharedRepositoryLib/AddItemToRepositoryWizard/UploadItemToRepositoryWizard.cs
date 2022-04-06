@@ -85,6 +85,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
                 uploadItem.ExistingItem = existingItem;
                 uploadItem.ExistingItemType = existingItemType;
                 uploadItem.Comment = strComment;
+                uploadItem.ReplaceAsLink = item.IsLinkedItem;
             }
             else
                 uploadItem.ItemUploadType = UploadItemSelection.eItemUploadType.New;

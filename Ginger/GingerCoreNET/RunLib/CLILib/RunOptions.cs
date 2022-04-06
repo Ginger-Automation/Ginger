@@ -29,6 +29,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('s', "solution", Required = true, HelpText = "Set solution folder")]
         public string Solution { get; set; }
 
+        [Option('m', "branch", Required = false, HelpText = "Set solution source control branch")]
+        public string Branch { get; set; }
 
         [Option('r', "runset", Required = true, HelpText = "Set runset name")]
         public string Runset { get; set; }

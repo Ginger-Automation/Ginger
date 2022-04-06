@@ -457,6 +457,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.InstanceLink:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Link);
                     break;
+                case eImageType.InstanceLinkOrange:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Link,Brushes.Orange);
+                    break;
                 case eImageType.UnSync:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Unlink);
                     break;

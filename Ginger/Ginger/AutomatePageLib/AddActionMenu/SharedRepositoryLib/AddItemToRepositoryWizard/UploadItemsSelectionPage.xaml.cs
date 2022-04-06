@@ -48,8 +48,11 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Selected), StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
+       
             defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ItemName), Header = "Item To Upload", WidthWeight = 15, ReadOnly = true });
-            
+
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ReplaceAsLink), Header = "Replace As Link", StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
+
             List<ComboEnumItem> itemUploadTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eItemUploadType));
             GridColView GCWUploadType = new GridColView()
             {

@@ -136,7 +136,7 @@ namespace GingerCore.ALM
                 {
                     return octaneRepository.GetEntities<ApplicationModule>(GetLoginDTO(), filter);
                 }).Result;
-
+                
                 ExploredApplicationModule.Add(listnodes.FirstOrDefault().Name, listnodes.FirstOrDefault().Id);
                 return listnodes.FirstOrDefault().Id;
             }
@@ -148,8 +148,8 @@ namespace GingerCore.ALM
 
         private LoginDTO GetLoginDTO()
         {
-            if (this.loginDto == null)
-            {
+            //if (this.loginDto == null)
+            //{
                 AlmResponseWithData<AlmDomainColl> domains = Task.Run(() =>
                 {
                     return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
@@ -164,7 +164,7 @@ namespace GingerCore.ALM
                     SharedSpaceId = domain.DomainId,
                     WorkSpaceId = project.ProjectId
                 };
-            }
+            //}
             return this.loginDto;
         }
 
@@ -1556,21 +1556,35 @@ namespace GingerCore.ALM
         }
         public string GetLastTestPlanIdFromPath(string path)
         {
-            string[] separatePath = path.Split('\\');
-
-            separatePath[0] = ExploredApplicationModule.ContainsKey("Application Modules") ? ExploredApplicationModule["Application Modules"] : GetRootFolderId();
-
-            if (!ExploredApplicationModule.ContainsKey("Application Modules"))
+            string[] separatePath;
+            if (!string.IsNullOrEmpty(path))
             {
-                ExploredApplicationModule.Add("Application Modules", separatePath[0]);
+                if(!path.Contains("Application Modules"))
+                { 
+                    path =@"Application Modules\"+path;
+                }
+                separatePath = path.Split('\\');
+                separatePath[0] = ExploredApplicationModule.ContainsKey("Application Modules") ? ExploredApplicationModule["Application Modules"] : GetRootFolderId();
+
+                if (!ExploredApplicationModule.ContainsKey("Application Modules"))
+                {
+                    ExploredApplicationModule.Add("Application Modules", separatePath[0]);
+                }
+               for (int i = 1; i < separatePath.Length; i++)
+                {
+                    separatePath[i] = GetTestLabFolderId(separatePath[i], separatePath[i - 1]);
+                }
+
+                return separatePath.Last();
+            }
+            else
+            {
+                return ExploredApplicationModule.ContainsKey("Application Modules") ? ExploredApplicationModule["Application Modules"] : GetRootFolderId();
             }
 
-            for (int i = 1; i < separatePath.Length; i++)
-            {
-                separatePath[i] = GetTestLabFolderId(separatePath[i], separatePath[i - 1]);
-            }
+            
 
-            return separatePath.Last();
+            
         }
 
         public string CreateApplicationModule(string appModuleNameTobeCreated, string desc, string paraentId)

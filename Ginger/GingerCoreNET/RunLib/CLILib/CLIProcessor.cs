@@ -416,6 +416,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.SourceControlURL = runOptions.URL;
             mCLIHelper.SourcecontrolUser = runOptions.User;
             mCLIHelper.sourceControlType = runOptions.SCMType;
+            
+            mCLIHelper.SetSourceControlBranch(runOptions.Branch);
+
             mCLIHelper.sourceControlPass = runOptions.Pass;
             mCLIHelper.sourceControlPassEncrypted = runOptions.PasswordEncrypted;
             mCLIHelper.SourceControlProxyServer(runOptions.SourceControlProxyServer);

@@ -367,7 +367,7 @@
                             <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
                             <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
                         </StackPanel>
-                        <TextBox x:Name="xRunSetNameTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" DockPanel.Dock="Top" Height="25" FontWeight="Bold"></TextBox>
+                        <TextBox x:Name="xRunSetNameTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" DockPanel.Dock="Top" Height="25" FontWeight="Bold" Margin="0,0,0,5"></TextBox>
                         
                         <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="-5,5,0,0">Description:</Label>
                         <TextBox x:Name="xRunSetDescriptionTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" DockPanel.Dock="Top" Height="50"></TextBox>

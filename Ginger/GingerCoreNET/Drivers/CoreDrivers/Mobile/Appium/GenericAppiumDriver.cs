@@ -2396,7 +2396,7 @@ namespace Amdocs.Ginger.CoreNET
             return (eDeviceOrientation)Enum.Parse(typeof(eDeviceOrientation), Driver.Orientation.ToString());
         }
 
-        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null)
+        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
             Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
             string filename = Path.GetTempFileName();

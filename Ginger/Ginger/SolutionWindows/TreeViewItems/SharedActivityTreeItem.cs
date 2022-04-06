@@ -33,7 +33,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     class SharedActivityTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private readonly Activity mActivity;
-        private GingerWPF.BusinessFlowsLib.ActivityPage mActivityEditPage;        
+        private GingerWPF.BusinessFlowsLib.ActivityPage mActivityEditPage;
         private SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode mShowMode;
 
         public SharedActivityTreeItem(Activity activity, SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode showMode = SharedActivitiesFolderTreeItem.eActivitiesItemsShowMode.ReadWrite)
@@ -56,7 +56,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {           
+        {
             return NewTVItemHeaderStyle(mActivity);
         }
 
@@ -81,7 +81,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         ContextMenu ITreeViewItem.Menu()
         {
-            return mContextMenu;            
+            return mContextMenu;
         }
 
         void ITreeViewItem.SetTools(ITreeView TV)
@@ -108,7 +108,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             RepositoryItemPublishInfoPage repositoryItemErroHandlerPublishInfoPage = new RepositoryItemPublishInfoPage(mActivity);
             repositoryItemErroHandlerPublishInfoPage.ShowAsWindow();
-        }    
+        }
 
         private void ShowUsage(object sender, RoutedEventArgs e)
         {
@@ -120,10 +120,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (SharedRepositoryOperations.CheckIfSureDoingChange(mActivity, "delete") == true)
             {
-                return (base.DeleteTreeItem(mActivity, deleteWithoutAsking, refreshTreeAfterDelete));                
+                return (base.DeleteTreeItem(mActivity, deleteWithoutAsking, refreshTreeAfterDelete));
             }
 
             return false;
-        }      
+        }
+        public async override void PostSaveTreeItemHandler()
+        {
+            await SharedRepositoryOperations.UpdateLinkedInstances(mActivity);
+        }
     }
 }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -44,6 +44,13 @@ namespace Amdocs.Ginger.Repository
     {
         PropertyNotFound,
         SetValueException   // if type changed, and we can add more handling...
+    }
+    public enum eSharedItemType
+    {
+        [EnumValueDescription("Regular Item")]
+        Regular = 0,
+        [EnumValueDescription("Linked Item")]
+        Link = 1
     }
 
     public abstract class RepositoryItemBase : INotifyPropertyChanged, ISearchFilter
@@ -369,6 +376,13 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public virtual bool IsLinkedItem
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public bool ClearBackup(bool isLocalBackup = false)
         {
@@ -791,9 +805,13 @@ namespace Amdocs.Ginger.Repository
                 {
                     if (setNewGUID)
                     {
-                        duplicatedItem.ParentGuid = Guid.Empty;   // TODO: why we don't keep parent GUID?
+                        duplicatedItem.ParentGuid = Guid.Empty;   // TODO: why we don't keep parent GUID?                     
                         duplicatedItem.ExternalID = string.Empty;
                         duplicatedItem.Guid = Guid.NewGuid();
+                        if (duplicatedItem.IsLinkedItem && duplicatedItem is GingerCore.Activity)
+                        {
+                            ((GingerCore.Activity)duplicatedItem).Type = eSharedItemType.Regular;
+                        }
                         duplicatedItem = duplicatedItem.ReplaceOldGuidUsages(guidMappingList);
                     }
                     duplicatedItem.UpdateCopiedItem();

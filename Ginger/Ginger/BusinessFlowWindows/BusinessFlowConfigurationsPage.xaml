@@ -19,7 +19,7 @@
                 <usercontrols:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
             </StackPanel>
             
-            <TextBox x:Name="xNameTxtBox" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch"/>
+            <TextBox x:Name="xNameTxtBox" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Margin="0,0,0,5"/>
             
             <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" VerticalAlignment="Top">Description:</Label>
             <TextBox x:Name="xDescriptionTxt" DockPanel.Dock="Top" Style="{StaticResource $MultiRowsTextBoxStyle}" Height="50"></TextBox>

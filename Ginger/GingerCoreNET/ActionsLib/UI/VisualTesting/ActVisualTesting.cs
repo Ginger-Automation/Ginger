@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 
 namespace GingerCore.Actions
 {
@@ -161,6 +162,19 @@ namespace GingerCore.Actions
             }
         }
 
+        public bool IsFullPageScreenshot
+        {
+            get
+            {
+                bool value = true;
+                bool.TryParse(GetOrCreateInputParam(nameof(IsFullPageScreenshot), value.ToString()).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(IsFullPageScreenshot), value.ToString());
+            }
+        }
         public string BaseLineFileName
         {
             get
@@ -323,7 +337,7 @@ namespace GingerCore.Actions
                     mDriver.ChangeAppWindowSize(0,0);
                     break;
                 case eChangeAppWindowSize.Custom:
-                    //TODO:
+                    mDriver.ChangeAppWindowSize(Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowWidth))), Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowHeight))));
                     break;
                 case eChangeAppWindowSize.Resolution640x480:
                     mDriver.ChangeAppWindowSize(640, 480);
@@ -430,7 +444,7 @@ namespace GingerCore.Actions
             // if the target file name is empty then we take screen shot, else we take the file
             if (string.IsNullOrEmpty(TargetFileName) )
             {                
-                targetImage = mDriver.GetScreenShot();                
+                targetImage = mDriver.GetScreenShot(null, IsFullPageScreenshot);                
             }
             else
             {
@@ -443,8 +457,8 @@ namespace GingerCore.Actions
 
             // TODO: check basic: size diff writye to output param, and other general params
 
-            AddScreenShot(baseImage, "Baseline Image");
-            AddScreenShot(targetImage, "Target Image");
+            AddScreenShot((Bitmap)baseImage.Clone(), "Baseline Image");
+            AddScreenShot((Bitmap)targetImage.Clone(), "Target Image");
             
             CheckSetVisualAnalyzer();
 
@@ -453,9 +467,8 @@ namespace GingerCore.Actions
             mVisualAnalyzer.Compare();
 
             //Add other info to output params
-
             AddImageInfo("Baseline image", baseImage);
-            AddImageInfo("Target image", targetImage);            
+            AddImageInfo("Target image", targetImage);
         }
 
         private void CheckSetVisualAnalyzer()
@@ -506,11 +519,14 @@ namespace GingerCore.Actions
             mDriver = driver;
             //TODO: verify we have driver            
             // get updated screen shot
-            baseImage = mDriver.GetScreenShot();
+            baseImage = mDriver.GetScreenShot(null, IsFullPageScreenshot);
             
             //Verify we have screenshots folder
-            string SAVING_PATH = System.IO.Path.Combine(SolutionFolder, @"Documents\ScreenShots\");
-            if (!Directory.Exists(SAVING_PATH)) Directory.CreateDirectory(SAVING_PATH);
+            string SAVING_PATH = System.IO.Path.Combine(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.Folder, @"Documents\ScreenShots\");
+            if (!Directory.Exists(SAVING_PATH)) 
+            {
+                Directory.CreateDirectory(SAVING_PATH); 
+            }
 
             // Create default file name if not exist
             if (string.IsNullOrEmpty(BaseLineFileName))
@@ -518,23 +534,26 @@ namespace GingerCore.Actions
                 BaseLineFileName = @"~\Documents\ScreenShots\" + Description + " - Baseline.png";
             }
 
-            //string FullPath = BaseLineFileName.Replace(@"~\", SolutionFolder);
             string FullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BaseLineFileName);
 
             // no need to ask user, + it might be at run time
-            //TOOD: handle err 
-            if (File.Exists(FullPath)) File.Delete(FullPath);
-
+            if (File.Exists(FullPath))
+            {
+                try
+                {
+                    File.Delete(FullPath);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                }
+            }
             baseImage.Save(FullPath);
         }
 
         // TODO: move from here to general or use general
         public string GetFullFilePath(string relativePath)
         {
-            //if (relativePath.StartsWith(@"~\"))
-            //{
-            //    return relativePath.Replace(@"~\", SolutionFolder);
-            //}
             relativePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(relativePath);
 
             return relativePath;

@@ -71,6 +71,7 @@ namespace Ginger.Run
         int mFlowX = 0;
         int mFlowY = 0;
         bool IsSelectedItemSyncWithExecution = true;//execution and selected items are synced as default   
+        private bool IsCalledFromxUndoBtn = false;
         SingleItemTreeViewSelectionPage mRunSetsSelectionPage = null;
         SingleItemTreeViewSelectionPage mBusFlowsSelectionPage = null;
         RunsetOperationsPage mRunsetOperations = null;
@@ -613,6 +614,7 @@ namespace Ginger.Run
         void InitRunSetConfigurations()
         {
             BindingHandler.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
+            xRunSetNameTextBox.AddValidationRule(new RunSetNameValidationRule());
             xShowIDUC.Init(mRunSetConfig);
             BindingHandler.ObjFieldBinding(xRunSetDescriptionTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Description));
             TagsViewer.Init(mRunSetConfig.Tags);
@@ -1400,7 +1402,7 @@ namespace Ginger.Run
             try
             {
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified;
-                if (bIsRunsetDirty)
+                if (bIsRunsetDirty && !IsCalledFromxUndoBtn)
                 {
                     UserSelectionSaveOrUndoRunsetChanges();
                 }
@@ -2361,7 +2363,7 @@ namespace Ginger.Run
         public void viewActivity(Activity activitytoView)
         {
             Activity ac = activitytoView;
-            GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(ac, new Context() { BusinessFlow = mCurrentBusinessFlowRunnerItemObject, Activity = ac }, General.eRIPageViewMode.View);
+            GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(ac, new Context() { BusinessFlow = mCurrentBusinessFlowRunnerItemObject, Activity = ac, Environment = mContext.Environment }, General.eRIPageViewMode.View);
             mContext.BusinessFlow.CurrentActivity = activitytoView;
             w.ShowAsWindow();
         }
@@ -2842,6 +2844,7 @@ namespace Ginger.Run
             {
                 if (CheckIfExecutionIsInProgress()) { return; }
 
+                IsCalledFromxUndoBtn = true;
                 mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
 
                 if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true))
@@ -2861,6 +2864,7 @@ namespace Ginger.Run
                 {
                     mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
                     mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                    IsCalledFromxUndoBtn = false;
                 }
             }
         }

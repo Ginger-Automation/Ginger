@@ -59,6 +59,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using Activity = GingerCore.Activity;
 
 namespace Ginger.Run
 {
@@ -82,7 +83,7 @@ namespace Ginger.Run
             }
         }
 
-        
+
 
         public PublishToALMConfig PublishToALMConfig = null;
 
@@ -274,10 +275,11 @@ namespace Ginger.Run
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
 
-            if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
-            {
-                RunListeners.Add(new TelemetryRunListener());
-            }
+           
+            //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
+            //{
+            //    RunListeners.Add(new TelemetryRunListener());
+            //}
 
         }
 
@@ -301,10 +303,11 @@ namespace Ginger.Run
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
 
-            if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
-            {
-                RunListeners.Add(new TelemetryRunListener());
-            }
+          
+            //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
+            //{
+            //    RunListeners.Add(new TelemetryRunListener());
+            //}
 
         }
 
@@ -333,7 +336,7 @@ namespace Ginger.Run
 
         public ISolution CurrentSolution { get; set; }
 
-        
+
 
         public Amdocs.Ginger.CoreNET.Execution.eRunStatus RunsetStatus
         {
@@ -584,7 +587,7 @@ namespace Ginger.Run
                     RunSetConfig runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
                     foreach (ApplicationAgent applicationAgent in mGingerRunner.ApplicationAgents)
                     {
-                        
+
 
                         if (applicationAgent.AgentName != null)
                         {
@@ -592,7 +595,7 @@ namespace Ginger.Run
 
                             var agent = (from a in agents where a.Name == applicationAgent.AgentName select a).FirstOrDefault();
 
-                            if(agent != null)
+                            if (agent != null)
                             {
                                 if (agent.AgentOperations == null)
                                 {
@@ -615,7 +618,7 @@ namespace Ginger.Run
 
                                 }
                             }
-                            
+
 
                             if (applicationAgent.Agent != null)
                             {
@@ -1207,7 +1210,7 @@ namespace Ginger.Run
                     {
                         break;
                     }
-                    
+
                 }
                 // Run any code needed after the action executed, used in ACTScreenShot save to file after driver took screen shot
 
@@ -3642,6 +3645,8 @@ namespace Ginger.Run
                     IsRunning = true;
                     mStopRun = false;
                 }
+                
+ 
 
                 //set the BF to execute
                 if (businessFlow != null)
