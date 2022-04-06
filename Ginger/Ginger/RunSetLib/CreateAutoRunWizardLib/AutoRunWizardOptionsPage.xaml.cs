@@ -72,7 +72,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     BindingHandler.ObjFieldBinding(xRunAnalyzerCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.RunAnalyzer));
                     BindingHandler.ObjFieldBinding(xSealightsConfigCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.SetSealightsSettings));
 
-                    // Gideon, Disable the xSealightsConfigCheckBox if Sealights is not anable in Configuration's setting
+                    // Disable the xSealightsConfigCheckBox if Sealights is not anable in Configuration's setting
                     if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == eSealightsLog.No)
                     {
                         xSealightsConfigCheckBox.IsEnabled = false;

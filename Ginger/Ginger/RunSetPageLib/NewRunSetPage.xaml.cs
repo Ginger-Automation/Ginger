@@ -620,8 +620,6 @@ namespace Ginger.Run
             TagsViewer.Init(mRunSetConfig.Tags);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mRunSetConfig, nameof(RepositoryItemBase.Publish));
 
-                        
-            //Gideon
             BindingHandler.ObjFieldBinding(xDefaultTestStageRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.DefaultTestStageYN));
             BindingHandler.ObjFieldBinding(xCustomTestStageRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.CustomTestStageYN));
 

@@ -178,7 +178,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                     testStage = mVE.ValueCalculated;
                 }
 
-                //restRequest.AddJsonBody(new { labId = "111", testStage = "Ginger Regression Test Gideon", bsId = "1624300311460", sessionTimeout = "10000" }); // Anonymous type object is converted to Json body
                 restRequest.AddJsonBody(new { labId = labId, testStage = testStage, bsId = bsId, sessionTimeout = sessionTimeout }); // Anonymous type object is converted to Json body
 
                 IRestResponse response = restClient.Execute(restRequest);

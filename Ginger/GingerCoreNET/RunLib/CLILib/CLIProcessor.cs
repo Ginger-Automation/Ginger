@@ -425,7 +425,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.SourceControlProxyPort(runOptions.SourceControlProxyPort);
             mCLIHelper.SelfHealingCheckInConfigured = runOptions.SelfHealingCheckInConfigured;
 
-            //Gideon
             mCLIHelper.SealightsEnable = runOptions.SealightsEnable;
             mCLIHelper.SealightsUrl = runOptions.SealightsUrl;
             mCLIHelper.SealightsAgentToken = runOptions.SealightsAgentToken;
