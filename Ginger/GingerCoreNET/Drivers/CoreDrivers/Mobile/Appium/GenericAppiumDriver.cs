@@ -351,7 +351,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, boolValue);
                 }
-                else if (UserCapability.Parameter != "uftm:tenantId" && int.TryParse(UserCapability.Value, out intValue))
+                else if (!isContainQuotationMarks(UserCapability) && int.TryParse(UserCapability.Value, out intValue))
                 {
                     driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, intValue);
                 }
@@ -392,6 +392,15 @@ namespace Amdocs.Ginger.CoreNET
             return driverOptions;
         }
 
+        private bool isContainQuotationMarks(DriverConfigParam capability)
+        {
+            if (capability.Value[0] == '\"' && capability.Value[capability.Value.Length - 1] == '\"')
+            {
+                capability.Value = capability.Value.Substring(1, capability.Value.Length - 2);
+                return true;
+            }
+            return false;
+        }
 
         public override void CloseDriver()
         {
