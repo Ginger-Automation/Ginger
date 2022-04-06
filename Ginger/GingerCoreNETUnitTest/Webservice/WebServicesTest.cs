@@ -314,37 +314,16 @@ namespace UnitTests.NonUITests
         [TestMethod][Timeout(6000000)]
         public void WebServices_RawRequestWebAPIRestWithJSON() 
         {
-            ////Arrange
-            //WebServicesDriver mDriver = new WebServicesDriver(mBF);
-
-            //Agent wsAgent = new Agent();
-            //AgentOperations agentOperations = new AgentOperations(wsAgent);
-            //wsAgent.AgentOperations = agentOperations;
-
-            //wsAgent.DriverType = Agent.eDriverType.WebServices;
-            //((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
-            //ApplicationAgent mAG = new ApplicationAgent();
-            //mAG.Agent = wsAgent;
-
+            //Arrange
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
-
-            //((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
-            //((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
-
-            //mGR.Executor.BusinessFlows.Add(mBF);
-
-            //Activity Activity2 = new Activity();
-            //Activity2.Active = true;
-            //Activity2.ActivityName = "Web API REST";
-            //Activity2.CurrentAgent = wsAgent;
-            //mBF.Activities.Add(Activity2);
 
             ActWebAPIRest restAct = new ActWebAPIRest();
             Context context = new Context();
             context.Runner = mGR.Executor;
             restAct.Context = context;
 
+            //Build REST Request:
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://petstore.swagger.io/v2/pet");
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.POST.ToString());
@@ -353,23 +332,10 @@ namespace UnitTests.NonUITests
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
-
-            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.URLUser, ApplicationAPIUtils.);
-            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.URLDomain, );
-            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.URLPass, );
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, Boolean.FalseString);
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.UseLegacyJSONParsing, Boolean.FalseString);
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"{CS Exp=System.Environment.UserName}\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.ImportRequestFile, Boolean.FalseString);
-            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificatePath,);
-            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificatePassword,);
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile, Boolean.FalseString);
-            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthUsername,);
-            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthPassword,);
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString());
-            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser,);
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+
 
             context = Context.GetAsContext(restAct.Context);
             if (context != null && context.Runner != null)
@@ -389,7 +355,7 @@ namespace UnitTests.NonUITests
         [Timeout(6000000)]
         public void WebServices_RawRequestWebAPISoap()
         {
-
+            //Arrange
             ActWebAPISoap soapAct = new ActWebAPISoap();
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
@@ -404,23 +370,12 @@ namespace UnitTests.NonUITests
             soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
             soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
             soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
-
-
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, bool.FalseString);
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.UseLegacyJSONParsing, bool.FalseString);
             soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\r\n  <soapenv:Header />\r\n  <soapenv:Body>\r\n    <tem:Multiply>\r\n      <tem:intA>2</tem:intA>\r\n      <tem:intB>3</tem:intB>\r\n    </tem:Multiply>\r\n  </soapenv:Body>\r\n</soapenv:Envelope>");
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.ImportRequestFile, bool.FalseString);
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile, bool.FalseString);
-            //soapAct.AddOrUpdateInputParamValue(ActWebAPISoap.Fields., ApplicationAPIUtils.eContentType.XML.ToString());
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
-            soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
             soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
 
 
             //Set Request body content:
             soapAct.mUseRequestBody = true;
-            //soapAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, getXML());
             soapAct.Active = true;
             soapAct.EnableRetryMechanism = false;
             soapAct.ItemName = "Web API Soap";
@@ -439,28 +394,242 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(rawRequestContent, "POST http://www.dneonline.com/calculator.asmx HTTP/1.1\r\nContent-Type: text/xml; charset=utf-8\r\nContent-Length: 289\r\nHost: www.dneonline.com\r\n\r\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\r\n  <soapenv:Header />\r\n  <soapenv:Body>\r\n    <tem:Multiply>\r\n      <tem:intA>2</tem:intA>\r\n      <tem:intB>3</tem:intB>\r\n    </tem:Multiply>\r\n  </soapenv:Body>\r\n</soapenv:Envelope>");
         }
 
-        [TestMethod]
-        [Timeout(600000)]
+        [TestMethod]  [Timeout(600000)]
         public void WebServices_RawRequestWebAPIRestWithXML()
         {
+            //Arrange:
+            ActWebAPIRest restAct = new ActWebAPIRest();
+            Context context = new Context();
+            context.Runner = mGR.Executor;
+            restAct.Context = context;
 
+            //Build REST Request:
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://petstore.swagger.io/v2/pet");
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.POST.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eContentType.XML.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "<Pet>\r\n  <id>111</id>\r\n  <category>\r\n    <id>222</id>\r\n    <name>Dogs</name>\r\n  </category>\r\n  <name>Dogs</name>\r\n  <photoUrls />\r\n  <tags>\r\n    <id>333</id>\r\n    <name>Rexi</name>\r\n  </tags>\r\n  <status>available</status>\r\n</Pet>");
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString());
+
+            context = Context.GetAsContext(restAct.Context);
+            if (context != null && context.Runner != null)
+            {
+                context.Runner.PrepActionValueExpression(restAct, context.BusinessFlow);
+            }
+
+            HttpWebClientUtils webAPI = new HttpWebClientUtils();
+            webAPI.RequestContstructor(restAct, null, false);
+            webAPI.CreateRawRequestContent();
+
+            string rawRequestContent = webAPI.RequestFileContent;
+            Assert.AreEqual(rawRequestContent, "POST https://petstore.swagger.io/v2/pet HTTP/1.1\r\nAccept: application/xml\r\nContent-Type: application/xml; charset=utf-8\r\nContent-Length: 229\r\nHost: petstore.swagger.io\r\n\r\n<Pet>\r\n  <id>111</id>\r\n  <category>\r\n    <id>222</id>\r\n    <name>Dogs</name>\r\n  </category>\r\n  <name>Dogs</name>\r\n  <photoUrls />\r\n  <tags>\r\n    <id>333</id>\r\n    <name>Rexi</name>\r\n  </tags>\r\n  <status>available</status>\r\n</Pet>");
+        }
+
+        [TestMethod]  [Timeout(600000)]
+        public void WebServices_RawRequestWebAPIRestWithFormData()
+        {
+            //Arrange
+            ActWebAPIRest restAct = new ActWebAPIRest();
+            Context context = new Context();
+            context.Runner = mGR.Executor;
+            restAct.Context = context;
+
+            WebAPIKeyBodyValues wakv = new WebAPIKeyBodyValues();
+            wakv.Param = "name";
+            wakv.Value = "Rexi";
+            wakv.ValueType = WebAPIKeyBodyValues.eValueType.Text;
+            restAct.RequestKeyValues.Add(wakv);
+
+            WebAPIKeyBodyValues wakv1 = new WebAPIKeyBodyValues();
+            wakv1.Param = "status";
+            wakv1.Value = "available";
+            wakv1.ValueType = WebAPIKeyBodyValues.eValueType.Text;
+            restAct.RequestKeyValues.Add(wakv1);
+
+            //Build REST Request:
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://petstore.swagger.io/v2/pet/9223372000668906000");
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.POST.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eContentType.FormData.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString());
+
+            context = Context.GetAsContext(restAct.Context);
+            if (context != null && context.Runner != null)
+            {
+                context.Runner.PrepActionValueExpression(restAct, context.BusinessFlow);
+            }
+
+            HttpWebClientUtils webAPI = new HttpWebClientUtils();
+            webAPI.RequestContstructor(restAct, null, false);
+            webAPI.CreateRawRequestContent();
+
+            string rawRequestContent = webAPI.RequestFileContent;
+
+            string untilBoundary = rawRequestContent.Substring(0, 144);
+            string afterBoundary = rawRequestContent.Substring(180);
+            Assert.AreEqual(untilBoundary, "POST https://petstore.swagger.io/v2/pet/9223372000668906000 HTTP/1.1\r\nAccept: multipart/form-data\r\nContent-Type: multipart/form-data; boundary=\"");
+            Assert.AreEqual(afterBoundary, "\"\r\nContent-Length: 313\r\nHost: petstore.swagger.io\r\n\r\nContent-Disposition: form-data; name=\"name\"\r\nRexi\r\nContent-Disposition: form-data; name=\"status\"\r\navailable\r\n");
+        }
+
+        [TestMethod]  [Timeout(600000)]
+        public void WebServices_RawRequestWebAPIRestWithHeaders()
+        {
+            //Arrange:
+            ActWebAPIRest restAct = new ActWebAPIRest();
+            Context context = new Context();
+            context.Runner = mGR.Executor;
+            restAct.Context = context;
+
+            ActInputValue aiv = new ActInputValue();
+            aiv.Param = "IncludeRequestDetails";
+            aiv.Value = bool.TrueString.ToLower();
+            aiv.ValueForDriver = bool.TrueString.ToLower();
+            restAct.HttpHeaders.Add(aiv);
+
+            //Build REST Request:
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "http://usstlattstl01:8002/api/v1/executions?executionIds=33b2dea1-c24a-494c-97d4-0bd47e59620c");
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.GET.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eContentType.FormData.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV10.ToString());
+
+            context = Context.GetAsContext(restAct.Context);
+            if (context != null && context.Runner != null)
+            {
+                context.Runner.PrepActionValueExpression(restAct, context.BusinessFlow);
+            }
+
+            HttpWebClientUtils webAPI = new HttpWebClientUtils();
+            webAPI.RequestContstructor(restAct, null, false);
+            webAPI.CreateRawRequestContent();
+
+            string rawRequestContent = webAPI.RequestFileContent;
+            Assert.AreEqual(rawRequestContent, "GET http://usstlattstl01:8002/api/v1/executions?executionIds=33b2dea1-c24a-494c-97d4-0bd47e59620c HTTP/1.0\r\nIncludeRequestDetails: true\r\nAccept: multipart/form-data\r\nHost: usstlattstl01:8002\r\n\r\n");
+        }
+
+        [TestMethod] [Timeout(600000)]
+        public void WebServices_RawRequestWebAPIRestWithAuthentication()
+        {
+            //Arrange:
+            ActWebAPIRest restAct = new ActWebAPIRest();
+            Context context = new Context();
+            context.Runner = mGR.Executor;
+            restAct.Context = context;
+
+            //Build REST Request:
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://petstore.swagger.io/v2/user/login");
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.GET.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.BasicAuthentication.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthUsername, "tom5012");
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthPassword, "12345678");
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString());
+
+            context = Context.GetAsContext(restAct.Context);
+            if (context != null && context.Runner != null)
+            {
+                context.Runner.PrepActionValueExpression(restAct, context.BusinessFlow);
+            }
+
+            HttpWebClientUtils webAPI = new HttpWebClientUtils();
+            webAPI.RequestContstructor(restAct, null, false);
+            webAPI.CreateRawRequestContent();
+
+            string rawRequestContent = webAPI.RequestFileContent;
+            Assert.AreEqual(rawRequestContent, "GET https://petstore.swagger.io/v2/user/login HTTP/1.1\r\nAuthorization: Basic dG9tNTAxMjoxMjM0NTY3OA==\r\nAccept: application/json\r\nHost: petstore.swagger.io\r\n\r\n");
         }
 
         [TestMethod]
         [Timeout(600000)]
-        public void WebServices_RawRequestWebAPIRestWithFormData()
+        public void WebServices_RawResponseWebAPIRest()
         {
+            //Arrange
+            WebServicesDriver mDriver = new WebServicesDriver(mBF);
 
-        }
+            Agent wsAgent = new Agent();
+            AgentOperations agentOperations = new AgentOperations(wsAgent);
+            wsAgent.AgentOperations = agentOperations;
 
-        public void WebServices_RawRequestWebAPIRestWithHeaders()
-        {
+            wsAgent.DriverType = Agent.eDriverType.WebServices;
+            ((AgentOperations)wsAgent.AgentOperations).Driver = mDriver;
+            ApplicationAgent mAG = new ApplicationAgent();
+            mAG.Agent = wsAgent;
 
-        }
+            mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
 
-        public void WebServices_RawRequestWebAPIRestWithAuthentication()
-        {
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(wsAgent);
 
+            mGR.Executor.BusinessFlows.Add(mBF);
+
+            Activity Activity2 = new Activity();
+            Activity2.Active = true;
+            Activity2.ActivityName = "Web API REST";
+            Activity2.CurrentAgent = wsAgent;
+            mBF.Activities.Add(Activity2);
+
+            ActWebAPIRest restAct = new ActWebAPIRest();
+            Context context = new Context();
+            context.Runner = mGR.Executor;
+            restAct.Context = context;
+
+            //Build REST Request:
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.EndPointURL, "https://petstore.swagger.io/v2/pet");
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.POST.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.Session.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose, Boolean.FalseString);
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.UseLegacyJSONParsing, Boolean.FalseString);
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"{CS Exp=System.Environment.UserName}\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV10.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton,ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
+
+            context = Context.GetAsContext(restAct.Context);
+            if (context != null && context.Runner != null)
+            {
+                context.Runner.PrepActionValueExpression(restAct, context.BusinessFlow);
+            }
+
+            HttpWebClientUtils webAPI = new HttpWebClientUtils();
+            webAPI.RequestContstructor(restAct, null, false);
+            webAPI.CreateRawRequestContent();
+
+            if (webAPI.SendRequest())
+            {
+                webAPI.CreatRawResponseContent();
+                string rawResponseContent = webAPI.ResponseFileContent;
+                string beforeDate = rawResponseContent.Substring(0, 19);
+                string afterDate = rawResponseContent.Substring(48);
+                Assert.AreEqual(beforeDate, "HTTP/1.1 OK\r\nDate: ");
+                Assert.AreEqual(afterDate, "\r\nConnection: close\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, DELETE, PUT\r\nAccess-Control-Allow-Headers: Content-Type, api_key, Authorization\r\nServer: Jetty(9.2.9.v20150224)\r\nContent-Type: application/json\r\n\r\n{\"id\":55,\"category\":{\"id\":0,\"name\":\"string\"},\"name\":\"tomse\",\"photoUrls\":[\"string\"],\"tags\":[{\"id\":0,\"name\":\"string\"}],\"status\":\"available\"}");
+            }
         }
 
         [TestMethod]  [Timeout(600000)]

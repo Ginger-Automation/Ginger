@@ -319,9 +319,15 @@ namespace Ginger.Actions.WebServices
 
             string rawRequestContent = webAPI.RequestFileContent;
 
-            DocumentEditorPage documentEditorPage = new DocumentEditorPage(rawRequestContent, true, false, "Raw Request Editor");
+            string path = System.IO.Directory.GetCurrentDirectory();
+            path = System.IO.Path.Combine(path, "example.txt");
+            System.IO.File.WriteAllText(path, rawRequestContent);
+
+            DocumentEditorPage documentEditorPage = new DocumentEditorPage(path, true, false, "Raw Request Editor");
             documentEditorPage.ShowAsWindow();
 
+
+            System.IO.File.Delete(path);
         }
     }
 }
