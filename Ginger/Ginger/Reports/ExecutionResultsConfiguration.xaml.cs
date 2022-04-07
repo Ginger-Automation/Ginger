@@ -102,6 +102,13 @@ namespace Ginger.Reports
                 xSealighsSessionTimeoutTextBox.ValueTextBox.Text = "14400";
             }
 
+            // check if fields have been populated (font-end validation)
+            xSealightsURLTextBox.AddUCValidationRule("Url cannot be empty");
+            xSealighsAgentTokenTextBox.AddUCValidationRule("Token cannot be empty");
+            xSealighsLabIdTextBox.AddUCValidationRule("Lab ID or Build Session ID must be provided");
+            xSealighsBuildSessionIDTextBox.AddUCValidationRule("Lab ID or Build Session ID must be provided");
+            xSealightsTestStageTextBox.AddUCValidationRule("Test Stage cannot be empty");
+
             xSealighsReportedEntityLevelComboBox.AddValidationRule(new SealightsValidationRule("Reported Entity Level"));
 
             xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),

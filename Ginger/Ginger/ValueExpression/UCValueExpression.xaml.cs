@@ -17,9 +17,11 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using Amdocs.Ginger.Common;
+using Ginger.Actions.Validation;
 using GingerCore;
 
 namespace Ginger.BusinessFlowWindows
@@ -53,13 +55,18 @@ namespace Ginger.BusinessFlowWindows
                 }
         }
 
+        public void AddUCValidationRule(string message)
+        {
+            ValueTextBox.AddValidationRule(new UCValueExpressionValidationRule(message));
+        }
+
         public void Init(Context context, object obj, string AttrName)
         {
             // If the VE is on stand alone form:
             this.obj = obj;
             this.AttrName = AttrName;
             mContext = context;
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);       
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);            
         }
 
         public void Init(Context context, object obj, string AttrName, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler = null)

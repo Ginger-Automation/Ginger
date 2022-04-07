@@ -640,9 +640,9 @@ namespace Ginger.Run
             //BindingHandler.ObjFieldBinding(xSealighsBuildSessionIDTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID));
 
             // check if fields have been populated (font-end validation)
-            //xSealightsTestStageTextBox.AddValidationRule(new SealightsValidationRule("Test Stage"));
-            //xSealighsLabIdTextBox.AddValidationRule(new SealightsValidationRule("Lab ID"));
-            //xSealighsBuildSessionIDTextBox.AddValidationRule(new SealightsValidationRule("Session ID"));
+            xSealighsLabIdTextBox.AddUCValidationRule("Lab ID or Build Session ID must be provided");
+            xSealighsBuildSessionIDTextBox.AddUCValidationRule("Lab ID or Build Session ID must be provided");
+            xSealightsTestStageTextBox.AddUCValidationRule("Test Stage cannot be empty");
 
             xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
             xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
