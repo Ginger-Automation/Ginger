@@ -994,32 +994,7 @@ namespace GingerCore.Drivers
             Uri uri = ValidateURL(sURL);
             if (uri != null)
             {
-               
-                IDevTools devTools = Driver as IDevTools;
-                Session = devTools.GetDevToolsSession();
-                var domains = Session.GetVersionSpecificDomains<DevToolsSessionDomains>();
-                domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
-                domains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V96.Network.SetBlockedURLsCommandSettings()
-                {
-                    Urls = new string[] { "*://*/*.css", "*://*/*.jpg", "*://*/*.png" }
-                });
-               // Driver.Manage().Network.NetworkRequestSent += OnNetworkRequestSent;
-                Driver.Manage().Network.NetworkResponseReceived += OnNetworkResponseReceived;
-
-                Task.Run(async ()=>
-                {
-                    await Driver.Manage().Network.StartMonitoring();
-                });
-
-                //Driver.Manage().Network.StartMonitoring().ConfigureAwait(false);
-                Driver.Navigate().GoToUrl(uri.AbsoluteUri);
-                
-                //Driver.Manage().Network.StopMonitoring().ConfigureAwait(false); ;
-                Task.Run(async () =>
-                {
-                    await Driver.Manage().Network.StopMonitoring();
-                });
-                Driver.Manage().Network.NetworkResponseReceived -= OnNetworkResponseReceived;
+               Driver.Navigate().GoToUrl(uri.AbsoluteUri);
             }
             else
             {
@@ -6744,12 +6719,6 @@ namespace GingerCore.Drivers
                         }
 
                     }
-
-                    //if(ActBrowserElement.Fields.xNetworkEnableCheckBox == "true")
-                    //{
-                        NetwrokSetup(Driver);
-                    //}
-
 
                     break;
                 case ActBrowserElement.eControlAction.NavigateBack:
