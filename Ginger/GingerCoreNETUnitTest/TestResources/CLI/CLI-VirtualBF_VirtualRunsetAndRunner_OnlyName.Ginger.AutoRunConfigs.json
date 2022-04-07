@@ -1,0 +1,42 @@
+{
+  "SolutionLocalPath": "SOLUTION_PATH",
+  "ShowAutoRunWindow": false,
+  "VerboseLevel": "normal",
+  "Runset": {
+    "Exist": false,
+    "Name": "Virtual Run Set",
+    "EnvironmentName": "Default",
+    "RunAnalyzer": false,
+    "RunInParallel": true,
+    "StopRunnersOnFailure": false,
+    "Runners": [
+      {
+        "Name": "Virtual Runner",
+        "OnFailureRunOption": "ContinueToRunall",
+        "BusinessFlows": [
+          {
+            "Name": "Flow 1",
+            "Exist": true,
+            "Active": true
+          },
+          {
+            "Name": "Flow_D",
+            "Exist": false,
+            "Active": true,
+            "SharedActivities": [
+              {
+                "SharedActivityName": "User Detail Activity"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "SelfHealingConfiguration": {
+      "ReprioritizePOMLocators": true,
+      "AutoFixAnalyzerIssue": false,
+      "AutoUpdateApplicationModel": false,
+      "SaveChangesInSourceControl": false
+    }
+  }
+}

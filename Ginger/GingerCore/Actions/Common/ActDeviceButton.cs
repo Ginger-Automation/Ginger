@@ -86,8 +86,17 @@ namespace GingerCore.Actions.Common
             RecentApps
         }
 
-        [IsSerializedForLocalRepository]
-        public eDeviceButtonAction DeviceButtonAction { get; set; }
+        public eDeviceButtonAction DeviceButtonAction
+        {
+            get
+            {
+                return (eDeviceButtonAction)GetOrCreateInputParam<eDeviceButtonAction>(nameof(DeviceButtonAction), eDeviceButtonAction.Press);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(DeviceButtonAction), value.ToString());
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public ePressKey PressKey { get; set; }

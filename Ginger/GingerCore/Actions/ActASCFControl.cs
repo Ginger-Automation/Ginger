@@ -437,12 +437,30 @@ namespace GingerCore.Actions
             ToolTip=9
         }
 
-        [IsSerializedForLocalRepository]
-        public eControlAction ControlAction { get; set; }
+        public eControlAction ControlAction
+        {
+            get
+            {
+                return (eControlAction)GetOrCreateInputParam<eControlAction>(nameof(ControlAction), eControlAction.SetValue);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ControlAction), value.ToString());
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public eControlProperty ControlProperty { get; set; }
-        
+        public eControlProperty ControlProperty
+        {
+            get
+            {
+                return (eControlProperty)GetOrCreateInputParam<eControlProperty>(nameof(ControlProperty), eControlProperty.NA);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ControlProperty), value.ToString());
+            }
+        }
+
         public bool WaitForIdle { get; set; }
         
 

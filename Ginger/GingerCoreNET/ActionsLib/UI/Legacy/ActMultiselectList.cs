@@ -66,8 +66,17 @@ namespace GingerCore.Actions
             SetFocus = 5,
         }
 
-        [IsSerializedForLocalRepository]
-        public eActMultiselectListAction ActMultiselectListAction { get; set; }
+        public eActMultiselectListAction ActMultiselectListAction
+        {
+            get
+            {
+                return (eActMultiselectListAction)GetOrCreateInputParam<eActMultiselectListAction>(nameof(ActMultiselectListAction), eActMultiselectListAction.SetSelectedValueByIndex);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ActMultiselectListAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

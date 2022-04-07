@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -201,6 +201,7 @@ namespace Amdocs.Ginger.Common.Enums
         Clock,
         File,
         InstanceLink,
+        InstanceLinkOrange,
         Search,
         Remove,
         Report,

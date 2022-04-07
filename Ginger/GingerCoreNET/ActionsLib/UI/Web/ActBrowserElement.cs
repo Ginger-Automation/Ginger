@@ -99,15 +99,18 @@ namespace GingerCore.Actions
         }
 
 
-        private int mImplicitWait = 60;
-        [IsSerializedForLocalRepository]
         public int ImplicitWait
         {
-            get { return mImplicitWait; }
+            get
+            {
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(ImplicitWait)).Value, out value);
+                return value;
+            }
             set
             {
-                mImplicitWait = value;
-                OnPropertyChanged(Fields.ImplicitWait);
+                AddOrUpdateInputParamValue(nameof(ImplicitWait), value.ToString());
+                OnPropertyChanged(nameof(ImplicitWait));
             }
         }
 

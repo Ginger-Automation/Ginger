@@ -64,7 +64,7 @@ namespace Ginger.BusinessFlowPages
             {
                 mContext.BusinessFlow.CurrentActivity = mContext.Activity;//so new Actions will be added to correct Activity
             }
-            
+
             if (mItem is Act)
             {
                 Act selectedAction = mItem as Act;
@@ -294,13 +294,16 @@ namespace Ginger.BusinessFlowPages
         public static void AddActivitiesFromSRHandler(List<Activity> sharedActivitiesToAdd, BusinessFlow businessFlow, string ActivitiesGroupID = null, int insertIndex = -1)
         {
             ActivitiesGroup parentGroup = null;
+            bool copyAsLink = true;
             if (!string.IsNullOrWhiteSpace(ActivitiesGroupID))
             {
                 parentGroup = businessFlow.ActivitiesGroups.Where(g => g.Name == ActivitiesGroupID).FirstOrDefault();
             }
             else
             {
-                parentGroup = (new ActivitiesGroupSelectionPage(businessFlow)).ShowAsWindow();
+                var activitiesGroupSelectionPage = new ActivitiesGroupSelectionPage(businessFlow);
+                parentGroup = activitiesGroupSelectionPage.ShowAsWindow();
+                copyAsLink = activitiesGroupSelectionPage.xCopyAsLink.IsChecked.Value;
             }
 
             if (parentGroup != null)
@@ -310,10 +313,16 @@ namespace Ginger.BusinessFlowPages
                 {
                     Activity activityIns = (Activity)sharedActivity.CreateInstance(true);
                     activityIns.Active = true;
+                    if (copyAsLink)
+                    {
+                        activityIns.Type = eSharedItemType.Link;
+                    }
                     //map activities target application to BF if missing in BF
                     userSelection = businessFlow.MapTAToBF(userSelection, activityIns, WorkSpace.Instance.Solution.ApplicationPlatforms);
                     businessFlow.SetActivityTargetApplication(activityIns);
                     businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
+
+
                 }
             }
         }

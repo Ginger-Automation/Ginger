@@ -75,13 +75,13 @@ namespace Ginger
             mLinkedRepoItem = SharedRepositoryOperations.GetMatchingRepoItem(mItem, null, ref mLinkIsByExternalID, ref mLinkIsByParentID);
             if (mLinkedRepoItem == null)
             {
-                LinkStatusImage.Source = General.GetResourceImage("@StarGray_24x24.png");//TODO: Use image maker
+                LinkStatusImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.NonSharedRepositoryItem;
                 LinkStatusImage.ToolTip = "The item is not linked to Shared Repository."+ Environment.NewLine +"Click to add it to Shared Repository.";
                 UpdateRepoBtn.ToolTip = "Upload to Shared Repository";
             }
             else
             {
-                LinkStatusImage.Source = General.GetResourceImage("@Star_24x24.png");
+                LinkStatusImage.ImageType = mItem.IsLinkedItem ? Amdocs.Ginger.Common.Enums.eImageType.InstanceLinkOrange : Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
 
                 string ItemName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(mLinkedRepoItem.ItemName);
                 
@@ -136,6 +136,10 @@ namespace Ginger
                         mItem.ParentGuid = Guid.Empty;
                         mItem.ExternalID = string.Empty;
                         mItem.IsSharedRepositoryInstance = false;
+                        if (mItem is Activity)
+                        {
+                            ((Activity)mItem).Type = eSharedItemType.Regular;
+                        }
                         SetRepoLinkStatus();
                     }
                 }

@@ -94,35 +94,35 @@ namespace Ginger.Actions
             public static string Value = "Value";
         }
 
-        private bool mISSendKeysSlowly;
 
-        [IsSerializedForLocalRepository]
         public bool IsSendKeysSlowly
         {
             get
             {
-                return mISSendKeysSlowly;
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(IsSendKeysSlowly)).Value, out value);
+                return value;
             }
             set
             {
-                mISSendKeysSlowly = value;
-                OnPropertyChanged(Fields.IsSendKeysSlowly);
+                AddOrUpdateInputParamValue(nameof(IsSendKeysSlowly), value.ToString());
+                OnPropertyChanged(nameof(IsSendKeysSlowly));
             }
         }
 
         
-        private bool mISWindowFocusRequired = true;
-        [IsSerializedForLocalRepository(true)]
         public bool ISWindowFocusRequired 
         {
             get
             {
-                return mISWindowFocusRequired;
+                bool value = true;
+                bool.TryParse(GetOrCreateInputParam(nameof(ISWindowFocusRequired), value.ToString()).Value, out value);
+                return value;
             }
             set
             {
-                mISWindowFocusRequired = value;
-                OnPropertyChanged(Fields.ISWindowFocusRequired);
+                AddOrUpdateInputParamValue(nameof(ISWindowFocusRequired), value.ToString());
+                OnPropertyChanged(nameof(ISWindowFocusRequired));
             }
         }  
 
@@ -205,12 +205,12 @@ namespace Ginger.Actions
                     }
                 }
 
-                if (mISWindowFocusRequired)
+                if (ISWindowFocusRequired)
                 {
                     SetForegroundWindow(winhandle);
                 }
             
-            if (mISSendKeysSlowly)
+            if (IsSendKeysSlowly)
                 {           
                     SendKeysSlowly(ValueForDriver);
                 }

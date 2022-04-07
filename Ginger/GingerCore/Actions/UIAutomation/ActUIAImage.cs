@@ -60,8 +60,17 @@ namespace GingerCore.Actions
             IsVisible = 1,
         }
 
-        [IsSerializedForLocalRepository]
-        public eImageAction ImageAction { get; set; }
+        public eImageAction ImageAction
+        {
+            get
+            {
+                return (eImageAction)GetOrCreateInputParam<eImageAction>(nameof(ImageAction), eImageAction.IsVisible);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ImageAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

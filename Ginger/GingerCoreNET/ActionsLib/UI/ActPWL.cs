@@ -45,12 +45,31 @@ namespace GingerCore.Actions
         public override bool ValueConfigsNeeded { get { return true; } }
 
 
-        private eLocateBy mOLocateBy{set;get;}
-        private string mOLocateValue { set; get; }
-        [IsSerializedForLocalRepository]
-        public eLocateBy OLocateBy { get { return mOLocateBy; } set { if (mOLocateBy != value) { mOLocateBy = value; OnPropertyChanged(Fields.OLocateBy); } } }
-        [IsSerializedForLocalRepository]
-        public string OLocateValue { get { return mOLocateValue; } set { mOLocateValue = value; OnPropertyChanged(Fields.OLocateValue); } }
+        public eLocateBy OLocateBy 
+        {
+            get
+            {
+                return (eLocateBy)GetOrCreateInputParam<eLocateBy>(nameof(OLocateBy), eLocateBy.NA);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(OLocateBy), value.ToString());
+                OnPropertyChanged(nameof(OLocateBy));
+
+            }
+        }
+        public string OLocateValue 
+        { 
+            get
+            {
+                return GetOrCreateInputParam(nameof(OLocateValue)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(OLocateValue), value);
+                OnPropertyChanged(nameof(OLocateValue));
+            }
+        }
 
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms

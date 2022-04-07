@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="01ee7e9c-4810-464d-872c-76cb1c0dda97" ItemType="Activity" CreatedBy="prateekv" Created="202202080757" GingerVersion="4.2.0.0" Version="1" LastUpdateBy="prateekv" LastUpdate="202202080757" />
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="User Detail Activity" AutomationStatus="Automated" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="01ee7e9c-4810-464d-872c-76cb1c0dda97" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="app1">
+<Acts>
+<ActLogAction Active="True" Description="Log Action" Guid="c4714c0c-4814-46fc-9387-0cebdc2696f8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SelectedLogLevel="INFO" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="abe18996-357c-45a4-b2fa-1782effb1b50" Param="LogText" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Executed on machine '{CS Exp=System.Environment.MachineName}' by user '{CS Exp=System.Environment.UserName}' at '{CS Exp=DateTime.Now}'" />
+</InputValues>
+</ActLogAction>
+</Acts>
+</Activity></GingerRepositoryItem>

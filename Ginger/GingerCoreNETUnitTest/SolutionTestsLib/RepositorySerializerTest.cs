@@ -97,7 +97,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
             int lt = xml.Count(f => f == '<');
             int gt = xml.Count(f => f == '>');
-            Assert.IsTrue(xml.Length < 800, "Verify minimal xml is less than 800 bytes");   
+            Assert.IsTrue(xml.Length < 850, "Verify minimal xml is less than 850 bytes");   
             Assert.AreEqual(9, lt, "XML Elements count <"); 
             Assert.AreEqual(9, gt, "XML Elements count >"); 
 
@@ -484,7 +484,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             int count = businessFlow.Activities.Count();
 
             Assert.AreEqual(true, businessFlow.LazyLoadFlagForUnitTest);
-            Assert.AreEqual(1, count);
+            Assert.AreEqual(2, count);
         }
 
         /// <summary>

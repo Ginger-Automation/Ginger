@@ -45,13 +45,14 @@ namespace Ginger.Agents
             InitializeComponent();
 
             if (agent != null)
-            {
+            {               
                 mAgent = agent;
 
                 xShowIDUC.Init(mAgent);
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Notes));
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentTypelbl, Label.ContentProperty, mAgent, nameof(Agent.AgentType));
+                BindingHandler.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
+                xAgentNameTextBox.AddValidationRule(new AgentNameValidationRule());
+                BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Notes));
+                BindingHandler.ObjFieldBinding(xAgentTypelbl, Label.ContentProperty, mAgent, nameof(Agent.AgentType));
                 BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mAgent, nameof(RepositoryItemBase.Publish));
                 TagsViewer.Init(mAgent.Tags);
 
@@ -62,7 +63,7 @@ namespace Ginger.Agents
 
                     xPlatformTxtBox.Text = mOriginalPlatformType.ToString();
                     SetDriverInformation();
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDriverTypeComboBox, ComboBox.TextProperty, mAgent, nameof(Agent.DriverType));
+                    BindingHandler.ObjFieldBinding(xDriverTypeComboBox, ComboBox.TextProperty, mAgent, nameof(Agent.DriverType));
                     xDriverTypeComboBox.SelectionChanged += driverTypeComboBox_SelectionChanged;
                 }
                 else//Plugin
@@ -90,16 +91,20 @@ namespace Ginger.Agents
         private void xPluginIdComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             PluginPackage p = (PluginPackage)xPluginIdComboBox.SelectedItem;
-            p.LoadServicesFromJSON();
-            xServiceIdComboBox.ItemsSource = p.Services;
+            if (p.PluginPackageOperations == null)
+            {
+                p.PluginPackageOperations = new PluginPackageOperations(p);
+            }
+            p.PluginPackageOperations.LoadServicesFromJSON();
+            xServiceIdComboBox.ItemsSource = ((PluginPackageOperations)p.PluginPackageOperations).Services;
             xServiceIdComboBox.DisplayMemberPath = nameof(PluginServiceInfo.ServiceId);
             xServiceIdComboBox.SelectedValuePath = nameof(PluginServiceInfo.ServiceId);
             xServiceIdComboBox.BindControl(mAgent, nameof(Agent.ServiceId));
 
             // auto select if there is only one service in the plugin
-            if (p.Services.Count == 1)
+            if (((PluginPackageOperations)p.PluginPackageOperations).Services.Count == 1)
             {
-                xServiceIdComboBox.SelectedItem = p.Services[0];
+                xServiceIdComboBox.SelectedItem = ((PluginPackageOperations)p.PluginPackageOperations).Services[0];
             }
         }
 
