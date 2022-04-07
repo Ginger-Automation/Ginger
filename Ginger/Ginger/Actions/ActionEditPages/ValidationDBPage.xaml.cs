@@ -259,7 +259,7 @@ namespace Ginger.Actions
             TablesComboBox.Items.Clear();
             ColumnComboBox.Items.Clear();
             string dbName = ((ComboBox)sender).SelectedItem.ToString();
-            Database db = (Database)EA.Dbs.First(m => m.Name == dbName);
+            db = (Database)EA.Dbs.First(m => m.Name == dbName);
             if (db.DBType.Equals(eDBTypes.CosmosDb))
             {
                 if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals("Insert")) == null
