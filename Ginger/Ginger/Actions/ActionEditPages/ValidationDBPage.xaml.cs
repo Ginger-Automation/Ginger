@@ -34,6 +34,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using GingerWPF.BusinessFlowsLib;
+using static GingerCore.Environments.Database;
+using static GingerCore.Actions.ActDBValidation;
+using GingerCore.GeneralLib;
 
 namespace Ginger.Actions
 {
@@ -88,6 +91,15 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ColumnComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Column);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWhere, TextBox.TextProperty, act, ActDBValidation.Fields.Where);
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(CommitDB, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDBValidation.Fields.CommitDB));
+
+            txtInsertJson.ValueTextBox.Text = string.Empty;
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtInsertJson, TextBox.TextProperty, act, nameof(ActDBValidation.InsertJson), BindingMode.TwoWay);
+            txtInsertJson.BindControl(Context.GetAsContext(act.Context), act, nameof(ActDBValidation.InsertJson));
+            txtInsertJson.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.InsertJson),
+                (Context.GetAsContext(act.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
+            txtInsertJson.ValueTextBox.AddValidationRule(new RunSetLib.CreateCLIWizardLib.ValidateJsonFormat());
+
+            txtInsertJson.AdjustHight(200);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPrimaryKey.ValueTextBox, TextBox.TextProperty, act, nameof(ActDBValidation.CosmosPrimaryKey), BindingMode.TwoWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPrimaryKey.ValueTextBox, TextBox.ToolTipProperty, act, nameof(ActDBValidation.CosmosPrimaryKey), BindingMode.TwoWay);
@@ -246,6 +258,24 @@ namespace Ginger.Actions
             KeySpaceComboBox.Items.Clear();
             TablesComboBox.Items.Clear();
             ColumnComboBox.Items.Clear();
+            string dbName = ((ComboBox)sender).SelectedItem.ToString();
+            Database db = (Database)EA.Dbs.First(m => m.Name == dbName);
+            if (db.DBType.Equals(eDBTypes.CosmosDb))
+            {
+                if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals("Insert")) == null
+                    || ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals("Insert")).Count() == 0)
+                {
+                    ValidationCfgComboBox.Items.Add(new ComboEnumItem() { text = "Insert", Value = eDBValidationType.Insert });
+                }
+            }
+            else
+            {
+                if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals("Insert")) != null
+                    && ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals("Insert")).Count() != 0)
+                {
+                    ValidationCfgComboBox.Items.Remove(ValidationCfgComboBox.Items.Cast<ComboEnumItem>().First(m => m.text.ToString().Equals("Insert")));
+                }
+            }
         }
 
         private void TablesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -363,11 +393,17 @@ namespace Ginger.Actions
             {
                 EA = pe.Applications.FirstOrDefault(m => m.Name.Equals(AppNameComboBox.Text));
             }
+
+
             //Ugly code but working, find way to make it simple use the enum val from combo
             ActDBValidation.eDBValidationType validationType = (ActDBValidation.eDBValidationType)ValidationCfgComboBox.SelectedValue;
 
             if (EA != null)
             {
+                txtInsertJson.Visibility = Visibility.Collapsed;
+                lblInsertJson.Visibility = Visibility.Collapsed;
+                gridInsertJson.Visibility = Visibility.Collapsed;
+                imgHelpSql.Visibility = Visibility.Collapsed;
                 switch (validationType)
                 {
                     case ActDBValidation.eDBValidationType.UpdateDB:
@@ -385,11 +421,12 @@ namespace Ginger.Actions
                             TableColWhereStackPanel.Visibility = Visibility.Visible;
                             txtWhere.Visibility = Visibility.Collapsed;
                             lblWhere.Visibility = Visibility.Hidden;
-                            TableColWhereStackPanel.Height = 70;
+                            TableColWhereStackPanel.Height = 40;
                             DoCommit.Visibility = Visibility.Collapsed;
                             FreeSQLStackPanel.Visibility = Visibility.Collapsed;
                             DoUpdate.Visibility = Visibility.Visible;
                             RadioButtonsSection.Visibility = Visibility.Collapsed;
+                            CosmosParametersGrid.Visibility = Visibility.Visible;
                             SetGridView();
                         }
                         else
@@ -471,6 +508,7 @@ namespace Ginger.Actions
                         txtWhere.Visibility = Visibility.Visible;
                         lblWhere.Visibility = Visibility.Visible;
                         TableColWhereStackPanel.Height = 244;
+                        imgHelpSql.Visibility = Visibility.Visible;
                         checkQueryType();
                         try
                         {
@@ -495,7 +533,26 @@ namespace Ginger.Actions
                         DoCommit.Visibility = System.Windows.Visibility.Collapsed;
                         DoUpdate.Visibility = Visibility.Collapsed;
                         SqlFile.Visibility = System.Windows.Visibility.Collapsed;
-                        FreeSQLLabel.Content = @"Record count - SELECT COUNT(1) FROM {Table} - Enter only Table name below (+optional WHERE clause)";
+                        FreeSQLLabel.Content = @"Record count";
+                        break;
+                    case eDBValidationType.Insert:
+                        DoUpdate.Visibility = Visibility.Visible;
+                        txtInsertJson.Visibility = Visibility.Visible;
+                        lblInsertJson.Visibility = Visibility.Visible;
+                        gridInsertJson.Visibility = Visibility.Visible;
+                        lblColumn.Visibility = Visibility.Collapsed;
+                        Keyspace.Visibility = Visibility.Collapsed;
+                        KeyspaceCmbStack.Visibility = Visibility.Collapsed;
+                        ColumnStack.Visibility = Visibility.Collapsed;
+                        CosmosParametersGrid.Visibility = Visibility.Collapsed;
+                        FreeSQLStackPanel.Visibility = Visibility.Collapsed;
+                        TableColWhereStackPanel.Visibility = Visibility.Visible;
+                        TableColWhereStackPanel.Height = 40;
+                        txtWhere.Visibility = Visibility.Collapsed;
+                        lblWhere.Visibility = Visibility.Hidden;
+                        DoCommit.Visibility = Visibility.Collapsed;
+                        FreeSQLStackPanel.Visibility = Visibility.Collapsed;
+                        RadioButtonsSection.Visibility = Visibility.Collapsed;
                         break;
                 }
                 if (db != null)

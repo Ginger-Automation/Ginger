@@ -5,12 +5,12 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       xmlns:local="clr-namespace:Ginger.Actions"
-      xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:Ginger="clr-namespace:Ginger" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="556.717" d:DesignWidth="728.358"
 	Title="ValidationDBPage" >
 
-    <Grid x:Name="pageGrid">
+    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="170*"/>
             <RowDefinition Height="387*"/>
@@ -20,48 +20,57 @@
                 <Button x:Name="QueryParamGridVEButton" Content="..." Click="QueryParamGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
             </DataTemplate>
         </Grid.Resources>
-        <StackPanel >
-            <Label Style="{StaticResource @InputFieldLabelStyle}">Environment Application Name:</Label>
-            <DockPanel HorizontalAlignment="Left" >
-                <ComboBox x:Name="AppNameComboBox" SelectionChanged="AppNameComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" HorizontalAlignment="Stretch" DockPanel.Dock="Left" Width="950"></ComboBox>
-                <Button x:Name="AppNamVEButton" Content="..." Click="AppNamVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,0,0" Width="30" Height="24" RenderTransformOrigin="2.119,0.674"/>
-            </DockPanel>
-
-            <StackPanel>
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Environment Application DB Name:</Label>
-                <DockPanel HorizontalAlignment="Left" >
-                    <ComboBox x:Name="DBNameComboBox" SelectionChanged="DBNameComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" HorizontalAlignment="Stretch" DockPanel.Dock="Left" Width="950"></ComboBox>
-                    <Button x:Name="DBNamVEButton" Content="..." Click="DBNamVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,0,0" Width="30" Height="24" RenderTransformOrigin="2.119,0.674"/>
+        <StackPanel Grid.Row="0">
+            <StackPanel Margin="0,5,5,5" Orientation="Horizontal">
+                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Environment Application Name:</Label>
+                <DockPanel Grid.Column="0" HorizontalAlignment="Left" >
+                    <ComboBox x:Name="AppNameComboBox" SelectionChanged="AppNameComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" IsEditable="True" HorizontalAlignment="Stretch" DockPanel.Dock="Left" Width="550"></ComboBox>
+                    <Button x:Name="AppNamVEButton" Content="..." Click="AppNamVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,0,0" Width="30" Height="24" RenderTransformOrigin="2.119,0.674"/>
                 </DockPanel>
             </StackPanel>
 
-            <Label Style="{StaticResource @InputFieldLabelStyle}">DB Operation Type:</Label>
-            <ComboBox x:Name="ValidationCfgComboBox" SelectionChanged="ValidationCfgComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" Width="950" HorizontalAlignment="Left"></ComboBox>
+            <StackPanel Margin="0,5,5,5" Orientation="Horizontal">
+                <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Environment Application DB Name:</Label>
+                <DockPanel HorizontalAlignment="Left" >
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox x:Name="DBNameComboBox" SelectionChanged="DBNameComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" IsEditable="True" HorizontalAlignment="Stretch" DockPanel.Dock="Left" Width="550"></ComboBox>
+                        <Button x:Name="DBNamVEButton" Content="..." Click="DBNamVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,0,0" Width="30" Height="24" RenderTransformOrigin="2.119,0.674"/>
+                    </StackPanel>
+                </DockPanel>
+            </StackPanel>
 
+            <StackPanel Margin="0,5,5,5" Orientation="Horizontal">
+                <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">DB Operation Type:</Label>
+                <ComboBox x:Name="ValidationCfgComboBox" SelectionChanged="ValidationCfgComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Width="550" HorizontalAlignment="Left"></ComboBox>
+            </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Row="1">
-            <StackPanel x:Name="RadioButtonsSection">
-                <Label x:Name="RadioButtonsLabel"  Style="{StaticResource @InputFieldLabelStyle}">Input type:</Label>
+        <StackPanel Grid.Row="1" Orientation="Vertical">
+            <StackPanel x:Name="RadioButtonsSection" Margin="0,7,7,7" Orientation="Horizontal">
+                <Label x:Name="RadioButtonsLabel" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Input type:</Label>
                 <StackPanel x:Name="SqlSelection" Orientation="Horizontal">
                     <UserControlsLib:UCRadioButtons x:Name="QueryTypeRadioButton" HorizontalAlignment="Left"></UserControlsLib:UCRadioButtons>
                 </StackPanel>
             </StackPanel>
-            <StackPanel x:Name="Keyspace">
-                <Label Style="{StaticResource @InputFieldLabelStyle}">KeySpace:</Label>
+            <StackPanel x:Name="Keyspace" Orientation="Horizontal">
+                <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">KeySpace:</Label>
                 <DockPanel HorizontalAlignment="Left"  >
-
-                    <ComboBox x:Name="KeySpaceComboBox" DropDownOpened="KeySpaceComboBox_DropDownOpened" Style="{StaticResource @InputComboBoxStyle}" Width="950"></ComboBox>
-                    <Button x:Name="KeySpaceVEButton" Content="..." Click="KeySpaceVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"  Width="30" Height="24" RenderTransformOrigin="12.855,0.928" />
+                    <StackPanel x:Name="KeyspaceCmbStack" Orientation="Horizontal">
+                        <ComboBox x:Name="KeySpaceComboBox" DropDownOpened="KeySpaceComboBox_DropDownOpened" Style="{StaticResource $FlatInputComboBoxStyle}" Width="950"></ComboBox>
+                        <Button x:Name="KeySpaceVEButton" Content="..." Click="KeySpaceVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"  Width="30" Height="24" RenderTransformOrigin="12.855,0.928" />
+                    </StackPanel>
                 </DockPanel>
             </StackPanel>
-            <StackPanel x:Name="FreeSQLStackPanel">
-                <Label x:Name="FreeSQLLabel"  Style="{StaticResource @InputFieldLabelStyle}">Free SQL:</Label>
+            <StackPanel x:Name="FreeSQLStackPanel" Orientation="Horizontal">
                 <StackPanel Orientation="Horizontal">
-                    <Actions:UCValueExpression x:Name="SQLUCValueExpression" Width="980"/>
+                    <Label x:Name="FreeSQLLabel"  Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Free SQL:</Label>
+                    <usercontrols:ImageMakerControl x:Name="imgHelpSql" ToolTip="SELECT COUNT(1) FROM {Table} - Enter only Table name below (+optional WHERE clause)" Visibility="Collapsed" SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="SemiBold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
+                    <Actions:UCValueExpression x:Name="SQLUCValueExpression" Width="400"/>
                 </StackPanel>
             </StackPanel>
-            <StackPanel x:Name="SqlFile">
-                <Label x:Name="SQLInputFile"  Style="{StaticResource @InputFieldLabelStyle}" ToolTip="Default path recommended is ~\Documents\SQL">SQL File Path:</Label>
+            <StackPanel x:Name="SqlFile" Orientation="Horizontal">
+                <Label x:Name="SQLInputFile"  Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Default path recommended is ~\Documents\SQL">SQL File Path:</Label>
                 <Actions:UCValueExpression x:Name="QueryFile"/>
                 <StackPanel Name="QueryParamsPanel" Visibility="Collapsed" HorizontalAlignment="Stretch" Margin="0,10,0,0">
                     <Ginger:ucGrid x:Name="QueryParamsGrid" Title="Query Input Value(s)" Height="156"/>
@@ -69,21 +78,25 @@
             </StackPanel>
 
             <StackPanel x:Name="TableColWhereStackPanel" Height="244">
+                <StackPanel Margin="0,5,5,5" Orientation="Horizontal">
+                    <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Table:</Label>
+                    <DockPanel HorizontalAlignment="Left"  >
+                        <ComboBox x:Name="TablesComboBox" SelectionChanged="TablesComboBox_SelectionChanged" DropDownOpened="TablesComboBox_DropDownOpened" Style="{StaticResource $FlatInputComboBoxStyle}" Width="550"></ComboBox>
+                        <Button x:Name="TablesVEButton" Content="..." Click="TablesVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"  Width="30" Height="24" RenderTransformOrigin="12.855,0.928" />
+                    </DockPanel>
+                </StackPanel>
+                <StackPanel x:Name="ColumnStack" Margin="0,5,5,5" Orientation="Horizontal">
+                    <Label x:Name="lblColumn" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Column:</Label>
+                    <DockPanel HorizontalAlignment="Left"  >
+                        <ComboBox x:Name="ColumnComboBox" DropDownOpened="ColumnComboBox_DropDownOpened" Style="{StaticResource $FlatInputComboBoxStyle}" Width="950"></ComboBox>
+                        <Button x:Name="ColumnsVEButton" Content="..." Click="ColumnsVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"  Width="30" Height="24" RenderTransformOrigin="12.855,0.928" />
+                    </DockPanel>
+                </StackPanel>
+                <StackPanel Margin="0,5,5,5" Orientation="Horizontal">
+                    <Label x:Name="lblWhere" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Where:</Label>
 
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Table:</Label>
-                <DockPanel HorizontalAlignment="Left"  >
-                    <ComboBox x:Name="TablesComboBox" SelectionChanged="TablesComboBox_SelectionChanged" DropDownOpened="TablesComboBox_DropDownOpened" Style="{StaticResource @InputComboBoxStyle}" Width="950"></ComboBox>
-                    <Button x:Name="TablesVEButton" Content="..." Click="TablesVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"  Width="30" Height="24" RenderTransformOrigin="12.855,0.928" />
-                </DockPanel>
-                <Label x:Name="lblColumn" Style="{StaticResource @InputFieldLabelStyle}">Column:</Label>
-                <DockPanel HorizontalAlignment="Left"  >
-                    <ComboBox x:Name="ColumnComboBox" DropDownOpened="ColumnComboBox_DropDownOpened" Style="{StaticResource @InputComboBoxStyle}" Width="950"></ComboBox>
-                    <Button x:Name="ColumnsVEButton" Content="..." Click="ColumnsVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"  Width="30" Height="24" RenderTransformOrigin="12.855,0.928" />
-                </DockPanel>
-                <Label x:Name="lblWhere" Style="{StaticResource @InputFieldLabelStyle}">Where:</Label>
-
-                <TextBox x:Name="txtWhere" Width="980" HorizontalAlignment="Left"></TextBox>
-
+                    <TextBox x:Name="txtWhere" Width="980" HorizontalAlignment="Left"></TextBox>
+                </StackPanel>
             </StackPanel>
 
             <StackPanel x:Name="DoCommit">
@@ -91,14 +104,20 @@
             </StackPanel>
             <StackPanel x:Name="DoUpdate" Visibility="Collapsed" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Auto">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,10,10">
-                    <Label Style="{StaticResource @InputFieldLabelStyle}">Primary Key:</Label>
+                    <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Primary Key:</Label>
                     <Actions:UCValueExpression Height="25" Margin="3,0" x:Name="txtPrimaryKey" Width="300" HorizontalAlignment="Left"></Actions:UCValueExpression>
 
-                    <Label Style="{StaticResource @InputFieldLabelStyle}">Partition Key:</Label>
+                    <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Partition Key:</Label>
                     <Actions:UCValueExpression Height="25" Margin="1,0" x:Name="txtPartitionKey" Width="295" HorizontalAlignment="Left"></Actions:UCValueExpression>
                 </StackPanel>
 
                 <Ginger:ucGrid x:Name="CosmosParametersGrid" Title="Cosmos Update Parameters"/>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="0,0,10,10">
+                    <Label Name="lblInsertJson" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Insert JSON:</Label>
+                    <Grid Width="600" x:Name="gridInsertJson" Visibility="Collapsed">
+                        <Actions:UCValueExpression x:Name="txtInsertJson" ToolTip="EndPoint" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                    </Grid>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
     </Grid>
