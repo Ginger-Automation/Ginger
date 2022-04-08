@@ -95,8 +95,8 @@ namespace Ginger.Actions
             txtInsertJson.ValueTextBox.Text = string.Empty;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtInsertJson, TextBox.TextProperty, act, nameof(ActDBValidation.InsertJson), BindingMode.TwoWay);
             txtInsertJson.BindControl(Context.GetAsContext(act.Context), act, nameof(ActDBValidation.InsertJson));
-            txtInsertJson.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.InsertJson),
-                (Context.GetAsContext(act.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
+            txtInsertJson.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.InsertJson), string.Empty),
+                               true, false);
             txtInsertJson.ValueTextBox.AddValidationRule(new RunSetLib.CreateCLIWizardLib.ValidateJsonFormat());
 
             txtInsertJson.AdjustHight(200);
@@ -262,20 +262,22 @@ namespace Ginger.Actions
             db = (Database)EA.Dbs.First(m => m.Name == dbName);
             if (db.DBType.Equals(eDBTypes.CosmosDb))
             {
-                if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals("Insert")) == null
-                    || ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals("Insert")).Count() == 0)
+                if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())) == null
+                    || ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())).Count() == 0)
                 {
                     ValidationCfgComboBox.Items.Add(new ComboEnumItem() { text = "Insert", Value = eDBValidationType.Insert });
                 }
             }
             else
             {
-                if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals("Insert")) != null
-                    && ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals("Insert")).Count() != 0)
+                if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())) != null
+                    && ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())).Count() != 0)
                 {
-                    ValidationCfgComboBox.Items.Remove(ValidationCfgComboBox.Items.Cast<ComboEnumItem>().First(m => m.text.ToString().Equals("Insert")));
+                    ValidationCfgComboBox.SelectedIndex = 0;
+                    ValidationCfgComboBox.Items.Remove(ValidationCfgComboBox.Items.Cast<ComboEnumItem>().First(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())));
                 }
             }
+            SetVisibleControlsForAction();
         }
 
         private void TablesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -426,7 +428,7 @@ namespace Ginger.Actions
                             FreeSQLStackPanel.Visibility = Visibility.Collapsed;
                             DoUpdate.Visibility = Visibility.Visible;
                             RadioButtonsSection.Visibility = Visibility.Collapsed;
-                            CosmosParametersGrid.Visibility = Visibility.Visible;
+                            UpdateDbParametersGrid.Visibility = Visibility.Visible;
                             SetGridView();
                         }
                         else
@@ -544,7 +546,7 @@ namespace Ginger.Actions
                         Keyspace.Visibility = Visibility.Collapsed;
                         KeyspaceCmbStack.Visibility = Visibility.Collapsed;
                         ColumnStack.Visibility = Visibility.Collapsed;
-                        CosmosParametersGrid.Visibility = Visibility.Collapsed;
+                        UpdateDbParametersGrid.Visibility = Visibility.Collapsed;
                         FreeSQLStackPanel.Visibility = Visibility.Collapsed;
                         TableColWhereStackPanel.Visibility = Visibility.Visible;
                         TableColWhereStackPanel.Height = 40;
@@ -688,16 +690,16 @@ namespace Ginger.Actions
             view.GridColsView.Add(new GridColView() { Field = nameof(CosmosPatchInputValues.Param), Header = "Path", WidthWeight = 150 });
             view.GridColsView.Add(new GridColView() { Field = nameof(CosmosPatchInputValues.Value), Header = "Value", WidthWeight = 150 });
 
-            CosmosParametersGrid.SetAllColumnsDefaultView(view);
-            CosmosParametersGrid.InitViewItems();
-            CosmosParametersGrid.SetTitleLightStyle = true;
-            CosmosParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPatchOperationForCosmos));
-            CosmosParametersGrid.btnDown.Visibility = Visibility.Collapsed;
-            CosmosParametersGrid.btnUp.Visibility = Visibility.Collapsed;
-            CosmosParametersGrid.btnClearAll.Visibility = Visibility.Collapsed;
-            CosmosParametersGrid.btnRefresh.Visibility = Visibility.Collapsed;
+            UpdateDbParametersGrid.SetAllColumnsDefaultView(view);
+            UpdateDbParametersGrid.InitViewItems();
+            UpdateDbParametersGrid.SetTitleLightStyle = true;
+            UpdateDbParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPatchOperationForCosmos));
+            UpdateDbParametersGrid.btnDown.Visibility = Visibility.Collapsed;
+            UpdateDbParametersGrid.btnUp.Visibility = Visibility.Collapsed;
+            UpdateDbParametersGrid.btnClearAll.Visibility = Visibility.Collapsed;
+            UpdateDbParametersGrid.btnRefresh.Visibility = Visibility.Collapsed;
 
-            CosmosParametersGrid.DataSourceList = mAct.CosmosPatchInputValues;
+            UpdateDbParametersGrid.DataSourceList = mAct.CosmosPatchInputValues;
         }
 
         private void AddPatchOperationForCosmos(object sender, RoutedEventArgs e)

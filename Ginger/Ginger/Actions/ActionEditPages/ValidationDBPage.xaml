@@ -111,7 +111,7 @@
                     <Actions:UCValueExpression Height="25" Margin="1,0" x:Name="txtPartitionKey" Width="295" HorizontalAlignment="Left"></Actions:UCValueExpression>
                 </StackPanel>
 
-                <Ginger:ucGrid x:Name="CosmosParametersGrid" Title="Cosmos Update Parameters"/>
+                <Ginger:ucGrid x:Name="UpdateDbParametersGrid" Title="Cosmos Update Parameters"/>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="0,0,10,10">
                     <Label Name="lblInsertJson" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Insert JSON:</Label>
                     <Grid Width="600" x:Name="gridInsertJson" Visibility="Collapsed">
