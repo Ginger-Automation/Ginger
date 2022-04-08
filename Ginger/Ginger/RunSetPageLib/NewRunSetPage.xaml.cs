@@ -633,12 +633,7 @@ namespace Ginger.Run
             xSealightsTestStageTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealightsTestStage));
             xSealighsLabIdTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealighsLabId));
             xSealighsBuildSessionIDTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID));
-
-            // Regular Textboxes
-            //BindingHandler.ObjFieldBinding(xSealightsTestStageTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealightsTestStage));
-            //BindingHandler.ObjFieldBinding(xSealighsLabIdTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealighsLabId));
-            //BindingHandler.ObjFieldBinding(xSealighsBuildSessionIDTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID));
-
+                      
             // check if fields have been populated (font-end validation)
             xSealighsLabIdTextBox.AddUCValidationRule("Lab ID or Build Session ID must be provided");
             xSealighsBuildSessionIDTextBox.AddUCValidationRule("Lab ID or Build Session ID must be provided");
