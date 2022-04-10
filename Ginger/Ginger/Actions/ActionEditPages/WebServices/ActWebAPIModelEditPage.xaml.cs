@@ -20,9 +20,13 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
+using Ginger.DataSource;
 using Ginger.UserControls;
-using GingerCore;
+using Ginger.UserControlsLib.TextEditor;
+using GingerCore.Actions.WebAPI;
+using GingerCore.Actions.WebServices;
 using GingerCore.Actions.WebServices.WebAPI;
+using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -30,12 +34,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.DataSource;
-using GingerWPF.ApplicationModelsLib.APIModels;
-using GingerCore.Actions.WebAPI;
-using GingerCore.Actions.WebServices;
-using Ginger.Actions.ActionEditPages.WebServices;
-using Ginger.UserControlsLib.TextEditor;
 
 namespace Ginger.Actions.WebServices
 {
@@ -305,29 +303,20 @@ namespace Ginger.Actions.WebServices
                 }
             }
 
-
-            //APIViewRawRequestPage mAPIViewRawRequestPage = new APIViewRawRequestPage(actWebAPI);
-            //mAPIViewRawRequestPage.PrepareActionValues();
-            //mAPIViewRawRequestPage.CreateRawRequestContent();
-
-            //mAPIViewRawRequestPage.ShowAsWindow(eWindowShowStyle.Dialog);
-
-
-            HttpWebClientUtils webAPI = new HttpWebClientUtils();
-            webAPI.RequestContstructor(actWebAPI, null, false);
-            webAPI.CreateRawRequestContent();
-
-            string rawRequestContent = webAPI.RequestFileContent;
-
-            string path = System.IO.Directory.GetCurrentDirectory();
-            path = System.IO.Path.Combine(path, "example.txt");
-            System.IO.File.WriteAllText(path, rawRequestContent);
-
-            DocumentEditorPage documentEditorPage = new DocumentEditorPage(path, true, false, "Raw Request Editor");
-            documentEditorPage.ShowAsWindow();
-
-
-            System.IO.File.Delete(path);
+            HttpWebClientUtils webAPIUtils = new HttpWebClientUtils();
+            string requestContent = webAPIUtils.GetRawRequestContentPreview(actWebAPI);
+            if (requestContent != string.Empty)
+            {
+                string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(requestContent);
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: "Raw Request Preview");
+                    docPage.ShowAsWindow();
+                    System.IO.File.Delete(tempFilePath);
+                    return;
+                }
+            }
+            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw request preview, see log for details.");
         }
     }
 }

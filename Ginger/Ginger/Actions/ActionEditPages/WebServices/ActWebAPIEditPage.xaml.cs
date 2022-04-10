@@ -19,8 +19,8 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.Actions.ActionEditPages.WebServices;
 using Ginger.UserControls;
+using Ginger.UserControlsLib.TextEditor;
 using GingerCore.Actions;
 using GingerCore.Actions.WebAPI;
 using GingerCore.Actions.WebServices;
@@ -598,12 +598,20 @@ namespace Ginger.Actions.WebServices
 
         private void xViewRawRequestBtn_Click(object sender, RoutedEventArgs e)
         {
-            APIViewRawRequestPage mAPIViewRawRequestPage = new APIViewRawRequestPage(mAct);
-            mAPIViewRawRequestPage.PrepareActionValues();
-            mAPIViewRawRequestPage.CreateRawRequestContent();
-
-            mAPIViewRawRequestPage.ShowAsWindow(eWindowShowStyle.Dialog);
-
+            HttpWebClientUtils webAPIUtils = new HttpWebClientUtils();
+            string requestContent = webAPIUtils.GetRawRequestContentPreview(mAct);
+            if (requestContent != string.Empty)
+            {
+                string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(requestContent);
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: "Raw Request Preview");
+                    docPage.ShowAsWindow();
+                    System.IO.File.Delete(tempFilePath);
+                    return;
+                }
+            }
+            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw request preview, see log for details.");
         }
 
         private void ContentTypeComboBox_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

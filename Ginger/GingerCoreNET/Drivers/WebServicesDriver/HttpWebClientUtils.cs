@@ -417,6 +417,28 @@ namespace GingerCore.Actions.WebAPI
             }
         }
 
+        public string GetRawRequestContentPreview(ActWebAPIBase act)
+        {
+            try
+            {
+                //Prepare act input values
+                Context context = Context.GetAsContext(act.Context);
+                if (context != null && context.Runner != null)
+                {
+                    context.Runner.PrepActionValueExpression(act, context.BusinessFlow);
+                }
+                //Create Request content
+                RequestContstructor(act, null, false);
+                CreateRawRequestContent();
+                return RequestFileContent;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to create API Request preview content", ex);
+                return string.Empty;
+            }
+        }
+
         public void SaveRequest(bool RequestSave, string SaveDirectory)
         {
             RequestFileContent = string.Empty;

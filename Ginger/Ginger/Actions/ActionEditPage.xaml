@@ -234,7 +234,7 @@
                                     </Expander.Header>
                                     <Expander.Content>
                                         <StackPanel Orientation="Vertical">
-                                            <Button x:Name="xRawResponseValuesBtn" HorizontalAlignment="Right" Width="165" Content="Raw API Response" Style="{StaticResource $RoundTextButtonStyle_Generic}" ></Button>
+                                            <Button x:Name="xRawResponseValuesBtn" HorizontalAlignment="Right" Content="View Raw Response" Style="{StaticResource $RoundTextButtonStyle_Generic}" Click="xRawResponseValuesBtn_Click" />
                                             <Ginger:ucGrid x:Name="xOutputValuesGrid" Margin="5,5,5,20" ShowTitle="Collapsed" ShowRefresh="Visible" />
                                         </StackPanel>
                                         

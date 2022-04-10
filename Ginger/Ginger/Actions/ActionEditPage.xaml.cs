@@ -25,13 +25,13 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowPages;
-using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.BusinessFlowWindows;
 using Ginger.Help;
 using Ginger.Repository;
 using Ginger.Run;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
+using Ginger.UserControlsLib.TextEditor;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.WindowExplorer;
 using GingerCore;
@@ -39,14 +39,12 @@ using GingerCore.Actions;
 using GingerCore.Actions.Java;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
-using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -1797,6 +1795,22 @@ namespace Ginger.Actions
         {
             updateDSOutGrid();
             SetDSGridVisibility();
+        }
+
+        private void xRawResponseValuesBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mAction.RawResponseValues != string.Empty)
+            {
+                string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(mAction.RawResponseValues);
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: "Raw Response");
+                    docPage.ShowAsWindow();
+                    System.IO.File.Delete(tempFilePath);
+                    return;
+                }
+            }
+            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw response view, see log for details.");
         }
     }
 }

@@ -23,7 +23,7 @@
             <StackPanel  VerticalAlignment="Top" Margin="0,0,0,0">
                 <Grid>
                     <Label VerticalAlignment="Bottom" Style="{StaticResource @InputFieldLabelStyle}">End Point URL:</Label>
-                    <Button x:Name="xViewRawRequestBtn" HorizontalAlignment="Right" Margin="0,10,0,10" Content="View Raw API Request" Width="130" Style="{StaticResource $RoundTextButtonStyle_Generic}" Click="xViewRawRequestBtn_Click"/>
+                    <Button x:Name="xViewRawRequestBtn" HorizontalAlignment="Right" Margin="0,10,0,10" Content="View Raw Request Preview" Style="{StaticResource $RoundTextButtonStyle_Generic}" Click="xViewRawRequestBtn_Click"/>
                 </Grid>
                 
                 <Actions:UCValueExpression x:Name="URLUCValueExpression"/>
