@@ -90,6 +90,25 @@ namespace Ginger.UserControlsLib.TextEditor
             }
         }
 
+        public DocumentEditorPage (object textOriginObject, string textOriginField, bool enableEdit = true, bool RemoveToolBar = false, string UCTextEditorTitle = null)
+        {
+            //Bind text area to origin object
+            InitializeComponent();
+
+
+            //Use the default UCTextEditor control
+            UCTextEditor UCTE = new UCTextEditor();
+
+            //AutoDetectTextEditor AD = new AutoDetectTextEditor();
+            //AD.ext = Path.GetExtension(FileName);
+            //TE = AD;
+            //UCTE.Init(FileName, TE, enableEdit, RemoveToolBar, EnableWrite: true);
+
+            if (UCTextEditorTitle != null)
+                UCTE.SetContentEditorTitleLabel(UCTextEditorTitle);
+            EditorFrame.Content = UCTE;
+        }
+
         internal void ShowAsWindow()
         {
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Free, this.Title, this);

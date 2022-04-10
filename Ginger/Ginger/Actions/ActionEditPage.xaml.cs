@@ -313,6 +313,8 @@ namespace Ginger.Actions
             BindingHandler.ObjFieldBinding(xDataSourceNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceName));
             BindingHandler.ObjFieldBinding(xDataSourceTableNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceTableName));
             BindingHandler.ObjFieldBinding(xdsOutputParamMapType, ComboBox.TextProperty, mAction, nameof(Act.OutDSParamMapType));
+            BindingHandler.ObjFieldBinding(xRawResponseValuesBtn, Button.VisibilityProperty, mAction, nameof(Act.RawResponseValues), bindingConvertor: new StringVisibilityConverter(), BindingMode: BindingMode.OneWay);
+
 
             BindingHandler.ObjFieldBinding(xdsOutputParamAutoCheck, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutDSParamAutoCheck));
 
@@ -336,9 +338,8 @@ namespace Ginger.Actions
                 xAddOutToDSCheckbox.IsEnabled = false;
             }
             xDataSourceConfigGrid.LostFocus += DataSourceConfigGrid_LostFocus;
-
             //Output Values
-           
+
 
             SetActReturnValuesGrid();
 
@@ -468,6 +469,11 @@ namespace Ginger.Actions
                 xOutputValuesGrid.ChangeGridView(eGridView.All.ToString());
             else
                 xOutputValuesGrid.ChangeGridView(eGridView.NonSimulation.ToString());
+        }
+
+        private void ShowRawResponseAPI(object sender, RoutedEventArgs e)
+        {
+            return;
         }
 
 
@@ -712,6 +718,9 @@ namespace Ginger.Actions
             xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize: 14);
             BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, nameof(Act.AddNewReturnParams));
             BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, nameof(Act.SupportSimulation));
+
+
+            
 
             xOutputValuesGrid.ShowViewCombo = Visibility.Collapsed;
             xOutputValuesGrid.ShowEdit = Visibility.Collapsed;
@@ -1624,6 +1633,7 @@ namespace Ginger.Actions
                     }
                 });
             }
+
         }
 
 
@@ -1707,6 +1717,8 @@ namespace Ginger.Actions
             BindingOperations.ClearAllBindings(xdsOutputParamMapType);
             BindingOperations.ClearAllBindings(xEnableActionLogConfigCheckBox);
             BindingOperations.ClearAllBindings(xLocateValueVE);
+
+            BindingOperations.ClearAllBindings(xRawResponseValuesBtn);
             xTagsViewer.ClearBinding();
             //this.ClearControlsBindings();
             if (mAction != null)

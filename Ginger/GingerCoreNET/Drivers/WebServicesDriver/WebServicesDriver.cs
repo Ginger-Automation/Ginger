@@ -341,11 +341,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 throw new Exception("The Action from type '" + act.GetType().ToString() + "' is unknown/Not Implemented by the Driver - " + this.GetType().ToString());
             }
             //act.ExInfo += System.Environment.NewLine;
-            act.ExInfo += "REQUEST:";
-            act.ExInfo += mWebAPI.RequestFileContent;
-            act.ExInfo += System.Environment.NewLine;
-            act.ExInfo += "RESPONSE:";
-            act.ExInfo += mWebAPI.ResponseFileContent;
+
         }
 
         private string ReplacePlaceHolderParameneterWithActual(string ValueBeforeReplacing, ObservableList<EnhancedActInputValue> APIModelDynamicParamsValue)
@@ -363,6 +359,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             act.Error = actWebAPI.Error;
             act.ExInfo = actWebAPI.ExInfo;
+            act.RawResponseValues = actWebAPI.RawResponseValues;
         }
         
        
@@ -486,6 +483,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     propertiesQouteFixed = propertiesQouteFixed.Replace("\0", "");
                     act.AddOrUpdateReturnParamActual(kpr.Value[0] + "-Properties", kpr.Value[5]);
                 }
+
+                //act.RawRequestValues = mWebAPI.RequestFileContent;
+                act.RawResponseValues = mWebAPI.ResponseFileContent;
+                act.AddOrUpdateReturnParamActual("Raw Request: ", mWebAPI.RequestFileContent);
+                act.AddOrUpdateReturnParamActual("Raw Response: ", mWebAPI.ResponseFileContent);
             }
 
             Dictionary<List<string>, List<string>> dictValues = new Dictionary<List<string>, List<string>>();

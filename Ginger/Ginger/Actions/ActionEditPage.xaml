@@ -233,7 +233,11 @@
                                         <Label Content="Output Values Validations / Assignments" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                                     </Expander.Header>
                                     <Expander.Content>
-                                        <Ginger:ucGrid x:Name="xOutputValuesGrid" Margin="5,5,5,20" ShowTitle="Collapsed" ShowRefresh="Visible" />
+                                        <StackPanel Orientation="Vertical">
+                                            <Button x:Name="xRawResponseValuesBtn" HorizontalAlignment="Right" Width="165" Content="Raw API Response" Style="{StaticResource $RoundTextButtonStyle_Generic}" ></Button>
+                                            <Ginger:ucGrid x:Name="xOutputValuesGrid" Margin="5,5,5,20" ShowTitle="Collapsed" ShowRefresh="Visible" />
+                                        </StackPanel>
+                                        
                                     </Expander.Content>
                                 </Expander>
                             </DockPanel>

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -131,6 +131,7 @@ namespace GingerCore.Actions
             public static string OutDataSourceTableName = "OutDataSourceTableName";
             public static string OutDSParamMapType = "OutDSParamMapType";
             public static string SupportSimulation = "SupportSimulation";
+            public static string RawResponseButtonVisibility = "RawResponseButtonVisibility";
         }
 
         // Being set by GingerRunner in PrepAction
@@ -238,6 +239,25 @@ namespace GingerCore.Actions
         string mOutDSParamMapType;
 
         public string OutDSParamMapType { get { return mOutDSParamMapType; } set { mOutDSParamMapType = value; OnPropertyChanged(Fields.OutDSParamMapType); } }
+
+        string mRawRequestValues;
+
+
+        string mRawResponseValues;
+
+        public string RawResponseValues { 
+            get 
+            { 
+                return mRawResponseValues;
+            } 
+            set 
+            { 
+                mRawResponseValues = value;
+                OnPropertyChanged(nameof(RawResponseValues));
+            }
+        }
+
+
 
 
         private bool mEnableRetryMechanism;
