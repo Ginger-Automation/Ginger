@@ -10,7 +10,7 @@ namespace Ginger.Actions.Validation
     public class UCValueExpressionValidationRule : ValidationRule
     {
         private string _Message;
-        public UCValueExpressionValidationRule(string message)
+        public UCValueExpressionValidationRule(string message = "Value must be provided")
         {
             _Message = message;
         }
