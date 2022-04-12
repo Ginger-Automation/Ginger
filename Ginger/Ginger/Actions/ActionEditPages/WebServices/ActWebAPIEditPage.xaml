@@ -94,7 +94,7 @@
                                 <StackPanel x:Name="ContentTypeParameters" Orientation="Vertical">
                                     <StackPanel x:Name="RequestContent" Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Left" >
                                         <Label Style="{StaticResource @InputFieldLabelStyle}">Body Content Type:</Label>
-                                        <UserControlsLib:UCComboBox x:Name="ContentTypeComboBox" Width="250" Margin="35,0,0,0" DataContextChanged="ContentTypeComboBox_DataContextChanged" ></UserControlsLib:UCComboBox>
+                                        <UserControlsLib:UCComboBox x:Name="ContentTypeComboBox" Width="250" Margin="35,0,0,0" ></UserControlsLib:UCComboBox>
                                     </StackPanel>
                                     <StackPanel x:Name="RequestBodyTypePanel" Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,0">
                                         <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Row="0">Body Content Source:</Label>

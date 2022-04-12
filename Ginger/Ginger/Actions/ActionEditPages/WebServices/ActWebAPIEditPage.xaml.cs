@@ -616,9 +616,5 @@ namespace Ginger.Actions.WebServices
             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw request preview, see log for details.");
         }
 
-        private void ContentTypeComboBox_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-
-        }
     }
 }

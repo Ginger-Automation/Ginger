@@ -337,7 +337,7 @@ namespace UnitTests.NonUITests
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"{CS Exp=System.Environment.UserName}\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"Rexi\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
 
@@ -353,7 +353,7 @@ namespace UnitTests.NonUITests
             webAPI.CreateRawRequestContent();
 
             string rawRequestContent = webAPI.RequestFileContent;
-            Assert.AreEqual(rawRequestContent, "POST https://petstore.swagger.io/v2/pet HTTP/1.1\r\nAccept: application/json\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: 232\r\nHost: petstore.swagger.io\r\n\r\n{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"tomse\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
+            Assert.AreEqual(rawRequestContent, "POST https://petstore.swagger.io/v2/pet HTTP/1.1\r\nAccept: application/json\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: 231\r\nHost: petstore.swagger.io\r\n\r\n{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"Rexi\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
         }
 
         [TestMethod]
@@ -616,24 +616,24 @@ namespace UnitTests.NonUITests
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV10.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton,ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
 
-            context = Context.GetAsContext(restAct.Context);
-            if (context != null && context.Runner != null)
-            {
-                context.Runner.PrepActionValueExpression(restAct, context.BusinessFlow);
-            }
+            restAct.Active = true;
+            restAct.EnableRetryMechanism = false;
+            restAct.ItemName = "Web API REST";
+            restAct.AddNewReturnParams = true;
 
-            HttpWebClientUtils webAPI = new HttpWebClientUtils();
-            webAPI.RequestContstructor(restAct, null, false);
-            webAPI.CreateRawRequestContent();
+            mBF.Activities[0].Acts.Add(restAct);
 
-            if (webAPI.SendRequest())
+            mDriver.StartDriver();
+            mGR.Executor.RunRunner();
+
+
+            if (restAct.ReturnValues.Count > 0)
             {
-                webAPI.CreatRawResponseContent();
-                string rawResponseContent = webAPI.ResponseFileContent;
-                string beforeDate = rawResponseContent.Substring(0, 19);
-                string afterDate = rawResponseContent.Substring(48);
-                Assert.AreEqual(beforeDate, "HTTP/1.1 OK\r\nDate: ");
-                Assert.AreEqual(afterDate, "\r\nConnection: close\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET, POST, DELETE, PUT\r\nAccess-Control-Allow-Headers: Content-Type, api_key, Authorization\r\nServer: Jetty(9.2.9.v20150224)\r\nContent-Type: application/json\r\n\r\n{\"id\":55,\"category\":{\"id\":0,\"name\":\"string\"},\"name\":\"tomse\",\"photoUrls\":[\"string\"],\"tags\":[{\"id\":0,\"name\":\"string\"}],\"status\":\"available\"}");
+                foreach (ActReturnValue val in restAct.ReturnValues)
+                {
+                    if (val.Actual.ToString() == "OK")
+                        Assert.AreEqual(val.Actual, "OK");
+                }
             }
         }
 

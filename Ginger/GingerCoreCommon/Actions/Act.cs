@@ -132,7 +132,6 @@ namespace GingerCore.Actions
             public static string OutDataSourceTableName = "OutDataSourceTableName";
             public static string OutDSParamMapType = "OutDSParamMapType";
             public static string SupportSimulation = "SupportSimulation";
-            public static string RawResponseButtonVisibility = "RawResponseButtonVisibility";
         }
 
         // Being set by GingerRunner in PrepAction
@@ -240,9 +239,6 @@ namespace GingerCore.Actions
         string mOutDSParamMapType;
 
         public string OutDSParamMapType { get { return mOutDSParamMapType; } set { mOutDSParamMapType = value; OnPropertyChanged(Fields.OutDSParamMapType); } }
-
-        string mRawRequestValues;
-
 
         string mRawResponseValues;
 
