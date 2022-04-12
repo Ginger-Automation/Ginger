@@ -26,7 +26,7 @@ using Ginger.UserControls;
 using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
-using Ginger.Sealights;
+using Ginger.ValidationRules;
 
 namespace Ginger.Reports
 {
@@ -103,13 +103,15 @@ namespace Ginger.Reports
             }
 
             // check if fields have been populated (font-end validation)
-            xSealightsURLTextBox.AddUCValidationRule("Url cannot be empty");
-            xSealighsAgentTokenTextBox.AddUCValidationRule("Token cannot be empty");
-            xSealighsLabIdTextBox.AddUCValidationRule("Lab ID or Build Session ID must be provided");
-            xSealighsBuildSessionIDTextBox.AddUCValidationRule("Lab ID or Build Session ID must be provided");
-            xSealightsTestStageTextBox.AddUCValidationRule("Test Stage cannot be empty");
+            xSealighsBuildSessionIDTextBox.AddEmptyAndDependentValidationRule(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId), "Lab ID or Build Session ID must be provided");
+            xSealighsLabIdTextBox.AddEmptyAndDependentValidationRule(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided");
+            xSealightsURLTextBox.AddEmptyAndDependentValidationRule("Url cannot be empty");
+            xSealighsAgentTokenTextBox.AddEmptyAndDependentValidationRule("Token cannot be empty");
+            xSealightsTestStageTextBox.AddEmptyAndDependentValidationRule("Test Stage cannot be empty");
 
-            xSealighsReportedEntityLevelComboBox.AddValidationRule(new SealightsValidationRule("Reported Entity Level"));
+            xSealighsSessionTimeoutTextBox.AddNumericValidationRule();
+
+            xSealighsReportedEntityLevelComboBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Entity Level cannot be empty"));
 
             xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
                 xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
@@ -180,12 +182,6 @@ namespace Ginger.Reports
                     xCentralExecutionLoggerGrid.Visibility = Visibility.Collapsed;
                 }
             }
-        }
-
-        private void PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9]+");
-            e.Handled = regex.IsMatch(e.Text);
         }
 
         private void xSaveButton_Click(object sender, RoutedEventArgs e)

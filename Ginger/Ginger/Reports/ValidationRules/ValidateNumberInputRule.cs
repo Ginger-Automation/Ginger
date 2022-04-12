@@ -5,25 +5,31 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace Ginger.Actions.Validation
-{
-    public class UCValueExpressionValidationRule : ValidationRule
+namespace Ginger.ValidationRules
+{ 
+    public class ValidateNumberInputRule : ValidationRule
     {
-        private string _Message;
-        public UCValueExpressionValidationRule(string message = "Value must be provided")
+        private string _Message = string.Empty;
+
+        public ValidateNumberInputRule(string message = "Value must be numeric")
         {
             _Message = message;
         }
 
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            if (value == null || string.IsNullOrEmpty(value.ToString()))
+            try
+            {
+                if (value != null && !string.IsNullOrEmpty(value.ToString()))
+                {
+                    int iValue = int.Parse(value.ToString());                    
+                }
+
+                return new ValidationResult(true, null);
+            }
+            catch (Exception err)
             {
                 return new ValidationResult(false, _Message);
-            }
-            else
-            {
-                return new ValidationResult(true, null);
             }
         }
 
