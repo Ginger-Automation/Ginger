@@ -62,11 +62,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             try
             {
                 Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Sealights Session Creation");
-                if (WorkSpace.Instance.RunsetExecutor != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null
-                    && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID != null)
-                {
-                    runsetConfig.ExecutionID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
-                }
+                
                 SealightsReportApiHandler.SendCreationTestSessionToSealightsAsync();
             }
             catch(Exception err)
@@ -155,8 +151,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
         #region Activity
         public override async void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
-        {
-            //await ActivityStartTask(activity);
+        {            
         }
 
       
@@ -213,7 +208,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         #region Action
         public override async void ActionStart(uint eventTime, Act action)
         {
-            //await ActionStartTask(action);
         }
 
  
@@ -223,7 +217,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             {
                 return;
             }
-            //await SendDataOnActionEndTask(action);
         }
 
 
