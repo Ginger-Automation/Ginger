@@ -34,6 +34,7 @@ using Ginger.RunSetLib.CreateCLIWizardLib;
 using Ginger.SolutionCategories;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControlsLib.VisualFlow;
+using Ginger.ValidationRules;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
@@ -625,9 +626,9 @@ namespace Ginger.Run
             xSealighsBuildSessionIDTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID));
                       
             // check if fields have been populated (font-end validation)
-            xSealighsLabIdTextBox.AddEmptyAndDependentValidationRule(mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID), "Lab ID or Build Session ID must be provided");
-            xSealighsBuildSessionIDTextBox.AddEmptyAndDependentValidationRule(mRunSetConfig, nameof(RunSetConfig.SealighsLabId), "Lab ID or Build Session ID must be provided");
-            xSealightsTestStageTextBox.AddEmptyAndDependentValidationRule("Test Stage cannot be empty");
+            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID), "Lab ID or Build Session ID must be provided"));
+            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(mRunSetConfig, nameof(RunSetConfig.SealighsLabId), "Lab ID or Build Session ID must be provided"));
+            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Test Stage cannot be empty"));
 
             xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
             xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
