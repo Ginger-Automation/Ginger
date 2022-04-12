@@ -37,6 +37,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         public Context mContext;
         private long StartTime;
         private long EndTime;
+        private bool RunningInRunsetMode = false;
 
         private SealightsReportApiHandler mSealightsApiHandler;
         public SealightsReportApiHandler SealightsReportApiHandler
@@ -61,6 +62,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             try
             {
+                RunningInRunsetMode = true;
+
                 Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Sealights Session Creation");
                 
                 SealightsReportApiHandler.SendCreationTestSessionToSealightsAsync();
@@ -75,6 +78,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
         public async Task RunSetEnd(RunSetConfig runsetConfig)
         {
+            RunningInRunsetMode = false;
+
             await SealightsReportApiHandler.SendDeleteSessionToSealightsAsync(); // Delete Sealights session
         }
 
@@ -107,18 +112,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
         public override async void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
-            if (SealightsReportApiHandler.TestSessionId == null) // this will make sure not reporting to Sealight for partial execution done from Run set page
+            if (RunningInRunsetMode == false && SealightsReportApiHandler.TestSessionId == null) // this will make sure not reporting to Sealight for partial execution done from Run set page
             {
                 return;
             }
 
             if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.BusinessFlow)
-            {
-                if (!businessFlow.Active || businessFlow.RunStatus == Execution.eRunStatus.Blocked)
-                {
-                    return;
-                }
-                                
+            {                                                
                 var statusItem = new[]
                 {
                     new { Status = "NA", Type = "Skipped" },
@@ -157,7 +157,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
       
         public override async void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
-            if (SealightsReportApiHandler.TestSessionId == null) // this will make sure not reporting to Sealight for partial execution done from Run set page
+            if (RunningInRunsetMode == false && SealightsReportApiHandler.TestSessionId == null) // this will make sure not reporting to Sealight for partial execution done from Run set page
             {
                 return;
             }
@@ -185,7 +185,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
  
         public override async void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
         {
-            if (SealightsReportApiHandler.TestSessionId == null) // this will make sure not reporting to Sealight for partial execution done from Run set page
+            if (RunningInRunsetMode == false && SealightsReportApiHandler.TestSessionId == null) // this will make sure not reporting to Sealight for partial execution done from Run set page
             {
                 return;
             }
