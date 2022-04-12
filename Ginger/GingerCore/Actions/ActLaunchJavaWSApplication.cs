@@ -367,17 +367,17 @@ namespace GingerCore.Actions
 
                     mAttachAgentCancellationToken = new CancellationTokenSource();
                     mAttachAgentTask = Task.Run(() =>
-                       {
-                           mProcessIDForAttach = -1;
-                           if (!PerformAttachGingerAgent()) return;
+                    {
+                        mProcessIDForAttach = -1;
+                        if (!PerformAttachGingerAgent()) return;
 
-                           if (mPort_Calc.Equals(Fields.DynamicPortPlaceHolder) &&
-                               mPortValueAutoResetEvent != null)
-                           {
-                               mPortValueAutoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
-                           }
-                           AddOrUpdateReturnParamActual("Port", mPort_Calc);
-                       }, mAttachAgentCancellationToken.Token);
+                        if (mPort_Calc.Equals(Fields.DynamicPortPlaceHolder) &&
+                            mPortValueAutoResetEvent != null)
+                        {
+                            mPortValueAutoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
+                        }
+                        AddOrUpdateReturnParamActual("Port", mPort_Calc);
+                    }, mAttachAgentCancellationToken.Token);
 
                     mAttachAgentTask.Wait();
                     //Wait Max 30 secs for Attach agent to attach the jar or process to exit
@@ -846,7 +846,7 @@ namespace GingerCore.Actions
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, string.Concat("Error when checking window with processId: ", processId), ex);
             }

@@ -31,6 +31,7 @@ using System.Xml;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Enums;
 using System.IO;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Actions.XML
 {
@@ -148,7 +149,7 @@ namespace GingerCore.Actions.XML
 
                 if (FilePath.Contains("~"))
                 {
-                    FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+                    FilePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FilePath);
                 }
 
                 if (FilePath.EndsWith(".XML", StringComparison.OrdinalIgnoreCase) || FilePath.EndsWith(".JSON", StringComparison.OrdinalIgnoreCase))

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Platform;
 using Amdocs.Ginger.IO;
@@ -237,7 +238,7 @@ namespace GingerCore.Actions.WebAPI
                 //Use Custom Certificate:
                 Handler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 //string path = (mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath).ToString().Replace(@"~\", mAct.SolutionFolder));
-                string path = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
+                string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
 
                 if (!string.IsNullOrEmpty(path))
                 {
@@ -736,7 +737,7 @@ namespace GingerCore.Actions.WebAPI
                                 {
                                     string path = mAct.RequestKeyValues[i].ValueForDriver;
                                     //string FullPath = path.Replace("~\\", mAct.SolutionFolder);
-                                    string FullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(path);
+                                    string FullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(path);
 
                                     FileStream FileStream = File.OpenRead(FullPath);
                                     var streamContent = new StreamContent(FileStream);
@@ -911,7 +912,7 @@ namespace GingerCore.Actions.WebAPI
             string FileContent = string.Empty;
             string TemplateFileName = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser).ToString();
             //string TemplateFileNameFullPath = TemplateFileName.Replace(@"~\", mAct.SolutionFolder);
-            string TemplateFileNameFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TemplateFileName);
+            string TemplateFileNameFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TemplateFileName);
 
             FileStream ReqStream = File.OpenRead(TemplateFileNameFullPath);
 

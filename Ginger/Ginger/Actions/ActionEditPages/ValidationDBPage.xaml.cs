@@ -33,6 +33,10 @@ using System.Windows.Data;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using GingerWPF.BusinessFlowsLib;
+using static GingerCore.Environments.Database;
+using static GingerCore.Actions.ActDBValidation;
+using GingerCore.GeneralLib;
 
 namespace Ginger.Actions
 {
@@ -50,7 +54,7 @@ namespace Ginger.Actions
         public ValidationDBPage(ActDBValidation act)
         {
             InitializeComponent();
-        
+
             this.mAct = act;
 
             if (String.IsNullOrEmpty(mAct.GetInputParamValue("SQL")))
@@ -73,12 +77,12 @@ namespace Ginger.Actions
             QueryFile.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDBValidation.Fields.QueryFile), true, true, UCValueExpression.eBrowserType.File, "sql", BrowseQueryFile_Click, WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
             QueryFile.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
-            
+
             //OLD binding and UI 
             GingerCore.General.FillComboFromEnumObj(ValidationCfgComboBox, act.DBValidationType);
 
             //TODO: fix hard coded
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValidationCfgComboBox, ComboBox.SelectedValueProperty, act,  "DBValidationType");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValidationCfgComboBox, ComboBox.SelectedValueProperty, act, "DBValidationType");
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AppNameComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.AppName);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DBNameComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.DBName);
@@ -88,6 +92,30 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWhere, TextBox.TextProperty, act, ActDBValidation.Fields.Where);
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(CommitDB, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDBValidation.Fields.CommitDB));
 
+            txtInsertJson.ValueTextBox.Text = string.Empty;
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtInsertJson, TextBox.TextProperty, act, nameof(ActDBValidation.InsertJson), BindingMode.TwoWay);
+            txtInsertJson.BindControl(Context.GetAsContext(act.Context), act, nameof(ActDBValidation.InsertJson));
+            txtInsertJson.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.InsertJson), string.Empty),
+                               true, false);
+            txtInsertJson.ValueTextBox.AddValidationRule(new RunSetLib.CreateCLIWizardLib.ValidateJsonFormat());
+
+            txtInsertJson.AdjustHight(200);
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPrimaryKey.ValueTextBox, TextBox.TextProperty, act, nameof(ActDBValidation.CosmosPrimaryKey), BindingMode.TwoWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPrimaryKey.ValueTextBox, TextBox.ToolTipProperty, act, nameof(ActDBValidation.CosmosPrimaryKey), BindingMode.TwoWay);
+            txtPrimaryKey.BindControl(Context.GetAsContext(act.Context), act, nameof(ActDBValidation.CosmosPrimaryKey));
+            txtPrimaryKey.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.CosmosPrimaryKey),
+                (Context.GetAsContext(act.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPartitionKey.ValueTextBox, TextBox.TextProperty, act, nameof(ActDBValidation.CosmosPartitionKey), BindingMode.TwoWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPartitionKey.ValueTextBox, TextBox.ToolTipProperty, act, nameof(ActDBValidation.CosmosPartitionKey), BindingMode.TwoWay);
+            txtPartitionKey.BindControl(Context.GetAsContext(act.Context), act, nameof(ActDBValidation.CosmosPartitionKey));
+            txtPartitionKey.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.CosmosPartitionKey),
+                (Context.GetAsContext(act.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
+
+            txtPartitionKey.ValueTextBox.Text = act.CosmosPartitionKey;
+            txtPrimaryKey.ValueTextBox.Text = act.CosmosPrimaryKey;
+
             KeySpaceComboBox.Items.Add(mAct.Keyspace);
             ComboAutoSelectIfOneItemOnly(KeySpaceComboBox);
             TablesComboBox.Items.Add(mAct.Table);
@@ -96,6 +124,8 @@ namespace Ginger.Actions
             ComboAutoSelectIfOneItemOnly(ColumnComboBox);
             SetVisibleControlsForAction();
             SetQueryParamsGrid();
+            NewAutomatePage.RaiseEnvComboBoxChanged -= NewAutomatePage_RaiseEnvComboBoxChanged;
+            NewAutomatePage.RaiseEnvComboBoxChanged += NewAutomatePage_RaiseEnvComboBoxChanged;
         }
 
         private async void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -111,23 +141,23 @@ namespace Ginger.Actions
                 if (await UserKeepsTyping() || QueryFile.ValueTextBox.Text == null) return;
             }
             string FileName = QueryFile.ValueTextBox.Text;
-            if (FileName != "" && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName)))
-            {  
-                parseScriptHeader(FileName);  
+            if (FileName != "" && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FileName)))
+            {
+                parseScriptHeader(FileName);
             }
         }
 
         public void parseScriptHeader(string FileName)
         {
             mAct.QueryParams.Clear();
-            string[] script = File.ReadAllLines(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName));
+            string[] script = File.ReadAllLines(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FileName));
 
             foreach (string line in script)
             {
                 var pattern = @"<<([^<^>].*?)>>"; // like div[1]
                                                   // Parse the XPath to extract the nodes on the path
                 var matches = Regex.Matches(line, pattern);
-                foreach(Match match in matches)
+                foreach (Match match in matches)
                 {
                     ActInputValue AIV = (from aiv in mAct.QueryParams where aiv.Param == match.Groups[1].Value select aiv).FirstOrDefault();
                     if (AIV == null)
@@ -137,8 +167,8 @@ namespace Ginger.Actions
 
                         AIV.Param = match.Groups[1].Value;
                         mAct.QueryParams.Add(AIV);
-                        AIV.Value = "";                        
-                    }                    
+                        AIV.Value = "";
+                    }
                 }
             }
 
@@ -178,16 +208,16 @@ namespace Ginger.Actions
             }
         }
 
-        
+
         /// <summary>
         /// Fill the environments Applications combo box
         /// </summary>
         private void FillAppComboBox()
-        {            
+        {
             AppNameComboBox.Items.Clear();
 
             if (Context.GetAsContext(mAct.Context) != null && Context.GetAsContext(mAct.Context).Environment != null)
-            {                
+            {
                 pe = (from e in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where e.Name == Context.GetAsContext(mAct.Context).Environment.Name select e).FirstOrDefault();
 
                 if (pe == null)
@@ -200,6 +230,7 @@ namespace Ginger.Actions
                 }
                 ComboAutoSelectIfOneItemOnly(AppNameComboBox);
             }
+
         }
 
         private void AppNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -217,7 +248,7 @@ namespace Ginger.Actions
             foreach (Database db in EA.Dbs)
             {
                 DBNameComboBox.Items.Add(db.Name);
-                
+
             }
             ComboAutoSelectIfOneItemOnly(DBNameComboBox);
         }
@@ -227,10 +258,30 @@ namespace Ginger.Actions
             KeySpaceComboBox.Items.Clear();
             TablesComboBox.Items.Clear();
             ColumnComboBox.Items.Clear();
+            string dbName = ((ComboBox)sender).SelectedItem.ToString();
+            db = (Database)EA.Dbs.First(m => m.Name == dbName);
+            if (db.DBType.Equals(eDBTypes.CosmosDb))
+            {
+                if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())) == null
+                    || ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())).Count() == 0)
+                {
+                    ValidationCfgComboBox.Items.Add(new ComboEnumItem() { text = "Insert", Value = eDBValidationType.Insert });
+                }
+            }
+            else
+            {
+                if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())) != null
+                    && ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())).Count() != 0)
+                {
+                    ValidationCfgComboBox.SelectedIndex = 0;
+                    ValidationCfgComboBox.Items.Remove(ValidationCfgComboBox.Items.Cast<ComboEnumItem>().First(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())));
+                }
+            }
+            SetVisibleControlsForAction();
         }
 
         private void TablesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {            
+        {
             ColumnComboBox.Items.Clear();
         }
 
@@ -238,7 +289,7 @@ namespace Ginger.Actions
         {
             KeySpaceComboBox.Items.Clear();
             string DBName = DBNameComboBox.Text;
-            db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
+            db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
             if (db == null) return;
             if (db.DBType == Database.eDBTypes.Cassandra)
             {
@@ -250,7 +301,8 @@ namespace Ginger.Actions
                 {
                     KeySpaceComboBox.Items.Add(s);
                 }
-            }else if (db.DBType == Database.eDBTypes.Couchbase)
+            }
+            else if (db.DBType == Database.eDBTypes.Couchbase)
             {
                 NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCouchbase(db);
@@ -271,9 +323,13 @@ namespace Ginger.Actions
                 Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Loading Tables...");
                 TablesComboBox.Items.Clear();
                 string DBName = DBNameComboBox.Text;
-                db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
+                db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
                 if (db == null) return;
                 string KeySpace = KeySpaceComboBox.Text;
+                if (db.DatabaseOperations == null)
+                {
+                    db.DatabaseOperations = new DatabaseOperations(db);
+                }
                 List<string> Tables = db.DatabaseOperations.GetTablesList(KeySpace);
                 if (Tables == null)
                 {
@@ -290,17 +346,17 @@ namespace Ginger.Actions
                 Reporter.HideStatusMessage();
             }
         }
-        
+
         private void ColumnComboBox_DropDownOpened(object sender, EventArgs e)
         {
             ColumnComboBox.Items.Clear();
             string DBName = DBNameComboBox.Text;
-            db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
+            db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
             if (db == null) return;
             string table;
             if (db.DBType == Database.eDBTypes.Cassandra)
             {
-                 table = KeySpaceComboBox.Text + "." + TablesComboBox.Text;
+                table = KeySpaceComboBox.Text + "." + TablesComboBox.Text;
             }
             else
             {
@@ -310,7 +366,7 @@ namespace Ginger.Actions
             if (Columns == null)
             {
                 return;
-            }                
+            }
             foreach (string s in Columns)
             {
                 ColumnComboBox.Items.Add(s);
@@ -335,109 +391,203 @@ namespace Ginger.Actions
                 TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 return;
             }
+            if (!string.IsNullOrEmpty(AppNameComboBox.Text))
+            {
+                EA = pe.Applications.FirstOrDefault(m => m.Name.Equals(AppNameComboBox.Text));
+            }
+
 
             //Ugly code but working, find way to make it simple use the enum val from combo
             ActDBValidation.eDBValidationType validationType = (ActDBValidation.eDBValidationType)ValidationCfgComboBox.SelectedValue;
 
-            switch (validationType)
+            if (EA != null)
             {
-                case ActDBValidation.eDBValidationType.UpdateDB:
-                    RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
-                    checkQueryType();
-                    TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                    FreeSQLLabel.Content = "Update DB SQL:";
-                    DoCommit.Visibility = System.Windows.Visibility.Visible;
-                    Keyspace.Visibility = System.Windows.Visibility.Collapsed;
-                    break;
-                case ActDBValidation.eDBValidationType.FreeSQL:
-                    checkQueryType();
-                    RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
-                    if (mAct.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
-                    {
-                        FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
+                txtInsertJson.Visibility = Visibility.Collapsed;
+                lblInsertJson.Visibility = Visibility.Collapsed;
+                gridInsertJson.Visibility = Visibility.Collapsed;
+                imgHelpSql.Visibility = Visibility.Collapsed;
+                switch (validationType)
+                {
+                    case ActDBValidation.eDBValidationType.UpdateDB:
+                        string dbName = DBNameComboBox.Text;
+                        db = (Database)(from d in EA.Dbs where d.Name == dbName select d).FirstOrDefault();
+                        RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
+                        checkQueryType();
+                        TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                        FreeSQLLabel.Content = "Update DB SQL:";
+                        DoCommit.Visibility = Visibility.Visible;
+                        Keyspace.Visibility = Visibility.Collapsed;
+                        if (db.DBType == Database.eDBTypes.CosmosDb)
+                        {
+                            FreeSQLStackPanel.Visibility = Visibility.Collapsed;
+                            TableColWhereStackPanel.Visibility = Visibility.Visible;
+                            txtWhere.Visibility = Visibility.Collapsed;
+                            lblWhere.Visibility = Visibility.Hidden;
+                            TableColWhereStackPanel.Height = 40;
+                            DoCommit.Visibility = Visibility.Collapsed;
+                            FreeSQLStackPanel.Visibility = Visibility.Collapsed;
+                            DoUpdate.Visibility = Visibility.Visible;
+                            RadioButtonsSection.Visibility = Visibility.Collapsed;
+                            UpdateDbParametersGrid.Visibility = Visibility.Visible;
+                            SetGridView();
+                        }
+                        else
+                        {
+                            FreeSQLStackPanel.Visibility = Visibility.Visible;
+                            TableColWhereStackPanel.Visibility = Visibility.Collapsed;
+                            txtWhere.Visibility = Visibility.Visible;
+                            lblWhere.Visibility = Visibility.Visible;
+                            TableColWhereStackPanel.Height = 244;
+                            DoCommit.Visibility = Visibility.Visible;
+                            DoUpdate.Visibility = Visibility.Collapsed;
+                            FreeSQLStackPanel.Visibility = Visibility.Visible;
+                            RadioButtonsSection.Visibility = Visibility.Visible;
+                        }
+                        break;
+                    case ActDBValidation.eDBValidationType.FreeSQL:
+                        TableColWhereStackPanel.Visibility = Visibility.Collapsed;
+                        txtWhere.Visibility = Visibility.Visible;
+                        lblWhere.Visibility = Visibility.Visible;
+                        TableColWhereStackPanel.Height = 244;
+                        checkQueryType();
+                        RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
+                        if (mAct.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
+                        {
+                            FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
+                            SqlFile.Visibility = System.Windows.Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            SqlFile.Visibility = System.Windows.Visibility.Visible;
+                            FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+
+                            if (mAct.QueryParams != null)
+                            {
+                                if (mAct.QueryParams.Count > 0)
+                                    QueryParamsPanel.Visibility = Visibility.Visible;
+                                else
+                                    QueryParamsPanel.Visibility = Visibility.Collapsed;
+                                QueryParamsGrid.DataSourceList = mAct.QueryParams;
+                            }
+                        }
+                        DoCommit.Visibility = System.Windows.Visibility.Collapsed;
+                        DoUpdate.Visibility = Visibility.Collapsed;
+                        TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                        FreeSQLLabel.Content = "Free SQL:";
+                        Keyspace.Visibility = System.Windows.Visibility.Collapsed;
+                        break;
+                    case ActDBValidation.eDBValidationType.SimpleSQLOneValue:
+                        checkQueryType();
+                        try
+                        {
+                            string DBName = DBNameComboBox.Text;
+                            db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
+                            if (!(db == null))
+                            {
+                                if (db.DBType == Database.eDBTypes.Cassandra)
+                                {
+                                    Keyspace.Visibility = System.Windows.Visibility.Visible;
+                                }
+                                else
+                                {
+                                    Keyspace.Visibility = System.Windows.Visibility.Collapsed;
+                                }
+                            }
+                        }
+                        catch { }
+                        FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                        RadioButtonsSection.Visibility = System.Windows.Visibility.Collapsed;
+                        TableColWhereStackPanel.Visibility = System.Windows.Visibility.Visible;
+                        DoCommit.Visibility = System.Windows.Visibility.Collapsed;
+                        DoUpdate.Visibility = Visibility.Collapsed;
                         SqlFile.Visibility = System.Windows.Visibility.Collapsed;
+                        txtWhere.Visibility = Visibility.Visible;
+                        lblWhere.Visibility = Visibility.Visible;
+                        TableColWhereStackPanel.Height = 244;
+                        break;
+                    case ActDBValidation.eDBValidationType.RecordCount:
+                        TableColWhereStackPanel.Visibility = Visibility.Collapsed;
+                        txtWhere.Visibility = Visibility.Visible;
+                        lblWhere.Visibility = Visibility.Visible;
+                        TableColWhereStackPanel.Height = 244;
+                        imgHelpSql.Visibility = Visibility.Visible;
+                        checkQueryType();
+                        try
+                        {
+                            string DBName = DBNameComboBox.Text;
+                            db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
+                            if (!(db == null))
+                            {
+                                if (db.DBType == Database.eDBTypes.Cassandra)
+                                {
+                                    Keyspace.Visibility = System.Windows.Visibility.Visible;
+                                }
+                                else
+                                {
+                                    Keyspace.Visibility = System.Windows.Visibility.Collapsed;
+                                }
+                            }
+                        }
+                        catch { }
+                        RadioButtonsSection.Visibility = System.Windows.Visibility.Collapsed;
+                        FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
+                        TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                        DoCommit.Visibility = System.Windows.Visibility.Collapsed;
+                        DoUpdate.Visibility = Visibility.Collapsed;
+                        SqlFile.Visibility = System.Windows.Visibility.Collapsed;
+                        FreeSQLLabel.Content = @"Record count";
+                        break;
+                    case eDBValidationType.Insert:
+                        DoUpdate.Visibility = Visibility.Visible;
+                        txtInsertJson.Visibility = Visibility.Visible;
+                        lblInsertJson.Visibility = Visibility.Visible;
+                        gridInsertJson.Visibility = Visibility.Visible;
+                        lblColumn.Visibility = Visibility.Collapsed;
+                        Keyspace.Visibility = Visibility.Collapsed;
+                        KeyspaceCmbStack.Visibility = Visibility.Collapsed;
+                        ColumnStack.Visibility = Visibility.Collapsed;
+                        UpdateDbParametersGrid.Visibility = Visibility.Collapsed;
+                        FreeSQLStackPanel.Visibility = Visibility.Collapsed;
+                        TableColWhereStackPanel.Visibility = Visibility.Visible;
+                        TableColWhereStackPanel.Height = 40;
+                        txtWhere.Visibility = Visibility.Collapsed;
+                        lblWhere.Visibility = Visibility.Hidden;
+                        DoCommit.Visibility = Visibility.Collapsed;
+                        FreeSQLStackPanel.Visibility = Visibility.Collapsed;
+                        RadioButtonsSection.Visibility = Visibility.Collapsed;
+                        break;
+                }
+                if (db != null)
+                {
+                    if (db.DBType == Database.eDBTypes.CosmosDb)
+                    {
+                        lblColumn.Visibility = Visibility.Collapsed;
+                        if (ColumnsVEButton != null)
+                        {
+                            ColumnsVEButton.Visibility = Visibility.Collapsed;
+                        }
+                        ColumnComboBox.Visibility = Visibility.Collapsed;
                     }
                     else
                     {
-                        SqlFile.Visibility = System.Windows.Visibility.Visible;
-                        FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-
-                        if(mAct.QueryParams != null)
+                        lblColumn.Visibility = Visibility.Visible;
+                        if (ColumnsVEButton != null)
                         {
-                            if (mAct.QueryParams.Count > 0)
-                                QueryParamsPanel.Visibility = Visibility.Visible;
-                            else
-                                QueryParamsPanel.Visibility = Visibility.Collapsed;
-                            QueryParamsGrid.DataSourceList = mAct.QueryParams;
+                            ColumnsVEButton.Visibility = Visibility.Visible;
                         }
+                        ColumnComboBox.Visibility = Visibility.Visible;
                     }
-                    DoCommit.Visibility = System.Windows.Visibility.Collapsed;
-                    TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                    FreeSQLLabel.Content = "Free SQL:";
-                    Keyspace.Visibility = System.Windows.Visibility.Collapsed;
-                    break;
-                case ActDBValidation.eDBValidationType.SimpleSQLOneValue:
-                    checkQueryType();
-                    try
-                    {
-                        string DBName = DBNameComboBox.Text;
-                        db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
-                        if (!(db == null))
-                        {
-                            if (db.DBType == Database.eDBTypes.Cassandra)
-                            {
-                                Keyspace.Visibility = System.Windows.Visibility.Visible;
-                            }
-                            else
-                            {
-                                Keyspace.Visibility = System.Windows.Visibility.Collapsed;
-                            }
-                        }
-                    }
-                    catch { }
-                    FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                    RadioButtonsSection.Visibility = System.Windows.Visibility.Collapsed;
-                    TableColWhereStackPanel.Visibility = System.Windows.Visibility.Visible;
-                    DoCommit.Visibility = System.Windows.Visibility.Collapsed;
-                    SqlFile.Visibility = System.Windows.Visibility.Collapsed;                    
-                    break;
-                case ActDBValidation.eDBValidationType.RecordCount:
-                    checkQueryType();
-                    try
-                    {
-                        string DBName = DBNameComboBox.Text;
-                        db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
-                        if (!(db == null))
-                        {
-                            if (db.DBType == Database.eDBTypes.Cassandra)
-                            {
-                                Keyspace.Visibility = System.Windows.Visibility.Visible;
-                            }
-                            else
-                            {
-                                Keyspace.Visibility = System.Windows.Visibility.Collapsed;
-                            }
-                        }
-                    }
-                    catch { }
-                    RadioButtonsSection.Visibility = System.Windows.Visibility.Collapsed;
-                    FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
-                    TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                    DoCommit.Visibility = System.Windows.Visibility.Collapsed;
-                    SqlFile.Visibility = System.Windows.Visibility.Collapsed;
-                    FreeSQLLabel.Content = @"Record count - SELECT COUNT(1) FROM {Table} - Enter only Table name below (+optional WHERE clause)";
-                    break;
-
+                }
             }
         }
-        
+
         private void DBNamVEButton_Click(object sender, RoutedEventArgs e)
         {
             ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActDBValidation.Fields.DBName, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
             DBNameComboBox.Text = mAct.DBName;
         }
-        
+
         private void AppNamVEButton_Click(object sender, RoutedEventArgs e)
         {
             ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActDBValidation.Fields.AppName, Context.GetAsContext(mAct.Context));
@@ -488,9 +638,9 @@ namespace Ginger.Actions
             if (mAct.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
             {
                 FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
-                SqlFile.Visibility = System.Windows.Visibility.Collapsed;               
+                SqlFile.Visibility = System.Windows.Visibility.Collapsed;
             }
-            else 
+            else
             {
                 SqlFile.Visibility = System.Windows.Visibility.Visible;
                 FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -499,10 +649,10 @@ namespace Ginger.Actions
 
         public void BrowseQueryFile_Click(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             if (!String.IsNullOrEmpty(QueryFile.ValueTextBox.Text))
             {
-                if(!System.IO.File.Exists(QueryFile.ValueTextBox.Text))
+                if (!System.IO.File.Exists(QueryFile.ValueTextBox.Text))
                 {
                     return;
                 }
@@ -512,7 +662,7 @@ namespace Ginger.Actions
                     FileName = FileName.Replace(SolutionFolder, @"~\");
                 }
 
-                QueryFile.ValueTextBox.Text = FileName;                
+                QueryFile.ValueTextBox.Text = FileName;
             }
         }
 
@@ -521,6 +671,41 @@ namespace Ginger.Actions
             ActInputValue AIV = (ActInputValue)QueryParamsGrid.CurrentItem;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
+        }
+
+        private void NewAutomatePage_RaiseEnvComboBoxChanged(object sender, EventArgs e)
+        {
+            FillAppComboBox();
+        }
+
+        private void TablesComboBox_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            ColumnComboBox.Items.Clear();
+        }
+
+        private void SetGridView()
+        {
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+            view.GridColsView.Add(new GridColView() { Field = nameof(CosmosPatchInputValues.Param), Header = "Path", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(CosmosPatchInputValues.Value), Header = "Value", WidthWeight = 150 });
+
+            UpdateDbParametersGrid.SetAllColumnsDefaultView(view);
+            UpdateDbParametersGrid.InitViewItems();
+            UpdateDbParametersGrid.SetTitleLightStyle = true;
+            UpdateDbParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPatchOperationForCosmos));
+            UpdateDbParametersGrid.btnDown.Visibility = Visibility.Collapsed;
+            UpdateDbParametersGrid.btnUp.Visibility = Visibility.Collapsed;
+            UpdateDbParametersGrid.btnClearAll.Visibility = Visibility.Collapsed;
+            UpdateDbParametersGrid.btnRefresh.Visibility = Visibility.Collapsed;
+
+            UpdateDbParametersGrid.DataSourceList = mAct.CosmosPatchInputValues;
+        }
+
+        private void AddPatchOperationForCosmos(object sender, RoutedEventArgs e)
+        {
+            CosmosPatchInputValues cosmosPatchInput = new CosmosPatchInputValues();
+            mAct.CosmosPatchInputValues.Add(cosmosPatchInput);
         }
     }
 }

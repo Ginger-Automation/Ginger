@@ -1578,7 +1578,7 @@ namespace Ginger.Actions
                     //    ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
                     //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, ds.FileFullPath);
                     //}
-                    ds.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ds.FilePath);
+                    ds.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ds.FilePath);
 
                     List<string> dsTableNames = new List<string>();
                     mDSTableList.Clear();

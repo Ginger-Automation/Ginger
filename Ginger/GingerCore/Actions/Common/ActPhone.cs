@@ -74,8 +74,17 @@ namespace GingerCore.Actions.Common
             WaitForRing            
         }
 
-        [IsSerializedForLocalRepository]
-        public ePhoneAction PhoneAction { get; set; }
+        public ePhoneAction PhoneAction
+        {
+            get
+            {
+                return (ePhoneAction)GetOrCreateInputParam<ePhoneAction>(nameof(PhoneAction), ePhoneAction.Dial);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PhoneAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

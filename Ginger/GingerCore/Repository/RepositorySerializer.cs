@@ -95,7 +95,7 @@ namespace GingerCore.Repository
                 return string.Empty;
         }
 
-       
+
 
         //TODO: later on get back this function it is more organize, but causing saving problems  -to be fixed later
         private void xmlwriteObject(XmlTextWriter xml, RepositoryItemBase ri)
@@ -150,7 +150,7 @@ namespace GingerCore.Repository
                 IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(fi, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
                 if (token == null) continue;
 
-                
+
                 if (IsObseravbleListLazyLoad(fi.Name))
                 {
                     bool b = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).LazyLoad;
@@ -163,7 +163,7 @@ namespace GingerCore.Repository
                         return;
                     }
                 }
-                
+
 
                 v = ri.GetType().GetField(fi.Name).GetValue(ri);
                 if (v != null)
@@ -268,7 +268,7 @@ namespace GingerCore.Repository
                 }
 
                 // first check if we need to auto upgrade the xml to latest ginger version               
-                
+
                 return DeserializeFromText(t, xml);
             }
             else
@@ -370,7 +370,7 @@ namespace GingerCore.Repository
         private static void xmlReadListOfObjects(object ParentObj, XmlReader xdr, IObservableList observableList)
         {
             // read list of object into the list, add one by one, like activities, actions etc.            
-            
+
             //Fast Load
             if (IsObseravbleListLazyLoad(xdr.Name))
             {
@@ -381,7 +381,7 @@ namespace GingerCore.Repository
                 //Lazy load was not really implemented for old RepositorySerilizer
                 return;
             }
-            
+
             xdr.Read();
             while (xdr.NodeType != XmlNodeType.EndElement)
             {
@@ -408,9 +408,8 @@ namespace GingerCore.Repository
 
         static Assembly GingerAssembly = System.Reflection.Assembly.Load("Ginger");
         static Assembly GingerCoreAssembly = System.Reflection.Assembly.GetExecutingAssembly();
-        static Assembly GingerCoreCommon = typeof(RepositoryItemBase).Assembly;
-        static Assembly GingerCoreNET = typeof(HTMLReportConfiguration).Assembly;
-
+        static Assembly GingerCoreCommon = System.Reflection.Assembly.Load("GingerCoreCommon");
+        static Assembly GingerCoreNET = System.Reflection.Assembly.Load("GingerCoreNET");
 
         private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null)
         {
@@ -437,11 +436,11 @@ namespace GingerCore.Repository
 
                 // We first try in current assembly = GingerCore
                 if (targetObj == null)
-                {                   
-                    obj = GingerCoreAssembly.CreateInstance(ClassName);                    
+                {
+                    obj = GingerCoreAssembly.CreateInstance(ClassName);
                 }
                 else
-                { 
+                {
                     obj = targetObj; //used for DeepCopy to objects fields
                 }
 
@@ -464,14 +463,14 @@ namespace GingerCore.Repository
                     if (ClassName == "GingerCore.Environments.GeneralParam") ClassName = typeof(GeneralParam).FullName;
                     if (ClassName == "Ginger.TagsLib.RepositoryItemTag") ClassName = typeof(RepositoryItemTag).FullName;
                     if (ClassName == "GingerCore.Platforms.ApplicationPlatform") ClassName = typeof(ApplicationPlatform).FullName;
-                    
-                    
+
+
                     obj = GingerCoreCommon.CreateInstance(ClassName);
                 }
 
 
                 if (obj == null) //GingerCoreNET assembly
-                {                    
+                {
                     obj = GingerCoreNET.CreateInstance(ClassName);
                 }
 
@@ -490,12 +489,12 @@ namespace GingerCore.Repository
                     // Check if it one obj attr or list
                     string attrName = xdr.Name;
 
-                    MemberInfo mi = obj.GetType().GetMember(attrName).SingleOrDefault(); 
+                    MemberInfo mi = obj.GetType().GetMember(attrName).SingleOrDefault();
 
                     // New to support prop and field - like BF.Activities
                     if (mi.MemberType == MemberTypes.Field)
                     {
-                        FieldInfo FI = (FieldInfo)mi;                         
+                        FieldInfo FI = (FieldInfo)mi;
                         // We check if it is list by arg count - List<string> will have string etc...
                         // another option is check the nake to start with List, Observe...
                         //or find a better way
@@ -543,7 +542,7 @@ namespace GingerCore.Repository
                         }
                     }
 
-                    
+
                     if (xdr.NodeType == XmlNodeType.EndElement)
                     {
                         xdr.ReadEndElement();
@@ -626,8 +625,8 @@ namespace GingerCore.Repository
                             }
                             else
                             {
-                                lst = (IObservableList)result;                 
-                                
+                                lst = (IObservableList)result;
+
                             }
                             //assign it to the relevant obj
                             pi.SetValue(obj, lst);
@@ -704,7 +703,7 @@ namespace GingerCore.Repository
                 xdr.MoveToNextAttribute();
             }
             catch (Exception ex)
-            {                
+            {
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message);
             }
         }

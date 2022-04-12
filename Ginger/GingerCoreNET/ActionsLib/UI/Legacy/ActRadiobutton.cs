@@ -73,8 +73,17 @@ namespace GingerCore.Actions
             GetStyle = 24,
         }
 
-        [IsSerializedForLocalRepository]
-        public eActRadioButtonAction RadioButtonAction { get; set; }
+        public eActRadioButtonAction RadioButtonAction
+        {
+            get
+            {
+                return (eActRadioButtonAction)GetOrCreateInputParam<eActRadioButtonAction>(nameof(RadioButtonAction), eActRadioButtonAction.SelectByIndex);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(RadioButtonAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

@@ -248,7 +248,7 @@ namespace GingerCore.Actions.ScreenCapture
                 }
                 
                 //FilePath = FilePath.Replace("~\\", f.SolutionFolder);
-                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FilePath);
 
                 bitmap.Save(FilePath, ImageFormat.Png);
             }

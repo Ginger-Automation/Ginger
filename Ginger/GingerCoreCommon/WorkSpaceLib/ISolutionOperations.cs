@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -23,6 +23,7 @@ namespace Ginger.SolutionGeneral
     public interface ISolutionOperations
     {
         bool AddValidationString();
+        string ConvertSolutionRelativePath(string relativePath);
         bool FetchEncryptionKey();
         bool SaveEncryptionKey();
         void SaveSolution(bool showWarning = true, Solution.eSolutionItemToSave solutionItemToSave = Solution.eSolutionItemToSave.GeneralDetails);

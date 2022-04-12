@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -35,7 +35,5 @@ namespace Amdocs.Ginger.Common
         [JsonProperty]
         public string Description { get; internal set; }
 
-        [JsonProperty]
-        public List<ActionInputValueInfo> InputValues = new List<ActionInputValueInfo>();
     }
 }

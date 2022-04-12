@@ -80,36 +80,41 @@ namespace GingerCore.Actions.MainFrame
             AfterCaretPosition
 
         }
-        private eDetailsToFetch mDetailsToFetch = eDetailsToFetch.GetText;
-        private eTextInstance mTextInstance = eTextInstance.FirstInstance;
 
-        [IsSerializedForLocalRepository]
         public eDetailsToFetch DetailsToFetch
         {
             get
             {
-                return mDetailsToFetch;
+                return (eDetailsToFetch)GetOrCreateInputParam<eDetailsToFetch>(nameof(DetailsToFetch), eDetailsToFetch.GetText);
             }
             set
             {
-                mDetailsToFetch = value;
+                AddOrUpdateInputParamValue(nameof(DetailsToFetch), value.ToString());
             }
         }
-        [IsSerializedForLocalRepository]
         public eTextInstance TextInstanceType
         {
             get
             {
-                return mTextInstance;
+                return (eTextInstance)GetOrCreateInputParam<eTextInstance>(nameof(TextInstanceType), eTextInstance.FirstInstance);
             }
             set
             {
-                mTextInstance = value;
+                AddOrUpdateInputParamValue(nameof(TextInstanceType), value.ToString());
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public string TextInstanceNumber { get; set; }
+        public string TextInstanceNumber
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(TextInstanceNumber)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(TextInstanceNumber), value);
+            }
+        }
 
     }
 }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -26,6 +26,8 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using GingerCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {
@@ -288,16 +290,19 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public static string RemoveInvalidFileNameChars(string fileName)
         {
-            foreach (char invalidChar in Path.GetInvalidFileNameChars())
+            if (!string.IsNullOrEmpty(fileName))
             {
-                fileName = fileName.Replace(invalidChar.ToString(), "");
+                foreach (char invalidChar in Path.GetInvalidFileNameChars())
+                {
+                    fileName = fileName.Replace(invalidChar.ToString(), "");
+                }
+                fileName = fileName.Replace(@".", "");
+                fileName = fileName.Replace(@"?", "");  // on Linux it is valid but we do not want it
+                                                        // !!!!!!!!!!!!!!!!!
+                                                        //TODO: add more chars remove - see https://blog.josephscott.org/2007/02/12/things-that-shouldnt-be-in-file-names-for-1000-alex/
             }
-            fileName = fileName.Replace(@".", "");
-            fileName = fileName.Replace(@"?", "");  // on Linux it is valid but we do not want it
-            // !!!!!!!!!!!!!!!!!
-            //TODO: add more chars remove - see https://blog.josephscott.org/2007/02/12/things-that-shouldnt-be-in-file-names-for-1000-alex/
-
             return fileName;
+
         }
 
         public static string RemoveInvalidCharsCombinePath(string filePath, string fileName)
@@ -458,6 +463,46 @@ namespace Amdocs.Ginger.Common.GeneralLib
             //TODO: move this func to General
             bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
             return designMode;
+        }
+
+        public static bool IsNumeric(string sValue)
+        {
+            // simple method to check is strign is number
+            // there are many other alternatives, just keep it simple and make sure it run fast as it is going to be used a lot, for every return value calc   
+            // regec and other are more expensive
+
+            foreach (char c in sValue)
+            {
+                if (!char.IsDigit(c) && c != '.')
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public static Dictionary<string, object> DeserializeJson(string json)
+        {
+            if (json.StartsWith("["))
+            {
+                Dictionary<string, object> dictionary = new Dictionary<string, object>();
+
+                JArray a = JArray.Parse(json);
+
+                int ArrayCount = 1;
+                foreach (JObject o in a.Children<JObject>())
+                {
+                    dictionary.Add(ArrayCount.ToString(), o);
+                    ArrayCount++;
+
+                }
+                return dictionary;
+            }
+            else
+            {
+                Dictionary<string, object> dictionary =
+                    JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                return dictionary;
+            }
         }
     }
 }

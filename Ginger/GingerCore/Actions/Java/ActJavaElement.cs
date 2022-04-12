@@ -144,12 +144,30 @@ namespace GingerCore.Actions.Java
             SetFocus
         }
         
-        [IsSerializedForLocalRepository]
-        public eControlAction ControlAction { get; set; }
-        
-        [IsSerializedForLocalRepository]
-        public eWaitForIdle WaitforIdle { get; set; }        
-        
+        public eControlAction ControlAction
+        {
+            get
+            {
+                return (eControlAction)GetOrCreateInputParam<eControlAction>(nameof(ControlAction), eControlAction.SetValue);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ControlAction), value.ToString());
+            }
+        }
+
+        public eWaitForIdle WaitforIdle
+        {
+            get
+            {
+                return (eWaitForIdle)GetOrCreateInputParam<eWaitForIdle>(nameof(WaitforIdle), eWaitForIdle.None);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(WaitforIdle), value.ToString());
+            }
+        }
+
         //TODO: ColomnNum should not be here
         public string ColomnNum
         {
