@@ -26,7 +26,6 @@ using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.Actions
@@ -67,7 +66,7 @@ namespace Ginger.Actions
             xURLSrcRadioButton.Init(typeof(ActBrowserElement.eURLSrc), xURLSrcRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString()), URLSrcRadioButton_Clicked);
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy);
             xImplicitWaitVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.ImplicitWait);
-            xNetworkUrlPnl.Visibility = Visibility.Collapsed;
+
             SetVisibleControlsForAction();
         }
 
@@ -226,24 +225,5 @@ namespace Ginger.Actions
             LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), mAct, null, mAct, nameof(ActBrowserElement.Fields.PomGUID), true);
             xPOMUrlFrame.Content = locateByPOMElementPage;
         }
-
-        private void XNetworkEnableCheckBox_CheckChanged(object sender, RoutedEventArgs e)
-        {
-            SetNetwrokURlPnl();
-        }
-
-        private void SetNetwrokURlPnl()
-        {
-            if (xNetworkEnableCheckBox.IsChecked == true)
-            {
-                xNetworkUrlPnl.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xNetworkUrlPnl.Visibility = Visibility.Collapsed;
-            }
-        }
-
-
     }
 }
