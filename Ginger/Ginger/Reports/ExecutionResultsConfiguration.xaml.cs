@@ -103,13 +103,13 @@ namespace Ginger.Reports
             }
 
             // check if fields have been populated (font-end validation)
-            xSealighsBuildSessionIDTextBox.AddEmptyAndDependentValidationRule(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId), "Lab ID or Build Session ID must be provided");
-            xSealighsLabIdTextBox.AddEmptyAndDependentValidationRule(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided");
-            xSealightsURLTextBox.AddEmptyAndDependentValidationRule("Url cannot be empty");
-            xSealighsAgentTokenTextBox.AddEmptyAndDependentValidationRule("Token cannot be empty");
-            xSealightsTestStageTextBox.AddEmptyAndDependentValidationRule("Test Stage cannot be empty");
+            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId), "Lab ID or Build Session ID must be provided"));
+            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
+            xSealightsURLTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Url cannot be empty"));
+            xSealighsAgentTokenTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Token cannot be empty"));
+            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Test Stage cannot be empty"));
 
-            xSealighsSessionTimeoutTextBox.AddNumericValidationRule();
+            xSealighsSessionTimeoutTextBox.ValueTextBox.AddValidationRule(new ValidateNumberInputRule());
 
             xSealighsReportedEntityLevelComboBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Entity Level cannot be empty"));
 

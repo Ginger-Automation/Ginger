@@ -55,21 +55,6 @@ namespace Ginger.BusinessFlowWindows
                 }
         }
 
-        public void AddEmptyAndDependentValidationRule(string message = "Value must be provided")
-        {
-            ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(message)); 
-        }
-
-        public void AddEmptyAndDependentValidationRule(object dependentObj, string dependentObjField, string message = "Value must be provided")
-        {
-            ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(dependentObj, dependentObjField, message));
-        }
-
-        public void AddNumericValidationRule(string message = "Value must be numeric")
-        {
-            ValueTextBox.AddValidationRule(new ValidateNumberInputRule(message));
-        }
-
         public void Init(Context context, object obj, string AttrName)
         {
             // If the VE is on stand alone form:
