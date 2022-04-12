@@ -562,7 +562,7 @@ namespace UnitTests.NonUITests
             webAPI.CreateRawRequestContent();
 
             string rawRequestContent = webAPI.RequestFileContent;
-            Assert.AreEqual(rawRequestContent, "GET https://petstore.swagger.io/v2/user/login HTTP/1.1\r\nAuthorization: Basic dG9tNTAxMjoxMjM0NTY3OA==\r\nAccept: application/json\r\nHost: petstore.swagger.io\r\n\r\n");
+            Assert.AreEqual(rawRequestContent, $"GET https://petstore.swagger.io/v2/user/login HTTP/1.1{Environment.NewLine}Authorization: Basic dG9tNTAxMjoxMjM0NTY3OA=={Environment.NewLine}Accept: application/json{Environment.NewLine}Host: petstore.swagger.io{Environment.NewLine}{Environment.NewLine}");
         }
 
         [TestMethod]

@@ -399,7 +399,6 @@ namespace GingerCore.Actions.WebAPI
                 else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "XwwwFormUrlEncoded"))
                 {
                     HttpContent UrlEncoded = new FormUrlEncodedContent(ConstructURLEncoded((ActWebAPIRest)mAct));
-                    //RequestFileContent = UrlEncoded.ToString();
                     RequestFileContent = CreateRawRequestAndResponse("request");
                     foreach(KeyValuePair<string, string> keyValue in ConstructURLEncoded((ActWebAPIRest)mAct))
                     {
@@ -420,7 +419,6 @@ namespace GingerCore.Actions.WebAPI
                         RequestFileContent += $"{mAct.RequestKeyValues[i].ValueForDriver}{Environment.NewLine}";
                     }
 
-                    //RequestFileContent = FormDataContent.ToString();
                 }
                 else
                 {

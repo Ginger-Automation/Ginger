@@ -294,11 +294,11 @@ namespace Ginger.Actions.WebServices
                     //init matching real WebAPI Action
                     if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.REST)
                     {
-                        actWebAPI = ActWAPIM.CreateActWebAPIREST((ApplicationAPIModel)AAMB, ActWAPIM);
+                        actWebAPI = ActWAPIM.CreateActWebAPIREST(AAMB, ActWAPIM);
                     }
                     else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
                     {
-                        actWebAPI = ActWAPIM.CreateActWebAPISOAP((ApplicationAPIModel)AAMB, ActWAPIM);
+                        actWebAPI = ActWAPIM.CreateActWebAPISOAP(AAMB, ActWAPIM);
                     }
                 }
             }

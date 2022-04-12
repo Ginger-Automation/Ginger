@@ -340,7 +340,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             {
                 throw new Exception("The Action from type '" + act.GetType().ToString() + "' is unknown/Not Implemented by the Driver - " + this.GetType().ToString());
             }
-            //act.ExInfo += System.Environment.NewLine;
 
         }
 
@@ -377,7 +376,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 mRawRequest = mWebAPI.RequestFileContent;
                 Reporter.ToLog(eLogLevel.DEBUG, "RequestContstructor passed successfully");
 
-                if (mWebAPI.SendRequest() == true)
+                if (mWebAPI.SendRequest())
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "SendRequest passed successfully");
 
@@ -484,7 +483,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     act.AddOrUpdateReturnParamActual(kpr.Value[0] + "-Properties", kpr.Value[5]);
                 }
 
-                //act.RawRequestValues = mWebAPI.RequestFileContent;
                 act.RawResponseValues = mWebAPI.ResponseFileContent;
                 act.AddOrUpdateReturnParamActual("Raw Request: ", mWebAPI.RequestFileContent);
                 act.AddOrUpdateReturnParamActual("Raw Response: ", mWebAPI.ResponseFileContent);
