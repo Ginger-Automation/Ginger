@@ -156,26 +156,37 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 sessionTimeout = mVE.ValueCalculated;
 
                 //  Check Sealights's values on run-set levels
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomLabIdYN == true)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId != null)
                 {
                     labId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId;
 
                     mVE.Value = labId;
                     labId = mVE.ValueCalculated;
                 }
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomSessionIdYN == true)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID != null)
                 {
                     bsId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID;
 
                     mVE.Value = bsId;
                     bsId = mVE.ValueCalculated;
                 }
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomTestStageYN == true)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage != null)
                 {
                     testStage = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage;
 
                     mVE.Value = testStage;
                     testStage = mVE.ValueCalculated;
+                }
+
+                if (string.IsNullOrEmpty(labId) && string.IsNullOrEmpty(bsId))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Sealights - LabId and bsid are empty");
+                    return false;
+                }
+                else if (string.IsNullOrEmpty(testStage))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Sealights - Test Stage is empty");
+                    return false;
                 }
 
                 restRequest.AddJsonBody(new { labId = labId, testStage = testStage, bsId = bsId, sessionTimeout = sessionTimeout }); // Anonymous type object is converted to Json body

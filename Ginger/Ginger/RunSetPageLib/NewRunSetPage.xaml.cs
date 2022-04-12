@@ -619,15 +619,6 @@ namespace Ginger.Run
             TagsViewer.Init(mRunSetConfig.Tags);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mRunSetConfig, nameof(RepositoryItemBase.Publish));
 
-            BindingHandler.ObjFieldBinding(xDefaultTestStageRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.DefaultTestStageYN));
-            BindingHandler.ObjFieldBinding(xCustomTestStageRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.CustomTestStageYN));
-
-            BindingHandler.ObjFieldBinding(xDefaultLabIdRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.DefaultLabIdYN));
-            BindingHandler.ObjFieldBinding(xCustomLabIdRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.CustomLabIdYN));
-
-            BindingHandler.ObjFieldBinding(xDefaultSessionIdRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.DefaultSessionIdYN));
-            BindingHandler.ObjFieldBinding(xCustomSessionIdRadioBtn, RadioButton.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.CustomSessionIdYN));
-
             // Value expression textboxes
             xSealightsTestStageTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealightsTestStage));
             xSealighsLabIdTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealighsLabId));
@@ -646,48 +637,49 @@ namespace Ginger.Run
             xCustomLabIdRadioBtn.Checked += XCustomLabIdRadioBtn_Checked;
             xCustomSessionIdRadioBtn.Checked += XCustomSessionIdRadioBtn_Checked;
 
-            if (RunSetConfig.DefaultTestStageYN == false && RunSetConfig.CustomTestStageYN == false) // init values
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage == null) // init values
             {
-                RunSetConfig.DefaultTestStageYN = true;                
+                xDefaultTestStageRadioBtn.IsChecked = true;
+                xSealightsTestStageTextBox.Visibility = Visibility.Collapsed;
             }
             else
             {
-                if (RunSetConfig.DefaultTestStageYN == true)
-                    XDefaultTestStageRadioBtn_Checked(null, null);
-                else
-                    XCustomTestStageRadioBtn_Checked(null, null);
+                xCustomTestStageRadioBtn.IsChecked = true;
+                XCustomTestStageRadioBtn_Checked(null, null); // Check the custom radion btn 
             }
 
-            if (RunSetConfig.DefaultLabIdYN == false && RunSetConfig.CustomLabIdYN == false) // init values
+
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null)
             {
-                RunSetConfig.DefaultLabIdYN = true;
+                xDefaultLabIdRadioBtn.IsChecked = true;
+                xSealighsLabIdTextBox.Visibility = Visibility.Collapsed;
             }
             else
             {
-                if (RunSetConfig.DefaultLabIdYN == true)
-                    XDefaultLabIdRadioBtn_Checked(null, null);
-                else
-                    XCustomLabIdRadioBtn_Checked(null, null);
+                xCustomLabIdRadioBtn.IsChecked = true;
+                XCustomLabIdRadioBtn_Checked(null, null);
             }
 
-            if (RunSetConfig.DefaultSessionIdYN == false && RunSetConfig.CustomSessionIdYN == false) // init values
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null)
             {
-                RunSetConfig.DefaultSessionIdYN = true;
+                xDefaultSessionIdRadioBtn.IsChecked = true;
+                xSealighsBuildSessionIDTextBox.Visibility = Visibility.Collapsed;
             }
             else
             {
-                if (RunSetConfig.DefaultSessionIdYN == true)
-                    XDefaultSessionIdRadioBtn_Checked(null, null);
-                else
-                    XCustomSessionIdRadioBtn_Checked(null, null);
+                xCustomSessionIdRadioBtn.IsChecked = true;
+                XCustomSessionIdRadioBtn_Checked(null, null);
             }
+           
 
             //Sealights Logger configuration settings should be visible only if the Sealight logger is set to yes in Configurations tab
             if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.No)
             {
                 xSealighsExpander.Visibility = Visibility.Collapsed;
             }
-            else if (RunSetConfig.DefaultTestStageYN == true && RunSetConfig.DefaultLabIdYN == true && RunSetConfig.DefaultSessionIdYN == true)
+            else if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null &&
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null &&
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null)
             {
                 xSealighsExpander.IsExpanded = false; //Sealight expand control should collapsed if all 3 Sealights' settings are in ‘Default’ mode.
             }
@@ -730,16 +722,19 @@ namespace Ginger.Run
         private void XDefaultTestStageRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
             xSealightsTestStageTextBox.Visibility = Visibility.Collapsed;
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage = null;
         }
 
         private void XDefaultLabIdRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
             xSealighsLabIdTextBox.Visibility = Visibility.Collapsed;
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId = null;
         }
 
         private void XDefaultSessionIdRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
             xSealighsBuildSessionIDTextBox.Visibility = Visibility.Collapsed;
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID = null;
         }
 
         void InitRunSetInfoSection()
@@ -1514,32 +1509,6 @@ namespace Ginger.Run
         {
             try
             {                
-                //  Check Sealights's values on run-set levels
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomLabIdYN == true)
-                {
-                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId.Trim() == "")
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please fill out the Sealights Lab ID");
-                        return;
-                    }
-                }
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomSessionIdYN == true)
-                {
-                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID.Trim() == "")
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please fill out the Sealights Session ID");
-                        return;
-                    }
-                }
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.CustomTestStageYN == true)
-                {
-                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage.Trim() == "")
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please fill out the Sealights Test Stage");
-                        return;
-                    }
-                }
-
                 mRunSetConfig.AllowAutoSave = false;
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);

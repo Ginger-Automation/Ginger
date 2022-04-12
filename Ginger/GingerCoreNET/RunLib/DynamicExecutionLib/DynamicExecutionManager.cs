@@ -519,15 +519,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 sealightsDetails.SealightsAgentToken = solution.LoggerConfigurations.SealightsAgentToken;
 
                 //  Check Sealights's values on run-set levels
-                if (runsetExecutor.RunSetConfig.CustomLabIdYN == true)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId != null)
                 {
                     sealightsDetails.SealightsLabId = runsetExecutor.RunSetConfig.SealighsLabId;
                 }
-                if (runsetExecutor.RunSetConfig.CustomSessionIdYN == true)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID != null)
                 {
                     sealightsDetails.SealightsBSId = runsetExecutor.RunSetConfig.SealighsBuildSessionID;
                 }
-                if (runsetExecutor.RunSetConfig.CustomTestStageYN == true)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage != null)
                 {
                     sealightsDetails.SealightsTestStage = runsetExecutor.RunSetConfig.SealightsTestStage;
                 }
