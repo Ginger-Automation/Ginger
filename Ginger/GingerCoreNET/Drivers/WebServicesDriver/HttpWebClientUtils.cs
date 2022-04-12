@@ -466,7 +466,6 @@ namespace GingerCore.Actions.WebAPI
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Client Sending Async Request");
-
                 Response = Client.SendAsync(RequestMessage).Result;
                 Reporter.ToLog(eLogLevel.DEBUG, "Response status: " + Response.StatusCode);
 

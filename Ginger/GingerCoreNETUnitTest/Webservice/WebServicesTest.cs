@@ -663,15 +663,7 @@ namespace UnitTests.NonUITests
             mDriver.StartDriver();
             mGR.Executor.RunRunner();
 
-
-            if (restAct.ReturnValues.Count > 0)
-            {
-                foreach (ActReturnValue val in restAct.ReturnValues)
-                {
-                    if (val.Actual.ToString() == "OK")
-                        Assert.AreEqual(val.Actual, "OK");
-                }
-            }
+            Assert.AreEqual(restAct.ReturnValues[0].Actual, "OK");
         }
 
         [TestMethod]  [Timeout(600000)]
@@ -724,15 +716,7 @@ namespace UnitTests.NonUITests
             mDriver.StartDriver();
             mGR.Executor.RunRunner();
 
-
-            if (restAct.ReturnValues.Count > 0)
-            {
-                foreach (ActReturnValue val in restAct.ReturnValues)
-                {
-                    if (val.Actual.ToString() == "OK")
-                        Assert.AreEqual(val.Actual, "OK");
-                }
-            }
+            Assert.AreEqual(restAct.ReturnValues[0].Actual, "OK");
         }       
 
 
