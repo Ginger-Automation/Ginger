@@ -81,10 +81,10 @@ jobs:
             $PR_LAST_COMMIT=$(git log -2 --format=%H).Split(" ")[1]
             $PR_NUMBER="$(System.PullRequest.PullRequestId)"
             $REPO_URL="$(System.PullRequest.SourceRepositoryURI)"
-          #  Write-Output "`n*** Create PR BSID ***"
+           # Write-Output "`n*** Create PR BSID ***"
            # .\SL.DotNet\x64\SL.DotNet.exe prConfig --appName $APP_NAME --pullRequestNumber $PR_NUMBER --targetBranch $PR_TARGET_BRANCH --latestCommit $PR_LAST_COMMIT --repositoryUrl $REPO_URL --includeNamespace $APP_NAMESPACE --buildSessionIdFile $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt --token $($slagenttoken) --logEnabled true --logAppendConsole true --ignoreCertificateErrors true
            # Write-Output "`n*** Prepare for MSBuild ***"
-            #.\SL.DotNet\x64\SL.DotNet.exe prepareForMsBuild --buildSessionIdFile $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt --workspacePath $(Build.Repository.LocalPath)\src --baseDir  $(Build.Repository.LocalPath) --ignoreGeneratedCode true --debugMode true --logEnabled true --logAppendConsole true --ignoreCertificateErrors true --token $($slagenttoken) --scm git --scmProvider vsts
+           # .\SL.DotNet\x64\SL.DotNet.exe prepareForMsBuild --buildSessionIdFile $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt --workspacePath $(Build.Repository.LocalPath)\Ginger --baseDir  $(Build.Repository.LocalPath) --ignoreGeneratedCode true --debugMode true --logEnabled true --logAppendConsole true --ignoreCertificateErrors true --token $($slagenttoken) --scm git --scmProvider vsts
     displayName: Prepare for PR Build
 # ------------------------------------------------------------------------------------------------------
 # Build Ginger Solution
