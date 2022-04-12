@@ -27,6 +27,7 @@ using GingerCore.Actions;
 using GingerCore.Activities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
@@ -121,8 +122,32 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 {
                     return;
                 }
+                                
+                var statusItem = new[]
+                {
+                    new { Status = "NA", Type = "Skipped" },
+                    new { Status = "Pending", Type = "Skipped" },
+                    new { Status = "Skipped", Type = "Skipped" },
+                    new { Status = "Wait", Type = "Skipped" },
+                    new { Status = "Blocked", Type = "Skipped" },
 
-                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, businessFlow.Status.ToString());
+                    new { Status = "Started", Type = "Failed" },
+                    new { Status = "Running", Type = "Failed" },
+                    new { Status = "Canceling", Type = "Failed" },
+                    new { Status = "Stopped", Type = "Failed" },
+                    new { Status = "Failed", Type = "Failed" },
+
+                    new { Status = "FailIgnored", Type = "Passed" },
+                    new { Status = "Passed", Type = "Passed" },
+                    new { Status = "Completed", Type = "Passed" },
+                    new { Status = "Automated", Type = "Passed" },
+
+                }.ToList().Where(a => a.Status == businessFlow.RunStatus.ToString()).ToList();
+
+                if (statusItem.Count > 0)
+                {
+                    await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, statusItem[0].Type);
+                }
             }
         }
 
