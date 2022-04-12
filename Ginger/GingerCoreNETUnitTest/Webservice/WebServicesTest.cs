@@ -481,7 +481,7 @@ namespace UnitTests.NonUITests
 
             string rawRequestContent = webAPI.RequestFileContent;
 
-            string untilBoundary = rawRequestContent.Substring(0, 144);
+            string untilBoundary = rawRequestContent.Substring(0, 143);
             string afterBoundary = rawRequestContent.Substring(180);
             Assert.AreEqual(untilBoundary, "POST https://petstore.swagger.io/v2/pet/9223372000668906000 HTTP/1.1\r\nAccept: multipart/form-data\r\nContent-Type: multipart/form-data; boundary=\"");
             Assert.AreEqual(afterBoundary, "\"\r\nContent-Length: 313\r\nHost: petstore.swagger.io\r\n\r\nContent-Disposition: form-data; name=\"name\"\r\nRexi\r\nContent-Disposition: form-data; name=\"status\"\r\navailable\r\n");
