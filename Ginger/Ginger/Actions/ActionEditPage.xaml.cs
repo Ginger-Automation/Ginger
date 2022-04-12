@@ -1804,8 +1804,8 @@ namespace Ginger.Actions
                 string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(mAction.RawResponseValues);
                 if (System.IO.File.Exists(tempFilePath))
                 {
-                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: "Raw Response");
-                    docPage.ShowAsWindow();
+                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: true, UCTextEditorTitle: "Raw Response", enableWrite: false);
+                    docPage.ShowAsWindow("Raw Response");
                     System.IO.File.Delete(tempFilePath);
                     return;
                 }

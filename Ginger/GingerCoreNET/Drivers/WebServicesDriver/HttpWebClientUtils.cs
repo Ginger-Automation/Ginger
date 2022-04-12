@@ -364,7 +364,18 @@ namespace GingerCore.Actions.WebAPI
                 rawMsg = $"HTTP/{Response.Version} {Response.ReasonPhrase}{Environment.NewLine}";
                 rawMsg += $"{Response.Headers}";
                 rawMsg += $"{Response.Content.Headers}{Environment.NewLine}";
-                rawMsg += ResponseMessage;
+                if (ResponseMessage.Contains("xml"))
+                {
+                    rawMsg += XMLDocExtended.PrettyXml(ResponseMessage);
+                }
+                else if (ResponseMessage.Contains("html"))
+                {
+                    rawMsg += ResponseMessage;
+                }
+                else
+                {
+                    rawMsg += JsonConvert.DeserializeObject(ResponseMessage);
+                }
             }
 
             return rawMsg;

@@ -605,8 +605,8 @@ namespace Ginger.Actions.WebServices
                 string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(requestContent);
                 if (System.IO.File.Exists(tempFilePath))
                 {
-                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: "Raw Request Preview");
-                    docPage.ShowAsWindow();
+                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: true, UCTextEditorTitle: "Raw Request Preview", enableWrite: false);
+                    docPage.ShowAsWindow("Raw Request Preview");
                     System.IO.File.Delete(tempFilePath);
                     return;
                 }
