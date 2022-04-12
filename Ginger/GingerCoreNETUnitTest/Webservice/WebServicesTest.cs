@@ -363,7 +363,6 @@ namespace UnitTests.NonUITests
             StringAssert.Contains(rawRequestContent, "\"id\": 0,");
             StringAssert.Contains(rawRequestContent, "\"name\": \"Rexi\"");
             StringAssert.Contains(rawRequestContent, "\"status\": \"available\"");
-            //Assert.AreEqual(rawRequestContent, "POST https://petstore.swagger.io/v2/pet HTTP/1.1\r\nAccept: application/json\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: 231\r\nHost: petstore.swagger.io\r\n\r\n{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"Rexi\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
         }
 
         [TestMethod]
@@ -406,7 +405,13 @@ namespace UnitTests.NonUITests
             webAPI.CreateRawRequestContent();
 
             string rawRequestContent = webAPI.RequestFileContent;
-            Assert.AreEqual(rawRequestContent, "POST http://www.dneonline.com/calculator.asmx HTTP/1.1\r\nContent-Type: text/xml; charset=utf-8\r\nContent-Length: 289\r\nHost: www.dneonline.com\r\n\r\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\r\n  <soapenv:Header />\r\n  <soapenv:Body>\r\n    <tem:Multiply>\r\n      <tem:intA>2</tem:intA>\r\n      <tem:intB>3</tem:intB>\r\n    </tem:Multiply>\r\n  </soapenv:Body>\r\n</soapenv:Envelope>");
+            StringAssert.Contains(rawRequestContent, "POST http://www.dneonline.com/calculator.asmx HTTP/1.1");
+            StringAssert.Contains(rawRequestContent, "Content-Type: text/xml; charset=utf-8");
+            StringAssert.Contains(rawRequestContent, "Content-Length: 289");
+            StringAssert.Contains(rawRequestContent, "Host: www.dneonline.com");
+            StringAssert.Contains(rawRequestContent, "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">");
+            StringAssert.Contains(rawRequestContent, "<tem:intA>2</tem:intA>");
+            StringAssert.Contains(rawRequestContent, "<tem:intB>3</tem:intB>");
         }
 
         [TestMethod]  [Timeout(600000)]
@@ -443,7 +448,16 @@ namespace UnitTests.NonUITests
             webAPI.CreateRawRequestContent();
 
             string rawRequestContent = webAPI.RequestFileContent;
-            Assert.AreEqual(rawRequestContent, "POST https://petstore.swagger.io/v2/pet HTTP/1.1\r\nAccept: application/xml\r\nContent-Type: application/xml; charset=utf-8\r\nContent-Length: 229\r\nHost: petstore.swagger.io\r\n\r\n<Pet>\r\n  <id>111</id>\r\n  <category>\r\n    <id>222</id>\r\n    <name>Dogs</name>\r\n  </category>\r\n  <name>Dogs</name>\r\n  <photoUrls />\r\n  <tags>\r\n    <id>333</id>\r\n    <name>Rexi</name>\r\n  </tags>\r\n  <status>available</status>\r\n</Pet>");
+            StringAssert.Contains(rawRequestContent, "POST https://petstore.swagger.io/v2/pet HTTP/1.1");
+            StringAssert.Contains(rawRequestContent, "Accept: application/xml");
+            StringAssert.Contains(rawRequestContent, "Content-Type: application/xml; charset=utf-8");
+            StringAssert.Contains(rawRequestContent, "Content-Length: 229");
+            StringAssert.Contains(rawRequestContent, "Host: petstore.swagger.io");
+            StringAssert.Contains(rawRequestContent, "<Pet>");
+            StringAssert.Contains(rawRequestContent, "<id>111</id>");
+            StringAssert.Contains(rawRequestContent, "<id>222</id>");
+            StringAssert.Contains(rawRequestContent, "<name>Rexi</name>");
+            StringAssert.Contains(rawRequestContent, "<name>Dogs</name>");
         }
 
         [TestMethod]  [Timeout(600000)]
@@ -502,8 +516,6 @@ namespace UnitTests.NonUITests
             StringAssert.Contains(rawRequestContent, "Rexi");
             StringAssert.Contains(rawRequestContent, "Content-Disposition: form-data; name=\"status\"");
             StringAssert.Contains(rawRequestContent, "available");
-            //Assert.AreEqual(untilBoundary, "POST https://petstore.swagger.io/v2/pet/9223372000668906000 HTTP/1.1\r\nAccept: multipart/form-data\r\nContent-Type: multipart/form-data; boundary=\"");
-           // Assert.AreEqual(afterBoundary, "\"\r\nContent-Length: 313\r\nHost: petstore.swagger.io\r\n\r\nContent-Disposition: form-data; name=\"name\"\r\nRexi\r\nContent-Disposition: form-data; name=\"status\"\r\navailable\r\n");
         }
 
         [TestMethod]  [Timeout(600000)]
@@ -548,7 +560,6 @@ namespace UnitTests.NonUITests
             StringAssert.Contains(rawRequestContent, "IncludeRequestDetails: true");
             StringAssert.Contains(rawRequestContent, "Accept: multipart/form-data");
             StringAssert.Contains(rawRequestContent, "Host: usstlattstl01:8002");
-            //Assert.AreEqual(rawRequestContent, "GET http://usstlattstl01:8002/api/v1/executions?executionIds=33b2dea1-c24a-494c-97d4-0bd47e59620c HTTP/1.0\r\nIncludeRequestDetails: true\r\nAccept: multipart/form-data\r\nHost: usstlattstl01:8002\r\n\r\n");
         }
 
         [TestMethod] [Timeout(600000)]
@@ -589,7 +600,6 @@ namespace UnitTests.NonUITests
             StringAssert.Contains(rawRequestContent, "Authorization: Basic dG9tNTAxMjoxMjM0NTY3OA==");
             StringAssert.Contains(rawRequestContent, "Accept: application/json");
             StringAssert.Contains(rawRequestContent, "Host: petstore.swagger.io");
-            //Assert.AreEqual(rawRequestContent, $"GET https://petstore.swagger.io/v2/user/login HTTP/1.1{Environment.NewLine}Authorization: Basic dG9tNTAxMjoxMjM0NTY3OA=={Environment.NewLine}Accept: application/json{Environment.NewLine}Host: petstore.swagger.io{Environment.NewLine}{Environment.NewLine}");
         }
 
         [TestMethod]
