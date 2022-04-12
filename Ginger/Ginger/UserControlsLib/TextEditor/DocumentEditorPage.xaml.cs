@@ -39,7 +39,7 @@ namespace Ginger.UserControlsLib.TextEditor
     {
         static List<TextEditorBase> TextEditors = null;
 
-        public DocumentEditorPage(string FileName, bool enableEdit = true,bool RemoveToolBar = false,string UCTextEditorTitle = null, bool enableWrite = true)
+        public DocumentEditorPage(string FileName, bool enableEdit = true,bool RemoveToolBar = false,string UCTextEditorTitle = null)
         {
             InitializeComponent();
 
@@ -75,7 +75,7 @@ namespace Ginger.UserControlsLib.TextEditor
                     AutoDetectTextEditor AD = new AutoDetectTextEditor();
                     AD.ext = Path.GetExtension(FileName);
                     TE = AD;                    
-                    UCTE.Init(FileName, TE, enableEdit, RemoveToolBar, enableWrite);
+                    UCTE.Init(FileName, TE, enableEdit, RemoveToolBar);
                     if (UCTextEditorTitle != null)
                         UCTE.SetContentEditorTitleLabel(UCTextEditorTitle);
                     EditorFrame.Content = UCTE;
@@ -96,6 +96,7 @@ namespace Ginger.UserControlsLib.TextEditor
         {
             if (string.IsNullOrEmpty(title))
             {
+                
                 GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Free, this.Title, this);
 
             }
