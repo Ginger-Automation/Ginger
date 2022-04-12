@@ -149,7 +149,7 @@ namespace Amdocs.Ginger.CoreNET
             get => LoadDeviceWindow;
         }
 
-        private AppiumDriver<AppiumWebElement> Driver;//appium 
+        private AppiumDriver Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
      
 
@@ -216,21 +216,21 @@ namespace Amdocs.Ginger.CoreNET
                     case eDevicePlatformType.Android:
                         if (string.IsNullOrEmpty(Proxy))
                         {
-                            Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, TimeSpan.FromSeconds(DriverLoadWaitingTime));
+                            Driver = new AndroidDriver(serverUri, driverOptions, TimeSpan.FromSeconds(DriverLoadWaitingTime));
                         }
                         else
                         {
-                            Driver = new AndroidDriver<AppiumWebElement>(new HttpCommandExecutor(serverUri, TimeSpan.FromSeconds(DriverLoadWaitingTime)) { Proxy = new WebProxy(this.Proxy) }, driverOptions);
+                            Driver = new AndroidDriver(new HttpCommandExecutor(serverUri, TimeSpan.FromSeconds(DriverLoadWaitingTime)) { Proxy = new WebProxy(this.Proxy) }, driverOptions);
                         }
                         break;
                     case eDevicePlatformType.iOS:
                         if (string.IsNullOrEmpty(Proxy))
                         {
-                            Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, TimeSpan.FromSeconds(DriverLoadWaitingTime));
+                            Driver = new IOSDriver(serverUri, driverOptions, TimeSpan.FromSeconds(DriverLoadWaitingTime));
                         }
                         else
                         {
-                            Driver = new IOSDriver<AppiumWebElement>(new HttpCommandExecutor(serverUri, TimeSpan.FromSeconds(DriverLoadWaitingTime)) { Proxy = new WebProxy(this.Proxy) }, driverOptions);
+                            Driver = new IOSDriver(new HttpCommandExecutor(serverUri, TimeSpan.FromSeconds(DriverLoadWaitingTime)) { Proxy = new WebProxy(this.Proxy) }, driverOptions);
                         }
                         break;
                 }
@@ -286,11 +286,63 @@ namespace Amdocs.Ginger.CoreNET
         //    return commandExecutor;
         //}
 
+        //private DriverOptions GetCapabilities()
+        //{
+        //    //see http://appium.io/slate/en/master/?csharp#appium-server-capabilities for full list of capabilities values
+        //    mDefaultURL = null;
+        //    DriverOptions driverOptions = new AppiumOptions();
+
+        //    //User customized capabilities
+        //    foreach (DriverConfigParam UserCapability in AppiumCapabilities)
+        //    {
+        //        if (String.IsNullOrWhiteSpace(UserCapability.Parameter))
+        //        {
+        //            continue;
+        //        }
+
+        //        if (UserCapability.Parameter.ToLower().Trim() == "defaulturl")
+        //        {
+        //            mDefaultURL = UserCapability.Value;
+        //            continue;
+        //        }
+
+        //        bool boolValue;
+        //        int intValue = 0;
+        //        if (bool.TryParse(UserCapability.Value, out boolValue))
+        //        {
+        //            driverOptions.AddAdditionalCapability(UserCapability.Parameter, boolValue);
+        //        }
+        //        else if (int.TryParse(UserCapability.Value, out intValue))
+        //        {
+        //            driverOptions.AddAdditionalCapability(UserCapability.Parameter, intValue);
+        //        }
+        //        else if (UserCapability.Value.Contains("{"))
+        //        {
+        //            try
+        //            {
+        //                JObject json = JObject.Parse(UserCapability.Value);
+        //                driverOptions.AddAdditionalCapability(UserCapability.Parameter, json);//for Json value to work properly, need to convert it into specific object type like: json.ToObject<selector>());
+        //            }
+        //            catch (Exception)
+        //            {
+        //                driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
+        //        }
+        //    }
+
+        //    return driverOptions;
+        //}
+
         private DriverOptions GetCapabilities()
         {
             //see http://appium.io/slate/en/master/?csharp#appium-server-capabilities for full list of capabilities values
             mDefaultURL = null;
-            DriverOptions driverOptions = new AppiumOptions();
+            //DriverOptions driverOptions = new AppiumOptions();
+            AppiumOptions driverOptions = new AppiumOptions();
 
             //User customized capabilities
             foreach (DriverConfigParam UserCapability in AppiumCapabilities)
@@ -310,33 +362,58 @@ namespace Amdocs.Ginger.CoreNET
                 int intValue = 0;
                 if (bool.TryParse(UserCapability.Value, out boolValue))
                 {
-                    driverOptions.AddAdditionalCapability(UserCapability.Parameter, boolValue);
+                    driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, boolValue);
                 }
-                else if (int.TryParse(UserCapability.Value, out intValue))
+                else if (!isContainQuotationMarks(UserCapability) && int.TryParse(UserCapability.Value, out intValue))
                 {
-                    driverOptions.AddAdditionalCapability(UserCapability.Parameter, intValue);
+                    driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, intValue);
                 }
                 else if (UserCapability.Value.Contains("{"))
                 {
                     try
                     {
                         JObject json = JObject.Parse(UserCapability.Value);
-                        driverOptions.AddAdditionalCapability(UserCapability.Parameter, json);//for Json value to work properly, need to convert it into specific object type like: json.ToObject<selector>());
+                        driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, json);//for Json value to work properly, need to convert it into specific object type like: json.ToObject<selector>());
                     }
                     catch (Exception)
                     {
-                        driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
+                        driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, UserCapability.Value);
                     }
                 }
                 else
                 {
-                    driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
+                    if(UserCapability.Parameter == "platformName")
+                    {
+                        driverOptions.PlatformName = UserCapability.Value;
+                    }
+                    else if(UserCapability.Parameter == "automationName")
+                    {
+                        driverOptions.AutomationName = UserCapability.Value;
+                    }
+                    else if(UserCapability.Parameter == "deviceName")
+                    {
+                        driverOptions.DeviceName = UserCapability.Value;
+                    }
+                    else
+                    {
+                        driverOptions.AddAdditionalAppiumOption(UserCapability.Parameter, UserCapability.Value);
+                    }
+                    
                 }
             }
 
             return driverOptions;
         }
 
+        private bool isContainQuotationMarks(DriverConfigParam capability)
+        {
+            if (capability.Value[0] == '\"' && capability.Value[capability.Value.Length - 1] == '\"')
+            {
+                capability.Value = capability.Value.Substring(1, capability.Value.Length - 2);
+                return true;
+            }
+            return false;
+        }
 
         public override void CloseDriver()
         {
@@ -384,12 +461,12 @@ namespace Amdocs.Ginger.CoreNET
             switch (locateBy)
             {
                 case eLocateBy.ByResourceID:
-                    elem = Driver.FindElementById(locateValue);
+                    elem = Driver.FindElement(By.Id(locateValue));
                     break;
 
                 case eLocateBy.ByRelXPath:
                 case eLocateBy.ByXPath:
-                    elem = Driver.FindElementByXPath(locateValue);
+                    elem = Driver.FindElement(By.XPath(locateValue));
                     break;
 
                 default:
@@ -631,9 +708,9 @@ namespace Amdocs.Ginger.CoreNET
                                     for (int indx = 1; indx <= elemntContent.Length; indx++)
                                     {
                                         //Driver.KeyEvent(22);//"KEYCODE_DPAD_RIGHT"- move marker to right
-                                        ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(22);
+                                        ((AndroidDriver)Driver).PressKeyCode(22);
                                         //Driver.KeyEvent(67);//"KEYCODE_DEL"- delete 1 character
-                                        ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(67);
+                                        ((AndroidDriver)Driver).PressKeyCode(67);
                                     }
                                 }
                             }
@@ -994,7 +1071,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public ICollection<IWebElement> GetAllElements()
         {
-            return (ICollection<IWebElement>)Driver.FindElementsByXPath(".//*");
+            return (ICollection<IWebElement>)Driver.FindElements(By.XPath(".//*"));
         }
 
         public void TapXY(long x, long y)
@@ -1037,7 +1114,7 @@ namespace Amdocs.Ginger.CoreNET
             switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
-                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Home);
+                    ((AndroidDriver)Driver).PressKeyCode(AndroidKeyCode.Home);
                     //((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(3);
                     break;
                 case eDevicePlatformType.iOS:
@@ -1058,7 +1135,7 @@ namespace Amdocs.Ginger.CoreNET
             switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
-                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Menu);
+                    ((AndroidDriver)Driver).PressKeyCode(AndroidKeyCode.Menu);
                     break;
             }
 
@@ -1073,7 +1150,7 @@ namespace Amdocs.Ginger.CoreNET
             switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
-                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Keycode_CAMERA);
+                    ((AndroidDriver)Driver).PressKeyCode(AndroidKeyCode.Keycode_CAMERA);
                     break;
             }
 
@@ -1091,10 +1168,10 @@ namespace Amdocs.Ginger.CoreNET
                     switch (volumeOperation)
                     {
                         case eVolumeOperation.Up:
-                            ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Keycode_VOLUME_UP);
+                            ((AndroidDriver)Driver).PressKeyCode(AndroidKeyCode.Keycode_VOLUME_UP);
                             break;
                         case eVolumeOperation.Down:
-                            ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Keycode_VOLUME_DOWN);
+                            ((AndroidDriver)Driver).PressKeyCode(AndroidKeyCode.Keycode_VOLUME_DOWN);
                             break;
                     }
                     break;
@@ -1128,10 +1205,10 @@ namespace Amdocs.Ginger.CoreNET
                     switch (LockOperation)
                     {
                         case eLockOperation.Lock:
-                            ((AndroidDriver<AppiumWebElement>)Driver).Lock();
+                            ((AndroidDriver)Driver).Lock();
                             break;
                         case eLockOperation.UnLock:
-                            ((AndroidDriver<AppiumWebElement>)Driver).Unlock();
+                            ((AndroidDriver)Driver).Unlock();
                             break;
                     }
                     break;
@@ -1150,7 +1227,7 @@ namespace Amdocs.Ginger.CoreNET
             switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
-                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(Convert.ToInt32(Enum.Parse(typeof(ActMobileDevice.ePressKey), key)));
+                    ((AndroidDriver)Driver).PressKeyCode(Convert.ToInt32(Enum.Parse(typeof(ActMobileDevice.ePressKey), key)));
                     break;
                     //case eDevicePlatformType.iOS:
                     //    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
@@ -1165,7 +1242,7 @@ namespace Amdocs.Ginger.CoreNET
             switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
-                    ((AndroidDriver<AppiumWebElement>)Driver).LongPressKeyCode(Convert.ToInt32(Enum.Parse(typeof(ActMobileDevice.ePressKey), key)));
+                    ((AndroidDriver)Driver).LongPressKeyCode(Convert.ToInt32(Enum.Parse(typeof(ActMobileDevice.ePressKey), key)));
                     break;
                     //case eDevicePlatformType.iOS:
                     //    Dictionary<string, object> commandArgs = new Dictionary<string, object>();
@@ -1233,7 +1310,7 @@ namespace Amdocs.Ginger.CoreNET
             drag.Press(startX, startY).Wait(200).MoveTo(endX, endY).Release().Perform();
         }
 
-        public ITouchAction BuildDragAction(AppiumDriver<AppiumWebElement> driver, int startX, int startY, int endX, int endY, int duration)
+        public ITouchAction BuildDragAction(AppiumDriver driver, int startX, int startY, int endX, int endY, int duration)
         {
             ITouchAction touchAction = new TouchAction(driver)
                 .Press(startX, startY)
@@ -1257,12 +1334,12 @@ namespace Amdocs.Ginger.CoreNET
             {
                 if (DevicePlatformType == eDevicePlatformType.Android)
                 {
-                    return string.Format("{0} | {1}", ((AndroidDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).CurrentPackage.Split('.').Last(),
-                        ((AndroidDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).CurrentActivity.Split('.').Last());
+                    return string.Format("{0} | {1}", ((AndroidDriver)Driver).CurrentPackage.Split('.').Last(),
+                        ((AndroidDriver)Driver).CurrentActivity.Split('.').Last());
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    return string.Format("{0}", ((IOSDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
                 }
                 else
                 {
@@ -1283,12 +1360,12 @@ namespace Amdocs.Ginger.CoreNET
             {
                 if (DevicePlatformType == eDevicePlatformType.Android)
                 {
-                    return string.Format("{0} | {1}", ((AndroidDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).CurrentPackage,
-                        ((AndroidDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).CurrentActivity);
+                    return string.Format("{0} | {1}", ((AndroidDriver)Driver).CurrentPackage,
+                        ((AndroidDriver)Driver).CurrentActivity);
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    return string.Format("{0}", ((IOSDriver<OpenQA.Selenium.Appium.AppiumWebElement>)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
                 }
                 else
                 {
@@ -2177,7 +2254,7 @@ namespace Amdocs.Ginger.CoreNET
                 switch (EL.LocateBy)
                 {
                     case eLocateBy.ByResourceID:
-                        elem = Driver.FindElementById(EL.LocateValue);
+                        elem = Driver.FindElement(By.Id(EL.LocateValue));
                         break;
 
                     case eLocateBy.iOSPredicateString:
@@ -2190,7 +2267,7 @@ namespace Amdocs.Ginger.CoreNET
 
                     case eLocateBy.ByRelXPath:
                     case eLocateBy.ByXPath:
-                        elem = Driver.FindElementByXPath(EL.LocateValue);
+                        elem = Driver.FindElement(By.XPath(EL.LocateValue));
                         break;
 
                     default:
@@ -2830,7 +2907,7 @@ namespace Amdocs.Ginger.CoreNET
             switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
-                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(Convert.ToInt32(ActMobileDevice.ePressKey.Keycode_SETTINGS));
+                    ((AndroidDriver)Driver).PressKeyCode(Convert.ToInt32(ActMobileDevice.ePressKey.Keycode_SETTINGS));
                     break;
                 case eDevicePlatformType.iOS:
                     Driver.ActivateApp("com.apple.Preferences");
