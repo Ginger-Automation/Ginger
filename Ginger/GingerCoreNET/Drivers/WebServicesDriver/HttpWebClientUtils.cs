@@ -415,7 +415,7 @@ namespace GingerCore.Actions.WebAPI
                     for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
                     {
                         FormDataContent.Add(new StringContent(mAct.RequestKeyValues[i].ValueForDriver), mAct.RequestKeyValues[i].ItemName.ToString());
-                        RequestFileContent += "Content-Disposition: form-data; name=\"" + mAct.RequestKeyValues[i].Param.ToString() + "\"" + { Environment.NewLine};
+                        RequestFileContent += "Content-Disposition: form-data; name=\"" + mAct.RequestKeyValues[i].Param.ToString() + "\"" + Environment.NewLine;
                         RequestFileContent += mAct.RequestKeyValues[i].ValueForDriver.ToString() + Environment.NewLine;
                     }
 
