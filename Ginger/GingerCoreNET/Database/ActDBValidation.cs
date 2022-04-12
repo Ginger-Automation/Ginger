@@ -183,6 +183,8 @@ namespace GingerCore.Actions
             SimpleSQLOneValue = 3,     // provide table, lookupield, lookupvalue, outfield,  Like: select cutomerType from TBCustomer WHERE customer id=123    
             [EnumValueDescription("Update DB")]
             UpdateDB = 4,     // Run SQL/PL procedure 
+            [EnumValueDescription("Insert")]
+            Insert = 5
         }
 
         public bool CommitDB_Value
@@ -201,6 +203,21 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public eDBValidationType DBValidationType { get; set; }
+
+        private string mInsertJson = string.Empty;
+
+        [IsSerializedForLocalRepository]
+        public string InsertJson
+        {
+            get
+            {
+                return mInsertJson;
+            }
+            set
+            {
+                mInsertJson = value;
+            }
+        }
 
         public string Params
         {
