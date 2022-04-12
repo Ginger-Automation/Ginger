@@ -288,17 +288,17 @@ namespace Ginger.Actions.WebServices
             if (mAct is ActWebAPIModel ActWAPIM)
             {
                 //pull pointed API Model
-                ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == ((ActWebAPIModel)mAct).APImodelGUID).FirstOrDefault();
-                if (AAMB != null)
+                ApplicationAPIModel AAMB1 = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == mAct.APImodelGUID).FirstOrDefault();
+                if (AAMB1 != null)
                 {
                     //init matching real WebAPI Action
-                    if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.REST)
+                    if (AAMB1.APIType == ApplicationAPIUtils.eWebApiType.REST)
                     {
-                        actWebAPI = ActWAPIM.CreateActWebAPIREST(AAMB, ActWAPIM);
+                        actWebAPI = ActWAPIM.CreateActWebAPIREST(AAMB1, ActWAPIM);
                     }
                     else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
                     {
-                        actWebAPI = ActWAPIM.CreateActWebAPISOAP(AAMB, ActWAPIM);
+                        actWebAPI = ActWAPIM.CreateActWebAPISOAP(AAMB1, ActWAPIM);
                     }
                 }
             }

@@ -316,7 +316,7 @@ namespace UnitTests.NonUITests
         }
 
         //Start Here
-        [TestMethod][Timeout(6000000)]
+        [TestMethod][Timeout(600000)]
         public void WebServices_RawRequestWebAPIRestWithJSON() 
         {
             //Arrange
@@ -366,7 +366,7 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-        [Timeout(6000000)]
+        [Timeout(600000)]
         public void WebServices_RawRequestWebAPISoap()
         {
             //Arrange
