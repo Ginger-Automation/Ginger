@@ -1045,6 +1045,7 @@ namespace WorkspaceHold
 
             // Assert        
             Assert.AreEqual(WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID, "1648233090826", "Validating correct Sealights SessionID");
+            Assert.AreEqual(WorkSpace.Instance.Solution.LoggerConfigurations.SealightsAgentToken, "112233", "Validating correct Sealights Token");
         }
 
         [TestMethod]
