@@ -20,7 +20,7 @@ namespace Ginger.ValidationRules
         {
             try
             {
-                if (value != null && !string.IsNullOrEmpty(value.ToString()))
+                if (value != null && !string.IsNullOrEmpty(value?.ToString()))
                 {
                     int iValue = int.Parse(value.ToString());                    
                 }

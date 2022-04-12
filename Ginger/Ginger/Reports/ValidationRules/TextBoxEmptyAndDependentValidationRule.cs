@@ -49,7 +49,7 @@ namespace Ginger.ValidationRules
         {
             if (_DependentObj != null && !string.IsNullOrEmpty(_DependentObjField))
             {
-                if (String.IsNullOrEmpty(value.ToString()) && String.IsNullOrEmpty(_DependentObj.GetType().GetProperty(_DependentObjField)?.GetValue(_DependentObj)?.ToString()))
+                if (String.IsNullOrEmpty(value?.ToString()) && String.IsNullOrEmpty(_DependentObj.GetType().GetProperty(_DependentObjField)?.GetValue(_DependentObj)?.ToString()))
                 {
                     return new ValidationResult(false, _Message);
                 }
