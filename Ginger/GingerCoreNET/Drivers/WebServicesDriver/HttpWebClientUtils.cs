@@ -402,7 +402,7 @@ namespace GingerCore.Actions.WebAPI
                     RequestFileContent = CreateRawRequestAndResponse("request");
                     foreach(KeyValuePair<string, string> keyValue in ConstructURLEncoded((ActWebAPIRest)mAct))
                     {
-                        RequestFileContent += keyValue.Key.ToString() + "=" + keyValue.Value.ToString();
+                        RequestFileContent += new StringBuilder(keyValue.Key + "=" + keyValue.Value.ToString());
                     }
                     RequestFileContent = RequestFileContent.Remove(RequestFileContent.Length - 1);
 
@@ -415,8 +415,8 @@ namespace GingerCore.Actions.WebAPI
                     for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
                     {
                         FormDataContent.Add(new StringContent(mAct.RequestKeyValues[i].ValueForDriver), mAct.RequestKeyValues[i].ItemName.ToString());
-                        RequestFileContent += "Content-Disposition: form-data; name=\"" + mAct.RequestKeyValues[i].Param.ToString() + "\"" + Environment.NewLine;
-                        RequestFileContent += mAct.RequestKeyValues[i].ValueForDriver.ToString() + Environment.NewLine;
+                        RequestFileContent += new StringBuilder("Content-Disposition: form-data; name=\"" + mAct.RequestKeyValues[i].Param.ToString() + "\"" + Environment.NewLine);
+                        RequestFileContent += new StringBuilder(mAct.RequestKeyValues[i].ValueForDriver.ToString() + Environment.NewLine);
                     }
 
                 }
