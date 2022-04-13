@@ -87,6 +87,7 @@ jobs:
             Write-Output "`n*** Prepare for MSBuild ***"
             .\SL.DotNet\x64\SL.DotNet.exe prepareForMsBuild --buildSessionIdFile $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt --workspacePath $(Build.Repository.LocalPath)\Ginger --baseDir  $(Build.Repository.LocalPath) --ignoreGeneratedCode true --debugMode true --logEnabled true --logAppendConsole true --ignoreCertificateErrors true --token $($slagenttoken) --scm git --scmProvider vsts
     displayName: Prepare for PR Build
+    continueOnError: true
 # ------------------------------------------------------------------------------------------------------
 # Build Ginger Solution
 # ------------------------------------------------------------------------------------------------------
