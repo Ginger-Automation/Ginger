@@ -87,6 +87,13 @@ namespace Ginger.Reports
                 xSealightsLogPanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.SealightsLog), SealightsLogRadioButton_CheckedHandler);
 
+            xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
+                xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
+                nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEndPointURLTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
+                nameof(ExecutionLoggerConfiguration.CentralLoggerEndPointUrl));
+
             Context mContext = new Context();
             xSealightsURLTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsURL));
             xSealighsAgentTokenTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
@@ -94,31 +101,29 @@ namespace Ginger.Reports
             xSealightsTestStageTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsTestStage));
             xSealighsBuildSessionIDTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
             xSealighsSessionTimeoutTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsSessionTimeout));
-
             xSealighsReportedEntityLevelComboBox.BindControl(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
-
-            if (xSealighsSessionTimeoutTextBox.ValueTextBox.Text.Trim() == "")
-            {
-                xSealighsSessionTimeoutTextBox.ValueTextBox.Text = "14400";
-            }
-
+            
             // check if fields have been populated (font-end validation)
             xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId), "Lab ID or Build Session ID must be provided"));
             xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
             xSealightsURLTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Url cannot be empty"));
             xSealighsAgentTokenTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Token cannot be empty"));
             xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Test Stage cannot be empty"));
-
             xSealighsSessionTimeoutTextBox.ValueTextBox.AddValidationRule(new ValidateNumberInputRule());
-
             xSealighsReportedEntityLevelComboBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Entity Level cannot be empty"));
 
-            xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
-                xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
+            // need in order to trigger the validation's rules on init binding (load/init form)
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsURL));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsLabId));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsTestStage));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEndPointURLTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.CentralLoggerEndPointUrl));
+            if (xSealighsSessionTimeoutTextBox.ValueTextBox.Text.Trim() == "")
+            {
+                xSealighsSessionTimeoutTextBox.ValueTextBox.Text = "14400";
+            }
 
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
@@ -206,23 +211,7 @@ namespace Ginger.Reports
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide endpoint URI");
                         return;
                     }
-                }
-
-                if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
-                {
-                    if (xSealightsURLTextBox.ValueTextBox.Text.Trim() == "" || xSealighsAgentTokenTextBox.ValueTextBox.Text.Trim() == "" ||
-                        xSealightsTestStageTextBox.ValueTextBox.Text.Trim() == "" || xSealighsReportedEntityLevelComboBox.SelectedIndex < 0)
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide all Sealights required information");
-                        return;
-                    }
-
-                    if (xSealighsLabIdTextBox.ValueTextBox.Text.Trim() == "" && xSealighsBuildSessionIDTextBox.ValueTextBox.Text.Trim() == "")
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide Lab ID or Session ID");
-                        return;
-                    }
-                }
+                }                
             }
             catch
             {
@@ -306,47 +295,11 @@ namespace Ginger.Reports
 
             if (sealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
             {
-                xSealightsURLLabel.Visibility = Visibility.Visible;
-                xSealightsURLTextBox.Visibility = Visibility.Visible;
-                xSealighsAgentTokenLabel.Visibility = Visibility.Visible;
-                xSealighsAgentTokenTextBox.Visibility = Visibility.Visible;
-                xSealighsLabIdLabel.Visibility = Visibility.Visible;
-                xSealighsLabIdTextBox.Visibility = Visibility.Visible;
-                xSealightsTestStageLabel.Visibility = Visibility.Visible;
-                xSealightsTestStageTextBox.Visibility = Visibility.Visible;
-                xSealighsBuildSessionIDLabel.Visibility = Visibility.Visible;
-                xSealighsBuildSessionIDTextBox.Visibility = Visibility.Visible;
-                xSealighsSessionTimeoutLabel.Visibility = Visibility.Visible;
-                xSealighsSessionTimeoutTextBox.Visibility = Visibility.Visible;
-                xSealighsReportedEntityLevelLabel.Visibility = Visibility.Visible;
-                xSealighsReportedEntityLevelComboBox.Visibility = Visibility.Visible;
-
-                xSealightsURLLabelValidation.Visibility = Visibility.Visible;
-                xSealighsAgentTokenLabelValidation.Visibility = Visibility.Visible;
-                xSealightsTestStageLabelValidation.Visibility = Visibility.Visible;
-                xSealighsReportedEntityLevelLabelValidation.Visibility = Visibility.Visible;
+                xSealightsExecutionLoggerGrid.Visibility = Visibility.Visible;
             }
             else
             {
-                xSealightsURLLabel.Visibility = Visibility.Collapsed;
-                xSealightsURLTextBox.Visibility = Visibility.Collapsed;
-                xSealighsAgentTokenLabel.Visibility = Visibility.Collapsed;
-                xSealighsAgentTokenTextBox.Visibility = Visibility.Collapsed;
-                xSealighsLabIdLabel.Visibility = Visibility.Collapsed;
-                xSealighsLabIdTextBox.Visibility = Visibility.Collapsed;
-                xSealightsTestStageLabel.Visibility = Visibility.Collapsed;
-                xSealightsTestStageTextBox.Visibility = Visibility.Collapsed;
-                xSealighsBuildSessionIDLabel.Visibility = Visibility.Collapsed;
-                xSealighsBuildSessionIDTextBox.Visibility = Visibility.Collapsed;
-                xSealighsSessionTimeoutLabel.Visibility = Visibility.Collapsed;
-                xSealighsSessionTimeoutTextBox.Visibility = Visibility.Collapsed;
-                xSealighsReportedEntityLevelLabel.Visibility = Visibility.Collapsed;
-                xSealighsReportedEntityLevelComboBox.Visibility = Visibility.Collapsed;
-
-                xSealightsURLLabelValidation.Visibility = Visibility.Collapsed;
-                xSealighsAgentTokenLabelValidation.Visibility = Visibility.Collapsed;
-                xSealightsTestStageLabelValidation.Visibility = Visibility.Collapsed;
-                xSealighsReportedEntityLevelLabelValidation.Visibility = Visibility.Collapsed;
+                xSealightsExecutionLoggerGrid.Visibility = Visibility.Collapsed;
             }
         }
         
@@ -362,6 +315,10 @@ namespace Ginger.Reports
                         try
                         {
                             var control = xPublishLogToCentralDBRadioBtnPanel.Children[i] as RadioButton;
+                            if (control == null)
+                            {
+                                continue;
+                            }
                             if (control.Name == "No")
                             {
                                 control.IsChecked = true;
