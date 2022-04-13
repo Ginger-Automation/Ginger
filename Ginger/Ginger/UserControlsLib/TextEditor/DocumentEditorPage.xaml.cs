@@ -92,22 +92,22 @@ namespace Ginger.UserControlsLib.TextEditor
 
 
 
-        internal void ShowAsWindow(string title = null)
+        internal void ShowAsWindow(string customeTitle = null)
         {
-            if (string.IsNullOrEmpty(title))
+            string title;
+            if (customeTitle != null)
             {
-                
-                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Free, this.Title, this);
-
+                title = customeTitle;
             }
             else
             {
-                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Free, title, this);
+                title = this.Title;
             }
-            
+
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Free, title, this);
         }
 
-       GenericWindow genWin;
+        GenericWindow genWin;
 
         private bool IsTextFile(string fileName)
         {            
