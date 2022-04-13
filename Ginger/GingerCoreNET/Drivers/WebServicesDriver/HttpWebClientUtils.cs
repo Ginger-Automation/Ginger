@@ -400,11 +400,12 @@ namespace GingerCore.Actions.WebAPI
                 {
                     HttpContent UrlEncoded = new FormUrlEncodedContent(ConstructURLEncoded((ActWebAPIRest)mAct));
                     RequestFileContent = CreateRawRequestAndResponse("request");
+                    StringBuilder str = new StringBuilder();
                     foreach(KeyValuePair<string, string> keyValue in ConstructURLEncoded((ActWebAPIRest)mAct))
                     {
-                        RequestFileContent += new StringBuilder(keyValue.Key + "=" + keyValue.Value.ToString());
+                        str.AppendLine(keyValue.Key + "=" + keyValue.Value);
                     }
-                    RequestFileContent = RequestFileContent.Remove(RequestFileContent.Length - 1);
+                    RequestFileContent += str;
 
                 }
                 else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "FormData"))
@@ -412,12 +413,14 @@ namespace GingerCore.Actions.WebAPI
                     MultipartFormDataContent FormDataContent = new MultipartFormDataContent();
 
                     RequestFileContent = CreateRawRequestAndResponse("request");
+                    StringBuilder str = new StringBuilder();
                     for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
                     {
                         FormDataContent.Add(new StringContent(mAct.RequestKeyValues[i].ValueForDriver), mAct.RequestKeyValues[i].ItemName.ToString());
-                        RequestFileContent += new StringBuilder("Content-Disposition: form-data; name=\"" + mAct.RequestKeyValues[i].Param.ToString() + "\"" + Environment.NewLine);
-                        RequestFileContent += new StringBuilder(mAct.RequestKeyValues[i].ValueForDriver.ToString() + Environment.NewLine);
+                        str.AppendLine("Content-Disposition: form-data; name=\"" + mAct.RequestKeyValues[i].Param + "\"");
+                        str.AppendLine(mAct.RequestKeyValues[i].ValueForDriver);
                     }
+                    RequestFileContent += str;
 
                 }
                 else
