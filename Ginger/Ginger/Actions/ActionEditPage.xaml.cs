@@ -469,11 +469,6 @@ namespace Ginger.Actions
                 xOutputValuesGrid.ChangeGridView(eGridView.NonSimulation.ToString());
         }
 
-        private void ShowRawResponseAPI(object sender, RoutedEventArgs e)
-        {
-            return;
-        }
-
 
         private void InputValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
@@ -1807,7 +1802,7 @@ namespace Ginger.Actions
                     DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
                     docPage.Width = 800;
                     docPage.Height = 800;
-                    docPage.ShowAsWindow("Raw Response Output Values");
+                    docPage.ShowAsWindow("Raw Output Values");
                     System.IO.File.Delete(tempFilePath);
                     return;
                 }

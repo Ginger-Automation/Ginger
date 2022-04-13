@@ -53,6 +53,12 @@ namespace Ginger.UserControlsLib.TextEditor.Common
             cbWildcards.IsChecked = useWildcards;
             cbSearchUp.IsChecked = searchUp;
             txtFind.Focus();
+
+            if (editor.IsReadOnly)
+            {
+                xReaplaceTab.Visibility = Visibility.Collapsed;
+            }
+
         }
 
         private void FindNextClick(object sender, RoutedEventArgs e)
@@ -73,44 +79,32 @@ namespace Ginger.UserControlsLib.TextEditor.Common
             string input = editor.Text.Substring(editor.SelectionStart, editor.SelectionLength);
             Match match = regex.Match(input);
             bool replaced = false;
-            if (!editor.IsReadOnly)
+            if (match.Success && match.Index == 0 && match.Length == input.Length)
             {
-                if (match.Success && match.Index == 0 && match.Length == input.Length)
-                {
-                    editor.Document.Replace(editor.SelectionStart, editor.SelectionLength, txtReplace.Text);
-                    replaced = true;
-                }
+                editor.Document.Replace(editor.SelectionStart, editor.SelectionLength, txtReplace.Text);
+                replaced = true;
+            }
 
-                if (!FindNext(txtFind2.Text) && !replaced)
-                    SystemSounds.Beep.Play();
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.ReplaceAll, "Raw Response is read only text");
-            }
+            if (!FindNext(txtFind2.Text) && !replaced)
+                SystemSounds.Beep.Play();
+
 
         }
 
         private void ReplaceAllClick(object sender, RoutedEventArgs e)
         {
-            if (!editor.IsReadOnly)
+
+            if (Reporter.ToUser(eUserMsgKey.ReplaceAll, "Are you sure you want to Replace All occurrences of \"" + txtFind2.Text + "\" with \"" + txtReplace.Text + "\"?") == Amdocs.Ginger.Common.eUserMsgSelection.OK)
             {
-                if (Reporter.ToUser(eUserMsgKey.ReplaceAll, "Are you sure you want to Replace All occurrences of \"" + txtFind2.Text + "\" with \"" + txtReplace.Text + "\"?") == Amdocs.Ginger.Common.eUserMsgSelection.OK)
+                Regex regex = GetRegEx(txtFind2.Text, true);
+                int offset = 0;
+                editor.BeginChange();
+                foreach (Match match in regex.Matches(editor.Text))
                 {
-                    Regex regex = GetRegEx(txtFind2.Text, true);
-                    int offset = 0;
-                    editor.BeginChange();
-                    foreach (Match match in regex.Matches(editor.Text))
-                    {
-                        editor.Document.Replace(offset + match.Index, match.Length, txtReplace.Text);
-                        offset += txtReplace.Text.Length - match.Length;
-                    }
-                    editor.EndChange();
+                    editor.Document.Replace(offset + match.Index, match.Length, txtReplace.Text);
+                    offset += txtReplace.Text.Length - match.Length;
                 }
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.ReplaceAll, "Raw Response is read only text");
+                editor.EndChange();
             }
         }
 
