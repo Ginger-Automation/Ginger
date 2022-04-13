@@ -21,8 +21,13 @@
 
         <StackPanel Grid.Row="0" VerticalAlignment="Top">
             <StackPanel  VerticalAlignment="Top" Margin="0,0,0,0">
-                <Label Style="{StaticResource @InputFieldLabelStyle}">End Point URL:</Label>
+                <Grid>
+                    <Label VerticalAlignment="Bottom" Style="{StaticResource @InputFieldLabelStyle}">End Point URL:</Label>
+                    <Button x:Name="xViewRawRequestBtn" HorizontalAlignment="Right" Margin="0,10,0,10" Content="View Raw Request Preview" Style="{StaticResource $RoundTextButtonStyle_Generic}" Click="xViewRawRequestBtn_Click"/>
+                </Grid>
+                
                 <Actions:UCValueExpression x:Name="URLUCValueExpression"/>
+                
             </StackPanel>
 
             <StackPanel x:Name="RestHeader"  Orientation="Horizontal" Visibility="Visible" Margin="0,10,0,0">
@@ -89,7 +94,7 @@
                                 <StackPanel x:Name="ContentTypeParameters" Orientation="Vertical">
                                     <StackPanel x:Name="RequestContent" Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Left" >
                                         <Label Style="{StaticResource @InputFieldLabelStyle}">Body Content Type:</Label>
-                                        <UserControlsLib:UCComboBox x:Name="ContentTypeComboBox" Width="250" Margin="35,0,0,0"></UserControlsLib:UCComboBox>
+                                        <UserControlsLib:UCComboBox x:Name="ContentTypeComboBox" Width="250" Margin="35,0,0,0" ></UserControlsLib:UCComboBox>
                                     </StackPanel>
                                     <StackPanel x:Name="RequestBodyTypePanel" Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,0">
                                         <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Row="0">Body Content Source:</Label>
