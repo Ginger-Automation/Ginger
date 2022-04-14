@@ -53,6 +53,12 @@ namespace Ginger.UserControlsLib.TextEditor.Common
             cbWildcards.IsChecked = useWildcards;
             cbSearchUp.IsChecked = searchUp;
             txtFind.Focus();
+
+            if (editor.IsReadOnly)
+            {
+                xReaplaceTab.Visibility = Visibility.Collapsed;
+            }
+
         }
 
         private void FindNextClick(object sender, RoutedEventArgs e)
@@ -81,12 +87,14 @@ namespace Ginger.UserControlsLib.TextEditor.Common
 
             if (!FindNext(txtFind2.Text) && !replaced)
                 SystemSounds.Beep.Play();
+
+
         }
 
         private void ReplaceAllClick(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKey.ReplaceAll, "Are you sure you want to Replace All occurrences of \"" +
-            txtFind2.Text + "\" with \"" + txtReplace.Text + "\"?") == Amdocs.Ginger.Common.eUserMsgSelection.OK)
+
+            if (Reporter.ToUser(eUserMsgKey.ReplaceAll, "Are you sure you want to Replace All occurrences of \"" + txtFind2.Text + "\" with \"" + txtReplace.Text + "\"?") == Amdocs.Ginger.Common.eUserMsgSelection.OK)
             {
                 Regex regex = GetRegEx(txtFind2.Text, true);
                 int offset = 0;
@@ -147,7 +155,7 @@ namespace Ginger.UserControlsLib.TextEditor.Common
             }
         }
 
-        
+
         public static void ShowForReplace(ICSharpCode.AvalonEdit.TextEditor editor)
         {
         }

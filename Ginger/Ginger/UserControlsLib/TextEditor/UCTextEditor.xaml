@@ -7,46 +7,34 @@
              xmlns:Ginger="clr-namespace:Ginger" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="600" PreviewKeyDown="UCTextEditor_PreviewKeyDown" >
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="xFirstGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition Name="ToolBarRow" Height="30"/>
+            <RowDefinition Name="ToolBarRow" Height="35"/>
             <RowDefinition Height="97*"/>
             <RowDefinition x:Name="EditPageRow" Height="30*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*"/>
-
-
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="0" BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}" Grid.ColumnSpan="1" >
+        <Border x:Name="xTitleBorder" Grid.Row="0" BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}" Grid.ColumnSpan="1" >
             <DockPanel>
                 <Label x:Name="lblTitle" Style="{DynamicResource @ucGridTitleLightStyle}" >Document Title</Label>
                 <Label x:Name="ContentEditorTitleLabel" Style="{DynamicResource @ucGridTitleLightStyle}" Visibility="Collapsed" >Document Editor</Label>
             </DockPanel>
         </Border>
 
-        <ToolBarTray x:Name="ToolBarTray" Grid.Row="1" Grid.ColumnSpan="1">
-            <ToolBar x:Name="toolbar" ToolBarTray.IsLocked="True" Band="1"
-                     IsHitTestVisible="True" ScrollViewer.CanContentScroll="True">
-                
-                
-                <ToggleButton x:Name="SaveButton" Click="SaveButton_Click"  ToolTip="Save Document" Visibility="Collapsed">
-                    <Image Source= "{StaticResource @Save_16x16 }"/>
-                </ToggleButton>
-                
-                <Button x:Name="UndoButton" Click="UndoButton_Click" ToolTip="Undo Changes" Visibility="Collapsed">
-                    <Image Source="{DynamicResource @Undo_16x16}" />
-                </Button>
-                
-                <Button x:Name="DeleteButton" Click="DeleteButton_Click" ToolTip="Delete Selected" Visibility="Collapsed">
-                    <Image Source="{DynamicResource @Delete_16x16}" />
-                </Button>
+        <ToolBarTray x:Name="ToolBarTray" Grid.Row="1">
+            <ToolBar x:Name="toolbar" ToolBarTray.IsLocked="True" Band="1" IsHitTestVisible="True" ScrollViewer.CanContentScroll="True" >
 
-                <ToggleButton x:Name="FindReplaceButton" Click="FindReplaceButton_Click"  ToolTip="Find Replace">
-                    <Image Source= "{StaticResource @View_16x16 }"/>
-                </ToggleButton>
+                <UserControls:ucButton x:Name="SaveButton" ButtonType="ImageButton" Margin="10,0,0,0" Click="SaveButton_Click" ToolTip="Save Document"  ButtonFontImageSize="18"  ButtonImageType="Save" />
+
+                <UserControls:ucButton x:Name="UndoButton" ButtonType="ImageButton" Click="UndoButton_Click" ToolTip="Undo Changes" Visibility="Collapsed" ButtonFontImageSize="18"  ButtonImageType="Undo" />
+
+                <UserControls:ucButton x:Name="DeleteButton" ButtonType="ImageButton" Click="DeleteButton_Click" ToolTip="Delete Selected" Visibility="Collapsed" ButtonFontImageSize="18"  ButtonImageType="Delete" />
+
+                <UserControls:ucButton  x:Name="FindReplaceButton" ButtonType="ImageButton" Margin="0,0,0,0" Click="FindReplaceButton_Click" ToolTip="Find Replace" VerticalAlignment="Top" ButtonFontImageSize="18"  ButtonImageType="Search" />
 
                 <Label x:Name="lblView" Style="{DynamicResource @LabelStyle}" Visibility="Collapsed">View:</Label>
                 <ComboBox x:Name="comboView" Width="100" Style="{DynamicResource @ToolBarComboBoxStyle}" Visibility="Collapsed">
@@ -65,7 +53,7 @@
 
         <GridSplitter x:Name="SelectionEditorFrameSplitter" Grid.Row="3"  ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_DarkGray}" Height="1" Width="Auto"/>
 
-        <Grid Grid.Row="3">
+        <Grid x:Name="xSecondGrid"  Grid.Row="3">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name ="UpdateRow" Height="0"/>
                 <RowDefinition/>
