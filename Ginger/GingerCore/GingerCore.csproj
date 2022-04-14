@@ -327,6 +327,7 @@
     <Compile Include="Actions\XML\ActXMLTagValidation.cs" />
     <Compile Include="Actions\XML\ActXMLProcessing.cs" />
     <Compile Include="Actions\XML\XMLProcessor.cs" />
+    <Compile Include="ActOcr.cs" />
     <Compile Include="ALM\QtestCore.cs" />
     <Compile Include="ALM\Qtest\ImportFromQtest.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
@@ -404,6 +405,7 @@
     <Compile Include="GeneralLib\ComboBoxWindow.xaml.cs">
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GingerOCR\GingerOcrOperations.cs" />
     <Compile Include="Helpers\HTMLHelper.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -477,6 +479,12 @@
     <Compile Include="XPathParser\XPathScanner.cs" />
     <Compile Include="XPathParser\XPathStringBuilder.cs" />
     <Compile Include="XPathParser\XPathTreeBuilder.cs" />
+    <None Include="tessdata\eng.traineddata">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Resource Include="tessdata\pdf.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQMSettings.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -790,6 +798,9 @@
     <PackageReference Include="EPPlus">
       <Version>4.5.3.1</Version>
     </PackageReference>
+    <PackageReference Include="Freeware.Pdf2Png">
+      <Version>1.0.1</Version>
+    </PackageReference>
     <PackageReference Include="Google.Protobuf">
       <Version>3.15.0</Version>
     </PackageReference>
@@ -860,7 +871,7 @@
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Drawing.Common">
-      <Version>4.7.0</Version>
+      <Version>5.0.3</Version>
     </PackageReference>
     <PackageReference Include="System.Globalization">
       <Version>4.3.0</Version>
@@ -891,6 +902,12 @@
     </PackageReference>
     <PackageReference Include="System.Threading.Tasks.Dataflow">
       <Version>4.11.1</Version>
+    </PackageReference>
+    <PackageReference Include="Tabula">
+      <Version>0.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="Tesseract">
+      <Version>4.1.1</Version>
     </PackageReference>
     <PackageReference Include="UIAComWrapper">
       <Version>1.1.0.14</Version>
