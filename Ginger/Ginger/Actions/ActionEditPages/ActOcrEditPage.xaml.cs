@@ -131,57 +131,6 @@ namespace Ginger.Actions
                 BindingHandler.ObjFieldBinding(xOcrOperationCombo, ComboBox.SelectedValueProperty, mAct, nameof(ActOcr.SelectedOcrPdfOperation), BindingMode.TwoWay);
             }
             xOcrOperationCombo_SelectionChanged(null, null);
-
-            //if (xOcrOperationCombo.SelectedValue.ToString().Equals(eActOcrFileType.ReadTextFromPDFSinglePage.ToString()))
-            //{
-            //    lblPageNos.Visibility = Visibility.Visible;
-            //    xPageNosTextBox.Visibility = Visibility.Visible;
-            //    return;
-            //}
-            //else
-            //{
-            //    lblPageNos.Visibility = Visibility.Collapsed;
-            //    xPageNosTextBox.Visibility = Visibility.Collapsed;
-            //}
-
-            //if (xOcrOperationCombo.SelectedValue.ToString().Equals(eActOcrFileType.ReadTextAfterLabel.ToString()))
-            //{
-            //    lblPageNos.Visibility = Visibility.Visible;
-            //    xPageNosTextBox.Visibility = Visibility.Visible;
-            //    xLabelFirststring.Content = "Label: ";
-            //    xLabelFirststring.Visibility = Visibility.Visible;
-            //    xFirstString.Visibility = Visibility.Visible;
-            //    xLabelSecondtring.Visibility = Visibility.Collapsed;
-            //    xSecondString.Visibility = Visibility.Collapsed;
-            //}
-            //else if (xOcrOperationCombo.SelectedValue.ToString().Equals(eActOcrFileType.ReadTextFromTableInPdf.ToString()))
-            //{
-            //    lblPageNos.Visibility = Visibility.Visible;
-            //    xPageNosTextBox.Visibility = Visibility.Visible;
-            //    xLabelFirststring.Content = "Column Name: ";
-            //    xLabelFirststring.Visibility = Visibility.Visible;
-            //    xFirstString.Visibility = Visibility.Visible;
-            //    xLabelSecondtring.Visibility = Visibility.Collapsed;
-            //    xSecondString.Visibility = Visibility.Collapsed;
-            //}
-            //else if (xOcrOperationCombo.SelectedValue.ToString().Equals(eActOcrFileType.ReadTextBetweenTwoStrings.ToString()))
-            //{
-            //    xLabelFirststring.Content = "Start String: ";
-            //    xLabelFirststring.Visibility = Visibility.Visible;
-            //    xFirstString.Visibility = Visibility.Visible;
-            //    xLabelSecondtring.Visibility = Visibility.Visible;
-            //    xSecondString.Visibility = Visibility.Visible;
-            //    xLabelSecondtring.Content = "End String: ";
-            //}
-            //else
-            //{
-            //    lblPageNos.Visibility = Visibility.Collapsed;
-            //    xPageNosTextBox.Visibility = Visibility.Collapsed;
-            //    xLabelFirststring.Visibility = Visibility.Collapsed;
-            //    xFirstString.Visibility = Visibility.Collapsed;
-            //    xLabelSecondtring.Visibility = Visibility.Collapsed;
-            //    xSecondString.Visibility = Visibility.Collapsed;
-            //}
         }
 
         private void xOcrOperationCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -8,6 +8,7 @@ using UglyToad.PdfPig;
 using Tesseract;
 using Freeware;
 using System.IO;
+using System.Text;
 
 namespace GingerCore.GingerOCR
 {
@@ -108,7 +109,7 @@ namespace GingerCore.GingerOCR
                                 }
                                 else
                                 {
-                                    resultTxt += lineTxt.Substring(firstIndexOf);
+                                    resultTxt = string.Concat(resultTxt, lineTxt.Substring(firstIndexOf));
                                     continue;
                                 }
                             }
@@ -117,12 +118,12 @@ namespace GingerCore.GingerOCR
                                 if (lineTxt.Contains(secondLabel))
                                 {
                                     secondIndexOf = lineTxt.IndexOf(secondLabel);
-                                    resultTxt += lineTxt.Substring(0, secondIndexOf);
+                                    resultTxt = string.Concat(resultTxt, lineTxt.Substring(0, secondIndexOf));
                                     return resultTxt;
                                 }
                                 else
                                 {
-                                    resultTxt += lineTxt;
+                                    resultTxt = string.Concat(resultTxt, lineTxt);
                                 }
                             }
                         } while (iter.Next(PageIteratorLevel.TextLine));
@@ -191,7 +192,7 @@ namespace GingerCore.GingerOCR
                     List<byte[]> lstPngByte = GetPngByteArrayFromPdf(pdfFilePath, pageNum, password);
                     foreach (byte[] pngByte in lstPngByte)
                     {
-                        txtOutput += ReadTextFromByteArray(pngByte);
+                        txtOutput = string.Concat(txtOutput, ReadTextFromByteArray(pngByte));
                     }
                 }
                 else
@@ -358,7 +359,7 @@ namespace GingerCore.GingerOCR
                                 }
                                 else
                                 {
-                                    resultTxt += lineTxt.Substring(firstIndexOf);
+                                    resultTxt = string.Concat(resultTxt, lineTxt.Substring(firstIndexOf));
                                     continue;
                                 }
                             }
@@ -367,12 +368,12 @@ namespace GingerCore.GingerOCR
                                 if (lineTxt.Contains(secondLabel))
                                 {
                                     secondIndexOf = lineTxt.IndexOf(secondLabel);
-                                    resultTxt += lineTxt.Substring(0, secondIndexOf);
+                                    resultTxt = string.Concat(resultTxt, lineTxt.Substring(0, secondIndexOf));
                                     break;
                                 }
                                 else
                                 {
-                                    resultTxt += lineTxt;
+                                    resultTxt = string.Concat(resultTxt, lineTxt);
                                 }
                             }
                         } while (iter.Next(PageIteratorLevel.TextLine));
@@ -463,10 +464,10 @@ namespace GingerCore.GingerOCR
                 {
                     string[] pageArray = pageNumber.Split('-');
                     int i, j = 0;
-                    isParse = int.TryParse(pageArray[0].ToString(), out i);
+                    isParse = int.TryParse(pageArray[0], out i);
                     if (isParse)
                     {
-                        isParse = int.TryParse(pageArray[1].ToString(), out j);
+                        isParse = int.TryParse(pageArray[1], out j);
                     }
                     if (isParse)
                     {

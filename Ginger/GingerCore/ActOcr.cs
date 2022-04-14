@@ -244,8 +244,6 @@ namespace GingerCore
                         Error = "Unable to read text from Image";
                     }
                     break;
-                default:
-                    break;
             }
         }
 
