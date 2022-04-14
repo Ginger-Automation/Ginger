@@ -626,9 +626,13 @@ namespace Ginger.Run
             xSealighsBuildSessionIDTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID));
                       
             // check if fields have been populated (font-end validation)
-            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID), "Lab ID or Build Session ID must be provided"));
-            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(mRunSetConfig, nameof(RunSetConfig.SealighsLabId), "Lab ID or Build Session ID must be provided"));
-            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Test Stage cannot be empty"));
+            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(mRunSetConfig, nameof(RunSetConfig.SealighsLabId), nameof(RunSetConfig.SealighsBuildSessionID), "Lab ID or Build Session ID must be provided"));
+            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID), nameof(RunSetConfig.SealighsLabId), "Lab ID or Build Session ID must be provided"));
+            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(mRunSetConfig, nameof(RunSetConfig.SealightsTestStage), "Test Stage cannot be empty"));
+
+            mRunSetConfig.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsLabId));
+            mRunSetConfig.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsTestStage));
+            mRunSetConfig.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
 
             xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
             xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
