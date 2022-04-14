@@ -80,7 +80,7 @@ jobs:
             $PR_TARGET_BRANCH="$(System.PullRequest.TargetBranch)".Replace("refs/heads/","")
             #Retrieve the last Commit Hash from the PR branch and not the one from the ADO local Merge (via git log history)
             $PR_LAST_COMMIT=$(git log -2 --format=%H).Split(" ")[1]
-            $PR_NUMBER="$(System.PullRequest.PullRequestId)"
+            $PR_NUMBER="$(system.pullRequest.pullRequestNumber)"
             $REPO_URL="$(System.PullRequest.SourceRepositoryURI)"
             Write-Output "`n*** Create PR BSID ***"
             .\SL.DotNet\x64\SL.DotNet.exe prConfig --appName $APP_NAME --pullRequestNumber $PR_NUMBER --targetBranch $PR_TARGET_BRANCH --latestCommit $PR_LAST_COMMIT --repositoryUrl $REPO_URL --includeNamespace $APP_NAMESPACE --buildSessionIdFile $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt --token $($slagenttoken) --logEnabled true --logAppendConsole true --ignoreCertificateErrors true
