@@ -240,6 +240,22 @@ namespace GingerCore.Actions
 
         public string OutDSParamMapType { get { return mOutDSParamMapType; } set { mOutDSParamMapType = value; OnPropertyChanged(Fields.OutDSParamMapType); } }
 
+        string mRawResponseValues;
+
+        public string RawResponseValues { 
+            get 
+            { 
+                return mRawResponseValues;
+            } 
+            set 
+            { 
+                mRawResponseValues = value;
+                OnPropertyChanged(nameof(RawResponseValues));
+            }
+        }
+
+
+
 
         private bool mEnableRetryMechanism;
         [IsSerializedForLocalRepository]

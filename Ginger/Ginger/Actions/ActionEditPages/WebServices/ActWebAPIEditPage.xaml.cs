@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using Ginger.UserControlsLib.TextEditor;
 using GingerCore.Actions;
 using GingerCore.Actions.WebAPI;
 using GingerCore.Actions.WebServices;
@@ -594,5 +595,26 @@ namespace Ginger.Actions.WebServices
                 }
             }
         }
+
+        private void xViewRawRequestBtn_Click(object sender, RoutedEventArgs e)
+        {
+            HttpWebClientUtils webAPIUtils = new HttpWebClientUtils();
+            string requestContent = webAPIUtils.GetRawRequestContentPreview(mAct);
+            if (requestContent != string.Empty)
+            {
+                string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(requestContent);
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
+                    docPage.Width = 800;
+                    docPage.Height = 800;
+                    docPage.ShowAsWindow("Raw Request Preview");
+                    System.IO.File.Delete(tempFilePath);
+                    return;
+                }
+            }
+            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw request preview, see log for details.");
+        }
+
     }
 }
