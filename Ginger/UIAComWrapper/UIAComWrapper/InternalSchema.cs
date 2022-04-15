@@ -26,7 +26,7 @@ using Windows.Foundation;
 namespace UIAComWrapperInternal
 {
     internal delegate object PropertyConverter(object valueAsObject);
-    internal delegate object PatternWrapper(AutomationElement el, object pattern, bool cached);
+    internal delegate object PatternWrapper(AutomationElement_Extend el, object pattern, bool cached);
 
     internal class PropertyTypeInfo
     {
@@ -73,10 +73,10 @@ namespace UIAComWrapperInternal
     {
         
         private PatternWrapper _clientSideWrapper;
-        private AutomationPattern _id;
+        private AutomationPatternExtended _id;
 
         
-        public PatternTypeInfo(AutomationPattern id, PatternWrapper clientSideWrapper)
+        public PatternTypeInfo(AutomationPatternExtended id, PatternWrapper clientSideWrapper)
         {
             this._id = id;
             this._clientSideWrapper = clientSideWrapper;
@@ -91,7 +91,7 @@ namespace UIAComWrapperInternal
             }
         }
 
-        internal AutomationPattern ID
+        internal AutomationPatternExtended ID
         {
             get
             {
@@ -120,73 +120,73 @@ namespace UIAComWrapperInternal
 
         private static readonly PropertyTypeInfo[] _propertyInfoTable = new PropertyTypeInfo[] { 
             // Properties requiring conversion
-            new PropertyTypeInfo(convertToRect, AutomationElement.BoundingRectangleProperty, typeof(Rect)), 
-            new PropertyTypeInfo(convertToControlType, AutomationElement.ControlTypeProperty, typeof(ControlType)), 
-            new PropertyTypeInfo(convertToPoint, AutomationElement.ClickablePointProperty, typeof(Point)), 
-            new PropertyTypeInfo(convertToCultureInfo, AutomationElement.CultureProperty, typeof(CultureInfo)), 
-            new PropertyTypeInfo(convertToOrientationType, AutomationElement.OrientationProperty, typeof(OrientationType)), 
+            new PropertyTypeInfo(convertToRect, AutomationElement_Extend.BoundingRectangleProperty, typeof(Rect)), 
+            new PropertyTypeInfo(convertToControlType, AutomationElement_Extend.ControlTypeProperty, typeof(ControlTypeExtended)), 
+            new PropertyTypeInfo(convertToPoint, AutomationElement_Extend.ClickablePointProperty, typeof(Point)), 
+            new PropertyTypeInfo(convertToCultureInfo, AutomationElement_Extend.CultureProperty, typeof(CultureInfo)), 
+            new PropertyTypeInfo(convertToOrientationType, AutomationElement_Extend.OrientationProperty, typeof(OrientationTypeExtended)), 
             new PropertyTypeInfo(convertToDockPosition, DockPattern.DockPositionProperty, typeof(DockPosition)), 
-            new PropertyTypeInfo(convertToExpandCollapseState, ExpandCollapsePattern.ExpandCollapseStateProperty, typeof(ExpandCollapseState)), 
-            new PropertyTypeInfo(convertToWindowVisualState, WindowPattern.WindowVisualStateProperty, typeof(WindowVisualState)), 
-            new PropertyTypeInfo(convertToWindowInteractionState, WindowPattern.WindowInteractionStateProperty, typeof(WindowInteractionState)), 
+            new PropertyTypeInfo(convertToExpandCollapseState, ExpandCollapsePatternExtended.ExpandCollapseStateProperty, typeof(ExpandCollapseState)), 
+            new PropertyTypeInfo(convertToWindowVisualState, WindowPatternExtended.WindowVisualStateProperty, typeof(WindowVisualStateExtended)), 
+            new PropertyTypeInfo(convertToWindowInteractionState, WindowPatternExtended.WindowInteractionStateProperty, typeof(WindowInteractionStateExtended)), 
             new PropertyTypeInfo(convertToRowOrColumnMajor, TablePattern.RowOrColumnMajorProperty, typeof(RowOrColumnMajor)), 
-            new PropertyTypeInfo(convertToToggleState, TogglePattern.ToggleStateProperty, typeof(ToggleState)), 
+            new PropertyTypeInfo(convertToToggleState, TogglePatternExtended.ToggleStateProperty, typeof(ToggleStateExtended)), 
 
             // Text attributes 
-            new PropertyTypeInfo(null, TextPattern.AnimationStyleAttribute, typeof(AnimationStyle)), 
-            new PropertyTypeInfo(null, TextPattern.BackgroundColorAttribute, typeof(int)), 
-            new PropertyTypeInfo(null, TextPattern.BulletStyleAttribute, typeof(BulletStyle)), 
-            new PropertyTypeInfo(null, TextPattern.CapStyleAttribute, typeof(CapStyle)), 
-            new PropertyTypeInfo(convertToCultureInfo, TextPattern.CultureAttribute, typeof(CultureInfo)), 
-            new PropertyTypeInfo(null, TextPattern.FontNameAttribute, typeof(string)), 
-            new PropertyTypeInfo(null, TextPattern.FontSizeAttribute, typeof(double)), 
-            new PropertyTypeInfo(null, TextPattern.FontWeightAttribute, typeof(int)), 
-            new PropertyTypeInfo(null, TextPattern.ForegroundColorAttribute, typeof(int)), 
-            new PropertyTypeInfo(null, TextPattern.HorizontalTextAlignmentAttribute, typeof(HorizontalTextAlignment)), 
-            new PropertyTypeInfo(null, TextPattern.IndentationFirstLineAttribute, typeof(double)), 
-            new PropertyTypeInfo(null, TextPattern.IndentationLeadingAttribute, typeof(double)), 
-            new PropertyTypeInfo(null, TextPattern.IndentationTrailingAttribute, typeof(double)), 
-            new PropertyTypeInfo(null, TextPattern.IsHiddenAttribute, typeof(bool)), new PropertyTypeInfo(null, TextPattern.IsItalicAttribute, typeof(bool)), 
-            new PropertyTypeInfo(null, TextPattern.IsReadOnlyAttribute, typeof(bool)), 
-            new PropertyTypeInfo(null, TextPattern.IsSubscriptAttribute, typeof(bool)), 
-            new PropertyTypeInfo(null, TextPattern.IsSuperscriptAttribute, typeof(bool)), 
-            new PropertyTypeInfo(null, TextPattern.MarginBottomAttribute, typeof(double)), 
-            new PropertyTypeInfo(null, TextPattern.MarginLeadingAttribute, typeof(double)), 
-            new PropertyTypeInfo(null, TextPattern.MarginTopAttribute, typeof(double)), 
-            new PropertyTypeInfo(null, TextPattern.MarginTrailingAttribute, typeof(double)), 
-            new PropertyTypeInfo(null, TextPattern.OutlineStylesAttribute, typeof(OutlineStyles)), 
-            new PropertyTypeInfo(null, TextPattern.OverlineColorAttribute, typeof(int)), 
-            new PropertyTypeInfo(null, TextPattern.OverlineStyleAttribute, typeof(TextDecorationLineStyle)), 
-            new PropertyTypeInfo(null, TextPattern.StrikethroughColorAttribute, typeof(int)), 
-            new PropertyTypeInfo(null, TextPattern.StrikethroughStyleAttribute, typeof(TextDecorationLineStyle)), 
-            new PropertyTypeInfo(null, TextPattern.TabsAttribute, typeof(double[])), 
-            new PropertyTypeInfo(null, TextPattern.TextFlowDirectionsAttribute, typeof(FlowDirections)), 
-            new PropertyTypeInfo(null, TextPattern.UnderlineColorAttribute, typeof(int)), 
-            new PropertyTypeInfo(null, TextPattern.UnderlineStyleAttribute, typeof(TextDecorationLineStyle))
+            new PropertyTypeInfo(null, TextPatternExtended.AnimationStyleAttribute, typeof(AnimationStyle)), 
+            new PropertyTypeInfo(null, TextPatternExtended.BackgroundColorAttribute, typeof(int)), 
+            new PropertyTypeInfo(null, TextPatternExtended.BulletStyleAttribute, typeof(BulletStyle)), 
+            new PropertyTypeInfo(null, TextPatternExtended.CapStyleAttribute, typeof(CapStyle)), 
+            new PropertyTypeInfo(convertToCultureInfo, TextPatternExtended.CultureAttribute, typeof(CultureInfo)), 
+            new PropertyTypeInfo(null, TextPatternExtended.FontNameAttribute, typeof(string)), 
+            new PropertyTypeInfo(null, TextPatternExtended.FontSizeAttribute, typeof(double)), 
+            new PropertyTypeInfo(null, TextPatternExtended.FontWeightAttribute, typeof(int)), 
+            new PropertyTypeInfo(null, TextPatternExtended.ForegroundColorAttribute, typeof(int)), 
+            new PropertyTypeInfo(null, TextPatternExtended.HorizontalTextAlignmentAttribute, typeof(HorizontalTextAlignment)), 
+            new PropertyTypeInfo(null, TextPatternExtended.IndentationFirstLineAttribute, typeof(double)), 
+            new PropertyTypeInfo(null, TextPatternExtended.IndentationLeadingAttribute, typeof(double)), 
+            new PropertyTypeInfo(null, TextPatternExtended.IndentationTrailingAttribute, typeof(double)), 
+            new PropertyTypeInfo(null, TextPatternExtended.IsHiddenAttribute, typeof(bool)), new PropertyTypeInfo(null, TextPatternExtended.IsItalicAttribute, typeof(bool)), 
+            new PropertyTypeInfo(null, TextPatternExtended.IsReadOnlyAttribute, typeof(bool)), 
+            new PropertyTypeInfo(null, TextPatternExtended.IsSubscriptAttribute, typeof(bool)), 
+            new PropertyTypeInfo(null, TextPatternExtended.IsSuperscriptAttribute, typeof(bool)), 
+            new PropertyTypeInfo(null, TextPatternExtended.MarginBottomAttribute, typeof(double)), 
+            new PropertyTypeInfo(null, TextPatternExtended.MarginLeadingAttribute, typeof(double)), 
+            new PropertyTypeInfo(null, TextPatternExtended.MarginTopAttribute, typeof(double)), 
+            new PropertyTypeInfo(null, TextPatternExtended.MarginTrailingAttribute, typeof(double)), 
+            new PropertyTypeInfo(null, TextPatternExtended.OutlineStylesAttribute, typeof(OutlineStyles)), 
+            new PropertyTypeInfo(null, TextPatternExtended.OverlineColorAttribute, typeof(int)), 
+            new PropertyTypeInfo(null, TextPatternExtended.OverlineStyleAttribute, typeof(TextDecorationLineStyle)), 
+            new PropertyTypeInfo(null, TextPatternExtended.StrikethroughColorAttribute, typeof(int)), 
+            new PropertyTypeInfo(null, TextPatternExtended.StrikethroughStyleAttribute, typeof(TextDecorationLineStyle)), 
+            new PropertyTypeInfo(null, TextPatternExtended.TabsAttribute, typeof(double[])), 
+            new PropertyTypeInfo(null, TextPatternExtended.TextFlowDirectionsAttribute, typeof(FlowDirections)), 
+            new PropertyTypeInfo(null, TextPatternExtended.UnderlineColorAttribute, typeof(int)), 
+            new PropertyTypeInfo(null, TextPatternExtended.UnderlineStyleAttribute, typeof(TextDecorationLineStyle))
         };
 
         private static readonly PatternTypeInfo[] _patternInfoTable = new PatternTypeInfo[] { 
-            new PatternTypeInfo(InvokePattern.Pattern, new PatternWrapper(InvokePattern.Wrap)), 
+            new PatternTypeInfo(InvokePatternExtended.Pattern, new PatternWrapper(InvokePatternExtended.Wrap)), 
             new PatternTypeInfo(SelectionPattern.Pattern, new PatternWrapper(SelectionPattern.Wrap)), 
-            new PatternTypeInfo(ValuePattern.Pattern, new PatternWrapper(ValuePattern.Wrap)), 
-            new PatternTypeInfo(RangeValuePattern.Pattern, new PatternWrapper(RangeValuePattern.Wrap)), 
-            new PatternTypeInfo(ScrollPattern.Pattern, new PatternWrapper(ScrollPattern.Wrap)), 
-            new PatternTypeInfo(ExpandCollapsePattern.Pattern, new PatternWrapper(ExpandCollapsePattern.Wrap)), 
-            new PatternTypeInfo(GridPattern.Pattern, new PatternWrapper(GridPattern.Wrap)), 
+            new PatternTypeInfo(ValuePatternExtended.Pattern, new PatternWrapper(ValuePatternExtended.Wrap)), 
+            new PatternTypeInfo(RangeValuePatternExtended.Pattern, new PatternWrapper(RangeValuePatternExtended.Wrap)), 
+            new PatternTypeInfo(ScrollPatternExtended.Pattern, new PatternWrapper(ScrollPatternExtended.Wrap)), 
+            new PatternTypeInfo(ExpandCollapsePatternExtended.Pattern, new PatternWrapper(ExpandCollapsePatternExtended.Wrap)), 
+            new PatternTypeInfo(GridPatternExtended.Pattern, new PatternWrapper(GridPatternExtended.Wrap)), 
             new PatternTypeInfo(GridItemPattern.Pattern, new PatternWrapper(GridItemPattern.Wrap)), 
             new PatternTypeInfo(MultipleViewPattern.Pattern, new PatternWrapper(MultipleViewPattern.Wrap)), 
-            new PatternTypeInfo(WindowPattern.Pattern, new PatternWrapper(WindowPattern.Wrap)), 
-            new PatternTypeInfo(SelectionItemPattern.Pattern, new PatternWrapper(SelectionItemPattern.Wrap)), 
+            new PatternTypeInfo(WindowPatternExtended.Pattern, new PatternWrapper(WindowPatternExtended.Wrap)), 
+            new PatternTypeInfo(SelectionItemPatternExtended.Pattern, new PatternWrapper(SelectionItemPatternExtended.Wrap)), 
             new PatternTypeInfo(DockPattern.Pattern, new PatternWrapper(DockPattern.Wrap)), 
             new PatternTypeInfo(TablePattern.Pattern, new PatternWrapper(TablePattern.Wrap)), 
             new PatternTypeInfo(TableItemPattern.Pattern, new PatternWrapper(TableItemPattern.Wrap)), 
-            new PatternTypeInfo(TextPattern.Pattern, new PatternWrapper(TextPattern.Wrap)), 
-            new PatternTypeInfo(TogglePattern.Pattern, new PatternWrapper(TogglePattern.Wrap)), 
-            new PatternTypeInfo(TransformPattern.Pattern, new PatternWrapper(TransformPattern.Wrap)), 
-            new PatternTypeInfo(ScrollItemPattern.Pattern, new PatternWrapper(ScrollItemPattern.Wrap)),
+            new PatternTypeInfo(TextPatternExtended.Pattern, new PatternWrapper(TextPatternExtended.Wrap)), 
+            new PatternTypeInfo(TogglePatternExtended.Pattern, new PatternWrapper(TogglePatternExtended.Wrap)), 
+            new PatternTypeInfo(TransformPatternExtended.Pattern, new PatternWrapper(TransformPatternExtended.Wrap)), 
+            new PatternTypeInfo(ScrollItemPatternExtended.Pattern, new PatternWrapper(ScrollItemPatternExtended.Wrap)),
             new PatternTypeInfo(ItemContainerPattern.Pattern, new PatternWrapper(ItemContainerPattern.Wrap)),
             new PatternTypeInfo(VirtualizedItemPattern.Pattern, new PatternWrapper(VirtualizedItemPattern.Wrap)),
-            new PatternTypeInfo(LegacyIAccessiblePattern.Pattern, new PatternWrapper(LegacyIAccessiblePattern.Wrap)),
+            new PatternTypeInfo(LegacyIAccessiblePatternExtended.Pattern, new PatternWrapper(LegacyIAccessiblePatternExtended.Wrap)),
             new PatternTypeInfo(SynchronizedInputPattern.Pattern, new PatternWrapper(SynchronizedInputPattern.Wrap))
      };
 
@@ -202,11 +202,11 @@ namespace UIAComWrapperInternal
 
         private static object ConvertToControlType(object value)
         {
-            if (value is ControlType)
+            if (value is ControlTypeExtended)
             {
                 return value;
             }
-            return ControlType.LookupById((int)value);
+            return ControlTypeExtended.LookupById((int)value);
         }
 
         private static object ConvertToCultureInfo(object value)
@@ -233,7 +233,7 @@ namespace UIAComWrapperInternal
 
         private static object ConvertToElement(object value)
         {
-            return AutomationElement.Wrap((UIAutomationClient.IUIAutomationElement)value);
+            return AutomationElement_Extend.Wrap((UIAutomationClient.IUIAutomationElement)value);
         }
 
         internal static object ConvertToElementArray(object value)
@@ -248,7 +248,7 @@ namespace UIAComWrapperInternal
 
         private static object ConvertToOrientationType(object value)
         {
-            return (OrientationType)value;
+            return (OrientationTypeExtended)value;
         }
 
         private static object ConvertToPoint(object value)
@@ -273,20 +273,20 @@ namespace UIAComWrapperInternal
 
         private static object ConvertToToggleState(object value)
         {
-            return (ToggleState)value;
+            return (ToggleStateExtended)value;
         }
 
         private static object ConvertToWindowInteractionState(object value)
         {
-            return (WindowInteractionState)value;
+            return (WindowInteractionStateExtended)value;
         }
 
         private static object ConvertToWindowVisualState(object value)
         {
-            return (WindowVisualState)value;
+            return (WindowVisualStateExtended)value;
         }
 
-        internal static bool GetPatternInfo(AutomationPattern id, out PatternTypeInfo info)
+        internal static bool GetPatternInfo(AutomationPatternExtended id, out PatternTypeInfo info)
         {
             foreach (PatternTypeInfo info2 in _patternInfoTable)
             {

@@ -17,6 +17,8 @@
     <OutputType>Library</OutputType>
 
     <StartupObject />
+
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>

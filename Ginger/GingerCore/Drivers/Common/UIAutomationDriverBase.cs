@@ -212,9 +212,9 @@ namespace GingerCore.Drivers.Common
             if (obj == null) return null;
             ElementInfo EI = null;
 
-            if (obj.GetType().Equals(typeof(AutomationElement)))
+            if (obj.GetType().Equals(typeof(AutomationElement_Extend)))
             {
-                EI = mUIAutomationHelper.GetElementInfoFor((AutomationElement)obj);
+                EI = mUIAutomationHelper.GetElementInfoFor((AutomationElement_Extend)obj);
             }
 
             else

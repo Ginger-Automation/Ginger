@@ -24,12 +24,12 @@ namespace System.Windows.Automation
     public class SynchronizedInputPattern : BasePattern
     {
         private UIAutomationClient.IUIAutomationSynchronizedInputPattern _pattern;
-        public static readonly AutomationEvent InputReachedTargetEvent = SynchronizedInputPatternIdentifiers.InputReachedTargetEvent;
-        public static readonly AutomationEvent InputReachedOtherElementEvent = SynchronizedInputPatternIdentifiers.InputReachedOtherElementEvent;
-        public static readonly AutomationEvent InputDiscardedEvent = SynchronizedInputPatternIdentifiers.InputDiscardedEvent;
-        public static readonly AutomationPattern Pattern = SynchronizedInputPatternIdentifiers.Pattern;
+        public static readonly AutomationEventExtended InputReachedTargetEvent = SynchronizedInputPatternIdentifiers.InputReachedTargetEvent;
+        public static readonly AutomationEventExtended InputReachedOtherElementEvent = SynchronizedInputPatternIdentifiers.InputReachedOtherElementEvent;
+        public static readonly AutomationEventExtended InputDiscardedEvent = SynchronizedInputPatternIdentifiers.InputDiscardedEvent;
+        public static readonly AutomationPatternExtended Pattern = SynchronizedInputPatternIdentifiers.Pattern;
 
-        private SynchronizedInputPattern(AutomationElement el, UIAutomationClient.IUIAutomationSynchronizedInputPattern pattern, bool cached)
+        private SynchronizedInputPattern(AutomationElement_Extend el, UIAutomationClient.IUIAutomationSynchronizedInputPattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
@@ -60,7 +60,7 @@ namespace System.Windows.Automation
             }
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
             return (pattern == null) ? null : new SynchronizedInputPattern(el, (UIAutomationClient.IUIAutomationSynchronizedInputPattern)pattern, cached);
         }

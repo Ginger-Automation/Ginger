@@ -23,10 +23,10 @@ using Windows.Foundation;
 
 namespace System.Windows.Automation
 {
-    public class TextPattern : BasePattern
+    public class TextPatternExtended : BasePattern
     {
         private UIAutomationClient.IUIAutomationTextPattern _pattern;
-        public static readonly AutomationPattern Pattern = TextPatternIdentifiers.Pattern;
+        public static readonly AutomationPatternExtended Pattern = TextPatternIdentifiers.Pattern;
         public static readonly AutomationTextAttribute AnimationStyleAttribute = TextPatternIdentifiers.AnimationStyleAttribute;
         public static readonly AutomationTextAttribute BackgroundColorAttribute = TextPatternIdentifiers.BackgroundColorAttribute;
         public static readonly AutomationTextAttribute BulletStyleAttribute = TextPatternIdentifiers.BulletStyleAttribute;
@@ -56,22 +56,22 @@ namespace System.Windows.Automation
         public static readonly AutomationTextAttribute StrikethroughColorAttribute = TextPatternIdentifiers.StrikethroughColorAttribute;
         public static readonly AutomationTextAttribute StrikethroughStyleAttribute = TextPatternIdentifiers.StrikethroughStyleAttribute;
         public static readonly AutomationTextAttribute TabsAttribute = TextPatternIdentifiers.TabsAttribute;
-        public static readonly AutomationEvent TextChangedEvent = TextPatternIdentifiers.TextChangedEvent;
+        public static readonly AutomationEventExtended TextChangedEvent = TextPatternIdentifiers.TextChangedEvent;
         public static readonly AutomationTextAttribute TextFlowDirectionsAttribute = TextPatternIdentifiers.TextFlowDirectionsAttribute;
-        public static readonly AutomationEvent TextSelectionChangedEvent = TextPatternIdentifiers.TextSelectionChangedEvent;
+        public static readonly AutomationEventExtended TextSelectionChangedEvent = TextPatternIdentifiers.TextSelectionChangedEvent;
         public static readonly AutomationTextAttribute UnderlineColorAttribute = TextPatternIdentifiers.UnderlineColorAttribute;
         public static readonly AutomationTextAttribute UnderlineStyleAttribute = TextPatternIdentifiers.UnderlineStyleAttribute;
         
-        private TextPattern(AutomationElement el, UIAutomationClient.IUIAutomationTextPattern pattern, bool cached)
+        private TextPatternExtended(AutomationElement_Extend el, UIAutomationClient.IUIAutomationTextPattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
             this._pattern = pattern;
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
-            return (pattern == null) ? null : new TextPattern(el, (UIAutomationClient.IUIAutomationTextPattern)pattern, cached);
+            return (pattern == null) ? null : new TextPatternExtended(el, (UIAutomationClient.IUIAutomationTextPattern)pattern, cached);
         }
 
         public TextPatternRange[] GetSelection()
@@ -98,7 +98,7 @@ namespace System.Windows.Automation
             }
         }
 
-        public TextPatternRange RangeFromChild(AutomationElement childElement)
+        public TextPatternRange RangeFromChild(AutomationElement_Extend childElement)
         {
             Utility.ValidateArgumentNonNull(childElement, "childElement");
             try

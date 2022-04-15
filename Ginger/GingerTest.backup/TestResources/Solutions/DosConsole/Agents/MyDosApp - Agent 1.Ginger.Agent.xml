@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="d9588c4c-6e0e-4206-8c09-3528332b9927" ItemType="Agent" CreatedBy="ravikugu" Created="201811061057" GingerVersion="3.0.0.0" Version="1" LastUpdateBy="ravikugu" LastUpdate="201811061057" />
+<Agent DriverType="DOSConsole" Guid="d9588c4c-6e0e-4206-8c09-3528332b9927" Name="MyDosApp - Agent 1" ParentGuid="00000000-0000-0000-0000-000000000000">
+<DriverConfiguration>
+<DriverConfigParam Description="Location of cmd.exe which open a DOS console" Guid="41dad498-d63b-4274-a442-42831a30d638" Parameter="CMDFileName" ParentGuid="00000000-0000-0000-0000-000000000000" Value="C:\windows\system32\cmd.exe" />
+<DriverConfigParam Description="Implicit Wait for Console Action Completion" Guid="d98e2fbe-0988-44e3-8ecd-d3048f53e2ef" Parameter="ImplicitWait" ParentGuid="00000000-0000-0000-0000-000000000000" Value="30" />
+<DriverConfigParam Description="The amount of maximum time (in seconds) to wait for the driver to load/connect" Guid="b5b5cd6b-f644-45f8-a5ab-e77a7cdf0cb9" Parameter="DriverLoadWaitingTime" ParentGuid="00000000-0000-0000-0000-000000000000" Value="30" />
+</DriverConfiguration>
+</Agent></GingerRepositoryItem>

@@ -1,0 +1,951 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>C:\Temp\GingerSetup\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <UpdateUrl>http://CMITECHINT1SRV/NextGen/Install/</UpdateUrl>
+    <ProductName>Amdocs Ginger Automation</ProductName>
+    <PublisherName>Amdocs</PublisherName>
+    <WebPage>publish.htm</WebPage>
+    <ApplicationRevision>50</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>2E9649D219B930C930D10870815D43A8D2252E7A</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>NextGenWPF_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>GingerIconNew.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility" />
+    <Reference Include="AlmDataContractsStd">
+      <HintPath>..\GingerCoreNET\DLLS\AlmDataContractsStd.dll</HintPath>
+    </Reference>
+    <Reference Include="ALMRestClient">
+      <HintPath>..\GingerCore\DLLs\ALMRestClient.dll</HintPath>
+    </Reference>
+    <Reference Include="ALM_Common">
+      <HintPath>..\GingerCore\DLLs\ALM_Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.TDAPIOLELib">
+      <HintPath>..\GingerCore\DLLs\Interop.TDAPIOLELib.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="JiraRepositoryStd">
+      <HintPath>..\GingerCoreNET\DLLS\JiraRepositoryStd.dll</HintPath>
+    </Reference>
+    <Reference Include="Open3270, Version=1.5.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLs\Open3270.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="QCRestClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GingerCore\DLLs\QCRestClient.dll</HintPath>
+    </Reference>
+    <Reference Include="QTestAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GingerCore\DLLs\QTestAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="ReachFramework" />
+    <Reference Update="System">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net" />
+    <Reference Include="System.Printing" />
+    <Reference Include="System.Security" />
+    <Reference Include="ZephyrEntStdSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GingerCoreNET\DLLS\ZephyrEntStdSDK.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiActionsConversionIntro.md" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
+    <Resource Include="Images\%40AddFile_16x16.png" />
+    <Resource Include="Images\%40AddSendExecutionData_16x16.png" />
+    <Resource Include="Agents\AddAgentWizardLib\AddAgentIntro.md" />
+    <Resource Include="Actions\ActionConversion\ActionConversionIntro.md" />
+    <None Update="ALMRESTConfiguration\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
+    <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
+    <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
+    <Resource Include="ALM\MapToALMWizard\MappedToALMIntro.md" />
+    <EmbeddedResource Include="Resources\LiteDB.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Resource Include="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro.md" />
+    <Resource Include="Images\%40A_16x16.png" />
+    <Resource Include="Images\%40AccessDataSource_16x16.png" />
+    <Resource Include="Images\%40Action_32x32.png" />
+    <Resource Include="Images\%40Activities_16x16.png" />
+    <Resource Include="Images\%40Add_16x16.png" />
+    <Resource Include="Images\%40Add_32x32.png" />
+    <Resource Include="Images\%40AddActivity_16x16.png" />
+    <Resource Include="Images\%40AddDefectsToALM_16x16.png" />
+    <Resource Include="Images\%40AddFolder_16x16.png" />
+    <Resource Include="Images\%40AddFolder_24x24.png" />
+    <Resource Include="Images\%40AddFolder_32x32.png" />
+    <Resource Include="Images\%40AddFolder_64x64.png" />
+    <Resource Include="Images\%40AddGinger_16x16.png" />
+    <Resource Include="Images\%40AddGinger_32x32.png" />
+    <Resource Include="Images\%40AddHTMLReport_16x16.png" />
+    <Resource Include="Images\%40AddMail_16x16.png" />
+    <Resource Include="Images\%40AddMail2_16x16.png" />
+    <Resource Include="Images\%40AddRunSetALMAction_16x16.png" />
+    <Resource Include="Images\%40AddSave_16x16.png" />
+    <Resource Include="Images\%40AddScnearios_32x32.png" />
+    <Resource Include="Images\%40AddScript_16x16.png" />
+    <Resource Include="Images\%40AddScript2_16x16.png" />
+    <Resource Include="Images\%40AddShare_16x16.png" />
+    <Resource Include="Images\%40AddSMS_16x16.png" />
+    <Resource Include="Images\%40AddTableColumn_16x16.png" />
+    <Resource Include="Images\%40AddToList_16x16.png" />
+    <Resource Include="Images\%40AddToList_24x24.png" />
+    <Resource Include="Images\%40AddToList_Gray_16x16.png" />
+    <Resource Include="Images\%40AddToRepository_16x16.png" />
+    <Resource Include="Images\%40Agent_16x16.png" />
+    <Resource Include="Images\%40Agent_32x32.png" />
+    <Resource Include="Images\%40AgentsConfig_16x16.png" />
+    <Resource Include="Images\%40AgentsConfig_32x32.png" />
+    <Resource Include="Images\%40AgentsLaunch_16x16.png" />
+    <Resource Include="Images\%40AgentsLaunch_32x32.png" />
+    <Resource Include="Images\%40AidBug_16x16.png" />
+    <Resource Include="Images\%40AidBug_32x32.png" />
+    <Resource Include="Images\%40AllReport_16x16.png" />
+    <Resource Include="Images\%40ALM_128x128.png" />
+    <Resource Include="Images\%40ALM_16x16.png" />
+    <Resource Include="Images\%40ALM_24x24.png" />
+    <Resource Include="Images\%40ALM_32x32.png" />
+    <Resource Include="Images\%40amdocs_logo.jpg" />
+    <Resource Include="Images\%40ArrowDown_16x16.png" />
+    <Resource Include="Images\%40ArrowDown_32x32.png" />
+    <Resource Include="Images\%40ArrowUp_16x16.png" />
+    <Resource Include="Images\%40ArrowUp_32x32.png" />
+    <Resource Include="Images\%40AutoEdit_16x16.png" />
+    <Resource Include="Images\%40Automate_16x16.png" />
+    <Resource Include="Images\%40BeatLogo.jpg" />
+    <Resource Include="Images\%40BrokenFile_32x32.png" />
+    <Resource Include="Images\%40BrokenFile_Orange_24x24.png" />
+    <Resource Include="Images\%40BrokenFile_Orange_32x32.png" />
+    <Resource Include="Images\%40Browser_16x16.png" />
+    <Resource Include="Images\%40Camera_32x32.png" />
+    <Resource Include="Images\%40Canvas16x16.png" />
+    <Resource Include="Images\%40CheckAllColumn_16x16.png" />
+    <Resource Include="Images\%40CheckAllRow_16x16.png" />
+    <Resource Include="Images\%40CheckAllTable_16x16.png" />
+    <Resource Include="Images\%40Checkbox_16x16.png" />
+    <Resource Include="Images\%40CheckIn_16x16.png" />
+    <Resource Include="Images\%40CheckIn_32x32.png" />
+    <Resource Include="Images\%40CheckIn2_16x16.png" />
+    <Resource Include="Images\%40CheckIn2_32x32.png" />
+    <Resource Include="Images\%40Circle_24x24.png" />
+    <Resource Include="Images\%40Circles_16x16.png" />
+    <Resource Include="Images\%40CleanScenarios_32x32.png" />
+    <Resource Include="Images\%40Clear_16x16.png" />
+    <Resource Include="Images\%40ClearAllGingers_32x32.png" />
+    <Resource Include="Images\%40Clock_16x16.png" />
+    <Resource Include="Images\%40Clock_32x32.png" />
+    <Resource Include="Images\%40Close_16x16.png" />
+    <Resource Include="Images\%40Close_20x20.png" />
+    <Resource Include="Images\%40Close_24x24.png" />
+    <Resource Include="Images\%40CloseWhite_16x16.png" />
+    <Resource Include="Images\%40CloseWhite_20x20.png" />
+    <Resource Include="Images\%40Commit_16x16.png" />
+    <Resource Include="Images\%40Config_16x16.png" />
+    <Resource Include="Images\%40Config_20x20.png" />
+    <Resource Include="Images\%40Config_24x24.png" />
+    <Resource Include="Images\%40Config_32x32.png" />
+    <Resource Include="Images\%40Config2_16x16.png" />
+    <Resource Include="Images\%40Config3_16x16.png" />
+    <Resource Include="Images\%40Connect_16x16.png" />
+    <Resource Include="Images\%40Connection_32x32.png" />
+    <Resource Include="Images\%40ContinueFlow_16x16.png" />
+    <Resource Include="Images\%40ContinueFlow_32x32.png" />
+    <Resource Include="Images\%40Copy_16x16.png" />
+    <Resource Include="Images\%40CreateShorCut_16x16.png" />
+    <Resource Include="Images\%40CreateShorCut_32x32.png" />
+    <Resource Include="Images\%40CSV_16x16.png" />
+    <Resource Include="Images\%40Cut_16x16.png" />
+    <Resource Include="Images\%40DataSource_16x16.png" />
+    <Resource Include="Images\%40DataSourceConfig_16x16.png" />
+    <Resource Include="Images\%40DataTable_16x16.png" />
+    <Resource Include="Images\%40Delete_16x16.png" />
+    <Resource Include="Images\%40Delete_32x32.png" />
+    <Resource Include="Images\%40DeleteTableColumn_16x16.png" />
+    <Resource Include="Images\%40DeLink_16x16.png" />
+    <Resource Include="Images\%40Dependency_16x16.png" />
+    <Resource Include="Images\%40DialogBox_16x16.png" />
+    <Resource Include="Images\%40DisabledClear_16x16.png" />
+    <Resource Include="Images\%40Documents_16x16.png" />
+    <Resource Include="Images\%40Download_16x16.png" />
+    <Resource Include="Images\%40Download_32x32.png" />
+    <Resource Include="Images\%40DropDownList_16x16.png" />
+    <Resource Include="Images\%40Duplicate_16x16.png" />
+    <Resource Include="Images\%40Duplicate_32x32.png" />
+    <Resource Include="Images\%40Edit_16x16.png" />
+    <Resource Include="Images\%40Edit_20x20.png" />
+    <Resource Include="Images\%40EMenu_32x32.png" />
+    <Resource Include="Images\%40Environment_16x16.png" />
+    <Resource Include="Images\%40Errhandler_16x16.png" />
+    <Resource Include="Images\%40ErrorOrange_16x16.png" />
+    <Resource Include="Images\%40ErrorRed_16x16.png" />
+    <Resource Include="Images\%40ErrorYellow_16x16.png" />
+    <Resource Include="Images\%40ExecutionRes_16x16.png" />
+    <Resource Include="Images\%40Export_16x16.png" />
+    <Resource Include="Images\%40ExportExecutionResultsToALM_16x16.png" />
+    <Resource Include="Images\%40ExportExecutionResultsToALM_32x32.png" />
+    <Resource Include="Images\%40ExportToALM_16x16.png" />
+    <Resource Include="Images\%40ExportToALM_32x32.png" />
+    <Resource Include="Images\%40FailIcon_Large.png" />
+    <Resource Include="Images\%40FailIconWithBack_Large.png" />
+    <Resource Include="Images\%40FeatureFile_16X16.png" />
+    <Resource Include="Images\%40FeatureFile_24x24.png" />
+    <Resource Include="Images\%40FeatureFile_32x32.png" />
+    <Resource Include="Images\%40Filter16x16.png" />
+    <Resource Include="Images\%40Flash_16x16.png" />
+    <Resource Include="Images\%40FlashGreen_16x16.png" />
+    <Resource Include="Images\%40Flow_16x16.png" />
+    <Resource Include="Images\%40Flow_24x24.png" />
+    <Resource Include="Images\%40Flow_32x32.png" />
+    <Resource Include="Images\%40Flow_64x64.png" />
+    <Resource Include="Images\%40Focuse_24x24.png" />
+    <Resource Include="Images\%40Folder_16x16.png" />
+    <Resource Include="Images\%40Folder2_16x16.png" />
+    <Resource Include="Images\%40Folder2_24x24.png" />
+    <Resource Include="Images\%40Folder2_32x32.png" />
+    <Resource Include="Images\%40Folder2_64x64.png" />
+    <Resource Include="Images\%40Forum_16x16.png" />
+    <Resource Include="Images\%40Forum_32x32.png" />
+    <Resource Include="Images\%40GeneralAction_24x24.png" />
+    <Resource Include="Images\%40GetLatest2_16x16.png" />
+    <Resource Include="Images\%40GetLatest2_32x32.png" />
+    <Resource Include="Images\%40GetStarted_32x32.png" />
+    <Resource Include="Images\%40GetStarted16x16.png" />
+    <Resource Include="Images\%40GingerHelper_Close.png" />
+    <Resource Include="Images\%40GingerHelper_Cog.png" />
+    <Resource Include="Images\%40GingerHelper_Ginger.png" />
+    <Resource Include="Images\%40GingerHelper_MsgBoard.png" />
+    <Resource Include="Images\%40GingerHelper_PlainCog.png" />
+    <Resource Include="Images\%40GingerIcon.png" />
+    <Resource Include="Images\%40GingerLogo.png" />
+    <Resource Include="Images\%40GingerLogo_lowRes.jpg" />
+    <Resource Include="Images\%40GingerLogoNew.png" />
+    <Resource Include="Images\%40GingerLogoNew_Small.png" />
+    <Resource Include="Images\%40Glass_16x16.png" />
+    <Resource Include="Images\%40Glass_32x32.png" />
+    <Resource Include="Images\%40Grafh_16x16.png" />
+    <Resource Include="Images\%40Grid_16x16.png" />
+    <Resource Include="Images\%40Grid_24x24.png" />
+    <Resource Include="Images\%40Grid_Gray_24x24.png" />
+    <Resource Include="Images\%40GridView_32x32.png" />
+    <Resource Include="Images\%40Group_16x16.png" />
+    <Resource Include="Images\%40Handler_16x16.png" />
+    <Resource Include="Images\%40Help_16x16.png" />
+    <Resource Include="Images\%40Help_32x32.png" />
+    <Resource Include="Images\%40HelpMe_32x32.png" />
+    <Resource Include="Images\%40HorizentalScroller_16x16.png" />
+    <Resource Include="Images\%40HTMLReport_16x16.png" />
+    <Resource Include="Images\%40HTMLReport_32x32.png" />
+    <Resource Include="Images\%40HTMLReport_Default_24x16.png" />
+    <Resource Include="Images\%40Image_16x16.png" />
+    <Resource Include="Images\%40Import_16x16.png" />
+    <Resource Include="Images\%40Import_32x32.png" />
+    <Resource Include="Images\%40ImportFromALM_32x32.png" />
+    <Resource Include="Images\%40ImportScript_16x16.png" />
+    <Resource Include="Images\%40Info_16x16.png" />
+    <Resource Include="Images\%40Info_24x24.png" />
+    <Resource Include="Images\%40Info_32x32.png" />
+    <Resource Include="Images\%40InfoWinBack_24x24.png" />
+    <Resource Include="Images\%40ItemNext.jpg" />
+    <Resource Include="Images\%40ItemPrev.jpg" />
+    <Resource Include="Images\%40Label_16x16.png" />
+    <Resource Include="Images\%40LeftArrow_16x16.png" />
+    <Resource Include="Images\%40LeftArrow_32x32.png" />
+    <Resource Include="Images\%40LightRun_16x16.png" />
+    <Resource Include="Images\%40LightRunFlow_16x16.png" />
+    <Resource Include="Images\%40Link_16x16.png" />
+    <Resource Include="Images\%40List_16x16.png" />
+    <Resource Include="Images\%40Lock_16x16.png" />
+    <Resource Include="Images\%40Lock_Red_10x10.png" />
+    <Resource Include="Images\%40Lock_Red_16x16.png" />
+    <Resource Include="Images\%40Lock_Yellow_10x10.png" />
+    <Resource Include="Images\%40MagnifyingGlass_24x24.png" />
+    <Resource Include="Images\%40MagnifyingGlass_32x32.png" />
+    <Resource Include="Images\%40Marker_32x32.png" />
+    <Resource Include="Images\%40MaximaizeWin_20x20.png" />
+    <Resource Include="Images\%40MaximaizeWin2_20x20.png" />
+    <Resource Include="Images\%40MaximizeWinWhite_16x16.png" />
+    <Resource Include="Images\%40MenuBar_16x16.png" />
+    <Resource Include="Images\%40MenuItem_16x16.png" />
+    <Resource Include="Images\%40MinimaizWinWhite_20x20.png" />
+    <Resource Include="Images\%40MinimaizWinWhite2_20x20.png" />
+    <Resource Include="Images\%40MinimizeWinWhite_16x16.png" />
+    <Resource Include="Images\%40MobileBack_24x24.png" />
+    <Resource Include="Images\%40MobileDevice_16x16.png" />
+    <Resource Include="Images\%40MobileDevice_32x32.png" />
+    <Resource Include="Images\%40MobileMenu_24x24.png" />
+    <Resource Include="Images\%40MultiReport_16x16.png" />
+    <Resource Include="Images\%40NewsTV_32x32.png" />
+    <Resource Include="Images\%40NewsTV16x16.png" />
+    <Resource Include="Images\%40NoCamera_32x32.png" />
+    <Resource Include="Images\%40NoSpyWhite_24x24.png" />
+    <Resource Include="Images\%40NotAvailable_600x600.png" />
+    <Resource Include="Images\%40OffSign_24x24.png" />
+    <Resource Include="Images\%40OnSign_24x24.png" />
+    <Resource Include="Images\%40Open_16x16.png" />
+    <Resource Include="Images\%40Open_32x32.png" />
+    <Resource Include="Images\%40Outputs_32x32.png" />
+    <Resource Include="Images\%40PassIcon_Large.png" />
+    <Resource Include="Images\%40PassIconWithBack_Large.png" />
+    <Resource Include="Images\%40Paste_16x16.png" />
+    <Resource Include="Images\%40Pause_32x32.png" />
+    <Resource Include="Images\%40Pin_24x24.png" />
+    <Resource Include="Images\%40Pin_32x32.png" />
+    <Resource Include="Images\%40PinWhite_16x16.png" />
+    <Resource Include="Images\%40PinWhite_20x20.png" />
+    <Resource Include="Images\%40PlatformAction_24x24.png" />
+    <Resource Include="Images\%40Play_16x16.png" />
+    <Resource Include="Images\%40Play_32x32.png" />
+    <Resource Include="Images\%40PlayAction_16x16.png" />
+    <Resource Include="Images\%40PlayAction_32x32.png" />
+    <Resource Include="Images\%40PlayCycle_32x32.png" />
+    <Resource Include="Images\%40PlayFlow_16x16.png" />
+    <Resource Include="Images\%40PlayFlow_32x32.png" />
+    <Resource Include="Images\%40Plugin_16x16.png" />
+    <Resource Include="Images\%40Plugin_32x32.png" />
+    <Resource Include="Images\%40PluginAction_24x24.png" />
+    <Resource Include="Images\%40PowerOff_16x16.png" />
+    <Resource Include="Images\%40Question_Large.png" />
+    <Resource Include="Images\%40RadioButton_16x16.png" />
+    <Resource Include="Images\%40Record_24x24.png" />
+    <Resource Include="Images\%40Record_32x32.png" />
+    <Resource Include="Images\%40RecordDisable_24x24.png" />
+    <Resource Include="Images\%40RecordOff_24x24.png" />
+    <Resource Include="Images\%40RecordOff_Gray_24x24.png" />
+    <Resource Include="Images\%40Redo_16x16.png" />
+    <Resource Include="Images\%40Refresh_16x16.png" />
+    <Resource Include="Images\%40Refresh_32x32.png" />
+    <Resource Include="Images\%40Refresh_Gray_16x16.png" />
+    <Resource Include="Images\%40RefreshALM_16x16.png" />
+    <Resource Include="Images\%40RefreshALM_32x32.png" />
+    <Resource Include="Images\%40RefreshWhite_24x24.png" />
+    <Resource Include="Images\%40RefreshWhite_Gray_24x24.png" />
+    <Resource Include="Images\%40Regex16x16.png" />
+    <Resource Include="Images\%40Report_16x16.png" />
+    <Resource Include="Images\%40Report_32x32.png" />
+    <Resource Include="Images\%40Report2_16x16.png" />
+    <Resource Include="Images\%40Report2_32x32.png" />
+    <Resource Include="Images\%40ReportsConfig_16x16.png" />
+    <Resource Include="Images\%40ReportsConfig_32x32.png" />
+    <Resource Include="Images\%40Reset_16x16.png" />
+    <Resource Include="Images\%40Reset_24x24.png" />
+    <Resource Include="Images\%40RightArrow_16x16.png" />
+    <Resource Include="Images\%40RightArrowRed_16x16.png" />
+    <Resource Include="Images\%40RoadSign_16x16.png" />
+    <Resource Include="Images\%40RoundArrowLeft_24x24.png" />
+    <Resource Include="Images\%40RoundRefresh_24x24.png" />
+    <Resource Include="Images\%40RoundRefresh_32x32.png" />
+    <Resource Include="Images\%40Run_16x16.png" />
+    <Resource Include="Images\%40Run_20x20.png" />
+    <Resource Include="Images\%40Run_24x24.png" />
+    <Resource Include="Images\%40Run2_20x20.png" />
+    <Resource Include="Images\%40RunAction_20x20.png" />
+    <Resource Include="Images\%40RunAll_16x16.png" />
+    <Resource Include="Images\%40RunAndReport_16x16.png" />
+    <Resource Include="Images\%40Save_16x16.png" />
+    <Resource Include="Images\%40Save_32x32.png" />
+    <Resource Include="Images\%40SaveAll_16x16.png" />
+    <Resource Include="Images\%40SaveAll_16x16png.png" />
+    <Resource Include="Images\%40SaveAll_24x24.png" />
+    <Resource Include="Images\%40SaveAll_32x32.png" />
+    <Resource Include="Images\%40Share_16x16.png" />
+    <Resource Include="Images\%40Share_32x32.png" />
+    <Resource Include="Images\%40SharedRepository_16x16.png" />
+    <Resource Include="Images\%40ShrinkWinWhite_20x20.png" />
+    <Resource Include="Images\%40Solution_16x16.png" />
+    <Resource Include="Images\%40SourceControlItemAdded_10x10.png" />
+    <Resource Include="Images\%40SourceControlItemChange_10x10.png" />
+    <Resource Include="Images\%40SourceControlItemDeleted_10x10.png" />
+    <Resource Include="Images\%40SourceControlItemUnchanged_10x10.png" />
+    <Resource Include="Images\%40Split_16x16.png" />
+    <Resource Include="Images\%40SplitView_32x32.png" />
+    <Resource Include="Images\%40Spy_24x24.png" />
+    <Resource Include="Images\%40Spy_Gray_24x24.png" />
+    <Resource Include="Images\%40SpyWhite_24x24.png" />
+    <Resource Include="Images\%40Star_16x16.png" />
+    <Resource Include="Images\%40Star_24x24.png" />
+    <Resource Include="Images\%40StarBlue_16x16.png" />
+    <Resource Include="Images\%40StarGray_16x16.png" />
+    <Resource Include="Images\%40StarGray_24x24.png" />
+    <Resource Include="Images\%40Stethoscope_16x16.png" />
+    <Resource Include="Images\%40Stethoscope_32x32.png" />
+    <Resource Include="Images\%40Stop_10x10.png" />
+    <Resource Include="Images\%40Stop_16x16.png" />
+    <Resource Include="Images\%40Stop_20x20.png" />
+    <Resource Include="Images\%40Stop_32x32.png" />
+    <Resource Include="Images\%40StopRed_16x16.png" />
+    <Resource Include="Images\%40SystemPlugin_16x16.png" />
+    <Resource Include="Images\%40TagClose_16X16.png" />
+    <Resource Include="Images\%40Target_24x24.png" />
+    <Resource Include="Images\%40Target_32x32.png" />
+    <Resource Include="Images\%40TestSet_16x16.png" />
+    <Resource Include="Images\%40TextBox_16x16.png" />
+    <Resource Include="Images\%40Ticket_16x16.png" />
+    <Resource Include="Images\%40Ticket_32x32.png" />
+    <Resource Include="Images\%40ToggleMiddle_16x16.png" />
+    <Resource Include="Images\%40ToggleOFF_16x16.png" />
+    <Resource Include="Images\%40ToggleON_16x16.png" />
+    <Resource Include="Images\%40Trash_16x16.png" />
+    <Resource Include="Images\%40TreeView_16x16.png" />
+    <Resource Include="Images\%40TreeView_24x24.png" />
+    <Resource Include="Images\%40TreeView_Gray_24x24.png" />
+    <Resource Include="Images\%40UnCheckAllColumn_16x16.png" />
+    <Resource Include="Images\%40UnCheckAllRow_16x16.png" />
+    <Resource Include="Images\%40UnCheckAllTable_16x16.png" />
+    <Resource Include="Images\%40Undo_16x16.png" />
+    <Resource Include="Images\%40Undo_32x32.png" />
+    <Resource Include="Images\%40Unlock_16x16.png" />
+    <Resource Include="Images\%40Upgrade_16x16.png" />
+    <Resource Include="Images\%40Upgrade_32x32.png" />
+    <Resource Include="Images\%40Upgrade_64x64.png" />
+    <Resource Include="Images\%40Upload_16x16.png" />
+    <Resource Include="Images\%40Upload_32x32.png" />
+    <Resource Include="Images\%40UploadStar_16x16.png" />
+    <Resource Include="Images\%40Variable_16x16.png" />
+    <Resource Include="Images\%40Variable_32x32.png" />
+    <Resource Include="Images\%40Video_16x16.png" />
+    <Resource Include="Images\%40View_16x16.png" />
+    <Resource Include="Images\%40ViewAll_16x16.png" />
+    <Resource Include="Images\%40ViewFiles_32x32.png" />
+    <Resource Include="Images\%40ViewGingers_32x32.png" />
+    <Resource Include="Images\%40VisualFlow_16x16.png" />
+    <Resource Include="Images\%40VisualFlow_32x32.png" />
+    <Resource Include="Images\%40WarnIcon_Large.png" />
+    <Resource Include="Images\%40WarnIconWithBack_Large.png" />
+    <Resource Include="Images\%40WebFile_16x16.png" />
+    <Resource Include="Images\%40Wheel_50x50.png" />
+    <Resource Include="Images\%40Wheel2_50x50.png" />
+    <Resource Include="Images\%40Window_16x16.png" />
+    <Resource Include="Images\%40WithoutSpyGray_24x24.png" />
+    <Resource Include="Images\%40WithoutSpyWhite_24x24.png" />
+    <Resource Include="Images\%40WithoutSpyWhite_Gray_24x24.png" />
+    <Resource Include="Images\%40WithSpyWhite_24x24.png" />
+    <Resource Include="Images\%40WorkFlow_16x16.png" />
+    <Resource Include="Images\%40XML_16x16.png" />
+    <Resource Include="Images\%40XML_24x24.png" />
+    <Resource Include="Images\%40XML_32x32.png" />
+    <Resource Include="Images\%40XML_64x64.png" />
+    <Resource Include="Images\About24x24.png" />
+    <Resource Include="Images\About32x32.png" />
+    <Resource Include="Images\Action16x16.png" />
+    <Resource Include="Images\Actions32x32.png" />
+    <Resource Include="Images\Activities32x32.png" />
+    <Resource Include="Images\Activity16x16.png" />
+    <Resource Include="Images\Add16x16.png" />
+    <Resource Include="Images\Add24x24.png" />
+    <Resource Include="Images\Add32x32.png" />
+    <Resource Include="Images\AddParam24x24.png" />
+    <Resource Include="Images\AddParam24x24_2.png" />
+    <Resource Include="Images\AddParam24x24_2_Des.png" />
+    <Resource Include="Images\AddPlus16x16.png" />
+    <Resource Include="Images\Agent16x16.png" />
+    <Resource Include="Images\Agent32x32.png" />
+    <Resource Include="Images\Analyzer_32x32.png" />
+    <Resource Include="Images\Application16x16.png" />
+    <Resource Include="Images\ASCF16x16.png" />
+    <Resource Include="Images\BEAT_Logo.png" />
+    <Resource Include="Images\BEAT_Logo_Small.png" />
+    <Resource Include="Images\Browser_16x16.png" />
+    <Resource Include="Images\BusinessFlow16x16.png" />
+    <Resource Include="Images\Button16x16.png" />
+    <Resource Include="Images\Camera16x16.png" />
+    <Resource Include="Images\Camera32x32.png" />
+    <Resource Include="Images\CheckMark24x24.png" />
+    <Resource Include="Images\CheckMark32x32.png" />
+    <Resource Include="Images\Comment16x16.png" />
+    <Resource Include="Images\Configurations16x16.png" />
+    <Resource Include="Images\Configurations2_16x16.png" />
+    <Resource Include="Images\Configurations2_32x32.png" />
+    <Resource Include="Images\Configurations32x32.png" />
+    <Resource Include="Images\console.png" />
+    <Resource Include="Images\console16x16.png" />
+    <Resource Include="Images\Copy of Save24x24.png" />
+    <Resource Include="Images\Copy of Save32x32.png" />
+    <Resource Include="Images\Copy16x16.png" />
+    <Resource Include="Images\Copy24x24.png" />
+    <Resource Include="Images\Copy32x32.png" />
+    <Resource Include="Images\CreateShortcut32x32.png" />
+    <Resource Include="Images\Database16x16.png" />
+    <Resource Include="Images\Delete16x16.png" />
+    <Resource Include="Images\Delete24x24.png" />
+    <Resource Include="Images\Delete32x32.png" />
+    <Resource Include="Images\Design32x32.png" />
+    <Resource Include="Images\DocFile16x16.png" />
+    <Resource Include="Images\Door16x16.png" />
+    <Resource Include="Images\down16x16.png" />
+    <Resource Include="Images\DragDrop\DoNotDrop.png" />
+    <Resource Include="Images\DragDrop\DragInsert.png" />
+    <Resource Include="Images\Edit16x16.png" />
+    <Resource Include="Images\eMenu16x16.png" />
+    <Resource Include="Images\eMenu32x32.png" />
+    <Resource Include="Images\Environment16x16.png" />
+    <Resource Include="Images\Error16x16.png" />
+    <Resource Include="Images\ExecutionResults16x16.png" />
+    <Resource Include="Images\Exit24x24.png" />
+    <Resource Include="Images\Export32x32.png" />
+    <Resource Include="Images\Fail24x24.png" />
+    <Resource Include="Images\Flash16x16.png" />
+    <Resource Include="Images\Flash16x16_purple.png" />
+    <Resource Include="Images\Flash24x24.png" />
+    <Resource Include="Images\Flash32x32.png" />
+    <Resource Include="Images\Flash32x32_Red.png" />
+    <Resource Include="Images\Folder_16x16.png" />
+    <Resource Include="Images\Folder_16x16_Yellow.png" />
+    <Resource Include="Images\Folder16x16.png" />
+    <Resource Include="Images\Folder32x32.png" />
+    <Resource Include="Images\Ginger.png" />
+    <Resource Include="Images\Ginger_Icon.png" />
+    <Resource Include="Images\Ginger_Logo.png" />
+    <Resource Include="Images\GingerBlueBackground.png" />
+    <Resource Include="Images\GingerRobot.png" />
+    <Resource Include="Images\GingerRobotNew.png" />
+    <Resource Include="Images\GlobalParam16x16.png" />
+    <Resource Include="Images\Globe32x32.png" />
+    <Resource Include="Images\Graph16x16.png" />
+    <Resource Include="Images\Graph16x16_p.png" />
+    <Resource Include="Images\Graph32x32.png" />
+    <Resource Include="Images\HELP_UFT.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Help16x16.png" />
+    <Resource Include="Images\Import32x32.png" />
+    <Resource Include="Images\java16x16.png" />
+    <Resource Include="Images\KPIGreen16x16.png" />
+    <Resource Include="Images\KPIRed16x16.png" />
+    <Resource Include="Images\KPIYellow16x16.png" />
+    <Resource Include="Images\Lens16x16.png" />
+    <Resource Include="Images\Lens24x24.png" />
+    <Resource Include="Images\Lens32x32.png" />
+    <Resource Include="Images\Load16x16.png" />
+    <Resource Include="Images\MagicWand32x32.png" />
+    <Resource Include="Images\Marker16x16.png" />
+    <Resource Include="Images\Marker32x32.png" />
+    <Resource Include="Images\News32x32.png" />
+    <Resource Include="Images\NewSolution32x32.png" />
+    <Resource Include="Images\NewTicket32x32.png" />
+    <Resource Include="Images\Next32x32.png" />
+    <Resource Include="Images\NextGen.png" />
+    <Resource Include="Images\ParserIcon32x32.png" />
+    <Resource Include="Images\Pass24x24.png" />
+    <Resource Include="Images\Pause.png" />
+    <Resource Include="Images\Pin16x16.png" />
+    <Resource Include="Images\Pin32x32.png" />
+    <Resource Include="Images\Platform32x32.png" />
+    <Resource Include="Images\PlatformConfig32x32.png" />
+    <Resource Include="Images\POM_32x32.png" />
+    <Resource Include="Images\Processing.gif" />
+    <Resource Include="Images\Project16x16.png" />
+    <Resource Include="Images\Project32x32.png" />
+    <Resource Include="Images\Record16x16.png" />
+    <Resource Include="Images\Record32x32.png" />
+    <Resource Include="Images\Redo16x16.png" />
+    <Resource Include="Images\Redo24x24.png" />
+    <Resource Include="Images\RedStar8x8.png" />
+    <Resource Include="Images\Refresh16x16.png" />
+    <Resource Include="Images\Refresh24x24.png" />
+    <Resource Include="Images\Refresh32x32.png" />
+    <Resource Include="Images\RemoteAgentScreen.jpg" />
+    <Resource Include="Images\RemoteAgentTempScreen.jpg" />
+    <Resource Include="Images\Report32x32.png" />
+    <Resource Include="Images\Repository16x16.png" />
+    <Resource Include="Images\Repository32x32.png" />
+    <Resource Include="Images\Req16x16.png" />
+    <Resource Include="Images\Req32x32.png" />
+    <Resource Include="Images\Reset32x32.png" />
+    <Resource Include="Images\RoundDownArrow24x24.png" />
+    <Resource Include="Images\RoundDownArrow32x32.png" />
+    <Resource Include="Images\RoundUpArrow24x24.png" />
+    <Resource Include="Images\RoundUpArrow32x32.png" />
+    <Resource Include="Images\RunAction32x32.png" />
+    <Resource Include="Images\RunActivity32x32.png" />
+    <Resource Include="Images\RunCycles32x32.png" />
+    <Resource Include="Images\RunFlow32x32.png" />
+    <Resource Include="Images\RunSet16x16.png" />
+    <Resource Include="Images\Save16x16.png" />
+    <Resource Include="Images\Save24x24.png" />
+    <Resource Include="Images\Save32x32.png" />
+    <Resource Include="Images\screen.bmp" />
+    <Resource Include="Images\SourceControlItemDeleted.png" />
+    <Resource Include="Images\SourceControlItemLock.png" />
+    <Resource Include="Images\SourceControlItemModified.png" />
+    <Resource Include="Images\SourceControlItemNew.png" />
+    <Resource Include="Images\Start32x32.png" />
+    <Resource Include="Images\stop32x32.png" />
+    <Resource Include="Images\tab16x16.png" />
+    <Resource Include="Images\Table16x16.png" />
+    <Resource Include="Images\Table16x16_Red.png" />
+    <Resource Include="Images\Table32x32.png" />
+    <Resource Include="Images\Task16x16.png" />
+    <Resource Include="Images\TBD16x16.png" />
+    <Resource Include="Images\TBD32x32.png" />
+    <Resource Include="Images\TextBox.png" />
+    <Resource Include="Images\Trash16x16.png" />
+    <Resource Include="Images\Trash24x24.png" />
+    <Resource Include="Images\Trash32x32.png" />
+    <Resource Include="Images\UnCheckMark24x24.png" />
+    <Resource Include="Images\UnCheckMark32x32.png" />
+    <Resource Include="Images\Undo16x16.png" />
+    <Resource Include="Images\Undo24x24.png" />
+    <Resource Include="Images\Undo32x32.png" />
+    <Resource Include="Images\up16x16.png" />
+    <Resource Include="Images\URL16x16.png" />
+    <Resource Include="Images\Validation16x16.png" />
+    <Resource Include="Images\Validation32x32.png" />
+    <Resource Include="Images\Variable16x16.png" />
+    <Resource Include="Images\Variable32x32.png" />
+    <Resource Include="Images\Variables32x32.png" />
+    <Resource Include="Images\VBS16x16.png" />
+    <Resource Include="Images\Views32x32.png" />
+    <Resource Include="Images\Workflow16x16.png" />
+    <Resource Include="Images\Workflow32x32.png" />
+    <Resource Include="Images\X16x16.png" />
+    <Content Include="Reports\GingerExecutionReport\assets\img\%40item_next.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\assets\img\%40item_prev.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\Ginger.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconInGrayNoBackground.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\android.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\ios.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\iosOutline.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\androidWhite.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\iosWhite.png" />
+    <None Include="Resources\%40ErrorOrange_16x16.png" />
+    <None Include="Resources\%40ErrorRed_16x16.png" />
+    <None Include="Resources\%40ErrorYellow_16x16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\GingerDataSource.mdb" />
+    <AppDesigner Include="Properties\" />
+    <Resource Include="TestLib\WizardLib\Intro.md">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
+    <Resource Include="RunSetLib\CreateAutoRunWizardLib\AutoRunIntroduction.md" />
+    <None Update="UserControlsLib\TextEditor\Gherkin\GherkinHighlighting.xshd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="UserControlsLib\TextEditor\ValueExpression\ValueExpressionHighlighting.xshd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj" />
+    <ProjectReference Include="..\GingerControls\GingerControls.csproj" />
+    <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
+    <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
+    <ProjectReference Include="..\GingerCore\GingerCore.csproj" />
+    <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
+    <ProjectReference Include="..\GingerPlugIns\GingerPlugIns.csproj" />
+    <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" />
+    <ProjectReference Include="..\GingerWin64OsSupport\GingerWin64OsSupport.csproj" />
+    <ProjectReference Include="..\UIAComWrapper\UIAComWrapper\UIAComWrapper.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="SourceControlItemModified.png" />
+    <Resource Include="SourceControlItemNew.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ALM\MapToALMWizard\MapWizardHelper\" />
+    <Folder Include="ALM\Octane\" />
+    <Folder Include="AutomatePageLib\AddActionMenu\WindowExplorer\InternalBrowser\" />
+    <Folder Include="Dictionaries\Languages\" />
+    <Folder Include="Reports\HTMLReports\" />
+    <Folder Include="Reports\SpecialReports\" />
+    <Folder Include="Settings\TreeViewItems\" />
+    <Folder Include="UserControlsLib\TextEditor\Java\" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="IWshRuntimeLibrary">
+      <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Outlook">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>6</VersionMinor>
+      <VersionMajor>9</VersionMajor>
+      <Guid>00062fff-0000-0000-c000-000000000046</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Reports\GingerExecutionReport\assets\img\%40BeatLogo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\_ReadMe.txt" />
+    <Resource Include="AutoLog.MainConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="GingerAgentStarter.xml" />
+    <Resource Include="Reports\Designer\ScreenShot1.png" />
+    <Content Include="Reports\GingerExecutionReport\assets\img\%40Ginger.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser">
+      <Version>2.6.0</Version>
+    </PackageReference>
+    <PackageReference Include="DocumentFormat.OpenXml">
+      <Version>2.9.1</Version>
+    </PackageReference>
+    <PackageReference Include="EPPlus">
+      <Version>4.5.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="FontAwesome.Sharp" Version="5.15.4" />
+    <PackageReference Include="HtmlAgilityPack">
+      <Version>1.11.21</Version>
+    </PackageReference>
+    <PackageReference Include="LiteDB">
+      <Version>4.1.4</Version>
+    </PackageReference>
+    <PackageReference Include="log4net">
+      <Version>2.0.12</Version>
+    </PackageReference>
+    <PackageReference Include="Magick.NET-Q16-AnyCPU">
+      <Version>7.22.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
+      <Version>3.3.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting">
+      <Version>3.7.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CSharp">
+      <Version>4.7.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.NETCore.Platforms">
+      <Version>3.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Win32.Primitives">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="Mono.Posix">
+      <Version>7.1.0-final.1.21458.1</Version>
+    </PackageReference>
+    <PackageReference Include="NETStandard.Library">
+      <Version>2.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="NSwag.Core.Yaml">
+      <Version>12.0.9</Version>
+    </PackageReference>
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.50" />
+    <PackageReference Include="RestSharp">
+      <Version>106.11.4</Version>
+    </PackageReference>
+    <PackageReference Include="RoyWpf.System.Windows.Interactivity" Version="0.1.2" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver">
+      <Version>98.0.4758.8000</Version>
+    </PackageReference>
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver">
+      <Version>0.30.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Selenium.WebDriver.IEDriver">
+      <Version>4.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver">
+      <Version>97.0.1072.55</Version>
+    </PackageReference>
+    <PackageReference Include="SharpAdbClient">
+      <Version>2.3.23</Version>
+    </PackageReference>
+    <PackageReference Include="Syncfusion.Shared.WPF" Version="20.1.0.47" />
+    <PackageReference Include="Syncfusion.UI.WPF.NET" Version="20.1.0.48" />
+    <PackageReference Include="System.AppContext">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Console">
+      <Version>4.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource">
+      <Version>4.7.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Diagnostics.FileVersionInfo">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Diagnostics.StackTrace">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Dynamic.Runtime">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.IO.Compression.ZipFile">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Http">
+      <Version>4.3.4</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Primitives">
+      <Version>4.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Sockets">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reflection.DispatchProxy">
+      <Version>4.7.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reflection.Metadata">
+      <Version>1.8.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Resources.Extensions">
+      <Version>4.7.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
+      <Version>6.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.Extensions">
+      <Version>4.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Security.Cryptography.Algorithms">
+      <Version>4.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Text.RegularExpressions">
+      <Version>4.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading.Tasks.Parallel">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading.Thread">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading.Timer">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Xml.ReaderWriter">
+      <Version>4.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Xml.XPath.XDocument">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.310801">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Windows.Forms.DataVisualization" Version="1.0.0-prerelease.20110.1" />
+    <PackageReference Include="AvalonEdit" Version="6.1.3.50" />
+    <PackageReference Include="Gherkin" Version="5.1.0" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.3" />
+    <PackageReference Include="Unofficial.Microsoft.mshtml.NetStandard" Version="7.0.3300.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="ALM\Repository\JiraRepository.cs" />
+    <Compile Remove="ApplicationModelsLib\POMModels\POMWizardLib\POMIntroductionWizardPage.xaml.cs" />
+    <Compile Remove="ApplicationModelsLib\POMModels\POMWizardLib\POMScreenShotWizardPage.xaml.cs" />
+    <Compile Remove="Reports\GingerExecutionReport\HTMLReports\HTMLDetailedReport.cs" />
+    <Compile Remove="Reports\GingerExecutionReport\HTMLReports\HTMLReportBase.cs" />
+    <Compile Remove="Reports\GingerExecutionReport\HTMLReports\HTMLSummaryReport.cs" />
+    <Compile Remove="Run\RunSetActions\RunSetActionHTMLReport.cs" />
+    <Compile Remove="SourceControl\SVNSourceControl.cs" />
+    <Page Remove="Reports\InternalTemplates\FullDetailedReport.xaml" />
+    <Page Remove="Reports\InternalTemplates\ScreenshotReport.xaml" />
+    <Page Remove="Reports\InternalTemplates\SummaryReport.xaml" />
+    <Page Remove="Reports\InternalTemplates\TotalsReport.xaml" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+xcopy "$(ProjectDir)..\GingerWin64OsSupport\bin\$(Configuration)\netstandard2.0\IEDriverServer.*" "$(TargetDir)Win64" /Y /I
+xcopy "$(ProjectDir)..\GingerWin64OsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.*" "$(TargetDir)Win64" /Y /I</PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+</Project>

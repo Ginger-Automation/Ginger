@@ -22,24 +22,24 @@ using UIAComWrapperInternal;
 
 namespace System.Windows.Automation
 {
-    public class TransformPattern : BasePattern
+    public class TransformPatternExtended : BasePattern
     {
         private UIAutomationClient.IUIAutomationTransformPattern _pattern;
-        public static readonly AutomationPattern Pattern = TransformPatternIdentifiers.Pattern;
-        public static readonly AutomationProperty CanMoveProperty = TransformPatternIdentifiers.CanMoveProperty;
-        public static readonly AutomationProperty CanResizeProperty = TransformPatternIdentifiers.CanResizeProperty;
-        public static readonly AutomationProperty CanRotateProperty = TransformPatternIdentifiers.CanRotateProperty;
+        public static readonly AutomationPatternExtended Pattern = TransformPatternIdentifiers.Pattern;
+        public static readonly AutomationPropertyExtended CanMoveProperty = TransformPatternIdentifiers.CanMoveProperty;
+        public static readonly AutomationPropertyExtended CanResizeProperty = TransformPatternIdentifiers.CanResizeProperty;
+        public static readonly AutomationPropertyExtended CanRotateProperty = TransformPatternIdentifiers.CanRotateProperty;
         
-        private TransformPattern(AutomationElement el, UIAutomationClient.IUIAutomationTransformPattern pattern, bool cached)
+        private TransformPatternExtended(AutomationElement_Extend el, UIAutomationClient.IUIAutomationTransformPattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
             this._pattern = pattern;
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
-            return (pattern == null) ? null : new TransformPattern(el, (UIAutomationClient.IUIAutomationTransformPattern)pattern, cached);
+            return (pattern == null) ? null : new TransformPatternExtended(el, (UIAutomationClient.IUIAutomationTransformPattern)pattern, cached);
         }
 
         public void Move(double x, double y)
@@ -98,9 +98,9 @@ namespace System.Windows.Automation
         [StructLayout(LayoutKind.Sequential)]
         public struct TransformPatternInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal TransformPatternInformation(AutomationElement element, bool isCached)
+            internal TransformPatternInformation(AutomationElement_Extend element, bool isCached)
             {
                 this._el = element;
                 this._isCached = isCached;
@@ -110,21 +110,21 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(TransformPattern.CanMoveProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(TransformPatternExtended.CanMoveProperty, _isCached);
                 }
             }
             public bool CanResize
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(TransformPattern.CanResizeProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(TransformPatternExtended.CanResizeProperty, _isCached);
                 }
             }
             public bool CanRotate
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(TransformPattern.CanRotateProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(TransformPatternExtended.CanRotateProperty, _isCached);
                 }
             }
         }

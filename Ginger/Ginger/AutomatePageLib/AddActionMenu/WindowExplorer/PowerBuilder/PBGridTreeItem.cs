@@ -63,7 +63,7 @@ namespace Ginger.Drivers.PowerBuilder
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
-            return new DataGridInfoPage((AutomationElement)UIAElementInfo.ElementObject);
+            return new DataGridInfoPage((AutomationElement_Extend)UIAElementInfo.ElementObject);
         }
     }
 }

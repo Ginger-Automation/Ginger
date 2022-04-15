@@ -25,18 +25,18 @@ namespace System.Windows.Automation
     public class MultipleViewPattern : BasePattern
     {
         private UIAutomationClient.IUIAutomationMultipleViewPattern _pattern;
-        public static readonly AutomationPattern Pattern = MultipleViewPatternIdentifiers.Pattern;
-        public static readonly AutomationProperty CurrentViewProperty = MultipleViewPatternIdentifiers.CurrentViewProperty;
-        public static readonly AutomationProperty SupportedViewsProperty = MultipleViewPatternIdentifiers.SupportedViewsProperty;
+        public static readonly AutomationPatternExtended Pattern = MultipleViewPatternIdentifiers.Pattern;
+        public static readonly AutomationPropertyExtended CurrentViewProperty = MultipleViewPatternIdentifiers.CurrentViewProperty;
+        public static readonly AutomationPropertyExtended SupportedViewsProperty = MultipleViewPatternIdentifiers.SupportedViewsProperty;
         
-        private MultipleViewPattern(AutomationElement el, UIAutomationClient.IUIAutomationMultipleViewPattern pattern, bool cached)
+        private MultipleViewPattern(AutomationElement_Extend el, UIAutomationClient.IUIAutomationMultipleViewPattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
             this._pattern = pattern;
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
             return (pattern == null) ? null : new MultipleViewPattern(el, (UIAutomationClient.IUIAutomationMultipleViewPattern)pattern, cached);
         }
@@ -86,9 +86,9 @@ namespace System.Windows.Automation
         [StructLayout(LayoutKind.Sequential)]
         public struct MultipleViewPatternInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal MultipleViewPatternInformation(AutomationElement element, bool isCached)
+            internal MultipleViewPatternInformation(AutomationElement_Extend element, bool isCached)
             {
                 this._el = element;
                 this._isCached = isCached;

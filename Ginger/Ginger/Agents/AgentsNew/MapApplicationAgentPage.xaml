@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:GingerWPF.AgentsLib"
-      xmlns:fa="http://schemas.fontawesome.io/icons/"
+      xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="MapApplicationAgentPage">
@@ -40,7 +40,7 @@
                         <Label Grid.Column="0" Content="{Binding AppName}" Foreground="Black"/>
                         <Label Grid.Column="1" Content="{Binding AgentName}" Foreground="Black"/>
 
-                        <fa:ImageAwesome Grid.Column="2" Icon="Flag" Foreground="{Binding StatusIcon.Color}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        <fa:IconImage Grid.Column="2" Icon="Flag" Foreground="{Binding StatusIcon.Color}" VerticalAlignment="Center" HorizontalAlignment="Center" />
 
                         <Button x:Name="StartButton" Click="StartButton_Click" Grid.Column="3">Start</Button>
 

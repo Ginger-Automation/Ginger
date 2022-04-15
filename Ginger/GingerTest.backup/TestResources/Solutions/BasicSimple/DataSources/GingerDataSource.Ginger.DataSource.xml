@@ -1,0 +1,3 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Ginger Repository Item created with version: 2.5.0.0-->
+<GingerCore.DataSource.AccessDataSource Created="9/28/2017 3:35:51 PM" CreatedBy="YARONWE" DSType="MSAccess" FilePath="~DataSources\GingerDataSource.mdb" Guid="00000000-0000-0000-0000-000000000000" LastUpdate="9/28/2017 3:35:51 PM" LastUpdateBy="YARONWE" Name="GingerDataSource" ParentGuid="00000000-0000-0000-0000-000000000000" Version="1" />

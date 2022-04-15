@@ -22,24 +22,24 @@ using UIAComWrapperInternal;
 
 namespace System.Windows.Automation
 {
-    public class ExpandCollapsePattern : BasePattern
+    public class ExpandCollapsePatternExtended : BasePattern
     {
         
         private UIAutomationClient.IUIAutomationExpandCollapsePattern _pattern;
-        public static readonly AutomationProperty ExpandCollapseStateProperty = ExpandCollapsePatternIdentifiers.ExpandCollapseStateProperty;
-        public static readonly AutomationPattern Pattern = ExpandCollapsePatternIdentifiers.Pattern;
+        public static readonly AutomationPropertyExtended ExpandCollapseStateProperty = ExpandCollapsePatternIdentifiersExtended.ExpandCollapseStateProperty;
+        public static readonly AutomationPatternExtended Pattern = ExpandCollapsePatternIdentifiersExtended.Pattern;
 
         
-        private ExpandCollapsePattern(AutomationElement el, UIAutomationClient.IUIAutomationExpandCollapsePattern pattern, bool cached)
+        private ExpandCollapsePatternExtended(AutomationElement_Extend el, UIAutomationClient.IUIAutomationExpandCollapsePattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
             this._pattern = pattern;
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
-            return (pattern == null) ? null : new ExpandCollapsePattern(el, (UIAutomationClient.IUIAutomationExpandCollapsePattern)pattern, cached);
+            return (pattern == null) ? null : new ExpandCollapsePatternExtended(el, (UIAutomationClient.IUIAutomationExpandCollapsePattern)pattern, cached);
         }
 
         public void Collapse()
@@ -86,9 +86,9 @@ this._pattern.Expand();            }
         [StructLayout(LayoutKind.Sequential)]
         public struct ExpandCollapsePatternInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal ExpandCollapsePatternInformation(AutomationElement element, bool isCached)
+            internal ExpandCollapsePatternInformation(AutomationElement_Extend element, bool isCached)
             {
                 this._el = element;
                 this._isCached = isCached;
@@ -98,7 +98,7 @@ this._pattern.Expand();            }
             {
                 get
                 {
-                    return (ExpandCollapseState)this._el.GetPropertyValue(ExpandCollapsePattern.ExpandCollapseStateProperty, _isCached);
+                    return (ExpandCollapseState)this._el.GetPropertyValue(ExpandCollapsePatternExtended.ExpandCollapseStateProperty, _isCached);
                 }
             }
         }

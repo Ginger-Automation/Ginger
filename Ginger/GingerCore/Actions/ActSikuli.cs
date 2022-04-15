@@ -175,7 +175,7 @@ namespace GingerCore.Actions
 
         public override eImageType Image { get { return eImageType.BullsEye; } }
 
-        private List<AutomationElement> lstWindows = new List<AutomationElement>();
+        private List<AutomationElement_Extend> lstWindows = new List<AutomationElement_Extend>();
 
         public void SetFocusToSelectedApplicationInstance()
         {
@@ -266,7 +266,7 @@ namespace GingerCore.Actions
             List<object> lstAppWindow = uiHelper.GetListOfWindows();
             ActiveProcessWindowsList.Clear();
             lstWindows.Clear();
-            foreach (AutomationElement process in lstAppWindow)
+            foreach (AutomationElement_Extend process in lstAppWindow)
             {
                 // If the process appears on the Taskbar (if has a title)
                 // print the information of the process

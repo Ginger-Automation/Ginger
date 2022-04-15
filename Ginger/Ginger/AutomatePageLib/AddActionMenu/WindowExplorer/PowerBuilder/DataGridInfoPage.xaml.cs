@@ -31,9 +31,9 @@ namespace Ginger.WindowExplorer.PowerBuilder
     /// </summary>
     public partial class DataGridInfoPage : Page
     {
-        private System.Windows.Automation.AutomationElement AEControl;
+        private System.Windows.Automation.AutomationElement_Extend AEControl;
 
-        public DataGridInfoPage(System.Windows.Automation.AutomationElement AEControl)
+        public DataGridInfoPage(System.Windows.Automation.AutomationElement_Extend AEControl)
         {
             InitializeComponent();
             this.AEControl = AEControl;
@@ -44,27 +44,27 @@ namespace Ginger.WindowExplorer.PowerBuilder
         private void ShowGridData()
         {             
             DataTable tempTable = new DataTable("table");
-            AutomationElement AEHeader = TreeWalker.RawViewWalker.GetFirstChild(AEControl);
+            AutomationElement_Extend AEHeader = TreeWalkerExtended.RawViewWalker.GetFirstChild(AEControl);
             
             //Calculate total cells of Grid
             while (AEHeader != null) 
             {
-                string ColName = AEHeader.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty).ToString();
+                string ColName = AEHeader.GetCurrentPropertyValue(ValuePatternIdentifiersExtended.ValueProperty).ToString();
                 ColName += " (" + AEHeader.Current.Name + ")";
                 tempTable.Columns.Add(ColName);
-                AEHeader = TreeWalker.RawViewWalker.GetNextSibling(AEHeader);
-                if (AEHeader.Current.ControlType != ControlType.Text) break;
+                AEHeader = TreeWalkerExtended.RawViewWalker.GetNextSibling(AEHeader);
+                if (AEHeader.Current.ControlType != ControlTypeExtended.Text) break;
             }
 
-            AutomationElement AECell = AEHeader;
+            AutomationElement_Extend AECell = AEHeader;
             while (AECell != null)
             {
                 DataRow dr = tempTable.NewRow();
                 for (int j = 0; j < tempTable.Columns.Count; j++)
                 {
                     //TODO: based on cell type get the value for check box get is checked
-                    dr[j] = AECell.GetCurrentPropertyValue(ValuePatternIdentifiers.ValueProperty).ToString();
-                    AECell = TreeWalker.RawViewWalker.GetNextSibling(AECell);
+                    dr[j] = AECell.GetCurrentPropertyValue(ValuePatternIdentifiersExtended.ValueProperty).ToString();
+                    AECell = TreeWalkerExtended.RawViewWalker.GetNextSibling(AECell);
                     if (AECell == null) break;
                 }
                 tempTable.Rows.Add(dr);

@@ -1,0 +1,23 @@
+Name,PlatfromType,DriverType
+IB,Web,InternalBrowser
+Selenium IE,Web,SeleniumIE
+Selenium FF,Web,SeleniumFireFox
+Selenium Chrome,Web,SeleniumChrome
+Selenium Remote Web driver,Web,SeleniumRemoteWebDriver
+Selenium Edge,Web,SeleniumEdge
+Appium IOS,Mobile,MobileAppiumIOS
+Android Browser,Mobile,MobileAppiumAndroidBrowser
+IOS Browser,Mobile,MobileAppiumIOSBrowser
+Perfecto,Mobile,PerfectoMobile
+Android,Mobile,MobileAppiumAndroid
+Unix,Unix,UnixShell
+ASCF,ASCF,ASCF
+Dos,DOS,DOSConsole
+Windows,Windows,WindowsAutomation
+Windows Fla,Windows,FlaUIWindow
+WS,WebServices,WebServices
+PB,PowerBuilder,PowerBuilder
+PB Fla,PowerBuilder,FlaUIPB
+Java,Java,JavaDriver
+MF,MainFrame,MainFrame3270
+Android ADB,Android,AndroidADB

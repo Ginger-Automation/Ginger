@@ -30,7 +30,7 @@ namespace GingerCore.Actions.UIAutomation
         public string LocalizedControlType { get; set; }
         public string AutomationId { get; set; }
         public string ClassName { get; set; }
-        public string ToggleState { get; set; }
+        public string ToggleStateExtended { get; set; }
         public string Text { get; set; }
         public bool IsKeyboardFocusable { get; set; } = false;
         public bool IsEnabled { get; set; } = false;

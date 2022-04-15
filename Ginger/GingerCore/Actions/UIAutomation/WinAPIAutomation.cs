@@ -216,7 +216,7 @@ namespace GingerCore.Drivers
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-        public static void ShowWindow(AutomationElement window)
+        public static void ShowWindow(AutomationElement_Extend window)
         {
             try
             {
@@ -333,7 +333,7 @@ namespace GingerCore.Drivers
         }
 
 
-        public void SendClick(AutomationElement element, bool flag = true)
+        public void SendClick(AutomationElement_Extend element, bool flag = true)
         {
             if (flag == true)
             {
@@ -382,7 +382,7 @@ namespace GingerCore.Drivers
          private const int WM_RBUTTONDBLCLK = 0x0206; */
 
 
-        public void SendDoubleClick(AutomationElement element, string XY = "")
+        public void SendDoubleClick(AutomationElement_Extend element, string XY = "")
         {
             int targetProcessID = element.Current.ProcessId;
             SetForeGroundWindow(targetProcessID);
@@ -407,10 +407,10 @@ namespace GingerCore.Drivers
             LeftClick(x, y);
             LeftClick(x, y);
         }
-        public void MoveMousetoXYPoint(AutomationElement element, int x, int y)
+        public void MoveMousetoXYPoint(AutomationElement_Extend element, int x, int y)
         {
             System.Windows.Rect boundingRect = (System.Windows.Rect)
-            element.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
+            element.GetCurrentPropertyValue(AutomationElement_Extend.BoundingRectangleProperty);
 
             int targetProcessID = element.Current.ProcessId;
             SetForeGroundWindow(targetProcessID);
@@ -418,7 +418,7 @@ namespace GingerCore.Drivers
             Cursor.Position = new System.Drawing.Point((int)(boundingRect.TopLeft.X + x), (int)(boundingRect.TopLeft.Y + y));
         }
 
-        public void SendClickOnXYPoint(AutomationElement element, int x, int y)
+        public void SendClickOnXYPoint(AutomationElement_Extend element, int x, int y)
         {
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
 
@@ -429,10 +429,10 @@ namespace GingerCore.Drivers
             ClickLeftMouseButton(x, y);
             System.Windows.Forms.Cursor.Position = p;
         }
-        public void SendClickOnWinXYPoint(AutomationElement element, int x, int y)
+        public void SendClickOnWinXYPoint(AutomationElement_Extend element, int x, int y)
         {
             System.Windows.Rect boundingRect = (System.Windows.Rect)
-            element.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
+            element.GetCurrentPropertyValue(AutomationElement_Extend.BoundingRectangleProperty);
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
 
             int targetProcessID = element.Current.ProcessId;
@@ -443,10 +443,10 @@ namespace GingerCore.Drivers
             System.Windows.Forms.Cursor.Position = p;
         }
 
-        public void SendDoubleClickOnWinXYPoint(AutomationElement element, int x, int y)
+        public void SendDoubleClickOnWinXYPoint(AutomationElement_Extend element, int x, int y)
         {
             System.Windows.Rect boundingRect = (System.Windows.Rect)
-    element.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
+    element.GetCurrentPropertyValue(AutomationElement_Extend.BoundingRectangleProperty);
 
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
 
@@ -459,11 +459,11 @@ namespace GingerCore.Drivers
             ClickLeftMouseButton((int)(boundingRect.TopLeft.X + x), (int)(boundingRect.TopLeft.Y + y));
             System.Windows.Forms.Cursor.Position = p;
         }
-        public void SendRightClickOnWinXYPoint(AutomationElement element, int x, int y)
+        public void SendRightClickOnWinXYPoint(AutomationElement_Extend element, int x, int y)
         {
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
             System.Windows.Rect boundingRect = (System.Windows.Rect)
-            element.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
+            element.GetCurrentPropertyValue(AutomationElement_Extend.BoundingRectangleProperty);
             int targetProcessID = element.Current.ProcessId;
             SetForeGroundWindow(targetProcessID);
 
@@ -472,11 +472,11 @@ namespace GingerCore.Drivers
             System.Windows.Forms.Cursor.Position = p;
         }
 
-        public void SetElementTextOnWinXYPoint(AutomationElement element, string value, int x, int y)
+        public void SetElementTextOnWinXYPoint(AutomationElement_Extend element, string value, int x, int y)
         {
             //Save the Current Cursor Position
             System.Windows.Rect boundingRect = (System.Windows.Rect)
-            element.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
+            element.GetCurrentPropertyValue(AutomationElement_Extend.BoundingRectangleProperty);
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
 
             int targetProcessID = element.Current.ProcessId;
@@ -488,7 +488,7 @@ namespace GingerCore.Drivers
 
             System.Windows.Forms.Cursor.Position = p;
         }
-        public void SendRightClick(AutomationElement element, string XY = "")
+        public void SendRightClick(AutomationElement_Extend element, string XY = "")
         {
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
 
@@ -513,7 +513,7 @@ namespace GingerCore.Drivers
             System.Windows.Forms.Cursor.Position = p;
         }
 
-        public void SetElementText(AutomationElement element, string value)
+        public void SetElementText(AutomationElement_Extend element, string value)
         {
             //Save the Current Cursor Position
 
@@ -532,7 +532,7 @@ namespace GingerCore.Drivers
             System.Windows.Forms.Cursor.Position = p;
         }
 
-        public void SetElementTextWithFocus(AutomationElement element, string value)
+        public void SetElementTextWithFocus(AutomationElement_Extend element, string value)
         {
             //Save the Current Cursor Position
 
@@ -553,7 +553,7 @@ namespace GingerCore.Drivers
             System.Windows.Forms.Cursor.Position = p;
         }
 
-        public void SetDate(AutomationElement element, string value)
+        public void SetDate(AutomationElement_Extend element, string value)
         {
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
 
@@ -588,7 +588,7 @@ namespace GingerCore.Drivers
             SendTabKey();
             System.Windows.Forms.Cursor.Position = p;
         }
-        public void ClickLeftMouseButtonAndHoldAndDrop(AutomationElement AE, int sourceX, int sourceY, int destX, int destY)
+        public void ClickLeftMouseButtonAndHoldAndDrop(AutomationElement_Extend AE, int sourceX, int sourceY, int destX, int destY)
         {
             INPUT mouseInput = new INPUT();
             mouseInput.type = SendInputEventType.InputMouse;
@@ -623,7 +623,7 @@ namespace GingerCore.Drivers
         //TODO: Currently we are iterating and clicking over a tab width to locate a tab. This adds unnecessary click events. Fix it to avoid additional click 
 
 
-        public void SendKeysByLibrary(AutomationElement element, string value)
+        public void SendKeysByLibrary(AutomationElement_Extend element, string value)
         {
             element.SetFocus();
             SendKeys.SendWait(value);
@@ -660,7 +660,7 @@ namespace GingerCore.Drivers
             //}
             //  //  GetWindowCaption((IntPtr)this.FlaUIAutomationElement.BasicAutomationElement.Properties.NativeWindowHandle, sb, 50);
             //else
-            // AutomationElement element = (AutomationElement)ElementObject;
+            // AutomationElement_Extend element = (AutomationElement_Extend)ElementObject;
             GetWindowCaption(handle, sb, 50);
             return sb.ToString();
         }
@@ -762,7 +762,7 @@ typeof(SHDocVw.WebBrowser).GUID;
 
         }
 
-        public SHDocVw.InternetExplorer GetIEFromAutomationelement(AutomationElement element) //***************
+        public SHDocVw.InternetExplorer GetIEFromAutomationelement(AutomationElement_Extend element) //***************
         {
 
             IntPtr HWND = (IntPtr)element.Current.NativeWindowHandle;

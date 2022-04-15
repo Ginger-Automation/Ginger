@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="67674834-5024-4e54-a74a-9a933a5b92e3" ItemType="BusinessFlow" CreatedBy="ravikugu" Created="201811061054" GingerVersion="3.0.0.0" Version="24" LastUpdateBy="ravikugu" LastUpdate="201811061111" />
+<BusinessFlow Active="False" Elapsed="6302" Guid="67674834-5024-4e54-a74a-9a933a5b92e3" Name="DOS_RegressionTestingSuite" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="ContinueActionsRunOnFailure" Active="True" ActivityName="Initial Setup" AutomationStatus="Development" Description="Initial set up of variables are created here" ErrorHandlerMappingType="AllAvailableHandlers" Guid="4b536b9e-f3b8-445d-810b-a1a83619dbe6" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyDosApp">
+<Acts>
+<ActScript Active="True" Description="Script Action-Get DOS path " Guid="7744697b-1682-42df-b074-9efd56672133" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" ScriptCommand="Script" ScriptInterpreterType="VBS" ScriptName="GetSolutionFolder.vbs" ScriptPath="C:\Users\ravikugu\Documents\GingerAutmationTest\TestSolution\Documents\Scripts\" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<ReturnValues>
+<ActReturnValue Active="True" Guid="e54f605a-9b9d-402d-95ba-9ec720da7b45" Param="DocumentFolder" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="Variable" StoreToValue="DOSPath" />
+</ReturnValues>
+</ActScript>
+</Acts>
+</Activity>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="New Activity" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="0bf4116f-9cc3-4c9f-bd01-3e8d7abe596e" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyDosApp">
+<Acts>
+<ActConsoleCommand Active="True" ConsoleCommand="CopyFile" Description="Console Command Action-Copy File-Testing" Guid="a202c66b-ab5a-4b60-b14d-624b9e421908" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="21831306-090d-4f7e-bf9d-a62bf7b9b247" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="/a {Var Name=DosFilesPath}\TxtFile0.txt + {Var Name=DosFilesPath}\TxtFile1.txt {Var Name=DosFilesPath}\TxtFile1.txt" Value="/a {Var Name=DosFilesPath}\TxtFile0.txt + {Var Name=DosFilesPath}\TxtFile1.txt {Var Name=DosFilesPath}\TxtFile1.txt" />
+</InputValues>
+</ActConsoleCommand>
+</Acts>
+</Activity>
+</Activities>
+
+<TargetApplications>
+<TargetApplication AppName="MyDosApp" Guid="e0549726-2231-436c-b23b-158530c4eea9" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+
+<Variables>
+<VariableString Description="Variable String" Guid="1a44cba7-e807-4973-9c90-8804f6c1f38c" InitialStringValue="C:\SVN\GingerSolutions\Ginger_Regression_Testing\Documents" MappedOutputType="None" Name="DOSPath" ParentGuid="00000000-0000-0000-0000-000000000000" Value="C:\SVN\GingerSolutions\Ginger_Regression_Testing\Documents" />
+<VariableString Description="Variable String" Guid="89803f19-d9b3-4af1-a0bd-efebead97ca6" InitialStringValue="C:\SVN\GingerSolutions\Ginger_Regression_Testing\Documents\Scripts" MappedOutputType="None" Name="ScriptPath" ParentGuid="00000000-0000-0000-0000-000000000000" Value="C:\SVN\GingerSolutions\Ginger_Regression_Testing\Documents\Scripts" />
+<VariableString Description="Variable String" Guid="be72c6e5-3b47-42e4-b310-a4db5da54a75" InitialStringValue="C:\SVN\GingerSolutions\Ginger_Regression_Testing\Documents\Dos" MappedOutputType="None" Name="DosFilesPath" ParentGuid="00000000-0000-0000-0000-000000000000" Value="C:\SVN\GingerSolutions\Ginger_Regression_Testing\Documents\Dos" />
+<VariableString Description="Variable String" Guid="09687015-e5d0-451d-90c6-d31f310bf326" InitialStringValue="8,10,11&#xD;&#xA;10,12,13&#xD;&#xA;8,10,11&#xD;&#xA;12,14,15" MappedOutputType="None" Name="File1Content" ParentGuid="00000000-0000-0000-0000-000000000000" Value="8,10,11&#xD;&#xA;10,12,13&#xD;&#xA;8,10,11&#xD;&#xA;12,14,15" />
+<VariableString Description="Variable String" Guid="0ab25a6e-2b4e-4087-b19f-1815e148dd36" InitialStringValue="10,12,13&#xD;&#xA;8,10,11&#xD;&#xA;11,13,14&#xD;&#xA;13,15,16" MappedOutputType="None" Name="File2Content" ParentGuid="00000000-0000-0000-0000-000000000000" Value="10,12,13&#xD;&#xA;8,10,11&#xD;&#xA;11,13,14&#xD;&#xA;13,15,16" />
+</Variables>
+</BusinessFlow></GingerRepositoryItem>

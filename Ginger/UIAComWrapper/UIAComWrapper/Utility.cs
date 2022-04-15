@@ -38,9 +38,9 @@ namespace UIAComWrapperInternal
             }
         }
 
-        internal static ControlType ConvertToControlType(int id)
+        internal static ControlTypeExtended ConvertToControlType(int id)
         {
-            return ControlType.LookupById(id);
+            return ControlTypeExtended.LookupById(id);
         }
 
         internal static int ConvertToInt(bool b)
@@ -53,15 +53,15 @@ namespace UIAComWrapperInternal
             return new Rect(rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top);
         }
 
-        internal static AutomationElement[] ConvertToElementArray(UIAutomationClient.IUIAutomationElementArray array)
+        internal static AutomationElement_Extend[] ConvertToElementArray(UIAutomationClient.IUIAutomationElementArray array)
         {
-            AutomationElement[] elementArray;
+            AutomationElement_Extend[] elementArray;
             if (array != null)
             {
-                elementArray = new AutomationElement[array.Length];
+                elementArray = new AutomationElement_Extend[array.Length];
                 for (int i = 0; i < array.Length; i++)
                 {
-                    elementArray[i] = AutomationElement.Wrap(array.GetElement(i));
+                    elementArray[i] = AutomationElement_Extend.Wrap(array.GetElement(i));
                 }
             }
             else
@@ -77,7 +77,7 @@ namespace UIAComWrapperInternal
             switch (e.ErrorCode)
             {
                 case UiaCoreIds.UIA_E_ELEMENTNOTAVAILABLE:
-                    uiaException = new ElementNotAvailableException(e);
+                    uiaException = new ElementNotAvailableExceptionExtended(e);
                     break;
 
                 case UiaCoreIds.UIA_E_ELEMENTNOTENABLED:
@@ -176,7 +176,7 @@ namespace UIAComWrapperInternal
             }
         }
 
-        internal static object WrapObjectAsPattern(AutomationElement el, object nativePattern, AutomationPattern pattern, bool cached)
+        internal static object WrapObjectAsPattern(AutomationElement_Extend el, object nativePattern, AutomationPatternExtended pattern, bool cached)
         {
             PatternTypeInfo info;
             if (!Schema.GetPatternInfo(pattern, out info))
@@ -190,18 +190,18 @@ namespace UIAComWrapperInternal
             return info.ClientSideWrapper(el, nativePattern, cached);
         }
 
-        internal static object WrapObjectAsProperty(AutomationProperty property, object obj)
+        internal static object WrapObjectAsProperty(AutomationPropertyExtended property, object obj)
         {
             PropertyTypeInfo info;
 
             // Handle the cases that we know.
-            if (obj == AutomationElement.NotSupported)
+            if (obj == AutomationElement_Extend.NotSupported)
             {
                 // No-op
             }
             else if (obj is UIAutomationClient.IUIAutomationElement)
             {
-                obj = AutomationElement.Wrap((UIAutomationClient.IUIAutomationElement)obj);
+                obj = AutomationElement_Extend.Wrap((UIAutomationClient.IUIAutomationElement)obj);
             }
             else if (obj is UIAutomationClient.IUIAutomationElementArray)
             {
@@ -224,9 +224,9 @@ namespace UIAComWrapperInternal
         {
             if (val != null)
             {
-                if (val is ControlType)
+                if (val is ControlTypeExtended)
                 {
-                    val = ((ControlType)val).Id;
+                    val = ((ControlTypeExtended)val).Id;
                 }
                 else if (val is Rect)
                 {
@@ -242,9 +242,9 @@ namespace UIAComWrapperInternal
                 {
                     val = ((CultureInfo)val).LCID;
                 }
-                else if (val is AutomationElement)
+                else if (val is AutomationElement_Extend)
                 {
-                    val = ((AutomationElement)val).NativeElement;
+                    val = ((AutomationElement_Extend)val).NativeElement;
                 }
             }
             return val;

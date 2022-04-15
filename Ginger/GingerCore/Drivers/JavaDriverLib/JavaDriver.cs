@@ -1765,7 +1765,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                                 String[] arrWindows = ErrorTitle.Split(new string[] { "##" }, StringSplitOptions.None);
                                 UIAComWrapperHelper uiHelper = new UIAComWrapperHelper();
                                 List<object> listWindows = uiHelper.GetListOfWindows();
-                                foreach (AutomationElement window in listWindows)
+                                foreach (AutomationElement_Extend window in listWindows)
                                 {
                                     String WindowTitle = "";
                                     WindowTitle = uiHelper.GetWindowInfo(window);
@@ -1780,13 +1780,13 @@ namespace GingerCore.Drivers.JavaDriverLib
                                 int iWinCount = 1;
                                 while (iWinCount < arrWindows.Count())
                                 {
-                                    AutomationElementCollection AEList;
-                                    PropertyCondition condDialog = new PropertyCondition(AutomationElementIdentifiers.LocalizedControlTypeProperty, "window");
-                                    AEList = uiHelper.CurrentWindow.FindAll(TreeScope.Children, condDialog);
+                                    AutomationElementCollectionExtended AEList;
+                                    PropertyConditionExtended condDialog = new PropertyConditionExtended(AutomationElementIdentifiersExtended.LocalizedControlTypeProperty, "window");
+                                    AEList = uiHelper.CurrentWindow.FindAll(TreeScopeExtended.Children, condDialog);
                                     if (AEList.Count == 0)
                                     {
-                                        condDialog = new PropertyCondition(AutomationElementIdentifiers.LocalizedControlTypeProperty, "pane");
-                                        AEList = uiHelper.CurrentWindow.FindAll(TreeScope.Children, condDialog);
+                                        condDialog = new PropertyConditionExtended(AutomationElementIdentifiersExtended.LocalizedControlTypeProperty, "pane");
+                                        AEList = uiHelper.CurrentWindow.FindAll(TreeScopeExtended.Children, condDialog);
                                     }
 
                                     if (AEList.Count >= 1)
@@ -1807,7 +1807,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                                         }
                                         if (bFound == false)
                                         {
-                                            AutomationElement AE = findPane(uiHelper, arrWindows[iWinCount]);
+                                            AutomationElement_Extend AE = findPane(uiHelper, arrWindows[iWinCount]);
                                             if (AE != null)
                                             {
                                                 uiHelper.CurrentWindow = AE;
@@ -1866,13 +1866,13 @@ namespace GingerCore.Drivers.JavaDriverLib
                         try
                         {
                             UIAComWrapperHelper uiDriver = new UIAComWrapperHelper();
-                            PropertyCondition nameCondition = new PropertyCondition(AutomationElement.NameProperty, title);
+                            PropertyConditionExtended nameCondition = new PropertyConditionExtended(AutomationElement_Extend.NameProperty, title);
 
-                            uiDriver.CurrentWindow = AutomationElement.RootElement.FindFirst(TreeScope.Children, nameCondition);
+                            uiDriver.CurrentWindow = AutomationElement_Extend.RootElement.FindFirst(TreeScopeExtended.Children, nameCondition);
                             if (uiDriver.CurrentWindow == null)
                             {
-                                nameCondition = new PropertyCondition(AutomationElement.NameProperty, title.Replace("&", ""));
-                                uiDriver.CurrentWindow = AutomationElement.RootElement.FindFirst(TreeScope.Children, nameCondition);
+                                nameCondition = new PropertyConditionExtended(AutomationElement_Extend.NameProperty, title.Replace("&", ""));
+                                uiDriver.CurrentWindow = AutomationElement_Extend.RootElement.FindFirst(TreeScopeExtended.Children, nameCondition);
                             }
 
                             if (uiDriver.CurrentWindow != null)
@@ -1891,11 +1891,11 @@ namespace GingerCore.Drivers.JavaDriverLib
             return resp;
         }
 
-        private AutomationElement findPane(UIAComWrapperHelper uiHelper, String sTitle)
+        private AutomationElement_Extend findPane(UIAComWrapperHelper uiHelper, String sTitle)
         {
-            PropertyCondition condDialog = new PropertyCondition(AutomationElementIdentifiers.LocalizedControlTypeProperty, "pane");
-            AutomationElementCollection AEList = uiHelper.CurrentWindow.FindAll(TreeScope.Children, condDialog);
-            AutomationElement AE = null;
+            PropertyConditionExtended condDialog = new PropertyConditionExtended(AutomationElementIdentifiersExtended.LocalizedControlTypeProperty, "pane");
+            AutomationElementCollectionExtended AEList = uiHelper.CurrentWindow.FindAll(TreeScopeExtended.Children, condDialog);
+            AutomationElement_Extend AE = null;
             bool sfound = false;
             do
             {
@@ -1916,7 +1916,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                         AE = findPane(uiHelper, sTitle);
                     }
                 }
-                AEList = uiHelper.CurrentWindow.FindAll(TreeScope.Children, condDialog);
+                AEList = uiHelper.CurrentWindow.FindAll(TreeScopeExtended.Children, condDialog);
             } while (sfound == false && AEList.Count > 0 && AE == null);
 
             return AE;

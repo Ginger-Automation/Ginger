@@ -26,9 +26,9 @@ namespace System.Windows.Automation.Text
     public class TextPatternRange
     {
         private UIAutomationClient.IUIAutomationTextRange _range;
-        private TextPattern _pattern;
+        private TextPatternExtended _pattern;
         
-        internal TextPatternRange(UIAutomationClient.IUIAutomationTextRange range, TextPattern pattern)
+        internal TextPatternRange(UIAutomationClient.IUIAutomationTextRange range, TextPatternExtended pattern)
         {
             Debug.Assert(range != null);
             Debug.Assert(pattern != null);
@@ -36,7 +36,7 @@ namespace System.Windows.Automation.Text
             this._pattern = pattern;
         }
 
-        internal static TextPatternRange Wrap(UIAutomationClient.IUIAutomationTextRange range, TextPattern pattern)
+        internal static TextPatternRange Wrap(UIAutomationClient.IUIAutomationTextRange range, TextPatternExtended pattern)
         {
             Debug.Assert(pattern != null);
             if (range == null)
@@ -116,7 +116,7 @@ namespace System.Windows.Automation.Text
         {
             Utility.ValidateArgumentNonNull(attribute, "attribute");
             Utility.ValidateArgumentNonNull(value, "value");
-            if ((attribute == TextPattern.CultureAttribute) && (value is CultureInfo))
+            if ((attribute == TextPatternExtended.CultureAttribute) && (value is CultureInfo))
             {
                 value = ((CultureInfo)value).LCID;
             }
@@ -159,7 +159,7 @@ namespace System.Windows.Automation.Text
                 {
                     return Enum.ToObject(info.Type, (int)valueAsObject);
                 }
-                if ((valueAsObject != AutomationElement.NotSupported) && (info.ObjectConverter != null))
+                if ((valueAsObject != AutomationElement_Extend.NotSupported) && (info.ObjectConverter != null))
                 {
                     valueAsObject = info.ObjectConverter(valueAsObject);
                 }
@@ -197,7 +197,7 @@ namespace System.Windows.Automation.Text
             }
         }
 
-        public AutomationElement[] GetChildren()
+        public AutomationElement_Extend[] GetChildren()
         {
             try
             {
@@ -209,11 +209,11 @@ namespace System.Windows.Automation.Text
             }
         }
 
-        public AutomationElement GetEnclosingElement()
+        public AutomationElement_Extend GetEnclosingElement()
         {
             try
             {
-                return AutomationElement.Wrap(this._range.GetEnclosingElement());
+                return AutomationElement_Extend.Wrap(this._range.GetEnclosingElement());
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
@@ -311,7 +311,7 @@ namespace System.Windows.Automation.Text
             }
         }
 
-        internal static TextPatternRange[] Wrap(UIAutomationClient.IUIAutomationTextRangeArray ranges, TextPattern pattern)
+        internal static TextPatternRange[] Wrap(UIAutomationClient.IUIAutomationTextRangeArray ranges, TextPatternExtended pattern)
         {
             if (ranges == null)
             {
@@ -334,7 +334,7 @@ namespace System.Windows.Automation.Text
             }
         }
 
-        public TextPattern TextPattern
+        public TextPatternExtended TextPattern
         {
             get
             {

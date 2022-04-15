@@ -73,7 +73,7 @@ namespace Ginger.ALM
                     break;
 
                 case eALMType.RALLY:
-                    AlmCore = new RallyCore();
+                    //AlmCore = new RallyCore();
                     AlmRepo = new RallyRepository();
                     break;
                 case eALMType.Jira:

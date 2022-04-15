@@ -212,8 +212,8 @@ namespace GingerCore.Actions
         public override void Execute()
         {
             Bitmap MainWinImage;
-            AutomationElement targetWin = null;
-            AutomationElement gingerWin = null;
+            AutomationElement_Extend targetWin = null;
+            AutomationElement_Extend gingerWin = null;
             WinAPIAutomation winAPI = new WinAPIAutomation();
             List<System.Drawing.Point> result = new List<System.Drawing.Point>(); //System.Drawing.Point(0,0);
             if (!string.IsNullOrWhiteSpace(WindowTitle))
@@ -245,10 +245,10 @@ namespace GingerCore.Actions
 
             if (WindowTitle == "FULLSCREEN")
             {
-                List<AutomationElement> wins = UIAutomationGetFirstLevelWindows();
-                targetWin = AutomationElement.RootElement;
+                List<AutomationElement_Extend> wins = UIAutomationGetFirstLevelWindows();
+                targetWin = AutomationElement_Extend.RootElement;
 
-                foreach (AutomationElement w in wins)
+                foreach (AutomationElement_Extend w in wins)
                 {
                     if (w == UIAutomationGetWindowByTitle("Amdocs Ginger Automation"))
                     {
@@ -281,10 +281,10 @@ namespace GingerCore.Actions
             }
             else if (string.IsNullOrWhiteSpace(WindowTitle) || targetWin == null)
             {
-                List<AutomationElement> wins = UIAutomationGetFirstLevelWindows();
-                targetWin = AutomationElement.RootElement;
+                List<AutomationElement_Extend> wins = UIAutomationGetFirstLevelWindows();
+                targetWin = AutomationElement_Extend.RootElement;
 
-                foreach (AutomationElement w in wins)
+                foreach (AutomationElement_Extend w in wins)
                 {
                     if (w == UIAutomationGetWindowByTitle("Amdocs Ginger Automation"))
                         continue;
@@ -345,14 +345,14 @@ namespace GingerCore.Actions
                 WinAPIAutomation.NormalizeWindow(gingerWin.Current.ProcessId);
         }
 
-        private AutomationElement UIAutomationGetWindowByTitle(string WindowTitle)
+        private AutomationElement_Extend UIAutomationGetWindowByTitle(string WindowTitle)
         {
-            TreeWalker walker = TreeWalker.ControlViewWalker;
-            AutomationElement win = walker.GetFirstChild(AutomationElement.RootElement);
+            TreeWalkerExtended walker = TreeWalkerExtended.ControlViewWalker;
+            AutomationElement_Extend win = walker.GetFirstChild(AutomationElement_Extend.RootElement);
 
             while (win != null)
             {
-                string WinTitle = (string)win.GetCurrentPropertyValue(AutomationElement.NameProperty);
+                string WinTitle = (string)win.GetCurrentPropertyValue(AutomationElement_Extend.NameProperty);
                 if (WinTitle.Contains(WindowTitle))
                 {
                     return win;
@@ -361,12 +361,12 @@ namespace GingerCore.Actions
             }
             return null;
         }
-        private List<AutomationElement> UIAutomationGetFirstLevelWindows()
+        private List<AutomationElement_Extend> UIAutomationGetFirstLevelWindows()
         {
-            TreeWalker walker = TreeWalker.ControlViewWalker;
-            List<AutomationElement> winList = new List<AutomationElement>();
-            winList.Add(AutomationElement.RootElement);
-            AutomationElement win = walker.GetFirstChild(AutomationElement.RootElement);
+            TreeWalkerExtended walker = TreeWalkerExtended.ControlViewWalker;
+            List<AutomationElement_Extend> winList = new List<AutomationElement_Extend>();
+            winList.Add(AutomationElement_Extend.RootElement);
+            AutomationElement_Extend win = walker.GetFirstChild(AutomationElement_Extend.RootElement);
 
             while (win != null)
             {
@@ -380,7 +380,7 @@ namespace GingerCore.Actions
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
 
-        private Bitmap GetWindowBitmap(AutomationElement window)
+        private Bitmap GetWindowBitmap(AutomationElement_Extend window)
         {
             Bitmap bmp = new Bitmap((int)window.Current.BoundingRectangle.Width, (int)window.Current.BoundingRectangle.Height);
             Graphics memoryGraphics = Graphics.FromImage(bmp);
@@ -390,7 +390,7 @@ namespace GingerCore.Actions
             return bmp;
         }
 
-        private void ClickWindowXY(AutomationElement win, int x, int y)
+        private void ClickWindowXY(AutomationElement_Extend win, int x, int y)
         {
             WinAPIAutomation winAPI = new WinAPIAutomation();
             winAPI.SendClickOnWinXYPoint(win, x, y);

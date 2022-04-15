@@ -38,8 +38,8 @@ namespace GingerCore.Drivers.Common
         // ---------------------------------------------------------------------------------------------------------------------
         //  Value
         // ---------------------------------------------------------------------------------------------------------------------
-        private Dictionary<string, AutomationElement[]> mMainDict = new Dictionary<string, AutomationElement[]>();
-        public Dictionary<string, AutomationElement[]> MainDict
+        private Dictionary<string, AutomationElement_Extend[]> mMainDict = new Dictionary<string, AutomationElement_Extend[]>();
+        public Dictionary<string, AutomationElement_Extend[]> MainDict
         {
             get
             {
@@ -90,7 +90,7 @@ namespace GingerCore.Drivers.Common
             // So we keep backward compatibility until all drivers do it correctly
             return mColumnNames;
         }
-        public virtual Dictionary<string, AutomationElement[]> GetMainDict()
+        public virtual Dictionary<string, AutomationElement_Extend[]> GetMainDict()
         {
             return MainDict;
         }

@@ -866,8 +866,8 @@ namespace GingerCore.Actions
 
         private bool FindProcessWindowTitle(Process p, string waitForWindowTilte)//no need to get all windows.
         {
-            TreeWalker walker = TreeWalker.ControlViewWalker;
-            AutomationElement window = walker.GetFirstChild(AutomationElement.RootElement);
+            TreeWalkerExtended walker = TreeWalkerExtended.ControlViewWalker;
+            AutomationElement_Extend window = walker.GetFirstChild(AutomationElement_Extend.RootElement);
             UIAComWrapperHelper uiHelper = new UIAComWrapperHelper();
             while (window != null)
             {

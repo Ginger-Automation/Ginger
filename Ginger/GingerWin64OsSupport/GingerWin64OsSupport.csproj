@@ -16,6 +16,7 @@
   
   <PropertyGroup>
     <GeckoDriverPlatform>win64</GeckoDriverPlatform>
+    <PlatformTarget>x86</PlatformTarget>
     <!--<PublishGeckoDriver>true</PublishGeckoDriver>-->
   </PropertyGroup>
 

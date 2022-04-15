@@ -24,20 +24,20 @@ namespace System.Windows.Automation
     public class ItemContainerPattern : BasePattern
     {
         private UIAutomationClient.IUIAutomationItemContainerPattern _pattern;
-        public static readonly AutomationPattern Pattern = ItemContainerPatternIdentifiers.Pattern;
+        public static readonly AutomationPatternExtended Pattern = ItemContainerPatternIdentifiers.Pattern;
 
-        private ItemContainerPattern(AutomationElement el, UIAutomationClient.IUIAutomationItemContainerPattern pattern, bool cached)
+        private ItemContainerPattern(AutomationElement_Extend el, UIAutomationClient.IUIAutomationItemContainerPattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
             this._pattern = pattern;
         }
 
-        public AutomationElement FindItemByProperty(AutomationElement startAfter, AutomationProperty property, object value)
+        public AutomationElement_Extend FindItemByProperty(AutomationElement_Extend startAfter, AutomationPropertyExtended property, object value)
         {
             try
             {
-                return AutomationElement.Wrap(
+                return AutomationElement_Extend.Wrap(
                     this._pattern.FindItemByProperty(
                         (startAfter == null) ? null : startAfter.NativeElement,
                         (property == null) ? 0 : property.Id,
@@ -49,7 +49,7 @@ namespace System.Windows.Automation
             }
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
             return (pattern == null) ? null : new ItemContainerPattern(el, (UIAutomationClient.IUIAutomationItemContainerPattern)pattern, cached);
         }
@@ -58,9 +58,9 @@ namespace System.Windows.Automation
     public class VirtualizedItemPattern : BasePattern
     {
         private UIAutomationClient.IUIAutomationVirtualizedItemPattern _pattern;
-        public static readonly AutomationPattern Pattern = VirtualizedItemPatternIdentifiers.Pattern;
+        public static readonly AutomationPatternExtended Pattern = VirtualizedItemPatternIdentifiers.Pattern;
 
-        private VirtualizedItemPattern(AutomationElement el, UIAutomationClient.IUIAutomationVirtualizedItemPattern pattern, bool cached)
+        private VirtualizedItemPattern(AutomationElement_Extend el, UIAutomationClient.IUIAutomationVirtualizedItemPattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
@@ -79,7 +79,7 @@ namespace System.Windows.Automation
             }
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
             return (pattern == null) ? null : new VirtualizedItemPattern(el, (UIAutomationClient.IUIAutomationVirtualizedItemPattern)pattern, cached);
         }

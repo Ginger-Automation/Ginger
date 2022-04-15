@@ -69,10 +69,10 @@ namespace Ginger.ALM.Rally
         {
             Mouse.OverrideCursor = Cursors.Wait;
             ObservableList<RallyTestPlan> mRallyTestPlansListSortedByDate = new ObservableList<RallyTestPlan>();
-            foreach (RallyTestPlan testPlan in RallyConnect.Instance.GetRallyTestPlansByProject( ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName,  WorkSpace.Instance.Solution.Folder + @"Documents\ALM\RQM_Configs", ALMCore.DefaultAlmConfig.ALMProjectName).OrderByDescending(item => item.CreationDate))
-            {
-                mRallyTestPlansListSortedByDate.Add(testPlan);
-            }
+            //foreach (RallyTestPlan testPlan in RallyConnect.Instance.GetRallyTestPlansByProject( ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName,  WorkSpace.Instance.Solution.Folder + @"Documents\ALM\RQM_Configs", ALMCore.DefaultAlmConfig.ALMProjectName).OrderByDescending(item => item.CreationDate))
+            //{
+            //    mRallyTestPlansListSortedByDate.Add(testPlan);
+            //}
             grdRallyTestPlanes.DataSourceList = mRallyTestPlansListSortedByDate;
             Mouse.OverrideCursor = null;
         }

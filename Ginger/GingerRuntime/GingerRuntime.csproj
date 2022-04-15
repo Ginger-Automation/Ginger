@@ -31,6 +31,7 @@
   <PropertyGroup>
     <GeckoDriverPlatform>linux64</GeckoDriverPlatform>
     <PublishGeckoDriver>true</PublishGeckoDriver>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>

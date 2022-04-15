@@ -43,7 +43,7 @@ namespace GingerCore.Drivers.PBDriver
     //This class is for Power Builder UIAutomation
     public class PBDriver : UIAutomationDriverBase, IWindowExplorer, IVirtualDriver, IVisualTestingDriver
     {
-        Dictionary<AutomationElement, AutomationElement[,]> gridDictionary;
+        Dictionary<AutomationElement_Extend, AutomationElement_Extend[,]> gridDictionary;
 
         int mActionTimeout = 150;
 
@@ -99,7 +99,7 @@ namespace GingerCore.Drivers.PBDriver
         {
             BusinessFlow = BF;
             LibraryType = type;
-            gridDictionary = new Dictionary<AutomationElement, AutomationElement[,]>();
+            gridDictionary = new Dictionary<AutomationElement_Extend, AutomationElement_Extend[,]>();
         }
 
         public override void StartDriver()
@@ -1026,7 +1026,7 @@ namespace GingerCore.Drivers.PBDriver
         }
         string IWindowExplorer.GetFocusedControl()
         {
-            AutomationElement AE= AutomationElement.FocusedElement;
+            AutomationElement_Extend AE= AutomationElement_Extend.FocusedElement;
             string s = null;
 
             s = AE.Current.Name + " - " + AE.Current.ClassName + "-" + AE.Current.LocalizedControlType;
@@ -1059,11 +1059,11 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.GetElementData(EI.ElementObject);
         }
 
-        private AutomationElement ElementFromCursor()
+        private AutomationElement_Extend ElementFromCursor()
         {
             // Convert mouse position from System.Drawing.Point to System.Windows.Point.
-            System.Windows.Point point = new System.Windows.Point(Cursor.Position.X, Cursor.Position.Y);
-            AutomationElement element = AutomationElement.FromPoint(point);
+            Windows.Foundation.Point point = new Windows.Foundation.Point(Cursor.Position.X, Cursor.Position.Y);
+            AutomationElement_Extend element = AutomationElement_Extend.FromPoint(point);
             return element;
         }
 
@@ -1201,14 +1201,14 @@ namespace GingerCore.Drivers.PBDriver
         /// <returns></returns>
         public async Task<ElementInfo> GetElementAtPoint(long ptX, long ptY)
         {
-            object elem = mUIAutomationHelper.GetElementAtPoint(new System.Windows.Point(ptX, ptY));
+            object elem = mUIAutomationHelper.GetElementAtPoint(new Windows.Foundation.Point(ptX, ptY));
 
             if (elem == null) return null;
             ElementInfo EI;
 
-            if (elem.GetType().Equals(typeof(AutomationElement)))
+            if (elem.GetType().Equals(typeof(AutomationElement_Extend)))
             {
-                EI = mUIAutomationHelper.GetElementInfoFor((AutomationElement)elem);
+                EI = mUIAutomationHelper.GetElementInfoFor((AutomationElement_Extend)elem);
             }
             else
             {

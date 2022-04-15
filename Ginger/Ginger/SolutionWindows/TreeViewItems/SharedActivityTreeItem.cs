@@ -26,7 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Common.Enums;
-using System.Runtime.Remoting.Contexts;
+//using System.Runtime.Remoting.Contexts;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
