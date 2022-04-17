@@ -113,10 +113,12 @@ namespace GingerCore.NoSqlBase
             {
                 ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
                 VE.Value = Act.SQL;
-                string SQLCalculated = VE.ValueCalculated;
+                string SQLCalculated = VE.ValueCalculated.ToLower();
                 string dbName = "";
                 string containerName = "";
-                if (Action == eDBValidationType.SimpleSQLOneValue || Action == eDBValidationType.UpdateDB)
+                Action = Act.DBValidationType;
+                if (Action == eDBValidationType.SimpleSQLOneValue || Action == eDBValidationType.UpdateDB
+                    || Action == eDBValidationType.Insert)
                 {
                     dbName = DatabaseName;
                     containerName = Act.Table;
@@ -125,9 +127,30 @@ namespace GingerCore.NoSqlBase
                 {
                     case eDBValidationType.FreeSQL:
                         dbName = DatabaseName;
-                        containerName = SQLCalculated.Split(' ')[SQLCalculated.Split(' ').Length - 1];
+                        if (!SQLCalculated.Contains("where"))
+                        {
+                            string[] chArray = VE.ValueCalculated.Split(' ');
+                            int idxFrom = 0;
+                            for (int i = 0; i < chArray.Length; i++)
+                            {
+                                if (chArray[i].Equals("from", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    idxFrom = i + 1;
+                                    break;
+                                }
+                            }
+                            containerName = chArray[idxFrom];
+                        }
+                        else
+                        {
+                            int indexOfFrom = SQLCalculated.IndexOf("from") + 4;
+                            int indexOfWhere = SQLCalculated.IndexOf("where");
+                            containerName = SQLCalculated.Substring(indexOfFrom, indexOfWhere - indexOfFrom).Trim();
+                            containerName = VE.ValueCalculated.Substring(VE.ValueCalculated.IndexOf(containerName, StringComparison.CurrentCultureIgnoreCase)
+                                , containerName.Length).Split(' ')[0];
+                        }
                         Container container = GetContainer(dbName, containerName);
-                        SetOutputFromApiResponse(container, SQLCalculated);
+                        SetOutputFromApiResponse(container, VE.ValueCalculated);
                         break;
                     case eDBValidationType.SimpleSQLOneValue:
                         Container objContainer = GetContainer(dbName, containerName);
@@ -136,16 +159,31 @@ namespace GingerCore.NoSqlBase
                         break;
                     case eDBValidationType.RecordCount:
                         dbName = DatabaseName;
-                        if (SQLCalculated.Contains("where"))
+                        SQLCalculated = "select count(1) from " + SQLCalculated;
+                        string properSql = VE.ValueCalculated;
+                        if (!SQLCalculated.Contains("where"))
                         {
-                            containerName = SQLCalculated.Substring(0, SQLCalculated.IndexOf("where"));
+                            string[] chArray = VE.ValueCalculated.Split(' ');
+                            int idxFrom = 0;
+                            for (int i = 0; i < chArray.Length; i++)
+                            {
+                                if (chArray[i].Equals("from", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    idxFrom = i + 1;
+                                    break;
+                                }
+                            }
+                            containerName = chArray[idxFrom];
                         }
                         else
                         {
-                            containerName = SQLCalculated;
+                            int indexOfFrom = SQLCalculated.IndexOf("from") + 4;
+                            int indexOfWhere = SQLCalculated.IndexOf("where");
+                            containerName = SQLCalculated.Substring(indexOfFrom, indexOfWhere - indexOfFrom).Trim();
+                            containerName = properSql.Substring(properSql.IndexOf(containerName, StringComparison.CurrentCultureIgnoreCase)
+                                , containerName.Length).Split(' ')[0];
                         }
                         Container recordContainer = GetContainer(dbName, containerName);
-                        SQLCalculated = "select Count(1) from " + SQLCalculated;
                         SetOutputFromApiResponse(recordContainer, SQLCalculated);
                         break;
                     case eDBValidationType.UpdateDB:
@@ -183,6 +221,39 @@ namespace GingerCore.NoSqlBase
                         if (response != null && response.Resource != null)
                         {
                             object outputVals = response.Resource;
+                            JObject parsed = JObject.Parse(outputVals.ToString());
+                            string key = parsed.GetValue("id").ToString();
+                            Dictionary<string, object> dctOutputVals = new Dictionary<string, object>();
+                            dctOutputVals.Add(key, outputVals);
+                            Act.AddToOutputValues(dctOutputVals);
+                        }
+                        break;
+                    case eDBValidationType.Insert:
+                        Container objContainerForInsert = GetContainer(dbName, containerName);
+                        string primaryKeyForInsert = Act.GetInputParamCalculatedValue("CosmosPrimaryKey");
+                        string partitionKeyForInsert = Act.GetInputParamCalculatedValue("CosmosPartitionKey");
+                        string insertJson = Act.GetInputParamCalculatedValue("InsertJson");
+                        if (string.IsNullOrEmpty(primaryKeyForInsert))
+                        {
+                            Act.Error = "Primary Key cannot be empty";
+                            return;
+                        }
+                        if (string.IsNullOrEmpty(partitionKeyForInsert))
+                        {
+                            Act.Error = "Partition Key cannot be empty";
+                            return;
+                        }
+                        if (string.IsNullOrEmpty(insertJson))
+                        {
+                            Act.Error = "JSON cannot be empty";
+                            return;
+                        }
+                        JObject jsonObject = JObject.Parse(insertJson);
+                        ItemResponse<object> objReturn = objContainerForInsert.CreateItemAsync<object>(jsonObject).Result;
+
+                        if (objReturn != null && objReturn.Resource != null)
+                        {
+                            object outputVals = objReturn.Resource;
                             JObject parsed = JObject.Parse(outputVals.ToString());
                             string key = parsed.GetValue("id").ToString();
                             Dictionary<string, object> dctOutputVals = new Dictionary<string, object>();
@@ -230,13 +301,12 @@ namespace GingerCore.NoSqlBase
             while (queryResultSetIterator.HasMoreResults)
             {
                 currentResultSet = queryResultSetIterator.ReadNextAsync().Result;
+                int i = 1;
                 foreach (object response in currentResultSet)
                 {
-                    JObject parsed = JObject.Parse(response.ToString());
-                    var key = parsed.GetValue("id").ToString();
-                    outputVals.Add(key, response);
+                    Act.ParseJSONToOutputValues(response.ToString(), i);
+                    i++;
                 }
-                Act.AddToOutputValues(outputVals);
             }
         }
 
