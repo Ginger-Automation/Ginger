@@ -244,6 +244,9 @@ namespace GingerCore
                         Error = "Unable to read text from Image";
                     }
                     break;
+                default:
+                    //do nothing
+                    break;
             }
         }
 
@@ -298,6 +301,7 @@ namespace GingerCore
                     }
                     break;
                 default:
+                    //do nothing
                     break;
             }
         }
@@ -313,6 +317,7 @@ namespace GingerCore
                     ExecutePdfOperation();
                     break;
                 default:
+                    //do nothing
                     break;
             }
         }
