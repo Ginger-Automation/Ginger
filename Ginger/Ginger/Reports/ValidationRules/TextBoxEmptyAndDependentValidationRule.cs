@@ -42,7 +42,7 @@ namespace Ginger.ValidationRules
             _SourceObjField = sourceObjField;
 
             this.ValidatesOnTargetUpdated = true; // Trigger the validation on init binding (load/init form)
-            this.ValidationStep = ValidationStep.UpdatedValue; // force the rule to run after the new value is converted and written back (fix for issue: property not updated/binded on empty value)
+            //this.ValidationStep = ValidationStep.UpdatedValue; // force the rule to run after the new value is converted and written back (fix for issue: property not updated/binded on empty value)
         }
 
         public TextBoxEmptyAndDependentValidationRule(object configurationObj, string sourceObjField, string dependentObjField, string message = "Value must be provided")
@@ -53,7 +53,7 @@ namespace Ginger.ValidationRules
             _DependentObjField = dependentObjField;
 
             this.ValidatesOnTargetUpdated = true; // Trigger the validation on init binding (load/init form)
-            this.ValidationStep = ValidationStep.UpdatedValue; // force the rule to run after the new value is converted and written back (fix for issue: property not updated/binded on empty value)
+            //this.ValidationStep = ValidationStep.UpdatedValue; // force the rule to run after the new value is converted and written back (fix for issue: property not updated/binded on empty value)
         }
 
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
