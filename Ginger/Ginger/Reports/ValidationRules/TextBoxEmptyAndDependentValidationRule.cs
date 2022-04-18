@@ -21,6 +21,7 @@ using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -33,51 +34,52 @@ namespace Ginger.ValidationRules
         private string _Message = string.Empty;
         private object _ConfigurationObj = null;
         private string _DependentObjField = string.Empty;
-        private string _SourceObjField = string.Empty;
 
-        public TextBoxEmptyAndDependentValidationRule(object configurationObj, string sourceObjField, string message = "Value must be provided")
+        public TextBoxEmptyAndDependentValidationRule(string message = "Value must be provided")
         {
             _Message = message;
-            _ConfigurationObj = configurationObj;
-            _SourceObjField = sourceObjField;
 
             this.ValidatesOnTargetUpdated = true; // Trigger the validation on init binding (load/init form)
-            //this.ValidationStep = ValidationStep.UpdatedValue; // force the rule to run after the new value is converted and written back (fix for issue: property not updated/binded on empty value)
+            this.ValidationStep = ValidationStep.UpdatedValue; // force the rule to run after the new value is converted and written back (fix for issue: property not updated/binded on empty value)
         }
 
-        public TextBoxEmptyAndDependentValidationRule(object configurationObj, string sourceObjField, string dependentObjField, string message = "Value must be provided")
+        public TextBoxEmptyAndDependentValidationRule(object configurationObj, string dependentObjField, string message = "Value must be provided")
         {
             _Message = message;
             _ConfigurationObj = configurationObj;
-            _SourceObjField = sourceObjField;
             _DependentObjField = dependentObjField;
 
             this.ValidatesOnTargetUpdated = true; // Trigger the validation on init binding (load/init form)
-            //this.ValidationStep = ValidationStep.UpdatedValue; // force the rule to run after the new value is converted and written back (fix for issue: property not updated/binded on empty value)
+            this.ValidationStep = ValidationStep.UpdatedValue; // force the rule to run after the new value is converted and written back (fix for issue: property not updated/binded on empty value)
         }
 
+        private object GetBoundValue(object value)
+        {
+            if (value is BindingExpression)
+            {
+                // ValidationStep was UpdatedValue or CommittedValue (validate after setting)
+                // Need to pull the value out of the BindingExpression.
+                BindingExpression binding = (BindingExpression)value;
+
+                // Get the bound object and name of the property
+                string resolvedPropertyName = binding.GetType().GetProperty("ResolvedSourcePropertyName", BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance).GetValue(binding, null).ToString();
+                object resolvedSource = binding.GetType().GetProperty("ResolvedSource", BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance).GetValue(binding, null);
+
+                // Extract the value of the property
+                object propertyValue = resolvedSource.GetType().GetProperty(resolvedPropertyName).GetValue(resolvedSource, null);
+
+                return propertyValue;
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
-        {        
-            // getting the user's new input value via reflection
-            //value = _ConfigurationObj.GetType().GetProperty(_SourceObjField)?.GetValue(_ConfigurationObj)?.ToString();
-
-            //// on init binding, if value is empty/blank ("") then Value = null 
-            //// if user changes the value to blank than value will be object of type: System.Windows.Data.BindingExpressionBase
-            //// (we are getting the object type BindingExpressionBase because of the setting: this.ValidationStep = ValidationStep.UpdatedValue;)
-            //if (value != null) 
-            //{
-
-            //    var target = ((System.Windows.Data.BindingExpressionBase)value).Target; // get the UI object (textbox)
-
-            //    if (target.GetType() == typeof(System.Windows.Controls.TextBox))
-            //    {
-            //        value = ((System.Windows.Controls.TextBox)target).Text;
-            //    }
-            //    else if (target.GetType() == typeof(System.Windows.Controls.ComboBox))
-            //    {
-            //        value = ((System.Windows.Controls.ComboBox)target).Text;
-            //    }
-            //}
+        {
+            value = GetBoundValue(value);    
 
             if (_ConfigurationObj != null && !string.IsNullOrEmpty(_DependentObjField))
             {
