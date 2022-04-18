@@ -104,13 +104,13 @@ namespace Ginger.Reports
             xSealighsReportedEntityLevelComboBox.BindControl(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
             
             // check if fields have been populated (font-end validation)
-            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId), "Lab ID or Build Session ID must be provided"));
-            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
-            xSealightsURLTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Url cannot be empty"));
-            xSealighsAgentTokenTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Token cannot be empty"));
-            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Test Stage cannot be empty"));
+            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId), "Lab ID or Build Session ID must be provided"));
+            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
+            xSealightsURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Url cannot be empty"));
+            xSealighsAgentTokenTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Token cannot be empty"));
+            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
             xSealighsSessionTimeoutTextBox.ValueTextBox.AddValidationRule(new ValidateNumberInputRule());
-            xSealighsReportedEntityLevelComboBox.AddValidationRule(new TextBoxEmptyAndDependentValidationRule("Entity Level cannot be empty"));
+            xSealighsReportedEntityLevelComboBox.AddValidationRule(new ValidateEmptyValue("Entity Level cannot be empty"));
 
             // need in order to trigger the validation's rules on init binding (load/init form)
             _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsURL));
