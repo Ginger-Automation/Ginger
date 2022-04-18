@@ -59,7 +59,7 @@ namespace Ginger.ValidationRules
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {        
             // getting the user's new input value via reflection
-            value = _ConfigurationObj.GetType().GetProperty(_SourceObjField)?.GetValue(_ConfigurationObj)?.ToString();
+            //value = _ConfigurationObj.GetType().GetProperty(_SourceObjField)?.GetValue(_ConfigurationObj)?.ToString();
 
             //// on init binding, if value is empty/blank ("") then Value = null 
             //// if user changes the value to blank than value will be object of type: System.Windows.Data.BindingExpressionBase
