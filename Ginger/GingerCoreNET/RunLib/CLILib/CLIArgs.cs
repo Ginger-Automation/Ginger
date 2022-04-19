@@ -16,12 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using CommandLine;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
 using System;
 using System.Threading.Tasks;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -77,6 +79,31 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 options.SelfHealingCheckInConfigured = true;
             }
 
+            if (cliHelper.SetSealightsSettings)
+            {               
+                options.SealightsEnable = solution.LoggerConfigurations.SealightsLog == eSealightsLog.Yes ? true : false;
+                options.SealightsLabID = solution.LoggerConfigurations.SealightsLabId;
+                options.SealightsSessionID = solution.LoggerConfigurations.SealightsBuildSessionID;
+                options.SealightsTestStage = solution.LoggerConfigurations.SealightsTestStage;
+                options.SealightsSessionTimeOut = solution.LoggerConfigurations.SealightsSessionTimeout;
+                options.SealightsEntityLevel = solution.LoggerConfigurations.SealightsReportedEntityLevel.ToString();
+                options.SealightsAgentToken = solution.LoggerConfigurations.SealightsAgentToken;
+
+                //  Check Sealights's values on run-set levels
+                if (runsetExecutor.RunSetConfig.SealighsLabId != null)
+                {
+                    options.SealightsLabID = runsetExecutor.RunSetConfig.SealighsLabId;
+                }
+                if (runsetExecutor.RunSetConfig.SealighsBuildSessionID != null)
+                {
+                    options.SealightsSessionID = runsetExecutor.RunSetConfig.SealighsBuildSessionID;
+                }
+                if (runsetExecutor.RunSetConfig.SealightsTestStage != null)
+                {
+                    options.SealightsTestStage = runsetExecutor.RunSetConfig.SealightsTestStage;
+                }
+            }
+
             var args = CommandLine.Parser.Default.FormatCommandLine<RunOptions>(options);
             args = args.Replace(solution.EncryptionKey, "\"" + solution.EncryptionKey + "\"");
             if (options.PasswordEncrypted && !string.IsNullOrEmpty(options.Pass))
@@ -84,34 +111,34 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 args = args.Replace(options.Pass, "\"" + options.Pass + "\"");
             }
 
-                // !!!!!!!!!!!!!!!!!!!
-                // TODO: we want to move SCM to another verb/action !!!!!
+            // !!!!!!!!!!!!!!!!!!!
+            // TODO: we want to move SCM to another verb/action !!!!!
 
-                //if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
-                //{
-                //    Args += string.Format(" --sourceControlType {0}" , solution.SourceControl.GetSourceControlType.ToString());
-                //    if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
-                //    {
-                //        string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
-                //        int lastSlash = modifiedURI.LastIndexOf('/');
-                //        modifiedURI = (lastSlash > -1) ? modifiedURI.Substring(0, lastSlash) : modifiedURI;
-                //        Args += string.Format(" --sourceControlUrl {0}", modifiedURI);
-                //    }
-                //    else
-                //    {
-                //        Args += string.Format(" --sourceControlUrl {0}", solution.SourceControl.SourceControlURL);
-                //    }
-                //    Args += string.Format(" --sourceControlUser {0}" , solution.SourceControl.SourceControlUser);
-                //    Args += string.Format(" --sourceControlPassword {0}" , EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass));
-                //    Args += string.Format(" --sourceControlPasswordEncrypted {0}" , "Y");
-                //    if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
-                //    {
-                //        Args += string.Format(" --sourceControlProxyServer {0}" , solution.SourceControl.SourceControlProxyAddress.ToString());
-                //        Args += string.Format(" --sourceControlProxyPort {0}" , solution.SourceControl.SourceControlProxyPort.ToString());
-                //    }
-                //}
+            //if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
+            //{
+            //    Args += string.Format(" --sourceControlType {0}" , solution.SourceControl.GetSourceControlType.ToString());
+            //    if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
+            //    {
+            //        string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
+            //        int lastSlash = modifiedURI.LastIndexOf('/');
+            //        modifiedURI = (lastSlash > -1) ? modifiedURI.Substring(0, lastSlash) : modifiedURI;
+            //        Args += string.Format(" --sourceControlUrl {0}", modifiedURI);
+            //    }
+            //    else
+            //    {
+            //        Args += string.Format(" --sourceControlUrl {0}", solution.SourceControl.SourceControlURL);
+            //    }
+            //    Args += string.Format(" --sourceControlUser {0}" , solution.SourceControl.SourceControlUser);
+            //    Args += string.Format(" --sourceControlPassword {0}" , EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass));
+            //    Args += string.Format(" --sourceControlPasswordEncrypted {0}" , "Y");
+            //    if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+            //    {
+            //        Args += string.Format(" --sourceControlProxyServer {0}" , solution.SourceControl.SourceControlProxyAddress.ToString());
+            //        Args += string.Format(" --sourceControlProxyPort {0}" , solution.SourceControl.SourceControlProxyPort.ToString());
+            //    }
+            //}
 
-                return args;
+            return args;
         }
 
         public void LoadGeneralConfigurations(string content, CLIHelper cliHelper)
@@ -124,8 +151,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
         public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
-        {
-
+        {           
         }
 
         public async Task Execute(RunsetExecutor runsetExecutor)

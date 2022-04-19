@@ -24,6 +24,9 @@ using System.Windows.Controls;
 using GingerCore;
 using Ginger.UserControls;
 using amdocs.ginger.GingerCoreNET;
+using System.Windows.Input;
+using System.Text.RegularExpressions;
+using Ginger.ValidationRules;
 
 namespace Ginger.Reports
 {
@@ -80,24 +83,55 @@ namespace Ginger.Reports
                 xPublishingPhasePanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.DataPublishingPhase));
 
+            xSealightsLogRadioButton.Init(typeof(ExecutionLoggerConfiguration.eSealightsLog),
+                xSealightsLogPanel, _selectedExecutionLoggerConfiguration,
+                nameof(ExecutionLoggerConfiguration.SealightsLog), SealightsLogRadioButton_CheckedHandler);
+
             xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
                 xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
 
-
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEndPointURLTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.CentralLoggerEndPointUrl));
 
+            Context mContext = new Context();
+            xSealightsURLTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsURL));
+            xSealighsAgentTokenTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
+            xSealighsLabIdTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId));
+            xSealightsTestStageTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsTestStage));
+            xSealighsBuildSessionIDTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
+            xSealighsSessionTimeoutTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsSessionTimeout));
+            xSealighsReportedEntityLevelComboBox.BindControl(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
+            
+            // check if fields have been populated (font-end validation)
+            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId), "Lab ID or Build Session ID must be provided"));
+            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
+            xSealightsURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Url cannot be empty"));
+            xSealighsAgentTokenTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Token cannot be empty"));
+            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
+            xSealighsSessionTimeoutTextBox.ValueTextBox.AddValidationRule(new ValidateNumberInputRule());
+            xSealighsReportedEntityLevelComboBox.AddValidationRule(new ValidateEmptyValue("Entity Level cannot be empty"));
+
+            // need in order to trigger the validation's rules on init binding (load/init form)
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsURL));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsLabId));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsTestStage));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
+
+            if (xSealighsSessionTimeoutTextBox.ValueTextBox.Text.Trim() == "")
+            {
+                xSealighsSessionTimeoutTextBox.ValueTextBox.Text = "14400";
+            }
 
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
-
                 executionResultOnRadioBtnsPnl.IsChecked = true;
                 executionResultOffRadioBtnsPnl.IsChecked = false;
             }
             else
             {
-
                 executionResultOnRadioBtnsPnl.IsChecked = false;
                 executionResultOffRadioBtnsPnl.IsChecked = true;
             }
@@ -155,7 +189,6 @@ namespace Ginger.Reports
             }
         }
 
-
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
         {
             if (FolderTextBox.Text.Length > 100)
@@ -178,7 +211,7 @@ namespace Ginger.Reports
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide endpoint URI");
                         return;
                     }
-                }
+                }                
             }
             catch
             {
@@ -252,6 +285,25 @@ namespace Ginger.Reports
             }
         }
 
+        private void SealightsLogRadioButton_CheckedHandler(object sender, RoutedEventArgs e)
+        {
+            string value = ((RadioButton)sender).Tag?.ToString();
+
+            ExecutionLoggerConfiguration.eSealightsLog sealightsLog;
+
+            Enum.TryParse(value, out sealightsLog);
+
+            if (sealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
+            {
+                xSealightsExecutionLoggerGrid.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xSealightsExecutionLoggerGrid.Visibility = Visibility.Collapsed;
+            }
+        }
+        
+
         private void SetExecutionLoggerRadioButtonToOff()
         {
             if (_selectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
@@ -263,6 +315,10 @@ namespace Ginger.Reports
                         try
                         {
                             var control = xPublishLogToCentralDBRadioBtnPanel.Children[i] as RadioButton;
+                            if (control == null)
+                            {
+                                continue;
+                            }
                             if (control.Name == "No")
                             {
                                 control.IsChecked = true;

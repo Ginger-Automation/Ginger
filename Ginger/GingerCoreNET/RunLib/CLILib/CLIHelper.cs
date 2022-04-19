@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.AnalyzerLib;
+using Ginger.Reports;
 using Ginger.Run;
 using Ginger.SourceControl;
 using GingerCore;
@@ -29,6 +30,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.SourceControl.SourceControlBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -51,6 +53,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public bool sourceControlPassEncrypted;
         public eAppReporterLoggingLevel AppLoggingLevel;
         public string ExecutionId;
+
+        public bool SealightsEnable;
+        public string SealightsUrl;
+        public string SealightsAgentToken;
+        public string SealightsLabID;
+        public string SealightsSessionID;
+        public string SealightsSessionTimeOut;
+        public string SealightsTestStage;
+        public string SealightsEntityLevel;
+        
 
         public bool SelfHealingCheckInConfigured;
 
@@ -95,6 +107,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 OnPropertyChanged(nameof(SetAlmConnectionDetails));
             }
         }
+
+        bool mSetSealightsSettings;
+        public bool SetSealightsSettings
+        {
+            get
+            {
+                return mSetSealightsSettings;
+            }
+            set
+            {
+                mSetSealightsSettings = value;
+                OnPropertyChanged(nameof(SetSealightsSettings));
+            }
+        }
+
+        
 
         bool mRunAnalyzer;
         public bool RunAnalyzer
@@ -329,6 +357,45 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlBranch: '" + value + "'");
             WorkSpace.Instance.UserProfile.SolutionSourceControlBranch = value;
+        }
+
+        public bool SetSealights()
+        {
+            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog = SealightsEnable ? eSealightsLog.Yes : eSealightsLog.No;
+
+            if (SealightsEnable) 
+            {
+                // Validation
+                if (SealightsUrl != null && SealightsAgentToken != null && (SealightsLabID != null || SealightsSessionID != null) &&
+                    SealightsTestStage != null && SealightsEntityLevel != null)
+                {
+                    // Override the Sealights Solution's settings with the CLI's settings
+                    if (SealightsUrl != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsURL = SealightsUrl;
+                    if (SealightsAgentToken != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsAgentToken = SealightsAgentToken;
+                    if (SealightsLabID != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLabId = SealightsLabID;
+                    if (SealightsSessionID != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID = SealightsSessionID;
+                    if (SealightsTestStage != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsTestStage = SealightsTestStage;
+                    if (SealightsSessionTimeOut != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsSessionTimeout = SealightsSessionTimeOut;
+                    if (SealightsEntityLevel != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel = (eSealightsEntityLevel)Enum.Parse(typeof(eSealightsEntityLevel), SealightsEntityLevel);
+
+                    // Override the Sealights RunSet's settings with the CLI's settings
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId = SealightsLabID;
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID = SealightsSessionID;
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage = SealightsTestStage;
+
+                    if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsSessionTimeout == null)
+                    {
+                        WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID = "14400"; // Default setting
+                    }
+                    return true;
+                }  
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         internal void SetSourceControlPassword(string value)

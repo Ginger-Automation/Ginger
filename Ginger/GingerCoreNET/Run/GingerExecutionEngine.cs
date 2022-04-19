@@ -28,6 +28,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
@@ -268,6 +269,11 @@ namespace Ginger.Run
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
 
+            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes)
+            {
+                RunListeners.Add(new SealightsReportExecutionLogger(mContext));
+            }
+            
             //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
             //{
             //    RunListeners.Add(new TelemetryRunListener());
@@ -289,6 +295,13 @@ namespace Ginger.Run
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
+
+            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes)
+            {
+                RunListeners.Add(new SealightsReportExecutionLogger(mContext));
+            }
+
+          
             //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
             //{
             //    RunListeners.Add(new TelemetryRunListener());
@@ -4443,6 +4456,15 @@ namespace Ginger.Run
             {
                 AccountReportExecutionLogger centeralized_Logger = (AccountReportExecutionLogger)(from x in mRunListeners where x.GetType() == typeof(AccountReportExecutionLogger) select x).SingleOrDefault();
                 return centeralized_Logger;
+            }
+        }
+
+        public SealightsReportExecutionLogger Sealights_Logger
+        {
+            get
+            {
+                SealightsReportExecutionLogger sealights_Logger = (SealightsReportExecutionLogger)(from x in mRunListeners where x.GetType() == typeof(SealightsReportExecutionLogger) select x).SingleOrDefault();
+                return sealights_Logger;
             }
         }
 

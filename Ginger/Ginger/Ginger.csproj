@@ -274,6 +274,8 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ValidationRules\ValidateEmptyValue.cs" />
+    <Compile Include="Reports\ValidationRules\ValidateNumberInputRule.cs" />
     <Compile Include="Activities\ActivityNameValidationRule.cs" />
     <Compile Include="Activities\ConfigureErrorListPage.xaml.cs">
       <DependentUpon>ConfigureErrorListPage.xaml</DependentUpon>
@@ -544,6 +546,7 @@
     <Compile Include="GlobalSolutionLib\ImportItemWizardLib\SelectItemImportTypePage.xaml.cs">
       <DependentUpon>SelectItemImportTypePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ValidationRules\ValidateEmptyValueWithDependency.cs" />
     <Compile Include="RunSetLib\CreateAutoRunWizardLib\ValidateJsonFormat.cs" />
     <Compile Include="RunSetLib\CreateAutoRunWizardLib\ValidateURLFormat.cs" />
     <Compile Include="RunSetPageLib\RunSetNameValidationRule.cs" />
