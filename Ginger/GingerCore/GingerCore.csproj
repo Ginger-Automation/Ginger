@@ -92,8 +92,9 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>DLLs\Interop.TDAPIOLELib.dll</HintPath>
     </Reference>
-    <Reference Include="JiraRepository">
-      <HintPath>DLLs\JiraRepository.dll</HintPath>
+    <Reference Include="JiraRepositoryStd, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLs\JiraRepositoryStd.dll</HintPath>
     </Reference>
     <Reference Include="LibGit2Sharp, Version=0.24.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -170,12 +171,13 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="ZephyrEntSDKStandard">
-      <HintPath>..\GingerCoreNET\DLLS\ZephyrEntSDKStandard.dll</HintPath>
-    </Reference>
-    <Reference Include="Zepyhr_Ent_Repository, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ZephyrEntStdSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\Zepyhr_Ent_Repository.dll</HintPath>
+      <HintPath>DLLs\ZephyrEntStdSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Zepyhr_Ent_Repository_Std, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLs\Zepyhr_Ent_Repository_Std.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
