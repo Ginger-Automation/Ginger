@@ -241,7 +241,7 @@ namespace GingerCore.GingerOCR
             return null;
         }
 
-        public static string ReadTextAfterLabelPdf(string pdfFilePath, string label, string pageNum, string password = null)
+        public static string ReadTextAfterLabelPdf(string pdfFilePath, string label, string pageNum = "", string password = null)
         {
             string resultTxt = string.Empty;
             if (!string.IsNullOrEmpty(pageNum))
@@ -355,7 +355,8 @@ namespace GingerCore.GingerOCR
                                 if (lineTxt.Contains(secondLabel))
                                 {
                                     secondIndexOf = lineTxt.IndexOf(secondLabel);
-                                    resultTxt = lineTxt.Substring(firstIndexOf, secondIndexOf);
+                                    resultTxt = lineTxt.Substring(firstIndexOf, secondIndexOf - firstIndexOf);
+                                    return;
                                 }
                                 else
                                 {
