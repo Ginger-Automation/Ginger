@@ -89,9 +89,12 @@
             </Grid.ColumnDefinitions>
 
 
-            <Label Content="Centralized Execution Logger Settings" Grid.Row="0" Grid.ColumnSpan="2" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="16"></Label>
-
-            <Label Content="Publish Execution logs to centralized DB:" Grid.Row="2" Grid.Column="0" Style="{StaticResource @LabelStyle}"  FontSize="12"></Label>
+                <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="2">
+                    <Label Content="Centralized Execution Logger Settings"  Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="16"></Label>
+                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                </StackPanel>
+            
+                <Label Content="Publish Execution logs to centralized DB:" Grid.Row="2" Grid.Column="0" Style="{StaticResource @LabelStyle}"  FontSize="12"></Label>
 
             <StackPanel x:Name="xPublishLogToCentralDBRadioBtnPanel" Margin="-15,0,0,0" Orientation="Horizontal" Grid.Row="2" Grid.Column="1" >
                 <UserControlsLib:UCRadioButtons x:Name="xPublishLogToCentralDBRadioButton" ></UserControlsLib:UCRadioButtons>
@@ -117,8 +120,11 @@
 
         <Expander x:Name="xSealighsExpander" Grid.Row="5" Grid.ColumnSpan="2" DockPanel.Dock="Top" ExpandDirection="Down"  IsExpanded="True" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,12,0,-49">
             <Expander.Header>
-                <Label Content="Sealights Execution Logger Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-            </Expander.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Sealights Execution Logger Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                    </StackPanel>
+                </Expander.Header>
                 <Expander.Content >
                     <StackPanel Orientation="Vertical">
 

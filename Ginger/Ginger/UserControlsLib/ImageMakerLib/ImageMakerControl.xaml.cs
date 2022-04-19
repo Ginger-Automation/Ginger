@@ -248,6 +248,10 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.PluginPackage:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Plug);
                     break;
+
+                case eImageType.Building:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.BuildingOutline);
+                    break;
                 #endregion
 
 

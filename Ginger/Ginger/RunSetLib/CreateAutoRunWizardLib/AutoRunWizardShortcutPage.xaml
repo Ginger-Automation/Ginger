@@ -39,8 +39,12 @@
             </StackPanel>
         </DockPanel>
         <StackPanel x:Name="xExecutionRequestPnl">
-            <DockPanel Margin="0 15 0 0">
-                <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Left" Margin="-5,0,0,0">Execute Now :</Label>
+            <DockPanel x:Name="xExecuteNow" Margin="0 15 0 0">
+                
+                <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Left" Margin="-5,0,0,0">Execute Now</Label>
+                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Left" Margin="-5,0,0,0"> :</Label>
+                
                 <RadioButton  x:Name="xRequestExecutionYesRadioButton" Checked="xRequestExecutionYesRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Yes</RadioButton>
                 <RadioButton  x:Name="xRequestExecutionNoRadioButton" Checked="xRequestExecutionNoRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">No</RadioButton>
             </DockPanel>

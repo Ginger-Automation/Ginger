@@ -49,7 +49,7 @@ namespace Ginger.Run
         {
             SetGridView();
             RunSetActionsGrid.AddSeparator();
-
+                        
             RunSetActionsGrid.AddToolbarTool("@AddHTMLReport_16x16.png", "Add Produce HTML Report Operation", AddHTMLReport);
             RunSetActionsGrid.AddToolbarTool("@AddMail_16x16.png", "Add Send HTML Report Email Operation", AddSendHTMLReportEmailAction);
             RunSetActionsGrid.AddToolbarTool("@AddFile_16x16.png", "Add Produce JSON Summary Report Operation", AddJSONSummary);
@@ -57,11 +57,15 @@ namespace Ginger.Run
             RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool("@AddMail2_16x16.png", "Add Send Text Email Operation", AddSendFreeEmailAction);
             RunSetActionsGrid.AddToolbarTool("@AddSMS_16x16.png", "Add Send SMS Operation", AddSendSMS);
-            RunSetActionsGrid.AddSeparator();
-            RunSetActionsGrid.AddToolbarTool("@AddRunSetALMAction_16x16.png", "Add Publish Execution Results to ALM Operation", AddPublishtoALMAction);           
-            RunSetActionsGrid.AddToolbarTool("@AddDefectsToALM_16x16.png", "Add Open ALM Defects Operation", AddAutomatedALMDefectsOperation);
-            RunSetActionsGrid.AddSeparator();
-            RunSetActionsGrid.AddToolbarTool("@AddScript2_16x16.png", "Add Run Script Operation", AddScriptAction);
+
+            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures == true)
+            {
+                RunSetActionsGrid.AddSeparator();
+                RunSetActionsGrid.AddToolbarTool("@AddRunSetALMAction_16x16.png", "Add Publish Execution Results to ALM Operation", AddPublishtoALMAction);
+                RunSetActionsGrid.AddToolbarTool("@AddDefectsToALM_16x16.png", "Add Open ALM Defects Operation", AddAutomatedALMDefectsOperation);
+                RunSetActionsGrid.AddSeparator();
+                RunSetActionsGrid.AddToolbarTool("@AddScript2_16x16.png", "Add Run Script Operation", AddScriptAction);
+            }
 
             RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.SignOut, "Add Send Execution JSON Data To External Source Operation", AddSendExecutionDataToExternalSourceAction);

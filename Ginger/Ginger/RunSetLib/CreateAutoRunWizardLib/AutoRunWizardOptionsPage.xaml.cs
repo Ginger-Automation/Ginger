@@ -78,6 +78,9 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                         xSealightsConfigCheckBox.IsEnabled = false;
                     }
 
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xALMConfigCheckBox, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealightsConfigCheckBox, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
+
                     xArtifactsPathTextBox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ArtifactsPath), isVENeeded: false, isBrowseNeeded: true, browserType: Activities.UCValueExpression.eBrowserType.Folder);
                     SelfHealingAutoCheckInSetting();
                     break;
