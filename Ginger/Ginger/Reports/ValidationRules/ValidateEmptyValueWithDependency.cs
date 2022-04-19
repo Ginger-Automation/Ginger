@@ -32,21 +32,13 @@ namespace Ginger.ValidationRules
     public class ValidateEmptyValueWithDependency : ValidationRule
     {
         private string _Message = string.Empty;
-        private object _ConfigurationObj = null;
+        private object _DependencyObj = null;
         private string _DependentObjField = string.Empty;
 
-        public ValidateEmptyValueWithDependency(string message = "Value must be provided")
+        public ValidateEmptyValueWithDependency(object dependencyObj, string dependentObjField, string message = "Value must be provided")
         {
             _Message = message;
-
-            this.ValidatesOnTargetUpdated = true; // Trigger the validation on init binding (load/init form)
-            this.ValidationStep = ValidationStep.UpdatedValue; // force the rule to run after the new value is converted and written back (fix for issue: property not updated/binded on empty value)
-        }
-
-        public ValidateEmptyValueWithDependency(object configurationObj, string dependentObjField, string message = "Value must be provided")
-        {
-            _Message = message;
-            _ConfigurationObj = configurationObj;
+            _DependencyObj = dependencyObj;
             _DependentObjField = dependentObjField;
 
             this.ValidatesOnTargetUpdated = true; // Trigger the validation on init binding (load/init form)
@@ -81,9 +73,9 @@ namespace Ginger.ValidationRules
         {
             value = GetBoundValue(value);    
 
-            if (_ConfigurationObj != null && !string.IsNullOrEmpty(_DependentObjField))
+            if (_DependencyObj != null && !string.IsNullOrEmpty(_DependentObjField))
             {
-                if (String.IsNullOrEmpty(value?.ToString()) && String.IsNullOrEmpty(_ConfigurationObj.GetType().GetProperty(_DependentObjField)?.GetValue(_ConfigurationObj)?.ToString()))
+                if (String.IsNullOrEmpty(value?.ToString()) && String.IsNullOrEmpty(_DependencyObj.GetType().GetProperty(_DependentObjField)?.GetValue(_DependencyObj)?.ToString()))
                 {
                     return new ValidationResult(false, _Message);
                 }
