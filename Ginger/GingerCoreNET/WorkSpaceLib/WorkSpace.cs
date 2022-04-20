@@ -50,6 +50,7 @@ using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run.RunSetActions;
 using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
+using Ginger.Reports;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -347,6 +348,35 @@ namespace amdocs.ginger.GingerCoreNET
             // when loading check restore and restore
         }
 
+        private void CheckForExistingEnterpriseFeaturesConfiguration()
+        {
+            // Configuration Logger - Centralized
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+            {
+                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
+            }
+
+            // Configuration Logger - Sealights
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
+            {
+                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
+            }
+
+            // General Report Configurations
+            HTMLReportsConfiguration mHTMLReportConfiguration = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            if (!string.IsNullOrEmpty(mHTMLReportConfiguration?.CentralizedReportDataServiceURL))
+            {
+                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
+            }
+
+            // General Report Configurations
+            if (!string.IsNullOrEmpty(mHTMLReportConfiguration?.CentralizedHtmlReportServiceURL))
+            {
+                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
+            }
+
+        }
+
         public bool OpenSolution(string solutionFolder, string encryptionKey = null)
         {
             try
@@ -473,6 +503,7 @@ namespace amdocs.ginger.GingerCoreNET
                 // PlugInsManager = new PluginsManager();
                 // mPluginsManager.Init(SolutionRepository);
 
+                CheckForExistingEnterpriseFeaturesConfiguration(); // Auto set the ExistingEnterprise's flag to true if needed
 
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
                 return true;

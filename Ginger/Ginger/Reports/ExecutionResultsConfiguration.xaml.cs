@@ -161,36 +161,7 @@ namespace Ginger.Reports
             _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
             _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
         }
-
-        private void CheckForExistingEnterpriseFeaturesConfiguration()
-        {
-            // Configuration Logger - Centralized
-            if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
-            {
-                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
-            }
-
-            // Configuration Logger - Sealights
-            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
-            {
-                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
-            }
-
-            // General Report Configurations
-            HTMLReportsConfiguration mHTMLReportConfiguration = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            if (!string.IsNullOrEmpty(mHTMLReportConfiguration?.CentralizedReportDataServiceURL))
-            {
-                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
-            }
-
-            // General Report Configurations
-            if (!string.IsNullOrEmpty(mHTMLReportConfiguration?.CentralizedHtmlReportServiceURL))
-            {
-                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
-            }
-
-        }
-
+        
         private void SelectFolderButton_Click(object sender, RoutedEventArgs e)
         {
             string s = General.OpenSelectFolderDialog("Save Results to Folder");
