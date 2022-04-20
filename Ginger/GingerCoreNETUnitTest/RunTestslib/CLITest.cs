@@ -1001,6 +1001,7 @@ namespace WorkspaceHold
             Assert.AreEqual(jiraSolConfig.JiraTestingALM, ALMIntegrationEnums.eTestingALMType.Xray, "Validating correct JiraTestingALM");
         }
 
+
         /// <summary>
         /// Testing JSON Runset with setup of ExecutionID
         /// </summary>   
@@ -1012,7 +1013,7 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            
+
 
             Task.Run(async () =>
             {
@@ -1022,6 +1023,29 @@ namespace WorkspaceHold
             // Assert        
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "DataMappingTest", "Validating correct Run set was executed");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString(), "9ab6158b-05b4-9b9c-99f9-bde0f2299f9e", "Validating ExecutionID which was configured in JSON actually was used in run time");
+        }
+
+        /// <summary>
+        /// Testing JSON Runset with setup of ExecutionID
+        /// </summary>   
+        [TestMethod]
+        public void CLI_Sealights_JSON_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-Sealights_JSON.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID, "1648233090826", "Validating correct Sealights SessionID");
+            Assert.AreEqual(WorkSpace.Instance.Solution.LoggerConfigurations.SealightsAgentToken, "112233", "Validating correct Sealights Token");
         }
 
         [TestMethod]

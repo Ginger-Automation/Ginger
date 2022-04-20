@@ -473,6 +473,11 @@ namespace Ginger.Run
                     await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetStart(RunSetConfig);
                 }
 
+                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes && Runners.Count > 0)
+                {
+                    ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetStart(RunSetConfig);
+                }
+
                 //Start Run 
                 if (doContinueRun == false)
                 {
@@ -580,6 +585,12 @@ namespace Ginger.Run
                 {
                    await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig);
                 }
+
+                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes && Runners.Count > 0)
+                {
+                    await ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetEnd(RunSetConfig);
+                }
+
                 if (mStopRun == false)
                 {
                     // Process all post execution RunSet Operations

@@ -62,15 +62,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
 
         private async Task ParseArgs(string[] args)
-        {
+        {            
             // FIXME: failing with exc of obj state
             // Do not show default version
             // Parser.Default.Settings.AutoVersion = false;
             var parser = new Parser(settings =>
-            {                
+            {
                 settings.IgnoreUnknownArguments = true;
             });
-            
+
             int result = await parser.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions, DoOptions>(args).MapResult(
                     async (RunOptions opts) => await HandleRunOptions(opts),
                     async (GridOptions opts) => await HanldeGridOption(opts),
@@ -80,7 +80,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     async (VersionOptions opts) => await HandleVersionOptions(opts),
                     async (ExampleOptions opts) => await HandleExampleOptions(opts),
                     async (DoOptions opts) => await HandleDoOptions(opts),
-
+                        
 
                     async errs => await HandleCLIParseError(errs)
             );
@@ -89,7 +89,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
                 Environment.ExitCode = 1; // error
-            }
+            }            
         }
 
         private async Task<int> HandleDoOptions(DoOptions opts)
@@ -349,6 +349,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
              });
 
         }
+               
 
         private async Task<int> HandleRunOptions(RunOptions runOptions)
         {
@@ -382,6 +383,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.SourceControlProxyServer(runOptions.SourceControlProxyServer);
             mCLIHelper.SourceControlProxyPort(runOptions.SourceControlProxyPort);
             mCLIHelper.SelfHealingCheckInConfigured = runOptions.SelfHealingCheckInConfigured;
+
+            mCLIHelper.SealightsEnable = runOptions.SealightsEnable;
+            mCLIHelper.SealightsUrl = runOptions.SealightsUrl;
+            mCLIHelper.SealightsAgentToken = runOptions.SealightsAgentToken;
+            mCLIHelper.SealightsLabID = runOptions.SealightsLabID;
+            mCLIHelper.SealightsSessionID = runOptions.SealightsSessionID;
+            mCLIHelper.SealightsSessionTimeOut = runOptions.SealightsSessionTimeOut;
+            mCLIHelper.SealightsTestStage = runOptions.SealightsTestStage;
+            mCLIHelper.SealightsEntityLevel = runOptions.SealightsEntityLevel?.ToString() == "None" ? null : runOptions.SealightsEntityLevel?.ToString();
 
             if (!string.IsNullOrEmpty(runOptions.RunSetExecutionId))
             {
@@ -550,6 +560,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 {
                     mCLIHandler.LoadRunsetConfigurations(runsetConfigs, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
                 }
+
                 if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
                 {
                     return false;//failed to load Run set
@@ -559,6 +570,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 {
                     return false; //Failed to perform execution preparations
                 }
+
+                // Check for any Sealights Settings
+                if (!mCLIHelper.SetSealights())
+                {
+                    return false;
+                }    
+
 
                 mCLIHelper.SetTestArtifactsFolder();
                 WorkSpace.Instance.StartLocalGrid();

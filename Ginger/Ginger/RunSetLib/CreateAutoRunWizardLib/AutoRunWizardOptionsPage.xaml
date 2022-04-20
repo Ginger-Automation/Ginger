@@ -34,6 +34,12 @@
                 </CheckBox.Content>
             </CheckBox>
 
+            <CheckBox x:Name="xSealightsConfigCheckBox" Style="{StaticResource $CeckBoxStyle}" Margin="5">
+                <CheckBox.Content>
+                    <GingerCore:ucTextDicResource Text="Set Sealights settings"/>
+                </CheckBox.Content>
+            </CheckBox>
+
             <CheckBox x:Name="xSelfHealinAutoCheckInConfigCheckBox" Visibility="Collapsed" Style="{StaticResource $CeckBoxStyle}" Margin="5">
                 <CheckBox.Content>
                     <GingerCore:ucTextDicResource Text="Save Self Healing changes and check-in to source control"/>
