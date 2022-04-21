@@ -231,7 +231,7 @@ namespace GingerCore
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(GetFromRowNumber), value.ToString());
+                AddOrUpdateInputParamValue(nameof(GetFromRowNumber), value);
             }
         }
 

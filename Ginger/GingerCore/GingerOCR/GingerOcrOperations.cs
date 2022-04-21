@@ -570,6 +570,8 @@ namespace GingerCore.GingerOCR
                                     case ActOcr.eTableElementRunColOperator.EndsWith:
                                         if (cellObj.GetText(false).EndsWith(conditionColumnValue))
                                         {
+                                            bIsConditionValFound = true;
+                                            break;
                                         }
                                         break;
                                     case ActOcr.eTableElementRunColOperator.NotEndsWith:
