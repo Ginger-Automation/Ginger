@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -23,6 +23,16 @@ using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Reports
 {
+    public enum eSealightsEntityLevel
+    {
+        [EnumValueDescription("Business Flow")]
+        BusinessFlow,
+        [EnumValueDescription("Activities Group")]
+        ActivitiesGroup,
+        [EnumValueDescription("Activity")]
+        Activity
+    }
+
     public class ExecutionLoggerConfiguration : RepositoryItemBase
     {
         public static partial class Fields
@@ -52,7 +62,13 @@ namespace Ginger.Reports
             Yes,
             No
         }
-       
+
+        public enum eSealightsLog
+        {
+            Yes,
+            No
+        }
+
         public enum eDeleteLocalDataOnPublish
         {
             Yes,
@@ -66,6 +82,8 @@ namespace Ginger.Reports
             [EnumValueDescription("During Execution")]
             DuringExecution
         }
+
+ 
 
         // Why we serialzie!!?
 
@@ -128,6 +146,24 @@ namespace Ginger.Reports
             }
         }
 
+
+        // Gideon
+        private eSealightsLog mSealightsLog = eSealightsLog.No;
+
+        [IsSerializedForLocalRepository]
+        public eSealightsLog SealightsLog
+        {
+            get
+            {
+                return mSealightsLog;
+            }
+            set
+            {
+                mSealightsLog = value;
+            }
+        }
+        // Gideon End
+
         private eDataPublishingPhase mDataPublishingPhase = eDataPublishingPhase.PostExecution;
 
         [IsSerializedForLocalRepository]
@@ -173,6 +209,114 @@ namespace Ginger.Reports
                 OnPropertyChanged(nameof(CentralLoggerEndPointUrl));
             }
         }
+
+        private string mSealightsURL;
+        [IsSerializedForLocalRepository]
+        public string SealightsURL
+        {
+            get
+            {
+                return mSealightsURL;
+            }
+            set
+            {
+                mSealightsURL = value;
+                OnPropertyChanged(nameof(SealightsURL));
+            }
+        }
+
+
+        private string mSealightsAgentToken;
+        [IsSerializedForLocalRepository]
+        public string SealightsAgentToken
+        {
+            get
+            {
+                return mSealightsAgentToken;
+            }
+            set
+            {
+                mSealightsAgentToken = value;
+                OnPropertyChanged(nameof(SealightsAgentToken));
+            }
+        }
+
+        private string mSealightsLabId;
+        [IsSerializedForLocalRepository]
+        public string SealightsLabId
+        {
+            get
+            {
+                return mSealightsLabId;
+            }
+            set
+            {
+                mSealightsLabId = value;
+                OnPropertyChanged(nameof(SealightsLabId));
+            }
+        }
+
+        private string mSealightsTestStage;
+        [IsSerializedForLocalRepository]
+        public string SealightsTestStage
+        {
+            get
+            {
+                return mSealightsTestStage;
+            }
+            set
+            {
+                mSealightsTestStage = value;
+                OnPropertyChanged(nameof(SealightsTestStage));
+            }
+        }
+
+        private string mSealightsBuildSessionID;
+        [IsSerializedForLocalRepository]
+        public string SealightsBuildSessionID
+        {
+            get
+            {
+                return mSealightsBuildSessionID;
+            }
+            set
+            {
+                mSealightsBuildSessionID = value;
+                OnPropertyChanged(nameof(SealightsBuildSessionID));
+            }
+        }        
+
+        private string mSealightsSessionTimeout;
+        [IsSerializedForLocalRepository]
+        public string SealightsSessionTimeout
+        {
+            get
+            {
+                return mSealightsSessionTimeout;
+            }
+            set
+            {
+                mSealightsSessionTimeout = value;
+                OnPropertyChanged(nameof(SealightsSessionTimeout));
+            }
+        }
+
+        private eSealightsEntityLevel mSealightsReportedEntityLevel;
+        [IsSerializedForLocalRepository]
+        public eSealightsEntityLevel SealightsReportedEntityLevel
+        {
+            get
+            {
+                return mSealightsReportedEntityLevel;
+            }
+            set
+            {
+                mSealightsReportedEntityLevel = value;
+                OnPropertyChanged(nameof(SealightsReportedEntityLevel));
+            }
+        }
+
+        
 
         public bool IsPublishToCentralDBRunning { get; set; }
 
