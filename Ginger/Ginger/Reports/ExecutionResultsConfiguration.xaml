@@ -24,16 +24,15 @@
             <ColumnDefinition Width="350*"/>
         </Grid.ColumnDefinitions>
 
-        <usercontrols:ucButton x:Name="xSaveButton" Grid.Row="0" Grid.ColumnSpan="2" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" HorizontalAlignment="Left" Margin="7,0,0,0"/>
-        <Label Margin="20,5,0,0" Content="Local Execution Logger Settings" Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="16"></Label>
-        <Label Margin="20,10,0,0" Content="Execution Logger Result Producing:" Grid.Row="2" Grid.Column="0" Style="{StaticResource @LabelStyle}"  FontSize="12"></Label>
-        <StackPanel Margin="30,0,0,0" Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                
+            <usercontrols:ucButton x:Name="xSaveButton" Grid.Row="0" Grid.ColumnSpan="2" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" HorizontalAlignment="Left" Margin="7,0,0,0"/>
+            <Label Margin="20,5,0,0" Content="Local Execution Logger Settings" Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="16"></Label>
+            <Label Margin="20,10,0,0" Content="Execution Logger Result Producing:" Grid.Row="2" Grid.Column="0" Style="{StaticResource @LabelStyle}"  FontSize="12"></Label>
+            <StackPanel Margin="280,0,0,0" Grid.Row="2" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <RadioButton x:Name="executionResultOnRadioBtnsPnl" Content="On" Padding="5,0,15,0" IsChecked="True" Checked="executionResultOnRadioBtnsPnl_Checked"></RadioButton>
                 <RadioButton x:Name="executionResultOffRadioBtnsPnl" Content="Off" Padding="5,0,0,0" Checked="executionResultOffRadioBtnsPnl_Checked"></RadioButton>
-        </StackPanel>
+            </StackPanel>
 
-        <Grid Grid.Row="3" Grid.ColumnSpan="2" Margin="20,10,0,0" Name="xLoggerSettingsGrid">
+            <Grid Grid.Row="3" Grid.ColumnSpan="2" Margin="20,10,0,0" Name="xLoggerSettingsGrid">
             <Grid.RowDefinitions>
                 <RowDefinition  Height="30"/>
                 <RowDefinition  Height="10"/>

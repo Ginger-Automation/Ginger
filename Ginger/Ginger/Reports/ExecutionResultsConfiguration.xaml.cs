@@ -130,8 +130,8 @@ namespace Ginger.Reports
             }
 
             // Gideon
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralExecutionLoggerGrid, Grid.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralExecutionLoggerGrid, Grid.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
 
             // this added in ordre to apply the validation when turnining ON the Enterprise Features Flag (the validation wont apply when the Enterprise Features Flag initially was OFF)
             xSealighsExpander.IsVisibleChanged += XSealighsExpander_IsVisibleChanged;
@@ -190,7 +190,7 @@ namespace Ginger.Reports
         }
 
         private void executionResultOffRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
-        {
+        {            
             _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = false;
             _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled));
             _selectedExecutionLoggerConfiguration.PublishLogToCentralDB = ExecutionLoggerConfiguration.ePublishToCentralDB.No;
@@ -203,7 +203,7 @@ namespace Ginger.Reports
                 {
                     xCentralExecutionLoggerGrid.Visibility = Visibility.Collapsed;
                 }
-            }
+            }            
         }
 
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
