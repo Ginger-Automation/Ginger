@@ -97,7 +97,7 @@
                     <ColumnDefinition Width="100"></ColumnDefinition>
                     <ColumnDefinition Width="900"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" x:Name="xLabelRow" FontWeight="SemiBold" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Row : "/>
+                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" x:Name="xLabelRow" FontWeight="SemiBold" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Where : "/>
                 <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,5,5,5">
                     <Grid>
                         <Grid.RowDefinitions>

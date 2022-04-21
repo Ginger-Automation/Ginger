@@ -26,7 +26,7 @@ namespace GingerCore
         {
             get
             {
-                return "Action to read text from PDF or Images using OCR";
+                return "Read text from PDF or Images using OCR";
             }
         }
 
