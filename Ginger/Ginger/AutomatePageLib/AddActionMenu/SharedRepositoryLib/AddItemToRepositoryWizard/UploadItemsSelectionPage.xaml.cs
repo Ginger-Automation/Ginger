@@ -47,11 +47,18 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Selected), StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Selected), StyleType = GridColView.eGridColStyleType.CheckBox,  WidthWeight = 10 });
        
-            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ItemName), Header = "Item To Upload", WidthWeight = 15, ReadOnly = true });
-
-            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ReplaceAsLink), Header = "Replace As Link", StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ItemName), Header = "Item To Upload", WidthWeight = 20, ReadOnly = true });
+            
+            defView.GridColsView.Add(new GridColView()
+            {
+                Field = nameof(UploadItemSelection.ReplaceType),
+                Header = "Replace Type",
+                WidthWeight = 20,
+                StyleType = GridColView.eGridColStyleType.Template,
+                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eActivityInstanceType)), nameof(UploadItemSelection.ReplaceType), false, true)
+            });
 
             List<ComboEnumItem> itemUploadTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eItemUploadType));
             GridColView GCWUploadType = new GridColView()
@@ -60,9 +67,9 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                 Header = "Upload Type",
                 StyleType = GridColView.eGridColStyleType.Template,
                 CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(UploadItemSelection.UploadTypeList), nameof(UploadItemSelection.ItemUploadType), false, false, nameof(UploadItemSelection.IsExistingItemParent), true),
-                
-                WidthWeight = 15
+                WidthWeight = 18
             };
+           
 
             defView.GridColsView.Add(GCWUploadType);
             defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ExistingItemName), Header = "Existing Item", WidthWeight = 15, ReadOnly = true });
@@ -77,7 +84,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             };
 
             defView.GridColsView.Add(GCW);
-            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Comment), StyleType = GridColView.eGridColStyleType.Text, Header = "Comment", WidthWeight = 30, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Comment), StyleType = GridColView.eGridColStyleType.Text, Header = "Comment", WidthWeight = 25, ReadOnly = true });
             itemSelectionGrid.SetAllColumnsDefaultView(defView);
             itemSelectionGrid.InitViewItems();
             itemSelectionGrid.btnMarkAll.Visibility = Visibility.Visible;
