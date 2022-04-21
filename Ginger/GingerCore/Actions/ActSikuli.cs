@@ -45,7 +45,7 @@ namespace GingerCore.Actions
 {
     public class ActSikuli : ActImageCaptureSupport
     {
-        public override string ActionDescription { get { return "Image based locator and operation using Sikuli"; } }
+        public override string ActionDescription { get { return "Image Based Operation"; } }
         public override string ActionUserDescription { get { return "Image based locator and operation using Sikuli"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
