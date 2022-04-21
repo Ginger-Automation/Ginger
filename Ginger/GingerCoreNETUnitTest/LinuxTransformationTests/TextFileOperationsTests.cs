@@ -2,6 +2,7 @@
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCoreNETUnitTest.RunTestslib;
@@ -25,6 +26,10 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             gingerRunner = new GingerExecutionEngine(new GingerRunner(), Amdocs.Ginger.Common.eExecutedFrom.Automation);
+            if (WorkSpace.Instance.Solution?.SolutionOperations == null)
+            {
+                WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
+            }
         }
 
         [TestMethod]

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -35,6 +35,14 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             Skipped
         }
 
+        public enum eActivityInstanceType
+        {
+            [EnumValueDescription("Regular Instance")]
+            RegularInstance = 1,
+            [EnumValueDescription("Link Instance")]
+            LinkInstance = 0
+        }
+
         public eItemUploadStatus ItemUploadStatus { get; set; }
 
         public static ObservableList<UploadItemSelection> mSelectedItems = new ObservableList<UploadItemSelection>();
@@ -43,6 +51,11 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         {
             New,
             Overwrite
+        }
+        public enum eItemReplace
+        {
+            NormalInstance,
+            AsLink
         }
         private eItemUploadType mItemUploadType;
         public eItemUploadType ItemUploadType
@@ -183,6 +196,20 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
             if (PartToUpload.Count > 0)
                 SelectedItemPart = PartToUpload[0];
+        }
+
+        eActivityInstanceType mReplaceType;
+        public eActivityInstanceType ReplaceType
+        {
+            get
+            {
+                return mReplaceType;
+            }
+            set
+            {
+                mReplaceType = value;
+                OnPropertyChanged(nameof(ReplaceType));
+            }
         }
     }
 }

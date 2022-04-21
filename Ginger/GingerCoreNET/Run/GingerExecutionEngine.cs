@@ -28,6 +28,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
@@ -58,6 +59,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using Activity = GingerCore.Activity;
 
 namespace Ginger.Run
 {
@@ -81,7 +83,7 @@ namespace Ginger.Run
             }
         }
 
-        
+
 
         public PublishToALMConfig PublishToALMConfig = null;
 
@@ -267,10 +269,15 @@ namespace Ginger.Run
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
 
-            if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
+            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes)
             {
-                RunListeners.Add(new TelemetryRunListener());
+                RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
+            
+            //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
+            //{
+            //    RunListeners.Add(new TelemetryRunListener());
+            //}
 
         }
 
@@ -288,10 +295,17 @@ namespace Ginger.Run
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
-            if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
+
+            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes)
             {
-                RunListeners.Add(new TelemetryRunListener());
+                RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
+
+          
+            //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
+            //{
+            //    RunListeners.Add(new TelemetryRunListener());
+            //}
 
         }
 
@@ -320,7 +334,7 @@ namespace Ginger.Run
 
         public ISolution CurrentSolution { get; set; }
 
-        
+
 
         public Amdocs.Ginger.CoreNET.Execution.eRunStatus RunsetStatus
         {
@@ -571,7 +585,7 @@ namespace Ginger.Run
                     RunSetConfig runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
                     foreach (ApplicationAgent applicationAgent in mGingerRunner.ApplicationAgents)
                     {
-                        
+
 
                         if (applicationAgent.AgentName != null)
                         {
@@ -579,7 +593,7 @@ namespace Ginger.Run
 
                             var agent = (from a in agents where a.Name == applicationAgent.AgentName select a).FirstOrDefault();
 
-                            if(agent != null)
+                            if (agent != null)
                             {
                                 if (agent.AgentOperations == null)
                                 {
@@ -602,7 +616,7 @@ namespace Ginger.Run
 
                                 }
                             }
-                            
+
 
                             if (applicationAgent.Agent != null)
                             {
@@ -1194,7 +1208,7 @@ namespace Ginger.Run
                     {
                         break;
                     }
-                    
+
                 }
                 // Run any code needed after the action executed, used in ACTScreenShot save to file after driver took screen shot
 
@@ -1343,7 +1357,7 @@ namespace Ginger.Run
                 if (DataSource == null)
                     return;
 
-                DataSource.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FilePath);
+                DataSource.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FilePath);
 
                 ObservableList<DataSourceTable> dstTables = DataSource.GetTablesList();
                 foreach (DataSourceTable dst in dstTables)
@@ -3629,6 +3643,8 @@ namespace Ginger.Run
                     IsRunning = true;
                     mStopRun = false;
                 }
+                
+ 
 
                 //set the BF to execute
                 if (businessFlow != null)
@@ -4440,6 +4456,15 @@ namespace Ginger.Run
             {
                 AccountReportExecutionLogger centeralized_Logger = (AccountReportExecutionLogger)(from x in mRunListeners where x.GetType() == typeof(AccountReportExecutionLogger) select x).SingleOrDefault();
                 return centeralized_Logger;
+            }
+        }
+
+        public SealightsReportExecutionLogger Sealights_Logger
+        {
+            get
+            {
+                SealightsReportExecutionLogger sealights_Logger = (SealightsReportExecutionLogger)(from x in mRunListeners where x.GetType() == typeof(SealightsReportExecutionLogger) select x).SingleOrDefault();
+                return sealights_Logger;
             }
         }
 

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.Expressions;
-using Amdocs.Ginger.Common.OS;
 
 namespace Amdocs.Ginger.Repository
 {

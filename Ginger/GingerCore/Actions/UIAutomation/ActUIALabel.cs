@@ -68,8 +68,17 @@ namespace GingerCore.Actions
         }
 
 
-        [IsSerializedForLocalRepository]
-        public eLabelAction LabelAction { get; set; }
+        public eLabelAction LabelAction
+        {
+            get
+            {
+                return (eLabelAction)GetOrCreateInputParam<eLabelAction>(nameof(LabelAction), eLabelAction.Click);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(LabelAction), value.ToString());
+            }
+        }
 
         public override String ActionType
         {

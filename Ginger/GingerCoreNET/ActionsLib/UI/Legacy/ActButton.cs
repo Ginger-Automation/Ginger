@@ -73,8 +73,17 @@ namespace GingerCore.Actions
             GetStyle = 24,
         }
 
-        [IsSerializedForLocalRepository]
-        public eButtonAction ButtonAction{get;set;}
+        public eButtonAction ButtonAction
+        {
+            get
+            {
+                return (eButtonAction)GetOrCreateInputParam<eButtonAction>(nameof(ButtonAction), eButtonAction.Click);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ButtonAction), value.ToString());
+            }
+        }
 
         public override String ActionType { get
             {

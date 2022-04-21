@@ -34,6 +34,7 @@ using Ginger.RunSetLib.CreateCLIWizardLib;
 using Ginger.SolutionCategories;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControlsLib.VisualFlow;
+using Ginger.ValidationRules;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
@@ -47,6 +48,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -69,6 +71,7 @@ namespace Ginger.Run
         int mFlowX = 0;
         int mFlowY = 0;
         bool IsSelectedItemSyncWithExecution = true;//execution and selected items are synced as default   
+        private bool IsCalledFromxUndoBtn = false;
         SingleItemTreeViewSelectionPage mRunSetsSelectionPage = null;
         SingleItemTreeViewSelectionPage mBusFlowsSelectionPage = null;
         RunsetOperationsPage mRunsetOperations = null;
@@ -602,13 +605,141 @@ namespace Ginger.Run
             }
         }
 
+        private void PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
         void InitRunSetConfigurations()
         {
             BindingHandler.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
+            xRunSetNameTextBox.AddValidationRule(new RunSetNameValidationRule());
             xShowIDUC.Init(mRunSetConfig);
             BindingHandler.ObjFieldBinding(xRunSetDescriptionTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Description));
             TagsViewer.Init(mRunSetConfig.Tags);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mRunSetConfig, nameof(RepositoryItemBase.Publish));
+
+            // Value expression textboxes
+            xSealightsTestStageTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealightsTestStage));
+            xSealighsLabIdTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealighsLabId));
+            xSealighsBuildSessionIDTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID));
+                      
+            // check if fields have been populated (font-end validation)
+            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID), "Lab ID or Build Session ID must be provided"));
+            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealighsLabId), "Lab ID or Build Session ID must be provided"));
+            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
+
+            mRunSetConfig.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsLabId));
+            mRunSetConfig.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsTestStage));
+            mRunSetConfig.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
+
+            xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
+            xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
+            xDefaultSessionIdRadioBtn.Checked += XDefaultSessionIdRadioBtn_Checked;
+
+            xCustomTestStageRadioBtn.Checked += XCustomTestStageRadioBtn_Checked;
+            xCustomLabIdRadioBtn.Checked += XCustomLabIdRadioBtn_Checked;
+            xCustomSessionIdRadioBtn.Checked += XCustomSessionIdRadioBtn_Checked;
+
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage == null) // init values
+            {
+                xDefaultTestStageRadioBtn.IsChecked = true;
+                xSealightsTestStageTextBox.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                xCustomTestStageRadioBtn.IsChecked = true;
+                XCustomTestStageRadioBtn_Checked(null, null); // Check the custom radion btn 
+            }
+
+
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null)
+            {
+                xDefaultLabIdRadioBtn.IsChecked = true;
+                xSealighsLabIdTextBox.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                xCustomLabIdRadioBtn.IsChecked = true;
+                XCustomLabIdRadioBtn_Checked(null, null);
+            }
+
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null)
+            {
+                xDefaultSessionIdRadioBtn.IsChecked = true;
+                xSealighsBuildSessionIDTextBox.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                xCustomSessionIdRadioBtn.IsChecked = true;
+                XCustomSessionIdRadioBtn_Checked(null, null);
+            }
+           
+
+            //Sealights Logger configuration settings should be visible only if the Sealight logger is set to yes in Configurations tab
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.No)
+            {
+                xSealighsExpander.Visibility = Visibility.Collapsed;
+            }
+            else if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null &&
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null &&
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null)
+            {
+                xSealighsExpander.IsExpanded = false; //Sealight expand control should collapsed if all 3 Sealights' settings are in ‘Default’ mode.
+            }
+
+
+        }
+
+        private void XCustomSessionIdRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            xSealighsBuildSessionIDTextBox.Visibility = Visibility.Visible;
+
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID.Trim() == "")
+            {
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID;
+            }
+        }
+
+        private void XCustomLabIdRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            xSealighsLabIdTextBox.Visibility = Visibility.Visible;
+
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId.Trim() == "")
+            {
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLabId;
+            }
+        }
+
+        private void XCustomTestStageRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            xSealightsTestStageTextBox.Visibility = Visibility.Visible;
+
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage.Trim() == "")
+            {
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsTestStage;
+            }
+        }
+
+
+
+        private void XDefaultTestStageRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            xSealightsTestStageTextBox.Visibility = Visibility.Collapsed;
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage = null;
+        }
+
+        private void XDefaultLabIdRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            xSealighsLabIdTextBox.Visibility = Visibility.Collapsed;
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId = null;
+        }
+
+        private void XDefaultSessionIdRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            xSealighsBuildSessionIDTextBox.Visibility = Visibility.Collapsed;
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID = null;
         }
 
         void InitRunSetInfoSection()
@@ -1263,7 +1394,7 @@ namespace Ginger.Run
             try
             {
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified;
-                if (bIsRunsetDirty)
+                if (bIsRunsetDirty && !IsCalledFromxUndoBtn)
                 {
                     UserSelectionSaveOrUndoRunsetChanges();
                 }
@@ -1382,7 +1513,7 @@ namespace Ginger.Run
         internal void SaveRunSetConfig()
         {
             try
-            {
+            {                
                 mRunSetConfig.AllowAutoSave = false;
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
@@ -2198,7 +2329,7 @@ namespace Ginger.Run
         public void viewActivity(Activity activitytoView)
         {
             Activity ac = activitytoView;
-            GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(ac, new Context() { BusinessFlow = mCurrentBusinessFlowRunnerItemObject, Activity = ac }, General.eRIPageViewMode.View);
+            GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(ac, new Context() { BusinessFlow = mCurrentBusinessFlowRunnerItemObject, Activity = ac, Environment = mContext.Environment }, General.eRIPageViewMode.View);
             mContext.BusinessFlow.CurrentActivity = activitytoView;
             w.ShowAsWindow();
         }
@@ -2679,6 +2810,7 @@ namespace Ginger.Run
             {
                 if (CheckIfExecutionIsInProgress()) { return; }
 
+                IsCalledFromxUndoBtn = true;
                 mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
 
                 if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true))
@@ -2698,6 +2830,7 @@ namespace Ginger.Run
                 {
                     mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
                     mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                    IsCalledFromxUndoBtn = false;
                 }
             }
         }

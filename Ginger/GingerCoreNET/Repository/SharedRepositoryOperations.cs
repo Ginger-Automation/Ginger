@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
@@ -87,6 +88,11 @@ namespace Ginger.Repository
                     return false;
                 }
 
+                if (itemCopy is Activity)
+                {
+                    ((Activity)itemCopy).Type = eSharedItemType.Regular;
+                }
+
                 if (isOverwrite)
                 {
                     WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(itemToUpload.ExistingItem);
@@ -102,13 +108,21 @@ namespace Ginger.Repository
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);
                 }     
 
-                itemToUpload.UsageItem.IsSharedRepositoryInstance = true;
+               
 
                 if (itemToUpload.ExistingItemType == UploadItemSelection.eExistingItemType.ExistingItemIsParent && itemToUpload.ItemUploadType == UploadItemSelection.eItemUploadType.New)
                 {
                     itemToUpload.UsageItem.ParentGuid = Guid.Empty;
                 }
-
+                if (itemToUpload.ReplaceType ==UploadItemSelection.eActivityInstanceType.LinkInstance && !itemToUpload.UsageItem.IsLinkedItem)
+                {
+                    context.BusinessFlow.MarkActivityAsLink(itemToUpload.ItemGUID, itemCopy.Guid);
+                }
+                else if (itemToUpload.ReplaceType == UploadItemSelection.eActivityInstanceType.RegularInstance && itemToUpload.UsageItem.IsLinkedItem)
+                {
+                    context.BusinessFlow.UnMarkActivityAsLink(itemToUpload.ItemGUID, itemCopy.Guid);
+                }
+                itemToUpload.UsageItem.IsSharedRepositoryInstance = true;
                 itemToUpload.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.Uploaded;
                 return true;
             }
@@ -320,7 +334,7 @@ namespace Ginger.Repository
             //if (usagePage.RepoItemUsages.Count > 0)//TODO: check if only one instance exist for showing the pop up for better performance
             //{
             //if (Reporter.ToUser(eUserMsgKey.AskIfWantsToChangeeRepoItem, item.GetNameForFileName(), usagePage.RepoItemUsages.Count, changeType) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-            if (Reporter.ToUser(eUserMsgKey.AskIfWantsToChangeeRepoItem2, item.GetNameForFileName(), changeType) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfWantsToChangeLinkedRepoItem, item.GetNameForFileName(), changeType) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 return true;
             }
@@ -430,6 +444,53 @@ namespace Ginger.Repository
                 }
             }
             //TODO - find better way to get unique name
+        }
+
+        private static readonly object saveLock = new object();
+        public static async Task UpdateLinkedInstances(Activity mActivity)
+        {
+            try
+            {
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating and Saving Linked Activity instanced in Businessflows...");
+                await Task.Run(() =>
+                {
+                    ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+
+                    Parallel.ForEach(BizFlows, BF =>
+                    {
+                        try
+                        {
+                            if (BF.Activities.Any(f => f.IsLinkedItem && f.ParentGuid == mActivity.Guid))
+                            {
+                                for (int i = 0; i < BF.Activities.Count(); i++)
+                                {
+                                    if (BF.Activities[i].IsLinkedItem && BF.Activities[i].ParentGuid == mActivity.Guid)
+                                    {
+                                        mActivity.UpdateInstance(BF.Activities[i], eItemParts.All.ToString(), BF);
+                                    }
+                                }
+                                lock (saveLock)
+                                {
+                                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BF);
+                                }
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to update the Activity in businessFlow " + BF.Name, ex);
+                        }
+                    });
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to update the Activity in businessFlow", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
         }
 
     }

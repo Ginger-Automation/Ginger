@@ -26,6 +26,10 @@ using Ginger.UserControls;
 using System.ComponentModel;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using Ginger.Run;
+using Ginger.Run.RunSetActions;
+using GingerCore.ALM;
 
 namespace Ginger.ALM
 {
@@ -41,19 +45,30 @@ namespace Ginger.ALM
         BackgroundWorker fieldsWorker = new BackgroundWorker();
 
         public static string LoadFieldsState = "aa";
+        eALMConfigType mAlmConfigType = eALMConfigType.MainMenu;
 
-        public ALMItemsFieldsConfigurationPage()
+        public ALMItemsFieldsConfigurationPage(eALMConfigType configType, eALMType type, ObservableList<ExternalItemFieldBase> selectedItemsFields)
         {
             InitializeComponent();
-            ALMIntegration.Instance.RefreshALMItemFields(WorkSpace.Instance.Solution.ExternalItemsFields, true, null);
-            mItemsFields =  WorkSpace.Instance.Solution.ExternalItemsFields;
-            if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-            {
-                RunWorker(true);
-            }
+            mAlmConfigType = configType;
+            mItemsFields = WorkSpace.Instance.Solution.ExternalItemsFields;
 
-            grdQCFields.DataSourceList = mItemsFields;
-            SetFieldsGrid();
+            if (mAlmConfigType.ToString().Equals(eALMConfigType.MainMenu.ToString()))
+            {
+                ALMIntegration.Instance.RefreshALMItemFields(WorkSpace.Instance.Solution.ExternalItemsFields, true, null);
+                if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                {
+                    RunWorker(true);
+                }
+
+                grdQCFields.DataSourceList = mItemsFields;
+                SetFieldsGrid();
+            }
+            else
+            {
+                grdQCFields.DataSourceList = selectedItemsFields;
+                SetFieldsGrid();
+            }
         }
 
         private void SetFieldsGrid()
@@ -78,16 +93,23 @@ namespace Ginger.ALM
 
         public void ShowAsWindow(bool refreshFields = true, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button saveButton = new Button();
-            saveButton.Content = "Save";
-            saveButton.ToolTip = "Save 'To Update' fields";
-            saveButton.Click += new RoutedEventHandler(Save);
-            if (refreshFields)
+            if (mAlmConfigType == eALMConfigType.MainMenu)
             {
-                ALMIntegration.Instance.RefreshALMItemFields(WorkSpace.Instance.Solution.ExternalItemsFields, true, null);
+                Button saveButton = new Button();
+                saveButton.Content = "Save";
+                saveButton.ToolTip = "Save 'To Update' fields";
+                saveButton.Click += new RoutedEventHandler(Save);
+                if (refreshFields)
+                {
+                    ALMIntegration.Instance.RefreshALMItemFields(WorkSpace.Instance.Solution.ExternalItemsFields, true, null);
+                }
+                grdQCFields.DataSourceList = WorkSpace.Instance.Solution.ExternalItemsFields;
+                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { saveButton });
             }
-            grdQCFields.DataSourceList = WorkSpace.Instance.Solution.ExternalItemsFields;
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { saveButton });
+            else
+            {
+                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this);
+            }
         }
 
         private void Save(object sender, RoutedEventArgs e)
@@ -101,7 +123,6 @@ namespace Ginger.ALM
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
             genWin.Close();
         }
-
         #region BackgroundWorker Thread
         public void RunWorker(Boolean refreshFlag)
         {

@@ -12,6 +12,7 @@
     "Runners": [
       {
         "Name": "Runner Dynamic",
+        "Exist": false,
         "EnvironmentName": "Env2",
         "EnvironmentID": "5ab6158b-05b4-4b2c-97f5-bde0f8522f3e",
         "OnFailureRunOption": "ContinueToRunall",
@@ -28,6 +29,7 @@
             "Name": "Calculator_Test",
             "ID": "8d4572b1-0058-4bcd-8009-cf7f7be75d9c",
             "Instance": 1,
+            "Exist": true,
             "Active": true,
             "InputValues": [
               {
@@ -49,7 +51,8 @@
           {
             "Name": "Flow 1",
             "ID": "2db992cd-c5f7-43a6-beb6-cd4de10fece7",
-            "Active": true
+            "Active": true,
+            "Exist": true
           },
           {
             "Name": "Calculator_Test",

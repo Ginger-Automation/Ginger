@@ -1,0 +1,48 @@
+{
+  "SolutionLocalPath": "SOLUTION_PATH",
+  "ShowAutoRunWindow": false,
+  "VerboseLevel": "normal",
+  "Runset": {
+    "Exist": true,
+    "Name": "Default Run Set",
+    "EnvironmentName": "Default",
+    "RunAnalyzer": false,
+    "RunInParallel": true,
+    "StopRunnersOnFailure": false,
+    "Runners": [
+      {
+        "Name": "Runner 1",
+        "OnFailureRunOption": "ContinueToRunall",
+        "AppAgentMappings": [
+          {
+            "ApplicationName": "app1",
+            "AgentName": "Chrome"
+          }
+        ],
+        "BusinessFlows": [
+          {
+            "Name": "Flow 1",
+            "Active": true
+          },
+          {
+            "Name": "Flow_D",
+            "Exist": false,
+            "ID": "86ad108b-bddc-4cce-ba17-c8bb50fe2c66",
+            "Active": true,
+            "SharedActivities": [
+              {
+                "SharedActivityName": "Test Activity"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "SelfHealingConfiguration": {
+      "ReprioritizePOMLocators": true,
+      "AutoFixAnalyzerIssue": false,
+      "AutoUpdateApplicationModel": false,
+      "SaveChangesInSourceControl": false
+    }
+  }
+}

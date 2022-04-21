@@ -134,6 +134,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         IWebserviceDriverWindow mDriverWindow;
         private ActWebService mActWebService;
         public ActWebAPIBase mActWebAPI;
+        public string mRawResponse;
+        public string mRawRequest;
+        private HttpWebClientUtils mWebAPI;
 
         public override bool IsSTAThread()
         {
@@ -209,6 +212,54 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             return null;
         }
 
+        public void CreateRawRequest(Act act)
+        {
+            HttpWebClientUtils WebAPI = new HttpWebClientUtils();
+
+            if (act is ActWebAPISoap || act is ActWebAPIRest)
+            {
+                if (WebAPI.RequestContstructor((ActWebAPIBase)act, WebServicesProxy, UseServerProxySettings))
+                {
+                    WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
+
+                }
+            }
+            else if (act is ActWebAPIModel ActWAPIM)
+            {
+                //pull pointed API Model
+                ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == ((ActWebAPIModel)act).APImodelGUID).FirstOrDefault();
+                if (AAMB == null)
+                {
+                    act.Error = "Failed to find the pointed API Model";
+                    act.ExInfo = string.Format("API Model with the GUID '{0}' was not found", ((ActWebAPIModel)act).APImodelGUID);
+                    return;
+                }
+
+                //init matching real WebAPI Action
+                ActWebAPIBase actWebAPI = null;
+                if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.REST)
+                {
+                    actWebAPI = ActWAPIM.CreateActWebAPIREST((ApplicationAPIModel)AAMB, ActWAPIM);
+                }
+                else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
+                {
+                    actWebAPI = ActWAPIM.CreateActWebAPISOAP((ApplicationAPIModel)AAMB, ActWAPIM);
+                }
+                else
+                {
+                    throw new Exception("The Action from type '" + act.GetType().ToString() + "' is unknown/Not Implemented by the Driver - " + this.GetType().ToString());
+                }
+
+                if (WebAPI.RequestContstructor(actWebAPI, WebServicesProxy, UseServerProxySettings))
+                {
+                    WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
+                }
+            }
+            mRawRequest = WebAPI.RequestFileContent;
+        }
+
+
+
         public override void RunAction(Act act)
         {
             //TODO: add func to Act + Enum for switch
@@ -218,7 +269,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 mActWebService = (ActWebService)act;
                 string ReqXML = String.Empty;
                 //FileStream ReqXMLStream = System.IO.File.OpenRead(mActWebService.XMLfileName.ValueForDriver.Replace(@"~\", mActWebService.SolutionFolder));
-                FileStream ReqXMLStream = System.IO.File.OpenRead(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mActWebService.XMLfileName.ValueForDriver));
+                FileStream ReqXMLStream = System.IO.File.OpenRead(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mActWebService.XMLfileName.ValueForDriver));
 
                 using (StreamReader reader = new StreamReader(ReqXMLStream))
                 {
@@ -278,6 +329,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
                 //Post Execution Copy execution result fields from actWebAPI to ActWebAPIModel (act)
                 CopyExecutionAttributes(act, actWebAPI);
+
+
+
             }
             else if (act is ActScreenShot)
             {
@@ -286,6 +340,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             {
                 throw new Exception("The Action from type '" + act.GetType().ToString() + "' is unknown/Not Implemented by the Driver - " + this.GetType().ToString());
             }
+
         }
 
         private string ReplacePlaceHolderParameneterWithActual(string ValueBeforeReplacing, ObservableList<EnhancedActInputValue> APIModelDynamicParamsValue)
@@ -303,6 +358,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             act.Error = actWebAPI.Error;
             act.ExInfo = actWebAPI.ExInfo;
+            act.RawResponseValues = actWebAPI.RawResponseValues;
         }
         
        
@@ -310,17 +366,17 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         private void HandleWebApiRequest(ActWebAPIBase act)
         {
-            HttpWebClientUtils WebAPI = new HttpWebClientUtils();
+            mWebAPI = new HttpWebClientUtils();
 
             //Call for Request Construction
-            if (WebAPI.RequestContstructor(act, WebServicesProxy, UseServerProxySettings))
+            if (mWebAPI.RequestContstructor(act, WebServicesProxy, UseServerProxySettings))
             {
 
-                WebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
-
+                mWebAPI.SaveRequest(SaveRequestXML, SavedXMLDirectoryPath);
+                mRawRequest = mWebAPI.RequestFileContent;
                 Reporter.ToLog(eLogLevel.DEBUG, "RequestContstructor passed successfully");
 
-                if (WebAPI.SendRequest() == true)
+                if (mWebAPI.SendRequest())
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "SendRequest passed successfully");
 
@@ -328,14 +384,15 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     bool dontFailActionOnBadResponse = false;
                     Boolean.TryParse(act.GetInputParamCalculatedValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose), out dontFailActionOnBadResponse);
                     if (!dontFailActionOnBadResponse)
-                        WebAPI.ValidateResponse();
+                        mWebAPI.ValidateResponse();
 
                     Reporter.ToLog(eLogLevel.DEBUG, "ValidateResponse passed successfully");
 
-                    WebAPI.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath);
-                    WebAPI.HandlePostExecutionOperations();
+                    mWebAPI.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath);
+                    mRawResponse = mWebAPI.ResponseFileContent;
+                    mWebAPI.HandlePostExecutionOperations();
                     //Parse response
-                    WebAPI.ParseRespondToOutputParams();
+                    mWebAPI.ParseRespondToOutputParams();
 
                     Reporter.ToLog(eLogLevel.DEBUG, "ParseRespondToOutputParams passed successfully");
                 }
@@ -425,6 +482,10 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     propertiesQouteFixed = propertiesQouteFixed.Replace("\0", "");
                     act.AddOrUpdateReturnParamActual(kpr.Value[0] + "-Properties", kpr.Value[5]);
                 }
+
+                act.RawResponseValues = mWebAPI.ResponseFileContent;
+                act.AddOrUpdateReturnParamActual("Raw Request: ", mWebAPI.RequestFileContent);
+                act.AddOrUpdateReturnParamActual("Raw Response: ", mWebAPI.ResponseFileContent);
             }
 
             Dictionary<List<string>, List<string>> dictValues = new Dictionary<List<string>, List<string>>();
@@ -611,7 +672,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             try
             {
                 //xmlFilesDir = SavedXMLDirectoryPath.Replace(@"~\", mActWebService.SolutionFolder) + @"\" + fileType + "XMLs";
-                xmlFilesDir = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SavedXMLDirectoryPath) + @"\" + fileType + "XMLs";
+                xmlFilesDir = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(SavedXMLDirectoryPath) + @"\" + fileType + "XMLs";
 
                 if (!Directory.Exists(xmlFilesDir))
                     Directory.CreateDirectory(xmlFilesDir);

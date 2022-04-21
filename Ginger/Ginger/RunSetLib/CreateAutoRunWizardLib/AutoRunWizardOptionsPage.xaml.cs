@@ -23,6 +23,7 @@ using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Windows.Controls;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
@@ -69,6 +70,14 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     BindingHandler.ObjFieldBinding(xALMConfigCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.SetAlmConnectionDetails));
                     BindingHandler.ObjFieldBinding(xGingerRunEXEWindowShow, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.ShowAutoRunWindow));
                     BindingHandler.ObjFieldBinding(xRunAnalyzerCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.RunAnalyzer));
+                    BindingHandler.ObjFieldBinding(xSealightsConfigCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.SetSealightsSettings));
+
+                    // Disable the xSealightsConfigCheckBox if Sealights is not anable in Configuration's setting
+                    if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == eSealightsLog.No)
+                    {
+                        xSealightsConfigCheckBox.IsEnabled = false;
+                    }
+
                     xArtifactsPathTextBox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ArtifactsPath), isVENeeded: false, isBrowseNeeded: true, browserType: Activities.UCValueExpression.eBrowserType.Folder);
                     SelfHealingAutoCheckInSetting();
                     break;

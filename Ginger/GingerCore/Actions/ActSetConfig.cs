@@ -64,10 +64,28 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public string sValue { get; set; }
+        public string sValue
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(sValue)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(sValue), value);
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public string sParam { get; set; }
+        public string sParam
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(sParam)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(sParam), value);
+            }
+        }
     }
 }

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Platform;
 using Amdocs.Ginger.IO;
@@ -53,6 +54,8 @@ namespace GingerCore.Actions.WebAPI
         string ContentType;
         ApplicationAPIUtils.eContentType eContentType;
         string ResponseMessage = null;
+        public string RequestFileContent = null;
+        public string ResponseFileContent = null;
 
         public bool RequestContstructor(ActWebAPIBase act, string ProxySettings,bool useProxyServerSettings)
         {
@@ -235,7 +238,7 @@ namespace GingerCore.Actions.WebAPI
                 //Use Custom Certificate:
                 Handler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 //string path = (mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath).ToString().Replace(@"~\", mAct.SolutionFolder));
-                string path = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
+                string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
 
                 if (!string.IsNullOrEmpty(path))
                 {
@@ -339,39 +342,122 @@ namespace GingerCore.Actions.WebAPI
             }
         }
 
+        private string CreateRawRequestAndResponse(string msgType)
+        {
+            string rawMsg = string.Empty;
+            if (msgType == "request")
+            {
+                if (RequestMessage != null) {
+
+                    rawMsg = $"{RequestMessage.Method} {RequestMessage.RequestUri} HTTP/{RequestMessage.Version}{Environment.NewLine}";
+                    rawMsg += $"{Client.DefaultRequestHeaders}";
+                    rawMsg += RequestMessage.Content != null && RequestMessage.Content.Headers != null ? $"{RequestMessage.Content.Headers}" : string.Empty;
+                    if (RequestMessage.Method.ToString() != "GET" && !RequestMessage.Content.Headers.ToString().Contains("Content-Length"))
+                    {
+                        rawMsg += $"Content-Length: {RequestMessage.Content.Headers.ContentLength}{Environment.NewLine}";
+                    }
+                    rawMsg += $"Host: {RequestMessage.RequestUri.Authority}{Environment.NewLine}{Environment.NewLine}";
+                    rawMsg += BodyString;
+                }
+            }
+            else
+            {
+                rawMsg = $"HTTP/{Response.Version} {Response.ReasonPhrase}{Environment.NewLine}";
+                rawMsg += $"{Response.Headers}";
+                rawMsg += $"{Response.Content.Headers}{Environment.NewLine}";
+                if (ResponseMessage.Contains("xml"))
+                {
+                    rawMsg += XMLDocExtended.PrettyXml(ResponseMessage);
+                }
+                else if (ResponseMessage.Contains("html"))
+                {
+                    rawMsg += ResponseMessage;
+                }
+                else
+                {
+                    rawMsg += JsonConvert.DeserializeObject(ResponseMessage);
+                }
+            }
+
+            return rawMsg;
+        }
+
+        public void CreateRawRequestContent()
+        {
+
+            if (mAct.GetType() == typeof(ActWebAPISoap))
+            {
+                RequestFileContent = CreateRawRequestAndResponse("request");
+                mAct.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ContentType, "XML");
+            }
+            else if (mAct.GetType() == typeof(ActWebAPIRest))
+            {
+                if (!string.IsNullOrEmpty(BodyString))
+                {
+                    RequestFileContent = CreateRawRequestAndResponse("request");
+                }
+                else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "XwwwFormUrlEncoded"))
+                {
+                    HttpContent UrlEncoded = new FormUrlEncodedContent(ConstructURLEncoded((ActWebAPIRest)mAct));
+                    RequestFileContent = CreateRawRequestAndResponse("request");
+                    StringBuilder str = new StringBuilder();
+                    foreach(KeyValuePair<string, string> keyValue in ConstructURLEncoded((ActWebAPIRest)mAct))
+                    {
+                        str.AppendLine(keyValue.Key + "=" + keyValue.Value);
+                    }
+                    RequestFileContent += str;
+
+                }
+                else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "FormData"))
+                {
+                    MultipartFormDataContent FormDataContent = new MultipartFormDataContent();
+
+                    RequestFileContent = CreateRawRequestAndResponse("request");
+                    StringBuilder str = new StringBuilder();
+                    for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
+                    {
+                        FormDataContent.Add(new StringContent(mAct.RequestKeyValues[i].ValueForDriver), mAct.RequestKeyValues[i].ItemName.ToString());
+                        str.AppendLine("Content-Disposition: form-data; name=\"" + mAct.RequestKeyValues[i].Param + "\"");
+                        str.AppendLine(mAct.RequestKeyValues[i].ValueForDriver);
+                    }
+                    RequestFileContent += str;
+
+                }
+                else
+                {
+                    RequestFileContent = CreateRawRequestAndResponse("request");
+                }
+            }
+        }
+
+        public string GetRawRequestContentPreview(ActWebAPIBase act)
+        {
+            try
+            {
+                //Prepare act input values
+                Context context = Context.GetAsContext(act.Context);
+                if (context != null && context.Runner != null)
+                {
+                    context.Runner.PrepActionValueExpression(act, context.BusinessFlow);
+                }
+                //Create Request content
+                RequestContstructor(act, null, false);
+                CreateRawRequestContent();
+                return RequestFileContent;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to create API Request preview content", ex);
+                return string.Empty;
+            }
+        }
+
         public void SaveRequest(bool RequestSave, string SaveDirectory)
         {
-            string RequestFileContent = string.Empty;
+            RequestFileContent = string.Empty;
             if (RequestSave)
             {
-                if (mAct.GetType() == typeof(ActWebAPISoap))
-                {
-                    RequestFileContent = BodyString;
-                    mAct.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ContentType, "XML");
-                }
-                else if (mAct.GetType() == typeof(ActWebAPIRest))
-                {
-                    if (!string.IsNullOrEmpty(BodyString))
-                    {
-                        RequestFileContent = BodyString;
-                    }
-                    else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "XwwwFormUrlEncoded"))
-                    {
-                        HttpContent UrlEncoded = new FormUrlEncodedContent(ConstructURLEncoded((ActWebAPIRest)mAct));
-                        RequestFileContent = UrlEncoded.ToString();
-                    }
-                    else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "FormData"))
-                    {
-                        MultipartFormDataContent FormDataContent = new MultipartFormDataContent();
-                        for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
-                            FormDataContent.Add(new StringContent(mAct.RequestKeyValues[i].ValueForDriver), mAct.RequestKeyValues[i].ItemName.ToString());
-                        RequestFileContent = FormDataContent.ToString();
-                    }
-                    else
-                    {
-                        RequestFileContent = RequestMessage.ToString();
-                    }
-                }
+                CreateRawRequestContent();
 
                 string FileFullPath = Webserviceplatforminfo.SaveToFile("Request", RequestFileContent, SaveDirectory,mAct);
                 mAct.AddOrUpdateReturnParamActual("Saved Request File Name", Path.GetFileName(FileFullPath));
@@ -383,7 +469,6 @@ namespace GingerCore.Actions.WebAPI
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Client Sending Async Request");
-
                 Response = Client.SendAsync(RequestMessage).Result;
                 Reporter.ToLog(eLogLevel.DEBUG, "Response status: " + Response.StatusCode);
 
@@ -447,6 +532,15 @@ namespace GingerCore.Actions.WebAPI
             }
         }
 
+        private void AddRawResponseAndRequestToOutputParams()
+        {
+            mAct.RawResponseValues = ">>>>>>>>>>>>>>>>>>>>>>>>>>> REQUEST:" + Environment.NewLine + Environment.NewLine + RequestFileContent;
+            mAct.RawResponseValues += Environment.NewLine + Environment.NewLine;
+            mAct.RawResponseValues += ">>>>>>>>>>>>>>>>>>>>>>>>>>> RESPONSE:" + Environment.NewLine + Environment.NewLine + ResponseFileContent;
+            mAct.AddOrUpdateReturnParamActual("Raw Request: ", RequestFileContent);
+            mAct.AddOrUpdateReturnParamActual("Raw Response: ", ResponseFileContent);
+        }
+
         public bool ParseRespondToOutputParams()
         {
             if (Response != null)
@@ -479,40 +573,50 @@ namespace GingerCore.Actions.WebAPI
             if (!ActWebAPIBase.ParseNodesToReturnParams(mAct, ResponseMessage))
                 return false;
 
+            AddRawResponseAndRequestToOutputParams();
+
+
             return true;
+        }
+
+        public void CreatRawResponseContent()
+        {
+
+
+
+            if (mAct.GetType() == typeof(ActWebAPISoap))
+            {
+                ResponseFileContent = CreateRawRequestAndResponse("response");
+
+                mAct.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, "XML");
+            }
+            else if (mAct.GetType() == typeof(ActWebAPIRest))
+            {
+                if (!string.IsNullOrEmpty(ResponseMessage))
+                {
+                    ResponseFileContent = CreateRawRequestAndResponse("response");
+                }
+                else
+                {
+                    if (Response != null && Response.Headers != null)
+                    {
+                        ResponseFileContent = $"HTTP/{Response.Version} {Response.ReasonPhrase}\r\n";
+                        ResponseFileContent += $"{Response.Headers}\r\n";
+                    }
+                    else
+                    {
+                        ResponseFileContent = string.Empty;
+                    }
+                }
+            }
+            ResponseFileContent = Amdocs.Ginger.Common.XMLDocExtended.PrettyXml(ResponseFileContent);
         }
 
         public void SaveResponseToFile(bool saveResponse, string savePath)
         {
             if (saveResponse)
             {
-                string ResponseFileContent = string.Empty;
-
-                if (mAct.GetType() == typeof(ActWebAPISoap))
-                {
-                    ResponseFileContent = ResponseMessage;
-                    mAct.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, "XML");
-                }
-                else if (mAct.GetType() == typeof(ActWebAPIRest))
-                {
-                    if (!string.IsNullOrEmpty(ResponseMessage))
-                    {
-                        ResponseFileContent = ResponseMessage;
-                    }
-                    else
-                    {
-                        if (Response != null && Response.Headers != null)
-                        {
-                            ResponseFileContent = Response.Headers.ToString();
-                        }
-                        else
-                        {
-                            ResponseFileContent = string.Empty;
-                        }
-                    }
-                }
-
-                ResponseFileContent = Amdocs.Ginger.Common.XMLDocExtended.PrettyXml(ResponseFileContent);
+                CreatRawResponseContent();
 
                 string FileFullPath = Webserviceplatforminfo.SaveToFile("Response", ResponseFileContent, savePath, mAct);
                 mAct.AddOrUpdateReturnParamActual("Saved Response File Name", Path.GetFileName(FileFullPath));
@@ -633,7 +737,7 @@ namespace GingerCore.Actions.WebAPI
                                 {
                                     string path = mAct.RequestKeyValues[i].ValueForDriver;
                                     //string FullPath = path.Replace("~\\", mAct.SolutionFolder);
-                                    string FullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(path);
+                                    string FullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(path);
 
                                     FileStream FileStream = File.OpenRead(FullPath);
                                     var streamContent = new StreamContent(FileStream);
@@ -717,8 +821,8 @@ namespace GingerCore.Actions.WebAPI
                         ContentType = "text/plain; charset=utf-8";
                         break;
                     case ApplicationAPIUtils.eContentType.XML:
-                        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
-                        ContentType = "text/xml";
+                        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+                        ContentType = "application/xml";
                         break;
                 }
             }
@@ -808,7 +912,7 @@ namespace GingerCore.Actions.WebAPI
             string FileContent = string.Empty;
             string TemplateFileName = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser).ToString();
             //string TemplateFileNameFullPath = TemplateFileName.Replace(@"~\", mAct.SolutionFolder);
-            string TemplateFileNameFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(TemplateFileName);
+            string TemplateFileNameFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(TemplateFileName);
 
             FileStream ReqStream = File.OpenRead(TemplateFileNameFullPath);
 

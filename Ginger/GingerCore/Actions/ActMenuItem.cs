@@ -76,8 +76,17 @@ namespace GingerCore.Actions
             Collapse=7
         }
 
-        [IsSerializedForLocalRepository]
-        public eMenuAction MenuAction { get; set; }
+        public eMenuAction MenuAction
+        {
+            get
+            {
+                return (eMenuAction)GetOrCreateInputParam<eMenuAction>(nameof(MenuAction), eMenuAction.Click);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MenuAction), value.ToString());
+            }
+        }
 
         public override String ToString()
         {

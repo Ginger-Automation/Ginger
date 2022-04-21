@@ -75,7 +75,7 @@ namespace Ginger.UserControlsLib.TextEditor
                     AutoDetectTextEditor AD = new AutoDetectTextEditor();
                     AD.ext = Path.GetExtension(FileName);
                     TE = AD;                    
-                    UCTE.Init(FileName, TE, enableEdit, RemoveToolBar, EnableWrite:true);
+                    UCTE.Init(FileName, TE, enableEdit, RemoveToolBar);
                     if (UCTextEditorTitle != null)
                         UCTE.SetContentEditorTitleLabel(UCTextEditorTitle);
                     EditorFrame.Content = UCTE;
@@ -90,12 +90,24 @@ namespace Ginger.UserControlsLib.TextEditor
             }
         }
 
-        internal void ShowAsWindow()
+
+
+        internal void ShowAsWindow(string customeTitle = null)
         {
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Free, this.Title, this);
+            string title;
+            if (customeTitle != null)
+            {
+                title = customeTitle;
+            }
+            else
+            {
+                title = this.Title;
+            }
+
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Free, title, this);
         }
 
-       GenericWindow genWin;
+        GenericWindow genWin;
 
         private bool IsTextFile(string fileName)
         {            
@@ -218,7 +230,12 @@ namespace Ginger.UserControlsLib.TextEditor
 
                 foreach (PluginPackage pluginPackage in Plugins)
                 {
-                    if (string.IsNullOrEmpty(pluginPackage.PluginPackageInfo.UIDLL)) continue;
+                    pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
+
+                    if (string.IsNullOrEmpty(((PluginPackageOperations)pluginPackage.PluginPackageOperations).PluginPackageInfo.UIDLL))
+                    {
+                        continue;
+                    }
                     
                     foreach (ITextEditor TE in PluginTextEditorHelper.GetTextFileEditors(pluginPackage))
                     {

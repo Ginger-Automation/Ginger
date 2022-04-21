@@ -309,7 +309,7 @@ namespace GingerCoreNET.GeneralLib
 
             if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
-                DataSource.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
+                DataSource.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
 
                 foreach (DataSourceTable dst in dsTables)
@@ -443,6 +443,34 @@ namespace GingerCoreNET.GeneralLib
             }
 
             return null;
+        }
+        public static string RemoveSpecialCharactersInColumnHeader(string columnHeader)
+        {
+            string specialCharactersToRemove = "./[]()";
+            foreach (char sc in specialCharactersToRemove)
+            {
+                if (columnHeader.Contains(sc.ToString()))
+                {
+                    columnHeader = columnHeader.Replace(sc.ToString(), string.Empty);
+                }
+            }
+            return columnHeader;
+        }
+
+        public static string CreateTempTextFile(string content)
+        {
+            try
+            {
+                string filePath = System.IO.Path.GetTempFileName();
+                byte[] bytes = System.Text.Encoding.Default.GetBytes(content);
+                File.WriteAllBytes(filePath, bytes);
+                return filePath;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to create temp text file", ex);
+                return null;
+            }
         }
     }
 

@@ -37,6 +37,7 @@ using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using Ginger.User;
 using GingerCore;
+using GingerCore.ALM;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
@@ -62,16 +63,17 @@ namespace Ginger
         private bool mAskUserIfToClose = true;
 
         ObservableList<HelpLayoutArgs> mHelpLayoutList = new ObservableList<HelpLayoutArgs>();
-
+        private bool mRestartApplication = false;
         public MainWindow()
         {
             InitializeComponent();
+            mRestartApplication = false;
             lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersion;
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
 
             mHelpLayoutList.CollectionChanged += MHelpLayoutList_CollectionChanged;
 
-            Telemetry.eventHandler += TelemetryEventHandler;
+            //Telemetry.eventHandler += TelemetryEventHandler;
 
             DriverWindowHandler.Init();
 
@@ -392,19 +394,35 @@ namespace Ginger
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (mAskUserIfToClose == false || Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            eUserMsgSelection userSelection;
+            if (mRestartApplication)
+            {
+                 userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestart);               
+            }
+            else if(mAskUserIfToClose == false)
+            {
+                 userSelection = eUserMsgSelection.Yes;
+            }
+            else
+            {
+                userSelection=Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose);
+            }
+
+
+            if (userSelection == eUserMsgSelection.Yes)
             {
                 AppCleanUp();
             }
             else
             {
+                mRestartApplication = false;
                 e.Cancel = true;
             }
         }
 
         private void AppCleanUp()
         {
-            Telemetry.eventHandler -= TelemetryEventHandler;
+            //Telemetry.eventHandler -= TelemetryEventHandler;
 
             ClosingWindow CW = new ClosingWindow();
             CW.Show();
@@ -561,7 +579,8 @@ namespace Ginger
 
         private void ALMFieldsConfiguration_Click(object sender, RoutedEventArgs e)
         {
-            ALMIntegration.Instance.OpenALMItemsFieldsPage();
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig(); 
+            ALMIntegration.Instance.OpenALMItemsFieldsPage(eALMConfigType.MainMenu, ALMIntegration.Instance.GetALMType(), WorkSpace.Instance.Solution.ExternalItemsFields);
         }
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
@@ -573,6 +592,11 @@ namespace Ginger
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
+            App.MainWindow.Close();
+        }
+        private void btnRestart_Click(object sender, RoutedEventArgs e)
+        {
+            mRestartApplication = true;
             App.MainWindow.Close();
         }
 
@@ -810,6 +834,11 @@ namespace Ginger
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
+            if(mRestartApplication)
+            {
+                Process.Start(Application.ResourceAssembly.Location);
+            }
+
             Application.Current.Shutdown();
         }
 

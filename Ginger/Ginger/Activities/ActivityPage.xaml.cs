@@ -34,6 +34,8 @@ using GingerCore.Helpers;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -492,13 +494,14 @@ namespace GingerWPF.BusinessFlowsLib
             mGenericWin.Close();
         }
 
-        private void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
+        private async void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
         {
             if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry)
             {
                 if (SharedRepositoryOperations.CheckIfSureDoingChange(mActivity, "change") == true)
                 {
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivity);
+                    await SharedRepositoryOperations.UpdateLinkedInstances(mActivity); 
                     mSaveWasDone = true;
                     mGenericWin.Close();
                 }
@@ -522,6 +525,6 @@ namespace GingerWPF.BusinessFlowsLib
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-        }
+        }       
     }
 }

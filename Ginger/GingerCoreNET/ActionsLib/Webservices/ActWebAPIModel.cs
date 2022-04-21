@@ -196,6 +196,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
             actWebAPIBase.AddOrUpdateInputParamValueAndCalculatedValue(ActWebAPIBase.Fields.AuthPassword, AAMBDuplicate.AuthPassword.ToString());
 
             actWebAPIBase.ReturnValues = actWebAPIModel.ReturnValues;
+            actWebAPIBase.Context = actWebAPIModel.Context;
         }
         private ObservableList<ActInputValue> ConvertAPIModelKeyValueToActInputValues(ObservableList<APIModelKeyValue> GingerCoreNETHttpHeaders, ActWebAPIModel actWebAPIModel)
         {

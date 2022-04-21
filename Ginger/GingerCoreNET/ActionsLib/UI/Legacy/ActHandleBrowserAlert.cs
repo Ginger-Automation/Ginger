@@ -67,8 +67,17 @@ namespace GingerCore.Actions
             SendKeysAlertBox = 4,
         }
 
-        [IsSerializedForLocalRepository]
-        public eHandleBrowseAlert GenElementAction { get; set; }
+        public eHandleBrowseAlert GenElementAction
+        {
+            get
+            {
+                return (eHandleBrowseAlert)GetOrCreateInputParam<eHandleBrowseAlert>(nameof(GenElementAction), eHandleBrowseAlert.AcceptAlertBox);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(GenElementAction), value.ToString());
+            }
+        }
 
         public override String ToString()
         {

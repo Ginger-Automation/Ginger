@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
+using Ginger.Reports;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
@@ -29,6 +30,7 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -179,6 +181,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     LoadALMDetailsFromJSON(exeConfiguration);
                 }
+                if (exeConfiguration.SealightsDetails != null)
+                {
+                   LoadSealightsDetailsFromJSON(exeConfiguration);
+                }
                 if (runset.EnvironmentName != null || runset.EnvironmentID != null)
                 {
                     ProjEnvironment env = DynamicExecutionManager.FindItemByIDAndName<ProjEnvironment>(
@@ -212,12 +218,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             await runsetExecutor.RunRunset();
         }
 
+        
+        private void LoadSealightsDetailsFromJSON(GingerExecConfig gingerExecConfig)
+        {
+            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog = (bool)gingerExecConfig.SealightsDetails.SealightsEnable ? eSealightsLog.Yes : eSealightsLog.No;
+            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLabId = gingerExecConfig.SealightsDetails.SealightsLabId;
+            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID = gingerExecConfig.SealightsDetails.SealightsBSId;
+            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsTestStage = gingerExecConfig.SealightsDetails.SealightsTestStage;
+            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsSessionTimeout = gingerExecConfig.SealightsDetails.SealightsSessionTimeout.ToString();
+            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel = (eSealightsEntityLevel)gingerExecConfig.SealightsDetails.SealightsEntityLevel;
+            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsAgentToken = gingerExecConfig.SealightsDetails.SealightsAgentToken;
+        }
+
         private void LoadALMDetailsFromJSON(GingerExecConfig gingerExecConfig)
         {
             foreach (AlmDetails almDetails in gingerExecConfig.AlmsDetails)
             {
                 ALMIntegrationEnums.eALMType almTypeToConfigure;
-                if (Enum.TryParse<ALMIntegrationEnums.eALMType>(almDetails.ALMType, out almTypeToConfigure))
+                if (Enum.TryParse(almDetails.ALMType.ToString(), out almTypeToConfigure))
                 {
                     try
                     {

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -90,7 +90,7 @@ namespace Amdocs.Ginger.Common
         AskIfToGenerateAutoRunDescription,
         MissingApplicationPlatform,
         NoActivitiesGroupWasSelected, ActivitiesGroupActivitiesNotFound, PartOfActivitiesGroupActsNotFound, SureWantToDeleteGroup,
-        ItemNameExistsInRepository, ItemExistsInRepository, ItemExternalExistsInRepository, ItemParentExistsInRepository, AskIfWantsToUpdateRepoItemInstances, AskIfWantsToChangeeRepoItem, AskIfWantsToChangeeRepoItem2, GetRepositoryItemUsagesFailed, UpdateRepositoryItemUsagesSuccess, FailedToAddItemToSharedRepository, OfferToUploadAlsoTheActivityGroupToRepository,
+        ItemNameExistsInRepository, ItemExistsInRepository, ItemExternalExistsInRepository, ItemParentExistsInRepository, AskIfWantsToUpdateRepoItemInstances, AskIfWantsToChangeeRepoItem, AskIfWantsToUpdateAllLinkedRepoItem,AskIfWantsToChangeLinkedRepoItem, GetRepositoryItemUsagesFailed, UpdateRepositoryItemUsagesSuccess, FailedToAddItemToSharedRepository, OfferToUploadAlsoTheActivityGroupToRepository,
         ConnectionCloseWarning,
         InvalidCharactersWarning,
         InvalidValueExpression,
@@ -102,7 +102,7 @@ namespace Amdocs.Ginger.Common
         ReportTemplateNotFound, DriverNotSupportingWindowExplorer, AgentNotRunningAfterWaiting,
         FoundDuplicateAgentsInRunSet, StaticErrorMessage, StaticWarnMessage, StaticInfoMessage, StaticQuestionsMessage, ApplicationAgentNotMapped,
         ActivitiesGroupAlreadyMappedToTC, ExportItemToALMFailed, AskIfToSaveBFAfterExport,
-        BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, WindowClosed, TargetWindowNotSelected,
+        BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, AskIfSureWantToRestart, WindowClosed, TargetWindowNotSelected,
         ChangingEnvironmentParameterValue, IFSaveChangesOfBF, AskIfToLoadExternalFields, WhetherToOpenSolution,
         AutomationTabExecResultsNotExists, FolderNamesAreTooLong, FolderSizeTooSmall, DefaultTemplateCantBeDeleted, FileNotExist, ExecutionsResultsProdIsNotOn, ExecutionsResultsNotExists, ExecutionsResultsToDelete, AllExecutionsResultsToDelete, FilterNotBeenSet, RetreivingAllElements, ClickElementAgain, CloseFilterPage,
         BusinessFlowNeedTargetApplication, HTMLReportAttachment, ImageSize,
@@ -199,6 +199,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticInfoMessage, new UserMsg(eUserMsgType.INFO, "Info", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticQuestionsMessage, new UserMsg(eUserMsgType.QUESTION, "Question", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToClose, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToRestart, new UserMsg(eUserMsgType.QUESTION, "Restart Ginger", "Are you sure you want to Restart Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowNeedTargetApplication, new UserMsg(eUserMsgType.WARN, "Target Application Not Selected", "Target Application Not Selected! Please Select at least one Target Application", eUserMsgOption.OK, eUserMsgSelection.None));
 
@@ -221,7 +222,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToAddItemToSharedRepository, new UserMsg(eUserMsgType.ERROR, "Add Item to Repository", "Failed to add the item '{0}' to shared repository." + Environment.NewLine + Environment.NewLine + "Error Details: {1}.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfWantsToUpdateRepoItemInstances, new UserMsg(eUserMsgType.WARN, "Update Repository Item Usages", "The item '{0}' has {1} instances." + Environment.NewLine + Environment.NewLine + "Do you want to review them and select which one to get updated as well?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfWantsToChangeeRepoItem, new UserMsg(eUserMsgType.WARN, "Change Repository Item", "The item '{0}' is been used in {1} places." + Environment.NewLine + Environment.NewLine + "Are you sure you want to {2} it?" + Environment.NewLine + Environment.NewLine + "Note: Anyway the changes won't affect the linked instances of this item", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfWantsToChangeeRepoItem2, new UserMsg(eUserMsgType.WARN, "Change Repository Item", "The item '{0}' may be used in many places." + Environment.NewLine + Environment.NewLine + "Are you sure you want to {1} it?" + Environment.NewLine + Environment.NewLine + "Note: Anyway the changes won't affect the linked instances of this item", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfWantsToChangeLinkedRepoItem, new UserMsg(eUserMsgType.WARN, "Change Repository Item", "The item '{0}' may be used as Link in many places. Modifying it will auto update all Linked instances." + Environment.NewLine + Environment.NewLine + "Are you sure you want to {1} it?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfWantsToUpdateAllLinkedRepoItem, new UserMsg(eUserMsgType.WARN, "Change Repository Items", "These repository items may be used as Link in many places. Modifying it will auto update all Linked instances." + Environment.NewLine + Environment.NewLine + "Are you sure you want to save it?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.GetRepositoryItemUsagesFailed, new UserMsg(eUserMsgType.ERROR, "Repository Item Usages", "Failed to get the '{0}' item usages." + Environment.NewLine + Environment.NewLine + "Error Details: {1}.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UpdateRepositoryItemUsagesSuccess, new UserMsg(eUserMsgType.INFO, "Update Repository Item Usages", "Finished to update the repository items usages." + Environment.NewLine + Environment.NewLine + "Note: Updates were not saved yet.", eUserMsgOption.OK, eUserMsgSelection.None));
 

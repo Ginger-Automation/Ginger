@@ -152,7 +152,7 @@ namespace Ginger.ALM.Repository
                 return false;
             }
 
-            if (businessFlow.ActivitiesGroups.Count == 0)
+            if (businessFlow.ActivitiesGroups.Count == 0 && almConectStyle != eALMConnectType.Silence)
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " do not include " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " which supposed to be mapped to ALM Test Cases, please add at least one " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " before doing export.");
                 return false;
@@ -193,11 +193,9 @@ namespace Ginger.ALM.Repository
             //just to check if new TC needs to be created or update has to be done
             if (matchingTS == null)
             {
-                testPlanUploadPath = SelectALMTestPlanPath();
-                if (String.IsNullOrEmpty(testPlanUploadPath))
+                if(almConectStyle != eALMConnectType.Silence)
                 {
-                    //no path to upload to
-                    return false;
+                    testPlanUploadPath = SelectALMTestPlanPath();
                 }
                 //create upload path if checked to create separete folder
                 if (QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder)
@@ -248,14 +246,14 @@ namespace Ginger.ALM.Repository
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                     Reporter.HideStatusMessage();
                 }
-                if (almConectStyle != eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
                 {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
                 }
                 return true;
             }
             else
-                if (almConectStyle != eALMConnectType.Auto)
+                if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
             {
                 Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
             }

@@ -71,7 +71,7 @@ namespace GingerCore.Actions.ScreenCapture
                     {
                         Directory.CreateDirectory(mScreenImageDirectory);
                     }
-                    mScreenImageDirectory = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ScreenImageDirectory);
+                    mScreenImageDirectory = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ScreenImageDirectory);
                 }
 
                 return mScreenImageDirectory;

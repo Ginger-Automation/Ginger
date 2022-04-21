@@ -16,19 +16,24 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNETUnitTest.RunTestslib;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
@@ -43,14 +48,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         static BusinessFlow mBF;
         static GingerRunner mGR;
-
+        static Solution solution;
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            string solutionfolder = TestResources.GetTempFolder("GingerVariableTests");
-            WorkspaceHelper.CreateWorkspaceWithTempSolution(solutionfolder);            
-
-
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Fire Fox";
@@ -77,6 +78,21 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGR.Executor.BusinessFlows.Add(mBF);
+
+            WorkSpace.Init(new WorkSpaceEventHandler());
+            WorkSpace.Instance.RunningFromUnitTest = true;
+            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+
+            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple"));
+            string solutionFile = System.IO.Path.Combine(path, @"Ginger.Solution.xml");
+            solution = SolutionOperations.LoadSolution(solutionFile);
+            WorkSpace.Instance.SolutionRepository.Open(path);
+            WorkSpace.Instance.Solution = solution;
+            if (WorkSpace.Instance.Solution.SolutionOperations == null)
+            {
+                WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
+            }
+
         }
 
         [ClassCleanup()]

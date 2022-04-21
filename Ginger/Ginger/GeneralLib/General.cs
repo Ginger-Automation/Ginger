@@ -105,7 +105,7 @@ namespace Ginger
 
         public static string GetFullFilePath(string filename)
         {
-            return WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(filename);
+            return WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(filename);
         }
 
         public static string OpenSelectFolderDialog(string Title)

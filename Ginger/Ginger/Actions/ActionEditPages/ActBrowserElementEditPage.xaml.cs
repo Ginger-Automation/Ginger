@@ -66,7 +66,6 @@ namespace Ginger.Actions
             xURLSrcRadioButton.Init(typeof(ActBrowserElement.eURLSrc), xURLSrcRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString()), URLSrcRadioButton_Clicked);
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy);
             xImplicitWaitVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.ImplicitWait);
-
             SetVisibleControlsForAction();
         }
 
@@ -77,6 +76,12 @@ namespace Ginger.Actions
             xURLSrcPnl.Visibility = System.Windows.Visibility.Collapsed;
             xValueGrid.Visibility = System.Windows.Visibility.Collapsed;
             xImplicitWaitPnl.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+        private void ResetPOMView()
+        {
+            xPOMUrlFrame.Visibility = System.Windows.Visibility.Collapsed;
+            ValueUC.Visibility = System.Windows.Visibility.Visible;
         }
 
         private void ControlActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -128,14 +133,18 @@ namespace Ginger.Actions
                         }
 
                     }
+                    else
+                    {
+                        ResetPOMView();
+                    }
                     xValueGrid.Visibility = System.Windows.Visibility.Visible;
 
                     xValueLabel.Content = "URL:";
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.InjectJS || mAct.ControlAction == ActBrowserElement.eControlAction.RunJavaScript)
                 {
-
-                    if((ActivityPlatform == ePlatformType.Java))
+                    ResetPOMView();
+                    if (ActivityPlatform == ePlatformType.Java)
                     {
                         xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
                         SetLocateValueControls();
@@ -215,5 +224,7 @@ namespace Ginger.Actions
             LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), mAct, null, mAct, nameof(ActBrowserElement.Fields.PomGUID), true);
             xPOMUrlFrame.Content = locateByPOMElementPage;
         }
+
+
     }
 }
