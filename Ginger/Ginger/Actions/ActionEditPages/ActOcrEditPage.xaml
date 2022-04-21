@@ -16,37 +16,113 @@
             <RowDefinition MaxHeight="60"/>
             <RowDefinition MaxHeight="60"/>
             <RowDefinition MaxHeight="60"/>
+            <RowDefinition MaxHeight="150"/>
             <RowDefinition Height="50*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,10,10,10">
-            <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Read Text From : "/>
-            <ComboBox SelectionChanged="xOcrFileTypeCombo_SelectionChanged" x:Name="xOcrFileTypeCombo" MinWidth="250" MaxWidth="400"
+            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid.RowDefinitions>
+                    <RowDefinition MaxHeight="50"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"></ColumnDefinition>
+                    <ColumnDefinition Width="30*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Read Text From : "/>
+                <ComboBox Grid.Column="1" SelectionChanged="xOcrFileTypeCombo_SelectionChanged" x:Name="xOcrFileTypeCombo" MinWidth="250" MaxWidth="400"
                            Style="{StaticResource $FlatInputComboBoxStyle}" >
-            </ComboBox>
+                </ComboBox>
+            </Grid>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,10,10,10">
-            <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Operation : "/>
-            <ComboBox SelectionChanged="xOcrOperationCombo_SelectionChanged" x:Name="xOcrOperationCombo" MinWidth="250" MaxWidth="400"
+            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid.RowDefinitions>
+                    <RowDefinition MaxHeight="50"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"></ColumnDefinition>
+                    <ColumnDefinition Width="30*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Operation : "/>
+                <ComboBox Grid.Column="1" SelectionChanged="xOcrOperationCombo_SelectionChanged" x:Name="xOcrOperationCombo" MinWidth="250" MaxWidth="400"
                            Style="{StaticResource $FlatInputComboBoxStyle}" >
-            </ComboBox>
+                </ComboBox>
+            </Grid>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,10,10,10">
-            <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="File Path : "/>
-            <Actions:UCValueExpression x:Name="xFilePathTextBox" ToolTip="File Path for OCR Operation" MinWidth="200" MaxWidth="450"/>
-            <Button x:Name="xBrowseFilePath" Click="xBrowseFilePath_Click" Content="Browse" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0"/>
-            <Label Style="{StaticResource @LabelStyle}" x:Name="lblPageNos" FontWeight="SemiBold" VerticalAlignment="Center" Visibility="Collapsed" HorizontalAlignment="Left" Content="Page Number (Optional):" Margin="5,0,0,0"/>
-            <Actions:UCValueExpression x:Name="xPageNosTextBox" ToolTip="Page Number" MinWidth="70" MaxWidth="450" Visibility="Collapsed" Margin="0,0,0,0"/>
-            <usercontrols:ImageMakerControl x:Name="xInfoPageNum" ToolTip="Enter page number as: single, range (- separated) or specific pages (, separated)" SetAsFontImageWithSize="10" ImageType="Info" Width="10" Height="10" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,0,0,0"/>
+            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid.RowDefinitions>
+                    <RowDefinition MaxHeight="50"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"></ColumnDefinition>
+                    <ColumnDefinition Width="200"></ColumnDefinition>
+                    <ColumnDefinition Width="60"></ColumnDefinition>
+                    <ColumnDefinition Width="160"></ColumnDefinition>
+                    <ColumnDefinition Width="100"></ColumnDefinition>
+                    <ColumnDefinition Width="20"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="File Path : "/>
+                <Actions:UCValueExpression Grid.Column="1" x:Name="xFilePathTextBox" ToolTip="File Path for OCR Operation" MinWidth="100" MaxWidth="450"/>
+                <Button x:Name="xBrowseFilePath" Click="xBrowseFilePath_Click" Content="Browse" Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="5,0,0,0"/>
+                <Label Grid.Column="3" Style="{StaticResource @LabelStyle}" x:Name="lblPageNos" FontWeight="SemiBold" VerticalAlignment="Center" Visibility="Collapsed" HorizontalAlignment="Left" Content="Page Number (Optional):" Margin="5,0,0,0"/>
+                <Actions:UCValueExpression Grid.Column="4" x:Name="xPageNosTextBox" ToolTip="Page Number" MinWidth="70" MaxWidth="450" Visibility="Collapsed" Margin="0,0,0,0"/>
+                <usercontrols:ImageMakerControl Grid.Column="5" x:Name="xInfoPageNum" ToolTip="Enter page number as: single, range ('-' separated) or specific pages (comma-separated)" SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,0,0,0"/>
+            </Grid>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="3" Margin="0,10,10,10">
-            <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelFirststring" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Label : "/>
-            <Actions:UCValueExpression x:Name="xFirstString" ToolTip="Find content after this label" MinWidth="100" MaxWidth="450"/>
-            <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelSecondtring" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Label : "/>
-            <Actions:UCValueExpression x:Name="xSecondString" ToolTip="Find content upto this label" MinWidth="100" MaxWidth="450"/>
-
+            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid.RowDefinitions>
+                    <RowDefinition MaxHeight="50"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"></ColumnDefinition>
+                    <ColumnDefinition Width="100"></ColumnDefinition>
+                    <ColumnDefinition Width="70"></ColumnDefinition>
+                    <ColumnDefinition Width="100"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" x:Name="xLabelFirststring" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Label : "/>
+                <Actions:UCValueExpression x:Name="xFirstString" Grid.Column="1" ToolTip="Find content after this label" MinWidth="100" MaxWidth="450"/>
+                <Label Style="{StaticResource @LabelStyle}" Grid.Column="2" x:Name="xLabelSecondtring" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Label : "/>
+                <Actions:UCValueExpression x:Name="xSecondString" Grid.Column="3" ToolTip="Find content upto this label" MinWidth="100" MaxWidth="450"/>
+            </Grid>
         </StackPanel>
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal">
+        <StackPanel x:Name="xTableWhereStack" Orientation="Horizontal" Grid.Row="4" Margin="0,10,10,10">
+            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid.RowDefinitions>
+                    <RowDefinition MaxHeight="190"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"></ColumnDefinition>
+                    <ColumnDefinition Width="900"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" x:Name="xLabelRow" FontWeight="SemiBold" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Row : "/>
+                <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,5,5,5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"></RowDefinition>
+                            <RowDefinition Height="50"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"></ColumnDefinition>
+                            <ColumnDefinition Width="100"></ColumnDefinition>
+                            <ColumnDefinition Width="100"></ColumnDefinition>
+                            <ColumnDefinition Width="450"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <RadioButton Checked="SelectColumnValueRdb_Checked" VerticalAlignment="Top" Unchecked="SelectColumnValueRdb_Checked" Grid.Row="0" Grid.Column="0" x:Name="SelectRowNumberRdb" GroupName="RowNumberGroup" Content="Row Number"></RadioButton>
+                        <Actions:UCValueExpression x:Name="xRowNumber" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1" ToolTip="Row Number" MinWidth="100" MaxWidth="450"/>
+                        <RadioButton Grid.Row="1" VerticalAlignment="Top" Grid.Column="0" x:Name="SelectColumnValueRdb" GroupName="RowNumberGroup" Content="Column"></RadioButton>
+                        <Actions:UCValueExpression x:Name="xColumnWhere" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1" ToolTip="Column Name" MinWidth="100" MaxWidth="450"/>
+                        <ComboBox Grid.Column="2" Grid.Row="1" VerticalAlignment="Top"  x:Name="xOperationCombo" MinWidth="250" MaxWidth="400"
+                           Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,10"/>
+                        <Actions:UCValueExpression x:Name="xColumnWhereValue" Margin="5,0,0,10" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="3" ToolTip="Column Name" MinWidth="100" MaxWidth="200"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Row="5" Orientation="Horizontal">
             <Expander x:Name="xAdvancedSettingsExpander" ExpandDirection="Down"  IsExpanded="False"  Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,10" BorderThickness="0">
                 <Expander.Header>
                     <Label Content="Advanced Settings" Style="{StaticResource @LabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"/>

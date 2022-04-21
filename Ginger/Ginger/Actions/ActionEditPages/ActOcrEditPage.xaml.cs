@@ -85,6 +85,34 @@ namespace Ginger.Actions
             xSecondString.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(mAct.SecondString),
                 string.Empty), true, false);
 
+            BindingHandler.ObjFieldBinding(xRowNumber.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.GetFromRowNumber), BindingMode.TwoWay);
+            BindingHandler.ObjFieldBinding(xRowNumber.ValueTextBox, TextBox.ToolTipProperty, mAct, nameof(ActOcr.GetFromRowNumber), BindingMode.TwoWay);
+            xRowNumber.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActOcr.GetFromRowNumber));
+            xRowNumber.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(mAct.GetFromRowNumber),
+                string.Empty), true, false);
+
+            BindingHandler.ObjFieldBinding(xColumnWhere.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.ConditionColumnName), BindingMode.TwoWay);
+            BindingHandler.ObjFieldBinding(xColumnWhere.ValueTextBox, TextBox.ToolTipProperty, mAct, nameof(ActOcr.ConditionColumnName), BindingMode.TwoWay);
+            xColumnWhere.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActOcr.ConditionColumnName));
+            xColumnWhere.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(mAct.ConditionColumnName),
+                string.Empty), true, false);
+
+            BindingHandler.ObjFieldBinding(xColumnWhereValue.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.ConditionColumnValue), BindingMode.TwoWay);
+            BindingHandler.ObjFieldBinding(xColumnWhereValue.ValueTextBox, TextBox.ToolTipProperty, mAct, nameof(ActOcr.ConditionColumnValue), BindingMode.TwoWay);
+            xColumnWhereValue.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActOcr.ConditionColumnValue));
+            xColumnWhereValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(mAct.ConditionColumnValue),
+                string.Empty), true, false);
+
+            GingerCore.General.FillComboFromEnumObj(xOperationCombo, mAct.ElementLocateBy);
+            BindingHandler.ObjFieldBinding(xOperationCombo, ComboBox.SelectedValueProperty, mAct, nameof(ActOcr.ElementLocateBy), BindingMode.TwoWay);
+
+            if (string.IsNullOrEmpty(mAct.UseRowNumber))
+            {
+                mAct.UseRowNumber = true.ToString();
+            }
+
+            SelectRowNumberRdb.IsChecked = bool.Parse(mAct.UseRowNumber);
+            SelectColumnValueRdb.IsChecked = !bool.Parse(mAct.UseRowNumber);
         }
 
         private void xBrowseFilePath_Click(object sender, RoutedEventArgs e)
@@ -122,11 +150,15 @@ namespace Ginger.Actions
             xOcrOperationCombo.ClearControlsBindings();
             if (xOcrFileTypeCombo.SelectedValue.ToString().Equals(eActOcrFileType.ReadTextFromImage.ToString()))
             {
+                mAct.SelectedOcrFileType = eActOcrFileType.ReadTextFromImage;
+                xAdvancedSettingsExpander.Visibility = Visibility.Collapsed;
                 GingerCore.General.FillComboFromEnumObj(xOcrOperationCombo, mAct.SelectedOcrImageOperation);
                 BindingHandler.ObjFieldBinding(xOcrOperationCombo, ComboBox.SelectedValueProperty, mAct, nameof(ActOcr.SelectedOcrImageOperation), BindingMode.TwoWay);
             }
             else if (xOcrFileTypeCombo.SelectedValue.ToString().Equals(eActOcrFileType.ReadTextFromPDF.ToString()))
             {
+                mAct.SelectedOcrFileType = eActOcrFileType.ReadTextFromPDF;
+                xAdvancedSettingsExpander.Visibility = Visibility.Visible;
                 GingerCore.General.FillComboFromEnumObj(xOcrOperationCombo, mAct.SelectedOcrPdfOperation);
                 BindingHandler.ObjFieldBinding(xOcrOperationCombo, ComboBox.SelectedValueProperty, mAct, nameof(ActOcr.SelectedOcrPdfOperation), BindingMode.TwoWay);
             }
@@ -135,6 +167,7 @@ namespace Ginger.Actions
 
         private void xOcrOperationCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            xTableWhereStack.Visibility = Visibility.Collapsed;
             if (xOcrFileTypeCombo.SelectedValue.ToString().Equals(eActOcrFileType.ReadTextFromImage.ToString()))
             {
                 if (xOcrOperationCombo.SelectedValue != null)
@@ -167,9 +200,9 @@ namespace Ginger.Actions
                         xPageNosTextBox.Visibility = Visibility.Collapsed;
                         xLabelFirststring.Visibility = Visibility.Visible;
                         xFirstString.Visibility = Visibility.Visible;
-                        xLabelFirststring.Content = "First String: ";
+                        xLabelFirststring.Content = "Start String: ";
                         xLabelSecondtring.Visibility = Visibility.Visible;
-                        xLabelSecondtring.Content = "Second String: ";
+                        xLabelSecondtring.Content = "End String: ";
                         xSecondString.Visibility = Visibility.Visible;
                     }
                 }
@@ -196,9 +229,9 @@ namespace Ginger.Actions
                         xPageNosTextBox.Visibility = Visibility.Visible;
                         xLabelFirststring.Visibility = Visibility.Visible;
                         xFirstString.Visibility = Visibility.Visible;
-                        xLabelFirststring.Content = "First String: ";
+                        xLabelFirststring.Content = "Start String: ";
                         xLabelSecondtring.Visibility = Visibility.Visible;
-                        xLabelSecondtring.Content = "Second String: ";
+                        xLabelSecondtring.Content = "End String: ";
                         xSecondString.Visibility = Visibility.Visible;
                     }
                     else if (xOcrOperationCombo.SelectedValue.ToString().Equals(eActOcrPdfOperations.ReadTextFromPDFSinglePage.ToString()))
@@ -221,9 +254,21 @@ namespace Ginger.Actions
                         xFirstString.Visibility = Visibility.Visible;
                         xLabelSecondtring.Visibility = Visibility.Collapsed;
                         xSecondString.Visibility = Visibility.Collapsed;
+                        xTableWhereStack.Visibility = Visibility.Visible;
                     }
                 }
             }
+        }
+
+        private void SelectColumnValueRdb_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton rb = (RadioButton)sender;
+
+            mAct.UseRowNumber = rb.IsChecked.Value.ToString();
+            xRowNumber.IsEnabled = rb.IsChecked.Value;
+            xColumnWhere.IsEnabled = !rb.IsChecked.Value;
+            xColumnWhereValue.IsEnabled = !rb.IsChecked.Value;
+            xOperationCombo.IsEnabled = !rb.IsChecked.Value;
         }
     }
 }

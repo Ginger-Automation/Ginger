@@ -164,17 +164,13 @@ namespace GingerCore.Actions
             }
         }
 
-        private string mPatternSimilarity { get; set; }
+        private string mPatternSimilarity = "70";
 
         [IsSerializedForLocalRepository]
         public string PatternSimilarity
         {
             get
             {
-                if (string.IsNullOrEmpty(mPatternSimilarity))
-                {
-                    return "70";
-                }
                 return mPatternSimilarity;
             }
             set

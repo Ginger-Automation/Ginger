@@ -26,7 +26,7 @@ namespace GingerCore
         {
             get
             {
-                return "OCR Action to read text from PDF or Images";
+                return "Action to read text from PDF or Images using OCR";
             }
         }
 
@@ -105,26 +105,23 @@ namespace GingerCore
             ReadTextAfterLabel = 0,
             [EnumValueDescription("Read Text Between Two Strings")]
             ReadTextBetweenTwoStrings = 1,
-            [EnumValueDescription("Read Text From PDF Single Page")]
+            [EnumValueDescription("Read Text From PDF")]
             ReadTextFromPDFSinglePage = 2,
             [EnumValueDescription("Read Text From Table In Pdf")]
             ReadTextFromTableInPdf = 3
         }
-
         [IsSerializedForLocalRepository]
         public eActOcrImageOperations SelectedOcrImageOperation
         {
             get => GetOrCreateInputParam(nameof(SelectedOcrImageOperation), eActOcrImageOperations.ReadTextAfterLabel);
             set => AddOrUpdateInputParamValue(nameof(SelectedOcrImageOperation), value.ToString());
         }
-
         [IsSerializedForLocalRepository]
         public eActOcrPdfOperations SelectedOcrPdfOperation
         {
             get => GetOrCreateInputParam(nameof(SelectedOcrPdfOperation), eActOcrPdfOperations.ReadTextAfterLabel);
             set => AddOrUpdateInputParamValue(nameof(SelectedOcrPdfOperation), value.ToString());
         }
-
         [IsSerializedForLocalRepository]
         public eActOcrFileType SelectedOcrFileType
         {
@@ -195,6 +192,68 @@ namespace GingerCore
             {
                 AddOrUpdateInputParamValue(nameof(SecondString), value);
             }
+        }
+
+        public enum eTableElementRunColOperator
+        {
+            [EnumValueDescription("Equals")]
+            Equals,
+            [EnumValueDescription("Not Equals")]
+            NotEquals,
+            [EnumValueDescription("Contains")]
+            Contains,
+            [EnumValueDescription("Not Contains")]
+            NotContains,
+            [EnumValueDescription("Starts With")]
+            StartsWith,
+            [EnumValueDescription("Not Starts With")]
+            NotStartsWith,
+            [EnumValueDescription("Ends With")]
+            EndsWith,
+            [EnumValueDescription("Not Ends With")]
+            NotEndsWith
+        }
+
+        public eTableElementRunColOperator ElementLocateBy
+        {
+            get => GetOrCreateInputParam(nameof(ElementLocateBy), eTableElementRunColOperator.Equals);
+            set => AddOrUpdateInputParamValue(nameof(ElementLocateBy), value.ToString());
+        }
+
+        private string mGetFromRowNumber { get; set; } = "0";
+
+        [IsSerializedForLocalRepository]
+        public string GetFromRowNumber
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(GetFromRowNumber), "0").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(GetFromRowNumber), value.ToString());
+            }
+        }
+
+        [IsSerializedForLocalRepository]
+        public string ConditionColumnName
+        {
+            get => GetOrCreateInputParam(nameof(ConditionColumnName)).Value;
+            set => AddOrUpdateInputParamValue(nameof(ConditionColumnName), value);
+        }
+
+        [IsSerializedForLocalRepository]
+        public string ConditionColumnValue
+        {
+            get => GetOrCreateInputParam(nameof(ConditionColumnValue)).Value;
+            set => AddOrUpdateInputParamValue(nameof(ConditionColumnValue), value);
+        }
+
+        [IsSerializedForLocalRepository]
+        public string UseRowNumber
+        {
+            get => GetOrCreateInputParam(nameof(UseRowNumber)).Value;
+            set => AddOrUpdateInputParamValue(nameof(UseRowNumber), value);
         }
 
         private void ProcessOutput(string txtOutput)
@@ -290,7 +349,11 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrPdfOperations.ReadTextFromTableInPdf:
-                    resultText = GingerOcrOperations.ReadTextFromPdfTable(OcrFilePath, FirstString, PageNumber, OcrPassword);
+                    if (string.IsNullOrEmpty(GetFromRowNumber))
+                    {
+                        GetFromRowNumber = "0";
+                    }
+                    resultText = GingerOcrOperations.ReadTextFromPdfTable(OcrFilePath, FirstString, PageNumber, bool.Parse(UseRowNumber), int.Parse(GetFromRowNumber), ElementLocateBy, ConditionColumnName, ConditionColumnValue, OcrPassword);
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);

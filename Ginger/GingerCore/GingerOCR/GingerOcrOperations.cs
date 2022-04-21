@@ -9,6 +9,7 @@ using Tesseract;
 using Freeware;
 using System.IO;
 using System.Text;
+using PageIterator = Tabula.PageIterator;
 
 namespace GingerCore.GingerOCR
 {
@@ -275,31 +276,44 @@ namespace GingerCore.GingerOCR
         private static string GetResultTextFromByteArray(string label, string resultTxt, byte[] byteArray)
         {
             Page pageObj = GetPageObjectFromByteArray(byteArray);
-            using (pageObj)
+            if (pageObj != null)
             {
-                using (ResultIterator iter = pageObj.GetIterator())
+                try
                 {
-                    try
+                    using (pageObj)
                     {
-                        iter.Begin();
-                        do
+                        using (ResultIterator iter = pageObj.GetIterator())
                         {
-                            string lineTxt = iter.GetText(PageIteratorLevel.TextLine);
-                            if (lineTxt.Contains(label))
+                            try
                             {
-                                int indexOf = lineTxt.IndexOf(label) + label.Length;
-                                resultTxt = lineTxt.Substring(indexOf);
-                                break;
+                                iter.Begin();
+                                do
+                                {
+                                    string lineTxt = iter.GetText(PageIteratorLevel.TextLine);
+                                    if (lineTxt.Contains(label))
+                                    {
+                                        int indexOf = lineTxt.IndexOf(label) + label.Length;
+                                        resultTxt = lineTxt.Substring(indexOf);
+                                        break;
+                                    }
+                                } while (iter.Next(PageIteratorLevel.TextLine));
                             }
-                        } while (iter.Next(PageIteratorLevel.TextLine));
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                            }
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                }
+                finally
+                {
+                    pageObj.Dispose();
+                }
             }
-
             return resultTxt;
         }
 
@@ -408,40 +422,47 @@ namespace GingerCore.GingerOCR
             return dctOutput;
         }
 
-        public static string ReadTextFromPdfTable(string pdfFilePath, string columnName, string pageNumber, string password = null)
+        public static string ReadTextFromPdfTable(string pdfFilePath, string columnName, string pageNumber, bool useRowNumber,
+                                                  int rowNumber, ActOcr.eTableElementRunColOperator elementLocateBy, string conditionColumnName,
+                                                  string conditionColumnValue, string password = null)
         {
             string txtOutput = string.Empty;
             try
             {
-                List<string> lstPageNum = GetListOfPageNos(pageNumber);
-                foreach (string pageNum in lstPageNum)
+                using (PdfDocument document = PdfDocument.Open(pdfFilePath, new ParsingOptions() { ClipPaths = true, Password = password }))
                 {
-                    using (PdfDocument document = PdfDocument.Open(pdfFilePath, new ParsingOptions() { ClipPaths = true, Password = password }))
+                    ObjectExtractor oe = new ObjectExtractor(document);
+                    if (!string.IsNullOrEmpty(pageNumber))
                     {
-                        ObjectExtractor oe = new ObjectExtractor(document);
-                        PageArea page = oe.Extract(int.Parse(pageNum));
-
-                        // detect canditate table zones
-                        SpreadsheetDetectionAlgorithm detector = new SpreadsheetDetectionAlgorithm();
-                        List<TableRectangle> regions = detector.Detect(page);
-
-                        IExtractionAlgorithm ea = new SpreadsheetExtractionAlgorithm();
-
-                        foreach (TableRectangle region in regions)
+                        List<string> lstPageNum = GetListOfPageNos(pageNumber);
+                        foreach (string pageNum in lstPageNum)
                         {
-                            List<Table> tables = ea.Extract(page.GetArea(region.BoundingBox));
-                            foreach (Table table in tables)
+                            PageArea page = oe.Extract(int.Parse(pageNum));
+
+                            // detect canditate table zones
+                            GetTableDataFromPageArea(columnName, useRowNumber, rowNumber, conditionColumnName, conditionColumnValue, ref txtOutput, page, elementLocateBy);
+                            if (!string.IsNullOrEmpty(txtOutput))
                             {
-                                IReadOnlyList<IReadOnlyList<Cell>> rows = table.Rows;
-                                for (int i = 0; i < rows[0].Count; i++)
+                                return txtOutput;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        PageIterator pgIterator = oe.Extract();
+                        using (pgIterator)
+                        {
+                            pgIterator.MoveNext();
+                            while (pgIterator.Current != null)
+                            {
+                                PageArea pgArea = pgIterator.Current;
+                                GetTableDataFromPageArea(columnName, useRowNumber, rowNumber, conditionColumnName, conditionColumnValue, ref txtOutput, pgArea, elementLocateBy);
+                                if (!string.IsNullOrEmpty(txtOutput))
                                 {
-                                    Cell cellObj = rows[0][i];
-                                    if (cellObj.GetText(false).Equals(columnName))
-                                    {
-                                        txtOutput = rows[1][i].GetText(false);
-                                        return txtOutput;
-                                    }
+                                    return txtOutput;
                                 }
+                                pgIterator.MoveNext();
                             }
                         }
                     }
@@ -451,7 +472,131 @@ namespace GingerCore.GingerOCR
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
+
+            Reporter.ToLog(eLogLevel.ERROR, "Unable to find text in tables", null);
             return txtOutput;
+        }
+
+        private static void GetTableDataFromPageArea(string columnName, bool useRowNumber, int rowNumber, string conditionColumnName, string conditionColumnValue, ref string txtOutput, PageArea page, ActOcr.eTableElementRunColOperator elementLocateBy)
+        {
+            SpreadsheetDetectionAlgorithm detector = new SpreadsheetDetectionAlgorithm();
+            List<TableRectangle> regions = detector.Detect(page);
+
+            IExtractionAlgorithm ea = new SpreadsheetExtractionAlgorithm();
+
+            foreach (TableRectangle region in regions)
+            {
+                List<Table> tables = ea.Extract(page);
+                foreach (Table table in tables)
+                {
+                    if (useRowNumber)
+                    {
+                        IReadOnlyList<IReadOnlyList<Cell>> rows = table.Rows;
+                        for (int i = 0; i < rows[0].Count; i++)
+                        {
+                            Cell cellObj = rows[0][i];
+                            if (cellObj.GetText(false).Equals(columnName))
+                            {
+                                txtOutput = rows[rowNumber][i].GetText(false);
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        IReadOnlyList<IReadOnlyList<Cell>> rows = table.Rows;
+
+                        int columnNameIndex = -1;
+                        int i, j;
+                        for (i = 0; i < rows[0].Count; i++)
+                        {
+                            Cell cellObj = rows[0][i];
+                            if (cellObj.GetText(false).Equals(columnName))
+                            {
+                                columnNameIndex = i;
+                                break;
+                            }
+                        }
+                        for (i = 0; i < rows.Count; i++)
+                        {
+                            bool bIsConditionValFound = false;
+                            for (j = 0; j < rows[i].Count; j++)
+                            {
+                                Cell cellObj = rows[i][j];
+                                switch (elementLocateBy)
+                                {
+                                    case ActOcr.eTableElementRunColOperator.Equals:
+                                        if (cellObj.GetText(false).Equals(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.NotEquals:
+                                        if (!cellObj.GetText(false).Equals(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.Contains:
+                                        if (cellObj.GetText(false).Contains(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.NotContains:
+                                        if (!cellObj.GetText(false).Contains(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.StartsWith:
+                                        if (cellObj.GetText(false).StartsWith(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.NotStartsWith:
+                                        if (!cellObj.GetText(false).StartsWith(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.EndsWith:
+                                        if (cellObj.GetText(false).EndsWith(conditionColumnValue))
+                                        {
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.NotEndsWith:
+                                        if (!cellObj.GetText(false).Equals(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
+                                            break;
+                                        }
+                                        break;
+                                    default:
+                                        //do nothing
+                                        break;
+                                }
+                                if (bIsConditionValFound)
+                                {
+                                    break;
+                                }
+                            }
+                            if (bIsConditionValFound)
+                            {
+                                txtOutput = rows[i][columnNameIndex].GetText(false);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private static List<string> GetListOfPageNos(string pageNumber)
