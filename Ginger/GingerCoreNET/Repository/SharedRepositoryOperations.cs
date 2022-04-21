@@ -114,11 +114,11 @@ namespace Ginger.Repository
                 {
                     itemToUpload.UsageItem.ParentGuid = Guid.Empty;
                 }
-                if (itemToUpload.ReplaceAsLink && !itemToUpload.UsageItem.IsLinkedItem)
+                if (itemToUpload.ReplaceType ==UploadItemSelection.eActivityInstanceType.LinkInstance && !itemToUpload.UsageItem.IsLinkedItem)
                 {
                     context.BusinessFlow.MarkActivityAsLink(itemToUpload.ItemGUID, itemCopy.Guid);
                 }
-                else if (!itemToUpload.ReplaceAsLink && itemToUpload.UsageItem.IsLinkedItem)
+                else if (itemToUpload.ReplaceType == UploadItemSelection.eActivityInstanceType.RegularInstance && itemToUpload.UsageItem.IsLinkedItem)
                 {
                     context.BusinessFlow.UnMarkActivityAsLink(itemToUpload.ItemGUID, itemCopy.Guid);
                 }
