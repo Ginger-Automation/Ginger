@@ -72,6 +72,7 @@
     <Compile Include="Misc\RespositorySerializer2Test.cs" />
     <Compile Include="Misc\RESTTest.cs" />
     <Compile Include="Misc\SourceControlUnitTest.cs" />
+    <Compile Include="Misc\OcrTest.cs" />
     <Compile Include="Misc\UnixShellTest.cs" />
     <Compile Include="Misc\UsedVariablesTest.cs" />
     <Compile Include="Misc\ValueExpressionTest.cs" />
@@ -199,6 +200,12 @@
     <Content Include="TestResources\JavaTestApp\Test App.jar">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\OCR\Capture-OCR-AllText.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\OCR\Capture-OCR.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\ScreenShot\Temp.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -243,6 +250,12 @@
     </None>
     <None Include="TestResources\Excel\Names.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\OCR\OcrSample.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\OCR\ReadAllTextPdf.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="TestResources\PBTestApp.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
