@@ -298,18 +298,34 @@ namespace GingerCore.NoSqlBase
 
         private void SetOutputFromApiResponse(Container objContainer, string sqlCalculated)
         {
-            FeedResponse<object> currentResultSet = null;
-            Dictionary<string, object> outputVals = new Dictionary<string, object>();
-            FeedIterator<object> queryResultSetIterator = null;
-            queryResultSetIterator = objContainer.GetItemQueryIterator<object>(sqlCalculated);
-            while (queryResultSetIterator.HasMoreResults)
+            try
             {
-                currentResultSet = queryResultSetIterator.ReadNextAsync().Result;
-                int i = 1;
-                foreach (object response in currentResultSet)
+                FeedResponse<object> currentResultSet = null;
+                Dictionary<string, object> outputVals = new Dictionary<string, object>();
+                FeedIterator<object> queryResultSetIterator = null;
+                queryResultSetIterator = objContainer.GetItemQueryIterator<object>(sqlCalculated);
+                while (queryResultSetIterator.HasMoreResults)
                 {
-                    Act.ParseJSONToOutputValues(response.ToString(), i);
-                    i++;
+                    currentResultSet = queryResultSetIterator.ReadNextAsync().Result;
+                    int i = 1;
+                    foreach (object response in currentResultSet)
+                    {
+                        Act.ParseJSONToOutputValues(response.ToString(), i);
+                        i++;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                if (!GetTableList(string.Empty).Contains(objContainer.Id))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Container name is invalid", null);
+                    Act.Error = "Container name is invalid";
+                }
+                else
+                {
+                    Act.Error = ex.Message;
                 }
             }
         }
