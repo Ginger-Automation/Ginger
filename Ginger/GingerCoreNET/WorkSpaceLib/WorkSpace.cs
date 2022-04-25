@@ -375,6 +375,10 @@ namespace amdocs.ginger.GingerCoreNET
                 WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
             }
 
+            if (WorkSpace.Instance.Solution.ALMConfigs.Count > 0)
+            {
+                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
+            }
         }
 
         public bool OpenSolution(string solutionFolder, string encryptionKey = null)

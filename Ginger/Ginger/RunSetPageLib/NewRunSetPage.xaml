@@ -392,7 +392,10 @@
 
                         <Expander x:Name="xSealighsExpander" DockPanel.Dock="Top" ExpandDirection="Down"  IsExpanded="True" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,12,0,0">
                             <Expander.Header>
-                                <Label Content="Sealights Execution Logger Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="Sealights Execution Logger Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
+                                </StackPanel>
                             </Expander.Header>
                             <Expander.Content>
 
