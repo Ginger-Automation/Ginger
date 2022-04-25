@@ -64,11 +64,12 @@ namespace Ginger.Run
             b.Path = new PropertyPath(nameof(UserProfile.ShowEnterpriseFeatures));
             b.Mode = BindingMode.OneWay;
             b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            b.NotifyOnValidationError = true;                
+            b.NotifyOnValidationError = true;
+            b.Converter = new GingerCore.GeneralLib.BoolVisibilityConverter();
 
             RunSetActionsGrid.AddSeparator();
-            RunSetActionsGrid.AddToolbarTool("@AddRunSetALMAction_16x16.png", "Add Publish Execution Results to ALM Operation", AddPublishtoALMAction /*, binding: b*/);
-            RunSetActionsGrid.AddToolbarTool("@AddDefectsToALM_16x16.png", "Add Open ALM Defects Operation", AddAutomatedALMDefectsOperation /*, binding: b*/);
+            RunSetActionsGrid.AddToolbarTool("@AddRunSetALMAction_16x16.png", "Add Publish Execution Results to ALM Operation", AddPublishtoALMAction, binding: b);
+            RunSetActionsGrid.AddToolbarTool("@AddDefectsToALM_16x16.png", "Add Open ALM Defects Operation", AddAutomatedALMDefectsOperation, binding: b);
             
             RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool("@AddScript2_16x16.png", "Add Run Script Operation", AddScriptAction);
