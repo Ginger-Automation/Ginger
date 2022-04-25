@@ -623,7 +623,7 @@ namespace Ginger.Actions
 
         private void RefreshOutputValuesGridElements(object sender, RoutedEventArgs e)
         {
-            //refresh Variabels StoreTo options
+            //refresh Variables StoreTo options
             GenerateStoreToVarsList();
         }
 
@@ -1272,7 +1272,7 @@ namespace Ginger.Actions
 
         private void HighLightElementButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: fixme - Currently working with first agent
+            //TODO: fix me - Currently working with first agent
             ApplicationAgent aa = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents[0];
             if (aa != null)
             {
