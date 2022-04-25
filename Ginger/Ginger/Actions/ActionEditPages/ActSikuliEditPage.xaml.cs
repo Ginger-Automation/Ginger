@@ -128,8 +128,8 @@ namespace Ginger.Actions
                 return;
             }
 
-            actSikuli.PatternPath = GetPathToExpectedImage();
-            xPatternImageLocationTextBox.ValueTextBox.Text = actSikuli.PatternPath;
+            actSikuli.PatternPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(GetPathToExpectedImage());
+            xPatternImageLocationTextBox.ValueTextBox.Text = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(actSikuli.PatternPath);
 
             App.MainWindow.WindowState = WindowState.Minimized;
             actSikuli.SetFocusToSelectedApplicationInstance();

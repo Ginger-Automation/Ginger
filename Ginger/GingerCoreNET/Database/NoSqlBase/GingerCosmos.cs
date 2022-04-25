@@ -140,6 +140,10 @@ namespace GingerCore.NoSqlBase
                                 }
                             }
                             containerName = chArray[idxFrom];
+                            if (containerName.Contains("."))
+                            {
+                                containerName = containerName.Split('.')[0];
+                            }
                         }
                         else
                         {
@@ -160,7 +164,7 @@ namespace GingerCore.NoSqlBase
                     case eDBValidationType.RecordCount:
                         dbName = DatabaseName;
                         SQLCalculated = "select count(1) from " + SQLCalculated;
-                        string properSql = VE.ValueCalculated;
+                        string properSql = "select count(1) from " + VE.ValueCalculated;
                         if (!SQLCalculated.Contains("where"))
                         {
                             string[] chArray = VE.ValueCalculated.Split(' ');
@@ -184,7 +188,7 @@ namespace GingerCore.NoSqlBase
                                 , containerName.Length).Split(' ')[0];
                         }
                         Container recordContainer = GetContainer(dbName, containerName);
-                        SetOutputFromApiResponse(recordContainer, SQLCalculated);
+                        SetOutputFromApiResponse(recordContainer, properSql);
                         break;
                     case eDBValidationType.UpdateDB:
                         Container objRecordContainer = GetContainer(DatabaseName, containerName);
