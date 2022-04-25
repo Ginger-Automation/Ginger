@@ -217,7 +217,14 @@ namespace Ginger.Environments
             view.GridColsView.Add(new GridColView() { Field = nameof(Database.Name), WidthWeight = 20 });
             view.GridColsView.Add(new GridColView() { Field = nameof(Database.Description), WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = nameof(Database.DBVer), Header = "Version", WidthWeight = 10 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(Database.DBType), WidthWeight = 10, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = Database.DbTypes, Header = "DB Type" });
+            view.GridColsView.Add(new GridColView()
+            {
+                Field = nameof(Database.DBType),
+                WidthWeight = 10,
+                StyleType = GridColView.eGridColStyleType.Template,
+                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(Database.eDBTypes)), nameof(Database.DBType), false, true),
+                Header = "DB Type"
+            });
             view.GridColsView.Add(new GridColView() { Field = nameof(Database.TNS), Header = "TNS / File Path / Host ", WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = "VE1", Header = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.appDataBasesWindowGrid.Resources["TNSValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(Database.User), Header = "User Name/Endpoint URI", WidthWeight = 10 });

@@ -561,6 +561,7 @@ namespace Ginger.Actions
                 {
                     if (db.DBType == Database.eDBTypes.CosmosDb)
                     {
+                        SQLUCValueExpression.ToolTip = "Container Name is case-sensitive";
                         lblColumn.Visibility = Visibility.Collapsed;
                         if (ColumnsVEButton != null)
                         {
@@ -570,6 +571,7 @@ namespace Ginger.Actions
                     }
                     else
                     {
+                        SQLUCValueExpression.ToolTip = string.Empty;
                         lblColumn.Visibility = Visibility.Visible;
                         if (ColumnsVEButton != null)
                         {
