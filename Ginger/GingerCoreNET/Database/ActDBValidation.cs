@@ -99,15 +99,19 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string Where { set; get; }
 
-        private string mPrimaryKey = string.Empty;
+        [IsSerializedForLocalRepository]
+        public string CosmosPrimaryKey
+        {
+            get => GetOrCreateInputParam(nameof(CosmosPrimaryKey)).Value;
+            set => AddOrUpdateInputParamValue(nameof(CosmosPrimaryKey), value);
+        }
 
         [IsSerializedForLocalRepository]
-        public string CosmosPrimaryKey { get; set; }
-
-        private string mPartitionKey = string.Empty;
-
-        [IsSerializedForLocalRepository]
-        public string CosmosPartitionKey { get; set; }
+        public string CosmosPartitionKey
+        {
+            get => GetOrCreateInputParam(nameof(CosmosPartitionKey)).Value;
+            set => AddOrUpdateInputParamValue(nameof(CosmosPartitionKey), value);
+        }
 
         public string SQL
         {
