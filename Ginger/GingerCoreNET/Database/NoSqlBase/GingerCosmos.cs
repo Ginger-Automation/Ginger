@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2022 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -158,7 +176,11 @@ namespace GingerCore.NoSqlBase
                         break;
                     case eDBValidationType.SimpleSQLOneValue:
                         Container objContainer = GetContainer(dbName, containerName);
-                        SQLCalculated = "select * from " + containerName + " where " + Act.Where;
+                        SQLCalculated = "select * from " + containerName;
+                        if (!string.IsNullOrEmpty(Act.Where))
+                        {
+                            SQLCalculated += " where " + Act.Where;
+                        }
                         SetOutputFromApiResponse(objContainer, SQLCalculated);
                         break;
                     case eDBValidationType.RecordCount:
@@ -298,18 +320,34 @@ namespace GingerCore.NoSqlBase
 
         private void SetOutputFromApiResponse(Container objContainer, string sqlCalculated)
         {
-            FeedResponse<object> currentResultSet = null;
-            Dictionary<string, object> outputVals = new Dictionary<string, object>();
-            FeedIterator<object> queryResultSetIterator = null;
-            queryResultSetIterator = objContainer.GetItemQueryIterator<object>(sqlCalculated);
-            while (queryResultSetIterator.HasMoreResults)
+            try
             {
-                currentResultSet = queryResultSetIterator.ReadNextAsync().Result;
-                int i = 1;
-                foreach (object response in currentResultSet)
+                FeedResponse<object> currentResultSet = null;
+                Dictionary<string, object> outputVals = new Dictionary<string, object>();
+                FeedIterator<object> queryResultSetIterator = null;
+                queryResultSetIterator = objContainer.GetItemQueryIterator<object>(sqlCalculated);
+                while (queryResultSetIterator.HasMoreResults)
                 {
-                    Act.ParseJSONToOutputValues(response.ToString(), i);
-                    i++;
+                    currentResultSet = queryResultSetIterator.ReadNextAsync().Result;
+                    int i = 1;
+                    foreach (object response in currentResultSet)
+                    {
+                        Act.ParseJSONToOutputValues(response.ToString(), i);
+                        i++;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                if (!GetTableList(string.Empty).Contains(objContainer.Id))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Container name is invalid", null);
+                    Act.Error = "Container name is invalid";
+                }
+                else
+                {
+                    Act.Error = ex.Message;
                 }
             }
         }
