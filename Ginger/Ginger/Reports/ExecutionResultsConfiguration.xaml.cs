@@ -308,6 +308,7 @@ namespace Ginger.Reports
             {
                 xSealightsExecutionLoggerGrid.Visibility = Visibility.Visible;
 
+                // This will fix the issue - Validation is not working when Sealights is not Enable on the Init/load Configuration form
                 Context mContext = new Context();
                 xSealightsURLTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsURL));
                 xSealighsAgentTokenTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
