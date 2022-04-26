@@ -684,7 +684,7 @@ namespace Ginger.Run
             }
             else if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null &&
                 WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null &&
-                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null)
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage == null)
             {
                 xSealighsExpander.IsExpanded = false; //Sealight expand control should collapsed if all 3 Sealights' settings are in ‘Default’ mode.
             }

@@ -988,11 +988,24 @@ namespace Ginger
         #endregion ##### Events
 
         #region ##### External Methods
+
         public void AddSeparator()
         {
+            AddSeparator(null);
+        }
+
+        public void AddSeparator(Binding binding = null)
+        {
             Separator s = new Separator();
+
+            if (binding != null)
+            {
+                s.SetBinding(Separator.VisibilityProperty, binding);
+            }
+
             toolbar.Items.Add(s);
         }
+
         public void AddButton(string txt, RoutedEventHandler handler)
         {
             Button b = new Button();
