@@ -67,7 +67,7 @@ namespace Ginger.Run
             b.NotifyOnValidationError = true;
             b.Converter = new GingerCore.GeneralLib.BoolVisibilityConverter();
 
-            RunSetActionsGrid.AddSeparator();
+            RunSetActionsGrid.AddSeparator(b);
             RunSetActionsGrid.AddToolbarTool("@AddRunSetALMAction_16x16.png", "Add Publish Execution Results to ALM Operation", AddPublishtoALMAction, binding: b);
             RunSetActionsGrid.AddToolbarTool("@AddDefectsToALM_16x16.png", "Add Open ALM Defects Operation", AddAutomatedALMDefectsOperation, binding: b);
             
