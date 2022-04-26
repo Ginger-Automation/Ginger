@@ -36,7 +36,7 @@ namespace GingerCore
         {
             get
             {
-                return "OCR Action to read text from PDF or Images";
+                return "OCR Action to Read Text from PDF or Images";
             }
         }
 
@@ -44,7 +44,7 @@ namespace GingerCore
         {
             get
             {
-                return "Read text from PDF or Images using OCR";
+                return "Read Text Using OCR";
             }
         }
 
@@ -88,7 +88,7 @@ namespace GingerCore
         {
             get
             {
-                return "OCR Action to read text from PDF or Images";
+                return "OCR Action to Read Text from PDF or Images";
             }
         }
 

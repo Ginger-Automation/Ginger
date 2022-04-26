@@ -258,23 +258,26 @@ namespace Ginger.Actions
             KeySpaceComboBox.Items.Clear();
             TablesComboBox.Items.Clear();
             ColumnComboBox.Items.Clear();
-            string dbName = ((ComboBox)sender).SelectedItem.ToString();
-            db = (Database)EA.Dbs.First(m => m.Name == dbName);
-            if (db.DBType.Equals(eDBTypes.CosmosDb))
+            if (((ComboBox)sender) != null && ((ComboBox)sender).SelectedItem != null)
             {
-                if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())) == null
-                    || ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())).Count() == 0)
+                string dbName = ((ComboBox)sender).SelectedItem.ToString();
+                db = (Database)EA.Dbs.First(m => m.Name == dbName);
+                if (db.DBType.Equals(eDBTypes.CosmosDb))
                 {
-                    ValidationCfgComboBox.Items.Add(new ComboEnumItem() { text = "Insert", Value = eDBValidationType.Insert });
+                    if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())) == null
+                        || ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())).Count() == 0)
+                    {
+                        ValidationCfgComboBox.Items.Add(new ComboEnumItem() { text = "Insert", Value = eDBValidationType.Insert });
+                    }
                 }
-            }
-            else
-            {
-                if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())) != null
-                    && ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())).Count() != 0)
+                else
                 {
-                    ValidationCfgComboBox.SelectedIndex = 0;
-                    ValidationCfgComboBox.Items.Remove(ValidationCfgComboBox.Items.Cast<ComboEnumItem>().First(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())));
+                    if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())) != null
+                        && ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())).Count() != 0)
+                    {
+                        ValidationCfgComboBox.SelectedIndex = 0;
+                        ValidationCfgComboBox.Items.Remove(ValidationCfgComboBox.Items.Cast<ComboEnumItem>().First(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())));
+                    }
                 }
             }
             SetVisibleControlsForAction();
