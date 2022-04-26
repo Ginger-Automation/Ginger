@@ -129,9 +129,8 @@ namespace Ginger.Reports
                 liteDbRadioBtnsPnl.IsChecked = true;
             }
 
-            // Gideon
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralExecutionLoggerExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralExecutionLoggerGrid, Grid.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
 
             // this added in ordre to apply the validation when turnining ON the Enterprise Features Flag (the validation wont apply when the Enterprise Features Flag initially was OFF)
             xSealighsExpander.IsVisibleChanged += XSealighsExpander_IsVisibleChanged;
@@ -153,6 +152,11 @@ namespace Ginger.Reports
             xSealighsSessionTimeoutTextBox.ValueTextBox.AddValidationRule(new ValidateNumberInputRule());
             xSealighsReportedEntityLevelComboBox.AddValidationRule(new ValidateEmptyValue("Entity Level cannot be empty"));
 
+            CallSealightsConfigPropertyChange();
+        }
+
+        private void CallSealightsConfigPropertyChange()
+        {
             // need in order to trigger the validation's rules on init binding (load/init form)
             _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsURL));
             _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
@@ -284,21 +288,11 @@ namespace Ginger.Reports
 
             if (publishToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
             {
-                xEndPointURLLabel.Visibility = Visibility.Visible;
-                xEndPointURLTextBox.Visibility = Visibility.Visible;
-                xDeleteLocalData.Visibility = Visibility.Visible;
-                xDeleteLocalDataOnPublishPanel.Visibility = Visibility.Visible;
-                xPublishingPhase.Visibility = Visibility.Visible;
-                xPublishingPhasePanel.Visibility = Visibility.Visible;
+                xCentralExecutionLoggerGrid.Visibility = Visibility.Visible;
             }
             else
             {
-                xEndPointURLLabel.Visibility = Visibility.Collapsed;
-                xEndPointURLTextBox.Visibility = Visibility.Collapsed;
-                xDeleteLocalData.Visibility = Visibility.Collapsed;
-                xDeleteLocalDataOnPublishPanel.Visibility = Visibility.Collapsed;
-                xPublishingPhase.Visibility = Visibility.Collapsed;
-                xPublishingPhasePanel.Visibility = Visibility.Collapsed;
+                xCentralExecutionLoggerGrid.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -313,6 +307,7 @@ namespace Ginger.Reports
             if (sealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
             {
                 xSealightsExecutionLoggerGrid.Visibility = Visibility.Visible;
+                CallSealightsConfigPropertyChange();
             }
             else
             {
