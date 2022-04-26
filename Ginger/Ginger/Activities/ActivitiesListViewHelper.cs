@@ -673,6 +673,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             export.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
             export.ToolTip = string.Concat("Export ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), " and it ", GingerDicser.GetTermResValue(eTermResKey.Activities), " to ALM");
             export.OperationHandler = ExportGroupHandler;
+            export.Visible = false;
             groupOperationsList.Add(export);
 
             ListItemGroupOperation publishGroup = new ListItemGroupOperation();
