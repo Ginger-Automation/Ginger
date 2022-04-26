@@ -63,7 +63,7 @@ namespace GingerCoreTest.Misc
         public void ReadAllTextPdf()
         {
             string txtOutput = GingerOcrOperations.ReadTextFromPdfSinglePage(OcrPdfAllTextFilePath, "1");
-            string txtExpectedOutput = "Hi, try reading this text\n";
+            string txtExpectedOutput = "Hi, try reading this text\n" + Environment.NewLine;
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }
 

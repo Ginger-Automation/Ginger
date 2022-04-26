@@ -176,7 +176,11 @@ namespace GingerCore.NoSqlBase
                         break;
                     case eDBValidationType.SimpleSQLOneValue:
                         Container objContainer = GetContainer(dbName, containerName);
-                        SQLCalculated = "select * from " + containerName + " where " + Act.Where;
+                        SQLCalculated = "select * from " + containerName;
+                        if (!string.IsNullOrEmpty(Act.Where))
+                        {
+                            SQLCalculated += " where " + Act.Where;
+                        }
                         SetOutputFromApiResponse(objContainer, SQLCalculated);
                         break;
                     case eDBValidationType.RecordCount:
