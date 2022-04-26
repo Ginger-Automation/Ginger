@@ -18,7 +18,7 @@
             <Label Margin="0,5,0,0" Content="Local Execution Logger Settings" DockPanel.Dock="Top" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="16"></Label>
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Label  Content="Execution Logger Result Producing:"  Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" Margin="0,0,63,0"  FontSize="12"></Label>
+                <Label  Content="Execution Logger Result Producing:"  Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" Margin="0,0,53,0"  FontSize="12"></Label>
                 <RadioButton x:Name="executionResultOnRadioBtnsPnl" Content="Yes" Padding="5,0,5,0" IsChecked="True" VerticalAlignment="Center" Checked="executionResultOnRadioBtnsPnl_Checked"></RadioButton>
                 <RadioButton x:Name="executionResultOffRadioBtnsPnl" Content="No" Padding="5,0,0,0" Checked="executionResultOffRadioBtnsPnl_Checked" VerticalAlignment="Center"></RadioButton>
             </StackPanel>
@@ -62,7 +62,7 @@
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal" >
                             <Label Content="Publish Execution logs to centralized DB:"  Style="{StaticResource @LabelStyle}" FontSize="12"></Label>
-                            <StackPanel x:Name="xPublishLogToCentralDBRadioBtnPanel" Margin="10,0,0,0" Orientation="Horizontal">
+                            <StackPanel x:Name="xPublishLogToCentralDBRadioBtnPanel" Margin="-3,0,0,0" Orientation="Horizontal">
                                 <UserControlsLib:UCRadioButtons x:Name="xPublishLogToCentralDBRadioButton" />
                             </StackPanel>
                         </StackPanel>
