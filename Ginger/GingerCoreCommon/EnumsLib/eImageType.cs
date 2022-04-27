@@ -66,6 +66,7 @@ namespace Amdocs.Ginger.Common.Enums
         Tag,
         DataSource,
         PluginPackage,
+        Building,
         #endregion
 
         #region Variable Items Images
