@@ -17,11 +17,21 @@
             
             <Label Margin="0,5,0,0" Content="Local Execution Logger Settings" DockPanel.Dock="Top" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="16"></Label>
 
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Label  Content="Execution Logger Result Producing:"  Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" Margin="0,0,53,0"  FontSize="12"></Label>
-                <RadioButton x:Name="executionResultOnRadioBtnsPnl" Content="Yes" Padding="5,0,5,0" IsChecked="True" VerticalAlignment="Center" Checked="executionResultOnRadioBtnsPnl_Checked"></RadioButton>
-                <RadioButton x:Name="executionResultOffRadioBtnsPnl" Content="No" Padding="5,0,0,0" Checked="executionResultOffRadioBtnsPnl_Checked" VerticalAlignment="Center"></RadioButton>
-            </StackPanel>
+            <Grid DockPanel.Dock="Top" Margin="0,10,0,0" >
+                <Grid.RowDefinitions>
+                    <RowDefinition  Height="30"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="350*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label  Content="Execution Logger Result Producing:" Grid.Row="0" Grid.Column="0"  Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <RadioButton x:Name="executionResultOnRadioBtnsPnl" Content="Yes" Padding="5,0,5,0" IsChecked="True" VerticalAlignment="Center" Checked="executionResultOnRadioBtnsPnl_Checked"></RadioButton>
+                    <RadioButton x:Name="executionResultOffRadioBtnsPnl" Content="No" Padding="5,0,0,0" Checked="executionResultOffRadioBtnsPnl_Checked" VerticalAlignment="Center"></RadioButton>
+                </StackPanel>
+            </Grid>
 
             <Grid DockPanel.Dock="Top" Margin="0,10,0,0" Name="xLoggerSettingsGrid">
                 <Grid.RowDefinitions>
@@ -60,13 +70,22 @@
                 </Expander.Header>
                 <Expander.Content >
                     <StackPanel Orientation="Vertical">
-                        <StackPanel Orientation="Horizontal" >
-                            <Label Content="Publish Execution logs to centralized DB:"  Style="{StaticResource @LabelStyle}" FontSize="12"></Label>
-                            <StackPanel x:Name="xPublishLogToCentralDBRadioBtnPanel" Margin="-3,0,0,0" Orientation="Horizontal">
+
+                        <Grid DockPanel.Dock="Top" Margin="0,10,0,0" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition  Height="30"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="250"/>
+                                <ColumnDefinition Width="350*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label  Content="Publish Execution logs to centralized DB:" Grid.Row="0" Grid.Column="0"  Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
+                            <StackPanel x:Name="xPublishLogToCentralDBRadioBtnPanel" Grid.Row="0" Grid.Column="1" Margin="-15,0,0,0"  Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <UserControlsLib:UCRadioButtons x:Name="xPublishLogToCentralDBRadioButton" />
                             </StackPanel>
-                        </StackPanel>
-
+                        </Grid>
+                        
                         <Grid Margin="0,10,0,0"  x:Name="xCentralExecutionLoggerGrid">
                             <Grid.RowDefinitions>
                                 <RowDefinition  Height="30"/>
