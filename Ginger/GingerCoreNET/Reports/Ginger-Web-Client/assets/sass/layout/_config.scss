@@ -1,0 +1,104 @@
+.layout-config {
+    width: $rightSidebarWidth;
+    height: 100%;
+    position: fixed;
+    right: 0;
+    top: 0;
+    padding: 1rem;
+    overflow: auto;
+    background: $rightSidebarBg;
+    z-index: 999;
+    border-left: $overlayBorder;
+    transform: translateX(100%);
+    transition: transform $animationDuration $animationTimingFunction;
+
+    &.layout-config-active {
+        transform: translateX(0);
+        box-shadow: $overlayShadow;
+
+        .layout-config-content {
+            .layout-config-button {
+                i {
+                    transform: rotate(360deg);
+                }
+            }
+        }
+    }
+
+    p {
+        line-height: 1.5rem;
+        color: $textSecondaryColor;
+    }
+
+    .layout-themes {
+        @include flex();
+        @include flex-wrap(wrap);
+
+        > div {
+            padding: .25rem;
+        }
+
+
+        a {
+            width: 2rem;
+            height: 2rem;
+            border-radius: $borderRadius;
+            display: block;
+            position: relative;
+            @include flex-align-center();
+            @include flex-justify-center();
+            transition: transform $transitionDuration;
+            box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+
+            i {
+                font-size: 1rem;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-left: -.5rem;
+                margin-top: -.5rem;
+            }
+
+            img {
+                width: 2rem;
+                height: 2rem;
+            }
+
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+    }
+}
+
+.layout-config-button {
+    display: block;
+    position: fixed;
+    width: 3rem;
+    height: 3rem;
+    line-height: 3rem;
+    background: $accentColor;
+    color: $accentTextColor;
+    text-align: center;
+    top: 50%;
+    right: 0;
+    margin-top: -1.5rem;
+    border-top-left-radius: $borderRadius;
+    border-bottom-left-radius: $borderRadius;
+    transition: background-color $transitionDuration;
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: -.25rem 0 1rem rgba(0,0,0,.15);
+
+    i {
+        font-size: 2rem;
+        line-height: inherit;
+        transform: rotate(0deg);
+        transition: transform 1s;
+    }
+
+    &:hover {
+        background: lighten($accentColor, 5%);
+    }
+}
