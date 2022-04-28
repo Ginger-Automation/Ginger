@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2022 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using Tabula;
@@ -186,20 +204,28 @@ namespace GingerCore.GingerOCR
             string txtOutput = string.Empty;
             try
             {
-                int pageNo = 0;
-                int.TryParse(pageNum, out pageNo);
-                if (pageNo != 0)
+                if (!string.IsNullOrEmpty(pageNum))
                 {
                     List<byte[]> lstPngByte = GetPngByteArrayFromPdf(pdfFilePath, pageNum, password);
+
                     foreach (byte[] pngByte in lstPngByte)
                     {
-                        txtOutput = string.Concat(txtOutput, ReadTextFromByteArray(pngByte));
+                        using (Page pageObj = GetPageObjectFromByteArray(pngByte))
+                        {
+                            txtOutput = string.Concat(txtOutput, pageObj.GetText(), Environment.NewLine);
+                        }
                     }
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Invalid Page Number Provided");
-                    Reporter.ToLog(eLogLevel.ERROR, "Invalid Page Number Provided");
+                    List<byte[]> lstByteArray = GetListOfPngByteArrayFromPdf(pdfFilePath, password);
+                    foreach (byte[] byteArray in lstByteArray)
+                    {
+                        using (Page pageObj = GetPageObjectFromByteArray(byteArray))
+                        {
+                            txtOutput = string.Concat(txtOutput, pageObj.GetText(), Environment.NewLine);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -462,7 +488,10 @@ namespace GingerCore.GingerOCR
                                 {
                                     return txtOutput;
                                 }
-                                pgIterator.MoveNext();
+                                if (!pgIterator.MoveNext())
+                                {
+                                    break;
+                                }
                             }
                         }
                     }
@@ -497,7 +526,7 @@ namespace GingerCore.GingerOCR
                             Cell cellObj = rows[0][i];
                             if (cellObj.GetText(false).Equals(columnName))
                             {
-                                txtOutput = rows[rowNumber][i].GetText(false);
+                                txtOutput = rows[rowNumber + 1][i].GetText(false);
                                 return;
                             }
                         }
@@ -523,67 +552,70 @@ namespace GingerCore.GingerOCR
                             for (j = 0; j < rows[i].Count; j++)
                             {
                                 Cell cellObj = rows[i][j];
-                                switch (elementLocateBy)
+                                if (rows[0][j].GetText(false).Equals(conditionColumnName))
                                 {
-                                    case ActOcr.eTableElementRunColOperator.Equals:
-                                        if (cellObj.GetText(false).Equals(conditionColumnValue))
-                                        {
-                                            bIsConditionValFound = true;
+                                    switch (elementLocateBy)
+                                    {
+                                        case ActOcr.eTableElementRunColOperator.Equals:
+                                            if (cellObj.GetText(false).Equals(conditionColumnValue))
+                                            {
+                                                bIsConditionValFound = true;
+                                                break;
+                                            }
                                             break;
-                                        }
-                                        break;
-                                    case ActOcr.eTableElementRunColOperator.NotEquals:
-                                        if (!cellObj.GetText(false).Equals(conditionColumnValue))
-                                        {
-                                            bIsConditionValFound = true;
+                                        case ActOcr.eTableElementRunColOperator.NotEquals:
+                                            if (!cellObj.GetText(false).Equals(conditionColumnValue))
+                                            {
+                                                bIsConditionValFound = true;
+                                                break;
+                                            }
                                             break;
-                                        }
-                                        break;
-                                    case ActOcr.eTableElementRunColOperator.Contains:
-                                        if (cellObj.GetText(false).Contains(conditionColumnValue))
-                                        {
-                                            bIsConditionValFound = true;
+                                        case ActOcr.eTableElementRunColOperator.Contains:
+                                            if (cellObj.GetText(false).Contains(conditionColumnValue))
+                                            {
+                                                bIsConditionValFound = true;
+                                                break;
+                                            }
                                             break;
-                                        }
-                                        break;
-                                    case ActOcr.eTableElementRunColOperator.NotContains:
-                                        if (!cellObj.GetText(false).Contains(conditionColumnValue))
-                                        {
-                                            bIsConditionValFound = true;
+                                        case ActOcr.eTableElementRunColOperator.NotContains:
+                                            if (!cellObj.GetText(false).Contains(conditionColumnValue))
+                                            {
+                                                bIsConditionValFound = true;
+                                                break;
+                                            }
                                             break;
-                                        }
-                                        break;
-                                    case ActOcr.eTableElementRunColOperator.StartsWith:
-                                        if (cellObj.GetText(false).StartsWith(conditionColumnValue))
-                                        {
-                                            bIsConditionValFound = true;
+                                        case ActOcr.eTableElementRunColOperator.StartsWith:
+                                            if (cellObj.GetText(false).StartsWith(conditionColumnValue))
+                                            {
+                                                bIsConditionValFound = true;
+                                                break;
+                                            }
                                             break;
-                                        }
-                                        break;
-                                    case ActOcr.eTableElementRunColOperator.NotStartsWith:
-                                        if (!cellObj.GetText(false).StartsWith(conditionColumnValue))
-                                        {
-                                            bIsConditionValFound = true;
+                                        case ActOcr.eTableElementRunColOperator.NotStartsWith:
+                                            if (!cellObj.GetText(false).StartsWith(conditionColumnValue))
+                                            {
+                                                bIsConditionValFound = true;
+                                                break;
+                                            }
                                             break;
-                                        }
-                                        break;
-                                    case ActOcr.eTableElementRunColOperator.EndsWith:
-                                        if (cellObj.GetText(false).EndsWith(conditionColumnValue))
-                                        {
-                                            bIsConditionValFound = true;
+                                        case ActOcr.eTableElementRunColOperator.EndsWith:
+                                            if (cellObj.GetText(false).EndsWith(conditionColumnValue))
+                                            {
+                                                bIsConditionValFound = true;
+                                                break;
+                                            }
                                             break;
-                                        }
-                                        break;
-                                    case ActOcr.eTableElementRunColOperator.NotEndsWith:
-                                        if (!cellObj.GetText(false).Equals(conditionColumnValue))
-                                        {
-                                            bIsConditionValFound = true;
+                                        case ActOcr.eTableElementRunColOperator.NotEndsWith:
+                                            if (!cellObj.GetText(false).Equals(conditionColumnValue))
+                                            {
+                                                bIsConditionValFound = true;
+                                                break;
+                                            }
                                             break;
-                                        }
-                                        break;
-                                    default:
-                                        //do nothing
-                                        break;
+                                        default:
+                                            //do nothing
+                                            break;
+                                    }
                                 }
                                 if (bIsConditionValFound)
                                 {

@@ -504,7 +504,8 @@ namespace Ginger.Actions
 
             if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) &&
                 a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) &&
-                a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand))
+                a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand) &&
+                a.GetType() != typeof(ActSetVariableValue) && a.GetType() != typeof(ActCreatePDFChart) && a.GetType() != typeof(ActCompareImgs) && a.GetType() != typeof(ActGenerateFileFromTemplate))
             {
                 if (a.InputValues.Count > minimumInputValuesToHideGrid)
                 {
@@ -614,6 +615,18 @@ namespace Ginger.Actions
                     xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
             }
+            else if (a.GetType() == typeof(ActSetVariableValue) || a.GetType() == typeof(ActCreatePDFChart) || a.GetType() == typeof(ActCompareImgs) || a.GetType() == typeof(ActGenerateFileFromTemplate))
+            {
+                xInputValuesGrid.Visibility = Visibility.Collapsed;
+                xValueBoxPnl.Visibility = Visibility.Visible;
+                ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
+                if (inputValue != null)
+                {
+                    xValueVE.Init(mContext, inputValue, nameof(ActInputValue.Value));
+                    xValueVE.ValueTextBox.Text = inputValue.Value;
+                    xValueLbl.Content = inputValue.Param;
+                }
+            }
         }
 
         private void AddReturnValue(object sender, RoutedEventArgs e)
@@ -623,7 +636,7 @@ namespace Ginger.Actions
 
         private void RefreshOutputValuesGridElements(object sender, RoutedEventArgs e)
         {
-            //refresh Variabels StoreTo options
+            //refresh Variables StoreTo options
             GenerateStoreToVarsList();
         }
 
@@ -1272,7 +1285,7 @@ namespace Ginger.Actions
 
         private void HighLightElementButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: fixme - Currently working with first agent
+            //TODO: fix me - Currently working with first agent
             ApplicationAgent aa = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents[0];
             if (aa != null)
             {
