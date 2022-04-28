@@ -74,6 +74,8 @@ namespace Ginger.Reports
                 htmlReportAutoProdOnRadioBtn.IsChecked = false;
                 htmlReportAutoProdOffRadioBtn.IsChecked = true;
             }
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralizedReportSettingsGrid, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
         }
        
 
