@@ -155,7 +155,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 AddSourceControlOptions(mContextMenu, false, false);
 
                 MenuItem importMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Import");
-                TreeViewUtils.AddSubMenuItem(importMenu, "Import External" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ImportExternalBuinessFlow, null, eImageType.ImportFile);
+                //TreeViewUtils.AddSubMenuItem(importMenu, "Import External" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ImportExternalBuinessFlow, null, eImageType.ImportFile);
                 TreeViewUtils.AddSubMenuItem(importMenu, "Import ALM Test Set", ALMTSImport, null, "@ALM_16x16.png");
                 TreeViewUtils.AddSubMenuItem(importMenu, "Import ALM Test Set By ID", ALMTSImportById, null, "@ALM_16x16.png");
                 TreeViewUtils.AddSubMenuItem(importMenu, "Import Gherkin Feature File", ImportGherkinFeature, null, "@FeatureFile_16X16.png");
