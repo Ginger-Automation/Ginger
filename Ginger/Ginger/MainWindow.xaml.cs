@@ -104,6 +104,8 @@ namespace Ginger
 
             try
             {
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSolutionALMMenu, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
+
                 //App
                 App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
 

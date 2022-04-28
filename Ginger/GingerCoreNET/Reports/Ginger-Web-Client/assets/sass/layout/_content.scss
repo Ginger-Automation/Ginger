@@ -1,23 +1,33 @@
 .layout-wrapper {
     .layout-main {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 100vh;
         @include transition(margin-left $transitionDuration);
+
         .route-bar {
             @include clearfix();
             @include border-box();
             min-height: 31px;
             background-color: $routeBarBgColor;
             border-bottom: solid 1px $routeBarBorderColor;
+
             .route-bar-breadcrumb {
                 padding: 6px 12px;
                 display: inline-block;
+
                 i {
                     color: $routeBarIconColor;
                     font-size: 18px;
+                    vertical-align: bottom;
                 }
+
                 a {
                     color: $textColor;
                 }
             }
+
             .route-bar-menu {
                 float: right;
                 list-style-type: none;
@@ -25,14 +35,17 @@
                 padding: 0;
                 height: 100%;
                 margin-right: 12px;
+
                 li {
                     height: 100%;
                     display: inline-block;
+
                     i {
                         line-height: inherit;
                         font-size: 18px;
                         color: $routeBarIconColor;
                     }
+
                     a {
                         width: 36px;
                         font-size: 18px;
@@ -40,10 +53,12 @@
                         height: 100%;
                         text-align: center;
                         line-height: 30px;
+
                         &:hover {
                             background-color: $routeBarIconHoverBgColor;
                         }
                     }
+
                     &.search-item {
                         input {
                             margin-right: 9px;
@@ -54,6 +69,7 @@
                             outline-offset: 0;
                             outline: 0 none;
                         }
+
                         i {
                             line-height: 30px;
                             width: 36px;
@@ -63,10 +79,13 @@
                 }
             }
         }
+
         .layout-main-content {
             padding: 15px;
+            flex: 1 1 0;
         }
     }
+
     &.layout-wrapper-sidebar-inactive {
         .layout-main {
             margin-left: 0;
@@ -80,11 +99,13 @@
             padding-top: 60px;
             margin-left: 230px;
         }
+
         &.layout-wrapper-sidebar-inactive {
             .layout-main {
                 margin-left: 0;
             }
         }
+
         &.layout-wrapper-overlay-sidebar {
             .layout-main {
                 margin-left: 0;

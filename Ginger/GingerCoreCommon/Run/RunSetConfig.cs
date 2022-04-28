@@ -379,7 +379,7 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
         {
             foreach (GingerRunner GR in GingerRunners)
             {
-                if (GR.Executor.IsUpdateBusinessFlowRunList)
+                if (GR.Executor != null && GR.Executor.IsUpdateBusinessFlowRunList)
                 {
                     GR.Executor.UpdateBusinessFlowsRunList();
                 }

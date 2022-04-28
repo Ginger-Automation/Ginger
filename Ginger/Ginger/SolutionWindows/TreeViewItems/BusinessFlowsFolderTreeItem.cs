@@ -155,12 +155,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 AddSourceControlOptions(mContextMenu, false, false);
 
                 MenuItem importMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Import");
-                TreeViewUtils.AddSubMenuItem(importMenu, "Import External " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ImportExternalBuinessFlow, null, eImageType.ImportFile);
+                //TreeViewUtils.AddSubMenuItem(importMenu, "Import External" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ImportExternalBuinessFlow, null, eImageType.ImportFile);
                 TreeViewUtils.AddSubMenuItem(importMenu, "Import ALM Test Set", ALMTSImport, null, "@ALM_16x16.png");
                 TreeViewUtils.AddSubMenuItem(importMenu, "Import ALM Test Set By ID", ALMTSImportById, null, "@ALM_16x16.png");
                 TreeViewUtils.AddSubMenuItem(importMenu, "Import Gherkin Feature File", ImportGherkinFeature, null, "@FeatureFile_16X16.png");
                 MenuItem exportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
                 TreeViewUtils.AddSubMenuItem(exportMenu, "Export All to ALM", ExportAllToALM, null, "@ALM_16x16.png");
+
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(importMenu, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(exportMenu, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
             }
             else
             {   

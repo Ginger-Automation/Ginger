@@ -988,11 +988,24 @@ namespace Ginger
         #endregion ##### Events
 
         #region ##### External Methods
+
         public void AddSeparator()
         {
+            AddSeparator(null);
+        }
+
+        public void AddSeparator(Binding binding = null)
+        {
             Separator s = new Separator();
+
+            if (binding != null)
+            {
+                s.SetBinding(Separator.VisibilityProperty, binding);
+            }
+
             toolbar.Items.Add(s);
         }
+
         public void AddButton(string txt, RoutedEventHandler handler)
         {
             Button b = new Button();
@@ -1507,7 +1520,7 @@ namespace Ginger
         }
 
         public static DataTemplate GetGridComboBoxTemplate(string valuesListField, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false,
-                                                            string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null,bool isdisable=false)
+                                                            string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null, bool isdisable = false)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));
@@ -1622,7 +1635,7 @@ namespace Ginger
 
 
             return template;
-        }    
+        }
 
         public static DataTemplate getDataColActionDetailsTemplate(string Path)
         {
@@ -1794,11 +1807,11 @@ namespace Ginger
         }
 
 
-        public void AddToolbarTool(string toolImage, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible)
+        public void AddToolbarTool(string toolImage, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, Binding binding = null)
         {
             Image image = new Image();
             image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + toolImage));
-            AddToolbarTool(image, toolTip, clickHandler, toolVisibility);
+            AddToolbarTool(image, toolTip, clickHandler, toolVisibility, binding);
         }
 
         public void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, int imageSize = 16)
@@ -1811,7 +1824,7 @@ namespace Ginger
         }
 
 
-        private void AddToolbarTool(object userControl, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible)
+        private void AddToolbarTool(object userControl, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, Binding binding = null)
         {
             Button tool = new Button();
             tool.Visibility = toolVisibility;
@@ -1819,6 +1832,11 @@ namespace Ginger
 
             tool.Content = userControl;
             tool.Click += clickHandler;
+
+            if (binding != null)
+            {
+                tool.SetBinding(Button.VisibilityProperty, binding);
+            }
 
             //toolbar.Items.Remove(lblSearch);
             toolbar.Items.Remove(txtSearch);

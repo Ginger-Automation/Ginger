@@ -75,6 +75,8 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     }
                     break;
             }
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecuteNow, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
         }
 
         private void InitNumberPicker()

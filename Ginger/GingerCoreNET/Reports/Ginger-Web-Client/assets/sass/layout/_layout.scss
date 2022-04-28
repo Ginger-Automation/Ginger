@@ -1,6 +1,6 @@
 @import './_variables';
 @import '../overrides/_layout_variables';
-@import '../_mixins';
+@import './_mixins';
 @import './_splashscreen';
 @import '../_fonts';
 @import './_utils.scss';
@@ -16,4 +16,9 @@
 @import './_content.scss';
 @import './_rightsidebar.scss';
 @import './_footer.scss';
+@import './_config.scss';
+@import './_help.scss';
+@import './_invoice.scss';
+@import './_widgets.scss';
+@import './_typography.scss';
 @import '../overrides/_layout_styles.scss';

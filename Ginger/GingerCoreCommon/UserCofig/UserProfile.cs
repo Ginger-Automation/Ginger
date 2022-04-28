@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -440,6 +440,21 @@ namespace Ginger
             {
                 mAutoLoadLastRunSet = value;
                 OnPropertyChanged(nameof(AutoLoadLastRunSet));
+            }
+        }
+
+        bool mShowEnterpriseFeatures;
+        [IsSerializedForLocalRepository]
+        public bool ShowEnterpriseFeatures
+        {
+            get
+            {
+                return mShowEnterpriseFeatures;
+            }
+            set
+            {
+                mShowEnterpriseFeatures = value;
+                OnPropertyChanged(nameof(ShowEnterpriseFeatures));
             }
         }
 
