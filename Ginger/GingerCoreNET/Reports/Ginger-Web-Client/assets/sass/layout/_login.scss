@@ -34,7 +34,7 @@
             max-height: 75px;
             margin-bottom: 25px;
         }
-        .ui-g {
+        .p-grid {
             .logo-container {
                 padding: 0;
                 .login-summary {
@@ -49,9 +49,9 @@
                     text-align: left;
                 }
             }
-            .ui-g-12 {
+            .p-col-12 {
                 padding: 15px 0px;
-                .ui-inputfield {
+                .p-inputtext {
                     display: block;
                     margin-top: 5px;
                 }
@@ -60,14 +60,14 @@
                         float: right;
                     }
                 }
-                .ui-chkbox {
+                .p-checkbox {
                     margin-right: 5px;
                 }
-                .ui-outputlabel {
+                .p-outputlabel {
                     vertical-align: middle;
                 }
             }
-            .ui-button {
+            .p-button {
                 width: 130px;
                 border-radius: 3px;
             }

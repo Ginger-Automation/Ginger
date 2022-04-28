@@ -20,8 +20,8 @@
                 height: 40px;
             }
         }
-        
-        .usermenu { 
+
+        .usermenu {
             a {
                 position: relative;
 
@@ -64,6 +64,7 @@
 
             i {
                 line-height: inherit;
+                font-size: 28px;
             }
         }
 
@@ -85,6 +86,7 @@
 
             i {
                 line-height: inherit;
+                font-size: 28px;
             }
         }
 
@@ -139,7 +141,7 @@
       }
 
     }
-    
+
     @media screen and (max-width: $mobileBreakPoint / 2) {
         .layout-topbar {
             #right-sidebar-button {
