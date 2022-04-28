@@ -612,9 +612,39 @@ namespace GingerCore.Drivers
                             //TODO: For sauce lab - externalize - try without amdocs proxy hot spot works then it is proxy issue
                             break;
                         }
+                        else if (RemoteBrowserName.Equals("chrome"))
+                        {
+                            ChromeOptions chromeOptions = new ChromeOptions();
+                            chromeOptions.Proxy = mProxy == null ? null : mProxy;
+                            if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), chromeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            else
+                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), chromeOptions.ToCapabilities());
+                            break;
+                        }
+                        else if (RemoteBrowserName.Equals("MicrosoftEdge"))
+                        {
+                            EdgeOptions edgeOptions = new EdgeOptions();
+                            edgeOptions.Proxy = mProxy;
+                            if (!string.IsNullOrEmpty(RemotePlatform))
+                            {
+                                edgeOptions.AddAdditionalOption(RemotePlatformParam, RemotePlatform);
+                            }
+                            if (!string.IsNullOrEmpty(RemoteVersion))
+                            {
+                                edgeOptions.AddAdditionalOption(SeleniumDriver.RemoteVersionParam, RemoteVersion);
+                            }
+
+                            edgeOptions.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            else
+                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities());
+                            break;
+                        }
                         else
                         {
-                         
+
                             InternetExplorerOptions internetExplorerOptions = new InternetExplorerOptions();
                             if (!string.IsNullOrEmpty(RemotePlatform))
                             {
