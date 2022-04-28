@@ -253,11 +253,11 @@ namespace GingerCore.Actions
         {
             get
             {
-                return mCustomJavaPath;
+                return GetOrCreateInputParam(nameof(CustomJavaPath)).Value;
             }
             set
             {
-                mCustomJavaPath = value;
+                AddOrUpdateInputParamValue(nameof(CustomJavaPath), value);
             }
         }
 
