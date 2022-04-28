@@ -187,7 +187,9 @@ namespace GingerWPF.BusinessFlowsLib
         #endregion LiteDB
 
         private void SetUIControls()
-        {
+        {            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xALMMenuItem, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
+
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Activities));
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Variables));
             xBusinessFlowItemComboBox.Items.Add("Details");
