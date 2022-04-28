@@ -39,5 +39,7 @@ namespace Ginger.UserControlsLib.UCListView
         public RoutedEventHandler OperationHandler;
 
         public List<General.eRIPageViewMode> SupportedViews = new List<General.eRIPageViewMode>();
+
+        public bool Visible = true;
     }
 }
