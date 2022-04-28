@@ -53,7 +53,12 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="700"/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Content="Centralized Report Data Settings" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="0">
+                    <Label  Content="Centralized Report Data Settings" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
+                </StackPanel>
+                
                 <DockPanel Grid.Row="1" Margin="5 0 5 5">
                     <Label  Style="{StaticResource @LabelStyle}" Content="Centralized Report Data Service URL:  "/>
                     <TextBox x:Name="xCentralizedReportDataServiceURLTextBox" Style="{StaticResource @TextBoxStyle}"  />
