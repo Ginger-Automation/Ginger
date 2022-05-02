@@ -95,7 +95,7 @@
                 <StackPanel Margin="0,5,5,5" Orientation="Horizontal">
                     <Label x:Name="lblWhere" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Where:</Label>
 
-                    <TextBox x:Name="txtWhere" Width="980" HorizontalAlignment="Left"></TextBox>
+                    <TextBox x:Name="txtWhere" Width="550" HorizontalAlignment="Left"></TextBox>
                 </StackPanel>
             </StackPanel>
 
