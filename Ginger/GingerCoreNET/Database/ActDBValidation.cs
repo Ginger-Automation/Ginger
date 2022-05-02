@@ -102,15 +102,15 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string CosmosPrimaryKey
         {
-            get;//=> GetOrCreateInputParam(nameof(CosmosPrimaryKey)).Value;
-            set;//=> AddOrUpdateInputParamValue(nameof(CosmosPrimaryKey), value);
+            get;
+            set;
         }
 
         [IsSerializedForLocalRepository]
         public string CosmosPartitionKey
         {
-            get;// => GetOrCreateInputParam(nameof(CosmosPartitionKey)).Value;
-            set;// => AddOrUpdateInputParamValue(nameof(CosmosPartitionKey), value);
+            get;
+            set;
         }
 
         public string SQL
