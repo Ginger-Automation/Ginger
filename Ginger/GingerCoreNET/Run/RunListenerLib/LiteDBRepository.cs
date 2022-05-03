@@ -95,7 +95,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     {
                         if (File.Exists(completeSSPath))
                         {
-                            File.Delete(completeSSPath);
+                            continue;
                         }
                         File.Move(action.ScreenShots[s], completeSSPath);
                         action.ScreenShots[s] = completeSSPath;
