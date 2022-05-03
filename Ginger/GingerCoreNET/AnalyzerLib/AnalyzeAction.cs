@@ -480,7 +480,7 @@ namespace Ginger.AnalyzerLib
             {
                 foreach (ActInputValue AIV in a.InputValues.ToList())
                 {
-                    if (a.InputValues.Where(aiv => aiv.Param == AIV.Param).ToList().Count > 1)
+                    if (a.InputValues.Where(aiv => AIV != null && aiv != null && aiv.Param == AIV.Param).ToList().Count > 1)
                     {
                         AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                         AA.Description = "The Input Value Parameter " + AIV.Param + " is Duplicate";
@@ -604,6 +604,6 @@ namespace Ginger.AnalyzerLib
             return AA;
         }
 
-        
+
     }
 }
