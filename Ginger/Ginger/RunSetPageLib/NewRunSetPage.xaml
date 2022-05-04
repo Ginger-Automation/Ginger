@@ -363,6 +363,7 @@
                                 </DockPanel>
                             </Border>
                         </TabItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <DockPanel Grid.Row="0" x:Name="Config" Visibility="Visible" Background="{StaticResource $BackgroundColor_LightGray}">
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                                 <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
@@ -468,6 +469,7 @@
                             </Expander>
 
                         </DockPanel>
+                        </ScrollViewer>
                     </TabItem>
 
                     <TabItem  x:Name="xExecution_SummaryTab" Style="{StaticResource $CoolTab}" TabIndex="5">
