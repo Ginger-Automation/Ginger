@@ -14,7 +14,7 @@
       d:DesignHeight="1000" d:DesignWidth="2000"
       Title="Runset"  Loaded="Page_loaded">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" >
+    
         <Grid Background="{StaticResource $BackgroundColor_LightGray}" Height="920">
             <StackPanel x:Name="xRunSetLoadingPnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" >
                 <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
@@ -33,9 +33,8 @@
                 </Grid.RowDefinitions>
 
                 <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto">
-                    <DockPanel>
-
-                        <usercontrols:ImageMakerControl x:Name="xIconImage"  ImageType="RunSet" Margin="3,0,5,2" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" VerticalAlignment="Center"/>
+                <DockPanel>
+                    <usercontrols:ImageMakerControl x:Name="xIconImage"  ImageType="RunSet" Margin="3,0,5,2" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" VerticalAlignment="Center"/>
                         <usercontrols1:UcLabel x:Name="xRunSetUcLabel" DockPanel.Dock="Left" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" MaxWidth="500" MaxHeight="50"/>
 
                         <!--<TextBlock x:Name="xNameTextBlock" DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Runset Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" MaxHeight="50" MaxWidth="500" />-->
@@ -364,111 +363,111 @@
                             </Border>
                         </TabItem.Header>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <DockPanel Grid.Row="0" x:Name="Config" Visibility="Visible" Background="{StaticResource $BackgroundColor_LightGray}">
-                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                                <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
-                                <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
-                            </StackPanel>
-                            <TextBox x:Name="xRunSetNameTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" DockPanel.Dock="Top" Height="25" FontWeight="Bold" Margin="0,0,0,5"></TextBox>
+                            <DockPanel Grid.Row="0" x:Name="Config" Visibility="Visible" Height="1000" Background="{StaticResource $BackgroundColor_LightGray}">
+                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                                    <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
+                                    <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                                </StackPanel>
+                                <TextBox x:Name="xRunSetNameTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" DockPanel.Dock="Top" Height="25" FontWeight="Bold" Margin="0,0,0,5"></TextBox>
 
-                            <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="-5,5,0,0">Description:</Label>
-                            <TextBox x:Name="xRunSetDescriptionTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" DockPanel.Dock="Top" Height="50"></TextBox>
+                                <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="-5,5,0,0">Description:</Label>
+                                <TextBox x:Name="xRunSetDescriptionTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" DockPanel.Dock="Top" Height="50"></TextBox>
 
-                            <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="-2,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" />
+                                <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="-2,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" />
 
-                            <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}" Margin="-5,0,0,0">Run Description:</Label>
-                            <Activities:UCValueExpression x:Name="xRunDescritpion" DockPanel.Dock="Top" HorizontalAlignment="Stretch" />
+                                <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}" Margin="-5,0,0,0">Run Description:</Label>
+                                <Activities:UCValueExpression x:Name="xRunDescritpion" DockPanel.Dock="Top" HorizontalAlignment="Stretch" />
 
-                            <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
-
-
-                            <Expander x:Name="xCategoriesExpander" DockPanel.Dock="Top" ExpandDirection="Down"  IsExpanded="True" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,12,0,0">
-                                <Expander.Header>
-                                    <Label Content="Categories" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                                </Expander.Header>
-                                <Expander.Content>
-                                    <Frame x:Name="xCategoriesFrame"/>
-                                </Expander.Content>
-                            </Expander>
+                                <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
 
 
-                            <Expander x:Name="xSealighsExpander" DockPanel.Dock="Top" ExpandDirection="Down"  IsExpanded="True" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,12,0,0">
-                                <Expander.Header>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label Content="Sealights Execution Logger Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
-                                    </StackPanel>
-                                </Expander.Header>
-                                <Expander.Content>
-
-                                    <Grid Margin="0,20,9.5,-209" Grid.Row="5" Grid.ColumnSpan="2" x:Name="xSealightsExecutionLoggerGrid">
-                                        <Grid.RowDefinitions>
-
-                                            <RowDefinition  Height="30"/>
-                                            <RowDefinition  Height="25"/>
-                                            <RowDefinition  Height="30"/>
-                                            <RowDefinition  Height="25"/>
-                                            <RowDefinition  Height="30"/>
-                                            <RowDefinition  Height="25"/>
-                                            <RowDefinition  Height="30"/>
-
-                                        </Grid.RowDefinitions>
-
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="120"/>
-                                            <ColumnDefinition Width="80"/>
-                                            <ColumnDefinition Width="80"/>
-                                            <ColumnDefinition Width="75*"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
+                                <Expander x:Name="xCategoriesExpander" DockPanel.Dock="Top" ExpandDirection="Down"  IsExpanded="True" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,12,0,0">
+                                    <Expander.Header>
+                                        <Label Content="Categories" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                    </Expander.Header>
+                                    <Expander.Content>
+                                        <Frame x:Name="xCategoriesFrame"/>
+                                    </Expander.Content>
+                                </Expander>
 
 
-                                        <Label x:Name="xSealighsLabIdLabel" Content="Lab ID:"  Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
-                                        <RadioButton x:Name="xDefaultLabIdRadioBtn" GroupName="radSealightsLabId"  IsChecked="True" Height="20" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="10,5,0,0"   >
-                                            <RadioButton.Content>
-                                                <GingerCore:ucTextDicResource Text="Default"/>
-                                            </RadioButton.Content>
-                                        </RadioButton>
-                                        <RadioButton x:Name="xCustomLabIdRadioBtn" GroupName="radSealightsLabId" Height="20" Grid.Column="2" Grid.Row="0"  HorizontalAlignment="Left" Margin="10,5,0,0"  >
-                                            <RadioButton.Content>
-                                                <GingerCore:ucTextDicResource Text="Custom"/>
-                                            </RadioButton.Content>
-                                        </RadioButton>
-                                        <Activities:UCValueExpression x:Name="xSealighsLabIdTextBox" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Left" ToolTip="Sealights Lab Id" Margin="10,0,0,0"  Width="400"/>
+                                <Expander x:Name="xSealighsExpander" DockPanel.Dock="Top" ExpandDirection="Down"  IsExpanded="True" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,12,0,0">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label Content="Sealights Execution Logger Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <Expander.Content>
 
-                                        <Label x:Name="xSealighsBuildSessionIDLabel" Content="Build Session ID:"  Grid.Column="0" Grid.Row="2" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
-                                        <RadioButton x:Name="xDefaultSessionIdRadioBtn" GroupName="radSealightsSessionId"  IsChecked="True" Height="20" Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Left" Margin="10,5,0,0"   >
-                                            <RadioButton.Content>
-                                                <GingerCore:ucTextDicResource Text="Default"/>
-                                            </RadioButton.Content>
-                                        </RadioButton>
-                                        <RadioButton x:Name="xCustomSessionIdRadioBtn" GroupName="radSealightsSessionId"  Height="20" Grid.Column="2" Grid.Row="2"  HorizontalAlignment="Left" Margin="10,5,0,0"  >
-                                            <RadioButton.Content>
-                                                <GingerCore:ucTextDicResource Text="Custom"/>
-                                            </RadioButton.Content>
-                                        </RadioButton>
-                                        <Activities:UCValueExpression x:Name="xSealighsBuildSessionIDTextBox" Grid.Column="3" Grid.Row="2" HorizontalAlignment="Left" ToolTip="Sealights Session Id" Margin="10,0,0,0"  Width="400"/>
+                                        <Grid Margin="0,20,9.5,-209" Grid.Row="5" Grid.ColumnSpan="2" x:Name="xSealightsExecutionLoggerGrid">
+                                            <Grid.RowDefinitions>
 
-                                        <Label x:Name="xSealightsTestStageLabel" Content="Test Stage:"  Grid.Column="0" Grid.Row="4" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
-                                        <RadioButton x:Name="xDefaultTestStageRadioBtn" GroupName="radSealightsTestStage" IsChecked="True" Height="20" Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Left" Margin="10,5,0,0"  >
-                                            <RadioButton.Content>
-                                                <GingerCore:ucTextDicResource Text="Default"/>
-                                            </RadioButton.Content>
-                                        </RadioButton>
-                                        <RadioButton x:Name="xCustomTestStageRadioBtn" GroupName="radSealightsTestStage" Height="20" Grid.Column="2" Grid.Row="4"  HorizontalAlignment="Left" Margin="10,5,0,0"  >
-                                            <RadioButton.Content>
-                                                <GingerCore:ucTextDicResource Text="Custom"/>
-                                            </RadioButton.Content>
-                                        </RadioButton>
-                                        <Activities:UCValueExpression x:Name="xSealightsTestStageTextBox" Grid.Column="3" Grid.Row="4" HorizontalAlignment="Left" ToolTip="Sealights Session Id" Margin="10,0,0,0"  Width="400"/>
+                                                <RowDefinition  Height="30"/>
+                                                <RowDefinition  Height="25"/>
+                                                <RowDefinition  Height="30"/>
+                                                <RowDefinition  Height="25"/>
+                                                <RowDefinition  Height="30"/>
+                                                <RowDefinition  Height="25"/>
+                                                <RowDefinition  Height="30"/>
+
+                                            </Grid.RowDefinitions>
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition Width="75*"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
 
 
-                                    </Grid>
+                                            <Label x:Name="xSealighsLabIdLabel" Content="Lab ID:"  Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
+                                            <RadioButton x:Name="xDefaultLabIdRadioBtn" GroupName="radSealightsLabId"  IsChecked="True" Height="20" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="10,5,0,0"   >
+                                                <RadioButton.Content>
+                                                    <GingerCore:ucTextDicResource Text="Default"/>
+                                                </RadioButton.Content>
+                                            </RadioButton>
+                                            <RadioButton x:Name="xCustomLabIdRadioBtn" GroupName="radSealightsLabId" Height="20" Grid.Column="2" Grid.Row="0"  HorizontalAlignment="Left" Margin="10,5,0,0"  >
+                                                <RadioButton.Content>
+                                                    <GingerCore:ucTextDicResource Text="Custom"/>
+                                                </RadioButton.Content>
+                                            </RadioButton>
+                                            <Activities:UCValueExpression x:Name="xSealighsLabIdTextBox" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Left" ToolTip="Sealights Lab Id" Margin="10,0,0,0"  Width="400"/>
 
-                                </Expander.Content>
-                            </Expander>
+                                            <Label x:Name="xSealighsBuildSessionIDLabel" Content="Build Session ID:"  Grid.Column="0" Grid.Row="2" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
+                                            <RadioButton x:Name="xDefaultSessionIdRadioBtn" GroupName="radSealightsSessionId"  IsChecked="True" Height="20" Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Left" Margin="10,5,0,0"   >
+                                                <RadioButton.Content>
+                                                    <GingerCore:ucTextDicResource Text="Default"/>
+                                                </RadioButton.Content>
+                                            </RadioButton>
+                                            <RadioButton x:Name="xCustomSessionIdRadioBtn" GroupName="radSealightsSessionId"  Height="20" Grid.Column="2" Grid.Row="2"  HorizontalAlignment="Left" Margin="10,5,0,0"  >
+                                                <RadioButton.Content>
+                                                    <GingerCore:ucTextDicResource Text="Custom"/>
+                                                </RadioButton.Content>
+                                            </RadioButton>
+                                            <Activities:UCValueExpression x:Name="xSealighsBuildSessionIDTextBox" Grid.Column="3" Grid.Row="2" HorizontalAlignment="Left" ToolTip="Sealights Session Id" Margin="10,0,0,0"  Width="400"/>
 
-                        </DockPanel>
+                                            <Label x:Name="xSealightsTestStageLabel" Content="Test Stage:"  Grid.Column="0" Grid.Row="4" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
+                                            <RadioButton x:Name="xDefaultTestStageRadioBtn" GroupName="radSealightsTestStage" IsChecked="True" Height="20" Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Left" Margin="10,5,0,0"  >
+                                                <RadioButton.Content>
+                                                    <GingerCore:ucTextDicResource Text="Default"/>
+                                                </RadioButton.Content>
+                                            </RadioButton>
+                                            <RadioButton x:Name="xCustomTestStageRadioBtn" GroupName="radSealightsTestStage" Height="20" Grid.Column="2" Grid.Row="4"  HorizontalAlignment="Left" Margin="10,5,0,0"  >
+                                                <RadioButton.Content>
+                                                    <GingerCore:ucTextDicResource Text="Custom"/>
+                                                </RadioButton.Content>
+                                            </RadioButton>
+                                            <Activities:UCValueExpression x:Name="xSealightsTestStageTextBox" Grid.Column="3" Grid.Row="4" HorizontalAlignment="Left" ToolTip="Sealights Session Id" Margin="10,0,0,0"  Width="400"/>
+
+
+                                        </Grid>
+
+                                    </Expander.Content>
+                                </Expander>
+
+                            </DockPanel>
                         </ScrollViewer>
                     </TabItem>
 
@@ -488,5 +487,5 @@
                 </TabControl>
             </Grid>
         </Grid>
-    </ScrollViewer>
+   
 </Page>
