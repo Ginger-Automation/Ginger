@@ -112,7 +112,7 @@ namespace GingerCore.Actions
                 return "Image based locator and operation using Sikuli";
             }
         }
-        [IsSerializedForLocalRepository]
+
         public string PatternPath
         {
             get
@@ -124,7 +124,6 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(PatternPath), value);
             }
         }
-        [IsSerializedForLocalRepository]
         public bool ShowSikuliConsole
         {
             get
@@ -138,7 +137,6 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(ShowSikuliConsole), value.ToString());
             }
         }
-        [IsSerializedForLocalRepository]
         public string SetTextValue
         {
             get
@@ -151,7 +149,6 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string ProcessNameForSikuliOperation
         {
             get
@@ -164,7 +161,6 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string PatternSimilarity
         {
             get
