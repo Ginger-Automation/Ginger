@@ -50,7 +50,9 @@ namespace GingerCore.NoSqlBase
             get
             {
                 int lastIndexOf = Db.ConnectionString.LastIndexOf(';');
-                return Db.ConnectionString.Substring(0, lastIndexOf);
+                string[] strArray = Db.ConnectionString.Split(';');
+                string connectionString = strArray[0] + ";" + strArray[1];
+                return connectionString;
             }
         }
 
@@ -59,7 +61,8 @@ namespace GingerCore.NoSqlBase
             get
             {
                 int lastIndexOf = Db.ConnectionString.LastIndexOf(';');
-                string dbString = Db.ConnectionString.Substring(lastIndexOf + 1);
+                string[] strArray = Db.ConnectionString.Split(';');
+                string dbString = strArray[2];
                 return dbString.Split('=')[1];
             }
         }

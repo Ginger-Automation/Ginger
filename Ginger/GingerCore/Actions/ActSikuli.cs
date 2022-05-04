@@ -109,10 +109,10 @@ namespace GingerCore.Actions
         {
             get
             {
-                return "Sikuli based operations execution Action";
+                return "Image based locator and operation using Sikuli";
             }
         }
-        [IsSerializedForLocalRepository]
+
         public string PatternPath
         {
             get
@@ -124,7 +124,6 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(PatternPath), value);
             }
         }
-        [IsSerializedForLocalRepository]
         public bool ShowSikuliConsole
         {
             get
@@ -138,7 +137,6 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(ShowSikuliConsole), value.ToString());
             }
         }
-        [IsSerializedForLocalRepository]
         public string SetTextValue
         {
             get
@@ -151,7 +149,6 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string ProcessNameForSikuliOperation
         {
             get
@@ -164,18 +161,15 @@ namespace GingerCore.Actions
             }
         }
 
-        private string mPatternSimilarity = "70";
-
-        [IsSerializedForLocalRepository]
         public string PatternSimilarity
         {
             get
             {
-                return mPatternSimilarity;
+                return GetOrCreateInputParam(nameof(PatternSimilarity)).Value;
             }
             set
             {
-                mPatternSimilarity = value;
+                AddOrUpdateInputParamValue(nameof(PatternSimilarity), value);
             }
         }
 
@@ -371,10 +365,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                if (ActiveProcessWindowsList == null || ActiveProcessWindowsList.Count == 0)
-                {
-                    RefreshActiveProcessesTitles();
-                }
+                RefreshActiveProcessesTitles();
                 return ActiveProcessWindowsList;
             }
         }
