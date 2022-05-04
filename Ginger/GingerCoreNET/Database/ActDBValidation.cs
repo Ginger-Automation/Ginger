@@ -102,15 +102,15 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string CosmosPrimaryKey
         {
-            get => GetOrCreateInputParam(nameof(CosmosPrimaryKey)).Value;
-            set => AddOrUpdateInputParamValue(nameof(CosmosPrimaryKey), value);
+            get;
+            set;
         }
 
         [IsSerializedForLocalRepository]
         public string CosmosPartitionKey
         {
-            get => GetOrCreateInputParam(nameof(CosmosPartitionKey)).Value;
-            set => AddOrUpdateInputParamValue(nameof(CosmosPartitionKey), value);
+            get;
+            set;
         }
 
         public string SQL
@@ -526,10 +526,39 @@ namespace GingerCore.Actions
 
     public class CosmosPatchInputValues : RepositoryItemBase
     {
+        //private string mParam;
+
+        private string mParam;
+
         [IsSerializedForLocalRepository]
-        public string Param { get; set; }
+        public string Param
+        {
+            get { return mParam; }
+            set
+            {
+                if (mParam != value)
+                {
+                    mParam = value;
+                    OnPropertyChanged(nameof(Param));
+                }
+            }
+        }
+
+        private string mValue;
+
         [IsSerializedForLocalRepository]
-        public string Value { get; set; }
+        public string Value
+        {
+            get { return mValue; }
+            set
+            {
+                if (mValue != value)
+                {
+                    mValue = value;
+                    OnPropertyChanged(nameof(Value));
+                }
+            }
+        }
 
         private string mItemName = string.Empty;
         public override string ItemName { get { return mItemName; } set { mItemName = value; } }
