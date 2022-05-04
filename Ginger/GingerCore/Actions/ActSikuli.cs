@@ -109,7 +109,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return "Sikuli based operations execution Action";
+                return "Image based locator and operation using Sikuli";
             }
         }
         [IsSerializedForLocalRepository]
@@ -164,18 +164,16 @@ namespace GingerCore.Actions
             }
         }
 
-        private string mPatternSimilarity = "70";
-
         [IsSerializedForLocalRepository]
         public string PatternSimilarity
         {
             get
             {
-                return mPatternSimilarity;
+                return GetOrCreateInputParam(nameof(PatternSimilarity)).Value;
             }
             set
             {
-                mPatternSimilarity = value;
+                AddOrUpdateInputParamValue(nameof(PatternSimilarity), value);
             }
         }
 
@@ -371,10 +369,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                if (ActiveProcessWindowsList == null || ActiveProcessWindowsList.Count == 0)
-                {
-                    RefreshActiveProcessesTitles();
-                }
+                RefreshActiveProcessesTitles();
                 return ActiveProcessWindowsList;
             }
         }

@@ -409,6 +409,8 @@ namespace Ginger.Actions
                 lblInsertJson.Visibility = Visibility.Collapsed;
                 gridInsertJson.Visibility = Visibility.Collapsed;
                 imgHelpSql.Visibility = Visibility.Collapsed;
+                xKeysStackPanel.Visibility = Visibility.Collapsed;
+                SQLUCValueExpression.ValueTextBox.Text = string.Empty;
                 switch (validationType)
                 {
                     case ActDBValidation.eDBValidationType.UpdateDB:
@@ -432,6 +434,7 @@ namespace Ginger.Actions
                             DoUpdate.Visibility = Visibility.Visible;
                             RadioButtonsSection.Visibility = Visibility.Collapsed;
                             UpdateDbParametersGrid.Visibility = Visibility.Visible;
+                            xKeysStackPanel.Visibility = Visibility.Visible;
                             SetGridView();
                         }
                         else
