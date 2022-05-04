@@ -111,7 +111,19 @@
                     <Actions:UCValueExpression Height="25" Margin="1,0" x:Name="txtPartitionKey" Width="295" HorizontalAlignment="Left"></Actions:UCValueExpression>
                 </StackPanel>
 
-                <Ginger:ucGrid x:Name="UpdateDbParametersGrid" Title="Cosmos Update Parameters"/>
+                <Grid  x:Name="UpdateDbParametersHeadersGrid">
+                    <Label Style="{StaticResource @LabelStyle}" x:Name="LabelHeaders" Content="Request Headers:" />
+                    <Ginger:ucGrid x:Name="UpdateDbParametersGrid" Title="Cosmos Update Parameters"/>
+                    <Grid.Resources>
+                        <DataTemplate x:Key="UpdateDbParametersPathValueExpressionButton">
+                            <Button x:Name="UpdateDbParametersGridPathVEButton" Content="..." Click="UpdateDbParametersGridPathVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                        </DataTemplate>
+                        <DataTemplate x:Key="UpdateDbParametersValueExpressionButton">
+                            <Button x:Name="UpdateDbParametersGridVEButton" Content="..." Click="UpdateDbParametersGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                        </DataTemplate>
+                    </Grid.Resources>
+                </Grid>
+
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="0,0,10,10">
                     <Label Name="lblInsertJson" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Insert JSON:</Label>
                     <Grid Width="600" x:Name="gridInsertJson" Visibility="Collapsed">

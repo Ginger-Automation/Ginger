@@ -693,7 +693,9 @@ namespace Ginger.Actions
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(CosmosPatchInputValues.Param), Header = "Path", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.UpdateDbParametersHeadersGrid.Resources["UpdateDbParametersPathValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(CosmosPatchInputValues.Value), Header = "Value", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = "....", Header = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.UpdateDbParametersHeadersGrid.Resources["UpdateDbParametersValueExpressionButton"] });
 
             UpdateDbParametersGrid.SetAllColumnsDefaultView(view);
             UpdateDbParametersGrid.InitViewItems();
@@ -705,6 +707,19 @@ namespace Ginger.Actions
             UpdateDbParametersGrid.btnRefresh.Visibility = Visibility.Collapsed;
 
             UpdateDbParametersGrid.DataSourceList = mAct.CosmosPatchInputValues;
+        }
+
+        private void UpdateDbParametersGridVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            CosmosPatchInputValues cosmosPatchInput = (CosmosPatchInputValues)UpdateDbParametersGrid.CurrentItem;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(cosmosPatchInput, nameof(CosmosPatchInputValues.Value), Context.GetAsContext(mAct.Context));
+            VEEW.ShowAsWindow();
+        }
+        private void UpdateDbParametersGridPathVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            CosmosPatchInputValues cosmosPatchInput = (CosmosPatchInputValues)UpdateDbParametersGrid.CurrentItem;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(cosmosPatchInput, nameof(CosmosPatchInputValues.Param), Context.GetAsContext(mAct.Context));
+            VEEW.ShowAsWindow();
         }
 
         private void AddPatchOperationForCosmos(object sender, RoutedEventArgs e)
