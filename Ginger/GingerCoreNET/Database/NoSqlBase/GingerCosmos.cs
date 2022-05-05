@@ -242,7 +242,12 @@ namespace GingerCore.NoSqlBase
                         List<PatchOperation> lstPatchOperations = new List<PatchOperation>();
                         foreach (CosmosPatchInputValues cosmosPatch in Act.CosmosPatchInputValues)
                         {
-                            lstPatchOperations.Add(PatchOperation.Replace(cosmosPatch.Param, cosmosPatch.Value));
+                            string param, value;
+                            VE.Value = cosmosPatch.Param;
+                            param = VE.ValueCalculated;
+                            VE.Value = cosmosPatch.Value;
+                            value = VE.ValueCalculated;
+                            lstPatchOperations.Add(PatchOperation.Replace(param, value));
                         }
                         IReadOnlyList<PatchOperation> enumerablePatchOps = lstPatchOperations;
                         ItemResponse<object> response = objRecordContainer.PatchItemAsync<object>(id: primaryKey, partitionKey: new PartitionKey(partitionKey), patchOperations: enumerablePatchOps
