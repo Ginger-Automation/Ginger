@@ -111,7 +111,10 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
                     }
                 }
             }
-
+            else
+            {
+                uploadItem.ReplaceType = UploadItemSelection.eActivityInstanceType.RegularInstance;
+            }
             uploadItem.ItemName = item.ItemName;
             uploadItem.ItemGUID = item.Guid;
             uploadItem.SetItemPartesFromEnum(GetTypeOfItemParts(item));

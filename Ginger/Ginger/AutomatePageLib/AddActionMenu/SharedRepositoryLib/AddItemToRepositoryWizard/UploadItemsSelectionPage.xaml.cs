@@ -17,12 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.GeneralLib;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControls;
-using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -35,32 +32,31 @@ namespace Ginger.Repository.ItemToRepositoryWizard
     {
         public UploadItemToRepositoryWizard UploadItemToRepositoryWizard;
         public UploadItemsValidationPage itemValidate;
-      
+
         public UploadItemsSelectionPage(ObservableList<UploadItemSelection> items)
         {
             InitializeComponent();
             SetSelectedItemsGridView();
-            itemSelectionGrid.DataSourceList = items;       
+            itemSelectionGrid.DataSourceList = items;
         }
 
         private void SetSelectedItemsGridView()
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Selected), StyleType = GridColView.eGridColStyleType.CheckBox,  WidthWeight = 10 });
-       
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Selected), StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10 });
+
             defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ItemName), Header = "Item To Upload", WidthWeight = 20, ReadOnly = true });
-            
+
             defView.GridColsView.Add(new GridColView()
             {
                 Field = nameof(UploadItemSelection.ReplaceType),
                 Header = "Replace Type",
                 WidthWeight = 20,
                 StyleType = GridColView.eGridColStyleType.Template,
-                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eActivityInstanceType)), nameof(UploadItemSelection.ReplaceType), false, true)
+                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eActivityInstanceType)), nameof(UploadItemSelection.ReplaceType), false, false, nameof(UploadItemSelection.IsActivity), true)
             });
 
-            List<ComboEnumItem> itemUploadTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eItemUploadType));
             GridColView GCWUploadType = new GridColView()
             {
                 Field = nameof(UploadItemSelection.ItemUploadType),
@@ -69,7 +65,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                 CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(UploadItemSelection.UploadTypeList), nameof(UploadItemSelection.ItemUploadType), false, false, nameof(UploadItemSelection.IsExistingItemParent), true),
                 WidthWeight = 18
             };
-           
+
 
             defView.GridColsView.Add(GCWUploadType);
             defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ExistingItemName), Header = "Existing Item", WidthWeight = 15, ReadOnly = true });
@@ -143,9 +139,9 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         }
 
         private void SelectUnSelectAll(bool activeStatus)
-        {           
+        {
             if (UploadItemSelection.mSelectedItems.Count > 0)
-            {                
+            {
                 foreach (UploadItemSelection usage in UploadItemSelection.mSelectedItems)
                     usage.Selected = activeStatus;
             }
