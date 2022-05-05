@@ -99,18 +99,28 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string Where { set; get; }
 
-        [IsSerializedForLocalRepository]
-        public string CosmosPrimaryKey
+        public string PrimaryKey
         {
-            get;
-            set;
+            get
+            {
+                return GetInputParamValue(nameof(PrimaryKey));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PrimaryKey), value);
+            }
         }
-
-        [IsSerializedForLocalRepository]
-        public string CosmosPartitionKey
+      
+        public string PartitionKey
         {
-            get;
-            set;
+            get
+            {
+                return GetInputParamValue(nameof(PartitionKey));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PartitionKey), value);
+            }
         }
 
         public string SQL
@@ -340,13 +350,13 @@ namespace GingerCore.Actions
         {
             //TODO: add on null or not found throw exception so it will fail
 
-            if (string.IsNullOrEmpty(CosmosPrimaryKey))
+            if (string.IsNullOrEmpty(PrimaryKey))
             {
-                CosmosPrimaryKey = string.Empty;
+                PrimaryKey = string.Empty;
             }
-            if (string.IsNullOrEmpty(CosmosPartitionKey))
+            if (string.IsNullOrEmpty(PartitionKey))
             {
-                CosmosPartitionKey = string.Empty;
+                PartitionKey = string.Empty;
             }
 
             string AppNameCalculated = ValueExpression.Calculate(this.AppName);

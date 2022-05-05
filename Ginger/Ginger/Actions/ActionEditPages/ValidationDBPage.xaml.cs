@@ -100,21 +100,12 @@ namespace Ginger.Actions
             txtInsertJson.ValueTextBox.AddValidationRule(new RunSetLib.CreateCLIWizardLib.ValidateJsonFormat());
 
             txtInsertJson.AdjustHight(200);
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPrimaryKey.ValueTextBox, TextBox.TextProperty, act, nameof(ActDBValidation.CosmosPrimaryKey), BindingMode.TwoWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPrimaryKey.ValueTextBox, TextBox.ToolTipProperty, act, nameof(ActDBValidation.CosmosPrimaryKey), BindingMode.TwoWay);
-            txtPrimaryKey.BindControl(Context.GetAsContext(act.Context), act, nameof(ActDBValidation.CosmosPrimaryKey));
-            txtPrimaryKey.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.CosmosPrimaryKey),
+          
+            txtPrimaryKey.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.PrimaryKey),
                 (Context.GetAsContext(act.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPartitionKey.ValueTextBox, TextBox.TextProperty, act, nameof(ActDBValidation.CosmosPartitionKey), BindingMode.TwoWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPartitionKey.ValueTextBox, TextBox.ToolTipProperty, act, nameof(ActDBValidation.CosmosPartitionKey), BindingMode.TwoWay);
-            txtPartitionKey.BindControl(Context.GetAsContext(act.Context), act, nameof(ActDBValidation.CosmosPartitionKey));
-            txtPartitionKey.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.CosmosPartitionKey),
+           
+            txtPartitionKey.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.PartitionKey),
                 (Context.GetAsContext(act.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
-
-            txtPartitionKey.ValueTextBox.Text = act.CosmosPartitionKey;
-            txtPrimaryKey.ValueTextBox.Text = act.CosmosPrimaryKey;
 
             KeySpaceComboBox.Items.Add(mAct.Keyspace);
             ComboAutoSelectIfOneItemOnly(KeySpaceComboBox);
@@ -411,6 +402,7 @@ namespace Ginger.Actions
                 imgHelpSql.Visibility = Visibility.Collapsed;
                 xKeysStackPanel.Visibility = Visibility.Collapsed;
                 SQLUCValueExpression.ValueTextBox.Text = string.Empty;
+                UpdateDbParametersHeadersGrid.Visibility = Visibility.Collapsed;
                 switch (validationType)
                 {
                     case ActDBValidation.eDBValidationType.UpdateDB:
@@ -435,6 +427,7 @@ namespace Ginger.Actions
                             RadioButtonsSection.Visibility = Visibility.Collapsed;
                             UpdateDbParametersGrid.Visibility = Visibility.Visible;
                             xKeysStackPanel.Visibility = Visibility.Visible;
+                            UpdateDbParametersHeadersGrid.Visibility = Visibility.Visible;
                             SetGridView();
                         }
                         else

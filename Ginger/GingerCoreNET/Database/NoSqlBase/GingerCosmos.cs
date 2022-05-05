@@ -217,8 +217,8 @@ namespace GingerCore.NoSqlBase
                         break;
                     case eDBValidationType.UpdateDB:
                         Container objRecordContainer = GetContainer(DatabaseName, containerName);
-                        string primaryKey = Act.GetInputParamCalculatedValue("CosmosPrimaryKey");
-                        string partitionKey = Act.GetInputParamCalculatedValue("CosmosPartitionKey");
+                        string primaryKey = Act.GetInputParamCalculatedValue(nameof(Act.PrimaryKey));
+                        string partitionKey = Act.GetInputParamCalculatedValue(nameof(Act.PartitionKey));
                         if (string.IsNullOrEmpty(primaryKey))
                         {
                             Act.Error = "Primary Key cannot be empty";
@@ -242,7 +242,12 @@ namespace GingerCore.NoSqlBase
                         List<PatchOperation> lstPatchOperations = new List<PatchOperation>();
                         foreach (CosmosPatchInputValues cosmosPatch in Act.CosmosPatchInputValues)
                         {
-                            lstPatchOperations.Add(PatchOperation.Replace(cosmosPatch.Param, cosmosPatch.Value));
+                            string param, value;
+                            VE.Value = cosmosPatch.Param;
+                            param = VE.ValueCalculated;
+                            VE.Value = cosmosPatch.Value;
+                            value = VE.ValueCalculated;
+                            lstPatchOperations.Add(PatchOperation.Replace(param, value));
                         }
                         IReadOnlyList<PatchOperation> enumerablePatchOps = lstPatchOperations;
                         ItemResponse<object> response = objRecordContainer.PatchItemAsync<object>(id: primaryKey, partitionKey: new PartitionKey(partitionKey), patchOperations: enumerablePatchOps
@@ -259,8 +264,8 @@ namespace GingerCore.NoSqlBase
                         break;
                     case eDBValidationType.Insert:
                         Container objContainerForInsert = GetContainer(dbName, containerName);
-                        string primaryKeyForInsert = Act.GetInputParamCalculatedValue("CosmosPrimaryKey");
-                        string partitionKeyForInsert = Act.GetInputParamCalculatedValue("CosmosPartitionKey");
+                        string primaryKeyForInsert = Act.GetInputParamCalculatedValue(nameof(Act.PrimaryKey));
+                        string partitionKeyForInsert = Act.GetInputParamCalculatedValue(nameof(Act.PartitionKey));
                         string insertJson = Act.GetInputParamCalculatedValue("InsertJson");
                         if (string.IsNullOrEmpty(primaryKeyForInsert))
                         {
