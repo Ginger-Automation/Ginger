@@ -86,7 +86,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(WindowTitle)).Value;
+                return GetOrCreateInputParam(nameof(WindowTitle)).ValueForDriver;
             }
             set
             {
@@ -117,7 +117,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(PatternPath)).Value;
+                return GetOrCreateInputParam(nameof(PatternPath)).ValueForDriver;
             }
             set
             {
@@ -141,7 +141,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(SetTextValue)).Value;
+                return GetOrCreateInputParam(nameof(SetTextValue)).ValueForDriver;
             }
             set
             {
@@ -153,7 +153,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(ProcessNameForSikuliOperation)).Value;
+                return GetOrCreateInputParam(nameof(ProcessNameForSikuliOperation)).ValueForDriver;
             }
             set
             {
@@ -165,7 +165,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(PatternSimilarity)).Value;
+                return GetOrCreateInputParam(nameof(PatternSimilarity)).ValueForDriver;
             }
             set
             {
@@ -247,7 +247,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(CustomJavaPath)).Value;
+                return GetOrCreateInputParam(nameof(CustomJavaPath)).ValueForDriver;
             }
             set
             {

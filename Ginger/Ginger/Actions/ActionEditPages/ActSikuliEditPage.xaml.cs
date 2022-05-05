@@ -96,7 +96,7 @@ namespace Ginger.Actions
 
         private void SetJavaRelatedDetails()
         {
-            JavaPathHomeRdb.Content = "Use JAVA HOME Environment Variable (" + CommonLib.GetJavaHome() + ")";
+            JavaPathHomeRdb.Content = new TextBlock { Text = "Use JAVA_HOME Environment Variable (" + CommonLib.GetJavaHome() + ")" };
             if (actSikuli.UseCustomJava)
             {
                 JavaPathHomeRdb.IsChecked = false;
