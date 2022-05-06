@@ -704,7 +704,7 @@ namespace Ginger.Actions
             UpdateDbParametersGrid.btnClearAll.Visibility = Visibility.Collapsed;
             UpdateDbParametersGrid.btnRefresh.Visibility = Visibility.Collapsed;
 
-            UpdateDbParametersGrid.DataSourceList = mAct.CosmosPatchInputValues;
+            UpdateDbParametersGrid.DataSourceList = mAct.UpdateOperationInputValues;
         }
 
         private void UpdateDbParametersGridVEButton_Click(object sender, RoutedEventArgs e)
@@ -723,7 +723,7 @@ namespace Ginger.Actions
         private void AddPatchOperationForCosmos(object sender, RoutedEventArgs e)
         {
             ActInputValue cosmosPatchInput = new ActInputValue();
-            mAct.CosmosPatchInputValues.Add(cosmosPatchInput);
+            mAct.UpdateOperationInputValues.Add(cosmosPatchInput);
         }
     }
 }

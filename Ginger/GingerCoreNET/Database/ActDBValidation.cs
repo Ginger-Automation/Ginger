@@ -146,7 +146,8 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> QueryParams = new ObservableList<ActInputValue>();
 
-        public ObservableList<ActInputValue> CosmosPatchInputValues = new ObservableList<ActInputValue>();
+        [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> UpdateOperationInputValues = new ObservableList<ActInputValue>();
 
         public enum eDatabaseTye
         {
@@ -264,7 +265,7 @@ namespace GingerCore.Actions
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
             List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
-            list.Add(CosmosPatchInputValues);
+            list.Add(UpdateOperationInputValues);
             return list;
         }
 
