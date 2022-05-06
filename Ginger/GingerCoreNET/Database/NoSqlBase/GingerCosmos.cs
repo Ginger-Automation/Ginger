@@ -240,7 +240,7 @@ namespace GingerCore.NoSqlBase
                             return;
                         }
                         List<PatchOperation> lstPatchOperations = new List<PatchOperation>();
-                        foreach (CosmosPatchInputValues cosmosPatch in Act.CosmosPatchInputValues)
+                        foreach (ActInputValue cosmosPatch in Act.CosmosPatchInputValues)
                         {
                             string param, value;
                             VE.Value = cosmosPatch.Param;
