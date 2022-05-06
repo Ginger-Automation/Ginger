@@ -146,7 +146,6 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> QueryParams = new ObservableList<ActInputValue>();
 
-        [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> CosmosPatchInputValues = new ObservableList<ActInputValue>();
 
         public enum eDatabaseTye
