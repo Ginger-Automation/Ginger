@@ -14,8 +14,8 @@
       d:DesignHeight="1000" d:DesignWidth="2000"
       Title="Runset"  Loaded="Page_loaded">
 
-    
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}" Height="920">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <StackPanel x:Name="xRunSetLoadingPnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" >
                 <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
                 <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
@@ -363,7 +363,7 @@
                             </Border>
                         </TabItem.Header>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <DockPanel Grid.Row="0" x:Name="Config" Visibility="Visible" Height="1000" Background="{StaticResource $BackgroundColor_LightGray}">
+                            <DockPanel Grid.Row="0" x:Name="Config" Visibility="Visible" Background="{StaticResource $BackgroundColor_LightGray}" MinHeight="800">
                                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                                     <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
                                     <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
