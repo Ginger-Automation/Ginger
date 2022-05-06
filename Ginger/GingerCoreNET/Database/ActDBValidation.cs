@@ -110,7 +110,7 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(PrimaryKey), value);
             }
         }
-      
+
         public string PartitionKey
         {
             get
@@ -147,7 +147,7 @@ namespace GingerCore.Actions
         public ObservableList<ActInputValue> QueryParams = new ObservableList<ActInputValue>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<CosmosPatchInputValues> CosmosPatchInputValues = new ObservableList<CosmosPatchInputValues>();
+        public ObservableList<ActInputValue> UpdateOperationInputValues = new ObservableList<ActInputValue>();
 
         public enum eDatabaseTye
         {
@@ -260,6 +260,13 @@ namespace GingerCore.Actions
         public override string ActionType
         {
             get { return "DB Action - " + DBValidationType.ToString(); }
+        }
+
+        public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
+        {
+            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
+            list.Add(UpdateOperationInputValues);
+            return list;
         }
 
         public override void Execute()
@@ -532,45 +539,5 @@ namespace GingerCore.Actions
                 }
             }
         }
-    }
-
-    public class CosmosPatchInputValues : RepositoryItemBase
-    {
-        //private string mParam;
-
-        private string mParam;
-
-        [IsSerializedForLocalRepository]
-        public string Param
-        {
-            get { return mParam; }
-            set
-            {
-                if (mParam != value)
-                {
-                    mParam = value;
-                    OnPropertyChanged(nameof(Param));
-                }
-            }
-        }
-
-        private string mValue;
-
-        [IsSerializedForLocalRepository]
-        public string Value
-        {
-            get { return mValue; }
-            set
-            {
-                if (mValue != value)
-                {
-                    mValue = value;
-                    OnPropertyChanged(nameof(Value));
-                }
-            }
-        }
-
-        private string mItemName = string.Empty;
-        public override string ItemName { get { return mItemName; } set { mItemName = value; } }
     }
 }

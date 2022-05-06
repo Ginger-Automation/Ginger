@@ -229,7 +229,7 @@ namespace GingerCore.NoSqlBase
                             Act.Error = "Partition Key cannot be empty";
                             return;
                         }
-                        if (Act.CosmosPatchInputValues == null || Act.CosmosPatchInputValues.Count == 0)
+                        if (Act.UpdateOperationInputValues == null || Act.UpdateOperationInputValues.Count == 0)
                         {
                             Act.Error = "Please provide fields to be modified";
                             return;
@@ -240,7 +240,7 @@ namespace GingerCore.NoSqlBase
                             return;
                         }
                         List<PatchOperation> lstPatchOperations = new List<PatchOperation>();
-                        foreach (CosmosPatchInputValues cosmosPatch in Act.CosmosPatchInputValues)
+                        foreach (ActInputValue cosmosPatch in Act.UpdateOperationInputValues)
                         {
                             string param, value;
                             VE.Value = cosmosPatch.Param;
