@@ -70,10 +70,6 @@ namespace Ginger.Reports
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FolderTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFolderMaximumSizeTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize), bindingConvertor: new GingerCore.GeneralLib.LongStringConverter());
 
-            if (_selectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
-            {
-                SetExecutionLoggerRadioButtonToOff();
-            }
 
             xPublishingPhaseRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDataPublishingPhase),
                 xPublishingPhasePanel, _selectedExecutionLoggerConfiguration,
@@ -124,16 +120,20 @@ namespace Ginger.Reports
             {
                 liteDbRadioBtnsPnl.IsChecked = true;
             }
-            xPublishLogToCentralDBRadioButton.Init(typeof(ExecutionLoggerConfiguration.ePublishToCentralDB),
-                xPublishLogToCentralDBRadioBtnPanel, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB), PublishLogToCentralDBRadioButton_CheckedHandler);
-
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralExecutionLoggerExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
 
             // this added in ordre to apply the validation when turnining ON the Enterprise Features Flag (the validation wont apply when the Enterprise Features Flag initially was OFF)
             xSealighsExpander.IsVisibleChanged += XSealighsExpander_IsVisibleChanged;
+            if (_selectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
+            {
+                SetExecutionLoggerRadioButtonToOff();
+            }
+            xPublishLogToCentralDBRadioButton.Init(typeof(ExecutionLoggerConfiguration.ePublishToCentralDB),
+                xPublishLogToCentralDBRadioBtnPanel, _selectedExecutionLoggerConfiguration,
+                nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB), PublishLogToCentralDBRadioButton_CheckedHandler);
+
         }
 
         private void XSealighsExpander_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -250,13 +250,13 @@ namespace Ginger.Reports
         {
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
-                xCentralExecutionLoggerGrid.Visibility = Visibility.Collapsed;
+                _selectedExecutionLoggerConfiguration.PublishLogToCentralDB = ExecutionLoggerConfiguration.ePublishToCentralDB.No;
+                SetExecutionLoggerRadioButtonToOff();
+                _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
+                xCentralExecutionLoggerExpander.Visibility = Visibility.Collapsed;
                 xFolderMaximumSizeLabel.Visibility = Visibility.Visible;
                 xFolderMaximumSizeTextBox.Visibility = Visibility.Visible;
                 _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
-
-                _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
-                _selectedExecutionLoggerConfiguration.PublishLogToCentralDB = ExecutionLoggerConfiguration.ePublishToCentralDB.No;
                 if (isControlsSet)
                 {
                     Reporter.ToUser(eUserMsgKey.ChangesRequireRestart);
@@ -295,6 +295,10 @@ namespace Ginger.Reports
             else
             {
                 xCentralExecutionLoggerGrid.Visibility = Visibility.Collapsed;
+                if (_selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                {
+                    xCentralExecutionLoggerExpander.Visibility = Visibility.Collapsed;
+                }
             }
         }
 
