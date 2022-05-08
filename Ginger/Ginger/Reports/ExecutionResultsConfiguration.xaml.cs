@@ -266,7 +266,10 @@ namespace Ginger.Reports
         {
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
-                xCentralExecutionLoggerExpander.Visibility = Visibility.Visible;
+                if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+                {
+                    xCentralExecutionLoggerExpander.Visibility = Visibility.Visible;
+                }
                 xFolderMaximumSizeRow.Height = new GridLength(0);
                 _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
                 _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
@@ -293,10 +296,6 @@ namespace Ginger.Reports
             else
             {
                 xCentralExecutionLoggerGrid.Visibility = Visibility.Collapsed;
-                if (_selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
-                {
-                    xCentralExecutionLoggerExpander.Visibility = Visibility.Collapsed;
-                }
             }
         }
 
