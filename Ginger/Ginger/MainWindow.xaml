@@ -123,7 +123,7 @@
                             </MenuItem>
                         </Menu>
 
-                        <Menu x:Name="xSolutionALMMenu" Background="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                        <Menu x:Name="xSolutionALMMenu" Background="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Enterprise Feature" >
                             <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Share Operations">
                                 <MenuItem.Icon>
                                     <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Share" Margin="0,0,0,0"/>

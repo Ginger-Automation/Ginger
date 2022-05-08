@@ -232,7 +232,7 @@
                                     </MenuItem.Header>
                                 </MenuItem>
                             </MenuItem>
-                            <MenuItem x:Name="xALMMenuItem" Style="{StaticResource $MenuItemStyle}">
+                            <MenuItem x:Name="xALMMenuItem" Style="{StaticResource $MenuItemStyle}" ToolTip="Enterprise Feature">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl ImageType="ALM" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>

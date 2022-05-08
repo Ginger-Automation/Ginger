@@ -324,7 +324,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             menu.Items.Add(mnuItem);
         }
 
-        public static MenuItem CreateSubMenu(ContextMenu menu, string Header, eImageType icon = eImageType.Null)
+        public static MenuItem CreateSubMenu(ContextMenu menu, string Header, eImageType icon = eImageType.Null, string tooltip="")
         {
             MenuItem mnuItem = new MenuItem();
             if (icon != eImageType.Null)
@@ -334,6 +334,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 menuIcon.Height = 16;
                 menuIcon.Width = 16;
                 mnuItem.Icon = menuIcon;
+                if (!String.IsNullOrEmpty(tooltip))
+                {
+                    mnuItem.ToolTip = tooltip;
+                }
             }
             mnuItem.Header = Header;
             menu.Items.Add(mnuItem);
