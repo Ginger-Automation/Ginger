@@ -254,8 +254,7 @@ namespace Ginger.Reports
                 SetExecutionLoggerRadioButtonToOff();
                 _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
                 xCentralExecutionLoggerExpander.Visibility = Visibility.Collapsed;
-                xFolderMaximumSizeLabel.Visibility = Visibility.Visible;
-                xFolderMaximumSizeTextBox.Visibility = Visibility.Visible;
+                xFolderMaximumSizeRow.Height = new GridLength(30);
                 _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
                 if (isControlsSet)
                 {
@@ -267,9 +266,11 @@ namespace Ginger.Reports
         {
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
-                xCentralExecutionLoggerGrid.Visibility = Visibility.Visible;
-                xFolderMaximumSizeLabel.Visibility = Visibility.Collapsed;
-                xFolderMaximumSizeTextBox.Visibility = Visibility.Collapsed;
+                if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+                {
+                    xCentralExecutionLoggerExpander.Visibility = Visibility.Visible;
+                }
+                xFolderMaximumSizeRow.Height = new GridLength(0);
                 _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
                 _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
                 if (isControlsSet)
@@ -295,10 +296,6 @@ namespace Ginger.Reports
             else
             {
                 xCentralExecutionLoggerGrid.Visibility = Visibility.Collapsed;
-                if (_selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
-                {
-                    xCentralExecutionLoggerExpander.Visibility = Visibility.Collapsed;
-                }
             }
         }
 
