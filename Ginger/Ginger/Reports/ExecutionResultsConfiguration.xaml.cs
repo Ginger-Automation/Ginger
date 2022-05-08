@@ -254,8 +254,7 @@ namespace Ginger.Reports
                 SetExecutionLoggerRadioButtonToOff();
                 _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
                 xCentralExecutionLoggerExpander.Visibility = Visibility.Collapsed;
-                xFolderMaximumSizeLabel.Visibility = Visibility.Visible;
-                xFolderMaximumSizeTextBox.Visibility = Visibility.Visible;
+                xFolderMaximumSizeRow.Height = new GridLength(30);
                 _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
                 if (isControlsSet)
                 {
@@ -267,9 +266,8 @@ namespace Ginger.Reports
         {
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
-                xCentralExecutionLoggerGrid.Visibility = Visibility.Visible;
-                xFolderMaximumSizeLabel.Visibility = Visibility.Collapsed;
-                xFolderMaximumSizeTextBox.Visibility = Visibility.Collapsed;
+                xCentralExecutionLoggerExpander.Visibility = Visibility.Visible;
+                xFolderMaximumSizeRow.Height = new GridLength(0);
                 _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
                 _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
                 if (isControlsSet)
