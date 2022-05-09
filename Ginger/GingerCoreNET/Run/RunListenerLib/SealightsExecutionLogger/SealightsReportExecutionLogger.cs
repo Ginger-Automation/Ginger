@@ -167,7 +167,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
             if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.Activity)
             {
-                if (!activity.Active || activity.Status == Execution.eRunStatus.Blocked)
+                if (activity.Status == Execution.eRunStatus.Blocked)
                 {
                     return;
                 }

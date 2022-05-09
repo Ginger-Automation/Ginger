@@ -739,7 +739,7 @@ namespace Ginger.Run
                     ((ExecutionLogger)mExecutionLogger).ExecutionLogBusinessFlowsCounter = counter;
                     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
                     runner.CalculateBusinessFlowFinalStatus(bf, true);
-                    if (bf.RunStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && bf.RunStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && bf.RunStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+                    if (bf.RunStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && bf.RunStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && bf.RunStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped && bf.RunStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
                     {
                         continue;
                     }

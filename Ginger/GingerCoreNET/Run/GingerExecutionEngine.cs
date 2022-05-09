@@ -3181,7 +3181,8 @@ namespace Ginger.Run
                                 NotifyActivityGroupStart(currentActivityGroup);
                                 break;
                             case executionLoggerStatus.StartedNotFinishedYet:
-                                // do nothing
+                                currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.StartedNotFinishedYet;
+                                NotifyActivityGroupStart(currentActivityGroup);
                                 break;
                             case executionLoggerStatus.Finished:
                                 // do nothing
@@ -3222,7 +3223,7 @@ namespace Ginger.Run
 
                     activityStarted = true;
                     CurrentBusinessFlow.CurrentActivity.Status = eRunStatus.Running;
-                    if (doContinueRun)
+                    if (doContinueRun || CurrentBusinessFlow.CurrentActivity.Status == eRunStatus.Skipped) // Gideon, Skip, 5/9/2022, For 'ActivityGroup'
                     {
                         NotifyActivityStart(CurrentBusinessFlow.CurrentActivity, doContinueRun);
                     }
@@ -3268,7 +3269,7 @@ namespace Ginger.Run
                         CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
 
                         GiveUserFeedback();
-                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true)
+                        if (act != null && act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true)
                         {
                             RunAction(act, false);
                             GiveUserFeedback();
@@ -3374,7 +3375,7 @@ namespace Ginger.Run
             }
             finally
             {
-                if (activityStarted)
+                if (activityStarted || activity.Status == eRunStatus.Skipped) // Gideon, Skipped, 5/9/2022 - For 'Activity'
                 {
                     st.Stop();
                     activity.Elapsed = st.ElapsedMilliseconds;
@@ -3942,6 +3943,7 @@ namespace Ginger.Run
             bool Failed = false;
             bool Blocked = false;
             bool Stopped = false;
+            bool Skipped = false;
 
             // Assume pass unless error
             AG.RunStatus = eActivitiesGroupRunStatus.Passed;
@@ -3950,7 +3952,7 @@ namespace Ginger.Run
                 AG.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped).ToList().Count == AG.ActivitiesIdentifiers.Count)
             {
                 AG.RunStatus = eActivitiesGroupRunStatus.Skipped;
-                return;
+                //return;
             }
 
             BF.Activities.Where(x => AG.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(x.Guid)).ToList();
@@ -3971,6 +3973,10 @@ namespace Ginger.Run
                 {
                     Stopped = true;
                 }
+                else if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
+                {
+                    Skipped = true;
+                }
             }
 
             if (Blocked)
@@ -3984,6 +3990,10 @@ namespace Ginger.Run
             else if (Stopped)
             {
                 AG.RunStatus = eActivitiesGroupRunStatus.Stopped;
+            }
+            else if (Skipped)
+            {
+                AG.RunStatus = eActivitiesGroupRunStatus.Skipped;
             }
             else
             {
@@ -4039,7 +4049,7 @@ namespace Ginger.Run
                     CalculateActivitiesGroupFinalStatus(currentActivityGroup, CurrentBusinessFlow);
                     if (currentActivityGroup != null)
                     {
-                        if (currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Stopped)
+                        if (currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Skipped)
                         {
                             currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
                         }
@@ -4048,7 +4058,13 @@ namespace Ginger.Run
                             switch (currentActivityGroup.ExecutionLoggerStatus)
                             {
                                 case executionLoggerStatus.NotStartedYet:
-                                    // do nothing
+                                    
+                                    // Gideon
+                                    if (currentActivityGroup.RunStatus == eActivitiesGroupRunStatus.Skipped)
+                                    {
+                                        NotifyActivityGroupEnd(currentActivityGroup, offlineMode);
+                                    }
+
                                     break;
                                 case executionLoggerStatus.StartedNotFinishedYet:
                                     currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.Finished;
@@ -4907,7 +4923,8 @@ namespace Ginger.Run
                     {
                         continue;
                     }
-                    if (activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+                    if (activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped
+                        && activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
                     {
                         continue;
                     }
@@ -4915,7 +4932,8 @@ namespace Ginger.Run
                     System.IO.Directory.CreateDirectory(activity.ExecutionLogFolder);
                     foreach (Act action in activity.Acts)
                     {
-                        if (action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped && action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.FailIgnored)
+                        if (action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped && action.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.FailIgnored
+                            && activity.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
                         {
                             continue;
                         }
