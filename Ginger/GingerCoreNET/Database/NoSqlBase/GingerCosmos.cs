@@ -50,7 +50,9 @@ namespace GingerCore.NoSqlBase
             get
             {
                 int lastIndexOf = Db.ConnectionString.LastIndexOf(';');
-                return Db.ConnectionString.Substring(0, lastIndexOf);
+                string[] strArray = Db.ConnectionString.Split(';');
+                string connectionString = strArray[0] + ";" + strArray[1];
+                return connectionString;
             }
         }
 
@@ -59,7 +61,8 @@ namespace GingerCore.NoSqlBase
             get
             {
                 int lastIndexOf = Db.ConnectionString.LastIndexOf(';');
-                string dbString = Db.ConnectionString.Substring(lastIndexOf + 1);
+                string[] strArray = Db.ConnectionString.Split(';');
+                string dbString = strArray[2];
                 return dbString.Split('=')[1];
             }
         }
@@ -214,8 +217,8 @@ namespace GingerCore.NoSqlBase
                         break;
                     case eDBValidationType.UpdateDB:
                         Container objRecordContainer = GetContainer(DatabaseName, containerName);
-                        string primaryKey = Act.GetInputParamCalculatedValue("CosmosPrimaryKey");
-                        string partitionKey = Act.GetInputParamCalculatedValue("CosmosPartitionKey");
+                        string primaryKey = Act.GetInputParamCalculatedValue(nameof(Act.PrimaryKey));
+                        string partitionKey = Act.GetInputParamCalculatedValue(nameof(Act.PartitionKey));
                         if (string.IsNullOrEmpty(primaryKey))
                         {
                             Act.Error = "Primary Key cannot be empty";
@@ -226,7 +229,7 @@ namespace GingerCore.NoSqlBase
                             Act.Error = "Partition Key cannot be empty";
                             return;
                         }
-                        if (Act.CosmosPatchInputValues == null || Act.CosmosPatchInputValues.Count == 0)
+                        if (Act.UpdateOperationInputValues == null || Act.UpdateOperationInputValues.Count == 0)
                         {
                             Act.Error = "Please provide fields to be modified";
                             return;
@@ -237,9 +240,14 @@ namespace GingerCore.NoSqlBase
                             return;
                         }
                         List<PatchOperation> lstPatchOperations = new List<PatchOperation>();
-                        foreach (CosmosPatchInputValues cosmosPatch in Act.CosmosPatchInputValues)
+                        foreach (ActInputValue cosmosPatch in Act.UpdateOperationInputValues)
                         {
-                            lstPatchOperations.Add(PatchOperation.Replace(cosmosPatch.Param, cosmosPatch.Value));
+                            string param, value;
+                            VE.Value = cosmosPatch.Param;
+                            param = VE.ValueCalculated;
+                            VE.Value = cosmosPatch.Value;
+                            value = VE.ValueCalculated;
+                            lstPatchOperations.Add(PatchOperation.Replace(param, value));
                         }
                         IReadOnlyList<PatchOperation> enumerablePatchOps = lstPatchOperations;
                         ItemResponse<object> response = objRecordContainer.PatchItemAsync<object>(id: primaryKey, partitionKey: new PartitionKey(partitionKey), patchOperations: enumerablePatchOps
@@ -256,8 +264,8 @@ namespace GingerCore.NoSqlBase
                         break;
                     case eDBValidationType.Insert:
                         Container objContainerForInsert = GetContainer(dbName, containerName);
-                        string primaryKeyForInsert = Act.GetInputParamCalculatedValue("CosmosPrimaryKey");
-                        string partitionKeyForInsert = Act.GetInputParamCalculatedValue("CosmosPartitionKey");
+                        string primaryKeyForInsert = Act.GetInputParamCalculatedValue(nameof(Act.PrimaryKey));
+                        string partitionKeyForInsert = Act.GetInputParamCalculatedValue(nameof(Act.PartitionKey));
                         string insertJson = Act.GetInputParamCalculatedValue("InsertJson");
                         if (string.IsNullOrEmpty(primaryKeyForInsert))
                         {

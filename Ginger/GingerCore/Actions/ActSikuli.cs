@@ -86,7 +86,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(WindowTitle)).Value;
+                return GetOrCreateInputParam(nameof(WindowTitle)).ValueForDriver;
             }
             set
             {
@@ -109,22 +109,21 @@ namespace GingerCore.Actions
         {
             get
             {
-                return "Sikuli based operations execution Action";
+                return "Image based locator and operation using Sikuli";
             }
         }
-        [IsSerializedForLocalRepository]
+
         public string PatternPath
         {
             get
             {
-                return GetOrCreateInputParam(nameof(PatternPath)).Value;
+                return GetOrCreateInputParam(nameof(PatternPath)).ValueForDriver;
             }
             set
             {
                 AddOrUpdateInputParamValue(nameof(PatternPath), value);
             }
         }
-        [IsSerializedForLocalRepository]
         public bool ShowSikuliConsole
         {
             get
@@ -138,12 +137,11 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(ShowSikuliConsole), value.ToString());
             }
         }
-        [IsSerializedForLocalRepository]
         public string SetTextValue
         {
             get
             {
-                return GetOrCreateInputParam(nameof(SetTextValue)).Value;
+                return GetOrCreateInputParam(nameof(SetTextValue)).ValueForDriver;
             }
             set
             {
@@ -151,12 +149,11 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string ProcessNameForSikuliOperation
         {
             get
             {
-                return GetOrCreateInputParam(nameof(ProcessNameForSikuliOperation)).Value;
+                return GetOrCreateInputParam(nameof(ProcessNameForSikuliOperation)).ValueForDriver;
             }
             set
             {
@@ -164,18 +161,15 @@ namespace GingerCore.Actions
             }
         }
 
-        private string mPatternSimilarity = "70";
-
-        [IsSerializedForLocalRepository]
         public string PatternSimilarity
         {
             get
             {
-                return mPatternSimilarity;
+                return GetOrCreateInputParam(nameof(PatternSimilarity)).ValueForDriver;
             }
             set
             {
-                mPatternSimilarity = value;
+                AddOrUpdateInputParamValue(nameof(PatternSimilarity), value);
             }
         }
 
@@ -253,7 +247,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(CustomJavaPath)).Value;
+                return GetOrCreateInputParam(nameof(CustomJavaPath)).ValueForDriver;
             }
             set
             {
@@ -371,10 +365,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                if (ActiveProcessWindowsList == null || ActiveProcessWindowsList.Count == 0)
-                {
-                    RefreshActiveProcessesTitles();
-                }
+                RefreshActiveProcessesTitles();
                 return ActiveProcessWindowsList;
             }
         }
