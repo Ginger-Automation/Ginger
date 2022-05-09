@@ -99,15 +99,29 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string Where { set; get; }
 
-        private string mPrimaryKey = string.Empty;
+        public string PrimaryKey
+        {
+            get
+            {
+                return GetInputParamValue(nameof(PrimaryKey));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PrimaryKey), value);
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public string CosmosPrimaryKey { get; set; }
-
-        private string mPartitionKey = string.Empty;
-
-        [IsSerializedForLocalRepository]
-        public string CosmosPartitionKey { get; set; }
+        public string PartitionKey
+        {
+            get
+            {
+                return GetInputParamValue(nameof(PartitionKey));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PartitionKey), value);
+            }
+        }
 
         public string SQL
         {
@@ -133,7 +147,7 @@ namespace GingerCore.Actions
         public ObservableList<ActInputValue> QueryParams = new ObservableList<ActInputValue>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<CosmosPatchInputValues> CosmosPatchInputValues = new ObservableList<CosmosPatchInputValues>();
+        public ObservableList<ActInputValue> UpdateOperationInputValues = new ObservableList<ActInputValue>();
 
         public enum eDatabaseTye
         {
@@ -248,6 +262,13 @@ namespace GingerCore.Actions
             get { return "DB Action - " + DBValidationType.ToString(); }
         }
 
+        public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
+        {
+            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
+            list.Add(UpdateOperationInputValues);
+            return list;
+        }
+
         public override void Execute()
         {
             if (String.IsNullOrEmpty(GetInputParamValue("SQL")))
@@ -336,13 +357,13 @@ namespace GingerCore.Actions
         {
             //TODO: add on null or not found throw exception so it will fail
 
-            if (string.IsNullOrEmpty(CosmosPrimaryKey))
+            if (string.IsNullOrEmpty(PrimaryKey))
             {
-                CosmosPrimaryKey = string.Empty;
+                PrimaryKey = string.Empty;
             }
-            if (string.IsNullOrEmpty(CosmosPartitionKey))
+            if (string.IsNullOrEmpty(PartitionKey))
             {
-                CosmosPartitionKey = string.Empty;
+                PartitionKey = string.Empty;
             }
 
             string AppNameCalculated = ValueExpression.Calculate(this.AppName);
@@ -518,16 +539,5 @@ namespace GingerCore.Actions
                 }
             }
         }
-    }
-
-    public class CosmosPatchInputValues : RepositoryItemBase
-    {
-        [IsSerializedForLocalRepository]
-        public string Param { get; set; }
-        [IsSerializedForLocalRepository]
-        public string Value { get; set; }
-
-        private string mItemName = string.Empty;
-        public override string ItemName { get { return mItemName; } set { mItemName = value; } }
     }
 }

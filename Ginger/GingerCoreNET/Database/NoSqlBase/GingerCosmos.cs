@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2022 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -32,7 +50,9 @@ namespace GingerCore.NoSqlBase
             get
             {
                 int lastIndexOf = Db.ConnectionString.LastIndexOf(';');
-                return Db.ConnectionString.Substring(0, lastIndexOf);
+                string[] strArray = Db.ConnectionString.Split(';');
+                string connectionString = strArray[0] + ";" + strArray[1];
+                return connectionString;
             }
         }
 
@@ -41,7 +61,8 @@ namespace GingerCore.NoSqlBase
             get
             {
                 int lastIndexOf = Db.ConnectionString.LastIndexOf(';');
-                string dbString = Db.ConnectionString.Substring(lastIndexOf + 1);
+                string[] strArray = Db.ConnectionString.Split(';');
+                string dbString = strArray[2];
                 return dbString.Split('=')[1];
             }
         }
@@ -158,7 +179,11 @@ namespace GingerCore.NoSqlBase
                         break;
                     case eDBValidationType.SimpleSQLOneValue:
                         Container objContainer = GetContainer(dbName, containerName);
-                        SQLCalculated = "select * from " + containerName + " where " + Act.Where;
+                        SQLCalculated = "select * from " + containerName;
+                        if (!string.IsNullOrEmpty(Act.Where))
+                        {
+                            SQLCalculated += " where " + Act.Where;
+                        }
                         SetOutputFromApiResponse(objContainer, SQLCalculated);
                         break;
                     case eDBValidationType.RecordCount:
@@ -192,8 +217,8 @@ namespace GingerCore.NoSqlBase
                         break;
                     case eDBValidationType.UpdateDB:
                         Container objRecordContainer = GetContainer(DatabaseName, containerName);
-                        string primaryKey = Act.GetInputParamCalculatedValue("CosmosPrimaryKey");
-                        string partitionKey = Act.GetInputParamCalculatedValue("CosmosPartitionKey");
+                        string primaryKey = Act.GetInputParamCalculatedValue(nameof(Act.PrimaryKey));
+                        string partitionKey = Act.GetInputParamCalculatedValue(nameof(Act.PartitionKey));
                         if (string.IsNullOrEmpty(primaryKey))
                         {
                             Act.Error = "Primary Key cannot be empty";
@@ -204,7 +229,7 @@ namespace GingerCore.NoSqlBase
                             Act.Error = "Partition Key cannot be empty";
                             return;
                         }
-                        if (Act.CosmosPatchInputValues == null || Act.CosmosPatchInputValues.Count == 0)
+                        if (Act.UpdateOperationInputValues == null || Act.UpdateOperationInputValues.Count == 0)
                         {
                             Act.Error = "Please provide fields to be modified";
                             return;
@@ -215,9 +240,14 @@ namespace GingerCore.NoSqlBase
                             return;
                         }
                         List<PatchOperation> lstPatchOperations = new List<PatchOperation>();
-                        foreach (CosmosPatchInputValues cosmosPatch in Act.CosmosPatchInputValues)
+                        foreach (ActInputValue cosmosPatch in Act.UpdateOperationInputValues)
                         {
-                            lstPatchOperations.Add(PatchOperation.Replace(cosmosPatch.Param, cosmosPatch.Value));
+                            string param, value;
+                            VE.Value = cosmosPatch.Param;
+                            param = VE.ValueCalculated;
+                            VE.Value = cosmosPatch.Value;
+                            value = VE.ValueCalculated;
+                            lstPatchOperations.Add(PatchOperation.Replace(param, value));
                         }
                         IReadOnlyList<PatchOperation> enumerablePatchOps = lstPatchOperations;
                         ItemResponse<object> response = objRecordContainer.PatchItemAsync<object>(id: primaryKey, partitionKey: new PartitionKey(partitionKey), patchOperations: enumerablePatchOps
@@ -234,8 +264,8 @@ namespace GingerCore.NoSqlBase
                         break;
                     case eDBValidationType.Insert:
                         Container objContainerForInsert = GetContainer(dbName, containerName);
-                        string primaryKeyForInsert = Act.GetInputParamCalculatedValue("CosmosPrimaryKey");
-                        string partitionKeyForInsert = Act.GetInputParamCalculatedValue("CosmosPartitionKey");
+                        string primaryKeyForInsert = Act.GetInputParamCalculatedValue(nameof(Act.PrimaryKey));
+                        string partitionKeyForInsert = Act.GetInputParamCalculatedValue(nameof(Act.PartitionKey));
                         string insertJson = Act.GetInputParamCalculatedValue("InsertJson");
                         if (string.IsNullOrEmpty(primaryKeyForInsert))
                         {
@@ -298,18 +328,34 @@ namespace GingerCore.NoSqlBase
 
         private void SetOutputFromApiResponse(Container objContainer, string sqlCalculated)
         {
-            FeedResponse<object> currentResultSet = null;
-            Dictionary<string, object> outputVals = new Dictionary<string, object>();
-            FeedIterator<object> queryResultSetIterator = null;
-            queryResultSetIterator = objContainer.GetItemQueryIterator<object>(sqlCalculated);
-            while (queryResultSetIterator.HasMoreResults)
+            try
             {
-                currentResultSet = queryResultSetIterator.ReadNextAsync().Result;
-                int i = 1;
-                foreach (object response in currentResultSet)
+                FeedResponse<object> currentResultSet = null;
+                Dictionary<string, object> outputVals = new Dictionary<string, object>();
+                FeedIterator<object> queryResultSetIterator = null;
+                queryResultSetIterator = objContainer.GetItemQueryIterator<object>(sqlCalculated);
+                while (queryResultSetIterator.HasMoreResults)
                 {
-                    Act.ParseJSONToOutputValues(response.ToString(), i);
-                    i++;
+                    currentResultSet = queryResultSetIterator.ReadNextAsync().Result;
+                    int i = 1;
+                    foreach (object response in currentResultSet)
+                    {
+                        Act.ParseJSONToOutputValues(response.ToString(), i);
+                        i++;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                if (!GetTableList(string.Empty).Contains(objContainer.Id))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Container name is invalid", null);
+                    Act.Error = "Container name is invalid";
+                }
+                else
+                {
+                    Act.Error = ex.Message;
                 }
             }
         }

@@ -144,7 +144,7 @@ namespace GingerWPF.TreeViewItemsLib
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Duplicating tree item", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Duplicating tree item", ex);
                 }
                 finally
                 {

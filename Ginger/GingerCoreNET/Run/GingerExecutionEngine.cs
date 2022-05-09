@@ -4162,13 +4162,22 @@ namespace Ginger.Run
                 if (mStopRun)
                     break;
 
-                if (act.Active && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
+                if (act.Active && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                {
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
+                }
                 if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                 {
-                    NotifyActionEnd(act);
+                    //To avoid repeat call to NotifyActionEnd for the same action
+                    if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked)
+                    {
+                        NotifyActionEnd(act);
+                    }
                 }
-                if (CurrentBusinessFlow.CurrentActivity.Acts.IsLastItem()) break;
-
+                if (CurrentBusinessFlow.CurrentActivity.Acts.IsLastItem())
+                {
+                    break;
+                }
                 else
                 {
                     CurrentBusinessFlow.CurrentActivity.Acts.MoveNext();

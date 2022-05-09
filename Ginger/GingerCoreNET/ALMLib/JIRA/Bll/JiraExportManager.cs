@@ -853,7 +853,7 @@ namespace GingerCore.ALM.JIRA.Bll
 
                     steps.Add(new JiraStepData()
                     {
-                        step_index = a.ToString(),
+                        step_index = (a+1).ToString(),
                         step_name = activity.ActivityName,
                         step_result = activity.IdentifiedActivity.Expected,
                         step_data = stepDataSb.ToString()

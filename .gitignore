@@ -333,3 +333,4 @@ ASALocalRun/
 /Ginger/GingerCoreNETUnitTest/TestResources/Solutions/BasicSimple/ExecutionResults/GingerExecutionResults.db
 /Ginger/GingerTest/GingerTest.GeneratedMSBuildEditorConfig.editorconfig
 *.DS_Store
+/Ginger-Automation/Ginger

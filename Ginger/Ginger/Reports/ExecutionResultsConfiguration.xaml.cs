@@ -70,14 +70,6 @@ namespace Ginger.Reports
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FolderTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFolderMaximumSizeTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize), bindingConvertor: new GingerCore.GeneralLib.LongStringConverter());
 
-            xPublishLogToCentralDBRadioButton.Init(typeof(ExecutionLoggerConfiguration.ePublishToCentralDB),
-                xPublishLogToCentralDBRadioBtnPanel, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB), PublishLogToCentralDBRadioButton_CheckedHandler);
-            //, new RoutedEventHandler(PublishLogToCentralDBRadioButton_Click)
-            if (_selectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
-            {
-                SetExecutionLoggerRadioButtonToOff();
-            }
 
             xPublishingPhaseRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDataPublishingPhase),
                 xPublishingPhasePanel, _selectedExecutionLoggerConfiguration,
@@ -102,23 +94,8 @@ namespace Ginger.Reports
             xSealighsBuildSessionIDTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
             xSealighsSessionTimeoutTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsSessionTimeout));
             xSealighsReportedEntityLevelComboBox.BindControl(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
-            
-            // check if fields have been populated (font-end validation)
-            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId), "Lab ID or Build Session ID must be provided"));
-            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
-            xSealightsURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Url cannot be empty"));
-            xSealighsAgentTokenTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Token cannot be empty"));
-            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
-            xSealighsSessionTimeoutTextBox.ValueTextBox.AddValidationRule(new ValidateNumberInputRule());
-            xSealighsReportedEntityLevelComboBox.AddValidationRule(new ValidateEmptyValue("Entity Level cannot be empty"));
 
-            // need in order to trigger the validation's rules on init binding (load/init form)
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsURL));
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsLabId));
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsTestStage));
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
+            ApplyValidationRules();
 
             if (xSealighsSessionTimeoutTextBox.ValueTextBox.Text.Trim() == "")
             {
@@ -143,6 +120,50 @@ namespace Ginger.Reports
             {
                 liteDbRadioBtnsPnl.IsChecked = true;
             }
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralExecutionLoggerExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
+
+            // this added in ordre to apply the validation when turnining ON the Enterprise Features Flag (the validation wont apply when the Enterprise Features Flag initially was OFF)
+            xSealighsExpander.IsVisibleChanged += XSealighsExpander_IsVisibleChanged;
+            if (_selectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
+            {
+                SetExecutionLoggerRadioButtonToOff();
+            }
+            xPublishLogToCentralDBRadioButton.Init(typeof(ExecutionLoggerConfiguration.ePublishToCentralDB),
+                xPublishLogToCentralDBRadioBtnPanel, _selectedExecutionLoggerConfiguration,
+                nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB), PublishLogToCentralDBRadioButton_CheckedHandler);
+
+        }
+
+        private void XSealighsExpander_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            ApplyValidationRules();
+        }
+
+        private void ApplyValidationRules()
+        {
+            // check if fields have been populated (font-end validation)
+            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId), "Lab ID or Build Session ID must be provided"));
+            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
+            xSealightsURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Url cannot be empty"));
+            xSealighsAgentTokenTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Token cannot be empty"));
+            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
+            xSealighsSessionTimeoutTextBox.ValueTextBox.AddValidationRule(new ValidateNumberInputRule());
+            xSealighsReportedEntityLevelComboBox.AddValidationRule(new ValidateEmptyValue("Entity Level cannot be empty"));
+
+            CallSealightsConfigPropertyChange();
+        }
+
+        private void CallSealightsConfigPropertyChange()
+        {
+            // need in order to trigger the validation's rules on init binding (load/init form)
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsURL));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsLabId));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsTestStage));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
+            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
         }
 
         private void SelectFolderButton_Click(object sender, RoutedEventArgs e)
@@ -165,7 +186,9 @@ namespace Ginger.Reports
             {
                 xLoggerSettingsGrid.Visibility = Visibility.Visible;
 
-                if (xCentralExecutionLoggerGrid != null && _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                if (xCentralExecutionLoggerGrid != null &&
+                    _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB &&
+                    _selectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
                 {
                     xCentralExecutionLoggerGrid.Visibility = Visibility.Visible;
                 }
@@ -211,7 +234,7 @@ namespace Ginger.Reports
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide endpoint URI");
                         return;
                     }
-                }                
+                }
             }
             catch
             {
@@ -227,13 +250,12 @@ namespace Ginger.Reports
         {
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
-                xCentralExecutionLoggerGrid.Visibility = Visibility.Collapsed;
-                xFolderMaximumSizeLabel.Visibility = Visibility.Visible;
-                xFolderMaximumSizeTextBox.Visibility = Visibility.Visible;
-                _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
-
-                _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
                 _selectedExecutionLoggerConfiguration.PublishLogToCentralDB = ExecutionLoggerConfiguration.ePublishToCentralDB.No;
+                SetExecutionLoggerRadioButtonToOff();
+                _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
+                xCentralExecutionLoggerExpander.Visibility = Visibility.Collapsed;
+                xFolderMaximumSizeRow.Height = new GridLength(30);
+                _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
                 if (isControlsSet)
                 {
                     Reporter.ToUser(eUserMsgKey.ChangesRequireRestart);
@@ -244,9 +266,11 @@ namespace Ginger.Reports
         {
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
-                xCentralExecutionLoggerGrid.Visibility = Visibility.Visible;
-                xFolderMaximumSizeLabel.Visibility = Visibility.Collapsed;
-                xFolderMaximumSizeTextBox.Visibility = Visibility.Collapsed;
+                if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+                {
+                    xCentralExecutionLoggerExpander.Visibility = Visibility.Visible;
+                }
+                xFolderMaximumSizeRow.Height = new GridLength(0);
                 _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
                 _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
                 if (isControlsSet)
@@ -267,21 +291,11 @@ namespace Ginger.Reports
 
             if (publishToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
             {
-                xEndPointURLLabel.Visibility = Visibility.Visible;
-                xEndPointURLTextBox.Visibility = Visibility.Visible;
-                xDeleteLocalData.Visibility = Visibility.Visible;
-                xDeleteLocalDataOnPublishPanel.Visibility = Visibility.Visible;
-                xPublishingPhase.Visibility = Visibility.Visible;
-                xPublishingPhasePanel.Visibility = Visibility.Visible;
+                xCentralExecutionLoggerGrid.Visibility = Visibility.Visible;
             }
             else
             {
-                xEndPointURLLabel.Visibility = Visibility.Collapsed;
-                xEndPointURLTextBox.Visibility = Visibility.Collapsed;
-                xDeleteLocalData.Visibility = Visibility.Collapsed;
-                xDeleteLocalDataOnPublishPanel.Visibility = Visibility.Collapsed;
-                xPublishingPhase.Visibility = Visibility.Collapsed;
-                xPublishingPhasePanel.Visibility = Visibility.Collapsed;
+                xCentralExecutionLoggerGrid.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -296,13 +310,25 @@ namespace Ginger.Reports
             if (sealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
             {
                 xSealightsExecutionLoggerGrid.Visibility = Visibility.Visible;
+
+                // Adding Init and validation in ordre to fix the issue: Validation is not working when Sealights is not Enable on the Init/load Configuration form
+                Context mContext = new Context();
+                xSealightsURLTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsURL));
+                xSealighsAgentTokenTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
+                xSealighsLabIdTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId));
+                xSealightsTestStageTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsTestStage));
+                xSealighsBuildSessionIDTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
+                xSealighsSessionTimeoutTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsSessionTimeout));
+                xSealighsReportedEntityLevelComboBox.BindControl(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
+
+                ApplyValidationRules();
             }
             else
             {
                 xSealightsExecutionLoggerGrid.Visibility = Visibility.Collapsed;
             }
         }
-        
+
 
         private void SetExecutionLoggerRadioButtonToOff()
         {

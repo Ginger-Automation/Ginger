@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.User"
-      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="UserSettings">
@@ -25,7 +25,11 @@
             <CheckBox x:Name="xAskToRecoverSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Do not offer to recover un-saved items"  Margin="0,5,0,0"/>
 
             <CheckBox x:Name="xAutoLoadLastRunSetCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Auto load last Run Set"  Margin="0,5,0,0"/>
-            
+
+            <StackPanel Orientation="Horizontal">
+                <CheckBox x:Name="xShowEnterpriseFeatures" Style="{StaticResource $CeckBoxStyle}" Content="Show enterprise features"  Margin="0,5,0,0"/>
+                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
+            </StackPanel>
             <!--<CheckBox x:Name="xShowBFSaveWarnCheckBox" Style="{StaticResource $CeckBoxStyle}"  Margin="0,5,0,0">
                 <CheckBox.Content>
                     <GingerCore:ucTextDicResource Text="Show [BusinessFlow] change save warning when shifting to automate other [BusinessFlow]"/>

@@ -71,7 +71,7 @@
             </StackPanel>
             <StackPanel x:Name="SqlFile" Orientation="Horizontal">
                 <Label x:Name="SQLInputFile"  Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="Default path recommended is ~\Documents\SQL">SQL File Path:</Label>
-                <Actions:UCValueExpression x:Name="QueryFile"/>
+                <Actions:UCValueExpression Width="200" MaxWidth="400" x:Name="QueryFile"/>
                 <StackPanel Name="QueryParamsPanel" Visibility="Collapsed" HorizontalAlignment="Stretch" Margin="0,10,0,0">
                     <Ginger:ucGrid x:Name="QueryParamsGrid" Title="Query Input Value(s)" Height="156"/>
                 </StackPanel>
@@ -95,7 +95,7 @@
                 <StackPanel Margin="0,5,5,5" Orientation="Horizontal">
                     <Label x:Name="lblWhere" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Where:</Label>
 
-                    <TextBox x:Name="txtWhere" Width="980" HorizontalAlignment="Left"></TextBox>
+                    <TextBox x:Name="txtWhere" Width="550" HorizontalAlignment="Left"></TextBox>
                 </StackPanel>
             </StackPanel>
 
@@ -103,7 +103,7 @@
                 <CheckBox x:Name="CommitDB"  Content="Do Commit after Update"  HorizontalAlignment="Left" Margin="10,10,0,0"/>
             </StackPanel>
             <StackPanel x:Name="DoUpdate" Visibility="Collapsed" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Auto">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,10,10">
+                <StackPanel x:Name="xKeysStackPanel" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,10,10">
                     <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Primary Key:</Label>
                     <Actions:UCValueExpression Height="25" Margin="3,0" x:Name="txtPrimaryKey" Width="300" HorizontalAlignment="Left"></Actions:UCValueExpression>
 
@@ -111,7 +111,19 @@
                     <Actions:UCValueExpression Height="25" Margin="1,0" x:Name="txtPartitionKey" Width="295" HorizontalAlignment="Left"></Actions:UCValueExpression>
                 </StackPanel>
 
-                <Ginger:ucGrid x:Name="UpdateDbParametersGrid" Title="Cosmos Update Parameters"/>
+                <Grid  x:Name="UpdateDbParametersHeadersGrid">
+                    <Label Style="{StaticResource @LabelStyle}" x:Name="LabelHeaders" Content="Request Headers:" />
+                    <Ginger:ucGrid x:Name="UpdateDbParametersGrid" Title="Cosmos Update Parameters"/>
+                    <Grid.Resources>
+                        <DataTemplate x:Key="UpdateDbParametersPathValueExpressionButton">
+                            <Button x:Name="UpdateDbParametersGridPathVEButton" Content="..." Click="UpdateDbParametersGridPathVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                        </DataTemplate>
+                        <DataTemplate x:Key="UpdateDbParametersValueExpressionButton">
+                            <Button x:Name="UpdateDbParametersGridVEButton" Content="..." Click="UpdateDbParametersGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                        </DataTemplate>
+                    </Grid.Resources>
+                </Grid>
+
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="0,0,10,10">
                     <Label Name="lblInsertJson" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Insert JSON:</Label>
                     <Grid Width="600" x:Name="gridInsertJson" Visibility="Collapsed">
