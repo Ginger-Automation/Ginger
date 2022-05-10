@@ -3223,7 +3223,7 @@ namespace Ginger.Run
 
                     activityStarted = true;
                     CurrentBusinessFlow.CurrentActivity.Status = eRunStatus.Running;
-                    if (doContinueRun || CurrentBusinessFlow.CurrentActivity.Status == eRunStatus.Skipped) // Gideon, Skip, 5/9/2022, For 'ActivityGroup'
+                    if (doContinueRun || CurrentBusinessFlow.CurrentActivity.Status == eRunStatus.Skipped) // Sealights, Skipped For 'ActivityGroup'
                     {
                         NotifyActivityStart(CurrentBusinessFlow.CurrentActivity, doContinueRun);
                     }
@@ -3375,7 +3375,7 @@ namespace Ginger.Run
             }
             finally
             {
-                if (activityStarted || activity.Status == eRunStatus.Skipped) // Gideon, Skipped, 5/9/2022 - For 'Activity'
+                if (activityStarted || activity.Status == eRunStatus.Skipped) // Sealights, Skipped For 'Activity'
                 {
                     st.Stop();
                     activity.Elapsed = st.ElapsedMilliseconds;
@@ -4058,8 +4058,8 @@ namespace Ginger.Run
                             switch (currentActivityGroup.ExecutionLoggerStatus)
                             {
                                 case executionLoggerStatus.NotStartedYet:
-                                    
-                                    // Gideon
+
+                                    // // Sealights, 'Skipped' support
                                     if (currentActivityGroup.RunStatus == eActivitiesGroupRunStatus.Skipped)
                                     {
                                         NotifyActivityGroupEnd(currentActivityGroup, offlineMode);
