@@ -222,6 +222,15 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Selenium line arguments || Set Selenium arguments separated with ; sign")]
         public string SeleniumUserArguments { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("VRT apiUrl - URL where backend is running")]
+        public String VRTApiUrl { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("VRT apiKey - User apiKey")]
+        public String VRTApiKey { get; set; }
 
         //[UserConfigured]
         //[UserConfiguredDefault("False")]

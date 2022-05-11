@@ -49,7 +49,7 @@
             <DockPanel x:Name="xSetApplicationScreenSize" Margin="10,0,0,0">
                 <Label Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left">Application Screen Size:</Label>
                 <StackPanel Orientation="Horizontal">
-                    <UserControlsLib:UCComboBox x:Name="ChangeAppScreenSizeComboBox" Width="250" Margin="0,0,0,0"/>
+                    <UserControlsLib:UCComboBox x:Name="ChangeAppScreenSizeComboBox" Width="250" Margin="40,0,0,0"/>
                     <StackPanel x:Name="WidthHeightStackPanel" Orientation="Horizontal">
                         <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12">Width</Label>
                         <Actions:UCValueExpression x:Name="WidthUCVE" Width="100"/>
@@ -92,7 +92,7 @@
                     <GridSplitter Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0" ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Style="{StaticResource @HorizontalGridSplitterStyle}" Height="5" Width="Auto"/>
                     <!--Titles-->
                     <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
-                        <Label Content="Baseline Image" Style="{StaticResource @InputFieldLabelStyle}"></Label>
+                        <Label Content="Baseline Image:" Style="{StaticResource @LabelStyle}"></Label>
 
                         <Button x:Name="CreateBaseline" Margin="50,0,0,0" Height="30" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1" Click="CreateBaseline_Click" Style="{StaticResource @InputImageButtonStyle}" >
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
@@ -111,7 +111,7 @@
                                 <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Label  Grid.Column="0" Margin="3,0,0,0" Content="Target Image:" Style="{StaticResource @InputFieldLabelStyle}"></Label>
+                            <Label  Grid.Column="0" Margin="3,0,0,0" Content="Target Image:" Style="{StaticResource @LabelStyle}"></Label>
 
                             <RadioButton x:Name="TargetScreenShotRadioButton" Content="Screenshot" Checked="TargetScreenShotRadioButton_Checked"  GroupName="TargetSource" VerticalAlignment="Center" Grid.Column="1"></RadioButton>
                             <RadioButton x:Name="TargetImageFileRadioButton" Content="Image File" Checked="TargetImageFileRadioButton_Checked"  GroupName="TargetSource" VerticalAlignment="Center" Grid.Column="2"></RadioButton>
@@ -140,7 +140,7 @@
         </Grid>
 
         <StackPanel Grid.Row="3" x:Name="xResultImageHeader">
-            <Label>Result</Label>
+            <Label Style="{StaticResource @LabelStyle}">Result</Label>
         </StackPanel>
         
         <Frame x:Name="xDiffrenceImageFrame" Background="White" Grid.Row="4" Margin="5"></Frame>

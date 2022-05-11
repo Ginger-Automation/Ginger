@@ -60,6 +60,8 @@ namespace GingerCore.Actions
             //BlinkDiff,
             //[EnumValueDescription("Spell Check Analyzer - Not Implemented")]
             //Spellcheck,
+            [EnumValueDescription("Visual Regression Tracker")]
+            VRT
         }
 
         public enum eChangeAppWindowSize
@@ -489,6 +491,10 @@ namespace GingerCore.Actions
                 case eVisualTestingAnalyzer.UIElementsComparison:
                     if (mVisualAnalyzer is UIElementsAnalyzer) return;
                     mVisualAnalyzer = new UIElementsAnalyzer();
+                    break;
+                case eVisualTestingAnalyzer.VRT:
+                    if (mVisualAnalyzer is VRTAnalyzer) return;
+                    mVisualAnalyzer = new VRTAnalyzer();
                     break;
             }
         }
