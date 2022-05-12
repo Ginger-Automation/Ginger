@@ -3172,7 +3172,7 @@ namespace Ginger.Run
                     // handling ActivityGroup execution
                     currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
                     if (currentActivityGroup != null)
-                    {
+                    {                       
                         currentActivityGroup.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
                         switch (currentActivityGroup.ExecutionLoggerStatus)
                         {
@@ -3374,6 +3374,11 @@ namespace Ginger.Run
             }
             finally
             {
+                if (activity.Status == eRunStatus.Skipped)
+                {
+                    NotifyActivitySkippedEnd(activity); // Sealights - Skipped for 'Activity'
+                }
+
                 if (activityStarted)
                 {
                     st.Stop();
@@ -4041,6 +4046,11 @@ namespace Ginger.Run
                     {
                         if (currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Stopped)
                         {
+                            if (currentActivityGroup.RunStatus == eActivitiesGroupRunStatus.Skipped)
+                            {
+                                NotifyActivityGroupSkippedEnd(currentActivityGroup);
+                            }
+
                             currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
                         }
                         else
@@ -4796,6 +4806,16 @@ namespace Ginger.Run
             }
         }
 
+        private void NotifyActivitySkippedEnd(Activity activity)
+        {
+            uint evetTime = RunListenerBase.GetEventTime();
+            activity.EndTimeStamp = DateTime.UtcNow;
+            foreach (RunListenerBase runnerListener in mRunListeners)
+            {
+                runnerListener.ActivitySkippedEnd(evetTime, activity);
+            }
+        }
+
 
         private void NotifyBusinessFlowEnd(BusinessFlow businessFlow)
         {
@@ -4807,6 +4827,29 @@ namespace Ginger.Run
                 foreach (RunListenerBase runnerListener in mRunListeners)
                 {
                     runnerListener.BusinessFlowEnd(eventTime, CurrentBusinessFlow);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Notify Businessflow End", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
+
+        }
+
+        private void NotifyBusinessFlowSkippedEnd(BusinessFlow businessFlow)
+        {
+            try
+            {
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating status for pending activities...");
+                uint eventTime = RunListenerBase.GetEventTime();
+                businessFlow.EndTimeStamp = DateTime.UtcNow;
+                foreach (RunListenerBase runnerListener in mRunListeners)
+                {
+                    runnerListener.BusinessFlowSkippedEnd(eventTime, CurrentBusinessFlow);
                 }
             }
             catch (Exception ex)
@@ -4868,6 +4911,20 @@ namespace Ginger.Run
                     ((Ginger.Run.ExecutionLoggerManager)runnerListener).mCurrentBusinessFlow = CurrentBusinessFlow;
                 }
                 runnerListener.ActivityGroupEnd(eventTime, activityGroup, offlineMode);
+            }
+        }
+
+        private void NotifyActivityGroupSkippedEnd(ActivitiesGroup activityGroup, bool offlineMode = false)
+        {
+            uint eventTime = RunListenerBase.GetEventTime();
+            activityGroup.EndTimeStamp = DateTime.UtcNow;
+            foreach (RunListenerBase runnerListener in mRunListeners)
+            {
+                if (runnerListener.ToString().Contains("Ginger.Run.ExecutionLExecutionLoggerManagerogger"))
+                {
+                    ((Ginger.Run.ExecutionLoggerManager)runnerListener).mCurrentBusinessFlow = CurrentBusinessFlow;
+                }
+                runnerListener.ActivityGroupSkippedEnd(eventTime, activityGroup, offlineMode);
             }
         }
 

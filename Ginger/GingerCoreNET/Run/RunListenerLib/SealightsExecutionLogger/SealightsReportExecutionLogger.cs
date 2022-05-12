@@ -233,6 +233,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         }
 
 
-        #endregion Action       
+        #endregion Action  
+
+        public override async void ActivitySkippedEnd(uint eventTime, Activity activity, bool offlineMode = false)
+        {
+            await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activity.ActivityName, activity.StartTimeStamp, activity.EndTimeStamp, "Skipped");
+        }
+
+        public override async void ActivityGroupSkippedEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
+        {
+            await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activityGroup.Name, activityGroup.StartTimeStamp, activityGroup.EndTimeStamp, "Skipped");
+        }
+        
     }
 }

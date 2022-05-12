@@ -163,6 +163,17 @@ namespace Amdocs.Ginger.Run
 
         }
 
+        public virtual void ActivityGroupSkippedEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
+        {
+
+        }
+
+        public virtual void ActivitySkippedEnd(uint eventTime, Activity activity, bool offlineMode = false)
+        {
+
+        }
+
+
         /// <summary>
         /// Notify the context of execution: Business Flow, Activity, Action
         /// </summary>

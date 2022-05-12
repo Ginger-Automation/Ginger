@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -48,5 +48,9 @@ namespace Amdocs.Ginger.Run
         void PrepActionStart(uint eventTime, Act action);
         void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false);
         void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false);
+
+        void ActivitySkippedEnd(uint eventTime, Activity activity, bool offlineMode = false);
+        void ActivityGroupSkippedEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false);
+        void BusinessFlowSkippedEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false);
     }
 }
