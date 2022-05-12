@@ -45,6 +45,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 dtExcelTable.Rows.Clear();
                 dtExcelTable.Columns.Clear();
                 var headerRow = sheet.GetRow(0);
+                List<string> cellNames = headerRow.Cells.Select(m => m.StringCellValue).ToList();
+                foreach (ICell cell in headerRow.Cells)
+                {
+                    if (cellNames.Count(m => m.Equals(cell.StringCellValue)) > 1)
+                    {
+                        throw new DuplicateNameException(string.Format("Sheet '{0}' contains duplicate '{1}' column names", sheet.SheetName, cell.StringCellValue));
+                    }
+                }
                 int colCount = headerRow.LastCellNum;
                 for (var c = 0; c < colCount; c++)
                 {
@@ -77,6 +85,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 }
                 return dtExcelTable;
             }
+            catch (DuplicateNameException dupEx)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Can't convert sheet to data, " + dupEx.Message);
+                throw dupEx;
+            }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Can't convert sheet to data, " + ex.Message);
@@ -87,7 +100,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         private object GetCellValue(ICell cell, CellType cellType)
         {
             object cellVal;
-            switch(cellType)
+            switch (cellType)
             {
                 case CellType.Numeric:
                     cellVal = HandleNumericCellType(cell);
@@ -124,6 +137,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 mExcelDataTable.DefaultView.RowFilter = filter;
                 mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
                 return mFilteredDataTable;
+            }
+            catch (DuplicateNameException dupEx)
+            {
+                throw dupEx;
             }
             catch (Exception ex)
             {
