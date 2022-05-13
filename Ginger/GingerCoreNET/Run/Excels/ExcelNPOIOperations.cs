@@ -85,7 +85,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             catch (DuplicateNameException dupEx)
             {
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Can't convert sheet to data, " + dupEx.Message);
-                throw dupEx;
+                throw;
             }
             catch (Exception ex)
             {
@@ -135,8 +135,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
                 return mFilteredDataTable;
             }
-            catch (DuplicateNameException)
+            catch (DuplicateNameException ex)
             {
+                Reporter.ToLog(eLogLevel.WARN, "Can't read sheet data, " + ex.Message);
                 throw;
             }
             catch (Exception ex)

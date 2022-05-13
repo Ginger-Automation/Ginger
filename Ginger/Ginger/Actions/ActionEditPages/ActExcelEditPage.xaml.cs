@@ -129,9 +129,9 @@ namespace Ginger.Actions
                 }
                 ExcelDataGrid.ItemsSource = dt.AsDataView();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
         }
         private void ViewWhereButton_Click(object sender, RoutedEventArgs e)
@@ -172,8 +172,9 @@ namespace Ginger.Actions
                 }
                 return mExcelOperations.ReadData(mAct.CalculatedFileName, mAct.CalculatedSheetName, isViewAllData ? null : mAct.CalculatedFilter, true);
             }
-            catch (DuplicateNameException)
+            catch (DuplicateNameException ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
                 throw;
             }
             catch (Exception ex)
