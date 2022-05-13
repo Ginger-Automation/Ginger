@@ -44,14 +44,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 var dtExcelTable = new DataTable();
                 dtExcelTable.Rows.Clear();
                 dtExcelTable.Columns.Clear();
-                var headerRow = sheet.GetRow(0);
-                List<string> cellNames = headerRow.Cells.Select(m => m.StringCellValue).ToList();
-                foreach (ICell cell in headerRow.Cells)
+                IRow headerRow = sheet.GetRow(0);
+                bool allUnique = headerRow.Cells.GroupBy(x => x.StringCellValue).All(g => g.Count() == 1);
+                if (!allUnique)
                 {
-                    if (cellNames.Count(m => m.Equals(cell.StringCellValue)) > 1)
-                    {
-                        throw new DuplicateNameException(string.Format("Sheet '{0}' contains duplicate '{1}' column names", sheet.SheetName, cell.StringCellValue));
-                    }
+                    throw new DuplicateNameException(string.Format("Sheet '{0}' contains duplicate column names", sheet.SheetName));
                 }
                 int colCount = headerRow.LastCellNum;
                 for (var c = 0; c < colCount; c++)
