@@ -153,9 +153,9 @@ namespace Ginger.Actions
                 }
                 ExcelDataGrid.ItemsSource = dt.AsDataView();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
         }
         DataTable GetExcelSheetData(bool isViewAllData)
@@ -172,12 +172,13 @@ namespace Ginger.Actions
                 }
                 return mExcelOperations.ReadData(mAct.CalculatedFileName, mAct.CalculatedSheetName, isViewAllData ? null : mAct.CalculatedFilter, true);
             }
-            catch (DuplicateNameException ex)
+            catch (DuplicateNameException)
             {
-                throw ex;
+                throw;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
                 return null;
             }
         }

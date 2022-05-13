@@ -138,9 +138,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
                 return mFilteredDataTable;
             }
-            catch (DuplicateNameException dupEx)
+            catch (DuplicateNameException)
             {
-                throw dupEx;
+                throw;
             }
             catch (Exception ex)
             {
