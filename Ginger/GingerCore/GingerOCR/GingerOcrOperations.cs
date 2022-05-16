@@ -108,50 +108,11 @@ namespace GingerCore.GingerOCR
             Page pageObj = GetPageObjectFromFilePath(imageFilePath);
             int firstIndexOf = -1;
             int secondIndexOf = -1;
-            using (pageObj)
+
+            ReadTextBetweenTwoLabels(firstLabel, secondLabel, ref resultTxt, ref firstIndexOf, ref secondIndexOf, pageObj);
+            if (firstIndexOf != -1 && secondIndexOf != -1)
             {
-                using (ResultIterator iter = pageObj.GetIterator())
-                {
-                    iter.Begin();
-                    try
-                    {
-                        do
-                        {
-                            string lineTxt = iter.GetText(PageIteratorLevel.TextLine);
-                            if (lineTxt.Contains(firstLabel))
-                            {
-                                firstIndexOf = lineTxt.IndexOf(firstLabel) + firstLabel.Length;
-                                if (lineTxt.Contains(secondLabel))
-                                {
-                                    secondIndexOf = lineTxt.IndexOf(secondLabel);
-                                    resultTxt = lineTxt.Substring(firstIndexOf, secondIndexOf);
-                                }
-                                else
-                                {
-                                    resultTxt = string.Concat(resultTxt, lineTxt.Substring(firstIndexOf));
-                                    continue;
-                                }
-                            }
-                            if (firstIndexOf != -1)
-                            {
-                                if (lineTxt.Contains(secondLabel))
-                                {
-                                    secondIndexOf = lineTxt.IndexOf(secondLabel);
-                                    resultTxt = string.Concat(resultTxt, lineTxt.Substring(0, secondIndexOf));
-                                    return resultTxt;
-                                }
-                                else
-                                {
-                                    resultTxt = string.Concat(resultTxt, lineTxt);
-                                }
-                            }
-                        } while (iter.Next(PageIteratorLevel.TextLine));
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
-                    }
-                }
+                return resultTxt;
             }
 
             return resultTxt;

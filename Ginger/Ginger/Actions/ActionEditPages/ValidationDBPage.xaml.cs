@@ -400,7 +400,8 @@ namespace Ginger.Actions
                 lblInsertJson.Visibility = Visibility.Collapsed;
                 gridInsertJson.Visibility = Visibility.Collapsed;
                 imgHelpSql.Visibility = Visibility.Collapsed;
-                xKeysStackPanel.Visibility = Visibility.Collapsed;
+                xPrimaryKeyStackPanel.Visibility = Visibility.Collapsed;
+                xPartitionKeyStackPanel.Visibility = Visibility.Collapsed;
                 SQLUCValueExpression.ValueTextBox.Text = string.Empty;
                 UpdateDbParametersHeadersGrid.Visibility = Visibility.Collapsed;
                 switch (validationType)
@@ -426,7 +427,8 @@ namespace Ginger.Actions
                             DoUpdate.Visibility = Visibility.Visible;
                             RadioButtonsSection.Visibility = Visibility.Collapsed;
                             UpdateDbParametersGrid.Visibility = Visibility.Visible;
-                            xKeysStackPanel.Visibility = Visibility.Visible;
+                            xPrimaryKeyStackPanel.Visibility = Visibility.Collapsed;
+                            xPartitionKeyStackPanel.Visibility = Visibility.Collapsed;
                             UpdateDbParametersHeadersGrid.Visibility = Visibility.Visible;
                             SetGridView();
                         }
