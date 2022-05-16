@@ -3374,11 +3374,6 @@ namespace Ginger.Run
             }
             finally
             {
-                if (activity.Status == eRunStatus.Skipped)
-                {
-                    NotifyActivitySkippedEnd(activity);
-                }
-
                 if (activityStarted)
                 {
                     st.Stop();
@@ -3420,7 +3415,7 @@ namespace Ginger.Run
                                 break;
                         }
                     }
-                }
+                }                
 
                 if (standaloneExecution)
                 {
@@ -3430,6 +3425,11 @@ namespace Ginger.Run
                 if (mIsErrorHandlerPostActionSet && handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity)
                 {
                     CheckAndExecutePostErrorHandlerAction();
+                }
+
+                if (activity.Status == eRunStatus.Skipped)
+                {
+                    NotifyActivitySkippedEnd(activity);
                 }
             }
         }
@@ -4896,11 +4896,7 @@ namespace Ginger.Run
             uint eventTime = RunListenerBase.GetEventTime();
             activityGroup.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
-            {
-                if (runnerListener.ToString().Contains("Ginger.Run.ExecutionLExecutionLoggerManagerogger"))
-                {
-                    ((Ginger.Run.ExecutionLoggerManager)runnerListener).mCurrentBusinessFlow = CurrentBusinessFlow;
-                }
+            {                
                 runnerListener.ActivityGroupSkipped(eventTime, activityGroup, offlineMode);
             }
         }
