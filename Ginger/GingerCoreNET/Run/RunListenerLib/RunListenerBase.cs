@@ -163,12 +163,12 @@ namespace Amdocs.Ginger.Run
 
         }
 
-        public virtual void ActivityGroupSkippedEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
+        public virtual void ActivityGroupSkipped(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
         {
 
         }
 
-        public virtual void ActivitySkippedEnd(uint eventTime, Activity activity, bool offlineMode = false)
+        public virtual void ActivitySkipped(uint eventTime, Activity activity, bool offlineMode = false)
         {
 
         }

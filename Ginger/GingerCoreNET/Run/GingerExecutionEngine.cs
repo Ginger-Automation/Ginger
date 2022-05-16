@@ -3376,7 +3376,7 @@ namespace Ginger.Run
             {
                 if (activity.Status == eRunStatus.Skipped)
                 {
-                    NotifyActivitySkippedEnd(activity); // Sealights - Skipped for 'Activity'
+                    NotifyActivitySkippedEnd(activity);
                 }
 
                 if (activityStarted)
@@ -4812,7 +4812,7 @@ namespace Ginger.Run
             activity.EndTimeStamp = DateTime.UtcNow;
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
-                runnerListener.ActivitySkippedEnd(evetTime, activity);
+                runnerListener.ActivitySkipped(evetTime, activity);
             }
         }
 
@@ -4827,29 +4827,6 @@ namespace Ginger.Run
                 foreach (RunListenerBase runnerListener in mRunListeners)
                 {
                     runnerListener.BusinessFlowEnd(eventTime, CurrentBusinessFlow);
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Notify Businessflow End", ex);
-            }
-            finally
-            {
-                Reporter.HideStatusMessage();
-            }
-
-        }
-
-        private void NotifyBusinessFlowSkippedEnd(BusinessFlow businessFlow)
-        {
-            try
-            {
-                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating status for pending activities...");
-                uint eventTime = RunListenerBase.GetEventTime();
-                businessFlow.EndTimeStamp = DateTime.UtcNow;
-                foreach (RunListenerBase runnerListener in mRunListeners)
-                {
-                    runnerListener.BusinessFlowSkippedEnd(eventTime, CurrentBusinessFlow);
                 }
             }
             catch (Exception ex)
@@ -4924,7 +4901,7 @@ namespace Ginger.Run
                 {
                     ((Ginger.Run.ExecutionLoggerManager)runnerListener).mCurrentBusinessFlow = CurrentBusinessFlow;
                 }
-                runnerListener.ActivityGroupSkippedEnd(eventTime, activityGroup, offlineMode);
+                runnerListener.ActivityGroupSkipped(eventTime, activityGroup, offlineMode);
             }
         }
 

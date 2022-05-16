@@ -33,9 +33,11 @@ namespace Amdocs.Ginger.Run
         void ActionUpdatedStart(uint eventTime, Act action);
         void ActionWaitEnd(uint eventTime, Act action);
         void ActionWaitStart(uint eventTime, Act action);
+        void ActivitySkipped(uint eventTime, Activity activity, bool offlineMode = false);
         void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false);
         void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false);
         void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup);
+        void ActivityGroupSkipped(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false);
         void ActivityStart(uint eventTime, Activity activity, bool continuerun = false);
         void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false);
         void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false);
@@ -49,8 +51,5 @@ namespace Amdocs.Ginger.Run
         void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false);
         void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false);
 
-        void ActivitySkippedEnd(uint eventTime, Activity activity, bool offlineMode = false);
-        void ActivityGroupSkippedEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false);
-        void BusinessFlowSkippedEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false);
     }
 }
