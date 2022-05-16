@@ -416,6 +416,13 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;
             try
             {
+                for (int i = 0; i < BusinessFlows.Count; i++)
+                {
+                    if (BusinessFlows[i].Active == false)
+                    {
+                        NotifyBusinessFlowSkipped(BusinessFlows[i]);
+                    }
+                }
 
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.Where(x => x.Active).FirstOrDefault() == null)
                 {
@@ -3429,7 +3436,7 @@ namespace Ginger.Run
 
                 if (activity.Status == eRunStatus.Skipped)
                 {
-                    NotifyActivitySkippedEnd(activity);
+                    NotifyActivitySkipped(activity);
                 }
             }
         }
@@ -4048,7 +4055,7 @@ namespace Ginger.Run
                         {
                             if (currentActivityGroup.RunStatus == eActivitiesGroupRunStatus.Skipped)
                             {
-                                NotifyActivityGroupSkippedEnd(currentActivityGroup);
+                                NotifyActivityGroupSkipped(currentActivityGroup);
                             }
 
                             currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
@@ -4806,7 +4813,7 @@ namespace Ginger.Run
             }
         }
 
-        private void NotifyActivitySkippedEnd(Activity activity)
+        private void NotifyActivitySkipped(Activity activity)
         {
             uint evetTime = RunListenerBase.GetEventTime();
             activity.EndTimeStamp = DateTime.UtcNow;
@@ -4847,6 +4854,16 @@ namespace Ginger.Run
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.BusinessFlowStart(evetTime, CurrentBusinessFlow, ContinueRun);
+            }
+        }
+
+        private void NotifyBusinessFlowSkipped(BusinessFlow businessFlow, bool ContinueRun = false)
+        {
+            uint evetTime = RunListenerBase.GetEventTime();
+
+            foreach (RunListenerBase runnerListener in mRunListeners)
+            {
+                runnerListener.BusinessFlowSkipped(evetTime, businessFlow, ContinueRun);
             }
         }
 
@@ -4891,7 +4908,7 @@ namespace Ginger.Run
             }
         }
 
-        private void NotifyActivityGroupSkippedEnd(ActivitiesGroup activityGroup, bool offlineMode = false)
+        private void NotifyActivityGroupSkipped(ActivitiesGroup activityGroup, bool offlineMode = false)
         {
             uint eventTime = RunListenerBase.GetEventTime();
             activityGroup.EndTimeStamp = DateTime.UtcNow;

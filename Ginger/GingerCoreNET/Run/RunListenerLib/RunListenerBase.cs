@@ -173,6 +173,11 @@ namespace Amdocs.Ginger.Run
 
         }
 
+        public virtual void BusinessFlowSkipped(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
+        {
+
+        }
+
 
         /// <summary>
         /// Notify the context of execution: Business Flow, Activity, Action

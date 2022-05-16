@@ -244,6 +244,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activityGroup.Name, activityGroup.StartTimeStamp, activityGroup.EndTimeStamp, "Skipped");
         }
-        
+
+        public override async void BusinessFlowSkipped(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
+        {
+            await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, "Skipped");
+        }
+
     }
 }

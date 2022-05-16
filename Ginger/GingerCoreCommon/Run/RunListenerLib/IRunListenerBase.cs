@@ -41,6 +41,7 @@ namespace Amdocs.Ginger.Run
         void ActivityStart(uint eventTime, Activity activity, bool continuerun = false);
         void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false);
         void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false);
+        void BusinessFlowSkipped(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false);
         void BusinessflowWasReset(uint eventTime, BusinessFlow businessFlow);
         void DynamicActivityWasAddedToBusinessflow(uint eventTime, BusinessFlow businessFlow);
         void EnvironmentChanged(uint eventTime, ProjEnvironment mProjEnvironment);
