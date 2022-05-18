@@ -416,14 +416,6 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;
             try
             {
-                for (int i = 0; i < BusinessFlows.Count; i++)
-                {
-                    if (BusinessFlows[i].Active == false)
-                    {
-                        NotifyBusinessFlowSkipped(BusinessFlows[i]);
-                    }
-                }
-
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.Where(x => x.Active).FirstOrDefault() == null)
                 {
                     runnerExecutionSkipped = true;
@@ -567,6 +559,8 @@ namespace Ginger.Run
 
                     NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
 
+                    ReportSkippedToSealights();
+
                     if (RunLevel == eRunLevel.Runner)
                     {
                         ExecutionLoggerManager.mExecutionLogger.EndRunSet();
@@ -578,6 +572,38 @@ namespace Ginger.Run
                     Status = RunsetStatus;
                 }
             }
+        }
+
+        private void ReportSkippedToSealights()
+        {
+            // Get all 'Skipped' BF
+            List<BusinessFlow> businessFlowList = BusinessFlows.Where(x => x.RunStatus == eRunStatus.Skipped).ToList();
+
+            foreach (BusinessFlow businessFlow in businessFlowList)
+            {
+                NotifyBusinessFlowSkipped(businessFlow);
+            }
+
+            // Saarch for Activities-Groups and Activities in All BF
+            foreach (BusinessFlow businessFlow in BusinessFlows)
+            {
+                // 'Skipped' Activities Group
+                List<ActivitiesGroup> activitiesGroupList = businessFlow.ActivitiesGroups.Where(x => x.RunStatus == eActivitiesGroupRunStatus.Skipped).ToList();
+
+                foreach (ActivitiesGroup activitiesGroup in activitiesGroupList)
+                {
+                    NotifyActivityGroupSkipped(activitiesGroup);
+                }
+
+                // 'Skipped' Activities
+                List<Activity> activitiesList = businessFlow.Activities.Where(x => x.Status == eRunStatus.Skipped).ToList();
+
+                foreach (Activity activity in activitiesList)
+                {
+                    NotifyActivitySkipped(activity);
+                }
+            }
+
         }
 
 
@@ -3433,11 +3459,6 @@ namespace Ginger.Run
                 {
                     CheckAndExecutePostErrorHandlerAction();
                 }
-
-                if (activity.Status == eRunStatus.Skipped)
-                {
-                    NotifyActivitySkipped(activity);
-                }
             }
         }
 
@@ -4053,11 +4074,6 @@ namespace Ginger.Run
                     {
                         if (currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Stopped)
                         {
-                            if (currentActivityGroup.RunStatus == eActivitiesGroupRunStatus.Skipped)
-                            {
-                                NotifyActivityGroupSkipped(currentActivityGroup);
-                            }
-
                             currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
                         }
                         else
