@@ -196,7 +196,6 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
 
             return solutionFilesWithVersion;
         }
-
         internal static bool IsGingerUpgradeNeeded(string solutionFolder, IEnumerable<string> solutionFiles)
         {                        
             ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = null;
@@ -227,6 +226,33 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution requires Ginger Upgrade", ex);
                 return false;
             }            
+        }
+        internal static bool IsUserProceedWithLoadSolutionInNewerGingerVersion(string solutionFolder, IEnumerable<string> solutionFiles)
+        {
+            ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = null;
+            try
+            {
+                if (solutionFilesWithVersion == null)
+                {
+                    solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
+                }
+                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, eGingerVersionComparisonResult.LowerVersion);
+                if (lowerVersionFiles.Count > 0)
+                {
+                    if(Reporter.ToUser(eUserMsgKey.SolutionOpenedOnNewerVersion) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                    {
+                        return true;
+                    }
+                    Reporter.ToLog(eLogLevel.WARN, "User declined to load the Solution on newer Ginger version, aborting Solution load.");
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if the user wants to proceed with loading the Solution on Higher Ginger version", ex);
+                return false;
+            }
         }
 
 
@@ -410,7 +436,6 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 return null;//failed to get the version
             }
         }
-
         /// <summary>
         /// Pull and return the Ginger Version (in Long format) which the Solution file was created with 
         /// </summary>

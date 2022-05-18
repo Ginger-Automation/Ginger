@@ -420,6 +420,12 @@ namespace amdocs.ginger.GingerCoreNET
                     return false;
                 }
 
+                if (!SolutionUpgrade.IsUserProceedWithLoadSolutionInNewerGingerVersion(solutionFolder, solutionFiles))
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Loading Solution- Error: User doesn't wish to proceed with loading the Solution in Newer Ginger version");
+                    return false;
+                }
+
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Loading Solution file xml into object");
                 Solution solution = SolutionOperations.LoadSolution(solutionFile, true, encryptionKey);
                 SolutionOperations solutionOperations = new SolutionOperations(solution);
