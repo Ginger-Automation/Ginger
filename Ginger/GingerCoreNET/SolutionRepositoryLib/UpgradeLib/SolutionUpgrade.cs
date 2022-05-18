@@ -239,12 +239,16 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, eGingerVersionComparisonResult.LowerVersion);
                 if (lowerVersionFiles.Count > 0)
                 {
-                    if(Reporter.ToUser(eUserMsgKey.SolutionOpenedOnNewerVersion) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                    if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
                     {
-                        return true;
+                        if (Reporter.ToUser(eUserMsgKey.SolutionOpenedOnNewerVersion) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                        {
+                            return true;
+                        }
+                        Reporter.ToLog(eLogLevel.WARN, "User declined to load the Solution on newer Ginger version, aborting Solution load.");
+                        return false;
                     }
-                    Reporter.ToLog(eLogLevel.WARN, "User declined to load the Solution on newer Ginger version, aborting Solution load.");
-                    return false;
+                    return true;
                 }
                 return true;
             }
