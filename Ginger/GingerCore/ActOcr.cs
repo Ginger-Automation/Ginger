@@ -128,26 +128,22 @@ namespace GingerCore
             [EnumValueDescription("Read Text From Table In Pdf")]
             ReadTextFromTableInPdf = 3
         }
-        [IsSerializedForLocalRepository]
         public eActOcrImageOperations SelectedOcrImageOperation
         {
             get => GetOrCreateInputParam(nameof(SelectedOcrImageOperation), eActOcrImageOperations.ReadTextAfterLabel);
             set => AddOrUpdateInputParamValue(nameof(SelectedOcrImageOperation), value.ToString());
         }
-        [IsSerializedForLocalRepository]
         public eActOcrPdfOperations SelectedOcrPdfOperation
         {
             get => GetOrCreateInputParam(nameof(SelectedOcrPdfOperation), eActOcrPdfOperations.ReadTextAfterLabel);
             set => AddOrUpdateInputParamValue(nameof(SelectedOcrPdfOperation), value.ToString());
         }
-        [IsSerializedForLocalRepository]
         public eActOcrFileType SelectedOcrFileType
         {
             get => GetOrCreateInputParam(nameof(SelectedOcrFileType), eActOcrFileType.ReadTextFromImage);
             set => AddOrUpdateInputParamValue(nameof(SelectedOcrFileType), value.ToString());
         }
 
-        [IsSerializedForLocalRepository]
         public string OcrFilePath
         {
             get
@@ -160,7 +156,6 @@ namespace GingerCore
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string OcrPassword
         {
             get
@@ -173,7 +168,6 @@ namespace GingerCore
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string PageNumber
         {
             get
@@ -186,7 +180,6 @@ namespace GingerCore
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string FirstString
         {
             get
@@ -199,7 +192,6 @@ namespace GingerCore
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string SecondString
         {
             get
@@ -240,7 +232,6 @@ namespace GingerCore
 
         private string mGetFromRowNumber { get; set; } = "0";
 
-        [IsSerializedForLocalRepository]
         public string GetFromRowNumber
         {
             get
@@ -253,21 +244,18 @@ namespace GingerCore
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string ConditionColumnName
         {
             get => GetOrCreateInputParam(nameof(ConditionColumnName)).Value;
             set => AddOrUpdateInputParamValue(nameof(ConditionColumnName), value);
         }
 
-        [IsSerializedForLocalRepository]
         public string ConditionColumnValue
         {
             get => GetOrCreateInputParam(nameof(ConditionColumnValue)).Value;
             set => AddOrUpdateInputParamValue(nameof(ConditionColumnValue), value);
         }
 
-        [IsSerializedForLocalRepository]
         public string UseRowNumber
         {
             get => GetOrCreateInputParam(nameof(UseRowNumber)).Value;
