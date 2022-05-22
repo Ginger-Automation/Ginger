@@ -557,9 +557,9 @@ namespace Ginger.Run
                     RunnerExecutionWatch.StopRunWatch();
                     Status = RunsetStatus;
 
-                    NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
+                    NotifyOnSkippedRunnerEntities();
 
-                    ReportSkippedToSealights();
+                    NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
 
                     if (RunLevel == eRunLevel.Runner)
                     {
@@ -574,7 +574,7 @@ namespace Ginger.Run
             }
         }
 
-        private void ReportSkippedToSealights()
+        private void NotifyOnSkippedRunnerEntities()
         {
             // Get all 'Skipped' BF
             List<BusinessFlow> businessFlowList = BusinessFlows.Where(x => x.RunStatus == eRunStatus.Skipped).ToList();
