@@ -416,7 +416,6 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;
             try
             {
-
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.Where(x => x.Active).FirstOrDefault() == null)
                 {
                     runnerExecutionSkipped = true;
@@ -558,6 +557,8 @@ namespace Ginger.Run
                     RunnerExecutionWatch.StopRunWatch();
                     Status = RunsetStatus;
 
+                    NotifyOnSkippedRunnerEntities();
+
                     NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
 
                     if (RunLevel == eRunLevel.Runner)
@@ -571,6 +572,38 @@ namespace Ginger.Run
                     Status = RunsetStatus;
                 }
             }
+        }
+
+        private void NotifyOnSkippedRunnerEntities()
+        {
+            // Get all 'Skipped' BF
+            List<BusinessFlow> businessFlowList = BusinessFlows.Where(x => x.RunStatus == eRunStatus.Skipped).ToList();
+
+            foreach (BusinessFlow businessFlow in businessFlowList)
+            {
+                NotifyBusinessFlowSkipped(businessFlow);
+            }
+
+            // Saarch for Activities-Groups and Activities in All BF
+            foreach (BusinessFlow businessFlow in BusinessFlows)
+            {
+                // 'Skipped' Activities Group
+                List<ActivitiesGroup> activitiesGroupList = businessFlow.ActivitiesGroups.Where(x => x.RunStatus == eActivitiesGroupRunStatus.Skipped).ToList();
+
+                foreach (ActivitiesGroup activitiesGroup in activitiesGroupList)
+                {
+                    NotifyActivityGroupSkipped(activitiesGroup);
+                }
+
+                // 'Skipped' Activities
+                List<Activity> activitiesList = businessFlow.Activities.Where(x => x.Status == eRunStatus.Skipped).ToList();
+
+                foreach (Activity activity in activitiesList)
+                {
+                    NotifyActivitySkipped(activity);
+                }
+            }
+
         }
 
 
@@ -3172,7 +3205,7 @@ namespace Ginger.Run
                     // handling ActivityGroup execution
                     currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
                     if (currentActivityGroup != null)
-                    {
+                    {                       
                         currentActivityGroup.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
                         switch (currentActivityGroup.ExecutionLoggerStatus)
                         {
@@ -3415,7 +3448,7 @@ namespace Ginger.Run
                                 break;
                         }
                     }
-                }
+                }                
 
                 if (standaloneExecution)
                 {
@@ -4796,6 +4829,16 @@ namespace Ginger.Run
             }
         }
 
+        private void NotifyActivitySkipped(Activity activity)
+        {
+            uint evetTime = RunListenerBase.GetEventTime();
+            activity.EndTimeStamp = DateTime.UtcNow;
+            foreach (RunListenerBase runnerListener in mRunListeners)
+            {
+                runnerListener.ActivitySkipped(evetTime, activity);
+            }
+        }
+
 
         private void NotifyBusinessFlowEnd(BusinessFlow businessFlow)
         {
@@ -4827,6 +4870,16 @@ namespace Ginger.Run
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.BusinessFlowStart(evetTime, CurrentBusinessFlow, ContinueRun);
+            }
+        }
+
+        private void NotifyBusinessFlowSkipped(BusinessFlow businessFlow, bool ContinueRun = false)
+        {
+            uint evetTime = RunListenerBase.GetEventTime();
+
+            foreach (RunListenerBase runnerListener in mRunListeners)
+            {
+                runnerListener.BusinessFlowSkipped(evetTime, businessFlow, ContinueRun);
             }
         }
 
@@ -4868,6 +4921,16 @@ namespace Ginger.Run
                     ((Ginger.Run.ExecutionLoggerManager)runnerListener).mCurrentBusinessFlow = CurrentBusinessFlow;
                 }
                 runnerListener.ActivityGroupEnd(eventTime, activityGroup, offlineMode);
+            }
+        }
+
+        private void NotifyActivityGroupSkipped(ActivitiesGroup activityGroup, bool offlineMode = false)
+        {
+            uint eventTime = RunListenerBase.GetEventTime();
+            activityGroup.EndTimeStamp = DateTime.UtcNow;
+            foreach (RunListenerBase runnerListener in mRunListeners)
+            {                
+                runnerListener.ActivityGroupSkipped(eventTime, activityGroup, offlineMode);
             }
         }
 
