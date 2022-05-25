@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using VisualRegressionTracker;
+//using VisualRegressionTracker;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -15,20 +15,20 @@ namespace GingerCore.Actions.VisualTesting
 
         ActVisualTesting mAct;
         IVisualTestingDriver mDriver;
-        VisualRegressionTracker.VisualRegressionTracker vrt;
-        VisualRegressionTracker.Config config;
+        //VisualRegressionTracker.VisualRegressionTracker vrt;
+        //VisualRegressionTracker.Config config;
 
         public VRTAnalyzer()
         {
-            VisualRegressionTracker.Config config = new VisualRegressionTracker.Config
-            {
-                CiBuildId = "commit_sha",
-                BranchName = "matser",
-                Project = "Default project",
-                ApiUrl = "http://10.234.170.81:4200",
-                ApiKey = "RYYWC5PFE9MSGSQ2D1A9ZCPVMTP2"
-            };
-            vrt = new VisualRegressionTracker.VisualRegressionTracker(config);
+            //VisualRegressionTracker.Config config = new VisualRegressionTracker.Config
+            //{
+            //    CiBuildId = "commit_sha",
+            //    BranchName = "matser",
+            //    Project = "Default project",
+            //    ApiUrl = "http://10.234.170.81:4200",
+            //    ApiKey = "RYYWC5PFE9MSGSQ2D1A9ZCPVMTP2"
+            //};
+            //vrt = new VisualRegressionTracker.VisualRegressionTracker(config);
         }
         public enum eVRTAction
         {
@@ -93,7 +93,7 @@ namespace GingerCore.Actions.VisualTesting
                 mResolution = mAct.GetWindowResolution();
                 //start
                 //vrt = new VisualRegressionTracker.VisualRegressionTracker(config);
-                vrt.Start();
+                //vrt.Start();
             }
             catch (Exception ex)
             {
@@ -111,7 +111,7 @@ namespace GingerCore.Actions.VisualTesting
         }
         private void TrackVRT()
         {
-            if (!vrt.IsStarted)
+            //if (!vrt.IsStarted)
             {
                 mAct.Error = "VRT is not Started";
                 mAct.ExInfo = "You require to add VRT Start Action one step before.";
@@ -121,7 +121,7 @@ namespace GingerCore.Actions.VisualTesting
             try
             {
                 //track
-                vrt.Track();
+                //vrt.Track();
             }
             catch (Exception ex)
             {
@@ -136,13 +136,13 @@ namespace GingerCore.Actions.VisualTesting
         {
             try
             {
-                if (vrt.IsStarted)
-                {
-                    vrt.Stop();
-                }
-                else
-                {
-                }
+                //if (vrt.IsStarted)
+                //{
+                //    vrt.Stop();
+                //}
+                //else
+                //{
+                //}
                 
             }
             catch (Exception ex)
