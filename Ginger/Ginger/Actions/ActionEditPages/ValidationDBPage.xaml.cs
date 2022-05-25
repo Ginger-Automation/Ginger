@@ -266,7 +266,10 @@ namespace Ginger.Actions
                     if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())) != null
                         && ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())).Count() != 0)
                     {
-                        ValidationCfgComboBox.SelectedIndex = 0;
+                        if (ValidationCfgComboBox.SelectedValue.ToString() == eDBValidationType.Insert.ToString())
+                        {
+                            ValidationCfgComboBox.SelectedIndex = 0;
+                        }
                         ValidationCfgComboBox.Items.Remove(ValidationCfgComboBox.Items.Cast<ComboEnumItem>().First(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())));
                     }
                 }
