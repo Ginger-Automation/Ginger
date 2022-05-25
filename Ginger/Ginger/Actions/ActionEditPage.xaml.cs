@@ -622,10 +622,15 @@ namespace Ginger.Actions
                 ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
                 if (inputValue != null)
                 {
-                    xValueVE.Init(mContext, inputValue, nameof(ActInputValue.Value));
                     xValueVE.ValueTextBox.Text = inputValue.Value;
                     xValueLbl.Content = inputValue.Param;
                 }
+                else
+                {
+                    a.AddOrUpdateInputParamValue("Value", "");
+                }
+                xValueVE.Init(mContext, inputValue, nameof(ActInputValue.Value));
+
             }
         }
 
