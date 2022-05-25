@@ -402,7 +402,7 @@ namespace Ginger.Actions
                 imgHelpSql.Visibility = Visibility.Collapsed;
                 xPrimaryKeyStackPanel.Visibility = Visibility.Collapsed;
                 xPartitionKeyStackPanel.Visibility = Visibility.Collapsed;
-                SQLUCValueExpression.ValueTextBox.Text = string.Empty;
+                //SQLUCValueExpression.ValueTextBox.Text = string.Empty;
                 UpdateDbParametersHeadersGrid.Visibility = Visibility.Collapsed;
                 switch (validationType)
                 {
@@ -427,8 +427,8 @@ namespace Ginger.Actions
                             DoUpdate.Visibility = Visibility.Visible;
                             RadioButtonsSection.Visibility = Visibility.Collapsed;
                             UpdateDbParametersGrid.Visibility = Visibility.Visible;
-                            xPrimaryKeyStackPanel.Visibility = Visibility.Collapsed;
-                            xPartitionKeyStackPanel.Visibility = Visibility.Collapsed;
+                            xPrimaryKeyStackPanel.Visibility = Visibility.Visible;
+                            xPartitionKeyStackPanel.Visibility = Visibility.Visible;
                             UpdateDbParametersHeadersGrid.Visibility = Visibility.Visible;
                             SetGridView();
                         }
