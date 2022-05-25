@@ -402,7 +402,7 @@ namespace Ginger.Actions
                 imgHelpSql.Visibility = Visibility.Collapsed;
                 xPrimaryKeyStackPanel.Visibility = Visibility.Collapsed;
                 xPartitionKeyStackPanel.Visibility = Visibility.Collapsed;
-                SQLUCValueExpression.ValueTextBox.Text = string.Empty;
+                //SQLUCValueExpression.ValueTextBox.Text = string.Empty;
                 UpdateDbParametersHeadersGrid.Visibility = Visibility.Collapsed;
                 switch (validationType)
                 {
