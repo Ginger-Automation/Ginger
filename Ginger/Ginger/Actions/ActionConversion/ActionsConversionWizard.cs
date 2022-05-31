@@ -105,7 +105,7 @@ namespace Ginger.Actions.ActionConversion
         }
 
         /// <summary>
-        /// This method is used to ge the businessflows to convert
+        /// This method is used to ge the business flows to convert
         /// </summary>
         /// <param name="businessFlows"></param>
         /// <returns></returns>

@@ -112,7 +112,8 @@
       <HintPath>..\GingerCore\DLLs\Interop.TDAPIOLELib.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="JiraRepositoryStd">
+    <Reference Include="JiraRepositoryStd, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\GingerCoreNET\DLLS\JiraRepositoryStd.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -226,6 +227,9 @@
     <Compile Include="Actions\ActionEditPages\ActValidationEditPage.xaml.cs">
       <DependentUpon>ActValidationEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionEditPages\ActOcrEditPage.xaml.cs">
+      <DependentUpon>ActOcrEditPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
       <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
     </Compile>
@@ -274,6 +278,8 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ValidationRules\ValidateEmptyValue.cs" />
+    <Compile Include="Reports\ValidationRules\ValidateNumberInputRule.cs" />
     <Compile Include="Activities\ActivityNameValidationRule.cs" />
     <Compile Include="Activities\ConfigureErrorListPage.xaml.cs">
       <DependentUpon>ConfigureErrorListPage.xaml</DependentUpon>
@@ -544,6 +550,7 @@
     <Compile Include="GlobalSolutionLib\ImportItemWizardLib\SelectItemImportTypePage.xaml.cs">
       <DependentUpon>SelectItemImportTypePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ValidationRules\ValidateEmptyValueWithDependency.cs" />
     <Compile Include="RunSetLib\CreateAutoRunWizardLib\ValidateJsonFormat.cs" />
     <Compile Include="RunSetLib\CreateAutoRunWizardLib\ValidateURLFormat.cs" />
     <Compile Include="RunSetPageLib\RunSetNameValidationRule.cs" />
@@ -2627,6 +2634,10 @@
     <Page Include="Actions\ActionEditPages\ActValidationEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Actions\ActionEditPages\ActOcrEditPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Activities\ConfigureErrorListPage.xaml">
       <SubType>Designer</SubType>
@@ -4913,16 +4924,16 @@
       <Version>106.11.4</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.ChromeDriver">
-      <Version>99.0.4844.5100</Version>
+      <Version>100.0.4896.6000</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.GeckoDriver">
-      <Version>0.30.0.1</Version>
+      <Version>0.31.0</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.IEDriver">
-      <Version>4.0.0</Version>
+      <Version>4.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.MSEdgeDriver">
-      <Version>97.0.1072.55</Version>
+      <Version>100.0.1185.36</Version>
     </PackageReference>
     <PackageReference Include="SharpAdbClient">
       <Version>2.3.23</Version>
@@ -4958,7 +4969,7 @@
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Drawing.Common">
-      <Version>4.7.0</Version>
+      <Version>5.0.3</Version>
     </PackageReference>
     <PackageReference Include="System.Dynamic.Runtime">
       <Version>4.3.0</Version>

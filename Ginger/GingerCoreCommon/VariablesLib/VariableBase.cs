@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -342,107 +342,112 @@ namespace GingerCore.Variables
 
         public static void GetListOfUsedVariables(object item, ref List<string> usedVariables)
         {
-            // TODO: cache the reflection item needed
-            var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
-            foreach (MemberInfo mi in properties)
+            if (item != null)
             {
-                if (Amdocs.Ginger.Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
+                // TODO: cache the reflection item needed
+                var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+                if (properties == null)
+                { return; }
+                foreach (MemberInfo mi in properties)
                 {
-                    continue;
-                }
+                    if (Amdocs.Ginger.Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
+                    {
+                        continue;
+                    }
 
-                //Get the attr value
-                PropertyInfo PI = item.GetType().GetProperty(mi.Name);
-                object value = null;
-                try
-                {
-                    if (mi.MemberType == MemberTypes.Property && PI != null && PI.CanRead)
+                    //Get the attr value
+                    PropertyInfo PI = item.GetType().GetProperty(mi.Name);
+                    object value = null;
+                    try
                     {
-                        value = PI.GetValue(item);
-                    }
-                    else if (mi.MemberType == MemberTypes.Field)
-                    {
-                        value = item.GetType().GetField(mi.Name).GetValue(item);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Exception occured during Action Analyze of Used Variabels, object='{0}', field='{1}'", item, mi.Name), ex);
-                    value = null;
-                }
-
-                if (value is IObservableList)
-                {
-                    foreach (object o in (IObservableList)value)
-                    {
-                        GetListOfUsedVariables(o, ref usedVariables);
-                    }
-                }
-                else
-                {
-                    if (value != null && PI != null)
-                    {
-                        try
+                        if (mi.MemberType == MemberTypes.Property && PI != null && PI.CanRead)
                         {
-                            //TODO: Use nameof !!!!!
-                            if ((PI.DeclaringType).FullName == "GingerCore.Actions.ActSetVariableValue" && mi.Name == "VariableName")
-                            {
-                                usedVariables.Add(value.ToString());
-                            }
+                            value = PI.GetValue(item);
+                        }
+                        else if (mi.MemberType == MemberTypes.Field)
+                        {
+                            value = item.GetType().GetField(mi.Name).GetValue(item);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Exception occured during Action Analyze of Used Variabels, object='{0}', field='{1}'", item, mi.Name), ex);
+                        value = null;
+                    }
 
-                            if (PI.CanWrite)
+                    if (value is IObservableList)
+                    {
+                        foreach (object o in (IObservableList)value)
+                        {
+                            GetListOfUsedVariables(o, ref usedVariables);
+                        }
+                    }
+                    else
+                    {
+                        if (value != null && PI != null)
+                        {
+                            try
                             {
                                 //TODO: Use nameof !!!!!
-                                if (mi.Name == "StoreToValue" && mi.DeclaringType.Name == "ActReturnValue" && value.ToString().IndexOf("{DS Name") == -1)
+                                if ((PI.DeclaringType).FullName == "GingerCore.Actions.ActSetVariableValue" && mi.Name == "VariableName")
                                 {
-                                    //check that it is not GUID of global model Param
-                                    Guid dummyGuid = new Guid();
-                                    if (!Guid.TryParse(value.ToString(), out dummyGuid))
-                                    {
-                                        if (value.ToString() != string.Empty)
-                                            if (usedVariables.Contains(value.ToString()) == false)
-                                                usedVariables.Add(value.ToString());
-                                    }
+                                    usedVariables.Add(value.ToString());
                                 }
-                                else if (mi.Name == "FlowControlAction" && value.ToString() == "SetVariableValue") //get used variable in flow control with set variable action type.
+
+                                if (PI.CanWrite)
                                 {
-                                    string[] vals = ((string)item.GetType().GetRuntimeProperty("ValueCalculated").GetValue(item)).Split(new[] { '=' });
-                                    const int count = 2;
-                                    if (vals.Count() == count && !usedVariables.Contains(vals[0]))
+                                    //TODO: Use nameof !!!!!
+                                    if (mi.Name == "StoreToValue" && mi.DeclaringType.Name == "ActReturnValue" && value.ToString().IndexOf("{DS Name") == -1)
                                     {
-                                        usedVariables.Add(vals[0]);
-                                    }
-                                }
-                                else if (mi.Name == "VariableName" && mi.DeclaringType.Name == "VariableDependency" && usedVariables != null)
-                                {
-                                    if (!usedVariables.Contains(value))
-                                    {
-                                        usedVariables.Add((string)value);
-                                    }
-                                }
-                                else
-                                {
-                                    string stringValue = value.ToString();
-                                    string[] splitedValue = stringValue.Split(new char[] { '{', '}' }, StringSplitOptions.RemoveEmptyEntries);
-                                    if (splitedValue.Length > 0)
-                                    {
-                                        for (int indx = 0; indx < splitedValue.Length; indx++)
+                                        //check that it is not GUID of global model Param
+                                        Guid dummyGuid = new Guid();
+                                        if (!Guid.TryParse(value.ToString(), out dummyGuid))
                                         {
-                                            string val = splitedValue[indx];
-                                            if (val.Contains("Var Name=") == true)
+                                            if (value.ToString() != string.Empty)
+                                                if (usedVariables.Contains(value.ToString()) == false)
+                                                    usedVariables.Add(value.ToString());
+                                        }
+                                    }
+                                    else if (mi.Name == "FlowControlAction" && value.ToString() == "SetVariableValue") //get used variable in flow control with set variable action type.
+                                    {
+                                        string[] vals = ((string)item.GetType().GetRuntimeProperty("ValueCalculated").GetValue(item)).Split(new[] { '=' });
+                                        const int count = 2;
+                                        if (vals.Count() == count && !usedVariables.Contains(vals[0]))
+                                        {
+                                            usedVariables.Add(vals[0]);
+                                        }
+                                    }
+                                    else if (mi.Name == "VariableName" && mi.DeclaringType.Name == "VariableDependency" && usedVariables != null)
+                                    {
+                                        if (!usedVariables.Contains(value))
+                                        {
+                                            usedVariables.Add((string)value);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        string stringValue = value.ToString();
+                                        string[] splitedValue = stringValue.Split(new char[] { '{', '}' }, StringSplitOptions.RemoveEmptyEntries);
+                                        if (splitedValue.Length > 0)
+                                        {
+                                            for (int indx = 0; indx < splitedValue.Length; indx++)
                                             {
-                                                val = val.Replace("Var Name=", "");
-                                                if (usedVariables.Contains(val) == false)
-                                                    usedVariables.Add(val);
+                                                string val = splitedValue[indx];
+                                                if (val.Contains("Var Name=") == true)
+                                                {
+                                                    val = val.Replace("Var Name=", "");
+                                                    if (usedVariables.Contains(val) == false)
+                                                        usedVariables.Add(val);
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Exception occured during Action Analyze of Used Variabels, object='{0}', field='{1}'", item, mi.Name), ex);
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Exception occured during Action Analyze of Used Variabels, object='{0}', field='{1}'", item, mi.Name), ex);
+                            }
                         }
                     }
                 }

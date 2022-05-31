@@ -1,0 +1,72 @@
+{
+  "SealightsDetails": {
+    "SealightsEnable": true,
+    "SealightsAgentToken": "112233",
+    "SealightsLabId": "{EnvParam App=App1 Param=Param1}",
+    "SealightsBSId": "1648233090826",
+    "SealightsSessionTimeout": 14400,
+    "SealightsTestStage": "Ginger Regression Test Gideon",
+    "SealightsEntityLevel": "ActivitiesGroup"
+  },
+  "SolutionLocalPath": "C:\\Solutions\\Sealights Test",
+  "EncryptionKey": "D3^hdfr7%ws4Kb56=Qt",
+  "ShowAutoRunWindow": false,
+  "VerboseLevel": "normal",
+  "Runset": {
+    "Exist": true,
+    "Name": "Customers testing set",
+    "ID": "b48d6037-b9e5-4b41-a244-f09542185450",
+    "Description": "Test",
+    "EnvironmentName": "Env3",
+    "EnvironmentID": "843afa46-3ac7-4414-9780-2c7930641574",
+    "RunAnalyzer": true,
+    "RunInParallel": true,
+    "StopRunnersOnFailure": false,
+    "Runners": [
+      {
+        "Exist": true,
+        "Name": "Runner 1",
+        "ID": "d5a8a3a1-0be6-449f-b947-1a72c3c07a4e",
+        "Active": true,
+        "OnFailureRunOption": "ContinueToRunall",
+        "AppAgentMappings": [
+          {
+            "ApplicationName": "MyWebServicesApp",
+            "ApplicationID": "4e046b91-4414-4f30-a597-13e3f076ae14",
+            "AgentName": "aa",
+            "AgentID": "58fbe345-aed5-427e-8601-ae14fcd9c639"
+          }
+        ],
+        "BusinessFlows": [
+          {
+            "Exist": true,
+            "Name": "Create Customer",
+            "ID": "cb7682fe-e269-4f71-9ce8-88299639e5d4",
+            "InstanceID": "731a5c3c-f1c7-401d-b330-b6e883b85105",
+            "Active": true
+          },
+          {
+            "Exist": true,
+            "Name": "Modify Customer",
+            "ID": "68425df4-6e28-45b8-865d-1cc807478c68",
+            "InstanceID": "ecb7d09c-357c-41b4-9986-b5373e932124",
+            "Active": true
+          },
+          {
+            "Exist": true,
+            "Name": "Delete Customer",
+            "ID": "69abc1b8-302c-4ff2-8064-a645693eb0dd",
+            "InstanceID": "ac61a220-1972-4ff3-8cab-3dacb5b31eb6",
+            "Active": true
+          }
+        ]
+      }
+    ],
+    "SelfHealingConfiguration": {
+      "ReprioritizePOMLocators": true,
+      "AutoFixAnalyzerIssue": false,
+      "AutoUpdateApplicationModel": false,
+      "SaveChangesInSourceControl": false
+    }
+  }
+}

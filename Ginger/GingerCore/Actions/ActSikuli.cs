@@ -39,13 +39,14 @@ using Amdocs.Ginger.Common;
 using System.Diagnostics;
 using System.Linq;
 using Amdocs.Ginger.Common.UIElement;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Actions
 {
     public class ActSikuli : ActImageCaptureSupport
     {
-        public override string ActionDescription { get { return "Sikuli Operation"; } }
-        public override string ActionUserDescription { get { return "Sikuli Operation"; } }
+        public override string ActionDescription { get { return "Image Based Operation"; } }
+        public override string ActionUserDescription { get { return "Image based locator and operation using Sikuli"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -76,7 +77,7 @@ namespace GingerCore.Actions
             Click,
             DoubleClick,
             SetValue,
-            //GetValue,
+            GetValue,
             Exist,
             MouseRightClick
         }
@@ -96,7 +97,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return (eActSikuliOperation)GetOrCreateInputParam<eActSikuliOperation>(nameof(ActSikuliOperation), eActSikuliOperation.SetValue);
+                return (eActSikuliOperation)GetOrCreateInputParam<eActSikuliOperation>(nameof(ActSikuliOperation), eActSikuliOperation.Click);
             }
             set
             {
@@ -108,7 +109,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return "Sikuli based operations execution Action";
+                return "Image based locator and operation using Sikuli";
             }
         }
 
@@ -147,19 +148,6 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(SetTextValue), value);
             }
         }
-        public int ProcessIDForSikuliOperation
-        {
-            get
-            {
-                int procId = -1;
-                //if (!string.IsNullOrEmpty(ProcessNameForSikuliOperation) && ActiveProcessWindowsDict.ContainsValue(ProcessNameForSikuliOperation))
-                //{
-                //    procId = ActiveProcessWindowsDict.Where(d => d.Value == ProcessNameForSikuliOperation).FirstOrDefault().Key;
-                //}
-
-                return procId;
-            }
-        }
 
         public string ProcessNameForSikuliOperation
         {
@@ -173,9 +161,99 @@ namespace GingerCore.Actions
             }
         }
 
+        public string PatternSimilarity
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(PatternSimilarity)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PatternSimilarity), value);
+            }
+        }
+
         public override eImageType Image { get { return eImageType.BullsEye; } }
 
         private List<AutomationElement> lstWindows = new List<AutomationElement>();
+
+        public static new partial class Fields
+        {
+            public static readonly string ChangeAppWindowSize = "ChangeAppWindowSize";
+        }
+
+        public enum eChangeAppWindowSize
+        {
+            [EnumValueDescription("")]
+            None,
+            [EnumValueDescription("640 x 480")]
+            Resolution640x480,
+            [EnumValueDescription("800 x 600")]
+            Resolution800x600,
+            [EnumValueDescription("1024 x 768")]
+            Resolution1024x768,
+            [EnumValueDescription("1280 x 800")]
+            Resolution1280x800,
+            [EnumValueDescription("1280 x 1024")]
+            Resolution1280x1024,
+            [EnumValueDescription("1366 x 768")]
+            Resolution1366x768,
+            [EnumValueDescription("1920 x 1080")]
+            Resolution1920x1080,
+        }
+        [IsSerializedForLocalRepository]
+        public bool SetCustomResolution
+        {
+            get
+            {
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(ShowSikuliConsole)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ShowSikuliConsole), value.ToString());
+            }
+        }
+        [IsSerializedForLocalRepository]
+        public eChangeAppWindowSize ChangeAppWindowSize
+        {
+            get
+            {
+                eChangeAppWindowSize eVal = eChangeAppWindowSize.None;
+                if (Enum.TryParse(GetInputParamValue(Fields.ChangeAppWindowSize), out eVal))
+                {
+                    return eVal;
+                }
+                else
+                {
+                    return eChangeAppWindowSize.None;
+                }
+            }
+
+            set
+            {
+                GetOrCreateInputParam(Fields.ChangeAppWindowSize).Value = value.ToString();
+            }
+        }
+
+        [IsSerializedForLocalRepository]
+        public bool UseCustomJava { get; set; }
+
+        private string mCustomJavaPath = string.Empty;
+
+        [IsSerializedForLocalRepository]
+        public string CustomJavaPath
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(CustomJavaPath)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(CustomJavaPath), value);
+            }
+        }
 
         public void SetFocusToSelectedApplicationInstance()
         {
@@ -188,34 +266,49 @@ namespace GingerCore.Actions
                 if (lstWindows.Count != 0)
                 {
                     WinAPIAutomation.ShowWindow(lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).First());
+                    if (SetCustomResolution)
+                    {
+                        List<int> lstVal = GetCustomResolutionValues();
+                        if (lstVal.Count == 2)
+                        {
+                            WinAPIAutomation.ResizeExternalWindow(lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).First(), lstVal[0], lstVal[1]);
+                        }
+                    }
                 }
             }
         }
 
         public override void Execute()
         {
-            if (CheckIfImageValid())
+            if (CheckIfImageValidAndIfPercentageValidAndSelectedApplicationValid())
             {
                 string logMessage = string.Empty;
-                APILauncher sikuliLauncher = new APILauncher(out logMessage, ShowSikuliConsole);
-                sikuliLauncher.EvtLogMessage += sikuliLauncher_EvtLogMessage;
-                sikuliLauncher.Start();
-
+                APILauncher sikuliLauncher = new APILauncher(out logMessage, ShowSikuliConsole, UseCustomJava,
+                                                             ValueExpression.Calculate(CustomJavaPath));
+                if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
+                {
+                    sikuliLauncher.EvtLogMessage += sikuliLauncher_EvtLogMessage;
+                    sikuliLauncher.Start();
+                }
                 try
                 {
                     Screen sekuliScreen = new Screen();
 
-                    Pattern sikuliPattern = new Pattern(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(PatternPath));
+                    Pattern sikuliPattern = new Pattern(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(
+                                                        ValueExpression.Calculate(PatternPath)),
+                                                        double.Parse(ValueExpression.Calculate(PatternSimilarity)) / 100);
 
-                    System.Threading.Tasks.Task.Run(() => SetFocusToSelectedApplicationInstance());
-
+                    if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
+                    {
+                        System.Threading.Tasks.Task.Run(() => SetFocusToSelectedApplicationInstance());
+                    }
                     switch (ActSikuliOperation)
                     {
                         case eActSikuliOperation.Click:
                             sekuliScreen.Click(sikuliPattern);
                             break;
                         case eActSikuliOperation.SetValue:
-                            sekuliScreen.Type(sikuliPattern, SetTextValue);
+                            sekuliScreen.Type(sikuliPattern, ValueExpression.Calculate(SetTextValue));
                             break;
                         case eActSikuliOperation.DoubleClick:
                             sekuliScreen.DoubleClick(sikuliPattern);
@@ -225,6 +318,19 @@ namespace GingerCore.Actions
                             break;
                         case eActSikuliOperation.Exist:
                             sekuliScreen.Exists(sikuliPattern);
+                            break;
+                        case eActSikuliOperation.GetValue:
+                            string txtOutput = GingerOCR.GingerOcrOperations.ReadTextFromImage(sikuliPattern.ImagePath);
+                            if (!string.IsNullOrEmpty(txtOutput))
+                            {
+                                Dictionary<string, object> dctOutput = new Dictionary<string, object>();
+                                dctOutput.Add("output", txtOutput);
+                                AddToOutputValues(dctOutput);
+                            }
+                            else
+                            {
+                                Error = "Unable to read text from image";
+                            }
                             break;
                         default:
                             break;
@@ -237,7 +343,10 @@ namespace GingerCore.Actions
                 }
                 finally
                 {
-                    sikuliLauncher.Stop();
+                    if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
+                    {
+                        sikuliLauncher.Stop();
+                    }
                 }
             }
         }
@@ -245,7 +354,7 @@ namespace GingerCore.Actions
         private void sikuliLauncher_EvtLogMessage(object sender, EventArgs e)
         {
             SikuliErrorModel ex = (SikuliErrorModel)sender;
-            if (ex.Exception != null)
+            if (ex.Exception == null)
             {
                 Reporter.ToLog(eLogLevel.INFO, ex.Message);
             }
@@ -372,21 +481,80 @@ namespace GingerCore.Actions
             }
         }
 
-        private bool CheckIfImageValid()
+        private bool CheckIfImageValidAndIfPercentageValidAndSelectedApplicationValid()
         {
-            if (string.IsNullOrEmpty(PatternPath))
+            if (string.IsNullOrEmpty(ValueExpression.Calculate(PatternPath)))
             {
                 Error = "File Path is Empty";
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Empty");
                 return false;
             }
-            if (!File.Exists(PatternPath))
+            if (!File.Exists(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(
+                ValueExpression.Calculate(PatternPath))))
             {
                 Error = "File Path is Invalid";
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Invalid");
                 return false;
             }
+            double result = 0;
+            if (!double.TryParse(ValueExpression.Calculate(PatternSimilarity), out result))
+            {
+                Error = "Please enter a valid percentage similarity";
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please enter a valid percentage similarity");
+                return false;
+            }
+            if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
+            {
+                RefreshActiveProcessesTitles();
+                if (lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)) == null ||
+                    lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).Count() == 0)
+                {
+                    Error = "Target Application is not running";
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Target Application is not running");
+                    return false;
+                }
+            }
             return true;
+        }
+
+        private List<int> GetCustomResolutionValues()
+        {
+            List<int> lstVal = new List<int>();
+            switch (ChangeAppWindowSize)
+            {
+                case eChangeAppWindowSize.Resolution640x480:
+                    lstVal.Add(640);
+                    lstVal.Add(480);
+                    break;
+                case eChangeAppWindowSize.Resolution800x600:
+                    lstVal.Add(800);
+                    lstVal.Add(600);
+                    break;
+                case eChangeAppWindowSize.Resolution1024x768:
+                    lstVal.Add(1024);
+                    lstVal.Add(768);
+                    break;
+                case eChangeAppWindowSize.Resolution1280x800:
+                    lstVal.Add(1280);
+                    lstVal.Add(800);
+                    break;
+                case eChangeAppWindowSize.Resolution1280x1024:
+                    lstVal.Add(1280);
+                    lstVal.Add(1024);
+                    break;
+                case eChangeAppWindowSize.Resolution1366x768:
+                    lstVal.Add(1366);
+                    lstVal.Add(768);
+                    break;
+                case eChangeAppWindowSize.Resolution1920x1080:
+                    lstVal.Add(1920);
+                    lstVal.Add(1080);
+                    break;
+                default:
+                    break;
+            }
+
+            return lstVal;
         }
     }
 }

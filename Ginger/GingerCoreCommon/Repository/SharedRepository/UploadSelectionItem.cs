@@ -26,7 +26,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 {
     public class UploadItemSelection : RepositoryItemBase, INotifyPropertyChanged
     {
-       
+
         public enum eItemUploadStatus
         {
             PendingUpload,
@@ -35,19 +35,34 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             Skipped
         }
 
+        public enum eActivityInstanceType
+        {
+            [EnumValueDescription("Link Instance")]
+            LinkInstance = 1,
+            [EnumValueDescription("Regular Instance")]
+            RegularInstance = 0
+        }
+
         public eItemUploadStatus ItemUploadStatus { get; set; }
 
         public static ObservableList<UploadItemSelection> mSelectedItems = new ObservableList<UploadItemSelection>();
-     
+
         public enum eItemUploadType
         {
             New,
             Overwrite
         }
+        public enum eItemReplace
+        {
+            NormalInstance,
+            AsLink
+        }
         private eItemUploadType mItemUploadType;
         public eItemUploadType ItemUploadType
-        { get { return mItemUploadType; }
-            set {
+        {
+            get { return mItemUploadType; }
+            set
+            {
                 if (mItemUploadType != value)
                 {
                     mItemUploadType = value;
@@ -79,14 +94,15 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         }
 
         public RepositoryItemBase UsageItem { get; set; }
+        public bool IsActivity { get => UsageItem is Activity; }
         public RepositoryItemBase ExistingItem { get; set; }
-    
+
         public enum eExistingItemType
         {
             NA,
             ExistingItemIsParent,
             ExistingItemIsExternalID,
-            ExistingItemIsDuplicate,            
+            ExistingItemIsDuplicate,
         }
 
         public eExistingItemType ExistingItemType { get; set; }
@@ -104,7 +120,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                 OnPropertyChanged(nameof(Selected));
             }
         }
-        
+
         public string Comment { get; set; }
 
         string mSelectedItemPart;
@@ -126,7 +142,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         public Array UploadTypeList
         {
             get
-             {
+            {
                 return Enum.GetValues(typeof(eItemUploadType));
             }
             set
@@ -150,7 +166,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
         }
 
-         public override string ItemName { get ; set; }
+        public override string ItemName { get; set; }
 
         public string ExistingItemName
         {
@@ -168,7 +184,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         }
 
         public Guid ItemGUID { get; set; }
-       
+
 
         public void SetItemPartesFromEnum(Type enumType)
         {
@@ -185,17 +201,17 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                 SelectedItemPart = PartToUpload[0];
         }
 
-        bool mReplaceAsLink;
-        public bool ReplaceAsLink
+        eActivityInstanceType mReplaceType;
+        public eActivityInstanceType ReplaceType
         {
             get
             {
-                return mReplaceAsLink;
+                return mReplaceType;
             }
             set
             {
-                mReplaceAsLink = value;
-                OnPropertyChanged(nameof(ReplaceAsLink));
+                mReplaceType = value;
+                OnPropertyChanged(nameof(ReplaceType));
             }
         }
     }

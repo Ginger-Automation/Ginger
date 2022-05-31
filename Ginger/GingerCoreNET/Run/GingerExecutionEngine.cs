@@ -28,6 +28,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
@@ -268,6 +269,11 @@ namespace Ginger.Run
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
 
+            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes)
+            {
+                RunListeners.Add(new SealightsReportExecutionLogger(mContext));
+            }
+            
             //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
             //{
             //    RunListeners.Add(new TelemetryRunListener());
@@ -289,6 +295,13 @@ namespace Ginger.Run
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
+
+            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes)
+            {
+                RunListeners.Add(new SealightsReportExecutionLogger(mContext));
+            }
+
+          
             //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
             //{
             //    RunListeners.Add(new TelemetryRunListener());
@@ -403,7 +416,6 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;
             try
             {
-
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.Where(x => x.Active).FirstOrDefault() == null)
                 {
                     runnerExecutionSkipped = true;
@@ -545,6 +557,8 @@ namespace Ginger.Run
                     RunnerExecutionWatch.StopRunWatch();
                     Status = RunsetStatus;
 
+                    NotifyOnSkippedRunnerEntities();
+
                     NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
 
                     if (RunLevel == eRunLevel.Runner)
@@ -558,6 +572,38 @@ namespace Ginger.Run
                     Status = RunsetStatus;
                 }
             }
+        }
+
+        private void NotifyOnSkippedRunnerEntities()
+        {
+            // Get all 'Skipped' BF
+            List<BusinessFlow> businessFlowList = BusinessFlows.Where(x => x.RunStatus == eRunStatus.Skipped).ToList();
+
+            foreach (BusinessFlow businessFlow in businessFlowList)
+            {
+                NotifyBusinessFlowSkipped(businessFlow);
+            }
+
+            // Saarch for Activities-Groups and Activities in All BF
+            foreach (BusinessFlow businessFlow in BusinessFlows)
+            {
+                // 'Skipped' Activities Group
+                List<ActivitiesGroup> activitiesGroupList = businessFlow.ActivitiesGroups.Where(x => x.RunStatus == eActivitiesGroupRunStatus.Skipped).ToList();
+
+                foreach (ActivitiesGroup activitiesGroup in activitiesGroupList)
+                {
+                    NotifyActivityGroupSkipped(activitiesGroup);
+                }
+
+                // 'Skipped' Activities
+                List<Activity> activitiesList = businessFlow.Activities.Where(x => x.Status == eRunStatus.Skipped).ToList();
+
+                foreach (Activity activity in activitiesList)
+                {
+                    NotifyActivitySkipped(activity);
+                }
+            }
+
         }
 
 
@@ -3159,7 +3205,7 @@ namespace Ginger.Run
                     // handling ActivityGroup execution
                     currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
                     if (currentActivityGroup != null)
-                    {
+                    {                       
                         currentActivityGroup.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
                         switch (currentActivityGroup.ExecutionLoggerStatus)
                         {
@@ -3402,7 +3448,7 @@ namespace Ginger.Run
                                 break;
                         }
                     }
-                }
+                }                
 
                 if (standaloneExecution)
                 {
@@ -4149,13 +4195,22 @@ namespace Ginger.Run
                 if (mStopRun)
                     break;
 
-                if (act.Active && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
+                if (act.Active && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                {
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
+                }
                 if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                 {
-                    NotifyActionEnd(act);
+                    //To avoid repeat call to NotifyActionEnd for the same action
+                    if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked)
+                    {
+                        NotifyActionEnd(act);
+                    }
                 }
-                if (CurrentBusinessFlow.CurrentActivity.Acts.IsLastItem()) break;
-
+                if (CurrentBusinessFlow.CurrentActivity.Acts.IsLastItem())
+                {
+                    break;
+                }
                 else
                 {
                     CurrentBusinessFlow.CurrentActivity.Acts.MoveNext();
@@ -4443,6 +4498,15 @@ namespace Ginger.Run
             {
                 AccountReportExecutionLogger centeralized_Logger = (AccountReportExecutionLogger)(from x in mRunListeners where x.GetType() == typeof(AccountReportExecutionLogger) select x).SingleOrDefault();
                 return centeralized_Logger;
+            }
+        }
+
+        public SealightsReportExecutionLogger Sealights_Logger
+        {
+            get
+            {
+                SealightsReportExecutionLogger sealights_Logger = (SealightsReportExecutionLogger)(from x in mRunListeners where x.GetType() == typeof(SealightsReportExecutionLogger) select x).SingleOrDefault();
+                return sealights_Logger;
             }
         }
 
@@ -4765,6 +4829,16 @@ namespace Ginger.Run
             }
         }
 
+        private void NotifyActivitySkipped(Activity activity)
+        {
+            uint evetTime = RunListenerBase.GetEventTime();
+            activity.EndTimeStamp = DateTime.UtcNow;
+            foreach (RunListenerBase runnerListener in mRunListeners)
+            {
+                runnerListener.ActivitySkipped(evetTime, activity);
+            }
+        }
+
 
         private void NotifyBusinessFlowEnd(BusinessFlow businessFlow)
         {
@@ -4796,6 +4870,16 @@ namespace Ginger.Run
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.BusinessFlowStart(evetTime, CurrentBusinessFlow, ContinueRun);
+            }
+        }
+
+        private void NotifyBusinessFlowSkipped(BusinessFlow businessFlow, bool ContinueRun = false)
+        {
+            uint evetTime = RunListenerBase.GetEventTime();
+
+            foreach (RunListenerBase runnerListener in mRunListeners)
+            {
+                runnerListener.BusinessFlowSkipped(evetTime, businessFlow, ContinueRun);
             }
         }
 
@@ -4837,6 +4921,16 @@ namespace Ginger.Run
                     ((Ginger.Run.ExecutionLoggerManager)runnerListener).mCurrentBusinessFlow = CurrentBusinessFlow;
                 }
                 runnerListener.ActivityGroupEnd(eventTime, activityGroup, offlineMode);
+            }
+        }
+
+        private void NotifyActivityGroupSkipped(ActivitiesGroup activityGroup, bool offlineMode = false)
+        {
+            uint eventTime = RunListenerBase.GetEventTime();
+            activityGroup.EndTimeStamp = DateTime.UtcNow;
+            foreach (RunListenerBase runnerListener in mRunListeners)
+            {                
+                runnerListener.ActivityGroupSkipped(eventTime, activityGroup, offlineMode);
             }
         }
 

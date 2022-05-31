@@ -303,7 +303,7 @@ namespace Ginger.BusinessFlowPages
             {
                 var activitiesGroupSelectionPage = new ActivitiesGroupSelectionPage(businessFlow);
                 parentGroup = activitiesGroupSelectionPage.ShowAsWindow();
-                copyAsLink = activitiesGroupSelectionPage.xCopyAsLink.IsChecked.Value;
+                copyAsLink = activitiesGroupSelectionPage.xLinkedInstance.IsChecked.Value;
             }
 
             if (parentGroup != null)

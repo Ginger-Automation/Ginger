@@ -17,8 +17,10 @@
         i {
             width: 15px;
             height: 15px;
+            font-size: 1em;
             text-align: center;
             margin-right: 2px;
+            vertical-align: middle;
         }
     }
     .layout-megamenu {
@@ -66,15 +68,15 @@
                     top: 40px;
                     text-shadow: 0px 0px 2px $darkMegamenuHeaderShadowColor;
                 }
-                .ui-button {
+                .p-button {
                     margin-top: 10px;
                     border-radius: 3px;
-                    .ui-button-text {
+                    .p-button-text {
                         padding: 4px 16px;
                     }
                 }
             }
-            h4 {
+            h6 {
                 color: $megamenuHeaderColor;
                 font-weight: 700;
                 line-height: 20px;
@@ -119,7 +121,7 @@
         &.layout-megamenu-dark {
             background-color: $darkMegamenuBgColor;
             border: none;
-            h4 {
+            h6 {
                 color: $darkMegamenuTextColor;
             }
             ul {

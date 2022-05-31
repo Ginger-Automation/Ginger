@@ -36,7 +36,6 @@ using SikuliStandard.sikuli_REST;
 using SikuliStandard.sikuli_UTIL;
 using HtmlAgilityPack;
 using InputSimulatorStandard;
-using Microsoft.Edge.SeleniumTools;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
@@ -58,6 +57,8 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text;
+using OpenQA.Selenium.Edge;
 
 namespace GingerCore.Drivers
 {
@@ -168,7 +169,7 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Only for Chrome & Firefox | Full path for the User Profile folder")]
+        [UserConfiguredDescription("Only for Chrome, Firefox & Edge | Full path for the User Profile folder")]
         public string UserProfileFolderPath { get; set; }
 
         [UserConfigured]
@@ -431,7 +432,7 @@ namespace GingerCore.Drivers
                             FirefoxOption.AddArgument("--headless");
                         }
 
-                        if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
+                        if (IsUserProfileFolderPathValid())
                         {
                             FirefoxProfile ffProfile2 = new FirefoxProfile();
                             ffProfile2 = new FirefoxProfile(UserProfileFolderPath);
@@ -462,7 +463,7 @@ namespace GingerCore.Drivers
                         options.AddArgument("--start-maximized");
                         SetCurrentPageLoadStrategy(options);
 
-                        if (!string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath))
+                        if (IsUserProfileFolderPathValid())
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
                         else if (!string.IsNullOrEmpty(ExtensionPath))
                             options.AddExtension(Path.GetFullPath(ExtensionPath));
@@ -500,9 +501,7 @@ namespace GingerCore.Drivers
                         }
                         else if (!string.IsNullOrEmpty(BrowserUserAgent))
                         {
-                            ChromeMobileEmulationDeviceSettings chromeMobileEmulationDevice = new ChromeMobileEmulationDeviceSettings()
-                            { UserAgent = BrowserUserAgent.Trim() };
-                            options.EnableMobileEmulation(chromeMobileEmulationDevice);
+                            options.AddArgument("--user-agent=" + BrowserUserAgent.Trim());
                         }
 
                         if (!(String.IsNullOrEmpty(ApplitoolsViewKey) && String.IsNullOrWhiteSpace(ApplitoolsViewKey)))
@@ -560,10 +559,13 @@ namespace GingerCore.Drivers
                     #region EDGE
                     case eBrowserType.Edge:
                         EdgeOptions EDOpts = new EdgeOptions();
-                        EDOpts.UseChromium = true;
+                        //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
+                        //EDOpts.UseChromium = true;
                         EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                        if (IsUserProfileFolderPathValid())
+                            EDOpts.AddAdditionalEdgeOption("user-data-dir=" ,UserProfileFolderPath);
                         SetCurrentPageLoadStrategy(EDOpts);
-                        EdgeDriverService EDService = EdgeDriverService.CreateDefaultServiceFromOptions(EDOpts);
+                        EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
                         EDService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
 
@@ -610,23 +612,52 @@ namespace GingerCore.Drivers
                             //TODO: For sauce lab - externalize - try without amdocs proxy hot spot works then it is proxy issue
                             break;
                         }
-                        else
+                        else if (RemoteBrowserName.Equals("chrome"))
                         {
-                            DesiredCapabilities capability = new DesiredCapabilities();
-                            capability.SetCapability(CapabilityType.BrowserName, RemoteBrowserName);
+                            ChromeOptions chromeOptions = new ChromeOptions();
+                            chromeOptions.Proxy = mProxy == null ? null : mProxy;
+                            if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), chromeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            else
+                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), chromeOptions.ToCapabilities());
+                            break;
+                        }
+                        else if (RemoteBrowserName.Equals("MicrosoftEdge"))
+                        {
+                            EdgeOptions edgeOptions = new EdgeOptions();
+                            edgeOptions.Proxy = mProxy;
                             if (!string.IsNullOrEmpty(RemotePlatform))
                             {
-                                capability.SetCapability(SeleniumDriver.RemotePlatformParam, RemotePlatform);
+                                edgeOptions.AddAdditionalOption(RemotePlatformParam, RemotePlatform);
                             }
                             if (!string.IsNullOrEmpty(RemoteVersion))
                             {
-                                capability.SetCapability(SeleniumDriver.RemoteVersionParam, RemoteVersion);
+                                edgeOptions.AddAdditionalOption(SeleniumDriver.RemoteVersionParam, RemoteVersion);
                             }
 
+                            edgeOptions.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
-                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), capability, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                             else
-                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), capability);
+                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities());
+                            break;
+                        }
+                        else
+                        {
+
+                            InternetExplorerOptions internetExplorerOptions = new InternetExplorerOptions();
+                            if (!string.IsNullOrEmpty(RemotePlatform))
+                            {
+                                internetExplorerOptions.AddAdditionalOption(RemotePlatformParam, RemotePlatform);
+                            }
+                            if (!string.IsNullOrEmpty(RemoteVersion))
+                            {
+                                internetExplorerOptions.AddAdditionalOption(SeleniumDriver.RemoteVersionParam, RemoteVersion);
+                            }
+                            if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), (ICapabilities)internetExplorerOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            else
+                                Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), internetExplorerOptions);
 
                             break;
                         }
@@ -8213,6 +8244,10 @@ namespace GingerCore.Drivers
             ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
             evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
             return LocateElementByLocator(evaluatedLocator, true);
+        }
+        private bool IsUserProfileFolderPathValid()
+        {
+            return !string.IsNullOrEmpty(UserProfileFolderPath) && System.IO.Directory.Exists(UserProfileFolderPath);
         }
 
         void IWindowExplorer.CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> mOriginalList)

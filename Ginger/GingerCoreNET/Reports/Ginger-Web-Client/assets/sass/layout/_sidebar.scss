@@ -8,6 +8,7 @@
         top: 60px;
         left: 0;
         height: 100%;
+        overflow: auto;
         @include border-box();
         @include transition(left $transitionDuration);
         @if variable-exists(menuBgImage) {
@@ -15,54 +16,63 @@
             background-size: 240px 100%;
             background-repeat: no-repeat;
         }
+
         .user-profile {
             text-align: center;
             color: $textColor;
+
             #sidebar-profile-button {
                 padding: 12px 0;
+
                 img {
                     display: block;
                     margin-left: 70px;
                 }
             }
+
             a {
                 color: $textColor;
                 display: block;
                 position: relative;
+
                 .sidebar-profile-name {
                     display: inline-block;
                     font-weight: 700;
                 }
+
                 .sidebar-profile-role {
                     display: block;
                     color: darken($textSecondaryColor, 25%);
                 }
+
                 &:hover {
                     background-color: $sidebarMenuitemHoverBgColor;
                 }
+
                 .layout-menuitem-toggler {
                     position: absolute;
                     right: 12px;
                     top: 11px;
                 }
+
             }
         }
+
         .layout-menu {
             list-style-type: none;
             padding: 0;
+            padding-bottom: 150px;
             margin: 0;
-            .text-badge {
-                .menuitem-badge {
-                    width: 40px;
-                    margin-right: 22px;
-                }
-            }
+
             li {
-                >a {
+                > a {
                     display: block;
                     padding: 8px 12px;
                     color: $sidebarMenuitemTextColor;
                     position: relative;
+                    cursor: pointer;
+                    user-select: none;
+
                     .menuitem-badge {
                         margin-right: 25px;
                         float: right;
@@ -73,10 +83,17 @@
                         text-align: center;
                         margin-left: 0;
                         border-radius: 50px;
+
+                        &.text-badge {
+                            width: 40px;
+                            margin-right: 22px;
+                        }
                     }
+
                     i {
                         color: $sidebarMenuitemIconColor;
-                        font-weight: 700;
+                        vertical-align: middle;
+
                         &.layout-menuitem-toggler {
                             position: absolute;
                             right: 12px;
@@ -84,51 +101,67 @@
                             @include transition(transform $transitionDuration);
                         }
                     }
+
+                    &.rotated-icon {
+                        .layout-menuitem-icon {
+                            transform: rotate(90deg);
+                        }
+                    }
+
                     span {
                         margin-left: 12px;
+                        vertical-align: middle;
                     }
+
                     &:hover {
                         background-color: $sidebarMenuitemHoverBgColor;
                     }
                 }
-                >ul {
+
+                > ul {
                     list-style-type: none;
                     padding: 0 0 0 0;
                     margin: 0;
                     overflow: hidden;
 
                     li {
-                        >a {
+                        > a {
                             padding: 8px 24px;
                         }
+
                         ul {
                             li {
-                                >a {
+                                > a {
                                     padding: 8px 36px;
                                 }
+
                                 ul {
                                     li {
-                                        >a {
+                                        > a {
                                             padding: 8px 48px;
                                         }
+
                                         ul {
                                             li {
-                                                >a {
+                                                > a {
                                                     padding: 8px 60px;
                                                 }
+
                                                 ul {
                                                     li {
-                                                        >a {
+                                                        > a {
                                                             padding: 8px 72px;
                                                         }
+
                                                         ul {
                                                             li {
-                                                                >a {
+                                                                > a {
                                                                     padding: 8px 84px;
                                                                 }
+
                                                                 ul {
                                                                     li {
-                                                                        >a {
+                                                                        > a {
                                                                             padding: 8px 96px;
                                                                         }
                                                                     }
@@ -145,67 +178,55 @@
                         }
                     }
                 }
+
                 &.active-menuitem {
-                    >a {
+                    > a {
                         color: $sidebarMenuitemActiveTextColor;
+
                         i {
                             color: $sidebarMenuitemActiveTextColor;
                         }
+
                         i.layout-menuitem-toggler {
                             @include rotate(-180deg);
                         }
                     }
                 }
             }
-            >li {
-                >a {
+
+            > li {
+                > a {
                     border-bottom: 1px solid $sidebarMenuitemDividerColor;
                 }
+
                 &.active-menuitem {
-                    >a {
+                    > a {
                         border-left: 4px solid $sidebarMenuitemActiveBorderLeftColor;
                         padding-left: 8px;
+
                         i {
                             color: $sidebarMenuitemActiveIconColor;
                         }
                     }
-                    >ul {
+
+                    > ul {
                         border-bottom: 1px solid $sidebarMenuitemDividerColor;
                     }
                 }
+
                 &:first-child {
-                    >a {
+                    > a {
                         border-top: 1px solid $sidebarMenuitemDividerColor;
                     }
                 }
+
                 &.ui-menuitem-submenu {
                     &.active-menuitem {
-                        >a {
+                        > a {
                             border-bottom-color: transparent;
                         }
                     }
                 }
-            }
-        }
-
-        .ui-scrollpanel {
-            background-color: transparent;
-            border-radius: 0;
-            border: none;
-
-            .ui-scrollpanel-bar {
-                background: #e0e0e0;
-            }
-
-            .ui-scrollpanel-hidden {
-                display: block;
-                visibility: hidden;
-            }
-
-            .sidebar-scroll-content {
-                width: 248px;
-                padding-right: 18px;
-                padding-bottom: 120px;
             }
         }
 
@@ -217,128 +238,148 @@
                 background-size: 240px 100%;
                 background-repeat: no-repeat;
             }
+
             .user-profile {
                 color: $darkSidebarMenuitemTextColor;
+
                 a {
                     color: $darkSidebarMenuitemTextColor;
+
                     &:hover {
                         background-color: $darkSidebarMenuitemHoverBgColor;
                     }
+
                     .sidebar-profile-role {
                         color: $darkSidebarMenuitemTextColor;
                     }
                 }
+
                 li.menuitem-active {
-                    >a {
+                    > a {
                         color: $darkSidebarMenuitemActiveTextColor;
+
                         i {
                             color: $darkSidebarMenuitemActiveIconColor;
                         }
                     }
                 }
             }
+
             .layout-menu {
                 li {
-                    >a {
+                    > a {
                         color: $darkSidebarMenuitemTextColor;
+
                         i {
                             color: $darkSidebarMenuitemIconColor;
                         }
+
                         &:hover {
                             background-color: $darkSidebarMenuitemHoverBgColor;
                         }
                     }
+
                     &.active-menuitem {
-                        >a {
+                        > a {
                             color: $darkSidebarMenuitemActiveTextColor;
+
                             i {
                                 color: $darkSidebarMenuitemActiveIconColor;
                             }
                         }
                     }
                 }
-                >li {
-                    >a {
+
+                > li {
+                    > a {
                         border-bottom: 1px solid $darkSidebarMenuitemDividerColor;
                     }
+
                     &.active-menuitem {
-                        >a {
+                        > a {
                             border-left: 4px solid $darkSidebarMenuitemActiveBorderLeftColor;
                             padding-left: 8px;
                             color: $darkSidebarMenuitemActiveTextColor;
+
                             i {
                                 color: $darkSidebarMenuitemActiveIconColor;
                             }
                         }
-                        >ul {
+
+                        > ul {
                             border-bottom: 1px solid $darkSidebarMenuitemDividerColor;
                         }
                     }
+
                     &:first-child {
-                        >a {
+                        > a {
                             border-top: 1px solid $darkSidebarMenuitemDividerColor;
                         }
                     }
                 }
             }
-
-            .ui-scrollpanel {
-                .ui-scrollpanel-bar {
-                    background: rgba(255, 255, 255, 0.1);
-                }
-            }
         }
+
         &.layout-sidebar-gradient {
             border-right-color: transparent;
             @if variable-exists(gradientMenuBgImage) {
                 background-image: url("../images/special/#{$gradientMenuBgImage}");
                 background-size: 240px 100%;
                 background-repeat: no-repeat;
-            }
-            @else {
+            } @else {
                 @include background-gradient-top2bottom($gradientSidebarTopBgColor,
-                $gradientSidebarBottomBgColor);
+                    $gradientSidebarBottomBgColor);
                 border-right-color: $gradientSidebarTopBgColor;
             }
+
             .layout-menu {
                 li {
-                    >a {
+                    > a {
                         color: $gradientSidebarMenuitemTextColor;
+
                         i {
                             color: $gradientSidebarMenuitemIconColor;
                         }
+
                         &:hover {
                             background-color: $gradientSidebarMenuitemHoverBgColor;
                         }
                     }
+
                     &.active-menuitem {
-                        >a {
+                        > a {
                             color: $gradientSidebarMenuitemActiveTextColor;
+
                             i {
                                 color: $gradientSidebarMenuitemActiveIconColor;
                             }
                         }
                     }
                 }
-                >li {
-                    >a {
+
+                > li {
+                    > a {
                         border-bottom: 1px solid $gradientSidebarMenuitemDividerColor;
                     }
+
                     &.active-menuitem {
-                        >a {
+                        > a {
                             border-left: 4px solid $gradientSidebarMenuitemActiveBorderLeftColor;
                             padding-left: 8px;
                             color: $gradientSidebarMenuitemActiveTextColor;
+
                             i {
                                 color: $gradientSidebarMenuitemActiveIconColor;
                             }
                         }
-                        >ul {
+
+                        > ul {
                             border-bottom: 1px solid $gradientSidebarMenuitemDividerColor;
                         }
                     }
+
                     &:first-child {
-                        >a {
+                        > a {
                             border-top: 1px solid $gradientSidebarMenuitemDividerColor;
                         }
                     }
@@ -346,15 +387,18 @@
             }
         }
     }
+
     &.layout-wrapper-sidebar-inactive {
         .layout-sidebar {
             left: -230px;
         }
     }
+
     &.layout-wrapper-overlay-sidebar {
         .layout-sidebar {
             left: -230px;
         }
+
         &.layout-wrapper-overlay-sidebar-active {
             .layout-sidebar {
                 left: 0;
@@ -374,6 +418,7 @@
 
             .layout-sidebar {
                 width: 50px;
+                overflow: visible;
 
                 .user-profile {
                     #sidebar-profile-button {
@@ -479,6 +524,10 @@
                                     font-size: 10px;
                                     width: 13px;
                                     height: 13px;
+
+                                    &.text-badge {
+                                        display: none;
+                                    }
                                 }
                             }
 
@@ -487,12 +536,6 @@
                             }
 
                             .layout-menuitem-toggler {
-                                display: none;
-                            }
-                        }
-
-                        &.text-badge {
-                            .menuitem-badge {
                                 display: none;
                             }
                         }
@@ -569,6 +612,7 @@
                             background-color: $darkSidebarBgColor;
                             border: $darkSidebarBgColor;
                             color: $darkSidebarMenuitemTextColor;
+
                             > li {
                                 a {
                                     color: $darkSidebarMenuitemTextColor;
@@ -644,6 +688,7 @@
                                 $gradientSidebarBottomBgColor);
                             border-color: $gradientSidebarTopBgColor;
                             color: $gradientSidebarMenuitemTextColor;
+
                             li {
                                 a {
                                     color: $gradientSidebarMenuitemTextColor;
@@ -670,6 +715,7 @@
                             }
                         }
                     }
+
                     .layout-menu {
                         > li {
                             > a {
@@ -734,20 +780,12 @@
                 min-height: 36px;
                 position: static;
                 padding: 0;
+                overflow: visible;
                 @if variable-exists(horizontalMenuBgImageLight) {
                     background-image: url("../images/special/#{$horizontalMenuBgImageLight}");
                     background-size: auto;
                     background-repeat: no-repeat;
                     background-color: $horizontalMenuBgColor;
-                }
-
-                .ui-scrollpanel {
-                    .ui-scrollpanel-wrapper {
-                        .ui-scrollpanel-content {
-                            padding: 0;
-                            width: 100%;
-                        }
-                    }
                 }
 
                 .layout-menu {
@@ -765,6 +803,7 @@
 
                         &:first-child {
                             border-left: 1px solid $sidebarMenuitemDividerColor;
+
                             > a {
                                 border-top: 0 none;
                             }
@@ -776,6 +815,7 @@
                             border-left: 4px solid transparent;
                             border-right: 1px solid $sidebarMenuitemDividerColor;
                             min-height: 38px;
+                            margin-bottom: -4px;
 
                             i {
                                 color: $routeBarIconColor;
@@ -877,7 +917,8 @@
                                 background-color: $darkSidebarBgColor;
                                 border-color: $darkSidebarBgColor;
                                 color: $darkSidebarMenuitemTextColor;
-                                li.active-menuitem{
+
+                                li.active-menuitem {
                                     > a {
                                         border-left: 4px solid $darkSidebarMenuitemActiveTextColor;
                                         color: $darkSidebarMenuitemActiveTextColor;
@@ -935,6 +976,7 @@
                                     $gradientSidebarBottomBgColor);
                                 border-color: $gradientSidebarTopBgColor;
                                 color: $gradientSidebarMenuitemTextColor;
+
                                 li.active-menuitem {
                                     > a {
                                         border-left: 4px solid $gradientSidebarMenuitemActiveTextColor;
@@ -966,29 +1008,6 @@
             }
 
             .layout-sidebar {
-                .ui-scrollpanel {
-                    .ui-scrollpanel-wrapper {
-                        overflow: visible;
-                        float: none;
-                        .ui-scrollpanel-content {
-                            display: block;
-                            height: auto;
-                            position: static;
-                            overflow: visible;
-                            overflow-x: visible;
-                        }
-                    }
-
-                    .ui-scrollpanel-bar {
-                        display: none;
-                    }
-
-                    .sidebar-scroll-content {
-                        width: 100%;
-                        padding: 0;
-                    }
-                }
-
                 .layout-menu {
                     ul {
                         li {
@@ -1051,10 +1070,11 @@
             left: -230px;
             top: 105px;
             @include shadow(2px 0 1px 0 rgba(0,
-            0,
-            0,
-            0.16));
+                0,
+                0,
+                0.16));
         }
+
         &.layout-wrapper-sidebar-mobile-active {
             .layout-sidebar {
                 left: 0;

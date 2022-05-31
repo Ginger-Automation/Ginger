@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2022 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -32,7 +50,9 @@ namespace GingerCore.NoSqlBase
             get
             {
                 int lastIndexOf = Db.ConnectionString.LastIndexOf(';');
-                return Db.ConnectionString.Substring(0, lastIndexOf);
+                string[] strArray = Db.ConnectionString.Split(';');
+                string connectionString = strArray[0] + ";" + strArray[1];
+                return connectionString;
             }
         }
 
@@ -41,7 +61,8 @@ namespace GingerCore.NoSqlBase
             get
             {
                 int lastIndexOf = Db.ConnectionString.LastIndexOf(';');
-                string dbString = Db.ConnectionString.Substring(lastIndexOf + 1);
+                string[] strArray = Db.ConnectionString.Split(';');
+                string dbString = strArray[2];
                 return dbString.Split('=')[1];
             }
         }
@@ -109,48 +130,168 @@ namespace GingerCore.NoSqlBase
 
         public override void PerformDBAction()
         {
-            ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
-            VE.Value = Act.SQL;
-            string SQLCalculated = VE.ValueCalculated;
-            string dbName = "";
-            string containerName = "";
-            if (Action == eDBValidationType.SimpleSQLOneValue || Action == eDBValidationType.UpdateDB)
+            try
             {
-                dbName = DatabaseName;
-                containerName = Act.Table;
+                ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
+                VE.Value = Act.SQL;
+                string SQLCalculated = VE.ValueCalculated.ToLower();
+                string dbName = "";
+                string containerName = "";
+                Action = Act.DBValidationType;
+                if (Action == eDBValidationType.SimpleSQLOneValue || Action == eDBValidationType.UpdateDB
+                    || Action == eDBValidationType.Insert)
+                {
+                    dbName = DatabaseName;
+                    containerName = Act.Table;
+                }
+                switch (Action)
+                {
+                    case eDBValidationType.FreeSQL:
+                        dbName = DatabaseName;
+                        if (!SQLCalculated.Contains("where"))
+                        {
+                            string[] chArray = VE.ValueCalculated.Split(' ');
+                            int idxFrom = 0;
+                            for (int i = 0; i < chArray.Length; i++)
+                            {
+                                if (chArray[i].Equals("from", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    idxFrom = i + 1;
+                                    break;
+                                }
+                            }
+                            containerName = chArray[idxFrom];
+                            if (containerName.Contains("."))
+                            {
+                                containerName = containerName.Split('.')[0];
+                            }
+                        }
+                        else
+                        {
+                            int indexOfFrom = SQLCalculated.IndexOf("from") + 4;
+                            int indexOfWhere = SQLCalculated.IndexOf("where");
+                            containerName = SQLCalculated.Substring(indexOfFrom, indexOfWhere - indexOfFrom).Trim();
+                            containerName = VE.ValueCalculated.Substring(VE.ValueCalculated.IndexOf(containerName, StringComparison.CurrentCultureIgnoreCase)
+                                , containerName.Length).Split(' ')[0];
+                        }
+                        Container container = GetContainer(dbName, containerName);
+                        SetOutputFromApiResponse(container, VE.ValueCalculated);
+                        break;
+                    case eDBValidationType.SimpleSQLOneValue:
+                        Container objContainer = GetContainer(dbName, containerName);
+                        SQLCalculated = "select * from " + containerName;
+                        if (!string.IsNullOrEmpty(Act.Where))
+                        {
+                            SQLCalculated += " where " + Act.Where;
+                        }
+                        SetOutputFromApiResponse(objContainer, SQLCalculated);
+                        break;
+                    case eDBValidationType.RecordCount:
+                        dbName = DatabaseName;
+                        SQLCalculated = "select count(1) from " + SQLCalculated;
+                        string properSql = "select count(1) from " + VE.ValueCalculated;
+                        if (!SQLCalculated.Contains("where"))
+                        {
+                            string[] chArray = VE.ValueCalculated.Split(' ');
+                            int idxFrom = 0;
+                            for (int i = 0; i < chArray.Length; i++)
+                            {
+                                if (chArray[i].Equals("from", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    idxFrom = i + 1;
+                                    break;
+                                }
+                            }
+                            containerName = chArray[idxFrom];
+                        }
+                        else
+                        {
+                            int indexOfFrom = SQLCalculated.IndexOf("from") + 4;
+                            int indexOfWhere = SQLCalculated.IndexOf("where");
+                            containerName = SQLCalculated.Substring(indexOfFrom, indexOfWhere - indexOfFrom).Trim();
+                            containerName = properSql.Substring(properSql.IndexOf(containerName, StringComparison.CurrentCultureIgnoreCase)
+                                , containerName.Length).Split(' ')[0];
+                        }
+                        Container recordContainer = GetContainer(dbName, containerName);
+                        SetOutputFromApiResponse(recordContainer, properSql);
+                        break;
+                    case eDBValidationType.UpdateDB:
+                        Container objRecordContainer = GetContainer(DatabaseName, containerName);
+                        string primaryKey = Act.GetInputParamCalculatedValue(nameof(Act.PrimaryKey));
+                        string partitionKey = Act.GetInputParamCalculatedValue(nameof(Act.PartitionKey));
+                        if (string.IsNullOrEmpty(primaryKey))
+                        {
+                            Act.Error = "Primary Key cannot be empty";
+                            return;
+                        }
+                        if (string.IsNullOrEmpty(partitionKey))
+                        {
+                            Act.Error = "Partition Key cannot be empty";
+                            return;
+                        }
+                        if (Act.UpdateOperationInputValues == null || Act.UpdateOperationInputValues.Count == 0)
+                        {
+                            Act.Error = "Please provide fields to be modified";
+                            return;
+                        }
+                        if (objRecordContainer == null)
+                        {
+                            Act.Error = "Please select valid container/table";
+                            return;
+                        }
+                        List<PatchOperation> lstPatchOperations = new List<PatchOperation>();
+                        foreach (ActInputValue cosmosPatch in Act.UpdateOperationInputValues)
+                        {
+                            string param, value;
+                            VE.Value = cosmosPatch.Param;
+                            param = VE.ValueCalculated;
+                            VE.Value = cosmosPatch.Value;
+                            value = VE.ValueCalculated;
+                            lstPatchOperations.Add(PatchOperation.Replace(param, value));
+                        }
+                        IReadOnlyList<PatchOperation> enumerablePatchOps = lstPatchOperations;
+                        ItemResponse<object> response = objRecordContainer.PatchItemAsync<object>(id: primaryKey, partitionKey: new PartitionKey(partitionKey), patchOperations: enumerablePatchOps
+                            , null, default).Result;
+                        if (response != null && response.Resource != null)
+                        {
+                            object outputVals = response.Resource;
+                            JObject parsed = JObject.Parse(outputVals.ToString());
+                            string key = parsed.GetValue("id").ToString();
+                            Dictionary<string, object> dctOutputVals = new Dictionary<string, object>();
+                            dctOutputVals.Add(key, outputVals);
+                            Act.AddToOutputValues(dctOutputVals);
+                        }
+                        break;
+                    case eDBValidationType.Insert:
+                        Container objContainerForInsert = GetContainer(dbName, containerName);
+                        string insertJson = Act.GetInputParamCalculatedValue("InsertJson");
+                        if (string.IsNullOrEmpty(insertJson))
+                        {
+                            Act.Error = "JSON cannot be empty";
+                            return;
+                        }
+                        JObject jsonObject = JObject.Parse(insertJson);
+                        ItemResponse<object> objReturn = objContainerForInsert.CreateItemAsync<object>(jsonObject).Result;
+
+                        if (objReturn != null && objReturn.Resource != null)
+                        {
+                            object outputVals = objReturn.Resource;
+                            JObject parsed = JObject.Parse(outputVals.ToString());
+                            string key = parsed.GetValue("id").ToString();
+                            Dictionary<string, object> dctOutputVals = new Dictionary<string, object>();
+                            dctOutputVals.Add(key, outputVals);
+                            Act.AddToOutputValues(dctOutputVals);
+                        }
+                        break;
+                    default:
+                        //do nothing
+                        break;
+                }
             }
-            switch (Action)
+            catch (Exception ex)
             {
-                case eDBValidationType.FreeSQL:
-                    dbName = DatabaseName;
-                    containerName = SQLCalculated.Split(' ')[SQLCalculated.Split(' ').Length - 1];
-                    Container container = GetContainer(dbName, containerName);
-                    SetOutputFromApiResponse(container, SQLCalculated);
-                    break;
-                case eDBValidationType.SimpleSQLOneValue:
-                    Container objContainer = GetContainer(dbName, containerName);
-                    SQLCalculated = "select * from " + containerName + " where " + Act.Where;
-                    SetOutputFromApiResponse(objContainer, SQLCalculated);
-                    break;
-                case eDBValidationType.RecordCount:
-                    dbName = DatabaseName;
-                    if (SQLCalculated.Contains("where"))
-                    {
-                        containerName = SQLCalculated.Substring(0, SQLCalculated.IndexOf("where"));
-                    }
-                    else
-                    {
-                        containerName = SQLCalculated;
-                    }
-                    Container recordContainer = GetContainer(dbName, containerName);
-                    SQLCalculated = "select Count(1) from " + SQLCalculated;
-                    SetOutputFromApiResponse(recordContainer, SQLCalculated);
-                    break;
-                case eDBValidationType.UpdateDB:
-                    throw new NotImplementedException("Update not yet implemented for Cosmos Db");
-                default:
-                    //do nothing
-                    break;
+                Act.Error = ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
         }
 
@@ -175,20 +316,35 @@ namespace GingerCore.NoSqlBase
 
         private void SetOutputFromApiResponse(Container objContainer, string sqlCalculated)
         {
-            FeedResponse<object> currentResultSet = null;
-            Dictionary<string, object> outputVals = new Dictionary<string, object>();
-            FeedIterator<object> queryResultSetIterator = null;
-            queryResultSetIterator = objContainer.GetItemQueryIterator<object>(sqlCalculated);
-            while (queryResultSetIterator.HasMoreResults)
+            try
             {
-                currentResultSet = queryResultSetIterator.ReadNextAsync().Result;
-                foreach (object response in currentResultSet)
+                FeedResponse<object> currentResultSet = null;
+                Dictionary<string, object> outputVals = new Dictionary<string, object>();
+                FeedIterator<object> queryResultSetIterator = null;
+                queryResultSetIterator = objContainer.GetItemQueryIterator<object>(sqlCalculated);
+                while (queryResultSetIterator.HasMoreResults)
                 {
-                    JObject parsed = JObject.Parse(response.ToString());
-                    var key = parsed.GetValue("id").ToString();
-                    outputVals.Add(key, response);
+                    currentResultSet = queryResultSetIterator.ReadNextAsync().Result;
+                    int i = 1;
+                    foreach (object response in currentResultSet)
+                    {
+                        Act.ParseJSONToOutputValues(response.ToString(), i);
+                        i++;
+                    }
                 }
-                Act.AddToOutputValues(outputVals);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                if (!GetTableList(string.Empty).Contains(objContainer.Id))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Container name is invalid", null);
+                    Act.Error = "Container name is invalid";
+                }
+                else
+                {
+                    Act.Error = ex.Message;
+                }
             }
         }
 

@@ -20,9 +20,13 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
+using Ginger.DataSource;
 using Ginger.UserControls;
-using GingerCore;
+using Ginger.UserControlsLib.TextEditor;
+using GingerCore.Actions.WebAPI;
+using GingerCore.Actions.WebServices;
 using GingerCore.Actions.WebServices.WebAPI;
+using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -30,8 +34,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.DataSource;
-using GingerWPF.ApplicationModelsLib.APIModels;
 
 namespace Ginger.Actions.WebServices
 {
@@ -278,6 +280,45 @@ namespace Ginger.Actions.WebServices
         {
             APIModelPage mAPIEditPage = new APIModelPage(AAMB);
             mAPIEditPage.ShowAsWindow(eWindowShowStyle.Dialog, e: APIModelPage.eEditMode.Edit, parentWindow: Window.GetWindow(this));
+        }
+
+        private void xViewRawRequestBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ActWebAPIBase actWebAPI = null;
+            if (mAct is ActWebAPIModel ActWAPIM)
+            {
+                //pull pointed API Model
+                ApplicationAPIModel AAMB1 = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == mAct.APImodelGUID).FirstOrDefault();
+                if (AAMB1 != null)
+                {
+                    //init matching real WebAPI Action
+                    if (AAMB1.APIType == ApplicationAPIUtils.eWebApiType.REST)
+                    {
+                        actWebAPI = ActWAPIM.CreateActWebAPIREST(AAMB1, ActWAPIM);
+                    }
+                    else if (AAMB.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
+                    {
+                        actWebAPI = ActWAPIM.CreateActWebAPISOAP(AAMB1, ActWAPIM);
+                    }
+                }
+            }
+
+            HttpWebClientUtils webAPIUtils = new HttpWebClientUtils();
+            string requestContent = webAPIUtils.GetRawRequestContentPreview(actWebAPI);
+            if (requestContent != string.Empty)
+            {
+                string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(requestContent);
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
+                    docPage.Width = 800;
+                    docPage.Height = 800;
+                    docPage.ShowAsWindow("Raw Request Preview");
+                    System.IO.File.Delete(tempFilePath);
+                    return;
+                }
+            }
+            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw request preview, see log for details.");
         }
     }
 }

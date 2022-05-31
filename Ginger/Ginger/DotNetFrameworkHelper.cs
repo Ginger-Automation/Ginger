@@ -236,16 +236,6 @@ namespace Ginger
             try
             {
                 Outlook.Application objOutLook = null;
-                if (string.IsNullOrEmpty(MailTo))
-                {
-                    Event = "Failed: Please provide TO email address.";
-                    return false;
-                }
-                if (string.IsNullOrEmpty(Subject))
-                {
-                    Event = "Failed: Please provide email subject.";
-                    return false;
-                }
                 // Check whether there is an Outlook process running.
                 if (System.Diagnostics.Process.GetProcessesByName("OUTLOOK").Count() > 0)
                 {

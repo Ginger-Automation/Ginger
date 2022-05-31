@@ -640,6 +640,10 @@ namespace GingerCore.ALM.JIRA
         {
             try
             {
+                if (string.IsNullOrEmpty(HTMLText))
+                {
+                    return HTMLText;
+                }
                 HTMLText = HTMLText.Replace("<br />", Environment.NewLine);
                 Regex reg = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
                 var stripped = reg.Replace(HTMLText, "");

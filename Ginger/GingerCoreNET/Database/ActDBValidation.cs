@@ -99,6 +99,30 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string Where { set; get; }
 
+        public string PrimaryKey
+        {
+            get
+            {
+                return GetInputParamValue(nameof(PrimaryKey));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PrimaryKey), value);
+            }
+        }
+
+        public string PartitionKey
+        {
+            get
+            {
+                return GetInputParamValue(nameof(PartitionKey));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(PartitionKey), value);
+            }
+        }
+
         public string SQL
         {
             get
@@ -121,6 +145,9 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> QueryParams = new ObservableList<ActInputValue>();
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> UpdateOperationInputValues = new ObservableList<ActInputValue>();
 
         public enum eDatabaseTye
         {
@@ -170,6 +197,8 @@ namespace GingerCore.Actions
             SimpleSQLOneValue = 3,     // provide table, lookupield, lookupvalue, outfield,  Like: select cutomerType from TBCustomer WHERE customer id=123    
             [EnumValueDescription("Update DB")]
             UpdateDB = 4,     // Run SQL/PL procedure 
+            [EnumValueDescription("Insert")]
+            Insert = 5
         }
 
         public bool CommitDB_Value
@@ -188,6 +217,21 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public eDBValidationType DBValidationType { get; set; }
+
+        private string mInsertJson = string.Empty;
+
+        [IsSerializedForLocalRepository]
+        public string InsertJson
+        {
+            get
+            {
+                return mInsertJson;
+            }
+            set
+            {
+                mInsertJson = value;
+            }
+        }
 
         public string Params
         {
@@ -216,6 +260,13 @@ namespace GingerCore.Actions
         public override string ActionType
         {
             get { return "DB Action - " + DBValidationType.ToString(); }
+        }
+
+        public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
+        {
+            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
+            list.Add(UpdateOperationInputValues);
+            return list;
         }
 
         public override void Execute()
@@ -304,7 +355,17 @@ namespace GingerCore.Actions
 
         private bool SetDBConnection()
         {
-            //TODO: add on null or not found throw exception so it will fail            
+            //TODO: add on null or not found throw exception so it will fail
+
+            if (string.IsNullOrEmpty(PrimaryKey))
+            {
+                PrimaryKey = string.Empty;
+            }
+            if (string.IsNullOrEmpty(PartitionKey))
+            {
+                PartitionKey = string.Empty;
+            }
+
             string AppNameCalculated = ValueExpression.Calculate(this.AppName);
             EnvApplication App = (from a in RunOnEnvironment.Applications where a.Name == AppNameCalculated select a).FirstOrDefault();
             if (App == null)

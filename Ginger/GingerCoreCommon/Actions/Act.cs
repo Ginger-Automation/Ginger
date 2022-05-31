@@ -240,6 +240,22 @@ namespace GingerCore.Actions
 
         public string OutDSParamMapType { get { return mOutDSParamMapType; } set { mOutDSParamMapType = value; OnPropertyChanged(Fields.OutDSParamMapType); } }
 
+        string mRawResponseValues;
+
+        public string RawResponseValues { 
+            get 
+            { 
+                return mRawResponseValues;
+            } 
+            set 
+            { 
+                mRawResponseValues = value;
+                OnPropertyChanged(nameof(RawResponseValues));
+            }
+        }
+
+
+
 
         private bool mEnableRetryMechanism;
         [IsSerializedForLocalRepository]
@@ -743,7 +759,7 @@ namespace GingerCore.Actions
             }
             else
             {
-                //Remove duplicate ActInputValues from the InputValues
+                //Remove duplicate ActInputValues from the InputValues                
                 while (InputValues.Where(aiv => aiv.Param == Param).ToList().Count > 1)
                 {
                     InputValues.Remove((from aiv in InputValues where aiv.Param == Param select aiv).LastOrDefault());
@@ -755,7 +771,7 @@ namespace GingerCore.Actions
         public string GetInputParamValue(string Param)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = (from aiv in InputValues where aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = (from aiv in InputValues where aiv!= null &&aiv.Param == Param select aiv).FirstOrDefault();
             if (AIV == null)
             {
                 return null;
@@ -768,7 +784,7 @@ namespace GingerCore.Actions
 
         public ActInputValue GetOrCreateInputParam(string Param, string DefaultValue = null)
         {
-            ActInputValue AIV = (from aiv in InputValues where aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = (from aiv in InputValues where aiv!=null && aiv.Param == Param select aiv).FirstOrDefault();
             if (AIV == null)
             {
                 AIV = new ActInputValue() { Param = Param, Value = DefaultValue };
@@ -834,7 +850,7 @@ namespace GingerCore.Actions
         public string GetInputParamCalculatedValue(string Param, bool decryptValue = true)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = (from aiv in InputValues where aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = (from aiv in InputValues where aiv!=null && aiv.Param == Param select aiv).FirstOrDefault();
             if (AIV == null)
             {
                 return null;
@@ -990,7 +1006,7 @@ namespace GingerCore.Actions
 
         public static string GetScreenShotRandomFileName()
         {
-            string filename = Path.GetRandomFileName();
+            string filename = Path.GetRandomFileName().Split('.')[0] + ".png";
             string filePath = Path.Combine(ScreenshotTempFolder, filename);
             if (!Directory.Exists(ScreenshotTempFolder))
             {
@@ -1744,7 +1760,7 @@ namespace GingerCore.Actions
                 ObservableList<ActionParamInfo> l = new ObservableList<ActionParamInfo>();
                 foreach (ActInputValue AIV in this.InputValues)
                 {
-                    if (!string.IsNullOrEmpty(AIV.Value))
+                    if (AIV != null && !string.IsNullOrEmpty(AIV.Value))
                     {
                         l.Add(new ActionParamInfo() { Param = AIV.Param, Value = AIV.Value, CalculatedValue = AIV.ValueForDriver });
                     }

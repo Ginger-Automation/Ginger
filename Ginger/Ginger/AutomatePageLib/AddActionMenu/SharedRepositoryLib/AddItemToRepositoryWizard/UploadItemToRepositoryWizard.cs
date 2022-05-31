@@ -52,7 +52,6 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         }
         /// <summary>
         /// Constructor For Uploading Single Repository Item
-        /// </summary>
         /// <param name="context"></param>
         /// <param name="item"></param>
         public UploadItemToRepositoryWizard(Context context, RepositoryItemBase item)
@@ -64,7 +63,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         }
 
         private void InitializeWizardPages()
-        {
+        {           
             AddPage(Name: "Items Selection", Title: "Item/s Selection", SubTitle: "Selected items to be added to Shared Repository", Page: new UploadItemsSelectionPage(UploadItemSelection.mSelectedItems));
             AddPage(Name: "Items Validation", Title: "Item/s Validation", SubTitle: "Validate the items to be added to Shared Repository", Page: new UploadItemsValidationPage());
             AddPage(Name: "Items Status", Title: "Item/s Status", SubTitle: "Upload Item Status", Page: new UploadStatusPage());
@@ -76,7 +75,6 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             string strComment = "";
             UploadItemSelection uploadItem = new UploadItemSelection();
             uploadItem.Selected = true;
-          
             UploadItemSelection.eExistingItemType existingItemType = UploadItemSelection.eExistingItemType.NA;
             RepositoryItemBase existingItem = ExistingItemCheck(item, ref strComment, ref existingItemType);
             if (existingItem != null)
@@ -85,18 +83,22 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
                 uploadItem.ExistingItem = existingItem;
                 uploadItem.ExistingItemType = existingItemType;
                 uploadItem.Comment = strComment;
-                uploadItem.ReplaceAsLink = item.IsLinkedItem;
+                if (item.IsLinkedItem) { uploadItem.ReplaceType = UploadItemSelection.eActivityInstanceType.LinkInstance; }
+                else { uploadItem.ReplaceType = UploadItemSelection.eActivityInstanceType.RegularInstance; }
+
             }
             else
+            {
                 uploadItem.ItemUploadType = UploadItemSelection.eItemUploadType.New;
-
-            if(item is Activity)
+                uploadItem.ReplaceType = UploadItemSelection.eActivityInstanceType.LinkInstance;
+            }
+            if (item is Activity)
             {
                 Activity activity = (Activity)item;
 
                 if (activity.ActivitiesGroupID != null && activity.ActivitiesGroupID != string.Empty)
                 {
-                    ActivitiesGroup group =(ActivitiesGroup)Context.BusinessFlow.ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
+                    ActivitiesGroup group = (ActivitiesGroup)Context.BusinessFlow.ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
                     if (group != null)
                     {
                         ObservableList<ActivitiesGroup> repoGroups = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
@@ -109,7 +111,10 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
                     }
                 }
             }
-
+            else
+            {
+                uploadItem.ReplaceType = UploadItemSelection.eActivityInstanceType.RegularInstance;
+            }
             uploadItem.ItemName = item.ItemName;
             uploadItem.ItemGUID = item.Guid;
             uploadItem.SetItemPartesFromEnum(GetTypeOfItemParts(item));
@@ -122,25 +127,25 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         {
             if (item is Activity)
             {
-                return typeof(eItemParts);   
+                return typeof(eItemParts);
             }
             else if (item is Act)
             {
                 return typeof(Act.eItemParts);
             }
             else if (item is ActivitiesGroup)
-            { 
+            {
                 return typeof(ActivitiesGroup.eItemParts);
             }
             else if (item is VariableBase)
-            { 
+            {
                 return typeof(VariableBase.eItemParts);
             }
             else
             {
                 return null;
             }
-                
+
         }
 
         public RepositoryItemBase ExistingItemCheck(object item, ref string strComment, ref UploadItemSelection.eExistingItemType existingItemType)
@@ -169,7 +174,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             }
 
             RepositoryItemBase exsitingItem = SharedRepositoryOperations.GetMatchingRepoItem((RepositoryItemBase)item, existingRepoItems, ref existingItemIsExternalID, ref existingItemIsParent);
-          
+
             if (exsitingItem != null)
             {
                 existingItemFileName = exsitingItem.FileName;
@@ -177,7 +182,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
                 if (existingItemIsExternalID)
                 {
                     strComment = "Item with Same External Id Exist. Back up of existing item will be saved in PrevVersion folder.Change the item upload type if you want to upload it as new item";
-                    existingItemType= UploadItemSelection.eExistingItemType.ExistingItemIsExternalID;
+                    existingItemType = UploadItemSelection.eExistingItemType.ExistingItemIsExternalID;
                 }
                 else if (existingItemIsParent)
                 {
