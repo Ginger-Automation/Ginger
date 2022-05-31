@@ -2747,7 +2747,7 @@
                                 BorderBrush="{DynamicResource $Color_DarkBlue}" BorderThickness="1">
                         <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
-                                Margin="{TemplateBinding Padding}"
+                                Margin="{TemplateBinding BorderThickness}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 RecognizesAccessKey="True"/>

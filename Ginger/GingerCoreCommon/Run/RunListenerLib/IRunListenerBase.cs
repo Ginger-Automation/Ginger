@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -33,12 +33,15 @@ namespace Amdocs.Ginger.Run
         void ActionUpdatedStart(uint eventTime, Act action);
         void ActionWaitEnd(uint eventTime, Act action);
         void ActionWaitStart(uint eventTime, Act action);
+        void ActivitySkipped(uint eventTime, Activity activity, bool offlineMode = false);
         void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false);
         void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false);
         void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup);
+        void ActivityGroupSkipped(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false);
         void ActivityStart(uint eventTime, Activity activity, bool continuerun = false);
         void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false);
         void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false);
+        void BusinessFlowSkipped(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false);
         void BusinessflowWasReset(uint eventTime, BusinessFlow businessFlow);
         void DynamicActivityWasAddedToBusinessflow(uint eventTime, BusinessFlow businessFlow);
         void EnvironmentChanged(uint eventTime, ProjEnvironment mProjEnvironment);
@@ -48,5 +51,6 @@ namespace Amdocs.Ginger.Run
         void PrepActionStart(uint eventTime, Act action);
         void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false);
         void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false);
+
     }
 }
