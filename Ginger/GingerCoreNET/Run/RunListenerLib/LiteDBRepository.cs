@@ -180,7 +180,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             activity.Acts.ToList().ForEach(action => this.MapActionToLiteDb((GingerCore.Actions.Act)action, context, executedFrom));
             AR.ActionsColl.AddRange(liteDbActionList);
 
-            AR.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active == true && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
+            AR.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
             AR.ChildExecutedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored);
             AR.ChildPassedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed);
 
@@ -243,7 +243,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             int ChildExecutedItemsCountActivity = 0;
             int ChildPassedItemsCountActivity = 0;
 
-            ChildExecutableItemsCountActivity = context.BusinessFlow.Activities.Count(x => x.Active == true && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
+            ChildExecutableItemsCountActivity = context.BusinessFlow.Activities.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
             ChildExecutedItemsCountActivity = context.BusinessFlow.Activities.Count(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored);
             ChildPassedItemsCountActivity = context.BusinessFlow.Activities.Count(ac => ac.Status == eRunStatus.Passed);
 
