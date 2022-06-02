@@ -86,7 +86,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(WindowTitle)).ValueForDriver;
+                return GetOrCreateInputParam(nameof(WindowTitle)).Value;
             }
             set
             {
@@ -117,7 +117,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(PatternPath)).ValueForDriver;
+                return GetOrCreateInputParam(nameof(PatternPath)).Value;
             }
             set
             {
@@ -141,7 +141,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(SetTextValue)).ValueForDriver;
+                return GetOrCreateInputParam(nameof(SetTextValue)).Value;
             }
             set
             {
@@ -153,7 +153,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(ProcessNameForSikuliOperation)).ValueForDriver;
+                return GetOrCreateInputParam(nameof(ProcessNameForSikuliOperation)).Value;
             }
             set
             {
@@ -165,7 +165,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(PatternSimilarity)).ValueForDriver;
+                return GetOrCreateInputParam(nameof(PatternSimilarity)).Value;
             }
             set
             {
@@ -247,7 +247,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(CustomJavaPath)).ValueForDriver;
+                return GetOrCreateInputParam(nameof(CustomJavaPath)).Value;
             }
             set
             {
@@ -269,7 +269,10 @@ namespace GingerCore.Actions
                     if (SetCustomResolution)
                     {
                         List<int> lstVal = GetCustomResolutionValues();
-                        WinAPIAutomation.ResizeExternalWindow(lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).First(), lstVal[0], lstVal[1]);
+                        if (lstVal.Count == 2)
+                        {
+                            WinAPIAutomation.ResizeExternalWindow(lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).First(), lstVal[0], lstVal[1]);
+                        }
                     }
                 }
             }
@@ -280,7 +283,8 @@ namespace GingerCore.Actions
             if (CheckIfImageValidAndIfPercentageValidAndSelectedApplicationValid())
             {
                 string logMessage = string.Empty;
-                APILauncher sikuliLauncher = new APILauncher(out logMessage, ShowSikuliConsole, UseCustomJava, CustomJavaPath);
+                APILauncher sikuliLauncher = new APILauncher(out logMessage, ShowSikuliConsole, UseCustomJava,
+                                                             ValueExpression.Calculate(CustomJavaPath));
                 if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
                 {
                     sikuliLauncher.EvtLogMessage += sikuliLauncher_EvtLogMessage;
@@ -290,8 +294,9 @@ namespace GingerCore.Actions
                 {
                     Screen sekuliScreen = new Screen();
 
-                    Pattern sikuliPattern = new Pattern(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(PatternPath),
-                                                        double.Parse(PatternSimilarity) / 100);
+                    Pattern sikuliPattern = new Pattern(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(
+                                                        ValueExpression.Calculate(PatternPath)),
+                                                        double.Parse(ValueExpression.Calculate(PatternSimilarity)) / 100);
 
                     if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
                     {
@@ -303,7 +308,7 @@ namespace GingerCore.Actions
                             sekuliScreen.Click(sikuliPattern);
                             break;
                         case eActSikuliOperation.SetValue:
-                            sekuliScreen.Type(sikuliPattern, SetTextValue);
+                            sekuliScreen.Type(sikuliPattern, ValueExpression.Calculate(SetTextValue));
                             break;
                         case eActSikuliOperation.DoubleClick:
                             sekuliScreen.DoubleClick(sikuliPattern);
@@ -478,20 +483,21 @@ namespace GingerCore.Actions
 
         private bool CheckIfImageValidAndIfPercentageValidAndSelectedApplicationValid()
         {
-            if (string.IsNullOrEmpty(PatternPath))
+            if (string.IsNullOrEmpty(ValueExpression.Calculate(PatternPath)))
             {
                 Error = "File Path is Empty";
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Empty");
                 return false;
             }
-            if (!File.Exists(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(PatternPath)))
+            if (!File.Exists(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(
+                ValueExpression.Calculate(PatternPath))))
             {
                 Error = "File Path is Invalid";
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Invalid");
                 return false;
             }
             double result = 0;
-            if (!double.TryParse(PatternSimilarity, out result))
+            if (!double.TryParse(ValueExpression.Calculate(PatternSimilarity), out result))
             {
                 Error = "Please enter a valid percentage similarity";
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please enter a valid percentage similarity");

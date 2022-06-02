@@ -1006,7 +1006,7 @@ namespace GingerCore.Actions
 
         public static string GetScreenShotRandomFileName()
         {
-            string filename = Path.GetRandomFileName();
+            string filename = Path.GetRandomFileName().Split('.')[0] + ".png";
             string filePath = Path.Combine(ScreenshotTempFolder, filename);
             if (!Directory.Exists(ScreenshotTempFolder))
             {
