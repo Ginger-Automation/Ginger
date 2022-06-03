@@ -7734,7 +7734,6 @@ namespace GingerCore.Drivers
         }
         public Bitmap GetElementScreenshot(Act act)
         {
-            //WebElement element = (WebElement)LocateElementByLocator(locator, false);
             WebElement element = (WebElement)LocateElement(act, false, null, null);
             var screenshot = ((ITakesScreenshot)element).GetScreenshot();
             return ScreenshotToImage(screenshot);
