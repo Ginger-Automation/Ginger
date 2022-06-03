@@ -143,36 +143,6 @@ namespace Ginger.Actions.VisualTesting
             }
         }
 
-        private void OpenResultsURL_Click(object sender, RoutedEventArgs e)
-        {
-            string url = mAct.GetReturnParam("ResultsURL");
-            if (string.IsNullOrEmpty(url))
-                Reporter.ToUser(eUserMsgKey.ApplitoolsLastExecutionResultsNotExists);
-            else
-            {
-                try
-                {
-                    //First try open with Chrome
-                    System.Diagnostics.Process.Start("chrome.exe", url);
-                }
-                catch (Exception ex)
-                {
-                    try
-                    {
-                        //Try open with Firefox
-                        System.Diagnostics.Process.Start("firefox.exe", url);
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                    }
-                    catch (Exception ee)
-                    {
-                        //Show message that Applitools can't be open with Explorer Browser
-                        Reporter.ToUser(eUserMsgKey.ApplitoolsMissingChromeOrFirefoxBrowser);
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ee.Message}", ee);
-                    }
-                }
-            }
-        }
-
         private void ElementLocateByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SetLocateValueControls();

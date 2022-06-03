@@ -66,21 +66,6 @@ namespace Ginger.Configurations
             }
         }
 
-        //private string mTestName;
-        //[IsSerializedForLocalRepository]
-        //public string TestName
-        //{
-        //    get
-        //    {
-        //        return mTestName;
-        //    }
-        //    set
-        //    {
-        //        mTestName = value;
-        //        OnPropertyChanged(nameof(TestName));
-        //    }
-        //}
-
         private string mProject;
         [IsSerializedForLocalRepository]
         public string Project

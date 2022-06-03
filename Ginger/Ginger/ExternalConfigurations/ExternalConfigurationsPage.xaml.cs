@@ -55,7 +55,6 @@ namespace Ginger.Configurations
             Context mContext = new Context();
             xAPIURLTextBox.Init(mContext, _VRTConfiguration, nameof(VRTConfiguration.ApiUrl));
             xAPIKeyTextBox.Init(mContext, _VRTConfiguration, nameof(VRTConfiguration.ApiKey));
-            //xTestNameTextBox.Init(mContext, _VRTConfiguration, nameof(VRTConfiguration.TestName));
             xProjectTextBox.Init(mContext, _VRTConfiguration, nameof(VRTConfiguration.Project));
             xBranchNameTextBox.Init(mContext, _VRTConfiguration, nameof(VRTConfiguration.BranchName));
             xEnableSoftAssertRadioButton.Init(typeof(VRTConfiguration.eEnableSoftAssert),
@@ -78,7 +77,6 @@ namespace Ginger.Configurations
             // check if fields have been populated (font-end validation)
             xAPIURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Url cannot be empty"));
             xAPIKeyTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Key cannot be empty"));
-            //xTestNameTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test/Build Name cannot be empty"));
             xProjectTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Project Name cannot be empty"));
 
             CallSealightsConfigPropertyChange();
@@ -89,7 +87,6 @@ namespace Ginger.Configurations
             // need in order to trigger the validation's rules on init binding (load/init form)
             _VRTConfiguration.OnPropertyChanged(nameof(VRTConfiguration.ApiUrl));
             _VRTConfiguration.OnPropertyChanged(nameof(VRTConfiguration.ApiKey));
-            //_VRTConfiguration.OnPropertyChanged(nameof(VRTConfiguration.TestName));
             _VRTConfiguration.OnPropertyChanged(nameof(VRTConfiguration.Project));
         }
 

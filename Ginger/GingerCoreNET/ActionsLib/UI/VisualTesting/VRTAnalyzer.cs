@@ -55,7 +55,6 @@ namespace GingerCore.Actions.VisualTesting
             {
                 config = new VisualRegressionTracker.Config
                 {
-                    //CiBuildId = WorkSpace.Instance.Solution.VRTConfiguration.TestName,
                     BranchName = WorkSpace.Instance.Solution.VRTConfiguration.BranchName,
                     Project = WorkSpace.Instance.Solution.VRTConfiguration.Project,
                     ApiUrl = WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl,
