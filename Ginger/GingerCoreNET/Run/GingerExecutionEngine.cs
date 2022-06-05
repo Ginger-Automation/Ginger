@@ -4834,7 +4834,10 @@ namespace Ginger.Run
         private void NotifyActivitySkipped(Activity activity)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+
+            activity.StartTimeStamp = DateTime.UtcNow;
             activity.EndTimeStamp = DateTime.UtcNow;
+
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivitySkipped(evetTime, activity);
