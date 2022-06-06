@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
+using Ginger.Configurations;
 using Ginger.GeneralWindows;
 using Ginger.Reports;
 using Ginger.SolutionWindows;
@@ -74,6 +75,11 @@ namespace Ginger.ConfigurationsLib
             reportsMenu.Add(eImageType.Config, "Execution Logger Configurations", ExecutionLoggerConfig, ConsoleKey.R, "Execution Logger Configurations", "Execution Logger Config AID");
             twoLevelMenu.Add(reportsMenu);
 
+            TopMenuItem externalConfigMenu = new TopMenuItem(eImageType.Settings, "External Integrations", ConsoleKey.X, "External Configurations AID", "List of External Configurations to be used");
+            externalConfigMenu.Add(eImageType.View, "VRT Configuration", GetExteranalConfigsPage, ConsoleKey.X, "Visual Regression Testing External Configurations", "VRT Configuration AID");
+            externalConfigMenu.Add(eImageType.Wrench, "Others", OthersPage, ConsoleKey.X, "Other External Configurations", "Other Configuration AID");
+            twoLevelMenu.Add(externalConfigMenu);
+
             TopMenuItem tagsMenu = new TopMenuItem(eImageType.Tag, "Tags", ConsoleKey.T, "Tags AID", "List of Tags to be used for marking any of the Solution items with");
             tagsMenu.Add(eImageType.Tag, "", GetTagsPage, ConsoleKey.T, "", "AID");
             twoLevelMenu.Add(tagsMenu);
@@ -120,7 +126,15 @@ namespace Ginger.ConfigurationsLib
             return reportsPage;
         }
 
+        private static Page GetExteranalConfigsPage()
+        {
+            return new ExternalConfigurationsPage();
+        }
 
-
+        //Remove when we add other pages
+        private static Page OthersPage()
+        {
+            return new Page();
+        }
     }
 }

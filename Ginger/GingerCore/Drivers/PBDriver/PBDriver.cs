@@ -1287,5 +1287,10 @@ namespace GingerCore.Drivers.PBDriver
         {
             return Driver;
         }
+
+        public Bitmap GetElementScreenshot(Act act)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

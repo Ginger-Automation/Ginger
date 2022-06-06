@@ -245,7 +245,7 @@ namespace GingerCore.Drivers
 
         protected IWebDriver Driver;
 
-        protected eBrowserType mBrowserTpe;
+        public eBrowserType mBrowserTpe;
         protected NgWebDriver ngDriver;
         private String DefaultWindowHandler = null;
 
@@ -7475,6 +7475,19 @@ namespace GingerCore.Drivers
 
         public Bitmap GetScreenShot(bool IsFullPageScreenshot = false)
         {
+            switch (mBrowserTpe)
+            {
+                case eBrowserType.FireFox:
+                    if (IsFullPageScreenshot)
+                    {
+                        var screenshot = ((FirefoxDriver)Driver).GetFullPageScreenshot();
+                        return ScreenshotToImage(screenshot);
+                    }
+                    break;
+                default:
+                    //
+                    break;
+            }
             try
             {
                 // If set to false only take screenshot of whats in view and not the whole page
@@ -7718,6 +7731,12 @@ namespace GingerCore.Drivers
             }
 
             return GetScreenShot(IsFullPageScreenshot);
+        }
+        public Bitmap GetElementScreenshot(Act act)
+        {
+            WebElement element = (WebElement)LocateElement(act, false, null, null);
+            var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+            return ScreenshotToImage(screenshot);
         }
 
         VisualElementsInfo IVisualTestingDriver.GetVisualElementsInfo()
