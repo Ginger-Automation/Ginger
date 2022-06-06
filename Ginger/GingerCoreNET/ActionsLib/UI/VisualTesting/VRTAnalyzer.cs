@@ -39,9 +39,11 @@ namespace GingerCore.Actions.VisualTesting
     {
         public static string VRTAction = "VRTAction";
         public const string ActionBy = "ActionBy";
+        public const string ImageNameBy = "ImageNameBy";
         public const string LocateBy = "LocateBy";
         public static string VRTParamDiffTollerancePercent = "VRTParamDiffTollerancePercent";
         public static string VRTParamBuildName = "VRTParamBuildName";
+        public static string ImageName = "ImageName";
 
 
         ActVisualTesting mAct;
@@ -77,6 +79,16 @@ namespace GingerCore.Actions.VisualTesting
         {
             Window,
             Region
+        }
+
+        public enum eImageNameBy
+        {
+            [EnumValueDescription("Action Name")]
+            ActionName,
+            [EnumValueDescription("Action Guid")]
+            ActionGuid,
+            [EnumValueDescription("Custom Name")]
+            Custom
         }
         bool IVisualAnalyzer.SupportUniqueExecution()
         {
@@ -206,8 +218,18 @@ namespace GingerCore.Actions.VisualTesting
                 mResolution = mAct.GetWindowResolution();
                 string viewport = new Size(mResolution[0], mResolution[1]).ToString();
                 string device = null;
+                //imageName
+                string imageName = mAct.Description;
+                if (mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy).Value == eImageNameBy.ActionGuid.ToString())
+                {
+                    imageName = mAct.Guid.ToString();
+                }
+                else if (mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy).Value == eImageNameBy.Custom.ToString())
+                {
+                    imageName = mAct.GetInputParamCalculatedValue(VRTAnalyzer.ImageName);
+                }
                 //checkpoint
-                TestRunResult result = vrt.Track(mAct.Description, General.ImageToByteArray(image, System.Drawing.Imaging.ImageFormat.Png), null, os, browser, viewport, device, tags, diffTollerancePercent).GetAwaiter().GetResult();
+                TestRunResult result = vrt.Track(imageName, General.ImageToByteArray(image, System.Drawing.Imaging.ImageFormat.Png), null, os, browser, viewport, device, tags, diffTollerancePercent).GetAwaiter().GetResult();
                 //results
                 mAct.ExInfo = "TestRun Results Status: " + result.Status;
                 mAct.AddOrUpdateReturnParamActual("Result Status", result.Status + "");

@@ -53,6 +53,11 @@ namespace Ginger.Actions.VisualTesting
 
             xActionByComboBox.Init(mAct.GetOrCreateInputParam(VRTAnalyzer.ActionBy, VRTAnalyzer.eActionBy.Window.ToString()), typeof(VRTAnalyzer.eActionBy), false);
             xActionByComboBox.ComboBox.SelectionChanged += ActionBy_Changed;
+
+            xVRTImageNameActionComboBox.Init(mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy, VRTAnalyzer.eImageNameBy.ActionName.ToString()), typeof(VRTAnalyzer.eImageNameBy), false);
+            xVRTImageNameActionComboBox.ComboBox.SelectionChanged += ImageNameBy_Changed;
+            xImageNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.ImageName, mAct.Description));
+
             InitLayout();
 
             DiffTollerancePercentUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTParamDiffTollerancePercent, "0.0"), true, false);
@@ -75,6 +80,7 @@ namespace Ginger.Actions.VisualTesting
         {
             VRTAnalyzer.eVRTAction vrtAction = (VRTAnalyzer.eVRTAction)Enum.Parse(typeof(VRTAnalyzer.eVRTAction), xVRTActionComboBox.ComboBox.SelectedValue.ToString(), true);
             VRTAnalyzer.eActionBy actionBy = (VRTAnalyzer.eActionBy)Enum.Parse(typeof(VRTAnalyzer.eActionBy), xActionByComboBox.ComboBox.SelectedValue.ToString(), true);
+            VRTAnalyzer.eImageNameBy imageNameBy = (VRTAnalyzer.eImageNameBy)Enum.Parse(typeof(VRTAnalyzer.eImageNameBy), xVRTImageNameActionComboBox.ComboBox.SelectedValue.ToString(), true);
 
             visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Collapsed);
             visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetBaselineSectionVisibility, eVisualTestingVisibility.Collapsed);
@@ -87,6 +93,8 @@ namespace Ginger.Actions.VisualTesting
                     xVRTBuildName.Visibility = Visibility.Visible;
                     xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
                     xActionByPanel.Visibility = Visibility.Collapsed;
+                    xVRTImageNameAction.Visibility = Visibility.Collapsed;
+                    xVRTImageName.Visibility = Visibility.Collapsed;
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Visible);
                     break;
                 case VRTAnalyzer.eVRTAction.Track:
@@ -102,6 +110,15 @@ namespace Ginger.Actions.VisualTesting
                     {
                         xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
                     }
+                    xVRTImageNameAction.Visibility = Visibility.Visible;
+                    if (imageNameBy == VRTAnalyzer.eImageNameBy.Custom)
+                    {
+                        xVRTImageName.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        xVRTImageName.Visibility = Visibility.Collapsed;
+                    }
                     break;
 
                 case VRTAnalyzer.eVRTAction.Stop:
@@ -110,6 +127,8 @@ namespace Ginger.Actions.VisualTesting
                     xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
                     xActionByPanel.Visibility = Visibility.Collapsed;
                     xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
+                    xVRTImageNameAction.Visibility = Visibility.Collapsed;
+                    xVRTImageName.Visibility = Visibility.Collapsed;
                     break;
             }
         }
@@ -120,6 +139,10 @@ namespace Ginger.Actions.VisualTesting
         }
 
         private void ActionBy_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            InitLayout();
+        }
+        private void ImageNameBy_Changed(object sender, SelectionChangedEventArgs e)
         {
             InitLayout();
         }
