@@ -201,7 +201,6 @@ namespace GingerCore.Actions
             [EnumValueDescription("1920 x 1080")]
             Resolution1920x1080,
         }
-        [IsSerializedForLocalRepository]
         public bool SetCustomResolution
         {
             get
@@ -215,7 +214,7 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(ShowSikuliConsole), value.ToString());
             }
         }
-        [IsSerializedForLocalRepository]
+
         public eChangeAppWindowSize ChangeAppWindowSize
         {
             get
@@ -242,7 +241,6 @@ namespace GingerCore.Actions
 
         private string mCustomJavaPath = string.Empty;
 
-        [IsSerializedForLocalRepository]
         public string CustomJavaPath
         {
             get
@@ -295,8 +293,7 @@ namespace GingerCore.Actions
                     Screen sekuliScreen = new Screen();
 
                     Pattern sikuliPattern = new Pattern(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(
-                                                        ValueExpression.Calculate(PatternPath)),
-                                                        double.Parse(ValueExpression.Calculate(PatternSimilarity)) / 100);
+                                                        ValueExpression.Calculate(PatternPath)));
 
                     if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
                     {
