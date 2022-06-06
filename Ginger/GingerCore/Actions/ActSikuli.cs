@@ -293,7 +293,7 @@ namespace GingerCore.Actions
                     Screen sekuliScreen = new Screen();
 
                     Pattern sikuliPattern = new Pattern(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(
-                                                        ValueExpression.Calculate(PatternPath)));
+                                                        ValueExpression.Calculate(PatternPath)), new Point(0, 0), PatternSimilarity);
 
                     if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
                     {
