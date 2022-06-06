@@ -29,6 +29,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security;
@@ -470,6 +471,15 @@ namespace GingerCoreNET.GeneralLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to create temp text file", ex);
                 return null;
+            }
+        }
+
+        public static byte[] ImageToByteArray(Image img, System.Drawing.Imaging.ImageFormat format)
+        {
+            using (var ms = new MemoryStream())
+            {
+                img.Save(ms, format);
+                return ms.ToArray();
             }
         }
     }
