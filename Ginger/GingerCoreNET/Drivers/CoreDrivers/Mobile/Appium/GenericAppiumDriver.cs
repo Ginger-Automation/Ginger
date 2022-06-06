@@ -2887,5 +2887,10 @@ namespace Amdocs.Ginger.CoreNET
         {
             return Driver;
         }
+
+        public Bitmap GetElementScreenshot(Act act)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

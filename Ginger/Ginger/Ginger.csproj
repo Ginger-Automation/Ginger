@@ -230,6 +230,9 @@
     <Compile Include="Actions\ActionEditPages\ActOcrEditPage.xaml.cs">
       <DependentUpon>ActOcrEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionEditPages\VisualTesting\VRTComaprePage.xaml.cs">
+      <DependentUpon>VRTComaprePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
       <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
     </Compile>
@@ -277,6 +280,9 @@
     </Compile>
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ExternalConfigurations\ExternalConfigurationsPage.xaml.cs">
+      <DependentUpon>ExternalConfigurationsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\ValidationRules\ValidateEmptyValue.cs" />
     <Compile Include="Reports\ValidationRules\ValidateNumberInputRule.cs" />
@@ -2639,6 +2645,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\ActionEditPages\VisualTesting\VRTComaprePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Activities\ConfigureErrorListPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -3018,6 +3028,10 @@
     <Page Include="Drivers\DriversWindows\MobileDriverWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ExternalConfigurations\ExternalConfigurationsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="GlobalSolutionLib\ImportItemWizardLib\SelectItemFromSolutionPage.xaml">
       <SubType>Designer</SubType>
@@ -4924,7 +4938,7 @@
       <Version>106.11.4</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.ChromeDriver">
-      <Version>100.0.4896.6000</Version>
+      <Version>102.0.5005.6102</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.GeckoDriver">
       <Version>0.31.0</Version>
