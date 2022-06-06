@@ -310,7 +310,10 @@ namespace GingerCore.Actions
             mDriver = driver;
             CheckSetVisualAnalyzer();
             CheckSetAppWindowSize();
-
+            if (Amdocs.Ginger.Common.Context.GetAsContext(Context).Activity == null)
+            {
+                Amdocs.Ginger.Common.Context.GetAsContext(Context).Activity = ((Drivers.DriverBase)mDriver).BusinessFlow.CurrentActivity;
+            }
             if (mVisualAnalyzer.SupportUniqueExecution())
             {
                 mVisualAnalyzer.SetAction(mDriver, this);
