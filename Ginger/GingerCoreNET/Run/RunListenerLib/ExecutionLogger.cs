@@ -226,7 +226,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public abstract void CreateNewDirectory(string logFolder);
 
-        public virtual void SetReportRunSet(RunSetReport runSetReport, string logFolder)
+        public virtual void SetReportRunSet(RunSetReport runSetReport, string logFolder, eExecutedFrom executedFrom = eExecutedFrom.Run)
         {
             runSetReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
             runSetReport.Elapsed = runSetReport.EndTimeStamp.Subtract(runSetReport.StartTimeStamp).TotalSeconds;

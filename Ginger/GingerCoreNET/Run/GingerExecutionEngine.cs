@@ -1157,25 +1157,11 @@ namespace Ginger.Run
                 {
                     if (!act.Active)
                     {
-                        ResetAction(act);
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
-                        {
-                            NotifyActionEnd(act);
-                        }
+                        SkipActionAndNotifyEnd(act);
                         act.ExInfo = "Action is not active.";
                         return;
                     }
-                    if ((act is ActVisualTesting) && !mGingerRunner.RunInVisualTestingMode)
-                    {
-                        act.Status = eRunStatus.Skipped;
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
-                        {
-                            NotifyActionEnd(act);
-                        }
-                        act.ExInfo = "Visual Testing Action Run Mode is  Inactive.";
-                        return;
-                    }
+                    
                     if (act.CheckIfVaribalesDependenciesAllowsToRun((Activity)(CurrentBusinessFlow.CurrentActivity), true) == false)
                         return;
                 }
@@ -3311,7 +3297,7 @@ namespace Ginger.Run
                         CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
 
                         GiveUserFeedback();
-                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true)
+                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true && RunInVisualTestingMode(act))
                         {
                             RunAction(act, false);
                             GiveUserFeedback();
@@ -3370,13 +3356,13 @@ namespace Ginger.Run
                         {
                             if (!act.Active)
                             {
-                                ResetAction(act);
-                                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
-                                {
-                                    NotifyActionEnd(act);
-                                }
+                                SkipActionAndNotifyEnd(act);
                                 act.ExInfo = "Action is not active.";
+                            }
+                            if (!RunInVisualTestingMode(act))
+                            {
+                                SkipActionAndNotifyEnd(act);
+                                act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
                             }
                             if (!activity.Acts.IsLastItem())
                             {
@@ -3472,7 +3458,24 @@ namespace Ginger.Run
             }
         }
 
+        private void SkipActionAndNotifyEnd(Act act)
+        {
+            ResetAction(act);
+            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+            {
+                NotifyActionEnd(act);
+            }
+        }
 
+        private bool RunInVisualTestingMode(Act act)
+        {
+            if ((act is ActVisualTesting) && !mGingerRunner.RunInVisualTestingMode)
+            {
+                return false;
+            }
+            else { return true; }
+        }
 
         private void ContinueTimerVariables(ObservableList<VariableBase> variableList)
         {
