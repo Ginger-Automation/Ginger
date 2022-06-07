@@ -671,7 +671,10 @@ namespace GingerCore.Drivers
                 {
                     Driver.Manage().Window.Size = new Size() { Height = Convert.ToInt32(BrowserHeight), Width = Convert.ToInt32(BrowserWidth) };
                 }
-
+                else
+                {
+                    Driver.Manage().Window.Maximize();
+                }
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
 
                 //set pageLoad timeout limit
