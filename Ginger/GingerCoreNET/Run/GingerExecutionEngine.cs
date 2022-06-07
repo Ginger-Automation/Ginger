@@ -3730,7 +3730,8 @@ namespace Ginger.Run
                 if (PrepareVariables() == false)
                 {
                     if (CurrentBusinessFlow.Activities.Count > 0)
-                    {
+                    {                        
+                        NotifyActivityGroupStart(CurrentBusinessFlow.ActivitiesGroups[0]);
                         NotifyActivityStart(CurrentBusinessFlow.Activities[0]);
                         CurrentBusinessFlow.Activities[0].Status = eRunStatus.Failed;
                         if (CurrentBusinessFlow.Activities[0].Acts.Count > 0)
@@ -3741,6 +3742,7 @@ namespace Ginger.Run
                             NotifyActionEnd((Act)CurrentBusinessFlow.Activities[0].Acts[0]);
                         }
                         NotifyActivityEnd(CurrentBusinessFlow.Activities[0]);
+                        NotifyActivityGroupEnd(CurrentBusinessFlow.ActivitiesGroups[0]);
                     }
                     return;//failed to prepare BF inputes as expected
                 }
@@ -4842,7 +4844,10 @@ namespace Ginger.Run
         private void NotifyActivitySkipped(Activity activity)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+
+            activity.StartTimeStamp = DateTime.UtcNow;
             activity.EndTimeStamp = DateTime.UtcNow;
+
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivitySkipped(evetTime, activity);
