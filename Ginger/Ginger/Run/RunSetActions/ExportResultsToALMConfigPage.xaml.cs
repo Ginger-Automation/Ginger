@@ -246,6 +246,8 @@ namespace Ginger.Run
                 return;
             }
             xExportDestinationFolder.Visibility = Visibility.Visible;
+            xExportTypeCbx.ComboBox.SelectedValue = eExportType.EntitiesAndResults;
+            xExportTypeCbx.IsEnabled = false;
         }
         private void xALMTypeCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
