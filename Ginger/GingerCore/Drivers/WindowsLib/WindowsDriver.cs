@@ -1814,5 +1814,10 @@ namespace GingerCore.Drivers.WindowsLib
         {
             return Driver;
         }
+
+        public Bitmap GetElementScreenshot(Act act)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
