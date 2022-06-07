@@ -148,6 +148,11 @@ namespace GingerCore.Drivers
         public bool HideConsoleWindow { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Only for Edge: Open Edge browser in IE Mode")]
+        public bool OpenInIEMode { get; set; }
+
+        [UserConfigured]
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Only For Chrome : Use a valid device name from the DevTools Emulation panel.")]
         public string EmulationDeviceName { get; set; }
@@ -568,7 +573,20 @@ namespace GingerCore.Drivers
                         EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
                         EDService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        // Changes to be done here or in the Edge mode
+                        if(OpenInIEMode == true)
+                        {
+                            var ieOptions = new InternetExplorerOptions();
+                            ieOptions.AttachToEdgeChrome = true;
+                            //change the path accordingly
+                            ieOptions.EdgeExecutablePath = UserProfileFolderPath;
 
+                            var driver = new InternetExplorerDriver(ieOptions);
+                            driver.Url = "https://bing.com";
+                            driver.FindElement(By.Id("sb_form_q")).SendKeys("WebDriver");
+                            driver.FindElement(By.Id("sb_form")).Submit();
+                            
+                        }
                         break;
                     #endregion
 
