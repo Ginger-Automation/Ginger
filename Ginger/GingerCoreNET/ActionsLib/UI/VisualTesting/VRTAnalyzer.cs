@@ -48,17 +48,22 @@ namespace GingerCore.Actions.VisualTesting
         {
             if (vrt == null)
             {
-                config = new VisualRegressionTracker.Config
-                {
-                    BranchName = WorkSpace.Instance.Solution.VRTConfiguration.BranchName,
-                    Project = WorkSpace.Instance.Solution.VRTConfiguration.Project,
-                    ApiUrl = WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl,
-                    ApiKey = WorkSpace.Instance.Solution.VRTConfiguration.ApiKey,
-                    EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.EnableSoftAssert == Ginger.Configurations.VRTConfiguration.eEnableSoftAssert.Yes ? true : false
-                };
+                CreateVRTConfig();
             }
         }
-        
+
+        private void CreateVRTConfig()
+        {
+            config = new VisualRegressionTracker.Config
+            {
+                BranchName = WorkSpace.Instance.Solution.VRTConfiguration.BranchName,
+                Project = WorkSpace.Instance.Solution.VRTConfiguration.Project,
+                ApiUrl = WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl,
+                ApiKey = WorkSpace.Instance.Solution.VRTConfiguration.ApiKey,
+                EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.EnableSoftAssert == Ginger.Configurations.VRTConfiguration.eEnableSoftAssert.Yes ? true : false
+            };
+        }
+
         public enum eVRTAction
         {
             [EnumValueDescription("Start Test")]
@@ -80,6 +85,8 @@ namespace GingerCore.Actions.VisualTesting
             ActionName,
             [EnumValueDescription("Action Guid")]
             ActionGuid,
+            [EnumValueDescription("Action Name & Guid")]
+            ActionNameGUID,
             [EnumValueDescription("Custom Name")]
             Custom
         }
@@ -136,6 +143,7 @@ namespace GingerCore.Actions.VisualTesting
                 string buildName = mAct.GetInputParamCalculatedValue(VRTAnalyzer.VRTParamBuildName);
                 if (!string.IsNullOrEmpty(buildName))
                 {
+                    CreateVRTConfig();
                     config.CiBuildId = buildName;
                     vrt = new VisualRegressionTracker.VisualRegressionTracker(config);
                     vrt.Start().GetAwaiter().GetResult();
@@ -146,7 +154,7 @@ namespace GingerCore.Actions.VisualTesting
                         return;
                     }
                 }
-                else 
+                else
                 {
                     mAct.Error = "VRT is not Started, Test/build name not provided.";
                     mAct.ExInfo = "Test/build name not provided.";
@@ -158,7 +166,13 @@ namespace GingerCore.Actions.VisualTesting
                 foreach (var e in ae.InnerExceptions)
                 {
                     mAct.Error += e.Message;
+                    mAct.Error += " Please check VRT configuration.";
                 }
+            }
+            catch (Exception ex)
+            {
+                mAct.Error += ex.Message;
+                mAct.Error += " Please check VRT configuration.";
             }
             finally
             {
@@ -209,15 +223,22 @@ namespace GingerCore.Actions.VisualTesting
                 {
                     tags = string.Join(",", activityTagsList);
                 }
-                List<int> mResolution = new List<int>();
-                mResolution = mAct.GetWindowResolution();
-                string viewport = new Size(mResolution[0], mResolution[1]).ToString();
+
+                //Get resolution from driver
+                Size size = ((Drivers.SeleniumDriver)mDriver).GetWindowSize();
+                string viewport = size.ToString();
+
                 string device = null;
+
                 //imageName
                 string imageName = mAct.Description;
                 if (mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy).Value == eImageNameBy.ActionGuid.ToString())
                 {
                     imageName = mAct.Guid.ToString();
+                }
+                else if (mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy).Value == eImageNameBy.ActionNameGUID.ToString())
+                {
+                    imageName = mAct.Description + "_" + mAct.Guid.ToString();
                 }
                 else if (mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy).Value == eImageNameBy.Custom.ToString())
                 {

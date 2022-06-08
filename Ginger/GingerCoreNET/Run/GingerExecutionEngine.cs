@@ -1161,7 +1161,11 @@ namespace Ginger.Run
                         act.ExInfo = "Action is not active.";
                         return;
                     }
-                    
+                    if (!CheckRunInVisualTestingMode(act))
+                    {
+                        SkipActionAndNotifyEnd(act);
+                        act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
+                    }
                     if (act.CheckIfVaribalesDependenciesAllowsToRun((Activity)(CurrentBusinessFlow.CurrentActivity), true) == false)
                         return;
                 }
@@ -3297,7 +3301,7 @@ namespace Ginger.Run
                         CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
 
                         GiveUserFeedback();
-                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true && RunInVisualTestingMode(act))
+                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true && CheckRunInVisualTestingMode(act))
                         {
                             RunAction(act, false);
                             GiveUserFeedback();
@@ -3359,7 +3363,7 @@ namespace Ginger.Run
                                 SkipActionAndNotifyEnd(act);
                                 act.ExInfo = "Action is not active.";
                             }
-                            if (!RunInVisualTestingMode(act))
+                            if (!CheckRunInVisualTestingMode(act))
                             {
                                 SkipActionAndNotifyEnd(act);
                                 act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
@@ -3468,7 +3472,7 @@ namespace Ginger.Run
             }
         }
 
-        private bool RunInVisualTestingMode(Act act)
+        private bool CheckRunInVisualTestingMode(Act act)
         {
             if ((act is ActVisualTesting) && !mGingerRunner.RunInVisualTestingMode)
             {
