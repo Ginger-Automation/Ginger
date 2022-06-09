@@ -44,7 +44,7 @@ namespace Ginger.Actions.VisualTesting
         ApplitoolsComparePage mApplitoolsComparePage = null;
         BitmapPixelsComaprePage mBitmapPixelsComaprePage = null;
         UIElementsComparisonPage mUIElementsBitmapComparisonPage = null;
-
+        VRTComparePage mVRtComparisonPage = null;
         public ActVisualTestingEditPage(GingerCore.Actions.ActVisualTesting Act)
         {
             InitializeComponent();
@@ -270,7 +270,15 @@ namespace Ginger.Actions.VisualTesting
                     mUIElementsBitmapComparisonPage.InitLayout();
                     EngineConfigFrame.Content = mUIElementsBitmapComparisonPage;
                     break;
-
+                case ActVisualTesting.eVisualTestingAnalyzer.VRT:
+                    if (mVRtComparisonPage == null)
+                    {
+                        mVRtComparisonPage = new VRTComparePage(mAct);
+                        mVRtComparisonPage.visualCompareAnalyzerIntegration.VisualTestingEvent += VisualCompareAnalyzerIntegration_VisualTestingEvent;
+                    }
+                    mVRtComparisonPage.InitLayout();
+                    EngineConfigFrame.Content = mVRtComparisonPage;
+                    break;
                 default:
                     EngineConfigFrame.Content = null;
                     xSetApplicationScreenSize.Visibility = Visibility.Collapsed;

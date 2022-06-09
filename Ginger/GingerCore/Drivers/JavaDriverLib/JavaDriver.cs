@@ -4081,5 +4081,10 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             return Driver;
         }
+
+        public Bitmap GetElementScreenshot(Act act)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -297,6 +297,7 @@
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
     <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
     <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" />
+    <ProjectReference Include="..\VisualRegressionTracker\VisualRegressionTracker.csproj" />
   </ItemGroup>
 
   <ItemGroup>
