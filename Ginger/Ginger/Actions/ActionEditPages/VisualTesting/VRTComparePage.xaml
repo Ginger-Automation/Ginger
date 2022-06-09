@@ -9,7 +9,7 @@
     x:Class="Ginger.Actions.VisualTesting.VRTComparePage"                  
       mc:Ignorable="d" 
       d:DesignHeight="700" d:DesignWidth="800"
-	Title="ApplitoolsComparePage">
+	Title="VRTComparePage">
 
     <Grid x:Name="ColApplitoolsComparison" Margin="15,0,0,0">
 

@@ -150,7 +150,7 @@ namespace GingerCore.Actions.VisualTesting
                     if (!vrt.IsStarted)
                     {
                         mAct.Error = "VRT is not Started";
-                        mAct.ExInfo = "Please check VRT configuration.";
+                        mAct.ExInfo = "Please check VRT configuration. From Configurations -> External Integrations -> VRT configurations";
                         return;
                     }
                 }
@@ -166,13 +166,13 @@ namespace GingerCore.Actions.VisualTesting
                 foreach (var e in ae.InnerExceptions)
                 {
                     mAct.Error += e.Message;
-                    mAct.Error += " Please check VRT configuration.";
+                    mAct.Error += " Please check VRT configuration. From Configurations -> External Integrations -> VRT configurations";
                 }
             }
             catch (Exception ex)
             {
                 mAct.Error += ex.Message;
-                mAct.Error += " Please check VRT configuration.";
+                mAct.Error += " Please check VRT configuration. From Configurations -> External Integrations -> VRT configurations";
             }
             finally
             {
