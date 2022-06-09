@@ -31,6 +31,7 @@
             </StackPanel>
 
             <CheckBox x:Name="xSimulationMode" DockPanel.Dock="Top" Margin="0,10,0,0" Content="Run in simulation mode" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" />
+            <CheckBox x:Name="xVisualTestingMode" DockPanel.Dock="Top" Margin="0,10,0,0" Content="Run Visual Testing actions" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" />
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,15,0,0">
                 <CheckBox x:Name="xUseSpecificEnvChkbox" Content="Use Specific Environment" Style="{StaticResource $CeckBoxStyle}" Margin="0,0,10,0" VerticalAlignment="Center" Checked="useSpecificEnvChkbox_Checked" Unchecked="useSpecificEnvChkbox_Checked"/>

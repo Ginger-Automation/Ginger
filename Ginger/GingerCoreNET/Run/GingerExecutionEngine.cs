@@ -1166,6 +1166,16 @@ namespace Ginger.Run
                         act.ExInfo = "Action is not active.";
                         return;
                     }
+                    if ((act is ActVisualTesting) && !mGingerRunner.RunInVisualTestingMode)
+                    {
+                        act.Status = eRunStatus.Skipped;
+                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                        {
+                            NotifyActionEnd(act);
+                        }
+                        act.ExInfo = "Visual Testing Action Run Mode is  Inactive.";
+                        return;
+                    }
                     if (act.CheckIfVaribalesDependenciesAllowsToRun((Activity)(CurrentBusinessFlow.CurrentActivity), true) == false)
                         return;
                 }
