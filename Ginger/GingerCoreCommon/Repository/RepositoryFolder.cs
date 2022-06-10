@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -696,8 +696,14 @@ namespace Amdocs.Ginger.Repository
         /// Save the Repository Item to folder and add it to cache
         /// </summary>
         /// <param name="repositoryItem"></param>
-        public override void AddRepositoryItem(RepositoryItemBase repositoryItem)
+        public override void AddRepositoryItem(RepositoryItemBase repositoryItem, bool addOnlyToCache = false)
         {
+            if(addOnlyToCache)
+            {
+                mSolutionRepositoryItemInfo.AddItemToCache((T)(object)repositoryItem);
+                return;
+            }
+
             //save it
             repositoryItem.ContainingFolder = FolderRelativePath;
             repositoryItem.ContainingFolderFullPath = FolderFullPath;
