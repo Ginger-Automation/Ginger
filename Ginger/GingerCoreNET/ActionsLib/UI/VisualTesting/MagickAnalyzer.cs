@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Repository;
 using GingerCore.Drivers;
+using GingerCoreNET.GeneralLib;
 using ImageMagick;
 using OpenQA.Selenium;
 using System;
@@ -43,8 +44,8 @@ namespace GingerCore.Actions.VisualTesting
 
         void IVisualAnalyzer.Compare()
         {
-            MagickImage magickBaseImg = new MagickImage(BitmapToArray(mAct.baseImage));//Not tested after code change
-            MagickImage magickTargetImg = new MagickImage(BitmapToArray(mAct.targetImage));//Not tested after code change
+            MagickImage magickBaseImg = new MagickImage(General.ImageToByteArray(mAct.baseImage, System.Drawing.Imaging.ImageFormat.Bmp));//Not tested after code change
+            MagickImage magickTargetImg = new MagickImage(General.ImageToByteArray(mAct.targetImage, System.Drawing.Imaging.ImageFormat.Bmp));//Not tested after code change
 
             MagickImage diffImg = new MagickImage();
 
@@ -63,15 +64,6 @@ namespace GingerCore.Actions.VisualTesting
             mAct.AddOrUpdateReturnParamActual("Percentage Difference", percentageDifference + "");
 
             mAct.AddScreenShot(ImgToSave, "Compare Result");
-        }
-
-        private byte[] BitmapToArray(Bitmap bitmap)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                bitmap.Save(ms, ImageFormat.Bmp);
-                return ms.ToArray();
-            }
         }
 
         public void CreateBaseline()
