@@ -152,7 +152,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
         public override async void BusinessFlowSkipped(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
-            await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, "Skipped");
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.BusinessFlow)
+            {
+                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, "Skipped");
+            }
         }
 
         #endregion BusinessFlow
@@ -221,7 +224,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
         public override async void ActivityGroupSkipped(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
         {
-            await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activityGroup.Name, activityGroup.StartTimeStamp, activityGroup.EndTimeStamp, "Skipped");
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.ActivitiesGroup)
+            {
+                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activityGroup.Name, activityGroup.StartTimeStamp, activityGroup.EndTimeStamp, "Skipped");
+            }
         }
 
         #endregion Activity Group

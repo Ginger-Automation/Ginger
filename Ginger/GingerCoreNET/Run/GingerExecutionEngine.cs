@@ -4848,6 +4848,8 @@ namespace Ginger.Run
             activity.StartTimeStamp = DateTime.UtcNow;
             activity.EndTimeStamp = DateTime.UtcNow;
 
+
+
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivitySkipped(evetTime, activity);
@@ -4891,6 +4893,9 @@ namespace Ginger.Run
         private void NotifyBusinessFlowSkipped(BusinessFlow businessFlow, bool ContinueRun = false)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+
+            businessFlow.StartTimeStamp = DateTime.UtcNow;
+            businessFlow.EndTimeStamp = DateTime.UtcNow;
 
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
@@ -4942,7 +4947,10 @@ namespace Ginger.Run
         private void NotifyActivityGroupSkipped(ActivitiesGroup activityGroup, bool offlineMode = false)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+
+            activityGroup.StartTimeStamp = DateTime.UtcNow;
             activityGroup.EndTimeStamp = DateTime.UtcNow;
+
             foreach (RunListenerBase runnerListener in mRunListeners)
             {                
                 runnerListener.ActivityGroupSkipped(eventTime, activityGroup, offlineMode);
