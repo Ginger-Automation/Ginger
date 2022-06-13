@@ -1084,7 +1084,7 @@ namespace Amdocs.Ginger.UserControls
 
         private BitmapImage GetImageBitMap(string imageName)
         {
-            return new BitmapImage(new Uri("pack://application:,,,/Ginger;component/UserControlsLib/ImageMakerLib/Images/" + imageName));
+            return new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute));
         }
 
         public static ImageSource GetImageSource(eImageType imageType, SolidColorBrush foreground = null, double spinDuration = 0, string toolTip = null, double width = 0.0, bool SetBorder = false)

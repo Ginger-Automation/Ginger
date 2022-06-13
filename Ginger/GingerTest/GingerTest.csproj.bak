@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FontAwesome.Sharp" Version="5.15.4" />
+    <PackageReference Include="GingerTestHelper" Version="2.0.2" />
+    <PackageReference Include="log4net" Version="2.0.14" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.7" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.7" />
+    <PackageReference Include="coverlet.collector" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj" />
+    <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
+    <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
+    <ProjectReference Include="..\GingerCore\GingerCore.csproj" />
+    <ProjectReference Include="..\Ginger\Ginger.csproj" />
+  </ItemGroup>
+
+</Project>

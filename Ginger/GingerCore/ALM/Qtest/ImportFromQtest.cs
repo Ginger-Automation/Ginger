@@ -924,11 +924,11 @@ namespace GingerCore.ALM.Qtest
             return new QtestTest();
         }
 
-        public static ObservableList<ExternalItemFieldBase> GetALMItemFields(ALM_Common.DataContracts.ResourceType resourceType)
+        public static ObservableList<ExternalItemFieldBase> GetALMItemFields(AlmDataContractsStd.Enums.ResourceType resourceType)
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
-            if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
+            if (resourceType == AlmDataContractsStd.Enums.ResourceType.ALL)
             {
                 return GetALMItemFields();
             }

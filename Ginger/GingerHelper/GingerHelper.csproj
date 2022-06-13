@@ -14,7 +14,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>GingerIcon.ico</ApplicationIcon>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Resource Include="GingerIcon.ico" />

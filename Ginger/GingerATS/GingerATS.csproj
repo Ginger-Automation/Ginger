@@ -28,7 +28,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
     <CodeAnalysisRuleSet>GingerATS.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -43,12 +43,6 @@
     <CodeAnalysisRuleSet>GingerATS.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SharpSvn, Version=1.8017.3940.496, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=x86">
-      <HintPath>..\packages\SharpSvn.1.8-x86.1.8017.3940.496\lib\net40\SharpSvn.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpSvn.UI, Version=1.8017.3940.496, Culture=neutral, PublicKeyToken=33789aa53ca44aa9, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpSvn.1.8-x86.1.8017.3940.496\lib\net40\SharpSvn.UI.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

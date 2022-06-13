@@ -155,7 +155,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             //TODO: replace with General.GetImage("@Variable_32x32.png")
             BitmapImage b = new BitmapImage();
             b.BeginInit();
-            b.UriSource = new Uri("pack://application:,,,/Ginger;component/Images/@Variable_32x32.png"); 
+            b.UriSource = new Uri(@"/Images/@Variable_32x32.png", UriKind.RelativeOrAbsolute); 
             b.EndInit();                             
 
             TCD.Image = b;

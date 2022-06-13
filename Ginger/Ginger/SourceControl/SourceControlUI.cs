@@ -108,22 +108,22 @@ namespace Ginger.SourceControl
             switch (RIS)
             {
                 case SourceControlFileInfo.eRepositoryItemStatus.New:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemAdded_10x10.png"));
+                    img = new BitmapImage(new Uri(@"/Images/" + "@SourceControlItemAdded_10x10.png", UriKind.RelativeOrAbsolute));
                     break;
                 case SourceControlFileInfo.eRepositoryItemStatus.Modified:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemChange_10x10.png"));
+                    img = new BitmapImage(new Uri(@"/Images/" + "@SourceControlItemChange_10x10.png", UriKind.RelativeOrAbsolute));
                     break;
                 case SourceControlFileInfo.eRepositoryItemStatus.Deleted:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemDeleted_10x10.png"));
+                    img = new BitmapImage(new Uri(@"/Images/" + "@SourceControlItemDeleted_10x10.png", UriKind.RelativeOrAbsolute));
                     break;
                 case SourceControlFileInfo.eRepositoryItemStatus.Equel:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemUnchanged_10x10.png"));
+                    img = new BitmapImage(new Uri(@"/Images/" + "@SourceControlItemUnchanged_10x10.png", UriKind.RelativeOrAbsolute));
                     break;
                 case SourceControlFileInfo.eRepositoryItemStatus.LockedByAnotherUser:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Lock_Red_10x10.png"));
+                    img = new BitmapImage(new Uri(@"/Images/" + "@Lock_Red_10x10.png", UriKind.RelativeOrAbsolute));
                     break;
                 case SourceControlFileInfo.eRepositoryItemStatus.LockedByMe:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Lock_Yellow_10x10.png"));
+                    img = new BitmapImage(new Uri(@"/Images/" + "@Lock_Yellow_10x10.png", UriKind.RelativeOrAbsolute));
                     break;
             }
             return img;

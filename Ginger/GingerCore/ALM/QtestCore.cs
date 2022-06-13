@@ -34,7 +34,8 @@ using amdocs.ginger.GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Reflection;
 using GingerCoreNET.ALMLib;
-using ALM_Common.DataContracts;
+//using ALM_Common.DataContracts;
+using AlmDataContractsStd.Enums;
 using System.Web;
 
 namespace GingerCore.ALM

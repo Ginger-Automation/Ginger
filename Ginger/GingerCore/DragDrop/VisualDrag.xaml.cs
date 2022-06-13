@@ -111,10 +111,10 @@ namespace GingerCore.DragDrop
         {
             InitializeComponent();
             exitFlag = false;
-            string img = "pack://application:,,,/Ginger;component/Images/@Variable_32x32.png";
-            if (dragType == "Activity") { img = "pack://application:,,,/Ginger;component/Images/@ViewFiles_32x32.png"; }
-            if (dragType == "VariableBase") { img = "pack://application:,,,/Ginger;component/Images/@Variable_32x32.png"; dragText = dragText.Replace("VariableBase Item", "Variable Item"); }
-            if (dragType == "Act") { img = "pack://application:,,,/Ginger;component/Images/@Action_32x32.png"; dragText = dragText.Replace("Act Item", "Action Item"); }
+            string img = @"/Images/@Variable_32x32.png";
+            if (dragType == "Activity") { img = @"/Images/@ViewFiles_32x32.png"; }
+            if (dragType == "VariableBase") { img = @"/Images/@Variable_32x32.png"; dragText = dragText.Replace("VariableBase Item", "Variable Item"); }
+            if (dragType == "Act") { img = @"/Images/@Action_32x32.png"; dragText = dragText.Replace("Act Item", "Action Item"); }
             SetStringWidth();
             
             tbDragText.Text = dragText;

@@ -16,7 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.DataContracts;
+//using ALM_Common.DataContracts;
+using AlmDataContractsStd.Enums;
 using ALMRestClient;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -638,7 +639,7 @@ namespace GingerCore.ALM.QCRestAPI
             {
                 for (int indx = 0; indx < testCaseParams.Count; indx++)
                 {
-                    QCRestAPIConnect.DeleteEntity(ALM_Common.DataContracts.ResourceType.DESIGN_STEP_PARAMETERS, testCaseParams[indx].Id);
+                    QCRestAPIConnect.DeleteEntity(AlmDataContractsStd.Enums.ResourceType.DESIGN_STEP_PARAMETERS, testCaseParams[indx].Id);
                 }
             }
 

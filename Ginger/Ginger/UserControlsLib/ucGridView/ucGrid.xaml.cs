@@ -1762,7 +1762,7 @@ public void RemoveCustomView(string viewName)
         public void AddToolbarTool(string toolImage, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible)
         {
             Image image = new Image();
-            image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + toolImage));
+            image.Source = new BitmapImage(new Uri(@"/Images/" + toolImage, UriKind.RelativeOrAbsolute));
             AddToolbarTool(image, toolTip, clickHandler, toolVisibility);
         }
 
@@ -1901,7 +1901,7 @@ public void RemoveCustomView(string viewName)
         public void SetBtnImage(Button btn, string imageName)
         {
             Image image = new Image();
-            image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + imageName));
+            image.Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute));
             btn.Content = image;
         }
         
@@ -2022,7 +2022,7 @@ public void RemoveCustomView(string viewName)
         {
             Button b = new Button();
             Image image = new Image();
-            image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + btnImage));
+            image.Source = new BitmapImage(new Uri(@"/Images/" + btnImage, UriKind.RelativeOrAbsolute));
             b.Content = image;
             b.ToolTip = tooltip;
             b.Style = this.FindResource("@GridFloatingImageButtonStyle") as Style;

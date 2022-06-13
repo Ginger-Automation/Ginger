@@ -114,7 +114,7 @@ namespace UnitTests.UITests.WebBrowserPageTest
             {
                 throw new Exception("Element not found by XPath - " + XPath);
             }
-            string QA2 = n2.getAttribute("data-QA");
+            string QA2 = (string)n2.getAttribute("data-QA");
 
             if (QA2 != DataQAValue)
             {

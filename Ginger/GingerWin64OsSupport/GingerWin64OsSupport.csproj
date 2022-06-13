@@ -16,7 +16,7 @@
   
   <PropertyGroup>
     <GeckoDriverPlatform>win64</GeckoDriverPlatform>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <!--<PublishGeckoDriver>true</PublishGeckoDriver>-->
   </PropertyGroup>
 

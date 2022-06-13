@@ -16,7 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.DataContracts;
+//using AlmDataContractsStd.Enums;
+using AlmDataContractsStd.Enums;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;

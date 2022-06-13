@@ -17,7 +17,7 @@
       <Version>2.0.2</Version>
     </PackageReference>
     <PackageReference Include="log4net">
-      <Version>2.0.12</Version>
+      <Version>2.0.14</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestFramework">
       <Version>2.1.2</Version>
@@ -195,14 +195,8 @@
     <Compile Remove="Misc\StatusResultTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="MSHTML">
-      <WrapperTool>tlbimp</WrapperTool>
-      <VersionMinor>0</VersionMinor>
-      <VersionMajor>4</VersionMajor>
-      <Guid>3050f1c5-98b5-11cf-bb82-00aa00bdce0b</Guid>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </COMReference>
+    <Reference Include="Microsoft.mshtml">
+      <HintPath>..\..\..\..\..\..\..\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\PublicAssemblies\Microsoft.mshtml.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

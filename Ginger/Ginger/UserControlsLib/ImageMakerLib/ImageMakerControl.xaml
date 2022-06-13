@@ -8,9 +8,9 @@
              d:DesignHeight="150" d:DesignWidth="150">
     <Border BorderThickness="0" CornerRadius="90" x:Name="ImageMakerBorder" Background="Transparent" BorderBrush="Transparent">
         <Grid >
-            <fa:IconImage x:Name="xFAImage" Visibility="Collapsed" Icon="Warning" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <fa:IconImage x:Name="xFAImage" Visibility="Collapsed" Icon="AddressCard" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-            <fa:IconBlock x:Name="xFAFont" Visibility="Collapsed" Icon="Warning" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <fa:IconBlock x:Name="xFAFont" Visibility="Collapsed" Icon="AddressCard" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
             <Image x:Name="xStaticImage" Visibility="Collapsed"></Image>
 

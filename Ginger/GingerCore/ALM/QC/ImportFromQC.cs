@@ -65,16 +65,16 @@ namespace GingerCore.ALM.QC
             {
                 //Linked TC
                 string[] linkTest = linkedTest.Split(';');
-                newTSTest.TestID = tsTest.ID;
+                newTSTest.TestID = (string)tsTest.ID;
                 newTSTest.TestName = linkTest[0];
                 newTSTest.LinkedTestID = linkTest[1];
             }
             else
             {
                 //Regular TC
-                newTSTest.TestID = tsTest.ID;
+                newTSTest.TestID = (string)tsTest.ID;
                 newTSTest.TestName = tsTest.Name;
-                newTSTest.LinkedTestID = tsTest.TestId;
+                newTSTest.LinkedTestID = (string)tsTest.TestId;
             }
 
             //Get the TC design steps
@@ -103,26 +103,26 @@ namespace GingerCore.ALM.QC
 
                 //Linked TC
                 DesignStep TestParam = GetListTSTestVars(tsTest);
-                for (int i = 0; i <= TestParam.LinkedParams.Count - 1; i++)
-                {
-                    ALMTSTestParameter newtsVar = new ALMTSTestParameter();
-                    if (TestParam.LinkedParams.ParamName(i) != null) { newtsVar.Name = TestParam.LinkedParams.ParamName(i); }
-                    if (TestParam.LinkedParams.ParamValue(i) != null) { newtsVar.Value = TestParam.LinkedParams.ParamValue(i).ToString(); }
-                    if (TestParam.LinkedParams.Type(i) != null) { newtsVar.Type = TestParam.LinkedParams.Type(i).ToString(); }
-                    newTSTest.Parameters.Add(newtsVar);
-                }
+                //for (int i = 0; i <= TestParam.LinkedParams.Count - 1; i++)
+                //{
+                //    ALMTSTestParameter newtsVar = new ALMTSTestParameter();
+                //    if (TestParam.LinkedParams.ParamName(i) != null) { newtsVar.Name = TestParam.LinkedParams.ParamName(i); }
+                //    if (TestParam.LinkedParams.ParamValue(i) != null) { newtsVar.Value = TestParam.LinkedParams.ParamValue(i).ToString(); }
+                //    if (TestParam.LinkedParams.Type(i) != null) { newtsVar.Type = TestParam.LinkedParams.Type(i).ToString(); }
+                //    newTSTest.Parameters.Add(newtsVar);
+                //}
             }
             else
             {
                 //Regular TC
-                for (int i = 0; i <= tsTest.Params.Count - 1; i++)
-                {
-                    ALMTSTestParameter newtsVar = new ALMTSTestParameter();
-                    if (tsTest.Params.ParamName(i) != null) { newtsVar.Name = tsTest.Params.ParamName(i); }
-                    if (tsTest.Params.ParamValue(i) != null) { newtsVar.Value = tsTest.Params.ParamValue(i).ToString(); }
-                    if (tsTest.Params.Type(i) != null) { newtsVar.Type = tsTest.Params.Type(i).ToString(); }
-                    newTSTest.Parameters.Add(newtsVar);
-                }                
+                //for (int i = 0; i <= tsTest.Params.Count - 1; i++)
+                //{
+                //    ALMTSTestParameter newtsVar = new ALMTSTestParameter();
+                //    if (tsTest.Params.ParamName(i) != null) { newtsVar.Name = tsTest.Params.ParamName(i); }
+                //    if (tsTest.Params.ParamValue(i) != null) { newtsVar.Value = tsTest.Params.ParamValue(i).ToString(); }
+                //    if (tsTest.Params.Type(i) != null) { newtsVar.Type = tsTest.Params.Type(i).ToString(); }
+                //    newTSTest.Parameters.Add(newtsVar);
+                //}                
             }
 
             //Get the TC execution history
@@ -176,7 +176,7 @@ namespace GingerCore.ALM.QC
             foreach (Test test in testsList)
             {
                 //return test;
-                DesignStepFactory DesStepF = test.DesignStepFactory;
+                DesignStepFactory DesStepF = (DesignStepFactory)test.DesignStepFactory;
                 List DStepList = DesStepF.NewList("");
                 foreach (DesignStep tsStep in DStepList)
                 {
@@ -193,8 +193,8 @@ namespace GingerCore.ALM.QC
         public static List GetListTSTest(ALMTestSet TS)
         {
             //TODO filter by name, path, id so only one will return
-            TestSetFactory TSetFact = mTDConn.TestSetFactory;
-            TDFilter tsFilter = TSetFact.Filter;
+            TestSetFactory TSetFact = (TestSetFactory)mTDConn.TestSetFactory;
+            TDFilter tsFilter = (TDFilter)TSetFact.Filter;
             tsFilter["CY_CYCLE_ID"] = "" + TS.TestSetID + "";
             List Testset = TSetFact.NewList(tsFilter.Text);
 
@@ -202,8 +202,8 @@ namespace GingerCore.ALM.QC
             {
                 if (testset.Name == TS.TestSetName)
                 {
-                    TSTestFactory TSTestFact = testset.TSTestFactory;
-                    TDFilter tsTestFilter = TSetFact.Filter;
+                    TSTestFactory TSTestFact = (TSTestFactory)testset.TSTestFactory;
+                    TDFilter tsTestFilter = (TDFilter)TSetFact.Filter;
                     tsTestFilter["TC_CYCLE_ID"] = "" + TS.TestSetID + "";
                     List TSActivities = TSTestFact.NewList(tsTestFilter.Text);
                     return TSActivities;
@@ -222,7 +222,7 @@ namespace GingerCore.ALM.QC
 
             foreach (Test test in testsList)
             {
-                DesignStepFactory DesStepF = test.DesignStepFactory;
+                DesignStepFactory DesStepF = (DesignStepFactory)test.DesignStepFactory;
                 List DStepList = DesStepF.NewList("");
                 foreach (DesignStep tsStep in DStepList)
                 {
@@ -232,7 +232,7 @@ namespace GingerCore.ALM.QC
                         List LinkTestList = (List)TestF.NewList(filter.Text);
                         foreach (Test LinkTestCase in LinkTestList)
                         {
-                            DesignStepFactory LinkDesStepF = LinkTestCase.DesignStepFactory;
+                            DesignStepFactory LinkDesStepF = (DesignStepFactory)LinkTestCase.DesignStepFactory;
                             List LinkDStepList = LinkDesStepF.NewList("");
                             return LinkDStepList;
                         }
@@ -261,7 +261,7 @@ namespace GingerCore.ALM.QC
 
             foreach (Test test in testsList)
             {
-                DesignStepFactory DesStepF = test.DesignStepFactory;
+                DesignStepFactory DesStepF = (DesignStepFactory)test.DesignStepFactory;
                 List DStepList = DesStepF.NewList("");
                 foreach (DesignStep tsStep in DStepList)
                 {
@@ -1161,7 +1161,7 @@ namespace GingerCore.ALM.QC
                 return null;
             }
 
-            TestFactory testFact = mTDConn.TestFactory;
+            TestFactory testFact = (TestFactory)mTDConn.TestFactory;
             TDFilter filter = testFact.Filter as TDFilter;
             filter["TS_TEST_ID"] = "" + testID + "";
             List testsList = testFact.NewList(filter.Text);
@@ -1213,8 +1213,8 @@ namespace GingerCore.ALM.QC
                 return null;
             }
 
-            TestSetFactory TSetFact = mTDConn.TestSetFactory;
-            TDFilter tsFilter = TSetFact.Filter;
+            TestSetFactory TSetFact = (TestSetFactory)mTDConn.TestSetFactory;
+            TDFilter tsFilter = (TDFilter)TSetFact.Filter;
             tsFilter["CY_CYCLE_ID"] = "" + testSetID + "";
             List Testset = TSetFact.NewList(tsFilter.Text);
             if (Testset != null && Testset.Count == 1)
@@ -1233,10 +1233,10 @@ namespace GingerCore.ALM.QC
         public static List<TSTest> GetTSTestsList(TestSet testset)
         {
             List<TSTest> tSTests = new List<TSTest>();
-            TSTestFactory TSTestFact = testset.TSTestFactory;
-            TestSetFactory TSetFact = mTDConn.TestSetFactory;
-            TDFilter tsFilter = TSetFact.Filter;
-            TDFilter tsTestFilter = TSetFact.Filter;
+            TSTestFactory TSTestFact = (TSTestFactory)testset.TSTestFactory;
+            TestSetFactory TSetFact = (TestSetFactory)mTDConn.TestSetFactory;
+            TDFilter tsFilter = (TDFilter)TSetFact.Filter;
+            TDFilter tsTestFilter = (TDFilter)TSetFact.Filter;
             tsFilter["CY_CYCLE_ID"] = "" + testset.ID + "";
             tsTestFilter["TC_CYCLE_ID"] = "" + testset.ID + "";
             List TSActivities = TSTestFact.NewList(tsTestFilter.Text);
@@ -1264,16 +1264,16 @@ namespace GingerCore.ALM.QC
                     continue;
 
                 List<string> fieldList = new List<string>();
-                if (testField.List != null && testField.List.RootNode.Children.Count > 0)
-                {
-                    CustomizationListNode lnode = testField.List.RootNode;
-                    List cNodes = lnode.Children;
-                    foreach (CustomizationListNode ccNode in cNodes)
-                    {
-                        //adds list of valid selections of Field
-                        fieldList.Add(ccNode.Name);
-                    }
-                }
+                //if (testField.List != null && testField.List.RootNode.Children.Count > 0)
+                //{
+                //    CustomizationListNode lnode = testField.List.RootNode;
+                //    List cNodes = lnode.Children;
+                //    foreach (CustomizationListNode ccNode in cNodes)
+                //    {
+                //        //adds list of valid selections of Field
+                //        fieldList.Add(ccNode.Name);
+                //    }
+                //}
                 //field name to set = TestField.ColumnName
                 //user label (what is shown in QC webpage) = TestField.UserLabel
                 if (!fields.ContainsKey(testField.UserLabel))
@@ -1314,16 +1314,16 @@ namespace GingerCore.ALM.QC
                     itemfield.ToUpdate = true;
                 itemfield.ItemType = eQCItemType.TestSet.ToString();
 
-                if (field.List != null) // field.List.RootNode.Children.Count > 0
-                {
-                    CustomizationListNode lnode = field.List.RootNode;
-                    List cNodes = lnode.Children;
-                    foreach (CustomizationListNode ccNode in cNodes)
-                    {
-                        //adds list of valid selections of Field
-                        itemfield.PossibleValues.Add(ccNode.Name);
-                    }
-                }
+                //if (field.List != null) // field.List.RootNode.Children.Count > 0
+                //{
+                //    CustomizationListNode lnode = field.List.RootNode;
+                //    List cNodes = lnode.Children;
+                //    foreach (CustomizationListNode ccNode in cNodes)
+                //    {
+                //        //adds list of valid selections of Field
+                //        itemfield.PossibleValues.Add(ccNode.Name);
+                //    }
+                //}
 
                 if (itemfield.PossibleValues.Count > 0)
                     itemfield.SelectedValue = itemfield.PossibleValues[0];
@@ -1346,16 +1346,16 @@ namespace GingerCore.ALM.QC
                     itemfield.ToUpdate = true;
                 itemfield.ItemType = eQCItemType.TestCase.ToString();
 
-                if (field.List != null) // field.List.RootNode.Children.Count > 0
-                {
-                    CustomizationListNode lnode = field.List.RootNode;
-                    List cNodes = lnode.Children;
-                    foreach (CustomizationListNode ccNode in cNodes)
-                    {
-                        //adds list of valid selections of Field
-                        itemfield.PossibleValues.Add(ccNode.Name);
-                    }
-                }
+                //if (field.List != null) // field.List.RootNode.Children.Count > 0
+                //{
+                //    CustomizationListNode lnode = field.List.RootNode;
+                //    List cNodes = lnode.Children;
+                //    foreach (CustomizationListNode ccNode in cNodes)
+                //    {
+                //        //adds list of valid selections of Field
+                //        itemfield.PossibleValues.Add(ccNode.Name);
+                //    }
+                //}
 
                 if (itemfield.PossibleValues.Count > 0)
                     itemfield.SelectedValue = itemfield.PossibleValues[0];
@@ -1368,7 +1368,7 @@ namespace GingerCore.ALM.QC
             return fields;
         }
 
-        public static ObservableList<ExternalItemFieldBase> GetQCEntityFieldsREST(ALM_Common.DataContracts.ResourceType fieldType)
+        public static ObservableList<ExternalItemFieldBase> GetQCEntityFieldsREST(AlmDataContractsStd.Enums.ResourceType fieldType)
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 

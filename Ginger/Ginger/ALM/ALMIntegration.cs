@@ -68,7 +68,7 @@ namespace Ginger.ALM
                     break;
 
                 case eALMType.RQM:
-                    AlmCore = new RQMCore();
+                    //AlmCore = new RQMCore();
                     AlmRepo = new RQMRepository();
                     break;
 
@@ -521,7 +521,7 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = null;
         }
 
-        public ObservableList<ExternalItemFieldBase> GetALMItemFieldsREST(bool online, ALM_Common.DataContracts.ResourceType resourceType, BackgroundWorker bw = null)
+        public ObservableList<ExternalItemFieldBase> GetALMItemFieldsREST(bool online, AlmDataContractsStd.Enums.ResourceType resourceType, BackgroundWorker bw = null)
         {
             ObservableList<ExternalItemFieldBase> latestALMFieldsREST = new ObservableList<ExternalItemFieldBase>();
             if (ALMIntegration.Instance.AutoALMProjectConnect())
