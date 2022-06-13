@@ -668,6 +668,14 @@ namespace Ginger.Run.RunSetActions
                                     }
                                     fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(act.Description) + "</td>");
                                 }
+                                if (selectedField_internal.FieldKey == ActionReport.Fields.RunDescription)
+                                {
+                                    if (firstIteration)
+                                    {
+                                        fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
+                                    }
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(act.RunDescription) + "</td>");
+                                }
                                 if (selectedField_internal.FieldKey == ActionReport.Fields.Error)
                                 {
                                     if (firstIteration)
