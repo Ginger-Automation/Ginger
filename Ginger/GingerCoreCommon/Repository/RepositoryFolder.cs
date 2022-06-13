@@ -696,18 +696,15 @@ namespace Amdocs.Ginger.Repository
         /// Save the Repository Item to folder and add it to cache
         /// </summary>
         /// <param name="repositoryItem"></param>
-        public override void AddRepositoryItem(RepositoryItemBase repositoryItem, bool addOnlyToCache = false)
+        public override void AddRepositoryItem(RepositoryItemBase repositoryItem, bool DoNotSave = false)
         {
-            if(addOnlyToCache)
+            if (!DoNotSave)
             {
-                mSolutionRepositoryItemInfo.AddItemToCache((T)(object)repositoryItem);
-                return;
+                //save it
+                repositoryItem.ContainingFolder = FolderRelativePath;
+                repositoryItem.ContainingFolderFullPath = FolderFullPath;
+                SolutionRepository.SaveNewRepositoryItem(repositoryItem);
             }
-
-            //save it
-            repositoryItem.ContainingFolder = FolderRelativePath;
-            repositoryItem.ContainingFolderFullPath = FolderFullPath;
-            SolutionRepository.SaveNewRepositoryItem(repositoryItem);
 
             //add it to folder cache
             mFolderItemsCache[repositoryItem.FilePath] = repositoryItem;
@@ -717,7 +714,7 @@ namespace Amdocs.Ginger.Repository
             }
 
             //add it to general item cache
-            if (!mSolutionRepositoryItemInfo.AllItemsCacheIsNull())
+            if (!mSolutionRepositoryItemInfo.AllItemsCacheIsNull() || DoNotSave)
             {
                 mSolutionRepositoryItemInfo.AddItemToCache((T)(object)repositoryItem);
             }
