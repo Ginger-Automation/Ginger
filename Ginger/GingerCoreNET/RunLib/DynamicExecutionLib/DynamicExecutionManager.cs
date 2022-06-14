@@ -42,6 +42,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using static Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration.SealightsDetails;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
@@ -503,6 +505,37 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     }
                 }
             }
+
+            if (cliHelper.SetSealightsSettings)
+            {
+                SealightsDetails sealightsDetails = new SealightsDetails();
+
+                sealightsDetails.SealightsEnable = solution.LoggerConfigurations.SealightsLog == eSealightsLog.Yes ? true : false;
+                sealightsDetails.SealightsLabId = solution.LoggerConfigurations.SealightsLabId;
+                sealightsDetails.SealightsBSId = solution.LoggerConfigurations.SealightsBuildSessionID;
+                sealightsDetails.SealightsTestStage = solution.LoggerConfigurations.SealightsTestStage;
+                sealightsDetails.SealightsSessionTimeout = Convert.ToInt32(solution.LoggerConfigurations.SealightsSessionTimeout);
+                sealightsDetails.SealightsEntityLevel = (eSealightsEntityLevel)solution.LoggerConfigurations.SealightsReportedEntityLevel;
+                sealightsDetails.SealightsAgentToken = solution.LoggerConfigurations.SealightsAgentToken;
+
+                //  Check Sealights's values on run-set levels
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId != null)
+                {
+                    sealightsDetails.SealightsLabId = runsetExecutor.RunSetConfig.SealighsLabId;
+                }
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID != null)
+                {
+                    sealightsDetails.SealightsBSId = runsetExecutor.RunSetConfig.SealighsBuildSessionID;
+                }
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage != null)
+                {
+                    sealightsDetails.SealightsTestStage = runsetExecutor.RunSetConfig.SealightsTestStage;
+                }
+
+                executionConfig.SealightsDetails = sealightsDetails;
+            }
+
+
             executionConfig.SolutionLocalPath = solution.Folder;
 
             executionConfig.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
@@ -764,13 +797,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                     operationConfigPublishToALM.ALMType = publishToQCAction.PublishALMType;
                     operationConfigPublishToALM.Name = publishToQCAction.Name;
+                    operationConfigPublishToALM.ID = publishToQCAction.Guid;
                     operationConfigPublishToALM.Condition = (OperationExecConfigBase.eOperationRunCondition?)publishToQCAction.Condition;
                     operationConfigPublishToALM.RunAt = (OperationExecConfigBase.eOperationRunAt?)publishToQCAction.RunAt;
                     operationConfigPublishToALM.AlmTestSetLevel = (AlmPublishOperationExecConfig.eAlmTestSetLevel?)publishToQCAction.ALMTestSetLevel;
-                    operationConfigPublishToALM.ExportType = (AlmPublishOperationExecConfig.eExportType?)publishToQCAction.ExportType;
-                    operationConfigPublishToALM.TestsetExportDestination= publishToQCAction.TestCaseFolderDestination;
+                    operationConfigPublishToALM.ExportType = (AlmPublishOperationExecConfig.eExportType?)Enum.Parse(typeof(AlmPublishOperationExecConfig.eExportType), publishToQCAction.ExportType.ToString());
+                    operationConfigPublishToALM.TestsetExportDestination= publishToQCAction.TestSetFolderDestination;
                     operationConfigPublishToALM.TestcasesExportDestination = publishToQCAction.TestCaseFolderDestination;
-                    operationConfigPublishToALM.TestCasesResultsToExport = (AlmPublishOperationExecConfig.eTestCasesResultsToExport?)publishToQCAction.FilterStatus;
+                    operationConfigPublishToALM.TestCasesResultsToExport = (AlmPublishOperationExecConfig.eTestCasesResultsToExport?)Enum.Parse(typeof(AlmPublishOperationExecConfig.eTestCasesResultsToExport), publishToQCAction.FilterStatus.ToString());
                     operationConfigPublishToALM.AttachActivitiesGroupsReport = publishToQCAction.toAttachActivitiesGroupReport;
                     operationConfigPublishToALM.UseUserVariableInRunInstanceName = publishToQCAction.isVariableInTCRunUsed;
                     operationConfigPublishToALM.UserVariableInRunInstance = publishToQCAction.VariableForTCRunName;
@@ -1375,8 +1409,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             publishToQCRunSetOperation = new RunSetActionPublishToQC();
                         }
-
-                        publishToQCRunSetOperation.PublishALMType = publishToALMOperationExecConfig.ALMType;
+                        if(publishToALMOperationExecConfig.ALMType.ToLower() == "default")
+                        {
+                            publishToQCRunSetOperation.PublishALMType = gingerExecConfig.AlmsDetails.Where(x=> x.IsDefault !=null && x.IsDefault.Value== true).FirstOrDefault().ALMType;
+                        }
+                        else
+                        {
+                            publishToQCRunSetOperation.PublishALMType = publishToALMOperationExecConfig.ALMType;
+                        }
 
                         if (publishToALMOperationExecConfig.AlmTestSetLevel != null)
                         {

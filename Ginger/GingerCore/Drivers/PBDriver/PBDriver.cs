@@ -1162,7 +1162,7 @@ namespace GingerCore.Drivers.PBDriver
         /// IVisualTestingDriver's Overloaded Method o get device screenshot
         /// </summary>
         /// <returns>Application Screenshot in Bitmap format</returns>
-        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null)
+        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
             Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
             return bmp;
@@ -1286,6 +1286,11 @@ namespace GingerCore.Drivers.PBDriver
         public IWebDriver GetWebDriver()
         {
             return Driver;
+        }
+
+        public Bitmap GetElementScreenshot(Act act)
+        {
+            throw new NotImplementedException();
         }
     }
 }

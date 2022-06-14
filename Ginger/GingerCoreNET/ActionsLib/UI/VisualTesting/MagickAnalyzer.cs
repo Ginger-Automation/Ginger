@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Repository;
 using GingerCore.Drivers;
+using GingerCoreNET.GeneralLib;
 using ImageMagick;
 using OpenQA.Selenium;
 using System;
@@ -42,21 +43,17 @@ namespace GingerCore.Actions.VisualTesting
         }
 
         void IVisualAnalyzer.Compare()
-        {            
-            MagickImage magickBaseImg = new MagickImage(BitmapToArray(mAct.baseImage));//Not tested after code change
-            MagickImage magickTargetImg = new MagickImage(BitmapToArray(mAct.targetImage));//Not tested after code change
+        {
+            MagickImage magickBaseImg = new MagickImage(General.ImageToByteArray(mAct.baseImage, System.Drawing.Imaging.ImageFormat.Bmp));//Not tested after code change
+            MagickImage magickTargetImg = new MagickImage(General.ImageToByteArray(mAct.targetImage, System.Drawing.Imaging.ImageFormat.Bmp));//Not tested after code change
 
             MagickImage diffImg = new MagickImage();
 
             double percentageDifference;
 
-            // TODO: add combo with list of options for user to choose the Error Matic and Cahnnels
-            ActInputValue AIV = mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ErrorMetric);
-            
-            //TODO: fix me - removed hard code
-            //caused build problem on build machine so temp fix for now
-            ErrorMetric EM = ErrorMetric.Fuzz;
-             percentageDifference = magickBaseImg.Compare(magickTargetImg, EM, diffImg, Channels.Red);
+            ErrorMetric eErrorMetric = ErrorMetric.Fuzz;
+            Enum.TryParse<ErrorMetric>(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ErrorMetric).Value, out eErrorMetric);
+             percentageDifference = magickBaseImg.Compare(magickTargetImg, eErrorMetric, diffImg, Channels.Red);
              percentageDifference = percentageDifference * 100;
              percentageDifference = Math.Round(percentageDifference, 2);
 
@@ -67,15 +64,6 @@ namespace GingerCore.Actions.VisualTesting
             mAct.AddOrUpdateReturnParamActual("Percentage Difference", percentageDifference + "");
 
             mAct.AddScreenShot(ImgToSave, "Compare Result");
-        }
-
-        private byte[] BitmapToArray(Bitmap bitmap)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                bitmap.Save(ms, ImageFormat.Bmp);
-                return ms.ToArray();
-            }
         }
 
         public void CreateBaseline()

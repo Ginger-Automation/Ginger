@@ -23,6 +23,7 @@ using GingerCore.Activities;
 using GingerCore.Environments;
 using System;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
+using Activity = GingerCore.Activity;
 
 namespace Amdocs.Ginger.Run
 {
@@ -160,6 +161,22 @@ namespace Amdocs.Ginger.Run
         {
 
         }
+
+        public virtual void ActivityGroupSkipped(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
+        {
+
+        }
+
+        public virtual void ActivitySkipped(uint eventTime, Activity activity, bool offlineMode = false)
+        {
+
+        }
+
+        public virtual void BusinessFlowSkipped(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
+        {
+
+        }
+
 
         /// <summary>
         /// Notify the context of execution: Business Flow, Activity, Action

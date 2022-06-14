@@ -44,7 +44,7 @@ namespace Ginger.Actions.VisualTesting
         ApplitoolsComparePage mApplitoolsComparePage = null;
         BitmapPixelsComaprePage mBitmapPixelsComaprePage = null;
         UIElementsComparisonPage mUIElementsBitmapComparisonPage = null;
-
+        VRTComparePage mVRtComparisonPage = null;
         public ActVisualTestingEditPage(GingerCore.Actions.ActVisualTesting Act)
         {
             InitializeComponent();
@@ -71,6 +71,8 @@ namespace Ginger.Actions.VisualTesting
             WidthUCVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActVisualTesting.Fields.SetAppWindowWidth);
             HeightUCVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActVisualTesting.Fields.SetAppWindowHeight);
 
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFullPageScreenshotCheckbox, CheckBox.IsCheckedProperty, mAct, nameof(mAct.IsFullPageScreenshot));
+            
             if (mAct.IsTargetSourceFromScreenshot)
             {
                 TargetScreenShotRadioButton.IsChecked = true;
@@ -97,7 +99,6 @@ namespace Ginger.Actions.VisualTesting
             switch (EventArgs.EventType)
             {
                 case VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility:
-                    xLightGrayVerticalBorder.Visibility = ConvertVisibility(EventArgs.visibility);
                     xSetApplicationScreenSize.Visibility = ConvertVisibility(EventArgs.visibility);
                     break;
 
@@ -269,10 +270,17 @@ namespace Ginger.Actions.VisualTesting
                     mUIElementsBitmapComparisonPage.InitLayout();
                     EngineConfigFrame.Content = mUIElementsBitmapComparisonPage;
                     break;
-
+                case ActVisualTesting.eVisualTestingAnalyzer.VRT:
+                    if (mVRtComparisonPage == null)
+                    {
+                        mVRtComparisonPage = new VRTComparePage(mAct);
+                        mVRtComparisonPage.visualCompareAnalyzerIntegration.VisualTestingEvent += VisualCompareAnalyzerIntegration_VisualTestingEvent;
+                    }
+                    mVRtComparisonPage.InitLayout();
+                    EngineConfigFrame.Content = mVRtComparisonPage;
+                    break;
                 default:
                     EngineConfigFrame.Content = null;
-                    xLightGrayVerticalBorder.Visibility = Visibility.Collapsed;
                     xSetApplicationScreenSize.Visibility = Visibility.Collapsed;
                     xCompareOrCreateBaselinesRadioButtons.Visibility = Visibility.Collapsed;
                     xBaselineAndTargetImages.Visibility = Visibility.Collapsed;

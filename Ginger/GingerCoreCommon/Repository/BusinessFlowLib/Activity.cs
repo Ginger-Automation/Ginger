@@ -219,7 +219,7 @@ namespace GingerCore
             {
                 double iAuto = 0;
                 double percent = 0;
-                
+
                 if (Acts.Count != 0)
                 {
                     foreach (GingerCore.Actions.Act act in Acts)
@@ -738,10 +738,31 @@ namespace GingerCore
         {
             Activity activityInstance = (Activity)instance;
             //Create new instance of source
-            Activity newInstance = (Activity)this.CreateInstance();
+            Activity newInstance = null;
+
+            if (activityInstance.Type == eSharedItemType.Link)
+            {
+                newInstance = (Activity)this.CreateInstance(true);
+                newInstance.Guid = activityInstance.Guid;
+                newInstance.ActivitiesGroupID = activityInstance.ActivitiesGroupID;
+                newInstance.Type = activityInstance.Type;
+                if (hostItem != null)
+                {
+                    //replace old instance object with new
+                    int originalIndex = ((BusinessFlow)hostItem).Activities.IndexOf(activityInstance);
+                    ((BusinessFlow)hostItem).Activities.Remove(activityInstance);
+                    ((BusinessFlow)hostItem).Activities.Insert(originalIndex, newInstance);
+                }
+                return;
+            }
+            else
+            {
+                newInstance = (Activity)this.CreateInstance();
+            }
 
 
             newInstance.IsSharedRepositoryInstance = true;
+            newInstance.Type = activityInstance.Type;
 
             //update required part
             eItemParts ePartToUpdate = (eItemParts)Enum.Parse(typeof(eItemParts), partToUpdate);
@@ -749,6 +770,8 @@ namespace GingerCore
             {
                 case eItemParts.All:
                 case eItemParts.Details:
+                    // if(activityInstance.Type == eSharedItemType.Link)
+                    //newInstance.Guid = activityInstance.Guid;
                     newInstance.Guid = activityInstance.Guid;
                     newInstance.ParentGuid = activityInstance.ParentGuid;
                     newInstance.ExternalID = activityInstance.ExternalID;

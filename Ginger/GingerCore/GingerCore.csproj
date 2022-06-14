@@ -27,6 +27,8 @@
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+	<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+	  <enableDefaultPageItems>false</enableDefaultPageItems>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <RegisterForComInterop>false</RegisterForComInterop>
@@ -59,15 +61,16 @@
     <Reference Include="Interop.TDAPIOLELib">
       <HintPath>DLLs\Interop.TDAPIOLELib.dll</HintPath>
     </Reference>
-    <Reference Include="JiraRepositoryStd">
-      <HintPath>..\..\..\..\..\OneDrive - AMDOCS\Backup Folders\Desktop\project dll\JiraRepositoryStd.dll</HintPath>
+    <Reference Include="JiraRepositoryStd, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GingerCoreNET\DLLS\JiraRepositoryStd.dll</HintPath>
     </Reference>
     <Reference Include="LibGit2Sharp, Version=0.24.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLL's\LibGit2Sharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.mshtml">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\PublicAssemblies\Microsoft.mshtml.dll</HintPath>
+      <HintPath>..\GingerCoreNET\DLLS\Microsoft.mshtml.dll</HintPath>
     </Reference>
     <Reference Include="Octane_Repository">
       <HintPath>DLLs\Octane_Repository.dll</HintPath>
@@ -105,6 +108,312 @@
     <Reference Include="System.Speech" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Actions\ScreenCapture\LocatorImageCaptureWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ScreenCapture\ScreenCaptureWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\UIAutomation\ActionHelperMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\UIAutomation\ActionHelper.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Actions\UIAutomation\UIA_ActionRecorder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DragDrop\VisualDrag.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Drivers\ConsoleDriverLib\ConsoleDriverWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Drivers\ConsoleDriverLib\ConsoleNewActionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Drivers\InternalBrowserLib\CreateNewActionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Drivers\InternalBrowserLib\InternalBrowserWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Drivers\InternalBrowserLib\WebBrowserPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Drivers\MainFrame\MainFrameDriverWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Drivers\WebServicesDriverLib\WebServicesDriverWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GeneralLib\GenericWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GeneralLib\ComboBoxWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GeneralLib\InputBoxWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\UCHtmlViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ucTextDicResource.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\XMLViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Actions\ActSikuli.cs" />
+    <Compile Include="Actions\RobotFramework\ActRobot.cs" />
+    <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
+    <Compile Include="Actions\RobotFramework\GingerParam.cs" />
+    <Compile Include="Actions\Common\ActMedia.cs" />
+    <Compile Include="Actions\Common\ActBattery.cs" />
+    <Compile Include="Actions\Common\ActPhone.cs" />
+    <Compile Include="Actions\Common\ActDevice.cs" />
+    <Compile Include="Actions\ActDemoPage.cs" />
+    <Compile Include="Actions\Common\ElementConfigControl.cs" />
+    <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
+    <Compile Include="Actions\ActImage.cs" />
+    <Compile Include="Actions\ActLowLevelClicks.cs" />
+    <Compile Include="Actions\ActCreatePDFChart.cs" />
+    <Compile Include="Actions\ActActivateRow.cs" />
+    <Compile Include="Actions\ActGetMsgboxText.cs" />
+    <Compile Include="Actions\ActConsoleCommand.cs" />
+    <Compile Include="Actions\ActFunction.cs" />
+    <Compile Include="Actions\ActASCFControl.cs" />
+    <Compile Include="Actions\ActLaunchJavaWSApplication.cs" />
+    <Compile Include="Actions\ActGenerateFileFromTemplate.cs" />
+    <Compile Include="Actions\ActionFlowControl.cs" />
+    <Compile Include="Actions\ActPBControl.cs" />
+    <Compile Include="Actions\ActCompareImgs.cs" />
+    <Compile Include="Actions\ActSendKeys.cs" />
+    <Compile Include="Actions\ActSetConfig.cs" />
+    <Compile Include="Actions\ActMenuItem.cs" />
+    <Compile Include="Actions\ActTextSpeech.cs" />
+    <Compile Include="Actions\ActWindow.cs" />
+    <Compile Include="Actions\Common\ActDeviceButton.cs" />
+    <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
+    <Compile Include="Actions\Java\ActJavaElement.cs" />
+    <Compile Include="Actions\Java\ActJavaEXE.cs" />
+    <Compile Include="Actions\ActTableElement.cs" />
+    <Compile Include="Actions\MainFrame\ActMainframeGetDetails.cs" />
+    <Compile Include="Actions\MainFrame\ActMainframeSendKey.cs" />
+    <Compile Include="Actions\MainFrame\ActMainframeSetText.cs" />
+    <Compile Include="Actions\ScreenCapture\LocatorImageCaptureWindow.xaml.cs">
+      <DependentUpon>LocatorImageCaptureWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\ScreenCapture\SnippingTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Actions\ScreenCapture\SnippingTool.Designer.cs" />
+    <Compile Include="Actions\UIAutomation\UIAElementInfo.cs" />
+    <Compile Include="Actions\Windows\ActWindowsControl.cs" />
+    <Compile Include="Actions\ScreenCapture\ScreenCaptureWindow.xaml.cs">
+      <DependentUpon>ScreenCaptureWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\UIAutomation\ActionHelperMenu.xaml.cs">
+      <DependentUpon>ActionHelperMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\UIAutomation\ActionHelper.xaml.cs">
+      <DependentUpon>ActionHelper.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\UIAutomation\ActUIASwitchWindow.cs" />
+    <Compile Include="Actions\UIAutomation\ActUIAGrid.cs" />
+    <Compile Include="Actions\UIAutomation\ActUIALabel.cs" />
+    <Compile Include="Actions\UIAutomation\ActUIAClickOnPoint.cs" />
+    <Compile Include="Actions\UIAutomation\ActUIAImage.cs" />
+    <Compile Include="Actions\UIAutomation\UIAComWrapperHelper.cs" />
+    <Compile Include="Actions\UIAutomation\ActUIAButton.cs" />
+    <Compile Include="Actions\UIAutomation\ActUIATextBox.cs" />
+    <Compile Include="Actions\UIAutomation\WinAPIAutomation.cs" />
+    <Compile Include="Actions\UIAutomation\UIA_ActionRecorder.xaml.cs">
+      <DependentUpon>UIA_ActionRecorder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\XML\ActXMLTagValidation.cs" />
+    <Compile Include="Actions\XML\ActXMLProcessing.cs" />
+    <Compile Include="Actions\XML\XMLProcessor.cs" />
+    <Compile Include="ActOcr.cs" />
+    <Compile Include="ALM\QtestCore.cs" />
+    <Compile Include="ALM\Qtest\ImportFromQtest.cs" />
+    <Compile Include="ALM\QCRestAPICore.cs" />
+    <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
+    <Compile Include="ALM\QCRestAPI\ImportFromQCRest.cs" />
+    <Compile Include="ALM\QCRestAPI\QCRestAPIConnect.cs" />
+    <Compile Include="ALM\QC\ExportToQC.cs" />
+    <Compile Include="ALM\QCCore.cs" />
+    <Compile Include="ALM\QC\ImportFromQC.cs" />
+    <Compile Include="ALM\QC\QCConnect.cs" />
+    <Compile Include="ALM\Qtest\QtestTestRun.cs" />
+    <Compile Include="ALM\Qtest\QtestTestSuite.cs" />
+    <Compile Include="ALM\Qtest\QtestTest.cs" />
+    <Compile Include="ALM\Qtest\QtestTestParameter.cs" />
+    <Compile Include="ALM\Qtest\QtestTestStep.cs" />
+    <Compile Include="ALM\Qtest\QtestConnect.cs" />
+    <Compile Include="ALM\RallyCore.cs" />
+    <Compile Include="ALM\Rally\ImportFromRally.cs" />
+    <Compile Include="ALM\Rally\RallyConnect.cs" />
+    <Compile Include="ALM\Rally\RallyStep.cs" />
+    <Compile Include="ALM\Rally\RallyTestCase.cs" />
+    <Compile Include="ALM\Rally\RallyTestParameter.cs" />
+    <Compile Include="ALM\Rally\RallyTestPlan.cs" />
+    <Compile Include="ALM\RQMCore.cs" />
+    <Compile Include="ALM\RQM\ExportToRQM.cs" />
+    <Compile Include="ALM\RQM\ImportFromRQM.cs" />
+    <Compile Include="ALM\RQM\RQMTestSuiteResults.cs" />
+    <Compile Include="ALM\RQM\RQMTestSuiteExecutionRecord.cs" />
+    <Compile Include="ALM\RQM\RQMTestSuite.cs" />
+    <Compile Include="ALM\RQM\RQMTestParameter.cs" />
+    <Compile Include="ALM\RQM\RQMStep.cs" />
+    <Compile Include="ALM\RQM\RQMExecutionRecord.cs" />
+    <Compile Include="ALM\RQM\RQMTestScript.cs" />
+    <Compile Include="ALM\RQM\RQMTestCase.cs" />
+    <Compile Include="ALM\RQM\RQMFieldsMappingConfig.cs" />
+    <Compile Include="ALM\RQM\RQMTestPlan.cs" />
+    <Compile Include="ALM\RQM\RQMConnect.cs" />
+    <Compile Include="DataSource\DataSourceTableColumn.cs" />
+    <Compile Include="Common\Devices\DeviceConfig.cs" />
+    <Compile Include="Common\Devices\DeviceButton.cs" />
+    <Compile Include="Common\Devices\DeviceControllerConfig.cs" />
+    <Compile Include="Drivers\ASCF\ASCFBrowserElementInfo.cs" />
+    <Compile Include="Drivers\ASCF\ASCFControlInfo.cs" />
+    <Compile Include="Drivers\ASCF\ASCFElementInfo.cs" />
+    <Compile Include="Drivers\Common\ComboElementInfo.cs" />
+    <Compile Include="Drivers\Common\UIAutomationHelperBase.cs" />
+    <Compile Include="Drivers\Common\UIAutomationDriverBase.cs" />
+    <Compile Include="Drivers\Common\TableElementInfo.cs" />
+    <Compile Include="Common\Utility.cs" />
+    <Compile Include="Drivers\Common\UIElementOperationsHelper.cs" />
+    <Compile Include="Drivers\DriverWindowDispatcher.cs" />
+    <Compile Include="Drivers\InternalBrowserLib\DeviceEmulation.cs" />
+    <Compile Include="Drivers\InternalBrowserLib\WebBrowserPage.xaml.cs">
+      <DependentUpon>WebBrowserPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\JavaDriverLib\JavaDriver.cs" />
+    <Compile Include="Drivers\JavaDriverLib\JavaElementInfo.cs" />
+    <Compile Include="Drivers\MainFrame\AttachedProperties.cs" />
+    <Compile Include="Drivers\MainFrame\MainFrameDriverWindow.xaml.cs">
+      <DependentUpon>MainFrameDriverWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\MainFrame\MainFrameDriver.cs" />
+    <Compile Include="Drivers\MainFrame\MainFrameUIHelper.cs" />
+    <Compile Include="Drivers\MainFrame\Terminal.cs" />
+    <Compile Include="Drivers\PBDriver\HTMLHelper.cs" />
+    <Compile Include="External\JsonExternalItemField.cs" />
+    <Compile Include="GeneralLib\BindingHandler.cs" />
+    <Compile Include="GeneralLib\ComboEnumItem.cs" />
+    <Compile Include="GeneralLib\ComboGroupedEnumItem.cs" />
+    <Compile Include="GeneralLib\ComboItem.cs" />
+    <Compile Include="GeneralLib\CommonLib.cs" />
+    <Compile Include="GeneralLib\JSONHelper.cs" />
+    <Compile Include="Extensions\Screenshot.cs" />
+    <Compile Include="DataSource\AccessDataSource.cs" />
+    <Compile Include="GeneralLib\ComboBoxWindow.xaml.cs">
+      <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GingerOCR\GingerOcrOperations.cs" />
+    <Compile Include="Helpers\HTMLHelper.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SourceControl\SVNSourceControl.cs" />
+    <Compile Include="UserControls\UCHtmlViewer.xaml.cs">
+      <DependentUpon>UCHtmlViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ucTextDicResource.xaml.cs">
+      <DependentUpon>ucTextDicResource.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Animations\Animations.cs" />
+    <Compile Include="DragDrop\VisualDrag.xaml.cs">
+      <DependentUpon>VisualDrag.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\ConsoleDriverLib\ConsoleNewActionPage.xaml.cs">
+      <DependentUpon>ConsoleNewActionPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\ConsoleDriverLib\UnixShellDriver.cs" />
+    <Compile Include="Drivers\ConsoleDriverLib\ConsoleDriverBase.cs" />
+    <Compile Include="Drivers\ConsoleDriverLib\ConsoleDriverWindow.xaml.cs">
+      <DependentUpon>ConsoleDriverWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\ConsoleDriverLib\UnixServerSimulator.cs" />
+    <Compile Include="Drivers\ConsoleDriverLib\DOSConsoleDriver.cs" />
+    <Compile Include="Drivers\InternalBrowserLib\CreateNewActionPage.xaml.cs">
+      <DependentUpon>CreateNewActionPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\PBDriver\PBDriver.cs" />
+    <Compile Include="Drivers\ScriptDriverLib\ScriptDriverBase.cs" />
+    <Compile Include="Drivers\ScriptDriverLib\VBScriptDriver.cs" />
+    <Compile Include="Drivers\WebServicesDriverLib\WebServicesDriverWindow.xaml.cs">
+      <DependentUpon>WebServicesDriverWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\WindowsLib\WindowsDriver.cs" />
+    <Compile Include="GeneralLib\General.cs" />
+    <Compile Include="GeneralLib\GenericWindow.xaml.cs">
+      <DependentUpon>GenericWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GeneralLib\RegistryFunctions.cs" />
+    <Compile Include="GeneralLib\SMS.cs" />
+    <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">
+      <DependentUpon>InputBoxWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\XMLViewer.xaml.cs">
+      <DependentUpon>XMLViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Repository\RepositorySerializer.cs" />
+    <Compile Include="Drivers\ASCF\ASCFDriver.cs" />
+    <Compile Include="Drivers\InternalBrowserLib\InternalBrowserWindow.xaml.cs">
+      <DependentUpon>InternalBrowserWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\InternalBrowserLib\InternalBrowser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Repository\RepositoryItem.cs" />
+    <Compile Include="XPathParser\IXpathBuilder.cs" />
+    <Compile Include="XPathParser\XPathAxis.cs" />
+    <Compile Include="XPathParser\XPathOperator.cs" />
+    <Compile Include="XPathParser\XPathParser.cs" />
+    <Compile Include="XPathParser\XPathParserException.cs" />
+    <Compile Include="XPathParser\XPathScanner.cs" />
+    <Compile Include="XPathParser\XPathStringBuilder.cs" />
+    <Compile Include="XPathParser\XPathTreeBuilder.cs" />
+    <None Include="tessdata\eng.traineddata">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Resource Include="tessdata\pdf.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="ALM\RQM\RQMServerConfigurationsPackage\RQMSettings.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -251,6 +560,9 @@
     <PackageReference Include="EPPlus">
       <Version>4.5.3.1</Version>
     </PackageReference>
+    <PackageReference Include="Freeware.Pdf2Png">
+      <Version>1.0.1</Version>
+    </PackageReference>
     <PackageReference Include="Google.Protobuf">
       <Version>3.15.0</Version>
     </PackageReference>
@@ -310,6 +622,9 @@
     <PackageReference Include="System.Drawing.Common">
       <Version>6.0.0</Version>
     </PackageReference>
+    <PackageReference Include="System.Globalization">
+      <Version>4.3.0</Version>
+    </PackageReference>
     <PackageReference Include="System.IO.Packaging">
       <Version>6.0.0</Version>
     </PackageReference>
@@ -331,6 +646,12 @@
     </PackageReference>
     <PackageReference Include="System.Threading.Tasks.Dataflow">
       <Version>4.11.1</Version>
+    </PackageReference>
+    <PackageReference Include="Tabula">
+      <Version>0.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="Tesseract">
+      <Version>4.1.1</Version>
     </PackageReference>
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.310801">

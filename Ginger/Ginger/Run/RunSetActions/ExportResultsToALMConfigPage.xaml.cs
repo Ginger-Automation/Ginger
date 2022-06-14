@@ -104,6 +104,13 @@ namespace Ginger.Run
         public void Init(ObservableList<BusinessFlow> bfs, ValueExpression VE)
         {
             this.Title = "Export Results To ALM";
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
+            xALMTypeCbx.Init(AlmConfig.AlmType, nameof(RunSetActionPublishToQC.PublishALMType), Enum.GetValues(typeof(eALMType)).Cast<eALMType>().ToList(), ComboBox.SelectedValueProperty);
+            xALMTestSetLevelCbx.Init(PublishToALMConfig.eALMTestSetLevel.BusinessFlow, nameof(RunSetActionPublishToQC.ALMTestSetLevel), Enum.GetValues(typeof(eALMTestSetLevel)).Cast<eALMTestSetLevel>().ToList(), ComboBox.SelectedValueProperty);
+            xALMTypeCbx.ComboBox.SelectedValue = AlmConfig.AlmType;
+            xALMTestSetLevelCbx.ComboBox.SelectedValue = PublishToALMConfig.eALMTestSetLevel.BusinessFlow;
+            xALMTestSetLevelCbx.IsEnabled = false;
+            xALMTypeCbx.IsEnabled = false;
             mBfs = bfs;
             mVE = VE;
         }
@@ -233,12 +240,14 @@ namespace Ginger.Run
         }
         private void xExportTypeCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xExportTypeCbx.ComboBoxSelectedValue is not null && xExportTypeCbx.ComboBoxSelectedValue.ToString().Equals(eExportType.ResultsOnly.ToString()))
+            if (xExportTypeCbx.ComboBoxSelectedValue is null) //&& xExportTypeCbx.ComboBoxSelectedValue.ToString().Equals(eExportType.ResultsOnly.ToString()))
             {
                 xExportDestinationFolder.Visibility = Visibility.Collapsed;
                 return;
             }
             xExportDestinationFolder.Visibility = Visibility.Visible;
+            xExportTypeCbx.ComboBox.SelectedValue = eExportType.EntitiesAndResults;
+            xExportTypeCbx.IsEnabled = false;
         }
         private void xALMTypeCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

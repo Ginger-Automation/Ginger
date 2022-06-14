@@ -95,7 +95,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     {
                         if (File.Exists(completeSSPath))
                         {
-                            File.Delete(completeSSPath);
+                            continue;
                         }
                         File.Move(action.ScreenShots[s], completeSSPath);
                         action.ScreenShots[s] = completeSSPath;
@@ -180,7 +180,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             activity.Acts.ToList().ForEach(action => this.MapActionToLiteDb((GingerCore.Actions.Act)action, context, executedFrom));
             AR.ActionsColl.AddRange(liteDbActionList);
 
-            AR.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active == true);
+            AR.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
             AR.ChildExecutedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored);
             AR.ChildPassedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed);
 
@@ -243,9 +243,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             int ChildExecutedItemsCountActivity = 0;
             int ChildPassedItemsCountActivity = 0;
 
-            ChildExecutableItemsCountActivity = context.BusinessFlow.Activities.Count(x => x.Active == true);
-            ChildExecutedItemsCountActivity = context.BusinessFlow.Activities.Where(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored).Count();
-            ChildPassedItemsCountActivity = context.BusinessFlow.Activities.Where(ac => ac.Status == eRunStatus.Passed).Count();
+            ChildExecutableItemsCountActivity = context.BusinessFlow.Activities.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
+            ChildExecutedItemsCountActivity = context.BusinessFlow.Activities.Count(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored);
+            ChildPassedItemsCountActivity = context.BusinessFlow.Activities.Count(ac => ac.Status == eRunStatus.Passed);
 
             BFR.ChildExecutableItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString(), ChildExecutableItemsCountActivity);
             BFR.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString(), ChildExecutedItemsCountActivity);
@@ -355,7 +355,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 runner.BusinessFlowsColl.RemoveRange(0, gingerRunner.BusinessFlows.Count);
             }
 
-            SetRunnerChildCounts(runner);
+            SetRunnerChildCounts(runner, gingerRunner.BusinessFlows);
 
             runner.SetReportData(gingerReport);
             SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
@@ -377,7 +377,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             lastRunnertStatus = gingerRunner.RunsetStatus;
             ClearSeq();
         }
-        private void SetRunnerChildCounts(LiteDbRunner runner)
+        private void SetRunnerChildCounts(LiteDbRunner runner, ObservableList<BusinessFlow> businessFlows)
         {
             int ChildExecutableItemsCountActivity = 0;
             int ChildExecutedItemsCountActivity = 0;
@@ -406,6 +406,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 businessFlow.ChildPassedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), out count);
                 ChildPassedItemsCountAction = ChildPassedItemsCountAction + count;
             }
+            foreach(BusinessFlow BF in businessFlows)
+            {
+                if(BF.RunStatus == eRunStatus.Blocked)
+                {
+                    ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + BF.Activities.Count;
+                    foreach(Activity activity in BF.Activities)
+                    {
+                        ChildExecutableItemsCountAction = ChildExecutableItemsCountActivity + activity.Acts.Count;
+                    }
+                }
+            }
             runner.ChildExecutableItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString(), ChildExecutableItemsCountActivity);
             runner.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString(), ChildExecutedItemsCountActivity);
             runner.ChildPassedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString(), ChildPassedItemsCountActivity);
@@ -419,7 +430,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             base.SetReportRunSet(runSetReport, logFolder);
             runSet.RunnersColl.AddRange(ExecutionLoggerManager.RunSetReport.liteDbRunnerList);
 
-            SetRunSetChildCounts(runSet);
+            SetRunSetChildCounts(runSet, WorkSpace.Instance.RunsetExecutor.Runners);
 
             runSet.SetReportData(runSetReport);
 
@@ -433,7 +444,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             ClearSeq();
         }
-        private void SetRunSetChildCounts(LiteDbRunSet runSet)
+        private void SetRunSetChildCounts(LiteDbRunSet runSet, ObservableList<GingerRunner> runners)
         {
             int ChildExecutableItemsCountActivity = 0;
             int ChildExecutedItemsCountActivity = 0;
@@ -461,6 +472,20 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
                 runner.ChildPassedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), out count);
                 ChildPassedItemsCountAction = ChildPassedItemsCountAction + count;
+            }
+            foreach(GingerRunner runner in runners)
+            {
+                if (runner.Status == eRunStatus.Blocked)
+                {
+                    foreach(BusinessFlow BF in runner.Executor.BusinessFlows)
+                    {
+                        ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + BF.Activities.Count;
+                        foreach(Activity activity in BF.Activities)
+                        {
+                            ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count;
+                        }
+                    }
+                }
             }
             runSet.ChildExecutableItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString(), ChildExecutableItemsCountActivity);
             runSet.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString(), ChildExecutedItemsCountActivity);
@@ -490,7 +515,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
                 runner.RunStatus = (liteDbBFList.Count > 0) ? liteDbBFList[0].RunStatus : eRunStatus.Automated.ToString();
 
-                SetRunnerChildCounts(runner);
+                SetRunnerChildCounts(runner, gingerRunner.BusinessFlows);
 
                 SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
                 liteDbBFList.Clear();
@@ -509,7 +534,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 runSet.EndTimeStamp = runner.EndTimeStamp;
                 runSet.Elapsed = runner.Elapsed;
 
-                SetRunSetChildCounts(runSet);
+                SetRunSetChildCounts(runSet, WorkSpace.Instance.RunsetExecutor.Runners);
 
                 SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             }
@@ -668,7 +693,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
             liteDbRunSet.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
 
-            liteDbRunSet.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunSet.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+            liteDbRunSet.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunSet.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
 
             if (liteDbRunSet.Elapsed.HasValue)
             {
@@ -683,7 +708,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
                 liteDbRunner.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
 
-                liteDbRunner.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunner.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+                liteDbRunner.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunner.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
 
                 if (liteDbRunner.Elapsed.HasValue)
                 {
@@ -695,7 +720,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
                     liteDbBusinessFlow.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
 
-                    liteDbBusinessFlow.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbBusinessFlow.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+                    liteDbBusinessFlow.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbBusinessFlow.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
 
                     if (liteDbBusinessFlow.Elapsed.HasValue)
                     {
@@ -710,7 +735,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
                             liteDbActivity.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbActivity.ChildExecutedItemsCount, liteDbActivity.ChildExecutableItemsCount));
 
-                            liteDbActivity.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbActivity.ChildPassedItemsCount, liteDbActivity.ChildExecutedItemsCount));
+                            liteDbActivity.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbActivity.ChildPassedItemsCount, liteDbActivity.ChildExecutableItemsCount));
 
 
                             if (liteDbActivity.Elapsed.HasValue)

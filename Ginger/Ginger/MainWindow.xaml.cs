@@ -73,7 +73,7 @@ namespace Ginger
 
             mHelpLayoutList.CollectionChanged += MHelpLayoutList_CollectionChanged;
 
-            Telemetry.eventHandler += TelemetryEventHandler;
+            //Telemetry.eventHandler += TelemetryEventHandler;
 
             DriverWindowHandler.Init();
 
@@ -104,6 +104,8 @@ namespace Ginger
 
             try
             {
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSolutionALMMenu, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
+
                 //App
                 App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
 
@@ -422,7 +424,7 @@ namespace Ginger
 
         private void AppCleanUp()
         {
-            Telemetry.eventHandler -= TelemetryEventHandler;
+            //Telemetry.eventHandler -= TelemetryEventHandler;
 
             ClosingWindow CW = new ClosingWindow();
             CW.Show();

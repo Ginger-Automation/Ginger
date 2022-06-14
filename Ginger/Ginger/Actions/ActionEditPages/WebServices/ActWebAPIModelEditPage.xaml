@@ -18,7 +18,7 @@
                     </DataTemplate>
                 </Grid.Resources>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="40"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -27,6 +27,7 @@
                     <ColumnDefinition Width="35"/>
                 </Grid.ColumnDefinitions>
                 <Label Name="APIModel" Grid.Row="0" Grid.Column="0" Margin="3,0,0,0" FontSize="14" HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}"  Content="API Model:" VerticalAlignment="Center" />
+                <Button x:Name="xViewRawRequestBtn" Margin="0,5,0,10" Grid.RowSpan="2" VerticalAlignment="Top" Grid.ColumnSpan="3" Visibility="Visible" HorizontalAlignment="Right" Content="View Raw Request Preview" Style="{StaticResource $RoundTextButtonStyle_Generic}" Click="xViewRawRequestBtn_Click" Panel.ZIndex="1"/>
                 <TextBox Grid.Row="1" Grid.Column="0" Margin="6,0,0,0" Height="23"  x:Name="APIModelTextBox" Style="{StaticResource $TextBoxStyle}" VerticalAlignment="Center" IsEnabled="false"/>
                 <usercontrols:ucButton x:Name="xChangeButton" Grid.Row="1" Grid.Column="1" Margin="0" ToolTip="Change API Model" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Edit" Click="ChangeButtonClicked" Visibility="Visible" HorizontalAlignment="Left" />
                 <usercontrols:ucButton x:Name="xViewAPIBtn" Grid.Row="1" Grid.Column="2" Margin="0" ToolTip="View/Edit API Model" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="View" Click="xViewAPIBtn_Click" Visibility="Visible" HorizontalAlignment="Left" />

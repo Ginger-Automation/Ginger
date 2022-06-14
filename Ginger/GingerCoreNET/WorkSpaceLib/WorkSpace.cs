@@ -50,6 +50,7 @@ using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run.RunSetActions;
 using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
+using Ginger.Reports;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -113,8 +114,8 @@ namespace amdocs.ginger.GingerCoreNET
             {
                 mWorkSpace.InitLocalGrid();
             }
-            Telemetry.Init();
-            mWorkSpace.Telemetry.SessionStarted();
+            //Telemetry.Init();
+            //mWorkSpace.Telemetry.SessionStarted();
         }
 
         public void StartLocalGrid()
@@ -173,7 +174,7 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     WorkSpace.Instance.LocalGingerGrid.Stop();
                 }
-                WorkSpace.Instance.Telemetry.SessionEnd();
+                //WorkSpace.Instance.Telemetry.SessionEnd();
                 mWorkSpace = null;
             }
             catch (Exception ex)
@@ -347,6 +348,39 @@ namespace amdocs.ginger.GingerCoreNET
             // when loading check restore and restore
         }
 
+        private void CheckForExistingEnterpriseFeaturesConfiguration()
+        {
+            // Configuration Logger - Centralized
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+            {
+                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
+            }
+
+            // Configuration Logger - Sealights
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
+            {
+                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
+            }
+
+            // General Report Configurations
+            HTMLReportsConfiguration mHTMLReportConfiguration = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            if (!string.IsNullOrEmpty(mHTMLReportConfiguration?.CentralizedReportDataServiceURL))
+            {
+                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
+            }
+
+            // General Report Configurations
+            if (!string.IsNullOrEmpty(mHTMLReportConfiguration?.CentralizedHtmlReportServiceURL))
+            {
+                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
+            }
+
+            if (WorkSpace.Instance.Solution.ALMConfigs.Count > 0)
+            {
+                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
+            }
+        }
+
         public bool OpenSolution(string solutionFolder, string encryptionKey = null)
         {
             try
@@ -383,6 +417,12 @@ namespace amdocs.ginger.GingerCoreNET
                 if (SolutionUpgrade.IsGingerUpgradeNeeded(solutionFolder, solutionFiles))
                 {
                     Reporter.ToLog(eLogLevel.WARN, "Loading Solution- Error: Current Ginger version can't load the Solution because it includes items from higher Ginger version");
+                    return false;
+                }
+
+                if (!SolutionUpgrade.IsUserProceedWithLoadSolutionInNewerGingerVersion(solutionFolder, solutionFiles))
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Loading Solution- Error: User doesn't wish to proceed with loading the Solution in Newer Ginger version");
                     return false;
                 }
 
@@ -473,6 +513,7 @@ namespace amdocs.ginger.GingerCoreNET
                 // PlugInsManager = new PluginsManager();
                 // mPluginsManager.Init(SolutionRepository);
 
+                CheckForExistingEnterpriseFeaturesConfiguration(); // Auto set the ExistingEnterprise's flag to true if needed
 
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
                 return true;

@@ -387,7 +387,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             ViewLinkedInstances.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
             ViewLinkedInstances.AutomationID = "ViewLinkedInstances";
             ViewLinkedInstances.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InstanceLink;
-            ViewLinkedInstances.ToolTip = "View Linked Instances";
+            ViewLinkedInstances.ToolTip = "View Item Usage";
             ViewLinkedInstances.OperationHandler = ViewRepositoryItemUsage;
             operationsList.Add(ViewLinkedInstances);
 
@@ -673,6 +673,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             export.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
             export.ToolTip = string.Concat("Export ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), " and it ", GingerDicser.GetTermResValue(eTermResKey.Activities), " to ALM");
             export.OperationHandler = ExportGroupHandler;
+            export.Visible = false;
             groupOperationsList.Add(export);
 
             ListItemGroupOperation publishGroup = new ListItemGroupOperation();

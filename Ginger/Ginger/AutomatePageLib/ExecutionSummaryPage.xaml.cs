@@ -31,6 +31,7 @@ using FontAwesome.Sharp;
 using LiveCharts;
 using LiveCharts.Wpf;
 using LiveCharts.Defaults;
+using System.Windows.Media;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -86,7 +87,7 @@ namespace Ginger.BusinessFlowWindows
                     continue;
                 }
                 //activityStatList.Add(new StatItems() { Description = v.Description, Count = (int)v.Count});
-                SeriesActivityCollection.Add(new PieSeries() { Title = v.Description, LabelPosition = PieLabelPosition.InsideSlice, Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
+                SeriesActivityCollection.Add(new PieSeries() { Title = v.Description,  LabelPosition = PieLabelPosition.InsideSlice, Foreground= new SolidColorBrush(Colors.Black), Fill= GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
                 //ActivityChart.Palette.Add(GingerCore.General.SelectColor(v.Description));
                 totalActivity += (int)v.Count;
             }         
@@ -109,7 +110,7 @@ namespace Ginger.BusinessFlowWindows
                     continue;
                 }
                 //actionStatList.Add(new StatItems() { Description = v.Description, Count =(int)v.Count});
-                SeriesActionCollection.Add(new PieSeries() { Title = v.Description, LabelPosition = PieLabelPosition.InsideSlice, Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
+                SeriesActionCollection.Add(new PieSeries() { Title = v.Description, LabelPosition = PieLabelPosition.InsideSlice, Foreground = new SolidColorBrush(Colors.Black), Fill = GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
                 //ActionChart.Palette.Add(GingerCore.General.SelectColor(v.Description));
                 totalAction += (int)v.Count;
             }
@@ -123,8 +124,8 @@ namespace Ginger.BusinessFlowWindows
                 SwitchLegend(s);
             }
             {
-                stck.Children.Add(Ginger.General.makeImgFromControl(ActivityChart, totalActivity.ToString(), 1));
-                stck.Children.Add(Ginger.General.makeImgFromControl(ActionChart, totalAction.ToString(), 2));
+                //stck.Children.Add(Ginger.General.makeImgFromControl(ActivityChart, totalActivity.ToString(), 1));
+                //stck.Children.Add(Ginger.General.makeImgFromControl(ActionChart, totalAction.ToString(), 2));
             }
             {                
                 //App.RunsetActivityTextbox.Text = totalActivity.ToString();

@@ -218,6 +218,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Operations:
                     SetAsFontAwesomeIcon(IconChar.Cogs);
                     break;
+                case eImageType.Settings:
+                    SetAsFontAwesomeIcon(IconChar.Cogs);//Gears
+                    break;
                 case eImageType.Environment:
                 case eImageType.Globe:
                     SetAsFontAwesomeIcon(IconChar.Globe);
@@ -247,6 +250,10 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.PluginPackage:
                     SetAsFontAwesomeIcon(IconChar.Plug);
+                    break;
+
+                case eImageType.Building:
+                    SetAsFontAwesomeIcon(IconChar.Building);
                     break;
                 #endregion
 
@@ -456,6 +463,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Sync:
                 case eImageType.InstanceLink:
                     SetAsFontAwesomeIcon(IconChar.Link);
+                    break;
+                case eImageType.InstanceLinkOrange:
+                    SetAsFontAwesomeIcon(IconChar.Link,Brushes.Orange);
                     break;
                 case eImageType.UnSync:
                     SetAsFontAwesomeIcon(IconChar.Unlink);

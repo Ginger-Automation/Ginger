@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -79,7 +79,10 @@ namespace Amdocs.Ginger.Repository
         public static void GetListOfUsedAppModelGlobalParameters(object item, ref List<string> usedGlobalParam)
         {
             //FIXME !!! use nameof and more - do not use refelction
-
+            if (item == null)
+            {
+                return;
+            }
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
 
             Regex rxGlobalParamPattern = new Regex(@"({GlobalAppsModelsParam Name=(\D*\d*\s*)}})|({GlobalAppsModelsParam Name=(\D*\d*\s*)})", RegexOptions.Compiled);

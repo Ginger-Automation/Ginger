@@ -32,6 +32,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.ScreenCapture;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
+using GingerCore.GeneralLib;
 using ScreenSnipApplication;
 
 namespace Ginger.Actions
@@ -52,6 +53,8 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetTextValueTextBox.ValueTextBox, TextBox.TextProperty, Act, nameof(ActSikuli.SetTextValue), BindingMode.TwoWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xShowSikuliCheckBox, CheckBox.IsCheckedProperty, Act, nameof(ActSikuli.ShowSikuliConsole), BindingMode.TwoWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPatternImageLocationTextBox.ValueTextBox, TextBox.ToolTipProperty, Act, nameof(ActSikuli.PatternPath), BindingMode.TwoWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetSimilarityTextBox.ValueTextBox, TextBox.ToolTipProperty, Act, nameof(ActSikuli.PatternSimilarity), BindingMode.TwoWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetSimilarityTextBox.ValueTextBox, TextBox.TextProperty, Act, nameof(ActSikuli.PatternSimilarity), BindingMode.TwoWay);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSikuliOperationComboBox, ComboBox.TextProperty, Act, nameof(ActSikuli.ActSikuliOperation), BindingMode.TwoWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xActiveProcessesTitlesComboBox, ComboBox.TextProperty, Act, nameof(ActSikuli.ProcessNameForSikuliOperation), BindingMode.TwoWay);
@@ -59,14 +62,52 @@ namespace Ginger.Actions
 
             xPatternImageLocationTextBox.BindControl(Context.GetAsContext(actSikuli.Context), actSikuli, nameof(ActSikuli.PatternPath));
             xSetTextValueTextBox.BindControl(Context.GetAsContext(actSikuli.Context), actSikuli, nameof(ActSikuli.SetTextValue));
+            xSetSimilarityTextBox.BindControl(Context.GetAsContext(actSikuli.Context), actSikuli, nameof(ActSikuli.PatternSimilarity));
             xSetTextValueTextBox.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(actSikuli.SetTextValue),
                 (Context.GetAsContext(actSikuli.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
             xPatternImageLocationTextBox.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(actSikuli.PatternPath),
                 (Context.GetAsContext(actSikuli.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
+            xSetSimilarityTextBox.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(actSikuli.PatternSimilarity),
+                (Context.GetAsContext(actSikuli.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
+
+            ChangeAppScreenSizeComboBox.Init(actSikuli.GetOrCreateInputParam(ActSikuli.Fields.ChangeAppWindowSize,
+                ActSikuli.eChangeAppWindowSize.None.ToString()), typeof(ActSikuli.eChangeAppWindowSize), false, new SelectionChangedEventHandler(ChangeAppWindowSize_Changed));
+
+            JavaPathTextBox.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(ActSikuli.CustomJavaPath)));
+
+
             xPatternImageLocationTextBox.ValueTextBox.TextChanged -= ValueTextBox_TextChanged;
             xPatternImageLocationTextBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
             xPatternImageLocationTextBox.ValueTextBox.Text = actSikuli.PatternPath;
+
+            if (!string.IsNullOrEmpty(actSikuli.PatternSimilarity))
+            {
+                xSetSimilarityTextBox.ValueTextBox.Text = actSikuli.PatternSimilarity.ToString();
+            }
+            else
+            {
+                xSetSimilarityTextBox.ValueTextBox.Text = "70";
+            }
+
             ElementImageSourceChanged(true);
+            SetJavaRelatedDetails();
+        }
+
+        private void SetJavaRelatedDetails()
+        {
+            JavaPathHomeRdb.Content = new TextBlock { Text = "Use JAVA_HOME Environment Variable (" + CommonLib.GetJavaHome() + ")" };
+            if (actSikuli.UseCustomJava)
+            {
+                JavaPathHomeRdb.IsChecked = false;
+                JavaPathOtherRdb.IsChecked = true;
+                JavaPathTextBox.ValueTextBox.Text = actSikuli.CustomJavaPath;
+            }
+            else
+            {
+                JavaPathHomeRdb.IsChecked = true;
+                JavaPathOtherRdb.IsChecked = false;
+                JavaPathTextBox.ValueTextBox.Text = string.Empty;
+            }
         }
 
         private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -86,8 +127,8 @@ namespace Ginger.Actions
                 return;
             }
 
-            actSikuli.PatternPath = GetPathToExpectedImage();
-            xPatternImageLocationTextBox.ValueTextBox.Text = actSikuli.PatternPath;
+            actSikuli.PatternPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(GetPathToExpectedImage());
+            xPatternImageLocationTextBox.ValueTextBox.Text = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(actSikuli.PatternPath);
 
             App.MainWindow.WindowState = WindowState.Minimized;
             actSikuli.SetFocusToSelectedApplicationInstance();
@@ -189,8 +230,13 @@ namespace Ginger.Actions
 
         void RefreshProcessesCombo()
         {
-
-
+            if (!string.IsNullOrEmpty(actSikuli.ProcessNameForSikuliOperation))
+            {
+                if (!actSikuli.ActiveProcessWindows.Contains(actSikuli.ProcessNameForSikuliOperation))
+                {
+                    actSikuli.ActiveProcessWindows.Add(actSikuli.ProcessNameForSikuliOperation);
+                }
+            }
             GingerCore.General.FillComboFromList(xActiveProcessesTitlesComboBox, actSikuli.ActiveProcessWindows);
         }
 
@@ -198,5 +244,46 @@ namespace Ginger.Actions
         {
             ElementImageSourceChanged();
         }
+        private void ChangeAppWindowSize_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            if (actSikuli.ChangeAppWindowSize != ActSikuli.eChangeAppWindowSize.None)
+            {
+                actSikuli.SetCustomResolution = true;
+            }
+            else
+            {
+                actSikuli.SetCustomResolution = false;
+            }
+        }
+
+        private void JavaPathOtherRdb_CheckedUnchecked(object sender, RoutedEventArgs e)
+        {
+            RadioButton rb = (RadioButton)sender;
+            if (rb.IsChecked.Value)
+            {
+                actSikuli.UseCustomJava = true;
+                JavaPathTextBox.IsEnabled = true;
+                BrowseJavaPath.IsEnabled = true;
+            }
+            else
+            {
+                actSikuli.UseCustomJava = false;
+                JavaPathTextBox.IsEnabled = false;
+                JavaPathTextBox.ValueTextBox.Clear();
+                BrowseJavaPath.IsEnabled = false;
+            }
+        }
+        private void BrowseJavaPath_Click(object sender, RoutedEventArgs e)
+        {
+            string folderName = General.SetupBrowseFolder(new System.Windows.Forms.FolderBrowserDialog(), false);
+            if (!string.IsNullOrEmpty(folderName))
+            {
+                actSikuli.UseCustomJava = true;
+                actSikuli.CustomJavaPath = folderName;
+                JavaPathTextBox.ValueTextBox.Text = actSikuli.CustomJavaPath;
+            }
+        }
+
+
     }
 }

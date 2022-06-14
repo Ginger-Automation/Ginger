@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Ginger.Run
 {
@@ -49,7 +50,7 @@ namespace Ginger.Run
         {
             SetGridView();
             RunSetActionsGrid.AddSeparator();
-
+                        
             RunSetActionsGrid.AddToolbarTool("@AddHTMLReport_16x16.png", "Add Produce HTML Report Operation", AddHTMLReport);
             RunSetActionsGrid.AddToolbarTool("@AddMail_16x16.png", "Add Send HTML Report Email Operation", AddSendHTMLReportEmailAction);
             RunSetActionsGrid.AddToolbarTool("@AddFile_16x16.png", "Add Produce JSON Summary Report Operation", AddJSONSummary);
@@ -57,12 +58,21 @@ namespace Ginger.Run
             RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool("@AddMail2_16x16.png", "Add Send Text Email Operation", AddSendFreeEmailAction);
             RunSetActionsGrid.AddToolbarTool("@AddSMS_16x16.png", "Add Send SMS Operation", AddSendSMS);
-            RunSetActionsGrid.AddSeparator();
-            RunSetActionsGrid.AddToolbarTool("@AddRunSetALMAction_16x16.png", "Add Publish Execution Results to ALM Operation", AddPublishtoALMAction);           
-            RunSetActionsGrid.AddToolbarTool("@AddDefectsToALM_16x16.png", "Add Open ALM Defects Operation", AddAutomatedALMDefectsOperation);
+           
+            Binding b = new Binding();
+            b.Source = WorkSpace.Instance.UserProfile;
+            b.Path = new PropertyPath(nameof(UserProfile.ShowEnterpriseFeatures));
+            b.Mode = BindingMode.OneWay;
+            b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            b.NotifyOnValidationError = true;
+            b.Converter = new GingerCore.GeneralLib.BoolVisibilityConverter();
+
+            RunSetActionsGrid.AddSeparator(b);
+            RunSetActionsGrid.AddToolbarTool("@AddRunSetALMAction_16x16.png", "Add Publish Execution Results to ALM Operation", AddPublishtoALMAction, binding: b);
+            RunSetActionsGrid.AddToolbarTool("@AddDefectsToALM_16x16.png", "Add Open ALM Defects Operation", AddAutomatedALMDefectsOperation, binding: b);
+            
             RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool("@AddScript2_16x16.png", "Add Run Script Operation", AddScriptAction);
-
             RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.SignOut, "Add Send Execution JSON Data To External Source Operation", AddSendExecutionDataToExternalSourceAction);
 
@@ -158,7 +168,14 @@ namespace Ginger.Run
         }
         private void RunSelected(object sender, RoutedEventArgs e)
         {
-            ((RunSetActionBase)RunSetActionsGrid.CurrentItem).runSetActionBaseOperations.ExecuteWithRunPageBFES();
+            if ((WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB || WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                && ((RunSetActionBase)RunSetActionsGrid.CurrentItem).GetType() == typeof(RunSetActionHTMLReportSendEmail) 
+                && WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetExecutionStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
+            {
+                Reporter.ToUser(eUserMsgKey.RunSetNotExecuted);
+                return;
+            }
+                ((RunSetActionBase)RunSetActionsGrid.CurrentItem).runSetActionBaseOperations.ExecuteWithRunPageBFES();
         }
         private void RunAll(object sender, RoutedEventArgs e)
         {

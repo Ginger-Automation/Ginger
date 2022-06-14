@@ -51,10 +51,11 @@ namespace Ginger.ALM
         {
             InitializeComponent();
             mAlmConfigType = configType;
+            mItemsFields = WorkSpace.Instance.Solution.ExternalItemsFields;
+
             if (mAlmConfigType.ToString().Equals(eALMConfigType.MainMenu.ToString()))
             {
                 ALMIntegration.Instance.RefreshALMItemFields(WorkSpace.Instance.Solution.ExternalItemsFields, true, null);
-                mItemsFields = WorkSpace.Instance.Solution.ExternalItemsFields;
                 if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     RunWorker(true);

@@ -11,7 +11,7 @@
       d:DesignHeight="700" d:DesignWidth="800"
 	Title="ApplitoolsComparePage">
 
-    <Grid x:Name="ColApplitoolsComparison">
+    <Grid x:Name="ColApplitoolsComparison" Margin="15,0,0,0">
         
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
@@ -28,25 +28,25 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,0">
             <Label MinWidth="150px" Style="{StaticResource $LabelStyle}" Grid.Column="0" VerticalAlignment="Center" Content="Applitools Action:"/>
-            <UserControlsLib:UCComboBox x:Name="xApplitoolsActionComboBox" Grid.Column="1" HorizontalAlignment="Left" Width="250" Margin="30,0,0,0"/>
+            <UserControlsLib:UCComboBox x:Name="xApplitoolsActionComboBox" Grid.Column="1" HorizontalAlignment="Left" Width="600" Margin="30,0,0,0"/>
         </StackPanel>
 
         <StackPanel Grid.Row="1" x:Name="xActionByPanel" Orientation="Horizontal" Margin="0,10,0,0">
             <Label MinWidth="150px" Style="{StaticResource $LabelStyle}" Grid.Column="0" VerticalAlignment="Center" Content="Action By:"/>
-            <UserControlsLib:UCComboBox x:Name="xActionByComboBox" Grid.Column="1" HorizontalAlignment="Left" Width="250" Margin="30,0,0,0"/>
+            <UserControlsLib:UCComboBox x:Name="xActionByComboBox" Grid.Column="1" HorizontalAlignment="Left" Width="600" Margin="30,0,0,0"/>
         </StackPanel>
         <DockPanel x:Name="xLocateByAndValuePanel" Grid.Row="2" DockPanel.Dock="Top" Margin="0,10,0,0">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                <Label x:Name="xLocateBy" Content="Locate By:"  Style="{StaticResource $LabelStyle}"/>
-                <ComboBox  x:Name="xElementLocateByComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ElementLocateByComboBox_SelectionChanged" ToolTip="How to Locate the Element on the screen" Width="300" Margin="112,0,0,0"/>
+                <Label x:Name="xLocateBy" MinWidth="150px" Content="Locate By:"  Style="{StaticResource $LabelStyle}"/>
+                <ComboBox  x:Name="xElementLocateByComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ElementLocateByComboBox_SelectionChanged" ToolTip="How to Locate the Element on the screen" Width="600" Margin="30,0,0,0"/>
             </StackPanel>
             <Grid DockPanel.Dock="Top" Margin="0,10,10,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="10*"/>
                     <ColumnDefinition Width="100*" />
                 </Grid.ColumnDefinitions>
-                <Label x:Name="xLocateValue" Content="Locate Value:" Grid.Column="0" Style="{StaticResource $LabelStyle}"/>
-                <Actions:UCValueExpression x:Name="xLocateValueVE" Margin="80,0,0,0" Grid.Column="1" ToolTip="How to Locate the Element on the screen" />
+                <Label MinWidth="150px" x:Name="xLocateValue" Content="Locate Value:" Grid.Column="0" Style="{StaticResource $LabelStyle}"/>
+                <Actions:UCValueExpression x:Name="xLocateValueVE" Margin="80,0,0,0" Grid.Column="1" HorizontalAlignment="Left" Width="600" ToolTip="How to Locate the Element on the screen" />
                 <Frame x:Name="xLocateValueEditFrame" Grid.Column="1" Margin="80,0,0,0" NavigationUIVisibility="Hidden"/>
             </Grid>
         </DockPanel>
@@ -64,7 +64,7 @@
         <StackPanel Grid.Row="5" HorizontalAlignment="Left" x:Name="xApplitoolsMatchLevel" Margin="0,10,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                 <Label MinWidth="150px" Style="{StaticResource $LabelStyle}" Content="Match Level:"/>
-                <UserControlsLib:UCComboBox HorizontalAlignment="Left" x:Name="SetMatchLevelComboBox" Width="250" Margin="23,0,0,0"/>
+                <UserControlsLib:UCComboBox HorizontalAlignment="Left" x:Name="SetMatchLevelComboBox" Width="600" Margin="30,0,0,0"/>
             </StackPanel>
         </StackPanel>
 

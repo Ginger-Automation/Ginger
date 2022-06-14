@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -66,6 +66,7 @@ namespace Amdocs.Ginger.Common.Enums
         Tag,
         DataSource,
         PluginPackage,
+        Building,
         #endregion
 
         #region Variable Items Images
@@ -201,6 +202,7 @@ namespace Amdocs.Ginger.Common.Enums
         Clock,
         File,
         InstanceLink,
+        InstanceLinkOrange,
         Search,
         Remove,
         Report,
@@ -220,6 +222,7 @@ namespace Amdocs.Ginger.Common.Enums
         Camera,
         Recording,
         Wrench,
+        Settings,
         Eraser,
         Power,
         ArrowDown,

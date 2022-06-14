@@ -44,7 +44,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 var dtExcelTable = new DataTable();
                 dtExcelTable.Rows.Clear();
                 dtExcelTable.Columns.Clear();
-                var headerRow = sheet.GetRow(0);
+                IRow headerRow = sheet.GetRow(0);
+                bool allUnique = headerRow.Cells.GroupBy(x => x.StringCellValue).All(g => g.Count() == 1);
+                if (!allUnique)
+                {
+                    throw new DuplicateNameException(string.Format("Sheet '{0}' contains duplicate column names", sheet.SheetName));
+                }
                 int colCount = headerRow.LastCellNum;
                 for (var c = 0; c < colCount; c++)
                 {
@@ -77,6 +82,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 }
                 return dtExcelTable;
             }
+            catch (DuplicateNameException dupEx)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Can't convert sheet to data, " + dupEx.Message);
+                throw;
+            }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Can't convert sheet to data, " + ex.Message);
@@ -87,7 +97,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         private object GetCellValue(ICell cell, CellType cellType)
         {
             object cellVal;
-            switch(cellType)
+            switch (cellType)
             {
                 case CellType.Numeric:
                     cellVal = HandleNumericCellType(cell);
@@ -124,6 +134,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 mExcelDataTable.DefaultView.RowFilter = filter;
                 mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
                 return mFilteredDataTable;
+            }
+            catch (DuplicateNameException ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Can't read sheet data, " + ex.Message);
+                throw;
             }
             catch (Exception ex)
             {
@@ -344,17 +359,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         private object HandleNumericCellType(ICell cell)
         {
-            object cellVal;
-            if (cell.NumericCellValue.ToString().Length > 15 || String.Equals(cell.CellStyle.GetDataFormatString(),"General",StringComparison.OrdinalIgnoreCase))
-            {
-                cellVal = ((decimal)cell.NumericCellValue).ToString(CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                cellVal = DateUtil.IsCellDateFormatted(cell)
-                    ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
-                    : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
-            }
+            object cellVal = DateUtil.IsCellDateFormatted(cell)
+                ? cell.DateCellValue.ToString(CultureInfo.InvariantCulture)
+                : (cell.NumericCellValue.ToString().Length > 15 || String.Equals(cell.CellStyle.GetDataFormatString(), "General", StringComparison.OrdinalIgnoreCase))
+                ? ((decimal)cell.NumericCellValue).ToString(CultureInfo.InvariantCulture)
+                : cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
 
             return cellVal;
         }

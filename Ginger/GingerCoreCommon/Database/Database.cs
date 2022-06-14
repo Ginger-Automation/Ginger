@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -48,6 +48,7 @@ namespace GingerCore.Environments
             MySQL,
             Couchbase,
             MongoDb,
+            CosmosDb
         }
 
         public enum eConfigType
@@ -135,7 +136,7 @@ namespace GingerCore.Environments
         private string mPass;
         [IsSerializedForLocalRepository]
         public string Pass { get { return mPass; } set { mPass = value; OnPropertyChanged(nameof(Pass)); } }
-        
+
         public static List<string> DbTypes
         {
             get

@@ -78,7 +78,11 @@ namespace GingerCore.GeneralLib
         public AlternateView alternateView { get; set; }
         private bool Send_Outlook(bool actualSend = true)
         {
-            bool a = TargetFrameworkHelper.Helper.Send_Outlook(actualSend, Email.MailTo, Email.Event, Email.Subject, Email.Body, Email.MailCC, Email.Attachments, Email.EmbededAttachment);
+            bool a = CheckRequiredEmailFields(true);
+            if (a)
+            {
+                a = TargetFrameworkHelper.Helper.Send_Outlook(actualSend, Email.MailTo, Email.Event, Email.Subject, Email.Body, Email.MailCC, Email.Attachments, Email.EmbededAttachment);
+            }
             return a;
         }
 
@@ -93,25 +97,8 @@ namespace GingerCore.GeneralLib
         {
             try
             {
-                if (string.IsNullOrEmpty(Email.MailFrom))
+                if (!CheckRequiredEmailFields())
                 {
-                    Email.Event = "Failed: Please provide FROM email address.";
-                    return false;
-                }
-                if (string.IsNullOrEmpty(Email.MailTo))
-                {
-                    Email.Event = "Failed: Please provide TO email address.";
-                    return false;
-                }
-                if (string.IsNullOrEmpty(Email.Subject))
-                {
-                    Email.Event = "Failed: Please provide email subject.";
-                    return false;
-                }
-
-                if (string.IsNullOrEmpty(Email.SMTPMailHost))
-                {
-                    Email.Event = "Failed: Please provide Mail Host";
                     return false;
                 }
                 mVE.Value = Email.MailFrom;
@@ -227,6 +214,32 @@ namespace GingerCore.GeneralLib
                 return false;
             }
         }
-
+        private bool CheckRequiredEmailFields(bool outlookEmail = false)
+        {
+            if (!outlookEmail)
+            {
+                if (string.IsNullOrEmpty(Email.MailFrom))
+                {
+                    Email.Event = "Failed: Please provide FROM email address.";
+                    return false;
+                }
+                if (string.IsNullOrEmpty(Email.SMTPMailHost))
+                {
+                    Email.Event = "Failed: Please provide Mail Host";
+                    return false;
+                }
+            }
+            if (string.IsNullOrEmpty(Email.MailTo))
+            {
+                Email.Event = "Failed: Please provide TO email address.";
+                return false;
+            }
+            if (string.IsNullOrEmpty(Email.Subject))
+            {
+                Email.Event = "Failed: Please provide email subject.";
+                return false;
+            }
+            return true;
+        }
     }
 }

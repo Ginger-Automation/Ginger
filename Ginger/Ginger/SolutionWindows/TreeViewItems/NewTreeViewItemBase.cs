@@ -22,7 +22,9 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger;
+using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SourceControl;
+using GingerCore;
 using GingerCoreNET.SourceControl;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -128,7 +130,7 @@ namespace GingerWPF.TreeViewItemsLib
         public override void DuplicateTreeItem(object item)
         {
             if (item is RepositoryItemBase)
-            {   
+            {
                 Reporter.ToStatus(eStatusMsgKey.DuplicateItem, null, ((RepositoryItemBase)item).ItemName);
 
                 try
@@ -140,9 +142,9 @@ namespace GingerWPF.TreeViewItemsLib
                         (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)item))).AddRepositoryItem(copiedItem);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Duplicating tree item", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Duplicating tree item", ex);
                 }
                 finally
                 {
@@ -217,7 +219,7 @@ namespace GingerWPF.TreeViewItemsLib
         public override void SaveAllTreeFolderItems()
         {
             List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
-
+            bool showConfirmation = true;
             int itemsSavedCount = 0;
             foreach (ITreeViewItem node in childNodes)
             {
@@ -229,11 +231,20 @@ namespace GingerWPF.TreeViewItemsLib
                         if (RI.DirtyStatus == eDirtyStatus.Modified)
                         {
                             // Try to save only items with file name = standalone xml, avoid items like env app
+                            if (RI is Activity && showConfirmation && Reporter.ToUser(eUserMsgKey.AskIfWantsToUpdateAllLinkedRepoItem) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                            {
+                                return;
+                            }
+                            showConfirmation = false;
                             if (!string.IsNullOrEmpty(RI.ContainingFolder))
                             {
                                 if (SaveTreeItem(node.NodeObject(), true))
                                 {
                                     itemsSavedCount++;
+                                    if (RI is Activity)
+                                    {
+                                        ((SharedActivityTreeItem)node).PostSaveTreeItemHandler();
+                                    }
                                 }
                             }
                         }
@@ -521,7 +532,7 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 // Source control image
                 ImageMakerControl sourceControlImage = new ImageMakerControl();
-                sourceControlImage.BindControl(repoItem, nameof(RepositoryItemBase.SourceControlStatus));                
+                sourceControlImage.BindControl(repoItem, nameof(RepositoryItemBase.SourceControlStatus));
                 sourceControlImage.Width = 8;
                 sourceControlImage.Height = 8;
                 stack.Children.Add(sourceControlImage);
@@ -594,7 +605,7 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 // Source control image
                 ImageMakerControl sourceControlImage = new ImageMakerControl();
-                sourceControlImage.BindControl(repoItemFolder, nameof(RepositoryFolderBase.SourceControlStatus));                
+                sourceControlImage.BindControl(repoItemFolder, nameof(RepositoryFolderBase.SourceControlStatus));
                 sourceControlImage.Width = 8;
                 sourceControlImage.Height = 8;
                 sourceControlImage.Margin = new Thickness(0, 0, 2, 0);
@@ -647,7 +658,7 @@ namespace GingerWPF.TreeViewItemsLib
                         {
                             WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)node.NodeObject());
                         }
-                        else if(node.NodeObject() is RepositoryItemBase)
+                        else if (node.NodeObject() is RepositoryItemBase)
                         {
                             ((NewTreeViewItemBase)node).DeleteTreeItem(node.NodeObject(), true, false);
                         }
@@ -660,8 +671,8 @@ namespace GingerWPF.TreeViewItemsLib
                     {
                         if (Directory.Exists(this.NodePath()))
                         {
-                           String [] DocFolderChildItems = Directory.GetDirectories(this.NodePath());
-                            foreach(String path in DocFolderChildItems)
+                            String[] DocFolderChildItems = Directory.GetDirectories(this.NodePath());
+                            foreach (String path in DocFolderChildItems)
                             {
                                 Directory.Delete(path, true);
                             }
@@ -671,6 +682,6 @@ namespace GingerWPF.TreeViewItemsLib
                 }
             }
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
-        }    
+        }
     }
 }

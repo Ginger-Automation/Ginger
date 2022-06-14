@@ -167,7 +167,7 @@ namespace Ginger.UserControlsLib.TextEditor
         /// <param name="FileName">The full path of the file to edit/view</param>
         /// <param name="EnableEdit">enable changing the document, if disable some toolbar buttons will not be visible</param>
         /// <param name="TextEditor">Text Editor to use, if null then text editor will be selected based on the extension of the file</param>
-        public void Init(string FileName, TextEditorBase TextEditor, bool EnableEdit=true,bool RemoveToolBar = false, bool EnableWrite = false)
+        public void Init(string FileName, TextEditorBase TextEditor, bool EnableEdit=true,bool RemoveToolBar = false)
         {
             mTextEditor = TextEditor;
 
@@ -180,21 +180,18 @@ namespace Ginger.UserControlsLib.TextEditor
             string SolutionPath = FileName.Replace( WorkSpace.Instance.Solution.Folder, "~");
             lblTitle.Content = SolutionPath;
 
-            if (EnableWrite)
+            toolbar.IsEnabled = true;
+            if (EnableEdit)
             {
                 SaveButton.Visibility = Visibility.Visible;
                 UndoButton.Visibility = Visibility.Visible;
                 DeleteButton.Visibility = Visibility.Visible;
-            }
-
-            textEditor.IsReadOnly = !EnableEdit;
-            if (EnableEdit)
-            {
-                toolbar.IsEnabled = true;                
+                toolbar.IsEnabled = true;
+                textEditor.IsReadOnly = false;
             }
             else
             {
-                toolbar.IsEnabled = false;                
+                textEditor.IsReadOnly = true;
             }
 
             this.FileName = FileName;
@@ -548,7 +545,11 @@ namespace Ginger.UserControlsLib.TextEditor
             lblTitle.Visibility = Visibility.Collapsed;
             ContentEditorTitleLabel.Visibility = Visibility.Visible;
             ContentEditorTitleLabel.Content = titleContent;
-            if (titleStyle != null)
+            if (titleContent == string.Empty)
+            {
+                xFirstGrid.RowDefinitions[0].Height = new GridLength(0);
+            }
+                if (titleStyle != null)
             {
                 ContentEditorTitleLabel.Style = titleStyle;
             }

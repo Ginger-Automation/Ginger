@@ -216,6 +216,32 @@ namespace GingerCore.Drivers
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
+        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+        public static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int Y, int cx, int cy, int wFlags);
+
+        const short SWP_NOMOVE = 0X2;
+        const short SWP_NOSIZE = 1;
+        const short SWP_NOZORDER = 0X4;
+        const int SWP_SHOWWINDOW = 0x0040;
+        public static void ResizeExternalWindow(AutomationElement_Extend window, int width, int height)
+        {
+            string clname = window.Current.ClassName;
+            string winname = window.Current.Name;
+            IntPtr hwnd = FindWindow(clname, winname);
+            if (hwnd == IntPtr.Zero)
+            {
+                hwnd = (IntPtr)window.Current.NativeWindowHandle;
+            }
+            uint processId;
+            GetWindowThreadProcessId(hwnd, out processId);
+            Process proc = Process.GetProcessById((int)processId);
+
+            if (proc.MainWindowHandle != IntPtr.Zero)
+            {
+                SetWindowPos(proc.MainWindowHandle, 0, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW);
+            }
+        }
+
         public static void ShowWindow(AutomationElement_Extend window)
         {
             try

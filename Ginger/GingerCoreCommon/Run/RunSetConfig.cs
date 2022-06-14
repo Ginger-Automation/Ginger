@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -85,6 +85,56 @@ namespace Ginger.Run
                 }
             }
         }
+
+        
+        private string mSealightsTestStage;
+        [IsSerializedForLocalRepository]
+        public string SealightsTestStage
+        {
+            get { return mSealightsTestStage; }
+            set
+            {
+                if (mSealightsTestStage != value)
+                {
+                    mSealightsTestStage = value;
+                    OnPropertyChanged(nameof(SealightsTestStage));
+                }
+            }
+        }
+
+        private string mSealighsLabId;
+        [IsSerializedForLocalRepository]
+        public string SealighsLabId
+        {
+            get { return mSealighsLabId; }
+            set
+            {
+                if (mSealighsLabId != value)
+                {
+                    mSealighsLabId = value;
+                    OnPropertyChanged(nameof(SealighsLabId));
+                }
+            }
+        }
+
+        private string mSealighsBuildSessionID;
+        [IsSerializedForLocalRepository]
+        public string SealighsBuildSessionID
+        {
+            get { return mSealighsBuildSessionID; }
+            set
+            {
+                if (mSealighsBuildSessionID != value)
+                {
+                    mSealighsBuildSessionID = value;
+                    OnPropertyChanged(nameof(SealighsBuildSessionID));
+                }
+            }
+        }
+
+        //-------------------
+
+        
 
         private string mRunDescription;
         /// <summary>
@@ -329,7 +379,7 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
         {
             foreach (GingerRunner GR in GingerRunners)
             {
-                if (GR.Executor.IsUpdateBusinessFlowRunList)
+                if (GR.Executor != null && GR.Executor.IsUpdateBusinessFlowRunList)
                 {
                     GR.Executor.UpdateBusinessFlowsRunList();
                 }

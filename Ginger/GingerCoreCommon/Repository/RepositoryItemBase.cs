@@ -805,9 +805,13 @@ namespace Amdocs.Ginger.Repository
                 {
                     if (setNewGUID)
                     {
-                        duplicatedItem.ParentGuid = Guid.Empty;   // TODO: why we don't keep parent GUID?
+                        duplicatedItem.ParentGuid = Guid.Empty;   // TODO: why we don't keep parent GUID?                     
                         duplicatedItem.ExternalID = string.Empty;
                         duplicatedItem.Guid = Guid.NewGuid();
+                        if (duplicatedItem.IsLinkedItem && duplicatedItem is GingerCore.Activity)
+                        {
+                            ((GingerCore.Activity)duplicatedItem).Type = eSharedItemType.Regular;
+                        }
                         duplicatedItem = duplicatedItem.ReplaceOldGuidUsages(guidMappingList);
                     }
                     duplicatedItem.UpdateCopiedItem();

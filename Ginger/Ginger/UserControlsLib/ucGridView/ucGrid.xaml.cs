@@ -93,7 +93,7 @@ namespace Ginger
         public ObservableList<Guid> Tags = null;
         ICollectionView mCollectionView;
 
-        List <Button> mFloatingButtons = new List<Button>();
+        List<Button> mFloatingButtons = new List<Button>();
 
         public IObservableList DataSourceList
         {
@@ -138,7 +138,7 @@ namespace Ginger
                             grdMain.SelectedIndex = 0;
                             grdMain.CurrentItem = value[0];
                             // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
-                            mObjList.CurrentItem = value[0];                          
+                            mObjList.CurrentItem = value[0];
                         }
                     });
                     UpdateFloatingButtons();
@@ -161,7 +161,7 @@ namespace Ginger
         }
 
         public void ClearFilters()
-        {            
+        {
             this.Dispatcher.Invoke(() =>
             {
                 txtSearch.Text = string.Empty;
@@ -195,7 +195,7 @@ namespace Ginger
             }
 
             //Filter by Tags            
-            if (mFilterSelectedTags!=null && mFilterSelectedTags.Count > 0)
+            if (mFilterSelectedTags != null && mFilterSelectedTags.Count > 0)
             {
                 if (TagsFilter(obj, mFilterSelectedTags) == true)
                     return true;
@@ -275,7 +275,7 @@ namespace Ginger
                             sb.Append(cell.ToString()).Append("~");
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
@@ -291,9 +291,9 @@ namespace Ginger
 
             StringBuilder sb = new StringBuilder();
 
-            if(obj.GetType().GetField("Tags") != null)
+            if (obj.GetType().GetField("Tags") != null)
             {
-                FieldInfo FI =obj.GetType().GetField("Tags");
+                FieldInfo FI = obj.GetType().GetField("Tags");
                 if (FI != null)
                 {
                     //TODO: add some more types if needed 
@@ -302,7 +302,7 @@ namespace Ginger
                         object o = FI.GetValue(obj);
                         if (o != null)
                         {
-                            foreach(Guid guid in (ObservableList<Guid>)o)
+                            foreach (Guid guid in (ObservableList<Guid>)o)
                             {
                                 // we append the '~' so in case 2 string combined will not make the search string i.e: ABC  + DEF   - will not return true if search for CD
                                 sb.Append(guid.ToString()).Append("~");
@@ -314,7 +314,7 @@ namespace Ginger
             return sb.ToString().ToUpper();
         }
 
-       
+
 
 
         public ucGrid()
@@ -336,14 +336,14 @@ namespace Ginger
         }
 
         private void TagsViewer_TagsStackPanlChanged(object sender, EventArgs e)
-        {            
+        {
             this.Dispatcher.Invoke(() =>
             {
                 grdMain.CommitEdit();
                 grdMain.CancelEdit();
                 CollectFilterData();
-                mCollectionView.Refresh();               
-            });            
+                mCollectionView.Refresh();
+            });
         }
 
 
@@ -381,7 +381,7 @@ namespace Ginger
         }
 
         public Boolean AllowReorderRow { get; set; }
-        
+
         #region #####Grid Handlers
         public object Title
         {
@@ -438,10 +438,10 @@ namespace Ginger
 
         public void UpdateTitleStyle()
         {
-            xSimpleHeaderTitle.Style = (Style)TryFindResource("$ucGridTitleLightStyle");           
+            xSimpleHeaderTitle.Style = (Style)TryFindResource("$ucGridTitleLightStyle");
         }
 
-        public void SetGridEnhancedHeader(eImageType itemTypeIcon, string itemTypeName= "",  RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null)
+        public void SetGridEnhancedHeader(eImageType itemTypeIcon, string itemTypeName = "", RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null)
         {
             GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
 
@@ -451,11 +451,11 @@ namespace Ginger
             xEnhancedHeaderIcon.ImageType = itemTypeIcon;
 
             if (string.IsNullOrEmpty(itemTypeName))
-            { 
+            {
                 xEnhancedHeaderTitle.Content = xSimpleHeaderTitle.Content.ToString();
             }
             else
-            { 
+            {
                 xEnhancedHeaderTitle.Content = itemTypeName;
             }
 
@@ -505,7 +505,7 @@ namespace Ginger
                 btnPaste.Visibility = value;
             }
         }
-      public Visibility ShowCopy
+        public Visibility ShowCopy
         {
             get { return btnCopy.Visibility; }
             set { btnCopy.Visibility = value; }
@@ -530,7 +530,7 @@ namespace Ginger
             get { return btnClearAll.Visibility; }
             set { btnClearAll.Visibility = value; }
         }
-		 public Visibility ShowSaveAllChanges
+        public Visibility ShowSaveAllChanges
         {
             get { return btnSaveAllChanges.Visibility; }
             set { btnSaveAllChanges.Visibility = value; }
@@ -549,8 +549,10 @@ namespace Ginger
         public bool EnableTagsPanel
         {
             get { return TagsViewer.xTagsStackPanl.IsEnabled; }
-            set { TagsViewer.xTagsStackPanl.IsEnabled = value;
-                if(value == true)
+            set
+            {
+                TagsViewer.xTagsStackPanl.IsEnabled = value;
+                if (value == true)
                     TagsViewer.xAddTagBtn.Visibility = Visibility.Visible;
                 else
                     TagsViewer.xAddTagBtn.Visibility = Visibility.Collapsed;
@@ -561,23 +563,24 @@ namespace Ginger
         public bool IsSupportDragDrop
         {
             get { return mIsSupportDragDrop; }
-            set {
-                    if (mIsSupportDragDrop == value)
-                        return;
-                    else if (value == false)
-                    {
-                        DragDrop2.UnHookEventHandlers(this);
-                        mIsSupportDragDrop = value;
-                        return;
-                    }
-                    else if (value == true)
-                    {
-                        DragDrop2.HookEventHandlers(this);
-                        mIsSupportDragDrop = value;
-                        return;
-                    }
-
+            set
+            {
+                if (mIsSupportDragDrop == value)
+                    return;
+                else if (value == false)
+                {
+                    DragDrop2.UnHookEventHandlers(this);
+                    mIsSupportDragDrop = value;
+                    return;
                 }
+                else if (value == true)
+                {
+                    DragDrop2.HookEventHandlers(this);
+                    mIsSupportDragDrop = value;
+                    return;
+                }
+
+            }
         }
 
         public Visibility ShowUpDown
@@ -666,7 +669,7 @@ namespace Ginger
 
         public bool AllowHorizentalScroll = false;
 
-        public void UseGridWithDataTableAsSource(DataTable dataTable,bool autoGenCol=true)
+        public void UseGridWithDataTableAsSource(DataTable dataTable, bool autoGenCol = true)
         {
             UsingDataTableAsSource = true;
             grdMain.AutoGenerateColumns = autoGenCol;
@@ -676,7 +679,7 @@ namespace Ginger
             foreach (DataRowView row in dtView) rowslist.Add(row);
             mObjList = rowslist;
             mObjList.PropertyChanged += ObjListPropertyChanged;
-            grdMain.ItemsSource = dtView; 
+            grdMain.ItemsSource = dtView;
         }
         #endregion #####Grid Handlers
 
@@ -698,7 +701,7 @@ namespace Ginger
 
         public void ScrollToViewCurrentItem()
         {
-            if(mObjList.CurrentItem!=null)
+            if (mObjList.CurrentItem != null)
                 grdMain.ScrollIntoView(mObjList.CurrentItem);
         }
 
@@ -768,7 +771,7 @@ namespace Ginger
         private void btnCut_Click(object sender, RoutedEventArgs e)
         {
             ClipboardOperationsHandler.CutSelectedItems(this);
-        }        
+        }
         private void btnPaste_Click(object sender, RoutedEventArgs e)
         {
             ClipboardOperationsHandler.PasteItems(this);
@@ -786,8 +789,8 @@ namespace Ginger
         {
             mObjList.Undo();
         }
-		
-		public void SetbtnDeleteHandler(RoutedEventHandler handler)
+
+        public void SetbtnDeleteHandler(RoutedEventHandler handler)
         {
             btnDelete.Click -= new System.Windows.RoutedEventHandler(btnDelete_Click);
             btnDelete.Click += handler;
@@ -815,7 +818,7 @@ namespace Ginger
             btnPaste.Click -= new System.Windows.RoutedEventHandler(btnPaste_Click);
             btnPaste.Click += handler;
         }
-        
+
         private void comboView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             setDefaultView();
@@ -867,7 +870,7 @@ namespace Ginger
             if (mObjList != null)
                 mObjList.CurrentItem = grdMain.SelectedItem; // .CurrentItem;
 
-            SetUpDownButtons();                        
+            SetUpDownButtons();
             e.Handled = true;
 
             if (RowChangedEvent != null)
@@ -913,7 +916,7 @@ namespace Ginger
                 {
                     this.Dispatcher.Invoke(() =>
                     {
-                        CollectFilterData();                       
+                        CollectFilterData();
                         mCollectionView.Refresh();
                     });
                 }
@@ -928,7 +931,7 @@ namespace Ginger
                 {
                     string filter = string.Empty;
                     foreach (DataColumn col in ((DataView)grdMain.ItemsSource).Table.Columns)
-                        if((col.DataType.Name.Equals("String")))
+                        if ((col.DataType.Name.Equals("String")))
                             filter += "[" + col.ColumnName + "] LIKE '%" + search + "%' OR ";
                     filter = filter.Substring(0, filter.LastIndexOf("OR"));
                     ((DataView)grdMain.ItemsSource).RowFilter = filter;
@@ -985,11 +988,24 @@ namespace Ginger
         #endregion ##### Events
 
         #region ##### External Methods
+
         public void AddSeparator()
         {
+            AddSeparator(null);
+        }
+
+        public void AddSeparator(Binding binding = null)
+        {
             Separator s = new Separator();
+
+            if (binding != null)
+            {
+                s.SetBinding(Separator.VisibilityProperty, binding);
+            }
+
             toolbar.Items.Add(s);
         }
+
         public void AddButton(string txt, RoutedEventHandler handler)
         {
             Button b = new Button();
@@ -1007,7 +1023,7 @@ namespace Ginger
         }
 
 
- public TextBox AddTextBox(string txt, string label, string fieldName, TextChangedEventHandler handler)
+        public TextBox AddTextBox(string txt, string label, string fieldName, TextChangedEventHandler handler)
         {
             TextBox t = new TextBox();
             t.Text = txt;
@@ -1064,7 +1080,7 @@ namespace Ginger
             toolbar.Items.Add(pnl);
             return b;
         }
-        
+
         #endregion ##### External Methods
 
         #region ##### Internal Methods
@@ -1093,7 +1109,7 @@ namespace Ginger
                 this.Dispatcher.Invoke(() =>
                 {
                     o = grdMain.SelectedItem;
-            });
+                });
                 return o;
             }
         }
@@ -1142,19 +1158,19 @@ namespace Ginger
         /// </summary>
         /// <param name="view"></param>
         public void SetAllColumnsDefaultView(GridViewDef view)
-        {            
+        {
             _DefaultViewName = view.Name;
             if (!_GridViews.ContainsKey(view.Name))
-                _GridViews.Add(view.Name, view);          
+                _GridViews.Add(view.Name, view);
             if (!comboView.Items.Contains(view.Name))
-                comboView.Items.Add(view.Name);            
+                comboView.Items.Add(view.Name);
         }
 
         public void updateAndSelectCustomView(GridViewDef view)
         {
             if (!_GridViews.ContainsKey(view.Name))
-                _GridViews.Add(view.Name, view);            
-            
+                _GridViews.Add(view.Name, view);
+
             if (_GridViews[view.Name].GridColsView.Count != view.GridColsView.Count)
                 _GridViews[view.Name] = view;
 
@@ -1182,7 +1198,7 @@ namespace Ginger
         }
 
 
-public void RemoveCustomView(string viewName)
+        public void RemoveCustomView(string viewName)
         {
             if (_GridViews.ContainsKey(viewName))
                 _GridViews.Remove(viewName);
@@ -1210,7 +1226,7 @@ public void RemoveCustomView(string viewName)
                 }
             }
             if (comboView.Items.Contains(_DefaultViewName))
-                comboView.SelectedItem = _DefaultViewName;            
+                comboView.SelectedItem = _DefaultViewName;
         }
 
         public void ChangeGridView(string viewName)
@@ -1223,22 +1239,22 @@ public void RemoveCustomView(string viewName)
                 }
             }
         }
-      
+
         public void DisableGridColoumns()
-        {           
+        {
             foreach (DataGridColumn gridCol in grdMain.Columns)
-            {         
-                if(gridCol.GetType()== typeof(DataGridCheckBoxColumn))
+            {
+                if (gridCol.GetType() == typeof(DataGridCheckBoxColumn))
                 {
                     ((DataGridCheckBoxColumn)gridCol).IsReadOnly = true;
                     ((DataGridCheckBoxColumn)gridCol).ElementStyle = FindResource("@ReadOnlyCheckBoxGridCellElemntStyle") as Style;
                 }
-                else if(gridCol.GetType() == typeof(DataGridComboBoxColumn))
+                else if (gridCol.GetType() == typeof(DataGridComboBoxColumn))
                 {
                     ((DataGridComboBoxColumn)gridCol).IsReadOnly = true;
                     ((DataGridComboBoxColumn)gridCol).ElementStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
                 }
-                else if(gridCol.GetType() == typeof(DataGridTemplateColumn))
+                else if (gridCol.GetType() == typeof(DataGridTemplateColumn))
                 {
                     ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
                 }
@@ -1249,8 +1265,8 @@ public void RemoveCustomView(string viewName)
                 else
                 {
                     gridCol.IsReadOnly = false;
-                }                
-            }           
+                }
+            }
         }
         private void SetView(GridViewDef view)
         {
@@ -1272,11 +1288,11 @@ public void RemoveCustomView(string viewName)
 
                 foreach (GridColView colView in view.GridColsView)
                 {
-                    DataGridColumn gridCol = null;       
-                    
+                    DataGridColumn gridCol = null;
+
                     if (_CurrentGridCols.ContainsKey(colView.Field))
                         gridCol = _CurrentGridCols[colView.Field];
-                    
+
                     else if ((gridCol == null) || (colView.BindingMode != null) || (colView.CellTemplate != null))
                     {
                         //Set the col binding
@@ -1300,6 +1316,7 @@ public void RemoveCustomView(string viewName)
 
                             case GridColView.eGridColStyleType.CheckBox:
                                 gridCol = new DataGridCheckBoxColumn();
+
                                 ((DataGridCheckBoxColumn)gridCol).Binding = binding;
                                 if (colView.MaxWidth == null)
                                     colView.MaxWidth = 100;
@@ -1307,6 +1324,7 @@ public void RemoveCustomView(string viewName)
                                     ((DataGridCheckBoxColumn)gridCol).ElementStyle = FindResource("@ReadOnlyCheckBoxGridCellElemntStyle") as Style;
                                 else
                                     ((DataGridCheckBoxColumn)gridCol).ElementStyle = FindResource("@GridCellCheckBoxStyle") as Style;
+
                                 break;
 
                             case GridColView.eGridColStyleType.ComboBox:
@@ -1415,7 +1433,7 @@ public void RemoveCustomView(string viewName)
 
                     //Add the column to the grid 
                     if (!grdMain.Columns.Contains(gridCol))
-                    {                       
+                    {
                         grdMain.Columns.Add(gridCol);
                         _CurrentGridCols.Add(colView.Field, gridCol);
                     }
@@ -1436,16 +1454,43 @@ public void RemoveCustomView(string viewName)
             return template;
         }
 
+        public static DataTemplate GetGridCheckBoxTemplate(string selectedValueField, string readonlyfield = "", Style style = null)
+        {
+            DataTemplate template = new DataTemplate();
+            FrameworkElementFactory checkbox = new FrameworkElementFactory(typeof(CheckBox));
+            checkbox.SetValue(CheckBox.MaxWidthProperty, 100.0);
 
-        public static DataTemplate GetGridComboBoxTemplate(List<ComboEnumItem> valuesList, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false,
-                                        string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
+            Binding selectedValueBinding = new Binding(selectedValueField);
+            selectedValueBinding.Mode = BindingMode.TwoWay;
+            selectedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            checkbox.SetBinding(CheckBox.IsCheckedProperty, selectedValueBinding);
+
+            if (!string.IsNullOrEmpty(readonlyfield))
+            {
+                Binding ReadonlyBinding = new Binding(readonlyfield);
+                ReadonlyBinding.Mode = BindingMode.OneWay;
+                ReadonlyBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                checkbox.SetBinding(CheckBox.IsEnabledProperty, ReadonlyBinding);
+            }
+
+            if (style != null)
+            {
+                checkbox.SetValue(CheckBox.StyleProperty, style);
+            }
+
+            template.VisualTree = checkbox;
+            return template;
+        }
+
+
+        public static DataTemplate GetGridComboBoxTemplate(List<ComboEnumItem> valuesList, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false, string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));
 
             combo.SetValue(ComboBox.ItemsSourceProperty, valuesList);
             combo.SetValue(ComboBox.DisplayMemberPathProperty, nameof(ComboEnumItem.text));
-            combo.SetValue(ComboBox.SelectedValuePathProperty,nameof(ComboEnumItem.Value)); 
+            combo.SetValue(ComboBox.SelectedValuePathProperty, nameof(ComboEnumItem.Value));
 
             Binding selectedValueBinding = new Binding(selectedValueField);
             selectedValueBinding.Mode = BindingMode.TwoWay;
@@ -1474,11 +1519,11 @@ public void RemoveCustomView(string viewName)
             return template;
         }
 
-        public static DataTemplate GetGridComboBoxTemplate(string valuesListField, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false, 
-                                                            string readonlyfield ="", bool isreadonly=false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
+        public static DataTemplate GetGridComboBoxTemplate(string valuesListField, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false,
+                                                            string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null, bool isdisable = false)
         {
             DataTemplate template = new DataTemplate();
-            FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));         
+            FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));
 
             Binding valuesBinding = new Binding(valuesListField);
             valuesBinding.Mode = BindingMode.TwoWay;
@@ -1495,6 +1540,10 @@ public void RemoveCustomView(string viewName)
                 ReadonlyBinding.Mode = BindingMode.OneWay;
                 ReadonlyBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                 combo.SetBinding(ComboBox.IsHitTestVisibleProperty, ReadonlyBinding);
+                if (isdisable)
+                {
+                    combo.SetBinding(ComboBox.IsEnabledProperty, ReadonlyBinding);
+                }
             }
             else
             {
@@ -1514,7 +1563,7 @@ public void RemoveCustomView(string viewName)
         }
 
         public static DataTemplate GetGridComboBoxTemplate(string valuesListField, string selectedValueField, string selectedValuePathField, string displayMemberPathField, bool allowEdit = false, bool selectedByDefault = false,
-                                                            string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null, Style style=null)
+                                                            string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null, Style style = null)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));
@@ -1576,18 +1625,17 @@ public void RemoveCustomView(string viewName)
         }
 
 
-        public static DataTemplate getDataColValueExpressionTemplate(string Path,Context context)
+        public static DataTemplate getDataColValueExpressionTemplate(string Path, Context context)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory factory = new FrameworkElementFactory(typeof(UCValueExpression));
             factory.SetBinding(UCDataColGrid.DataContextProperty, new Binding(Path));
-            factory.SetValue(UCValueExpression.ContextProperty, context); 
+            factory.SetValue(UCValueExpression.ContextProperty, context);
             template.VisualTree = factory;
-          
+
 
             return template;
         }
- 
 
         public static DataTemplate getDataColActionDetailsTemplate(string Path)
         {
@@ -1598,7 +1646,7 @@ public void RemoveCustomView(string viewName)
 
             return template;
         }
-        
+
         public void SetGridColumnsWidth()
         {
             if (mainDockPanel.ActualWidth == 0) return;
@@ -1682,7 +1730,7 @@ public void RemoveCustomView(string viewName)
             imageFactory.SetValue(System.Windows.Controls.Image.SourceProperty, b);
             DataTemplate dataTemplate = new DataTemplate();
             dataTemplate.VisualTree = imageFactory;
-            imgColumn.CellTemplate = dataTemplate;       
+            imgColumn.CellTemplate = dataTemplate;
             return imgColumn;
         }
 
@@ -1735,7 +1783,7 @@ public void RemoveCustomView(string viewName)
                     System.Globalization.CultureInfo culture)
             {
                 eImageType imageType = (eImageType)value;
-                return ImageMakerControl.GetImageSource(imageType);                
+                return ImageMakerControl.GetImageSource(imageType);
             }
 
             public object ConvertBack(object value, Type targetType,
@@ -1759,7 +1807,7 @@ public void RemoveCustomView(string viewName)
         }
 
 
-        public void AddToolbarTool(string toolImage, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible)
+        public void AddToolbarTool(string toolImage, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, Binding binding = null)
         {
             Image image = new Image();
             image.Source = new BitmapImage(new Uri(@"/Images/" + toolImage, UriKind.RelativeOrAbsolute));
@@ -1776,7 +1824,7 @@ public void RemoveCustomView(string viewName)
         }
 
 
-        private void AddToolbarTool(object userControl, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible)
+        private void AddToolbarTool(object userControl, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, Binding binding = null)
         {
             Button tool = new Button();
             tool.Visibility = toolVisibility;
@@ -1784,6 +1832,11 @@ public void RemoveCustomView(string viewName)
 
             tool.Content = userControl;
             tool.Click += clickHandler;
+
+            if (binding != null)
+            {
+                tool.SetBinding(Button.VisibilityProperty, binding);
+            }
 
             //toolbar.Items.Remove(lblSearch);
             toolbar.Items.Remove(txtSearch);
@@ -1803,7 +1856,7 @@ public void RemoveCustomView(string viewName)
         }
 
 
-        public void AddComboBoxToolbarTool(string lableContent,Type enumType, SelectionChangedEventHandler view_SelectionChanged, string defaultOptionText = null)
+        public void AddComboBoxToolbarTool(string lableContent, Type enumType, SelectionChangedEventHandler view_SelectionChanged, string defaultOptionText = null)
         {
             ComboBox comboBox = new ComboBox();
             comboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
@@ -1884,10 +1937,10 @@ public void RemoveCustomView(string viewName)
             b.Converter = Converter;
             s.Value = b;
             columnStyle.Setters.Add(s);
-            
+
             return columnStyle;
         }
-        
+
         public void Renum()
         {
             foreach (var item in grdMain.Items)
@@ -1904,7 +1957,7 @@ public void RemoveCustomView(string viewName)
             image.Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute));
             btn.Content = image;
         }
-        
+
         void IDragDrop.StartDrag(DragInfo Info)
         {
             // Get the item under the mouse, or nothing, avoid selecting scroll bars. or empty areas etc..
@@ -1927,11 +1980,11 @@ public void RemoveCustomView(string viewName)
                 {
                     Info.Data = this.GetSelectedItems();
                     int identityTextLength = row.Item.ToString().ToCharArray().Length;
-                    if(identityTextLength > 16)
+                    if (identityTextLength > 16)
                     {
                         identityTextLength = 16;
                     }
-                    Info.Header = row.Item.ToString().Substring(0, identityTextLength) + ".. + " + (selectedItemsCount-1);
+                    Info.Header = row.Item.ToString().Substring(0, identityTextLength) + ".. + " + (selectedItemsCount - 1);
                 }
                 else
                 {
@@ -1994,7 +2047,7 @@ public void RemoveCustomView(string viewName)
                 handler(Info, new EventArgs());
             }
             // TODO: if in same grid then do move, 
-        }        
+        }
 
 
         public void SetTitleStyle(Style titleStyle)
@@ -2017,7 +2070,7 @@ public void RemoveCustomView(string viewName)
             MarkUnMarkAllActive(ActiveStatus);
             ActiveStatus = !ActiveStatus;
         }
-    
+
         public void AddFloatingImageButton(string btnImage, string tooltip, RoutedEventHandler handler, int column)
         {
             Button b = new Button();
@@ -2039,50 +2092,50 @@ public void RemoveCustomView(string viewName)
         {
             if (mFloatingButtons == null || mFloatingButtons.Count == 0) return;
             this.Dispatcher.Invoke(() =>
-            {                
-                    foreach (Button b in mFloatingButtons)
-                        b.Visibility = System.Windows.Visibility.Collapsed;
+            {
+                foreach (Button b in mFloatingButtons)
+                    b.Visibility = System.Windows.Visibility.Collapsed;
 
-                    if (grdMain.SelectedItem == null) return;
+                if (grdMain.SelectedItem == null) return;
 
-                    // Put the button on the current Grid Row in the column end
-                    Dictionary<int, double> colFlotingBtnsSize = new Dictionary<int, double>();
-                    double bHieght = 0;
-                    DataGridRow r = (DataGridRow)grdMain.ItemContainerGenerator.ContainerFromItem(grdMain.SelectedItem);
-                    if (r == null)
+                // Put the button on the current Grid Row in the column end
+                Dictionary<int, double> colFlotingBtnsSize = new Dictionary<int, double>();
+                double bHieght = 0;
+                DataGridRow r = (DataGridRow)grdMain.ItemContainerGenerator.ContainerFromItem(grdMain.SelectedItem);
+                if (r == null)
+                {
+                    grdMain.UpdateLayout();
+                    grdMain.ScrollIntoView(grdMain.Items[grdMain.SelectedIndex]);
+                    r = (DataGridRow)grdMain.ItemContainerGenerator.ContainerFromItem(grdMain.SelectedItem);
+                    if (r == null) return;
+                }
+                Point rel = r.TranslatePoint(new Point(0, 0), grdMain);
+                bHieght = rel.Y;
+
+                foreach (Button b in mFloatingButtons)
+                {
+                    b.Visibility = System.Windows.Visibility.Visible;
+
+                    int col = (int)b.Tag;
+
+                    double marginleft = 0;
+                    if (!double.IsNaN(grdMain.RowHeaderWidth))
+                        marginleft = grdMain.RowHeaderWidth;
+                    for (int i = 0; i <= col; i++)
                     {
-                        grdMain.UpdateLayout();
-                        grdMain.ScrollIntoView(grdMain.Items[grdMain.SelectedIndex]);
-                        r = (DataGridRow)grdMain.ItemContainerGenerator.ContainerFromItem(grdMain.SelectedItem);
-                        if (r == null) return;
+                        marginleft += grdMain.Columns[i].ActualWidth;
                     }
-                    Point rel = r.TranslatePoint(new Point(0, 0), grdMain);
-                    bHieght = rel.Y;
 
-                    foreach (Button b in mFloatingButtons)
-                    {
-                        b.Visibility = System.Windows.Visibility.Visible;
+                    if (colFlotingBtnsSize.Keys.Contains(col))
+                        colFlotingBtnsSize[col] = colFlotingBtnsSize[col] + b.ActualWidth + 2;
+                    else
+                        colFlotingBtnsSize.Add(col, b.ActualWidth);
+                    marginleft -= colFlotingBtnsSize[col] + 2;
 
-                        int col = (int)b.Tag;
-
-                        double marginleft = 0;
-                        if (!double.IsNaN(grdMain.RowHeaderWidth))
-                            marginleft = grdMain.RowHeaderWidth;
-                        for (int i = 0; i <= col; i++)
-                        {
-                            marginleft += grdMain.Columns[i].ActualWidth;
-                        }
-
-                        if (colFlotingBtnsSize.Keys.Contains(col))
-                            colFlotingBtnsSize[col] = colFlotingBtnsSize[col] + b.ActualWidth + 2;
-                        else
-                            colFlotingBtnsSize.Add(col, b.ActualWidth);
-                        marginleft -= colFlotingBtnsSize[col] + 2;
-
-                        b.Margin = new Thickness(marginleft, bHieght, 0, 0);
-                        b.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-                        b.VerticalAlignment = System.Windows.VerticalAlignment.Top;
-                    }              
+                    b.Margin = new Thickness(marginleft, bHieght, 0, 0);
+                    b.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+                    b.VerticalAlignment = System.Windows.VerticalAlignment.Top;
+                }
             });
         }
 
@@ -2104,7 +2157,7 @@ public void RemoveCustomView(string viewName)
         private int GetCheckedRowCount()
         {
             int count = 0;
-            for(int i = 0; i < Grid.Items.Count; i++)
+            for (int i = 0; i < Grid.Items.Count; i++)
             {
                 var cItem = grdMain.Items[i];
                 var mycheckbox = grdMain.Columns[0].GetCellContent(cItem) as CheckBox;
@@ -2117,7 +2170,7 @@ public void RemoveCustomView(string viewName)
         }
 
         public static readonly DependencyProperty RowsCountProperty = DependencyProperty.Register(
-                    "RowsCount", typeof(int), typeof(ucGrid), new PropertyMetadata(0));        
+                    "RowsCount", typeof(int), typeof(ucGrid), new PropertyMetadata(0));
 
         public int RowsCount
         {
@@ -2138,16 +2191,16 @@ public void RemoveCustomView(string viewName)
         public bool HasValidationError()
         {
             bool validationRes = false;
-            foreach(eUcGridValidationRules rule in ValidationRules)
+            foreach (eUcGridValidationRules rule in ValidationRules)
             {
                 switch (rule)
                 {
                     case eUcGridValidationRules.CantBeEmpty:
-                        if (Grid.Items.Count == 0) validationRes= true;
+                        if (Grid.Items.Count == 0) validationRes = true;
                         break;
 
                     case eUcGridValidationRules.OnlyOneItem:
-                        if (Grid.Items.Count != 1) validationRes= true;
+                        if (Grid.Items.Count != 1) validationRes = true;
                         break;
 
                     case eUcGridValidationRules.CheckedRowCount:
@@ -2155,7 +2208,7 @@ public void RemoveCustomView(string viewName)
                             int count = GetCheckedRowCount();
                             if (count <= 0)
                             {
-                                validationRes = true; 
+                                validationRes = true;
                             }
                         }
                         break;
@@ -2247,5 +2300,5 @@ public void RemoveCustomView(string viewName)
                 }
             }
         }
-    }  
+    }
 }

@@ -25,13 +25,13 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowPages;
-using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.BusinessFlowWindows;
 using Ginger.Help;
 using Ginger.Repository;
 using Ginger.Run;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
+using Ginger.UserControlsLib.TextEditor;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.WindowExplorer;
 using GingerCore;
@@ -39,14 +39,12 @@ using GingerCore.Actions;
 using GingerCore.Actions.Java;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
-using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -313,6 +311,8 @@ namespace Ginger.Actions
             BindingHandler.ObjFieldBinding(xDataSourceNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceName));
             BindingHandler.ObjFieldBinding(xDataSourceTableNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceTableName));
             BindingHandler.ObjFieldBinding(xdsOutputParamMapType, ComboBox.TextProperty, mAction, nameof(Act.OutDSParamMapType));
+            BindingHandler.ObjFieldBinding(xRawResponseValuesBtn, Button.VisibilityProperty, mAction, nameof(Act.RawResponseValues), bindingConvertor: new StringVisibilityConverter(), BindingMode: BindingMode.OneWay);
+
 
             BindingHandler.ObjFieldBinding(xdsOutputParamAutoCheck, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutDSParamAutoCheck));
 
@@ -336,9 +336,8 @@ namespace Ginger.Actions
                 xAddOutToDSCheckbox.IsEnabled = false;
             }
             xDataSourceConfigGrid.LostFocus += DataSourceConfigGrid_LostFocus;
-
             //Output Values
-           
+
 
             SetActReturnValuesGrid();
 
@@ -505,7 +504,8 @@ namespace Ginger.Actions
 
             if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) &&
                 a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) &&
-                a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand))
+                a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand) &&
+                a.GetType() != typeof(ActSetVariableValue) && a.GetType() != typeof(ActCreatePDFChart) && a.GetType() != typeof(ActCompareImgs) && a.GetType() != typeof(ActGenerateFileFromTemplate))
             {
                 if (a.InputValues.Count > minimumInputValuesToHideGrid)
                 {
@@ -615,6 +615,23 @@ namespace Ginger.Actions
                     xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
             }
+            else if (a.GetType() == typeof(ActSetVariableValue) || a.GetType() == typeof(ActCreatePDFChart) || a.GetType() == typeof(ActCompareImgs) || a.GetType() == typeof(ActGenerateFileFromTemplate))
+            {
+                xInputValuesGrid.Visibility = Visibility.Collapsed;
+                xValueBoxPnl.Visibility = Visibility.Visible;
+                ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
+                if (inputValue != null)
+                {
+                    xValueVE.ValueTextBox.Text = inputValue.Value;
+                    xValueLbl.Content = inputValue.Param;
+                }
+                else
+                {
+                    a.AddOrUpdateInputParamValue("Value", "");
+                }
+                xValueVE.Init(mContext, inputValue, nameof(ActInputValue.Value));
+
+            }
         }
 
         private void AddReturnValue(object sender, RoutedEventArgs e)
@@ -624,7 +641,7 @@ namespace Ginger.Actions
 
         private void RefreshOutputValuesGridElements(object sender, RoutedEventArgs e)
         {
-            //refresh Variabels StoreTo options
+            //refresh Variables StoreTo options
             GenerateStoreToVarsList();
         }
 
@@ -712,6 +729,9 @@ namespace Ginger.Actions
             xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize: 14);
             BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, nameof(Act.AddNewReturnParams));
             BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, nameof(Act.SupportSimulation));
+
+
+            
 
             xOutputValuesGrid.ShowViewCombo = Visibility.Collapsed;
             xOutputValuesGrid.ShowEdit = Visibility.Collapsed;
@@ -1270,7 +1290,7 @@ namespace Ginger.Actions
 
         private void HighLightElementButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: fixme - Currently working with first agent
+            //TODO: fix me - Currently working with first agent
             ApplicationAgent aa = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents[0];
             if (aa != null)
             {
@@ -1624,6 +1644,7 @@ namespace Ginger.Actions
                     }
                 });
             }
+
         }
 
 
@@ -1707,6 +1728,8 @@ namespace Ginger.Actions
             BindingOperations.ClearAllBindings(xdsOutputParamMapType);
             BindingOperations.ClearAllBindings(xEnableActionLogConfigCheckBox);
             BindingOperations.ClearAllBindings(xLocateValueVE);
+
+            BindingOperations.ClearAllBindings(xRawResponseValuesBtn);
             xTagsViewer.ClearBinding();
             //this.ClearControlsBindings();
             if (mAction != null)
@@ -1785,6 +1808,24 @@ namespace Ginger.Actions
         {
             updateDSOutGrid();
             SetDSGridVisibility();
+        }
+
+        private void xRawResponseValuesBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mAction.RawResponseValues != string.Empty)
+            {
+                string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(mAction.RawResponseValues);
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
+                    docPage.Width = 800;
+                    docPage.Height = 800;
+                    docPage.ShowAsWindow("Raw Output Values");
+                    System.IO.File.Delete(tempFilePath);
+                    return;
+                }
+            }
+            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw response view, see log for details.");
         }
     }
 }

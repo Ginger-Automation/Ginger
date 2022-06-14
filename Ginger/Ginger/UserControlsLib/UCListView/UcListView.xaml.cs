@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
@@ -840,6 +841,11 @@ namespace Ginger.UserControlsLib.UCListView
                     menuitem.ToolTip = operation.ToolTip;
                     menuitem.Click += operation.OperationHandler;
 
+                    if (operation.Visible == false)
+                    {
+                        GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(menuitem, MenuItem.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
+                    }
+
                     menuitem.Tag = menu.Tag;
 
                     if (string.IsNullOrEmpty(operation.Group))
@@ -874,6 +880,11 @@ namespace Ginger.UserControlsLib.UCListView
                             groupMenuitem.ToolTip = operation.Group;
                             ((MenuItem)menu.Items[0]).Items.Add(groupMenuitem);
                             groupMenuitem.Items.Add(menuitem);
+
+                            if (operation.Visible == false)
+                            {
+                                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(groupMenuitem, MenuItem.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
+                            }
                         }
                     }
                 }
