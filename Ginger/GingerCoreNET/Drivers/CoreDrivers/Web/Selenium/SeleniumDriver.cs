@@ -8526,5 +8526,10 @@ namespace GingerCore.Drivers
         {
             return this.BusinessFlow.Environment;
         }
+
+        public Size GetWindowSize()
+        {
+            return Driver.Manage().Window.Size;
+        }
     }
 }

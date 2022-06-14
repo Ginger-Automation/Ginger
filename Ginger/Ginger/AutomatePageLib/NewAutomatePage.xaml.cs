@@ -136,7 +136,7 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         mExecutionEngine.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad, true);
                         mExecutionEngine.ExecutionLoggerManager.RunnerRunEnd(0, mExecutionEngine.GingerRunner, offlineMode: true);
-                        ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).SetReportRunSet(mRunSetReport, "");
+                        ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).SetReportRunSet(mRunSetReport, "", eExecutedFrom.Automation);
                         SetOrClearPreviousAutoRunSetDocumentLiteDB(false);
                         return;
                     }
