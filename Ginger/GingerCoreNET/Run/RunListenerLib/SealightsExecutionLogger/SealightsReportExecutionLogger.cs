@@ -141,6 +141,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
             if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.BusinessFlow)
             {
+                if (businessFlow.RunStatus == Execution.eRunStatus.Skipped) // We are tracking the 'skipped' seperatly (in NotifyOnSkippedRunnerEntities(..))
+                {
+                    return;
+                }
+
                 var statusItem = statusItemList.ToList().Where(a => a.Status == businessFlow.RunStatus.ToString()).ToList();
 
                 if (statusItem.Count > 0)
@@ -175,7 +180,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
             if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.Activity)
             {
-                if (!activity.Active || activity.Status == Execution.eRunStatus.Blocked)
+                if (!activity.Active || activity.Status == Execution.eRunStatus.Blocked || activity.Status == Execution.eRunStatus.Skipped) // We are tracking the 'skipped' seperatly (in NotifyOnSkippedRunnerEntities(..))
                 {
                     return;
                 }
@@ -208,7 +213,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
             if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.ActivitiesGroup)
             {
-                if (activityGroup.RunStatus == Common.InterfacesLib.eActivitiesGroupRunStatus.Blocked)
+                if (activityGroup.RunStatus == Common.InterfacesLib.eActivitiesGroupRunStatus.Blocked || activityGroup.RunStatus == Common.InterfacesLib.eActivitiesGroupRunStatus.Skipped) // We are tracking the 'skipped' seperatly (in NotifyOnSkippedRunnerEntities(..))
                 {
                     return;
                 }
