@@ -249,6 +249,7 @@ namespace Ginger.Actions.VisualTesting
                     }
                     mApplitoolsComparePage.InitLayout();
                     EngineConfigFrame.Content = mApplitoolsComparePage;
+                    xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
                     break;
 
                 case ActVisualTesting.eVisualTestingAnalyzer.BitmapPixelsComparison:
@@ -259,6 +260,7 @@ namespace Ginger.Actions.VisualTesting
                     }
                     mBitmapPixelsComaprePage.InitLayout();
                     EngineConfigFrame.Content = mBitmapPixelsComaprePage;
+                    xFullPageScreenshotCheckbox.Visibility = Visibility.Visible;
                     break;
 
                 case ActVisualTesting.eVisualTestingAnalyzer.UIElementsComparison:
@@ -269,6 +271,7 @@ namespace Ginger.Actions.VisualTesting
                     }
                     mUIElementsBitmapComparisonPage.InitLayout();
                     EngineConfigFrame.Content = mUIElementsBitmapComparisonPage;
+                    xFullPageScreenshotCheckbox.Visibility = Visibility.Visible;
                     break;
                 case ActVisualTesting.eVisualTestingAnalyzer.VRT:
                     if (mVRtComparisonPage == null)
@@ -278,6 +281,7 @@ namespace Ginger.Actions.VisualTesting
                     }
                     mVRtComparisonPage.InitLayout();
                     EngineConfigFrame.Content = mVRtComparisonPage;
+                    xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
                     break;
                 default:
                     EngineConfigFrame.Content = null;
@@ -288,6 +292,7 @@ namespace Ginger.Actions.VisualTesting
                     xDiffrenceImageFrameRow.Height = new GridLength(500, GridUnitType.Star);
                     xResultImageHeader.Visibility = Visibility.Collapsed;
                     xResultImageHeaderRow.Height = new GridLength(30, GridUnitType.Star);
+                    xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
                     break;
             }
         }

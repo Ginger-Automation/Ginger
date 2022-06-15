@@ -230,8 +230,8 @@
     <Compile Include="Actions\ActionEditPages\ActOcrEditPage.xaml.cs">
       <DependentUpon>ActOcrEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActionEditPages\VisualTesting\VRTComaprePage.xaml.cs">
-      <DependentUpon>VRTComaprePage.xaml</DependentUpon>
+    <Compile Include="Actions\ActionEditPages\VisualTesting\VRTComparePage.xaml.cs">
+      <DependentUpon>VRTComparePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
       <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
@@ -2645,7 +2645,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActionEditPages\VisualTesting\VRTComaprePage.xaml">
+    <Page Include="Actions\ActionEditPages\VisualTesting\VRTComparePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

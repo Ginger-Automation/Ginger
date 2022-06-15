@@ -424,14 +424,21 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runner.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), ChildExecutedItemsCountAction);
             runner.ChildPassedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), ChildPassedItemsCountAction);
         }
-        public override void SetReportRunSet(RunSetReport runSetReport, string logFolder)
+        public override void SetReportRunSet(RunSetReport runSetReport, string logFolder, eExecutedFrom executedFrom = eExecutedFrom.Run)
         {
             LiteDbRunSet runSet = new LiteDbRunSet();
             base.SetReportRunSet(runSetReport, logFolder);
             runSet.RunnersColl.AddRange(ExecutionLoggerManager.RunSetReport.liteDbRunnerList);
-
-            SetRunSetChildCounts(runSet, WorkSpace.Instance.RunsetExecutor.Runners);
-
+            if (executedFrom == eExecutedFrom.Automation)
+            {
+                var runners = new ObservableList<GingerRunner>();
+                runners.Add(new GingerRunner());
+                SetRunSetChildCounts(runSet, runners);
+            }
+            else
+            {
+                SetRunSetChildCounts(runSet, WorkSpace.Instance.RunsetExecutor.Runners);
+            }
             runSet.SetReportData(runSetReport);
 
             ExecutionLoggerManager.RunSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
@@ -534,7 +541,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 runSet.EndTimeStamp = runner.EndTimeStamp;
                 runSet.Elapsed = runner.Elapsed;
 
-                SetRunSetChildCounts(runSet, WorkSpace.Instance.RunsetExecutor.Runners);
+                var runners = new ObservableList<GingerRunner>();
+                runners.Add(gingerRunner.GingerRunner);
+                SetRunSetChildCounts(runSet, runners);
 
                 SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             }
