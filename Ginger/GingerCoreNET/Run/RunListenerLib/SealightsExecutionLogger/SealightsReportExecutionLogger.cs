@@ -20,6 +20,7 @@ using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Run;
+using Ginger.Configurations;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
@@ -139,7 +140,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 return;
             }
 
-            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.BusinessFlow)
+            if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel == SealightsConfiguration.eSealightsEntityLevel.BusinessFlow)
             {
                 var statusItem = statusItemList.ToList().Where(a => a.Status == businessFlow.RunStatus.ToString()).ToList();
 
@@ -170,7 +171,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 return;
             }
 
-            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.Activity)
+            if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel == SealightsConfiguration.eSealightsEntityLevel.Activity)
             {
                 if (!activity.Active || activity.Status == Execution.eRunStatus.Blocked)
                 {
@@ -203,7 +204,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 return;
             }
 
-            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.ActivitiesGroup)
+            if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel == SealightsConfiguration.eSealightsEntityLevel.ActivitiesGroup)
             {
                 if (activityGroup.RunStatus == Common.InterfacesLib.eActivitiesGroupRunStatus.Blocked)
                 {
@@ -245,7 +246,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
         public override async void ActivitySkipped(uint eventTime, Activity activity, bool offlineMode = false)
         {
-            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel == eSealightsEntityLevel.Activity)
+            if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel == SealightsConfiguration.eSealightsEntityLevel.Activity)
             {
                 await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activity.ActivityName, activity.StartTimeStamp, activity.EndTimeStamp, "Skipped");
             }
