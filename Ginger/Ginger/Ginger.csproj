@@ -278,6 +278,7 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Drivers\DriversWindows\DeviceInfo.cs" />
     <Compile Include="Reports\ValidationRules\ValidateEmptyValue.cs" />
     <Compile Include="Reports\ValidationRules\ValidateNumberInputRule.cs" />
     <Compile Include="Activities\ActivityNameValidationRule.cs" />
