@@ -990,7 +990,22 @@ namespace Amdocs.Ginger.CoreNET
                             act.Error = "Operation not supported for this mobile OS or application type.";
                         }
                         break;
-
+                    case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
+                        act.AddOrUpdateReturnParamActual("Device's battery %", DictionaryToString(GetDeviceBatteryInfo()));
+                        act.RawResponseValues = DictionaryToString(GetDeviceBatteryInfo());
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetDeviceCPUUsage:
+                        act.AddOrUpdateReturnParamActual("Device's CPU Usage", DictionaryToString(GetDeviceCPUInfo()));
+                        act.RawResponseValues = DictionaryToString(GetDeviceCPUInfo());
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetDeviceNetwork:
+                        act.AddOrUpdateReturnParamActual("Device's network information", GetDeviceNetworkInfo().Result);
+                        act.RawResponseValues = GetDeviceNetworkInfo().Result;
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetDeviceRAMUsage:
+                        act.AddOrUpdateReturnParamActual("Device's RAM usage", DictionaryToString(GetDeviceMemoryInfo()));
+                        act.RawResponseValues = DictionaryToString(GetDeviceMemoryInfo());
+                        break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
                 }
@@ -999,6 +1014,17 @@ namespace Amdocs.Ginger.CoreNET
             {
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
             }
+        }
+
+        private string DictionaryToString(Dictionary<string, string> dict)
+        {
+            string returnString = string.Empty;
+            foreach (KeyValuePair<string, string> entry in dict)
+            {
+                returnString += entry.Key + ": " + entry.Value + ", ";
+            }
+            returnString = returnString.Substring(0, returnString.Length - 2);
+            return returnString;
         }
 
         public override void HighlightActElement(Act act)
@@ -3065,14 +3091,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public Dictionary<string, string> GetDeviceCPUInfo()
         {
-            try
-            {
 
-            }
-            catch (Exception e)
-            {
-                return new Dictionary<string, string>();
-            }
             DeviceCPUInfo = GetDeviceMetricsString("cpuinfo").Result;
             return DeviceCPUInfo;
         }
