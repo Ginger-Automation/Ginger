@@ -16,22 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerCore.Actions;
-using GingerCore.Actions.VisualTesting;
+using GingerCoreNET.GeneralLib;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using VisualRegressionTracker;
 using System.Drawing;
-using System.IO;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common.OS;
+using System.Linq;
 using System.Runtime.InteropServices;
-using GingerCoreNET.GeneralLib;
-using System.Threading.Tasks;
-using Amdocs.Ginger.Common.UIElement;
+using VisualRegressionTracker;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -55,17 +48,22 @@ namespace GingerCore.Actions.VisualTesting
         {
             if (vrt == null)
             {
-                config = new VisualRegressionTracker.Config
-                {
-                    BranchName = WorkSpace.Instance.Solution.VRTConfiguration.BranchName,
-                    Project = WorkSpace.Instance.Solution.VRTConfiguration.Project,
-                    ApiUrl = WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl,
-                    ApiKey = WorkSpace.Instance.Solution.VRTConfiguration.ApiKey,
-                    EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.EnableSoftAssert == Ginger.Configurations.VRTConfiguration.eEnableSoftAssert.Yes ? true : false
-                };
+                CreateVRTConfig();
             }
         }
-        
+
+        private void CreateVRTConfig()
+        {
+            config = new VisualRegressionTracker.Config
+            {
+                BranchName = WorkSpace.Instance.Solution.VRTConfiguration.BranchName,
+                Project = WorkSpace.Instance.Solution.VRTConfiguration.Project,
+                ApiUrl = WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl,
+                ApiKey = WorkSpace.Instance.Solution.VRTConfiguration.ApiKey,
+                EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.EnableSoftAssert == Ginger.Configurations.VRTConfiguration.eEnableSoftAssert.Yes ? true : false
+            };
+        }
+
         public enum eVRTAction
         {
             [EnumValueDescription("Start Test")]
@@ -87,6 +85,8 @@ namespace GingerCore.Actions.VisualTesting
             ActionName,
             [EnumValueDescription("Action Guid")]
             ActionGuid,
+            [EnumValueDescription("Action Name & Guid")]
+            ActionNameGUID,
             [EnumValueDescription("Custom Name")]
             Custom
         }
@@ -143,17 +143,18 @@ namespace GingerCore.Actions.VisualTesting
                 string buildName = mAct.GetInputParamCalculatedValue(VRTAnalyzer.VRTParamBuildName);
                 if (!string.IsNullOrEmpty(buildName))
                 {
+                    CreateVRTConfig();
                     config.CiBuildId = buildName;
                     vrt = new VisualRegressionTracker.VisualRegressionTracker(config);
                     vrt.Start().GetAwaiter().GetResult();
                     if (!vrt.IsStarted)
                     {
                         mAct.Error = "VRT is not Started";
-                        mAct.ExInfo = "Please check VRT configuration.";
+                        mAct.ExInfo = "Please check VRT configuration. From Configurations -> External Integrations -> VRT configurations";
                         return;
                     }
                 }
-                else 
+                else
                 {
                     mAct.Error = "VRT is not Started, Test/build name not provided.";
                     mAct.ExInfo = "Test/build name not provided.";
@@ -165,7 +166,13 @@ namespace GingerCore.Actions.VisualTesting
                 foreach (var e in ae.InnerExceptions)
                 {
                     mAct.Error += e.Message;
+                    mAct.Error += " Please check VRT configuration. From Configurations -> External Integrations -> VRT configurations";
                 }
+            }
+            catch (Exception ex)
+            {
+                mAct.Error += ex.Message;
+                mAct.Error += " Please check VRT configuration. From Configurations -> External Integrations -> VRT configurations";
             }
             finally
             {
@@ -174,6 +181,8 @@ namespace GingerCore.Actions.VisualTesting
         }
         private void TrackVRT()
         {
+            string diffImage = string.Empty;
+
             if (!vrt.IsStarted)
             {
                 mAct.Error = "VRT is not Started";
@@ -187,12 +196,12 @@ namespace GingerCore.Actions.VisualTesting
                 {
                     image = mDriver.GetScreenShot(null, mAct.IsFullPageScreenshot);
                 }
-                else 
+                else
                 {
                     image = mDriver.GetElementScreenshot(mAct);
                 }
                 bool res = Double.TryParse(mAct.GetInputParamCalculatedValue(VRTAnalyzer.VRTParamDiffTollerancePercent), out double diffTollerancePercent);
-                
+
                 string os = "Linux";
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -214,15 +223,22 @@ namespace GingerCore.Actions.VisualTesting
                 {
                     tags = string.Join(",", activityTagsList);
                 }
-                List<int> mResolution = new List<int>();
-                mResolution = mAct.GetWindowResolution();
-                string viewport = new Size(mResolution[0], mResolution[1]).ToString();
+
+                //Get resolution from driver
+                Size size = ((Drivers.SeleniumDriver)mDriver).GetWindowSize();
+                string viewport = size.ToString();
+
                 string device = null;
+
                 //imageName
                 string imageName = mAct.Description;
                 if (mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy).Value == eImageNameBy.ActionGuid.ToString())
                 {
                     imageName = mAct.Guid.ToString();
+                }
+                else if (mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy).Value == eImageNameBy.ActionNameGUID.ToString())
+                {
+                    imageName = mAct.Description + "_" + mAct.Guid.ToString();
                 }
                 else if (mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy).Value == eImageNameBy.Custom.ToString())
                 {
@@ -246,8 +262,27 @@ namespace GingerCore.Actions.VisualTesting
                     mAct.Error += e.Message;
                 }
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when TrackVRT", ex);
+                if (ex.Message.Contains("Difference found"))
+                {
+                    int index = ex.Message.LastIndexOf("/");
+                    mAct.Error += ex.Message.Substring(0, index);
+                    diffImage = ex.Message.Substring(index + 1);
+                }
+                else
+                {
+                    mAct.Error += ex.Message;
+                }
+            }
             finally
             {
+                if(!string.IsNullOrEmpty(diffImage))
+                {
+                    //Adding only difference image
+                    General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + diffImage, mAct);
+                }
             }
         }
         private void StopVRT()
@@ -275,5 +310,6 @@ namespace GingerCore.Actions.VisualTesting
             Enum.TryParse<eVRTAction>(mAct.GetInputParamValue(VRTAnalyzer.VRTAction), out vrtAction);
             return vrtAction;
         }
+
     }
 }

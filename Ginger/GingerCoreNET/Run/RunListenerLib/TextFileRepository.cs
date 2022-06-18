@@ -209,7 +209,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
         }
 
-        public override void SetReportRunSet(RunSetReport runSetReport, string logFolder)
+        public override void SetReportRunSet(RunSetReport runSetReport, string logFolder, eExecutedFrom eExecutedFrom = eExecutedFrom.Run)
         {
             ExecutionLoggerManager.RunSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
             base.SetReportRunSet(runSetReport, logFolder);
