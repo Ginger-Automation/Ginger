@@ -36,8 +36,8 @@ namespace GingerCore.ALM
         }
         public enum eExportType
         {
-            //[EnumValueDescription("Results Only")]
-            //ResultsOnly,
+            [EnumValueDescription("Results Only")]
+            ResultsOnly,
             [EnumValueDescription("Entities and Results")]
             EntitiesAndResults
         }

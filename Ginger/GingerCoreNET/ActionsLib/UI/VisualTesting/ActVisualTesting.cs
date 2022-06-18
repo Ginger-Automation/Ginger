@@ -60,6 +60,8 @@ namespace GingerCore.Actions
             //BlinkDiff,
             //[EnumValueDescription("Spell Check Analyzer - Not Implemented")]
             //Spellcheck,
+            [EnumValueDescription("Visual Regression Tracker")]
+            VRT
         }
 
         public enum eChangeAppWindowSize
@@ -308,7 +310,10 @@ namespace GingerCore.Actions
             mDriver = driver;
             CheckSetVisualAnalyzer();
             CheckSetAppWindowSize();
-
+            if (Amdocs.Ginger.Common.Context.GetAsContext(Context).Activity == null)
+            {
+                Amdocs.Ginger.Common.Context.GetAsContext(Context).Activity = ((Drivers.DriverBase)mDriver).BusinessFlow.CurrentActivity;
+            }
             if (mVisualAnalyzer.SupportUniqueExecution())
             {
                 mVisualAnalyzer.SetAction(mDriver, this);
@@ -489,6 +494,10 @@ namespace GingerCore.Actions
                 case eVisualTestingAnalyzer.UIElementsComparison:
                     if (mVisualAnalyzer is UIElementsAnalyzer) return;
                     mVisualAnalyzer = new UIElementsAnalyzer();
+                    break;
+                case eVisualTestingAnalyzer.VRT:
+                    if (mVisualAnalyzer is VRTAnalyzer) return;
+                    mVisualAnalyzer = new VRTAnalyzer();
                     break;
             }
         }

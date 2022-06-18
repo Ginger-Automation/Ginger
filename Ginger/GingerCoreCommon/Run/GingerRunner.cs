@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -208,6 +208,21 @@ namespace Ginger.Run
             {
                 mRunInSimulationMode = value;
                 OnPropertyChanged(nameof(GingerRunner.RunInSimulationMode));
+            }
+        }
+
+        private bool mRunInVisualTestingMode = true;
+        [IsSerializedForLocalRepository]
+        public bool RunInVisualTestingMode
+        {
+            get
+            {
+                return mRunInVisualTestingMode;
+            }
+            set
+            {
+                mRunInVisualTestingMode = value;
+                OnPropertyChanged(nameof(GingerRunner.RunInVisualTestingMode));
             }
         }
 

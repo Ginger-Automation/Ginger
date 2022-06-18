@@ -168,7 +168,14 @@ namespace Ginger.Run
         }
         private void RunSelected(object sender, RoutedEventArgs e)
         {
-            ((RunSetActionBase)RunSetActionsGrid.CurrentItem).runSetActionBaseOperations.ExecuteWithRunPageBFES();
+            if ((WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB || WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                && ((RunSetActionBase)RunSetActionsGrid.CurrentItem).GetType() == typeof(RunSetActionHTMLReportSendEmail) 
+                && WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetExecutionStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
+            {
+                Reporter.ToUser(eUserMsgKey.RunSetNotExecuted);
+                return;
+            }
+                ((RunSetActionBase)RunSetActionsGrid.CurrentItem).runSetActionBaseOperations.ExecuteWithRunPageBFES();
         }
         private void RunAll(object sender, RoutedEventArgs e)
         {
