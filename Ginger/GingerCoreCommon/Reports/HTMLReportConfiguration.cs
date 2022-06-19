@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -145,8 +145,8 @@ namespace Ginger.Reports
 
         public enum eExecutionStatisticsCountBy
         {
-            Actions = 0,
-            Activities = 1
+            Actions = 1,
+            Activities = 0
         }
 
         [IsSerializedForLocalRepository]

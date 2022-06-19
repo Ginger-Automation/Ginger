@@ -9,14 +9,14 @@
       d:DesignHeight="300" d:DesignWidth="600"
       Title="UIElementsComparisonPage">
 
-    <Grid>
+    <Grid Margin="15,0,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*"/>
-            <ColumnDefinition Width="100*"/>
+            <!--<ColumnDefinition Width="100*"/>-->
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="91"/>
+            <RowDefinition Height="10*"/>
             <RowDefinition Height="71"/>
             <RowDefinition Height="41*"/>
             <RowDefinition Height="10*"/>
@@ -28,21 +28,22 @@
 
 
         <StackPanel Grid.Row="0">
-            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Compare"/>
-            <StackPanel Margin="10">
-                <CheckBox>Missing elements in target</CheckBox>
-                <CheckBox>Missing elements in source</CheckBox>
-                <CheckBox>Compare Elements Bitmap</CheckBox>
+            <Label Style="{StaticResource $LabelStyle}" FontWeight="SemiBold" Content="Compare"/>
+            <StackPanel Margin="10,0,0,0">
+                <CheckBox Margin="10,0,0,0">Missing elements in target</CheckBox>
+                <CheckBox Margin="10,0,0,0">Missing elements in source</CheckBox>
+                <CheckBox Margin="10,0,0,0">Compare Elements Bitmap</CheckBox>
             </StackPanel>
         </StackPanel>
 
         <StackPanel Grid.Row="1">
             <StackPanel Orientation="Horizontal">
-                <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Baseline Info File"/>
+                <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" Content="Baseline Info File" MinWidth="150px"/>
+                <Actions:UCValueExpression x:Name="BaselineInfoFileUCVE" Width="600" Margin="40,0,0,0"/>
             </StackPanel>
-            <StackPanel>
+            <!--<StackPanel>
                 <Actions:UCValueExpression x:Name="BaselineInfoFileUCVE"/>
-            </StackPanel>
+            </StackPanel>-->
         </StackPanel>
 
 

@@ -56,52 +56,20 @@ namespace Ginger.Actions
             BindingHandler.ObjFieldBinding(xOcrFileTypeCombo, ComboBox.SelectedValueProperty, mAct, nameof(ActOcr.SelectedOcrFileType), BindingMode.TwoWay);
 
             BindingHandler.ObjFieldBinding(xFilePathTextBox.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.OcrFilePath), BindingMode.TwoWay);
-            BindingHandler.ObjFieldBinding(xFilePathTextBox.ValueTextBox, TextBox.ToolTipProperty, mAct, nameof(ActOcr.OcrFilePath), BindingMode.TwoWay);
-            xFilePathTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActOcr.OcrFilePath));
-            xFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(mAct.OcrFilePath),
-                (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
 
             BindingHandler.ObjFieldBinding(xSetPdfPasswordTextBox.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.OcrPassword), BindingMode.TwoWay);
-            BindingHandler.ObjFieldBinding(xSetPdfPasswordTextBox.ValueTextBox, TextBox.ToolTipProperty, mAct, nameof(ActOcr.OcrPassword), BindingMode.TwoWay);
-            xSetPdfPasswordTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActOcr.OcrPassword));
-            xSetPdfPasswordTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(mAct.OcrPassword),
-                (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
 
             BindingHandler.ObjFieldBinding(xPageNosTextBox.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.PageNumber), BindingMode.TwoWay);
-            BindingHandler.ObjFieldBinding(xPageNosTextBox.ValueTextBox, TextBox.ToolTipProperty, mAct, nameof(ActOcr.PageNumber), BindingMode.TwoWay);
-            xPageNosTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActOcr.PageNumber));
-            xPageNosTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(mAct.PageNumber),
-                (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
 
             BindingHandler.ObjFieldBinding(xFirstString.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.FirstString), BindingMode.TwoWay);
-            BindingHandler.ObjFieldBinding(xFirstString.ValueTextBox, TextBox.ToolTipProperty, mAct, nameof(ActOcr.FirstString), BindingMode.TwoWay);
-            xFirstString.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActOcr.FirstString));
-            xFirstString.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(mAct.FirstString),
-                string.Empty), true, false);
 
             BindingHandler.ObjFieldBinding(xSecondString.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.SecondString), BindingMode.TwoWay);
-            BindingHandler.ObjFieldBinding(xSecondString.ValueTextBox, TextBox.ToolTipProperty, mAct, nameof(ActOcr.SecondString), BindingMode.TwoWay);
-            xSecondString.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActOcr.SecondString));
-            xSecondString.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(mAct.SecondString),
-                string.Empty), true, false);
 
             BindingHandler.ObjFieldBinding(xRowNumber.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.GetFromRowNumber), BindingMode.TwoWay);
-            BindingHandler.ObjFieldBinding(xRowNumber.ValueTextBox, TextBox.ToolTipProperty, mAct, nameof(ActOcr.GetFromRowNumber), BindingMode.TwoWay);
-            xRowNumber.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActOcr.GetFromRowNumber));
-            xRowNumber.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(mAct.GetFromRowNumber),
-                string.Empty), true, false);
 
             BindingHandler.ObjFieldBinding(xColumnWhere.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.ConditionColumnName), BindingMode.TwoWay);
-            BindingHandler.ObjFieldBinding(xColumnWhere.ValueTextBox, TextBox.ToolTipProperty, mAct, nameof(ActOcr.ConditionColumnName), BindingMode.TwoWay);
-            xColumnWhere.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActOcr.ConditionColumnName));
-            xColumnWhere.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(mAct.ConditionColumnName),
-                string.Empty), true, false);
 
             BindingHandler.ObjFieldBinding(xColumnWhereValue.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.ConditionColumnValue), BindingMode.TwoWay);
-            BindingHandler.ObjFieldBinding(xColumnWhereValue.ValueTextBox, TextBox.ToolTipProperty, mAct, nameof(ActOcr.ConditionColumnValue), BindingMode.TwoWay);
-            xColumnWhereValue.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActOcr.ConditionColumnValue));
-            xColumnWhereValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(mAct.ConditionColumnValue),
-                string.Empty), true, false);
 
             GingerCore.General.FillComboFromEnumObj(xOperationCombo, mAct.ElementLocateBy);
             BindingHandler.ObjFieldBinding(xOperationCombo, ComboBox.SelectedValueProperty, mAct, nameof(ActOcr.ElementLocateBy), BindingMode.TwoWay);

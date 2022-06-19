@@ -222,6 +222,7 @@ namespace Amdocs.Ginger.Common.Enums
         Camera,
         Recording,
         Wrench,
+        Settings,
         Eraser,
         Power,
         ArrowDown,

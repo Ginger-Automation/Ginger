@@ -1,0 +1,1271 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Visual Regression Tracker",
+      "description": "API Documentation",
+      "version": "1.0",
+      "contact": {}
+    },
+    "tags": [],
+    "servers": [],
+    "components": {
+      "securitySchemes": {
+        "bearer": {
+          "scheme": "bearer",
+          "bearerFormat": "JWT",
+          "type": "http"
+        },
+        "api_key": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "apiKey",
+          "description": "API Key For External calls"
+        }
+      },
+      "schemas": {
+        "CreateUserDto": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "email",
+            "password",
+            "firstName",
+            "lastName"
+          ]
+        },
+        "UserLoginResponseDto": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            },
+            "apiKey": {
+              "type": "string"
+            },
+            "token": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "email",
+            "firstName",
+            "lastName",
+            "apiKey",
+            "token"
+          ]
+        },
+        "UserLoginRequestDto": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "email",
+            "password"
+          ]
+        },
+        "UpdateUserDto": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string"
+            },
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "email",
+            "firstName",
+            "lastName"
+          ]
+        },
+        "BuildDto": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "ciBuildId": {
+              "type": "string",
+              "nullable": true
+            },
+            "number": {
+              "type": "number"
+            },
+            "branchName": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "projectId": {
+              "type": "string"
+            },
+            "updatedAt": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "createdAt": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "userId": {
+              "type": "string",
+              "nullable": true
+            },
+            "passedCount": {
+              "type": "number"
+            },
+            "unresolvedCount": {
+              "type": "number"
+            },
+            "failedCount": {
+              "type": "number"
+            },
+            "isRunning": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "ciBuildId",
+            "number",
+            "branchName",
+            "status",
+            "projectId",
+            "updatedAt",
+            "createdAt",
+            "userId",
+            "passedCount",
+            "unresolvedCount",
+            "failedCount",
+            "isRunning"
+          ]
+        },
+        "CreateBuildDto": {
+          "type": "object",
+          "properties": {
+            "ciBuildId": {
+              "type": "string"
+            },
+            "branchName": {
+              "type": "string"
+            },
+            "project": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "branchName",
+            "project"
+          ]
+        },
+        "CommentDto": {
+          "type": "object",
+          "properties": {
+            "comment": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "comment"
+          ]
+        },
+        "IgnoreAreaDto": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "width": {
+              "type": "number"
+            },
+            "height": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "x",
+            "y",
+            "width",
+            "height"
+          ]
+        },
+        "CreateTestRequestDto": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "os": {
+              "type": "string"
+            },
+            "browser": {
+              "type": "string"
+            },
+            "viewport": {
+              "type": "string"
+            },
+            "device": {
+              "type": "string"
+            },
+            "customTags": {
+              "type": "string"
+            },
+            "branchName": {
+              "type": "string"
+            },
+            "imageBase64": {
+              "type": "string"
+            },
+            "buildId": {
+              "type": "string"
+            },
+            "projectId": {
+              "type": "string"
+            },
+            "diffTollerancePercent": {
+              "type": "number"
+            },
+            "merge": {
+              "type": "boolean"
+            },
+            "ignoreAreas": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/IgnoreAreaDto"
+              }
+            }
+          },
+          "required": [
+            "name",
+            "branchName",
+            "imageBase64",
+            "buildId",
+            "projectId"
+          ]
+        },
+        "TestRunResultDto": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "imageName": {
+              "type": "string"
+            },
+            "diffName": {
+              "type": "string",
+              "nullable": true
+            },
+            "baselineName": {
+              "type": "string",
+              "nullable": true
+            },
+            "diffPercent": {
+              "type": "number",
+              "nullable": true
+            },
+            "diffTollerancePercent": {
+              "type": "number"
+            },
+            "pixelMisMatchCount": {
+              "type": "number",
+              "nullable": true
+            },
+            "status": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "merge": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "imageName",
+            "diffName",
+            "baselineName",
+            "diffPercent",
+            "diffTollerancePercent",
+            "pixelMisMatchCount",
+            "status",
+            "url",
+            "merge"
+          ]
+        },
+        "ProjectDto": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "buildsCounter": {
+              "type": "number"
+            },
+            "name": {
+              "type": "string"
+            },
+            "mainBranchName": {
+              "type": "string"
+            },
+            "createdAt": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "updatedAt": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "buildsCounter",
+            "name",
+            "mainBranchName",
+            "createdAt",
+            "updatedAt"
+          ]
+        },
+        "CreateProjectDto": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "mainBranchName": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "mainBranchName"
+          ]
+        }
+      }
+    },
+    "paths": {
+      "/users/register": {
+        "post": {
+          "operationId": "UsersController_register",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUserDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UserLoginResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "users"
+          ]
+        }
+      },
+      "/users/login": {
+        "post": {
+          "operationId": "UsersController_login",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserLoginRequestDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UserLoginResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "users"
+          ]
+        }
+      },
+      "/users/newApiKey": {
+        "get": {
+          "operationId": "UsersController_generateNewApiKey",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "users"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/users/password": {
+        "put": {
+          "operationId": "UsersController_changePassword",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "users"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/users": {
+        "put": {
+          "operationId": "UsersController_update",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUserDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UserLoginResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "users"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/builds": {
+        "get": {
+          "operationId": "BuildsController_get",
+          "parameters": [
+            {
+              "name": "projectId",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/BuildDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "builds"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        },
+        "post": {
+          "operationId": "BuildsController_create",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBuildDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BuildDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "builds"
+          ],
+          "security": [
+            {
+              "api_key": []
+            }
+          ]
+        }
+      },
+      "/builds/{id}": {
+        "delete": {
+          "operationId": "BuildsController_remove",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "builds"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        },
+        "patch": {
+          "operationId": "BuildsController_stop",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BuildDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "builds"
+          ],
+          "security": [
+            {
+              "bearer": []
+            },
+            {
+              "api_key": []
+            }
+          ]
+        }
+      },
+      "/test-runs": {
+        "get": {
+          "operationId": "TestRunsController_get",
+          "parameters": [
+            {
+              "name": "buildId",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "test-runs"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        },
+        "post": {
+          "operationId": "TestRunsController_postTestRun",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateTestRequestDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/TestRunResultDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "test-runs"
+          ],
+          "security": [
+            {
+              "api_key": []
+            }
+          ]
+        }
+      },
+      "/test-runs/recalculateDiff/{id}": {
+        "get": {
+          "operationId": "TestRunsController_recalculateDiff",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "test-runs"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/test-runs/approve": {
+        "get": {
+          "operationId": "TestRunsController_approveTestRun",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "merge",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "type": "boolean"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "test-runs"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/test-runs/reject/{id}": {
+        "get": {
+          "operationId": "TestRunsController_rejectTestRun",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "test-runs"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/test-runs/{id}": {
+        "delete": {
+          "operationId": "TestRunsController_deleteTestRun",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "test-runs"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/test-runs/ignoreArea/{testRunId}": {
+        "put": {
+          "operationId": "TestRunsController_updateIgnoreAreas",
+          "parameters": [
+            {
+              "name": "testRunId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "test-runs"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/test-runs/comment/{testRunId}": {
+        "put": {
+          "operationId": "TestRunsController_updateComment",
+          "parameters": [
+            {
+              "name": "testRunId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "test-runs"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/test-variations": {
+        "get": {
+          "operationId": "TestVariationsController_getList",
+          "parameters": [
+            {
+              "name": "projectId",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "test-variations"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/test-variations/details/{id}": {
+        "get": {
+          "operationId": "TestVariationsController_getDetails",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "test-variations"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/test-variations/ignoreArea/{variationId}": {
+        "put": {
+          "operationId": "TestVariationsController_updateIgnoreAreas",
+          "parameters": [
+            {
+              "name": "variationId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "test-variations"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/test-variations/comment/{id}": {
+        "put": {
+          "operationId": "TestVariationsController_updateComment",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "test-variations"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/test-variations/merge/": {
+        "get": {
+          "operationId": "TestVariationsController_merge",
+          "parameters": [
+            {
+              "name": "projectId",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "branchName",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BuildDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "test-variations"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/test-variations/{id}": {
+        "delete": {
+          "operationId": "TestVariationsController_delete",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "test-variations"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/projects": {
+        "get": {
+          "operationId": "ProjectsController_getAll",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ProjectDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "projects"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        },
+        "post": {
+          "operationId": "ProjectsController_create",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateProjectDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ProjectDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "projects"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        },
+        "put": {
+          "operationId": "ProjectsController_update",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ProjectDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "projects"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/projects/{id}": {
+        "delete": {
+          "operationId": "ProjectsController_remove",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ProjectDto"
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "projects"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      }
+    }
+  }

@@ -366,7 +366,7 @@ namespace GingerCore
                     }
                     else
                     {
-                        Error = "Unable to read text from Image";
+                        Error = "Unable to read text from PDF";
                     }
                     break;
                 default:
