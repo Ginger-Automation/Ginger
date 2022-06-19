@@ -205,6 +205,8 @@ namespace GingerCore.Actions
             GetDeviceCPUUsage,
             [EnumValueDescription("Get Device's RAM Usage")]
             GetDeviceRAMUsage,
+            [EnumValueDescription("Get Device's General Info")]
+            GetDeviceGeneralInfo,
         }
 
         public enum ePressKey

@@ -991,20 +991,26 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         break;
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
-                        act.AddOrUpdateReturnParamActual("Device's battery %", DictionaryToString(GetDeviceBatteryInfo()));
-                        act.RawResponseValues = DictionaryToString(GetDeviceBatteryInfo());
+                        AddReturnParamFromDict(GetDeviceBatteryInfo(), act);
+                        act.RawResponseValues = GetDeviceMetricsString("batteryinfo").Result;
                         break;
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceCPUUsage:
-                        act.AddOrUpdateReturnParamActual("Device's CPU Usage", DictionaryToString(GetDeviceCPUInfo()));
-                        act.RawResponseValues = DictionaryToString(GetDeviceCPUInfo());
+                        AddReturnParamFromDict(GetDeviceCPUInfo(), act);
+                        act.RawResponseValues = GetDeviceMetricsString("cpuinfo").Result;
                         break;
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceNetwork:
                         act.AddOrUpdateReturnParamActual("Device's network information", GetDeviceNetworkInfo().Result);
-                        act.RawResponseValues = GetDeviceNetworkInfo().Result;
+                        act.RawResponseValues = GetDeviceMetricsString("networkinfo").Result;
                         break;
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceRAMUsage:
-                        act.AddOrUpdateReturnParamActual("Device's RAM usage", DictionaryToString(GetDeviceMemoryInfo()));
-                        act.RawResponseValues = DictionaryToString(GetDeviceMemoryInfo());
+                        AddReturnParamFromDict(GetDeviceMemoryInfo(), act);
+                        act.RawResponseValues = GetDeviceMetricsString("memoryinfo").Result;
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetDeviceGeneralInfo:
+                        foreach(KeyValuePair<string,object> entry in GetDeviceGeneralInfo())
+                        {
+                            act.AddOrUpdateReturnParamActual(entry.Key, entry.Value.ToString());
+                        }
                         break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
@@ -1025,6 +1031,15 @@ namespace Amdocs.Ginger.CoreNET
             }
             returnString = returnString.Substring(0, returnString.Length - 2);
             return returnString;
+        }
+
+        private void AddReturnParamFromDict(Dictionary<string, string>dict, ActMobileDevice act)
+        {
+            foreach (KeyValuePair<string, string> entry in dict)
+            {
+                act.AddOrUpdateReturnParamActual(entry.Key, entry.Value.ToString());
+            }
+
         }
 
         public override void HighlightActElement(Act act)
@@ -3024,13 +3039,17 @@ namespace Amdocs.Ginger.CoreNET
             return dict;
         }
 
-        private async Task<Dictionary<string, string>> GetDeviceMetricsString(string dataType)
+        private async Task<string> GetDeviceMetricsString(string dataType)
         {
-
             string url = this.AppiumServer + "/session/" + Driver.SessionId + "/appium/getPerformanceData";
             string requestBody = "{\"packageName\": \"" + GetCurrentPackage() + "\", \"dataType\": \"" + dataType + "\"}";
             restClient = new RestClient(url);
-            string response = await SendRestRequestAndGetResponse(url, requestBody).ConfigureAwait(false);
+            return await SendRestRequestAndGetResponse(url, requestBody).ConfigureAwait(false);
+        }
+
+        private async Task<Dictionary<string, string>> GetDeviceMetricsDict(string dataType)
+        {
+            string response = await GetDeviceMetricsString(dataType);
             if (response.Contains("error"))
             {
                 return new Dictionary<string, string>();
@@ -3092,13 +3111,13 @@ namespace Amdocs.Ginger.CoreNET
         public Dictionary<string, string> GetDeviceCPUInfo()
         {
 
-            DeviceCPUInfo = GetDeviceMetricsString("cpuinfo").Result;
+            DeviceCPUInfo = GetDeviceMetricsDict("cpuinfo").Result;
             return DeviceCPUInfo;
         }
 
         public Dictionary<string, string> GetDeviceMemoryInfo()
         {
-            DeviceMemoryInfo = GetDeviceMetricsString("memoryinfo").Result;
+            DeviceMemoryInfo = GetDeviceMetricsDict("memoryinfo").Result;
             return DeviceMemoryInfo;
         }
 
@@ -3114,7 +3133,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public Dictionary<string, string> GetDeviceBatteryInfo()
         {
-            DeviceBatteryInfo = GetDeviceMetricsString("batteryinfo").Result;
+            DeviceBatteryInfo = GetDeviceMetricsDict("batteryinfo").Result;
             return DeviceBatteryInfo;
         }
 
