@@ -29,6 +29,7 @@ namespace GingerCore.Actions.VisualTesting
     public interface IVisualTestingDriver
     {
         Bitmap GetScreenShot(Tuple<int,int> setScreenSize=null, bool IsFullPageScreenshot = false);        
+        Bitmap GetElementScreenshot(Act act);        
 
         VisualElementsInfo GetVisualElementsInfo();
         void ChangeAppWindowSize(int Width, int Height);

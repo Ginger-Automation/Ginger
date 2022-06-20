@@ -218,6 +218,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Operations:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Cogs);
                     break;
+                case eImageType.Settings:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Gears);
+                    break;
                 case eImageType.Environment:
                 case eImageType.Globe:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Globe);

@@ -201,7 +201,6 @@ namespace GingerCore.Actions
             [EnumValueDescription("1920 x 1080")]
             Resolution1920x1080,
         }
-        [IsSerializedForLocalRepository]
         public bool SetCustomResolution
         {
             get
@@ -215,7 +214,7 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(ShowSikuliConsole), value.ToString());
             }
         }
-        [IsSerializedForLocalRepository]
+
         public eChangeAppWindowSize ChangeAppWindowSize
         {
             get
@@ -242,7 +241,6 @@ namespace GingerCore.Actions
 
         private string mCustomJavaPath = string.Empty;
 
-        [IsSerializedForLocalRepository]
         public string CustomJavaPath
         {
             get
@@ -295,8 +293,7 @@ namespace GingerCore.Actions
                     Screen sekuliScreen = new Screen();
 
                     Pattern sikuliPattern = new Pattern(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(
-                                                        ValueExpression.Calculate(PatternPath)),
-                                                        double.Parse(ValueExpression.Calculate(PatternSimilarity)) / 100);
+                                                        ValueExpression.Calculate(PatternPath)), new Point(0, 0), PatternSimilarity);
 
                     if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
                     {
@@ -486,22 +483,27 @@ namespace GingerCore.Actions
             if (string.IsNullOrEmpty(ValueExpression.Calculate(PatternPath)))
             {
                 Error = "File Path is Empty";
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Empty");
                 return false;
             }
             if (!File.Exists(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(
                 ValueExpression.Calculate(PatternPath))))
             {
                 Error = "File Path is Invalid";
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Invalid");
                 return false;
             }
             double result = 0;
             if (!double.TryParse(ValueExpression.Calculate(PatternSimilarity), out result))
             {
                 Error = "Please enter a valid percentage similarity";
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please enter a valid percentage similarity");
                 return false;
+            }
+            else
+            {
+                if (result < 0 || result > 100)
+                {
+                    Error = "Percentage Similarity should be between 0-100";
+                    return false;
+                }
             }
             if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
             {
@@ -510,8 +512,32 @@ namespace GingerCore.Actions
                     lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).Count() == 0)
                 {
                     Error = "Target Application is not running";
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Target Application is not running");
                     return false;
+                }
+            }
+            if (UseCustomJava)
+            {
+                if (string.IsNullOrEmpty(ValueExpression.Calculate(CustomJavaPath)))
+                {
+                    Error = "Java Version Path cannot be empty";
+                    return false;
+                }
+                else
+                {
+                    string customJavaPath = ValueExpression.Calculate(CustomJavaPath);
+                    string customBinPath = Path.Combine(customJavaPath, @"bin");
+                    string customExePath = Path.Combine(customBinPath, @"java.exe");
+                    string customWExePath = Path.Combine(customBinPath, @"javaw.exe");
+                    if (!File.Exists(customExePath))
+                    {
+                        Error = "java.exe is missing inside bin folder " + customJavaPath;
+                        return false;
+                    }
+                    if (!File.Exists(customWExePath))
+                    {
+                        Error = "javaw.exe is missing inside bin folder " + customJavaPath;
+                        return false;
+                    }
                 }
             }
             return true;
