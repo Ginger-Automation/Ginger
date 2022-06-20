@@ -81,7 +81,6 @@ namespace Ginger.Drivers.DriversWindows
         private string mDeviceNetworkInfo;
 
         ObservableList<DeviceInfo> mDeviceDetails = new ObservableList<DeviceInfo>();
-        //ObservableList<DeviceInfo> mDeviceMetrics = new ObservableList<DeviceInfo>();
 
 
 
@@ -1575,9 +1574,6 @@ namespace Ginger.Drivers.DriversWindows
                         AgentEditPage agentEditPage = new AgentEditPage(mAgent, true);
                         agentEditPage.Width = 800;
                         agentEditPage.Height = 800;
-                        //((TextBox)agentEditPage.FindName("xAgentNameTextBox")).IsReadOnly = true;
-                        //((TextBox)agentEditPage.FindName("xDescriptionTextBox")).IsReadOnly = true;
-                        //((TextBox)agentEditPage.FindName("xPlatformTxtBox")).IsReadOnly = true;
 
                         GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Free, mAgent.Name, agentEditPage);
                     });
