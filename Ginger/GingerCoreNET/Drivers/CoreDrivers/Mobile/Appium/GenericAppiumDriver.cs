@@ -65,6 +65,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -1027,7 +1028,7 @@ namespace Amdocs.Ginger.CoreNET
             string returnString = string.Empty;
             foreach (KeyValuePair<string, string> entry in dict)
             {
-                returnString += entry.Key + ": " + entry.Value + ", ";
+                returnString += new StringBuilder(entry.Key + ": " + entry.Value + ", ");
             }
             returnString = returnString.Substring(0, returnString.Length - 2);
             return returnString;
@@ -3063,49 +3064,6 @@ namespace Amdocs.Ginger.CoreNET
             {
                 return new Dictionary<string, string>();
             }
-
-
-            #region ActWebAPI action to send http request
-            //ActWebAPIRest restAct = new ActWebAPIRest();
-            ////Build REST Request:
-            //restAct.AddOrUpdateInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL, this.AppiumServer + "/session/" + Driver.SessionId + "/appium/getPerformanceData");
-            //restAct.AddOrUpdateInputParamCalculatedValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, ApplicationAPIUtils.eCretificateType.AllSSL.ToString());
-            //restAct.AddOrUpdateInputParamCalculatedValue(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.POST.ToString());
-            //restAct.AddOrUpdateInputParamCalculatedValue(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
-            //restAct.AddOrUpdateInputParamCalculatedValue(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString());
-            //restAct.AddOrUpdateInputParamCalculatedValue(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString());
-            //restAct.AddOrUpdateInputParamCalculatedValue(ActWebAPIBase.Fields.AuthorizationType, ApplicationAPIUtils.eAuthType.NoAuthentication.ToString());
-            //restAct.AddOrUpdateInputParamCalculatedValue(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.None.ToString());
-            //restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
-            //restAct.AddOrUpdateInputParamCalculatedValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString());
-            //restAct.AddOrUpdateInputParamCalculatedValue(ActWebAPIBase.Fields.RequestBody, "{\"packageName\": \"" + GetCurrentPackage() + "\", \"dataType\": \"" + dataType + "\"}");
-
-            //HttpWebClientUtils webAPIUtils = new HttpWebClientUtils();
-            //webAPIUtils.RequestContstructor(restAct, null, false);
-            //if (webAPIUtils.SendRequest())
-            //{
-            //    return webAPIUtils.ResponseMessage;
-            //}
-            //else
-            //{
-            //    return "Problem!";
-            //}
-            #endregion
-
-            #region Another way to perform http request
-            //Dictionary<string, string> values = new Dictionary<string, string> { { "packageName", GetCurrentPackage() }, { "dataType", dataType } };
-            //FormUrlEncodedContent content = new FormUrlEncodedContent(values);
-
-            //string url = this.AppiumServer + "/session/" + Driver.SessionId + "/appium/getPerformanceData";
-
-
-
-            //var client = new HttpClient();
-            //HttpResponseMessage response = (HttpResponseMessage)await client.PostAsync(url, content);
-            //var contents = await response.Content.ReadAsStringAsync();
-
-            // return contents;
-            #endregion
         }
 
         public Dictionary<string, string> GetDeviceCPUInfo()

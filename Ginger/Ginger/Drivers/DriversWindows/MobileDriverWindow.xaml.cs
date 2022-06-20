@@ -359,8 +359,6 @@ namespace Ginger.Drivers.DriversWindows
         {
             mDeviceDetails = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Detail).ToList());
 
-            //mDeviceMetrics.ClearAll();
-
             #region setting device metrics grid the old way
             if (mDeviceCPUInfo.Count > 0)
             {
@@ -459,12 +457,9 @@ namespace Ginger.Drivers.DriversWindows
                     if (string.IsNullOrEmpty((string)value))
                     {
                         mDeviceDetails.Add(new DeviceInfo("Model:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-
-                        //xModelValueLbl.Content = "N/A";
                     }
                     else
                     {
-                        //xModelValueLbl.Content = (string)value;
                         mDeviceDetails.Add(new DeviceInfo("Model:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
                     }
                 }
@@ -542,13 +537,13 @@ namespace Ginger.Drivers.DriversWindows
 
                 if (mDeviceGeneralInfo.TryGetValue("displayDensity", out value))
                 {
-                    if (string.IsNullOrEmpty((string)value.ToString()))
+                    if (string.IsNullOrEmpty(value.ToString()))
                     {
                         mDeviceDetails.Add(new DeviceInfo("Display density:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
                     }
                     else
                     {
-                        mDeviceDetails.Add(new DeviceInfo("Display density:", (string)value.ToString(), DeviceInfo.eDeviceInfoCategory.Detail));
+                        mDeviceDetails.Add(new DeviceInfo("Display density:",value.ToString(), DeviceInfo.eDeviceInfoCategory.Detail));
                     }
                 }
 
@@ -606,12 +601,10 @@ namespace Ginger.Drivers.DriversWindows
 
             if (string.IsNullOrEmpty(mAgent.Name))
             {
-                //xAgentValueLbl.Content = "N/A";
                 mDeviceDetails.Add(new DeviceInfo("Ginger Agent:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
             }
             else
             {
-                //xAgentValueLbl.Content = mAgent.Name;
                 mDeviceDetails.Add(new DeviceInfo("Ginger Agent:", mAgent.Name, DeviceInfo.eDeviceInfoCategory.Detail, "Has extra info"));
             }
             #endregion
@@ -738,7 +731,6 @@ namespace Ginger.Drivers.DriversWindows
             if (mDriver.IsDeviceConnected)
             {
                 SetMeticsPanelView(!mMeticsIsOn);
-                //GetAndSetDeviceDetailsAndMetrics();
             }
             else
             {
@@ -1131,7 +1123,6 @@ namespace Ginger.Drivers.DriversWindows
                 xConfigurationsFrame.Visibility = System.Windows.Visibility.Collapsed;
                 xConfigurationsCol.Width = new GridLength(0);
 
-                //xMetricsFrame.Visibility = Visibility.Collapsed;
                 xMeticsCol.Width = new GridLength(0);
 
                 //Main tool bar
@@ -1483,13 +1474,10 @@ namespace Ginger.Drivers.DriversWindows
         {
             if (show == true)
             {
-                //xMetricsFrame.Visibility = System.Windows.Visibility.Visible;
-                xMeticsCol.Width = new GridLength(350);
                 this.Width = this.Width + Convert.ToDouble(xMeticsCol.Width.ToString());
             }
             else
             {
-                //xMetricsFrame.Visibility = System.Windows.Visibility.Collapsed;
                 xMeticsCol.Width = new GridLength(0);
                 if (this.Width - xMeticsCol.ActualWidth > 0)
                 {
@@ -1534,8 +1522,6 @@ namespace Ginger.Drivers.DriversWindows
         private void OpenPopUpWindow(string content, string title)
         {
             string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(content);
-            //string filePath = Path.Combine(Directory.GetCurrentDirectory(), "temp.json");
-            //File.WriteAllText(filePath, content);
             if (System.IO.File.Exists(tempFilePath))
             {
                 Application.Current.Dispatcher.Invoke(() =>
@@ -1577,6 +1563,8 @@ namespace Ginger.Drivers.DriversWindows
 
                         GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Free, mAgent.Name, agentEditPage);
                     });
+                    break;
+                default:
                     break;
             }
         }

@@ -38,7 +38,6 @@ namespace Ginger.Drivers.DriversWindows
                 if (!string.IsNullOrEmpty(value))
                 {
                     mExtraInfo = value;
-                    //mIsVisible = Visibility.Visible;
                 }
 
             }
