@@ -611,7 +611,6 @@ namespace Ginger.Drivers.DriversWindows
             #endregion
 
             xDeviceDetailsGrid.DataSourceList = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Detail));
-            ;
         }
 
         private void xDeviceScreenshotImage_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -1257,7 +1256,7 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         this.Dispatcher.Invoke(() =>
                         {
-                            waitingRatio = int.Parse(xRefreshWaitingRateCombo.Text.ToString());
+                            waitingRatio = int.Parse(xRefreshWaitingRateCombo.Text);
                         });
                         Thread.Sleep(waitingTimeInMiliSeconds * (waitingRatio));
                     }
@@ -1564,7 +1563,10 @@ namespace Ginger.Drivers.DriversWindows
 
                         GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Free, mAgent.Name, agentEditPage);
                     });
-                    break;                    
+                    break;
+                default:
+                    Reporter.ToUser(eUserMsgKey.MobileDriverNotConnected);
+                    break;
             }
         }
     }
