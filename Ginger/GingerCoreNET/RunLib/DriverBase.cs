@@ -93,7 +93,6 @@ namespace GingerCore.Drivers
         public bool cancelAgentLoading = false;
         public abstract void CloseDriver();
         public string DriverClass { get { return this.GetType().ToString(); } }
-        public string DriverClassName { get { return this.GetType().Name.ToString(); } }
 
         // running an action on the UI
         public abstract void RunAction(Act act);

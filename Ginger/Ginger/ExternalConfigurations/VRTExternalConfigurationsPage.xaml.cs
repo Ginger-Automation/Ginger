@@ -61,8 +61,6 @@ namespace Ginger.Configurations
                 xEnableSoftAssertPanel, _VRTConfiguration,
                 nameof(VRTConfiguration.EnableSoftAssert));
             ApplyValidationRules();
-            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVRTExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
-
         }
 
         private void ApplyValidationRules()
