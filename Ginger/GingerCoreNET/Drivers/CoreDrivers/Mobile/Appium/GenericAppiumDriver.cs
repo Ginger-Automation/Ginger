@@ -3180,6 +3180,11 @@ namespace Amdocs.Ginger.CoreNET
                 return (string)udid;
             }
         }
+
+        public Bitmap GetElementScreenshot(Act act)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

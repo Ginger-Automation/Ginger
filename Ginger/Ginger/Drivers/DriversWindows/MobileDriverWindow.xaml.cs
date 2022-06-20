@@ -349,7 +349,7 @@ namespace Ginger.Drivers.DriversWindows
                 }
                 if (!string.IsNullOrEmpty(mDriver.GetDeviceUDID()))
                 {
-                    this.Title += " " + mDriver.GetDeviceUDID();
+                    this.Title += " [" + mDriver.GetDeviceUDID() + "]";
                 }
 
             }

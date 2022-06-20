@@ -36,7 +36,7 @@
                         
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}" >
 
-                        <Ginger:ucGrid x:Name="xDeviceDetailsGrid" Width="365" HorizontalAlignment="Left" IsReadOnly="False" Title="Device Details" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Visible" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed"/>
+                        <Ginger:ucGrid x:Name="xDeviceDetailsGrid" Width="346"  HorizontalAlignment="Left" IsReadOnly="False" Title="Device Details" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Visible" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed"/>
 
                         <StackPanel x:Name="xDetailsLoadingPnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                             <UserControls:ImageMakerControl x:Name="xDetailsProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
