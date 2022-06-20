@@ -18,7 +18,7 @@
 
         <Grid.Resources>
             <DataTemplate x:Key="ExtraInfo">
-                <UserControls:ucButton x:Name="xExtraInfoBtn_ExtraInfo" ButtonType="ImageButton" Visibility="{Binding IsVisible}" ButtonFontImageSize="14" Height="25" ButtonImageType="Info" Click="xExtraInfoBtn_ExtraInfo_Click" ToolTip="Press for more inforamtion" />
+                <UserControls:ucButton VerticalAlignment="Center" x:Name="xExtraInfoBtn_ExtraInfo" ButtonType="ImageButton" Visibility="{Binding IsVisible}" ButtonFontImageSize="14" Height="25" ButtonImageType="Info" Click="xExtraInfoBtn_ExtraInfo_Click" ToolTip="Press for more information" />
             </DataTemplate>
         </Grid.Resources>
 
@@ -34,68 +34,6 @@
                             </Border>
                         </TabItem.Header>
                         
-                        <!--<Grid Background="{StaticResource $BackgroundColor_LightGray}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-
-                            <Label x:Name="xDeviceIdLbl" Grid.Row="0" Grid.Column="0" Content="Device ID:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xManufacturerLbl" Grid.Row="1" Grid.Column="0" Content="Manufacturer::" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xBrandLbl" Grid.Row="2" Grid.Column="0" Content="Brand:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xModelLbl" Grid.Row="3" Grid.Column="0" Content="Model:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xOSTypeLbl" Grid.Row="4" Grid.Column="0" Content="OS Type:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xOSVersionLbl" Grid.Row="5" Grid.Column="0" Content="OS Version:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xForamFactorLbl" Grid.Row="6" Grid.Column="0" Content="Form Factor:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xPhysicalEmulatorLbl" Grid.Row="7" Grid.Column="0" Content="Physical/emulator:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xLanguageLbl" Grid.Row="8" Grid.Column="0" Content="Language:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xTimeZoneLbl" Grid.Row="9" Grid.Column="0" Content="Time Zone:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xScreenResulotionLbl" Grid.Row="10" Grid.Column="0" Content="Screen Resulotion:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xDisplayDensityLbl" Grid.Row="11" Grid.Column="0" Content="Display Density:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xCarrierNameLbl" Grid.Row="12" Grid.Column="0" Content="Carrier Name:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xWIFILbl" Grid.Row="13" Grid.Column="0" Content="WIFI State:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xBluetoothLbl" Grid.Row="14" Grid.Column="0" Content="Bluetooth State:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xAgentLbl" Grid.Row="15" Grid.Column="0" Content="Agent:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-
-                            <Label x:Name="xDeviceIdValueLbl" Grid.Row="0" Grid.Column="1" Content="Device ID:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <UserControls:ucButton x:Name="xDeviceDetailsRefreshBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" ButtonFontImageSize="14" Height="25" ButtonImageType="Refresh" Click="xDeviceDetailsRefreshBtn_Click" ToolTip="Refresh Device Details" />
-
-                            <Label x:Name="xManufacturerValueLbl" Grid.Row="1" Grid.Column="1" Content="Manufacturer::" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xBrandValueLbl" Grid.Row="2" Grid.Column="1" Content="Brand:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xModelValueLbl" Grid.Row="3" Grid.Column="1" Content="Model:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xOSTypeValueLbl" Grid.Row="4" Grid.Column="1" Content="OS Type:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xOSVersionValueLbl" Grid.Row="5" Grid.Column="1" Content="OS Version:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xForamFactorValueLbl" Grid.Row="6" Grid.Column="1" Content="Form Factor:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xPhysicalEmulatorValueLbl" Grid.Row="7" Grid.Column="1" Content="Physical/emulator:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xLanguageValueLbl" Grid.Row="8" Grid.Column="1" Content="Language:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xTimeZoneValueLbl" Grid.Row="9" Grid.Column="1" Content="Time Zone:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xScreenResulotionValueLbl" Grid.Row="10" Grid.Column="1" Content="Screen Resulotion:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xDisplayDensityValueLbl" Grid.Row="11" Grid.Column="1" Content="Display Density:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xCarrierNameValueLbl" Grid.Row="12" Grid.Column="1" Content="Carrier Name:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xWIFIValueLbl" Grid.Row="13" Grid.Column="1" Content="WIFI State:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xBluetoothValueLbl" Grid.Row="14" Grid.Column="1" Content="Bluetooth State:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xAgentValueLbl" Grid.Row="15" TargetUpdated="xAgentValueLbl_TargetUpdated" HorizontalAlignment="Left" Grid.Column="1" Content="Agent:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <UserControls:ucButton x:Name="xAgentBtn"  Grid.Row="15" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" ButtonFontImageSize="14" Height="25" ButtonImageType="Info" Click="xAgentBtn_Click" ToolTip="Open Agent's Details" />
-
-                        </Grid>-->
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}" >
 
                         <Ginger:ucGrid x:Name="xDeviceDetailsGrid" Width="365" HorizontalAlignment="Left" IsReadOnly="False" Title="Device Details" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Visible" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed"/>
@@ -123,36 +61,6 @@
                             </Border>
                         </TabItem.Header>
 
-                        <!--<Grid Background="{StaticResource $BackgroundColor_LightGray}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                                <RowDefinition Height="35"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-
-                            <Label x:Name="xCPUUsageLbl" Grid.Row="0" Grid.Column="0" Content="CPU Usage:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xRamUsageLbl" Grid.Row="1" Grid.Column="0" Content="Ram Usage:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xBatteryLbl" Grid.Row="2" Grid.Column="0" Content="Battery:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xDiskSpaceLbl" Grid.Row="3" Grid.Column="0" Content="Free/Total Disk Space:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xNetworksLbl" Grid.Row="4" Grid.Column="0" Content="Networks:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-
-                            <Label x:Name="xCPUUsageValueLbl" Grid.Row="0" Grid.Column="1" Content="CPU Usage:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <UserControls:ucButton x:Name="xDeviceMetricsRefreshBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" ButtonFontImageSize="14" Height="25" ButtonImageType="Refresh" Click="xDeviceMetricsRefreshBtn_Click" ToolTip="Refresh Device Metrics" />
-
-                            <Label x:Name="xRamUsageValueLbl" Grid.Row="1" Grid.Column="1" Content="Ram Usage:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <UserControls:ucButton x:Name="xRamUsageBtn"  Grid.Row="1" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" ButtonFontImageSize="14" Height="25" ButtonImageType="Info" Click="xRamUsageBtn_Click" ToolTip="Open Full Ram Usage" />
-
-                            <Label x:Name="xBatteryValueLbl" Grid.Row="2" Grid.Column="1" Content="Battery:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xDiskSpaceValueLbl" Grid.Row="3" Grid.Column="1" Content="Free/Total Disk Space:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <Label x:Name="xNetworksValueLbl" Grid.Row="4" Grid.Column="1" Content="Networks:" Style="{StaticResource $SubListViewItemLabelStyle}"/>
-                            <UserControls:ucButton x:Name="xNetworksBtn"  Grid.Row="4" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" ButtonFontImageSize="14" Height="25" ButtonImageType="Info" Click="xNetworksBtn_Click" ToolTip="Open Full Network Details" />
-                        </Grid>-->
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}">
                         <Ginger:ucGrid x:Name="xDeviceMetricsGrid" Width="365" HorizontalAlignment="Left" Title="Metrics Details"  IsReadOnly="false"  ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Visible" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed"/>
 

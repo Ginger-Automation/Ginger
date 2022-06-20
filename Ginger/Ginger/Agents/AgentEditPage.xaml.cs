@@ -39,10 +39,19 @@ namespace Ginger.Agents
         Agent mAgent;
         ePlatformType mOriginalPlatformType;
         string mOriginalDriverType;
+        bool IsReadOnly, IsEnabledCheckBox;
         
-        public AgentEditPage(Agent agent)
+        public AgentEditPage(Agent agent, bool isReadOnly = false)
         {
             InitializeComponent();
+            //xAgentNameTextBox.IsReadOnly
+            
+            this.IsReadOnly = isReadOnly;
+            ChangeContorlsReadOnly(IsReadOnly);
+            if (isReadOnly)
+            {
+                this.IsEnabledCheckBox = !isReadOnly;
+            }
 
             if (agent != null)
             {               
@@ -86,6 +95,14 @@ namespace Ginger.Agents
                    xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent));
                 }
             }
+        }
+
+        private void ChangeContorlsReadOnly(bool isReadOnly)
+        {
+            xAgentNameTextBox.IsReadOnly = isReadOnly;
+            xDescriptionTextBox.IsReadOnly = isReadOnly;
+            xDriverTypeComboBox.IsReadOnly = isReadOnly;
+            xPublishcheckbox.IsEnabled = !isReadOnly;
         }
 
         private void xPluginIdComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

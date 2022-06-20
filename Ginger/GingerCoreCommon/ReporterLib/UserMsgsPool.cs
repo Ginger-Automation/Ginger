@@ -310,7 +310,7 @@ namespace Amdocs.Ginger.Common
             #endregion Environment Messages
 
             #region Agents/Drivers Messages
-            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileDriverNotConnected, new UserMsg(eUserMsgType.INFO, "Mobile Driver Error", "Mobile driver could not connet to mobile device, please try again.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileDriverNotConnected, new UserMsg(eUserMsgType.INFO, "Mobile Device Error", "The connection to the mobile device has failed, please try again.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestagentSucceed, new UserMsg(eUserMsgType.INFO, "Test Agent", "Agent starting test ended successfully!", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToConnectAgent, new UserMsg(eUserMsgType.ERROR, "Connect to Agent", "Failed to load '{0}' Agent." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SshCommandError, new UserMsg(eUserMsgType.ERROR, "Ssh Command Error", "The Ssh Run Command returns error, please double check the connection info and credentials." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));

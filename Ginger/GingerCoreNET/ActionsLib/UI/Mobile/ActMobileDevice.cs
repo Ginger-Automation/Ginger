@@ -197,15 +197,15 @@ namespace GingerCore.Actions
             LockDevice,
             [EnumValueDescription("Get Page Source")]
             GetPageSource,
-            [EnumValueDescription("Get Device's Battery %")]
+            [EnumValueDescription("Get Device Battery %")]
             GetDeviceBattery,
-            [EnumValueDescription("Get Device's Network Info")]
+            [EnumValueDescription("Get Device Network Info")]
             GetDeviceNetwork,
-            [EnumValueDescription("Get Device's CPU Usage")]
+            [EnumValueDescription("Get App CPU Usage")]
             GetDeviceCPUUsage,
-            [EnumValueDescription("Get Device's RAM Usage")]
+            [EnumValueDescription("Get App RAM Usage")]
             GetDeviceRAMUsage,
-            [EnumValueDescription("Get Device's General Info")]
+            [EnumValueDescription("Get Device General Info")]
             GetDeviceGeneralInfo,
         }
 

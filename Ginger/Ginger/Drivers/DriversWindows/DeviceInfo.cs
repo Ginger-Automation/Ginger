@@ -10,19 +10,19 @@ namespace Ginger.Drivers.DriversWindows
 {
     public class DeviceInfo : INotifyPropertyChanged
     {
-        public DeviceInfo(string name, string value, eCategory category, string extraInfo = null)
+        public DeviceInfo(string name, string value, eDeviceInfoCategory category, string extraInfo = null)
         {
             DetailName = name;
             DetailValue = value;
             ExtraInfo = extraInfo;
             Category = category;
         }
-        public enum eCategory
+        public enum eDeviceInfoCategory
         {
-            DeviceDetails = 1,
-            DeviceMetrics = 2
+            Detail = 1,
+            Metric = 2
         }
-        public eCategory Category { get; set; }
+        public eDeviceInfoCategory Category { get; set; }
 
         public string DetailName { get; set; }
         public string DetailValue { get; set; }
@@ -38,13 +38,25 @@ namespace Ginger.Drivers.DriversWindows
                 if (!string.IsNullOrEmpty(value))
                 {
                     mExtraInfo = value;
-                    mIsVisible = Visibility.Visible;
+                    //mIsVisible = Visibility.Visible;
                 }
 
             }
         }
-        private Visibility mIsVisible = Visibility.Collapsed;
-        public Visibility IsVisible { get { return mIsVisible; } }
+        public Visibility IsVisible
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ExtraInfo))
+                {
+                    return Visibility.Collapsed;
+                }
+                else
+                {
+                    return Visibility.Visible;
+                }
+            }
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
