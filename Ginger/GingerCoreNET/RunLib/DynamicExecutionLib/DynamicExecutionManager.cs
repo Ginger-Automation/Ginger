@@ -511,7 +511,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 SealightsDetails sealightsDetails = new SealightsDetails();
 
-                sealightsDetails.SealightsEnable = solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.Yes ? true : false;
+                sealightsDetails.SealightsEnable = solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.Yes;
                 sealightsDetails.SealightsLabId = solution.SealightsConfiguration.SealightsLabId;
                 sealightsDetails.SealightsBSId = solution.SealightsConfiguration.SealightsBuildSessionID;
                 sealightsDetails.SealightsTestStage = solution.SealightsConfiguration.SealightsTestStage;
