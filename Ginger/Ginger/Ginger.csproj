@@ -286,7 +286,6 @@
     </Compile>
     <Compile Include="Drivers\DriversWindows\DeviceInfo.cs" />
     <Compile Include="Drivers\DriversWindows\DeviceInfo.cs" />
->>>>>>>>> Temporary merge branch 2
     <Compile Include="Reports\ValidationRules\ValidateEmptyValue.cs" />
     <Compile Include="Reports\ValidationRules\ValidateNumberInputRule.cs" />
     <Compile Include="Activities\ActivityNameValidationRule.cs" />
