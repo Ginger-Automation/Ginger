@@ -1038,7 +1038,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             foreach (KeyValuePair<string, string> entry in dict)
             {
-                act.AddOrUpdateReturnParamActual(entry.Key, entry.Value.ToString());
+                act.AddOrUpdateReturnParamActual(entry.Key, entry.Value);
             }
 
         }

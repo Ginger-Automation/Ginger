@@ -397,7 +397,7 @@ namespace Ginger.Drivers.DriversWindows
             string returnString = string.Empty;
             foreach (KeyValuePair<string, string> entry in dict)
             {
-                returnString += new StringBuilder(entry.Key + ": " + entry.Value + ", ");
+                returnString = new StringBuilder(returnString + entry.Key + ": " + entry.Value + ", ").ToString();
             }
             returnString = returnString.Substring(0, returnString.Length - 2);
             return returnString;
