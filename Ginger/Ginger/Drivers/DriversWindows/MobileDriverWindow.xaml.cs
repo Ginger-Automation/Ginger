@@ -45,6 +45,7 @@ using System.Windows.Media.Imaging;
 using System.Linq;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
+using System.Text;
 
 namespace Ginger.Drivers.DriversWindows
 {
@@ -396,7 +397,7 @@ namespace Ginger.Drivers.DriversWindows
             string returnString = string.Empty;
             foreach (KeyValuePair<string, string> entry in dict)
             {
-                returnString += entry.Key + ": " + entry.Value + ", ";
+                returnString += new StringBuilder(entry.Key + ": " + entry.Value + ", ");
             }
             returnString = returnString.Substring(0, returnString.Length - 2);
             return returnString;
@@ -1563,9 +1564,7 @@ namespace Ginger.Drivers.DriversWindows
 
                         GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Free, mAgent.Name, agentEditPage);
                     });
-                    break;
-                default:
-                    break;
+                    break;                    
             }
         }
     }
