@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
+using Ginger.Configurations;
 using Ginger.Reports;
 using GingerCore;
 using GingerCore.Platforms;
@@ -293,6 +294,8 @@ namespace Ginger.SolutionGeneral
         [IsSerializedForLocalRepository]
         public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList { get; set; } = new ObservableList<HTMLReportsConfiguration>();
 
+        [IsSerializedForLocalRepository]
+        public VRTConfiguration VRTConfiguration { get; set; } = new VRTConfiguration();
         public void AddVariable(VariableBase v, int insertIndex = -1)
         {
             if (v != null)

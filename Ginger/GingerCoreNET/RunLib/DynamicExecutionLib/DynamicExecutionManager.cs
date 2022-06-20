@@ -1409,8 +1409,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             publishToQCRunSetOperation = new RunSetActionPublishToQC();
                         }
-
-                        publishToQCRunSetOperation.PublishALMType = publishToALMOperationExecConfig.ALMType;
+                        if(publishToALMOperationExecConfig.ALMType.ToLower() == "default")
+                        {
+                            publishToQCRunSetOperation.PublishALMType = gingerExecConfig.AlmsDetails.Where(x=> x.IsDefault !=null && x.IsDefault.Value== true).FirstOrDefault().ALMType;
+                        }
+                        else
+                        {
+                            publishToQCRunSetOperation.PublishALMType = publishToALMOperationExecConfig.ALMType;
+                        }
 
                         if (publishToALMOperationExecConfig.AlmTestSetLevel != null)
                         {
