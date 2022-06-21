@@ -2,12 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
+	<UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
 	  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GingerTestHelper" Version="2.0.2" />
     <PackageReference Include="log4net" Version="2.0.14" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="11.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
@@ -22,15 +24,6 @@
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
     <ProjectReference Include="..\GingerCore\GingerCore.csproj" />
     <ProjectReference Include="..\Ginger\Ginger.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="PresentationCore">
-      <HintPath>..\GingerCoreNET\DLLS\PresentationCore.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationFramework">
-      <HintPath>..\GingerCoreNET\DLLS\PresentationFramework.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
