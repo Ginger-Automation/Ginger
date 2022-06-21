@@ -1157,24 +1157,14 @@ namespace Ginger.Run
                 {
                     if (!act.Active)
                     {
-                        ResetAction(act);
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
-                        {
-                            NotifyActionEnd(act);
-                        }
+                        SkipActionAndNotifyEnd(act);
                         act.ExInfo = "Action is not active.";
                         return;
                     }
-                    if ((act is ActVisualTesting) && !mGingerRunner.RunInVisualTestingMode)
+                    if (!CheckRunInVisualTestingMode(act))
                     {
-                        act.Status = eRunStatus.Skipped;
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
-                        {
-                            NotifyActionEnd(act);
-                        }
-                        act.ExInfo = "Visual Testing Action Run Mode is  Inactive.";
-                        return;
+                        SkipActionAndNotifyEnd(act);
+                        act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
                     }
                     if (act.CheckIfVaribalesDependenciesAllowsToRun((Activity)(CurrentBusinessFlow.CurrentActivity), true) == false)
                         return;
@@ -3311,7 +3301,7 @@ namespace Ginger.Run
                         CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
 
                         GiveUserFeedback();
-                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true)
+                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true && CheckRunInVisualTestingMode(act))
                         {
                             RunAction(act, false);
                             GiveUserFeedback();
@@ -3370,13 +3360,13 @@ namespace Ginger.Run
                         {
                             if (!act.Active)
                             {
-                                ResetAction(act);
-                                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
-                                {
-                                    NotifyActionEnd(act);
-                                }
+                                SkipActionAndNotifyEnd(act);
                                 act.ExInfo = "Action is not active.";
+                            }
+                            if (!CheckRunInVisualTestingMode(act))
+                            {
+                                SkipActionAndNotifyEnd(act);
+                                act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
                             }
                             if (!activity.Acts.IsLastItem())
                             {
@@ -3472,7 +3462,24 @@ namespace Ginger.Run
             }
         }
 
+        private void SkipActionAndNotifyEnd(Act act)
+        {
+            ResetAction(act);
+            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+            {
+                NotifyActionEnd(act);
+            }
+        }
 
+        private bool CheckRunInVisualTestingMode(Act act)
+        {
+            if ((act is ActVisualTesting) && !mGingerRunner.RunInVisualTestingMode)
+            {
+                return false;
+            }
+            else { return true; }
+        }
 
         private void ContinueTimerVariables(ObservableList<VariableBase> variableList)
         {
@@ -4848,6 +4855,8 @@ namespace Ginger.Run
             activity.StartTimeStamp = DateTime.UtcNow;
             activity.EndTimeStamp = DateTime.UtcNow;
 
+
+
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivitySkipped(evetTime, activity);
@@ -4891,6 +4900,9 @@ namespace Ginger.Run
         private void NotifyBusinessFlowSkipped(BusinessFlow businessFlow, bool ContinueRun = false)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+
+            businessFlow.StartTimeStamp = DateTime.UtcNow;
+            businessFlow.EndTimeStamp = DateTime.UtcNow;
 
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
@@ -4942,7 +4954,10 @@ namespace Ginger.Run
         private void NotifyActivityGroupSkipped(ActivitiesGroup activityGroup, bool offlineMode = false)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+
+            activityGroup.StartTimeStamp = DateTime.UtcNow;
             activityGroup.EndTimeStamp = DateTime.UtcNow;
+
             foreach (RunListenerBase runnerListener in mRunListeners)
             {                
                 runnerListener.ActivityGroupSkipped(eventTime, activityGroup, offlineMode);
