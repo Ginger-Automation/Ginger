@@ -83,12 +83,31 @@ namespace Ginger.GeneralWindows
             xSubNavigationListView.Visibility = Visibility.Collapsed;
             xSelectedItemFrame.SetContent(null);
 
+            xMainNavigationListView.Items.Clear();
+            foreach (TopMenuItem menu in mTwoLevelMenu.MenuList)
+            {
+                if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+                {
+                    if (menu.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
+                    {
+                        continue;
+                    }
+                }
+                xMainNavigationListView.Items.Add(menu);
+            }
         }
 
         private void LoadMenus()
         {            
             foreach(TopMenuItem menu in mTwoLevelMenu.MenuList)
-            {                
+            {
+                if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+                {
+                    if (menu.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
+                    {
+                        continue;
+                    }
+                }
                 xMainNavigationListView.Items.Add(menu);
             }          
         }

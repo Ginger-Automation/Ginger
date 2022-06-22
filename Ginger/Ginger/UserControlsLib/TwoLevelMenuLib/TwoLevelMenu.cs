@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,14 @@ namespace Ginger.TwoLevelMenuLib
         {
             foreach (TopMenuItem topMenuItem in MenuList)
             {
-                foreach(SubMenuItem subMenuItem in topMenuItem.SubItems)
+                if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+                {
+                    if (topMenuItem.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
+                    {
+                        continue;
+                    }
+                }
+                foreach (SubMenuItem subMenuItem in topMenuItem.SubItems)
                 {
                     subMenuItem.ResetPage();
                 }
