@@ -55,22 +55,22 @@ namespace Ginger.Actions
             GingerCore.General.FillComboFromEnumObj(xOcrFileTypeCombo, mAct.SelectedOcrFileType);
             BindingHandler.ObjFieldBinding(xOcrFileTypeCombo, ComboBox.SelectedValueProperty, mAct, nameof(ActOcr.SelectedOcrFileType), BindingMode.TwoWay);
 
-            BindingHandler.ObjFieldBinding(xFilePathTextBox.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.OcrFilePath), BindingMode.TwoWay);
-
-            BindingHandler.ObjFieldBinding(xSetPdfPasswordTextBox.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.OcrPassword), BindingMode.TwoWay);
-
-            BindingHandler.ObjFieldBinding(xPageNosTextBox.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.PageNumber), BindingMode.TwoWay);
-
-            BindingHandler.ObjFieldBinding(xFirstString.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.FirstString), BindingMode.TwoWay);
-
-            BindingHandler.ObjFieldBinding(xSecondString.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.SecondString), BindingMode.TwoWay);
-
-            BindingHandler.ObjFieldBinding(xRowNumber.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.GetFromRowNumber), BindingMode.TwoWay);
-
-            BindingHandler.ObjFieldBinding(xColumnWhere.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.ConditionColumnName), BindingMode.TwoWay);
-
-            BindingHandler.ObjFieldBinding(xColumnWhereValue.ValueTextBox, TextBox.TextProperty, mAct, nameof(ActOcr.ConditionColumnValue), BindingMode.TwoWay);
-
+            xFilePathTextBox.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.OcrFilePath), string.Empty),
+                               true, false);
+            xSetPdfPasswordTextBox.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.OcrPassword), string.Empty),
+                               true, false);
+            xPageNosTextBox.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.PageNumber), string.Empty),
+                               true, false);
+            xFirstString.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.FirstString), string.Empty),
+                               true, false);
+            xSecondString.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.SecondString), string.Empty),
+                               true, false);
+            xRowNumber.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.GetFromRowNumber), string.Empty),
+                   true, false);
+            xColumnWhere.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.ConditionColumnName), string.Empty),
+                   true, false);
+            xColumnWhereValue.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.ConditionColumnValue), string.Empty),
+                   true, false);
             GingerCore.General.FillComboFromEnumObj(xOperationCombo, mAct.ElementLocateBy);
             BindingHandler.ObjFieldBinding(xOperationCombo, ComboBox.SelectedValueProperty, mAct, nameof(ActOcr.ElementLocateBy), BindingMode.TwoWay);
 
