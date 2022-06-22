@@ -563,7 +563,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 AutoFixAnalyzerIssue = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue,
                 ReprioritizePOMLocators = runsetExecutor.RunSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators,
                 AutoUpdateApplicationModel = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel,
-                SaveChangesInSourceControl = runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl
+                SaveChangesInSourceControl = runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl,
+                AutoExecuteInSimulationMode = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoExecuteInSimulationMode
             };
 
             runset.SelfHealingConfiguration = selfHealingConfiguration;
@@ -608,6 +609,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     }
                     runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID });
                 }
+
+                //
+                runner.RunInSimulationMode = gingerRunner.RunInSimulationMode;
+                runner.RunInVisualTestingMode = gingerRunner.RunInVisualTestingMode;
 
                 if (gingerRunner.BusinessFlowsRunList.Count > 0)
                 {
@@ -935,6 +940,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     if (runnerConfig.Active.HasValue)
                     {
                         gingerRunner.Active = runnerConfig.Active.Value;
+                    }
+
+                    if (runnerConfig.RunInSimulationMode.HasValue)
+                    {
+                        gingerRunner.RunInSimulationMode = runnerConfig.RunInSimulationMode.Value;
+                    }
+                    if (runnerConfig.RunInVisualTestingMode.HasValue)
+                    {
+                        gingerRunner.RunInVisualTestingMode = runnerConfig.RunInVisualTestingMode.Value;
                     }
 
                     if (runnerConfig.EnvironmentName != null || runnerConfig.EnvironmentID != null)
@@ -1517,6 +1531,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel = dynamicRunsetConfigs.SelfHealingConfiguration.AutoUpdateApplicationModel;
                 runSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl = dynamicRunsetConfigs.SelfHealingConfiguration.SaveChangesInSourceControl;
                 runSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators = dynamicRunsetConfigs.SelfHealingConfiguration.ReprioritizePOMLocators;
+                runSetConfig.SelfHealingConfiguration.AutoExecuteInSimulationMode = dynamicRunsetConfigs.SelfHealingConfiguration.AutoExecuteInSimulationMode;
             }
             // Set config
             runsetExecutor.RunSetConfig = runSetConfig;
