@@ -564,7 +564,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 ReprioritizePOMLocators = runsetExecutor.RunSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators,
                 AutoUpdateApplicationModel = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel,
                 SaveChangesInSourceControl = runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl,
-                AutoExecuteInSimulateionMode = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoExecuteInSimulateionMode
+                AutoExecuteInSimulateionMode = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoExecuteInSimulationMode
             };
 
             runset.SelfHealingConfiguration = selfHealingConfiguration;
@@ -942,7 +942,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         gingerRunner.Active = runnerConfig.Active.Value;
                     }
 
-                    //
                     if (runnerConfig.RunInSimulationMode.HasValue)
                     {
                         gingerRunner.RunInSimulationMode = runnerConfig.RunInSimulationMode.Value;
@@ -1532,7 +1531,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel = dynamicRunsetConfigs.SelfHealingConfiguration.AutoUpdateApplicationModel;
                 runSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl = dynamicRunsetConfigs.SelfHealingConfiguration.SaveChangesInSourceControl;
                 runSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators = dynamicRunsetConfigs.SelfHealingConfiguration.ReprioritizePOMLocators;
-                runSetConfig.SelfHealingConfiguration.AutoExecuteInSimulateionMode = dynamicRunsetConfigs.SelfHealingConfiguration.AutoExecuteInSimulateionMode;
+                runSetConfig.SelfHealingConfiguration.AutoExecuteInSimulationMode = dynamicRunsetConfigs.SelfHealingConfiguration.AutoExecuteInSimulateionMode;
             }
             // Set config
             runsetExecutor.RunSetConfig = runSetConfig;

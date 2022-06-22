@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.Common.SelfHealingLib
         public bool AutoUpdateApplicationModel { get; set; }
 
         [IsSerializedForLocalRepository]
-        public bool AutoExecuteInSimulateionMode{ get; set; }
+        public bool AutoExecuteInSimulationMode{ get; set; }
 
         public bool SaveChangesInSourceControl { get; set; }
 
