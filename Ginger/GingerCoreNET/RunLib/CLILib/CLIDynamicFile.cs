@@ -31,7 +31,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
-
+using Ginger.Configurations;
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIDynamicFile : ICLI
@@ -221,13 +221,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         
         private void LoadSealightsDetailsFromJSON(GingerExecConfig gingerExecConfig)
         {
-            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog = (bool)gingerExecConfig.SealightsDetails.SealightsEnable ? eSealightsLog.Yes : eSealightsLog.No;
-            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLabId = gingerExecConfig.SealightsDetails.SealightsLabId;
-            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID = gingerExecConfig.SealightsDetails.SealightsBSId;
-            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsTestStage = gingerExecConfig.SealightsDetails.SealightsTestStage;
-            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsSessionTimeout = gingerExecConfig.SealightsDetails.SealightsSessionTimeout.ToString();
-            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel = (eSealightsEntityLevel)gingerExecConfig.SealightsDetails.SealightsEntityLevel;
-            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsAgentToken = gingerExecConfig.SealightsDetails.SealightsAgentToken;
+            WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog = (bool)gingerExecConfig.SealightsDetails.SealightsEnable ? SealightsConfiguration.eSealightsLog.Yes : SealightsConfiguration.eSealightsLog.No;
+            WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId = gingerExecConfig.SealightsDetails.SealightsLabId;
+            WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID = gingerExecConfig.SealightsDetails.SealightsBSId;
+            WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestStage = gingerExecConfig.SealightsDetails.SealightsTestStage;
+            WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout = gingerExecConfig.SealightsDetails.SealightsSessionTimeout.ToString();
+            WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel = (SealightsConfiguration.eSealightsEntityLevel)gingerExecConfig.SealightsDetails.SealightsEntityLevel;
+            WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken = gingerExecConfig.SealightsDetails.SealightsAgentToken;
         }
 
         private void LoadALMDetailsFromJSON(GingerExecConfig gingerExecConfig)

@@ -136,7 +136,7 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         mExecutionEngine.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad, true);
                         mExecutionEngine.ExecutionLoggerManager.RunnerRunEnd(0, mExecutionEngine.GingerRunner, offlineMode: true);
-                        ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).SetReportRunSet(mRunSetReport, "");
+                        ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).SetReportRunSet(mRunSetReport, "", eExecutedFrom.Automation);
                         SetOrClearPreviousAutoRunSetDocumentLiteDB(false);
                         return;
                     }
@@ -437,6 +437,8 @@ namespace GingerWPF.BusinessFlowsLib
                         mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
 
                         //--BF sections updates
+                        //Environments
+                        UpdateUsedEnvironment((ProjEnvironment)xEnvironmentComboBox.SelectedItem);
                         //Configurations
                         if (mConfigurationsPage == null)
                         {
@@ -1155,6 +1157,10 @@ namespace GingerWPF.BusinessFlowsLib
         {
             mEnvironment = env;
             mContext.Environment = env;
+            if (mBusinessFlow != null)
+            {
+                mBusinessFlow.Environment = env?.Name.ToString();
+            }
             if (env != null)
             {
                 mExecutionEngine.GingerRunner.UseSpecificEnvironment = true;

@@ -28,7 +28,7 @@
 
 
         <StackPanel Grid.Row="0">
-            <Label Style="{StaticResource $LabelStyle}" Content="Compare"/>
+            <Label Style="{StaticResource $LabelStyle}" FontWeight="SemiBold" Content="Compare"/>
             <StackPanel Margin="10,0,0,0">
                 <CheckBox Margin="10,0,0,0">Missing elements in target</CheckBox>
                 <CheckBox Margin="10,0,0,0">Missing elements in source</CheckBox>
@@ -38,8 +38,8 @@
 
         <StackPanel Grid.Row="1">
             <StackPanel Orientation="Horizontal">
-                <Label Style="{StaticResource @LabelStyle}" Content="Baseline Info File" MinWidth="150px"/>
-                <Actions:UCValueExpression x:Name="BaselineInfoFileUCVE" Width="600" Margin="30,0,0,0"/>
+                <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" Content="Baseline Info File" MinWidth="150px"/>
+                <Actions:UCValueExpression x:Name="BaselineInfoFileUCVE" Width="600" Margin="40,0,0,0"/>
             </StackPanel>
             <!--<StackPanel>
                 <Actions:UCValueExpression x:Name="BaselineInfoFileUCVE"/>
