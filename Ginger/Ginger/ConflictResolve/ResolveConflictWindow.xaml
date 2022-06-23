@@ -11,12 +11,10 @@
 
     <Grid x:Name="ResolveConflictsGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="xExplanationLable" Grid.Row="0" Style="{StaticResource @TextBlockStyle}" TextWrapping="Wrap" FontSize="14" FontWeight="Light" Margin="10,10,0,0" >Conflict found in following files. Please accept server changes or keep local changes to proceed.</TextBlock>
-        <Ginger:ucGrid x:Name="xConflictingItemsGrid" Grid.Row="1" Title="Conflict Resolution Items" IsReadOnly="False" FontStyle="Normal" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" />
+        <Ginger:ucGrid x:Name="xConflictingItemsGrid" Grid.Row="0" Title="Conflict Items" IsReadOnly="False" FontStyle="Normal" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" />
 
     </Grid>
 </Page>

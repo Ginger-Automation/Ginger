@@ -45,12 +45,6 @@ namespace Ginger.ConflictResolve
             Button resolveBtn = new Button();
             resolveBtn.Content = "Resolve";
             resolveBtn.Click += new RoutedEventHandler(resolve_Click);
-            Button takeServerForAll = new Button();
-            takeServerForAll.Content = "Accept Server Changes For All";
-            takeServerForAll.Click += new RoutedEventHandler(resolve_Click);
-            Button takeLocalForAll = new Button();
-            takeLocalForAll.Content = "Accept Local Changes For All";
-            takeLocalForAll.Click += new RoutedEventHandler(resolve_Click);
 
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Source Control Conflicts", this, new ObservableList<Button> { resolveBtn }, true, "Do Not Resolve", CloseWindow);
         }
