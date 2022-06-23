@@ -123,7 +123,7 @@ namespace Ginger.SourceControl
 
         private void SaveConfiguration_Click(object sender, RoutedEventArgs e)
         {
-            if (!(SourceControlClassTextBox.Text == SourceControlBase.eSourceControlType.GIT.ToString()))
+            if (SourceControlClassTextBox.Text != SourceControlBase.eSourceControlType.GIT.ToString())
             {
                 if (string.IsNullOrEmpty(xTextSourceControlConnectionTimeout.Text) || Int32.TryParse(xTextSourceControlConnectionTimeout.Text, out int _))
                 {

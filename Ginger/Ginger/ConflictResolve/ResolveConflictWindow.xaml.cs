@@ -86,15 +86,7 @@ namespace Ginger.ConflictResolve
             view.GridColsView = viewCols;
             view.GridColsView.Add(new GridColView() { Field = nameof(ConflictResolve.ItemName), Header = "Name", WidthWeight = 70, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ConflictResolve.RelativeConflictPath), Header = "Conflicted File", WidthWeight = 150, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            viewCols.Add(new GridColView()
-            {
-                Field = nameof(ConflictResolve.resolveOperations),
-                Header = "Operation",
-                WidthWeight = 90,
-                BindingMode = BindingMode.TwoWay,
-                StyleType = GridColView.eGridColStyleType.Template,
-                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(eResolveOperations)), nameof(ConflictResolve.resolveOperations), false, true)
-            }); ;
+            viewCols.Add(new GridColView() { Field = nameof(ConflictResolve.resolveOperations), Header = "Operation", WidthWeight = 90, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(eResolveOperations)), nameof(ConflictResolve.resolveOperations), false, true) }); ;
 
             xConflictingItemsGrid.SetAllColumnsDefaultView(view);
             xConflictingItemsGrid.InitViewItems();
