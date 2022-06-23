@@ -20,6 +20,8 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Core;
+using Amdocs.Ginger.Repository;
+using Ginger.ConflictResolve;
 using GingerCore;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
@@ -55,33 +57,41 @@ namespace Ginger.SourceControl
         }
         public static bool GetLatest(string path, SourceControlBase SourceControl)
         {
+            Dictionary<string, string> filePathItemNameDct = new Dictionary<string, string>();
             string error = string.Empty;
             List<string> conflictsPaths = new List<string>();
-            bool result = true;
-            bool conflictHandled = false;
+            IEnumerable<RepositoryFile> repositoryFiles = WorkSpace.Instance.SolutionRepository.GetAllSolutionRepositoryFiles();
+            IEnumerator<RepositoryFile> repoFileEnum = repositoryFiles.GetEnumerator();
+            while (repoFileEnum.MoveNext())
+            {
+                RepositoryFile repoFile = repoFileEnum.Current;
+                RepositoryItemBase repoItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByPath(repoFile.FilePath);
+                string itemName = repoItem.ItemName;
+                filePathItemNameDct.Add(repoFile.FilePath, itemName);
+            }
             if (!SourceControl.GetLatest(path, ref error, ref conflictsPaths))
             {
-
-                foreach (string cPath in conflictsPaths)
+                ResolveConflictWindow conflictWindow = new ResolveConflictWindow(conflictsPaths, filePathItemNameDct);
+                if (WorkSpace.Instance.RunningInExecutionMode == true)
                 {
-                    ResolveConflictPage resConfPage = new ResolveConflictPage(cPath);
-                    if (WorkSpace.Instance.RunningInExecutionMode == true)
-                        SourceControlIntegration.ResolveConflicts(SourceControl, cPath, eResolveConflictsSide.Server);
-                    else
-                        resConfPage.ShowAsWindow();
-                    result = resConfPage.IsResolved;
-
-                    if (!result)
+                    conflictsPaths.ForEach(path => SourceControlIntegration.ResolveConflicts(SourceControl, path, eResolveConflictsSide.Server));
+                }
+                else
+                {
+                    conflictWindow.ShowAsWindow();
+                }
+                if (!conflictWindow.IsResolved)
+                {
+                    if (!string.IsNullOrEmpty(error))
                     {
-                        Reporter.ToUser(eUserMsgKey.SourceControlGetLatestConflictHandledFailed);
+                        Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, error);
                         return false;
                     }
-                    conflictHandled = true;
-                }
-                if (!conflictHandled)
-                {
-                    Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, error);
-                    return false;
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unable to resolve conflict");
+                        return false;
+                    }
                 }
             }
             return true;

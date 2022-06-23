@@ -1,0 +1,22 @@
+﻿<Page x:Class="Ginger.ConflictResolve.ResolveConflictWindow"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.ConflictResolve" xmlns:Ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="1200"
+      Height="600" Width="1200" Title="Resolve Conflict Window">
+
+
+    <Grid x:Name="ResolveConflictsGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="300*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="xExplanationLable" Grid.Row="0" Style="{StaticResource @TextBlockStyle}" TextWrapping="Wrap" FontSize="14" FontWeight="Light" Margin="10,10,0,0" >Conflict found in following files. Please accept server changes or keep local changes to proceed.</TextBlock>
+        <Ginger:ucGrid x:Name="xConflictingItemsGrid" Grid.Row="1" Title="Conflict Resolution Items" IsReadOnly="False" FontStyle="Normal" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" />
+
+    </Grid>
+</Page>
