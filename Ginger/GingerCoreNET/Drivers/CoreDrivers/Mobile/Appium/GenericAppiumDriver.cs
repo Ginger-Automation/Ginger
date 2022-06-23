@@ -160,29 +160,6 @@ namespace Amdocs.Ginger.CoreNET
         private AppiumDriver Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
 
-        private Dictionary<string, object> mDeviceGeneralInfo;
-        public Dictionary<string, object> DeviceGeneralInfo { get => mDeviceGeneralInfo; set => mDeviceGeneralInfo = value; }
-
-
-        private Dictionary<string, string> mDeviceCPUInfo;
-        public Dictionary<string, string> DeviceCPUInfo { get => mDeviceCPUInfo; set => mDeviceCPUInfo = value; }
-
-        private Dictionary<string, string> mDeviceBatteryInfo;
-        public Dictionary<string, string> DeviceBatteryInfo { get => mDeviceBatteryInfo; set => mDeviceBatteryInfo = value; }
-
-        private Dictionary<string, string> mDeviceMemoryInfo;
-        public Dictionary<string, string> DeviceMemoryInfo { get => mDeviceMemoryInfo; set => mDeviceMemoryInfo = value; }
-
-        private Dictionary<string, string> mDeviceNetworkInfo;
-        public Dictionary<string, string> DeviceNetworkInfo { get => mDeviceNetworkInfo; set => mDeviceNetworkInfo = value; }
-
-        private string mDeviceBrandName;
-        public string DeviceBrandName { get => mDeviceBrandName; set => mDeviceBrandName = value; }
-
-        private string mDeviceModel;
-        public string DeviceModel { get => mDeviceModel; set => mDeviceModel = value; }
-
-
         public override bool StopProcess
         {
             get
@@ -3069,14 +3046,12 @@ namespace Amdocs.Ginger.CoreNET
         public Dictionary<string, string> GetDeviceCPUInfo()
         {
 
-            DeviceCPUInfo = GetDeviceMetricsDict("cpuinfo").Result;
-            return DeviceCPUInfo;
+            return GetDeviceMetricsDict("cpuinfo").Result;
         }
 
         public Dictionary<string, string> GetDeviceMemoryInfo()
         {
-            DeviceMemoryInfo = GetDeviceMetricsDict("memoryinfo").Result;
-            return DeviceMemoryInfo;
+            return GetDeviceMetricsDict("memoryinfo").Result;
         }
 
         public async Task<string> GetDeviceNetworkInfo()
@@ -3091,16 +3066,15 @@ namespace Amdocs.Ginger.CoreNET
 
         public Dictionary<string, string> GetDeviceBatteryInfo()
         {
-            DeviceBatteryInfo = GetDeviceMetricsDict("batteryinfo").Result;
-            return DeviceBatteryInfo;
+            return GetDeviceMetricsDict("batteryinfo").Result;
         }
 
         public Dictionary<string, object> GetDeviceGeneralInfo()
         {
             try
             {
-                DeviceGeneralInfo = (Dictionary<string, object>)Driver.ExecuteScript("mobile: deviceInfo");
-                return DeviceGeneralInfo;
+                return (Dictionary<string, object>)Driver.ExecuteScript("mobile: deviceInfo");
+
             }
             catch (Exception e)
             {
@@ -3127,8 +3101,11 @@ namespace Amdocs.Ginger.CoreNET
 
         public string GetDeviceUDID()
         {
-            object udid;
-            Driver.SessionDetails.TryGetValue("udid", out udid);
+            object udid = null;
+            if(Driver.SessionDetails != null)
+            {
+                Driver.SessionDetails.TryGetValue("udid", out udid);
+            }
             if (string.IsNullOrEmpty((string)udid))
             {
                 return null;

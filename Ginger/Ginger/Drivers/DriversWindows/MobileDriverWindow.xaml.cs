@@ -42,7 +42,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Linq;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
 using System.Text;
@@ -69,17 +68,9 @@ namespace Ginger.Drivers.DriversWindows
         eAutoScreenshotRefreshMode mDeviceAutoScreenshotRefreshMode;
         bool mWindowIsOpen = true;
         bool IsRecording = false;
+        bool mIsMetricsClickedOnce = false;
 
-        bool isPhysicalDevice;
-        private Dictionary<string, object> mDeviceGeneralInfo;
 
-        private Dictionary<string, string> mDeviceCPUInfo;
-
-        private Dictionary<string, string> mDeviceBatteryInfo;
-
-        private Dictionary<string, string> mDeviceMemoryInfo;
-
-        private string mDeviceNetworkInfo;
 
         ObservableList<DeviceInfo> mDeviceDetails = new ObservableList<DeviceInfo>();
 
@@ -88,9 +79,6 @@ namespace Ginger.Drivers.DriversWindows
         public MobileDriverWindow(DriverBase driver, Agent agent)
         {
             InitializeComponent();
-
-            SetDeviceDetailsGridView();
-            SetDeviceMetricsGridView();
 
             mDriver = (IMobileDriverWindow)driver;
             mAgent = agent;
@@ -101,31 +89,27 @@ namespace Ginger.Drivers.DriversWindows
 
         private async void RefreshDetailsTable(object sender, RoutedEventArgs e)
         {
-            xDeviceDetailsGrid.Visibility = Visibility.Collapsed;
-            xDetailsLoadingPnl.Visibility = Visibility.Visible;
-            await Task.Run(() =>
+            await this.Dispatcher.InvokeAsync(async () =>
             {
-                mDeviceGeneralInfo = mDriver.GetDeviceGeneralInfo();
-                isPhysicalDevice = mDriver.IsRealDeviceAsync().Result;
-                mDeviceBatteryInfo = mDriver.GetDeviceBatteryInfo();
+                xDeviceDetailsGrid.Visibility = Visibility.Collapsed;
+                xDetailsLoadingPnl.Visibility = Visibility.Visible;
+                await SetDeviceDetailsGridData();
+                xDeviceDetailsGrid.Visibility = Visibility.Visible;
+                xDetailsLoadingPnl.Visibility = Visibility.Collapsed;
             });
-            SetDeviceDetailsGrid();
-            xDeviceDetailsGrid.Visibility = Visibility.Visible;
-            xDetailsLoadingPnl.Visibility = Visibility.Collapsed;
+
         }
         private async void RefreshMetricsTable(object sender, RoutedEventArgs e)
         {
-            xDeviceMetricsGrid.Visibility = Visibility.Collapsed;
-            xMetricsLoadingPnl.Visibility = Visibility.Visible;
-            await Task.Run(() =>
+            await this.Dispatcher.InvokeAsync(async () =>
             {
-                mDeviceCPUInfo = mDriver.GetDeviceCPUInfo();
-                mDeviceMemoryInfo = mDriver.GetDeviceMemoryInfo();
-                mDeviceNetworkInfo = mDriver.GetDeviceNetworkInfo().Result;
+                xDeviceMetricsGrid.Visibility = Visibility.Collapsed;
+                xMetricsLoadingPnl.Visibility = Visibility.Visible;
+                await SetDeviceMetricsGridData();
+                xDeviceMetricsGrid.Visibility = Visibility.Visible;
+                xMetricsLoadingPnl.Visibility = Visibility.Collapsed;
             });
-            SetDeviceMetricsGrid();
-            xDeviceMetricsGrid.Visibility = Visibility.Visible;
-            xMetricsLoadingPnl.Visibility = Visibility.Collapsed;
+
         }
 
         private void SetDeviceDetailsGridView()
@@ -136,9 +120,9 @@ namespace Ginger.Drivers.DriversWindows
             view.GridColsView = new ObservableList<GridColView>();
 
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Detail Name", WidthWeight = 6, ReadOnly = true, MaxWidth = 105 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailValue), Header = "Value", WidthWeight = 7, ReadOnly = true, MaxWidth = 195 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.IsVisible), Header = "Extra Info", WidthWeight = 2, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 6, ReadOnly = true, MaxWidth=105});
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailValue), Header = "Value", WidthWeight = 7, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.ExtraInfo), Header = "Extra Info", WidthWeight = 2, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
 
             xDeviceDetailsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshDetailsTable));
 
@@ -154,9 +138,9 @@ namespace Ginger.Drivers.DriversWindows
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Detail Name", WidthWeight = 6, ReadOnly = true, MaxWidth = 105 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailValue), Header = "Value", WidthWeight = 7, ReadOnly = true, MaxWidth = 195 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.IsVisible), Header = "Extra Info", WidthWeight = 2, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 6, ReadOnly = true, MaxWidth = 105 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailValue), Header = "Value", WidthWeight = 7, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.ExtraInfo), Header = "Extra Info", WidthWeight = 2, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
 
             xDeviceMetricsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshMetricsTable));
 
@@ -246,37 +230,21 @@ namespace Ginger.Drivers.DriversWindows
                             xDeviceScreenshotCanvas.Visibility = Visibility.Visible;
                             xMessageLbl.Content = "Loading Device Screenshot...";
 
-                            //Loading image on details and metrics ucGrid
-                            xDeviceDetailsGrid.Visibility = Visibility.Collapsed;
-                            xDeviceMetricsGrid.Visibility = Visibility.Collapsed;
+                            ////Loading image on details and metrics ucGrid
+                            //xDeviceDetailsGrid.Visibility = Visibility.Collapsed;
+                            //xDeviceMetricsGrid.Visibility = Visibility.Collapsed;
 
-                            xDetailsLoadingPnl.Visibility = Visibility.Visible;
-                            xMetricsLoadingPnl.Visibility = Visibility.Visible;
+                            //xDetailsLoadingPnl.Visibility = Visibility.Visible;
+                            //xMetricsLoadingPnl.Visibility = Visibility.Visible;
 
                             await RefreshDeviceScreenshotAsync();
                             SetOrientationButton();
                             DoContinualDeviceScreenshotRefresh();
 
-                            await Task.Run(() =>
-                            {
-                                mDeviceGeneralInfo = mDriver.GetDeviceGeneralInfo();
-                                isPhysicalDevice = mDriver.IsRealDeviceAsync().Result;
-                                mDeviceBatteryInfo = mDriver.GetDeviceBatteryInfo();
-                            });
-                            SetDeviceDetailsGrid();
-                            xDeviceDetailsGrid.Visibility = Visibility.Visible;
-                            xDetailsLoadingPnl.Visibility = Visibility.Collapsed;
+                            Dictionary<string, object> mDeviceGeneralInfo;
+                            mDeviceGeneralInfo = mDriver.GetDeviceGeneralInfo();
 
-                            SetTitle();
-                            await Task.Run(() =>
-                            {
-                                mDeviceCPUInfo = mDriver.GetDeviceCPUInfo();
-                                mDeviceMemoryInfo = mDriver.GetDeviceMemoryInfo();
-                                mDeviceNetworkInfo = mDriver.GetDeviceNetworkInfo().Result;
-                            });
-                            SetDeviceMetricsGrid();
-                            xDeviceMetricsGrid.Visibility = Visibility.Visible;
-                            xMetricsLoadingPnl.Visibility = Visibility.Collapsed;
+                            SetTitle(mDeviceGeneralInfo);
                         });
 
                     }
@@ -317,7 +285,7 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
-        private void SetTitle()
+        private void SetTitle(Dictionary<string, object> mDeviceGeneralInfo)
         {
             object value, platformVersion;
             if (mDeviceGeneralInfo.Count > 0)
@@ -356,29 +324,50 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
-        private void SetDeviceMetricsGrid()
+        private async Task<bool> SetDeviceMetricsGridData()
         {
+            string mDeviceNetworkInfo = string.Empty;
+            Dictionary<string, string> mDeviceMemoryInfo = null;
+            Dictionary<string, string> mDeviceCPUInfo = null;
+
+            await Task.Run(() =>
+            {
+                mDeviceCPUInfo = mDriver.GetDeviceCPUInfo();
+                mDeviceMemoryInfo = mDriver.GetDeviceMemoryInfo();
+                mDeviceNetworkInfo = mDriver.GetDeviceNetworkInfo().Result;
+            });
+
+
             mDeviceDetails = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Detail).ToList());
 
             #region setting device metrics grid the old way
-            if (mDeviceCPUInfo.Count > 0)
+            if (mDeviceCPUInfo != null && mDeviceCPUInfo.Count > 0)
             {
-                string cpuUsage = (double.Parse(mDeviceCPUInfo["user"]) + double.Parse(mDeviceCPUInfo["kernel"])).ToString() + " %";
+                double userCpuUsage = 0, kernelCpuUsage = 0;
+                double.TryParse(mDeviceCPUInfo["user"], out userCpuUsage);
+                double.TryParse(mDeviceCPUInfo["kernel"], out kernelCpuUsage);
+
+                string cpuUsage = (userCpuUsage + kernelCpuUsage).ToString() + " %";
                 mDeviceDetails.Add(new DeviceInfo("App CPU Usage:", cpuUsage, DeviceInfo.eDeviceInfoCategory.Metric, DictionaryToString(mDeviceCPUInfo)));
             }
             else
             {
                 mDeviceDetails.Add(new DeviceInfo("App CPU Usage:", "N/A", DeviceInfo.eDeviceInfoCategory.Metric));
             }
-            if (mDeviceMemoryInfo.Count > 0)
+
+            if (mDeviceMemoryInfo != null && mDeviceMemoryInfo.Count > 0)
             {
-                string ramUsage = (Int32.Parse(mDeviceMemoryInfo["totalPss"]) / 1024).ToString() + " Mb";
+                double totalPss = 0;
+                double.TryParse(mDeviceMemoryInfo["totalPss"], out totalPss);
+                totalPss = Math.Round(totalPss/1024, 2);
+                string ramUsage = (totalPss).ToString() + " Mb";
                 mDeviceDetails.Add(new DeviceInfo("App RAM Usage:", ramUsage, DeviceInfo.eDeviceInfoCategory.Metric, DictionaryToString(mDeviceMemoryInfo)));
             }
             else
             {
                 mDeviceDetails.Add(new DeviceInfo("App RAM Usage:", "N/A", DeviceInfo.eDeviceInfoCategory.Metric));
             }
+
             if (!string.IsNullOrEmpty(mDeviceNetworkInfo))
             {
                 mDeviceDetails.Add(new DeviceInfo("Networks:", "Press info to view", DeviceInfo.eDeviceInfoCategory.Metric, mDeviceNetworkInfo));
@@ -389,7 +378,7 @@ namespace Ginger.Drivers.DriversWindows
             }
             #endregion
             xDeviceMetricsGrid.DataSourceList = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Metric).ToList());
-
+            return false;
         }
 
         private string DictionaryToString(Dictionary<string, string> dict)
@@ -403,200 +392,166 @@ namespace Ginger.Drivers.DriversWindows
             return returnString;
         }
 
-        private void SetDeviceDetailsGrid()
+        private async Task<bool> SetDeviceDetailsGridData()
         {
+
+            bool isPhysicalDevice = false;
+            Dictionary<string, object> mDeviceGeneralInfo = null;
+            Dictionary<string, string> mDeviceBatteryInfo = null;
+
+            await Task.Run(() =>
+            {
+                mDeviceGeneralInfo = mDriver.GetDeviceGeneralInfo();
+                isPhysicalDevice = mDriver.IsRealDeviceAsync().Result;
+                mDeviceBatteryInfo = mDriver.GetDeviceBatteryInfo();
+            });
+
             mDeviceDetails = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Metric).ToList());
 
             #region setting device details grid the old way
             object value, apiVersion, platformVersion;
             string battery;
-            if (mDeviceGeneralInfo.Count > 0)
+
+            if (!string.IsNullOrEmpty(mDriver.GetDeviceUDID()))
             {
-                if (!string.IsNullOrEmpty(mDriver.GetDeviceUDID()))
-                {
-                    mDeviceDetails.Add(new DeviceInfo("Device ID:", mDriver.GetDeviceUDID(), DeviceInfo.eDeviceInfoCategory.Detail));
-                }
-                else
-                {
-                    mDeviceDetails.Add(new DeviceInfo("Device ID:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                }
-
-                //Check if device is real device or emulator
-                if (isPhysicalDevice)
-                {
-                    mDeviceDetails.Add(new DeviceInfo("Physical/emulator:", "Physical", DeviceInfo.eDeviceInfoCategory.Detail));
-                }
-                else
-                {
-                    mDeviceDetails.Add(new DeviceInfo("Physical/emulator:", "Emulator", DeviceInfo.eDeviceInfoCategory.Detail));
-                }
-
-                if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value))
-                {
-                    mDeviceDetails.Add(new DeviceInfo("Manufacture:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
-                }
-                else
-                {
-                    mDeviceDetails.Add(new DeviceInfo("Manufacture:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-
-                }
-
-                if (mDeviceGeneralInfo.TryGetValue("brand", out value))
-                {
-                    if (string.IsNullOrEmpty((string)value))
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Brand:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                    else
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Brand:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                }
-
-                if (mDeviceGeneralInfo.TryGetValue("model", out value))
-                {
-                    if (string.IsNullOrEmpty((string)value))
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Model:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                    else
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Model:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                }
-
-                if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value))
-                {
-
-                    if (string.IsNullOrEmpty((string)value))
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("OS Type:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                    else
-                    {
-                        if ((string)value != "apple")
-                        {
-                            mDeviceDetails.Add(new DeviceInfo("OS Type:", "Android", DeviceInfo.eDeviceInfoCategory.Detail));
-                        }
-                        else
-                        {
-                            mDeviceDetails.Add(new DeviceInfo("OS Type:", "iOS", DeviceInfo.eDeviceInfoCategory.Detail));
-                        }
-                    }
-                }
-
-                if (mDeviceGeneralInfo.TryGetValue("platformVersion", out platformVersion))
-                {
-                    string version;
-                    version = (string)platformVersion;
-                    if (mDeviceGeneralInfo.TryGetValue("apiVersion", out apiVersion))
-                    {
-                        version += " [" + (string)apiVersion + "]";
-                        mDeviceDetails.Add(new DeviceInfo("OS Version:", version, DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                    if (string.IsNullOrEmpty((string)platformVersion) || string.IsNullOrEmpty((string)apiVersion))
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("OS Version:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                }
-
-                if (mDeviceGeneralInfo.TryGetValue("locale", out value))
-                {
-                    if (string.IsNullOrEmpty((string)value))
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Language:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                    else
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Language:", ((string)value).Replace("_", "/"), DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                }
-
-                if (mDeviceGeneralInfo.TryGetValue("timeZone", out value))
-                {
-                    if (string.IsNullOrEmpty((string)value))
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Time zone:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                    else
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Time zone:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                }
-
-                if (mDeviceGeneralInfo.TryGetValue("realDisplaySize", out value))
-                {
-                    if (string.IsNullOrEmpty((string)value))
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Screen resolution:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                    else
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Screen resolution:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                }
-
-                if (mDeviceGeneralInfo.TryGetValue("displayDensity", out value))
-                {
-                    if (string.IsNullOrEmpty(value.ToString()))
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Display density:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                    else
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Display density:",value.ToString(), DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                }
-
-                if (mDeviceGeneralInfo.TryGetValue("carrierName", out value))
-                {
-                    if (string.IsNullOrEmpty((string)value))
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Carrier name:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                    else
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Carrier name:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                }
-
-                if (mDeviceGeneralInfo.TryGetValue("bluetooth", out value))
-                {
-                    if (((Dictionary<string, object>)value).Count > 0)
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Bluetooth:", ((Dictionary<string, object>)value)["state"].ToString(), DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                    else
-                    {
-                        mDeviceDetails.Add(new DeviceInfo("Bluetooth:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                    }
-                }
-
-                if (mDeviceBatteryInfo.TryGetValue("power", out battery))
-                {
-                    mDeviceDetails.Add(new DeviceInfo("Device Battery:", battery + "%", DeviceInfo.eDeviceInfoCategory.Detail));
-                }
-                else
-                {
-                    mDeviceDetails.Add(new DeviceInfo("Battery:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                }
-
+                mDeviceDetails.Add(new DeviceInfo("Device ID:", mDriver.GetDeviceUDID(), DeviceInfo.eDeviceInfoCategory.Detail));
             }
             else
             {
                 mDeviceDetails.Add(new DeviceInfo("Device ID:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                mDeviceDetails.Add(new DeviceInfo("Manufacturer:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                mDeviceDetails.Add(new DeviceInfo("OS Type:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            //Check if device is real device or emulator
+            if (isPhysicalDevice)
+            {
+                mDeviceDetails.Add(new DeviceInfo("Physical/emulator:", "Physical", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Physical/emulator:", "Emulator", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value) && !string.IsNullOrEmpty((string)value))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Manufacture:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Manufacture:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("brand", out value) && !string.IsNullOrEmpty((string)value))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Brand:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
                 mDeviceDetails.Add(new DeviceInfo("Brand:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("model", out value) && !string.IsNullOrEmpty((string)value))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Model:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
                 mDeviceDetails.Add(new DeviceInfo("Model:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                mDeviceDetails.Add(new DeviceInfo("OS Version:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                mDeviceDetails.Add(new DeviceInfo("Physical/Emulator:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value) && !string.IsNullOrEmpty((string)value))
+            {
+                if ((string)value != "apple")
+                {
+                    mDeviceDetails.Add(new DeviceInfo("OS Type:", "Android", DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+                else
+                {
+                    mDeviceDetails.Add(new DeviceInfo("OS Type:", "iOS", DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("OS Type:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("platformVersion", out platformVersion))
+            {
+                string version;
+                version = (string)platformVersion;
+                if (mDeviceGeneralInfo.TryGetValue("apiVersion", out apiVersion))
+                {
+                    version += " [" + (string)apiVersion + "]";
+                    mDeviceDetails.Add(new DeviceInfo("OS Version:", version, DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+                if (string.IsNullOrEmpty((string)platformVersion) || string.IsNullOrEmpty((string)apiVersion))
+                {
+                    mDeviceDetails.Add(new DeviceInfo("OS Version:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("locale", out value) && !string.IsNullOrEmpty((string)value))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Language:", ((string)value).Replace("_", "/"), DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
                 mDeviceDetails.Add(new DeviceInfo("Language:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                mDeviceDetails.Add(new DeviceInfo("Time Zone:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                mDeviceDetails.Add(new DeviceInfo("Screen Resulotion:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                mDeviceDetails.Add(new DeviceInfo("Display Density:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                mDeviceDetails.Add(new DeviceInfo("Carrier Name:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("timeZone", out value) && !string.IsNullOrEmpty((string)value))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Time zone:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Time zone:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("realDisplaySize", out value) && !string.IsNullOrEmpty((string)value))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Screen resolution:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Screen resolution:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("displayDensity", out value) && !string.IsNullOrEmpty(value.ToString()))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Display density:", value.ToString(), DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Display density:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("carrierName", out value) && !string.IsNullOrEmpty((string)value))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Carrier name:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Carrier name:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("bluetooth", out value) && ((Dictionary<string, object>)value).Count > 0)
+            {
+                mDeviceDetails.Add(new DeviceInfo("Bluetooth:", ((Dictionary<string, object>)value)["state"].ToString(), DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
                 mDeviceDetails.Add(new DeviceInfo("Bluetooth:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+
+            if (mDeviceBatteryInfo.TryGetValue("power", out battery))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Device Battery:", battery + "%", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Battery:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
             }
 
 
@@ -611,6 +566,7 @@ namespace Ginger.Drivers.DriversWindows
             #endregion
 
             xDeviceDetailsGrid.DataSourceList = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Detail));
+            return false;
         }
 
         private void xDeviceScreenshotImage_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -725,12 +681,44 @@ namespace Ginger.Drivers.DriversWindows
         }
 
         bool mMeticsIsOn = false;
-        private void xMetricsBtn_Click(object sender, RoutedEventArgs e)
+        private async void xMetricsBtn_Click(object sender, RoutedEventArgs e)
         {
 
             if (mDriver.IsDeviceConnected)
             {
+                if (!mIsMetricsClickedOnce)
+                {
+                    //Setting up the detail and metic grids
+                    SetDeviceDetailsGridView();
+                    SetDeviceMetricsGridView();
+
+                    mIsMetricsClickedOnce = true;
+                }
+                //Setting the with of the metrics panel
                 SetMeticsPanelView(!mMeticsIsOn);
+
+                if (mMeticsIsOn)
+                {
+                    await this.Dispatcher.InvokeAsync(async () =>
+                    {
+                        //Loading the device details and metrics
+                        xDeviceDetailsGrid.Visibility = Visibility.Collapsed;
+                        xDeviceMetricsGrid.Visibility = Visibility.Collapsed;
+
+                        xDetailsLoadingPnl.Visibility = Visibility.Visible;
+                        xMetricsLoadingPnl.Visibility = Visibility.Visible;
+
+                        await SetDeviceDetailsGridData();
+                        xDeviceDetailsGrid.Visibility = Visibility.Visible;
+                        xDetailsLoadingPnl.Visibility = Visibility.Collapsed;
+
+                        await SetDeviceMetricsGridData();
+                        xDeviceMetricsGrid.Visibility = Visibility.Visible;
+                        xMetricsLoadingPnl.Visibility = Visibility.Collapsed;
+                    });
+
+                }
+
             }
             else
             {
@@ -1285,11 +1273,11 @@ namespace Ginger.Drivers.DriversWindows
                             }
                             image.Freeze();
                             this.Dispatcher.Invoke(() =>
-                                {
-                                    xDeviceScreenshotCanvas.Visibility = Visibility.Visible;
-                                    xMessagePnl.Visibility = Visibility.Collapsed;
-                                    xDeviceScreenshotImage.Source = image;
-                                });
+                            {
+                                xDeviceScreenshotCanvas.Visibility = Visibility.Visible;
+                                xMessagePnl.Visibility = Visibility.Collapsed;
+                                xDeviceScreenshotImage.Source = image;
+                            });
                         }
 
                         return true;
@@ -1472,8 +1460,9 @@ namespace Ginger.Drivers.DriversWindows
 
         private void SetMeticsPanelView(bool show)
         {
-            if (show == true)
+            if (show)
             {
+                xMeticsCol.Width = new GridLength(350);
                 this.Width = this.Width + Convert.ToDouble(xMeticsCol.Width.ToString());
             }
             else
@@ -1546,13 +1535,13 @@ namespace Ginger.Drivers.DriversWindows
             switch (deviceInfo.DetailName)
             {
                 case "App RAM Usage:":
-                    OpenPopUpWindow(DictionaryToString(mDeviceMemoryInfo).Replace(", ", Environment.NewLine), "Full device's Memory Information");
+                    OpenPopUpWindow(deviceInfo.ExtraInfo.Replace(", ", Environment.NewLine), "Full device's Memory Information");
                     break;
                 case "Networks:":
-                    OpenPopUpWindow(mDeviceNetworkInfo, "Full device's Network Information");
+                    OpenPopUpWindow(deviceInfo.ExtraInfo, "Full device's Network Information");
                     break;
                 case "App CPU Usage:":
-                    OpenPopUpWindow(DictionaryToString(mDeviceCPUInfo).Replace(", ", Environment.NewLine), "Full device's CPU Information");
+                    OpenPopUpWindow(deviceInfo.ExtraInfo.Replace(", ", Environment.NewLine), "Full device's CPU Information");
                     break;
                 case "Ginger Agent:":
                     Application.Current.Dispatcher.Invoke(() =>

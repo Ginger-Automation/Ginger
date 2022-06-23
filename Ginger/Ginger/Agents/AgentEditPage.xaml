@@ -25,11 +25,11 @@
                         <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
                         <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
                     </StackPanel>
-                    <TextBox x:Name="xAgentNameTextBox" IsReadOnly="{Binding IsReadOnly}" AutomationProperties.AutomationId="AgentNameTextBox" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <TextBox x:Name="xAgentNameTextBox" AutomationProperties.AutomationId="AgentNameTextBox" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                 </StackPanel>
                 <StackPanel>
                     <Label Style="{StaticResource $LabelStyle}" Content="Description:"/>
-                    <TextBox x:Name="xDescriptionTextBox" IsReadOnly="{Binding IsReadOnly}" Text="" Height="50" Style="{StaticResource $MultiRowsTextBoxStyle}" />
+                    <TextBox x:Name="xDescriptionTextBox" Text="" Height="50" Style="{StaticResource $MultiRowsTextBoxStyle}" />
                     <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="-5,0,0,0" HorizontalAlignment="Left" />
                 </StackPanel>
             </StackPanel>
@@ -49,7 +49,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
                         <Label Style="{StaticResource $LabelStyle}" Content="Driver Type:" Margin="0,0,0,0" VerticalAlignment="Center"/>
-                        <ComboBox x:Name="xDriverTypeComboBox" IsReadOnly="{Binding IsReadOnly}" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="25,0,0,0" FontWeight="Bold"/>
+                        <ComboBox x:Name="xDriverTypeComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="25,0,0,0" FontWeight="Bold"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0" x:Name="xVirtualAgentsPanel" Visibility="Visible">
                         <StackPanel  Orientation="Horizontal" VerticalAlignment="Center">
@@ -64,7 +64,7 @@
                             </Button>
                         </StackPanel>-->
                     </StackPanel>
-                    <CheckBox x:Name="xPublishcheckbox"  IsEnabled="{Binding IsEnabledCheckBox}" Content="Publish" ToolTip="Publish to third party applications" HorizontalAlignment="Left" Margin="5,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
+                    <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" HorizontalAlignment="Left" Margin="5,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
                 </StackPanel>
 
                 <StackPanel x:Name="xPluginConfigPnl" Visibility="Collapsed" Margin="0,10,0,0" >

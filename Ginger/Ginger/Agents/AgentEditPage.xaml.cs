@@ -48,10 +48,6 @@ namespace Ginger.Agents
             
             this.IsReadOnly = isReadOnly;
             ChangeContorlsReadOnly(IsReadOnly);
-            if (isReadOnly)
-            {
-                this.IsEnabledCheckBox = !isReadOnly;
-            }
 
             if (agent != null)
             {               

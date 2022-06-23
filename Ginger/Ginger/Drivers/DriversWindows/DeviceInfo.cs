@@ -26,22 +26,7 @@ namespace Ginger.Drivers.DriversWindows
 
         public string DetailName { get; set; }
         public string DetailValue { get; set; }
-        private string mExtraInfo;
-        public string ExtraInfo
-        {
-            get
-            {
-                return mExtraInfo;
-            }
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    mExtraInfo = value;
-                }
-
-            }
-        }
+        public string ExtraInfo { get; set; }
         public Visibility IsVisible
         {
             get
