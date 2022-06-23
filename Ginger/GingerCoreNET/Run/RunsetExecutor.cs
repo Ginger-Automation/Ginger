@@ -473,7 +473,7 @@ namespace Ginger.Run
                     await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetStart(RunSetConfig);
                 }
 
-                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes && Runners.Count > 0)
+                if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
                 {
                     ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetStart(RunSetConfig);
                 }
@@ -586,7 +586,7 @@ namespace Ginger.Run
                    await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig);
                 }
 
-                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes && Runners.Count > 0)
+                if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
                 {
                     await ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetEnd(RunSetConfig);
                 }

@@ -277,7 +277,7 @@ namespace GingerCore
             switch (SelectedOcrImageOperation)
             {
                 case eActOcrImageOperations.ReadTextAfterLabel:
-                    resultText = GingerOcrOperations.ReadTextFromImageAfterLabel(OcrFilePath, FirstString);
+                    resultText = GingerOcrOperations.ReadTextFromImageAfterLabel(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -288,7 +288,7 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrImageOperations.ReadTextBetweenTwoStrings:
-                    resultText = GingerOcrOperations.ReadTextFromImageBetweenStrings(OcrFilePath, FirstString, SecondString);
+                    resultText = GingerOcrOperations.ReadTextFromImageBetweenStrings(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(SecondString));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -299,7 +299,7 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrImageOperations.ReadAllText:
-                    resultText = GingerOcrOperations.ReadTextFromImage(OcrFilePath);
+                    resultText = GingerOcrOperations.ReadTextFromImage(ValueExpression.Calculate(OcrFilePath));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -322,7 +322,7 @@ namespace GingerCore
             switch (SelectedOcrPdfOperation)
             {
                 case eActOcrPdfOperations.ReadTextAfterLabel:
-                    resultText = GingerOcrOperations.ReadTextAfterLabelPdf(OcrFilePath, FirstString, PageNumber, OcrPassword);
+                    resultText = GingerOcrOperations.ReadTextAfterLabelPdf(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(PageNumber), ValueExpression.Calculate(OcrPassword));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -333,7 +333,8 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrPdfOperations.ReadTextBetweenTwoStrings:
-                    resultText = GingerOcrOperations.ReadTextBetweenLabelsPdf(OcrFilePath, FirstString, SecondString, PageNumber, OcrPassword);
+                    resultText = GingerOcrOperations.ReadTextBetweenLabelsPdf(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString),
+                        ValueExpression.Calculate(SecondString), ValueExpression.Calculate(PageNumber), ValueExpression.Calculate(OcrPassword));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -344,7 +345,7 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrPdfOperations.ReadTextFromPDFSinglePage:
-                    resultText = GingerOcrOperations.ReadTextFromPdfSinglePage(OcrFilePath, PageNumber, OcrPassword);
+                    resultText = GingerOcrOperations.ReadTextFromPdfSinglePage(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(PageNumber), ValueExpression.Calculate(OcrPassword));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -359,7 +360,9 @@ namespace GingerCore
                     {
                         GetFromRowNumber = "0";
                     }
-                    resultText = GingerOcrOperations.ReadTextFromPdfTable(OcrFilePath, FirstString, PageNumber, bool.Parse(UseRowNumber), int.Parse(GetFromRowNumber), ElementLocateBy, ConditionColumnName, ConditionColumnValue, OcrPassword);
+                    resultText = GingerOcrOperations.ReadTextFromPdfTable(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(PageNumber), bool.Parse(UseRowNumber),
+                        int.Parse(ValueExpression.Calculate(GetFromRowNumber)), ElementLocateBy, ValueExpression.Calculate(ConditionColumnName),
+                        ValueExpression.Calculate(ConditionColumnValue), ValueExpression.Calculate(OcrPassword));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
