@@ -128,16 +128,6 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredDescription("Appium capabilities")]
         public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
 
-        [UserConfigured]
-        [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Applitool View Key number")]
-        public String ApplitoolsViewKey { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Applitool Server Url")]
-        public String ApplitoolsServerUrl { get; set; }
-
         protected IWebDriver webDriver;
 
 
@@ -2937,12 +2927,12 @@ namespace Amdocs.Ginger.CoreNET
 
         public string GetApplitoolServerURL()
         {
-            return this.ApplitoolsServerUrl;
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
         }
 
         public string GetApplitoolKey()
         {
-            return this.ApplitoolsViewKey;
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
         }
 
         public ePlatformType GetPlatform()
@@ -3119,6 +3109,16 @@ namespace Amdocs.Ginger.CoreNET
         public Bitmap GetElementScreenshot(Act act)
         {
             throw new NotImplementedException();
+        }
+
+        public string GetAgentAppName()
+        {
+            return this.Platform.ToString();
+        }
+
+        public string GetViewport()
+        {
+            return Driver.Manage().Window.Size.ToString();
         }
     }
 

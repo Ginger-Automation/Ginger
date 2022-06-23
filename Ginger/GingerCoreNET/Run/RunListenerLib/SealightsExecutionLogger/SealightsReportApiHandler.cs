@@ -50,8 +50,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             mContext = context;
             mVE = new GingerCore.ValueExpression(mContext.Environment, mContext.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
 
-            EndPointUrl = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsURL;
-            Token = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsAgentToken;
+            EndPointUrl = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL;
+            Token = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken;
 
             mVE.Value = EndPointUrl;  // Calculate the value Expression
             EndPointUrl = mVE.ValueCalculated;
@@ -142,10 +142,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 restRequest.AddHeader("Content-Type", "application/json");
                 restRequest.AddHeader("Authorization", "Bearer " + Token);
 
-                string labId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLabId;
-                string testStage = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsTestStage;
-                string bsId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID;
-                string sessionTimeout = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsSessionTimeout;
+                string labId = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId;
+                string testStage = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestStage;
+                string bsId = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID;
+                string sessionTimeout = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout;
 
                 // Calculate the value Expression
                 mVE.Value = labId;  
