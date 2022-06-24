@@ -6682,6 +6682,7 @@ namespace GingerCore.Drivers
                     String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
                     var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
 
+                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkLogs));
                     foreach (var item in networkLogs)
                     {
                         Dictionary<string, object> dict = item as Dictionary<string, object>;
