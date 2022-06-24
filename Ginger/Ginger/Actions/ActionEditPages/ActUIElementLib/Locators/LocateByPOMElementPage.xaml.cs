@@ -36,6 +36,8 @@ using GingerCore.Platforms;
 using GingerCore.Actions;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.Run;
+using System.Windows.Media.Imaging;
+using Ginger.Actions.UserControls;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -148,6 +150,16 @@ namespace Ginger.Actions._Common.ActUIElementLib
                                 //SetElementTypeProperty(selectedPOMElement.ElementTypeEnum); //we don't want it to overwrite user type selection in case it is diffrent from element type                                
                                 SetElementViewText(selectedPOMElement.ElementName, selectedPOMElement.ElementTypeEnum.ToString());
                                 HighlightButton.IsEnabled = true;
+
+                                //update screenshot
+                                BitmapSource source = null;
+                                if (selectedPOMElement.ScreenShotImage != null)
+                                {
+                                    source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(selectedPOMElement.ScreenShotImage.ToString()));
+                                    xElementScreenShotFrame.Content = new ScreenShotViewPage(selectedPOMElement?.ElementName, source);
+                                    xElementScreenShotFrame.Visibility = Visibility.Visible;
+                                }
+                                
                             }
                         }
                     }
@@ -233,35 +245,39 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void HideElementSelection()
         {
-            xSpaceCol.Width = new GridLength(0);
+            //xSpaceCol.Width = new GridLength(0);
             xPOMElementsLbl.Visibility = Visibility.Collapsed;
-            xElementLblCol.Width = new GridLength(0);
+            //xElementLblCol.Width = new GridLength(0);
             xPOMElementTextBox.Visibility = Visibility.Collapsed;
-            xElementTxtBoxCol.Width = new GridLength(0);
+            //xElementTxtBoxCol.Width = new GridLength(0);
             ArrowDownButton.Visibility = Visibility.Collapsed;
             HighlightButton.Visibility = Visibility.Collapsed;
-            xElementControlsCol.Width = new GridLength(0);
+            //xElementControlsCol.Width = new GridLength(0);
             xPOMTitleLbl.Visibility = Visibility.Collapsed;
             xPOMGrid.ColumnDefinitions[0].Width = new GridLength(0);
+
+            xElementScreenShotFrame.Visibility = Visibility.Visible;
         }
 
         private void AllowElementSelection()
         {
             if (!mOnlyPOMRequest)
             {
-                xSpaceCol.Width = new GridLength(10);
+                //xSpaceCol.Width = new GridLength(10);
                 xPOMElementsLbl.Visibility = Visibility.Visible;
-                xElementLblCol.Width = new GridLength(50);
+                //xElementLblCol.Width = new GridLength(50);
                 xPOMElementTextBox.Visibility = Visibility.Visible;
-                xElementTxtBoxCol.Width = new GridLength(100,GridUnitType.Star);
+                //xElementTxtBoxCol.Width = new GridLength(100,GridUnitType.Star);
                 ArrowDownButton.Visibility = Visibility.Visible;
                 HighlightButton.Visibility = Visibility.Visible;
-                xElementControlsCol.Width = new GridLength(45);
+                //xElementControlsCol.Width = new GridLength(45);
                 xPOMTitleLbl.Visibility = Visibility.Visible;
                 xPOMElementsGrid.Visibility = Visibility.Visible;
                 xSelectElement.Visibility = Visibility.Visible;
                 xPOMElementsGrid.Refresh();
                 ArrowExpended = true;
+
+                xElementScreenShotFrame.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -288,6 +304,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             xPOMElementTextBox.Visibility = Visibility.Visible;
             xPOMElementsGrid.Visibility = Visibility.Collapsed;
             xSelectElement.Visibility = Visibility.Collapsed;
+            xElementScreenShotFrame.Visibility = Visibility.Collapsed;
             ArrowExpended = false;            
             if (xPOMElementsGrid.Grid.SelectedItem != null)
             {
@@ -297,6 +314,15 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 SetElementTypeProperty(selectedElement.ElementTypeEnum);
                 SetElementViewText(selectedElement.ElementName, selectedElement.ElementTypeEnum.ToString());
                 HighlightButton.IsEnabled = true;
+
+                //update screenshot
+                BitmapSource source = null;
+                if (selectedElement.ScreenShotImage != null)
+                {
+                    source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(selectedElement.ScreenShotImage.ToString()));
+                    xElementScreenShotFrame.Content = new ScreenShotViewPage(selectedElement?.ElementName, source);
+                    xElementScreenShotFrame.Visibility = Visibility.Visible;
+                }
             }            
         }
 
