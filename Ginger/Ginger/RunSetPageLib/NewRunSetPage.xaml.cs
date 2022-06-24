@@ -35,6 +35,7 @@ using Ginger.SolutionCategories;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControlsLib.VisualFlow;
 using Ginger.ValidationRules;
+using Ginger.Configurations;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
@@ -630,9 +631,9 @@ namespace Ginger.Run
             xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealighsLabId), "Lab ID or Build Session ID must be provided"));
             xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
 
-            mRunSetConfig.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsLabId));
-            mRunSetConfig.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsTestStage));
-            mRunSetConfig.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
+            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsLabId));
+            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsTestStage));
+            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsBuildSessionID));
 
             xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
             xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
@@ -678,7 +679,7 @@ namespace Ginger.Run
            
 
             //Sealights Logger configuration settings should be visible only if the Sealight logger is set to yes in Configurations tab
-            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.No)
+            if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.No)
             {
                 xSealighsExpander.Visibility = Visibility.Collapsed;
             }
@@ -701,7 +702,7 @@ namespace Ginger.Run
 
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID.Trim() == "")
             {
-                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID;
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID;
             }
         }
 
@@ -711,7 +712,7 @@ namespace Ginger.Run
 
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId.Trim() == "")
             {
-                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLabId;
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId;
             }
         }
 
@@ -721,7 +722,7 @@ namespace Ginger.Run
 
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage.Trim() == "")
             {
-                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsTestStage;
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestStage;
             }
         }
 

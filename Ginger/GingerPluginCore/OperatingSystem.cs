@@ -36,9 +36,9 @@ namespace GingerPluginCore
         public static string GetCurrentOS()
         {
             return
-            (IsWindows() ? "windows" : null) ??
-            (IsMacOS() ? "mac" : null) ??
-            (IsLinux() ? "linux" : null);
+            (IsWindows() ? "Windows" : null) ??
+            (IsMacOS() ? "Mac" : null) ??
+            (IsLinux() ? "Linux" : null);
         }
     }
 

@@ -324,7 +324,7 @@ namespace GingerCore.Actions.VisualTesting
                 mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
                 mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
                 
-                SetUp(newmEyes, mDriver.GetApplitoolServerURL(), mDriver.GetApplitoolKey(), eBrowserType.Chrome, mDriver.GetEnvironment());
+                SetUp(newmEyes, mDriver.GetApplitoolServerURL(), mDriver.GetApplitoolKey(), ((SeleniumDriver)mDriver).GetBrowserType(), mDriver.GetEnvironment());
                 mAct.CheckSetAppWindowSize();
                 mResolution = mAct.GetWindowResolution();
                 newmEyes.Open(mDriver.GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
@@ -670,7 +670,7 @@ namespace GingerCore.Actions.VisualTesting
 
                 case HttpStatusCode.Accepted:
                     var location = responseReceived.Headers.GetValues("Location");
-                    URI = location.First() + "?apiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
+                    URI = location.First() + "?apiKey=" + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
 
                     request = new HttpRequestMessage(HttpMethod.Get, URI);
                     HttpResponseMessage response = longRequestLoop(request, LONG_REQUEST_DELAY_MS);
@@ -678,7 +678,7 @@ namespace GingerCore.Actions.VisualTesting
 
                 case HttpStatusCode.Created:
                     var location2 = responseReceived.Headers.GetValues("Location");
-                    URI = location2.First() + "?apiKey=" + ((SeleniumDriver)mDriver).ApplitoolsViewKey;
+                    URI = location2.First() + "?apiKey=" + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
                     request = new HttpRequestMessage(HttpMethod.Delete, URI);
                     return sendRequest(request, 1, false);
 

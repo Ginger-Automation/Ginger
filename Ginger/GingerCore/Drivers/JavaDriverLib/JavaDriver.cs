@@ -693,6 +693,12 @@ namespace GingerCore.Drivers.JavaDriverLib
                     Response = SmartSyncHandler((ActSmartSync)act);
                     break;
 
+                case "ActVisualTesting":
+                    ActVisualTesting actVisual = (ActVisualTesting)act;
+                    actVisual.Execute(this);
+                    return;
+                    break;
+
                 default:
                     throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
             }
@@ -4085,6 +4091,29 @@ namespace GingerCore.Drivers.JavaDriverLib
         public Bitmap GetElementScreenshot(Act act)
         {
             throw new NotImplementedException();
+        }
+
+        public string GetAgentAppName()
+        {
+            return this.Platform.ToString();
+        }
+
+        public string GetViewport()
+        {
+            ElementInfo EI = new ElementInfo();
+            EI.XPath = "/";
+            EI.ElementType = eElementType.Window.ToString();
+            EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
+
+            Size size = new Size();
+            int Height = 0;
+            int Width = 0;
+            int.TryParse(EI.Properties.Where(item => item.Name == "Height").FirstOrDefault().Value, out Height);
+            int.TryParse(EI.Properties.Where(item => item.Name == "Width").FirstOrDefault().Value, out Width);
+
+            size.Height = Height;
+            size.Width = Width;
+            return size.ToString();
         }
     }
 }

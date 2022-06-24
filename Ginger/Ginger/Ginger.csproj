@@ -281,8 +281,14 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ExternalConfigurations\ExternalConfigurationsPage.xaml.cs">
-      <DependentUpon>ExternalConfigurationsPage.xaml</DependentUpon>
+    <Compile Include="ExternalConfigurations\ApplitoolsExternalConfigurationsPage.xaml.cs">
+      <DependentUpon>ApplitoolsExternalConfigurationsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ExternalConfigurations\SealightsExternalConfigurationsPage.xaml.cs">
+      <DependentUpon>SealightsExternalConfigurationsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ExternalConfigurations\VRTExternalConfigurationsPage.xaml.cs">
+      <DependentUpon>VRTExternalConfigurationsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Reports\ValidationRules\ValidateEmptyValue.cs" />
     <Compile Include="Reports\ValidationRules\ValidateNumberInputRule.cs" />
@@ -3029,7 +3035,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ExternalConfigurations\ExternalConfigurationsPage.xaml">
+    <Page Include="ExternalConfigurations\ApplitoolsExternalConfigurationsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ExternalConfigurations\SealightsExternalConfigurationsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ExternalConfigurations\VRTExternalConfigurationsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3472,6 +3486,9 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\androidWhite.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\iosWhite.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\ApplitoolsLogo.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\VRTLogo.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
