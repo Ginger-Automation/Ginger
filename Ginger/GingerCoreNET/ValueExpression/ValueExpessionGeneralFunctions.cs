@@ -81,9 +81,12 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
         [ValueExpressionFunctionSubCategory("Functions")]
         public string GetHashedDataByteString(object[] obj)
         {
+            Encoding asciiEncoding = System.Text.Encoding.GetEncoding("ISO646-US", new EncoderReplacementFallback(""), new DecoderReplacementFallback());
+            Encoding utf8Encoding = System.Text.Encoding.GetEncoding("UTF-8");
             SHA1CryptoServiceProvider sha1Hasher = new SHA1CryptoServiceProvider();
-            byte[] hashedDataBytes = sha1Hasher.ComputeHash(Encoding.UTF8.GetBytes(obj[0].ToString().ToCharArray()));
-            return ASCIIEncoding.ASCII.GetString( hashedDataBytes);
+            byte[] hashedDataBytes = sha1Hasher.ComputeHash(Encoding.UTF8.GetBytes((obj[0].ToString()).ToCharArray()));
+            byte[] asciiBytes = Encoding.Convert(utf8Encoding, asciiEncoding, hashedDataBytes);
+            return asciiEncoding.GetString(asciiBytes);
         }
 
         [ValueExpressionFunctionAttribute]

@@ -233,7 +233,7 @@ namespace VisualRegressionTracker
                         errorString = $"No baseline: {result.Url}";
                         break;
                     case TestRunStatus.Unresolved:
-                        errorString = $"Difference found: {result.Url}";
+                        errorString = $"Difference found: {result.DiffUrl}";
                         break;
                     
                     default:

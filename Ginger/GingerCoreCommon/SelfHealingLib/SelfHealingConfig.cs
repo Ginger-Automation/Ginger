@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -34,15 +34,25 @@ namespace Amdocs.Ginger.Common.SelfHealingLib
         public bool AutoUpdateApplicationModel { get; set; }
 
         [IsSerializedForLocalRepository]
-        public bool AutoExecuteInSimulateionMode{ get; set; }
+        public bool AutoExecuteInSimulationMode{ get; set; }
 
         public bool SaveChangesInSourceControl { get; set; }
 
-
-        //[IsSerializedForLocalRepository]
-
-       // public bool UseVirtulaEnviroment { get; set; }
         public override string ItemName { get { return string.Empty; } set { } }
+
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType == SerializationErrorType.PropertyNotFound)
+            {
+                if (name == "AutoExecuteInSimulateionMode")
+                {
+                    bool.TryParse(value, out bool res);
+                    this.AutoExecuteInSimulationMode = res;
+                    return true;
+                }
+            }
+            return false;
+        }
 
     }
 }
