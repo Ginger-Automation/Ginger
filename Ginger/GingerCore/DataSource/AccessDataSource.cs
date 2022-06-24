@@ -386,13 +386,22 @@ namespace GingerCore.DataSource
             mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
             foreach (string sColName in mColumnNames)
             {
+                string colType = mDSTableDetails.DSC.GetTable(mDSTableDetails.Name).Columns[sColName].DataType.ToString();
+                
                 if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
                 {
-                        dr[sColName] = "";
+                    if (colType=="Int32")
+                    {
+                        dr[sColName] = 0;
+                    }
+                    else if (colType == "String")
+                    {
+                        dr[sColName] = string.Empty;
+                    }
                 }
                 else if (sColName == "GINGER_ID")
                 {
-                        dr[sColName] = System.DBNull.Value;
+                    dr[sColName] = System.DBNull.Value;
                 }
             }
             mDSTableDetails.DataTable.Rows.Add(dr);
