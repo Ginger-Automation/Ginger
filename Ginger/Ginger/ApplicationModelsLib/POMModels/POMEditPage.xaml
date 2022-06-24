@@ -54,10 +54,10 @@
                             </StackPanel>
                             <TextBox x:Name="xDescriptionTextBox" Margin="10,0,0,0" TextWrapping="WrapWithOverflow" Height="35" Style="{StaticResource $MultiRowsTextBoxStyle}" Grid.Column="0" Grid.Row="3"/>
 
-                            <Label Style="{StaticResource $LabelStyle}" Content="Target Application:" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="0"/>
-                            <ComboBox x:Name="xTargetApplicationComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="10,0,0,0" SelectionChanged="xTargetApplicationComboBox_SelectionChanged" Width="250" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"></ComboBox>
+                            <Label Style="{StaticResource $LabelStyle}" Content="Target Application:" Margin="15,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="0"/>
+                            <ComboBox x:Name="xTargetApplicationComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="20,0,0,0" SelectionChanged="xTargetApplicationComboBox_SelectionChanged" Width="250" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"></ComboBox>
 
-                            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2" Margin="10,0,0,0">
+                            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2" Margin="20,0,0,0">
                                 <Label Style="{StaticResource $LabelStyle}" Content="Page Loading Option:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                 <RadioButton x:Name="xPageUrlRadioBtn"  Content="URL"  Tag="radPageURL" Checked="xRadioBtn_Checked" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" />
                                 <RadioButton x:Name="xBusinessFlowRadioBtn" Tag="radPageURL" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Checked="xRadioBtn_Checked" >
@@ -67,7 +67,7 @@
                                 </RadioButton>
                             </StackPanel>
                             
-                            <StackPanel Grid.Column="1" Grid.Row="3" Margin="10,0,0,0">
+                            <StackPanel Grid.Column="1" Grid.Row="3" Margin="20,0,0,0">
                                 <StackPanel x:Name="xPageUrlStackPanel" Orientation="Horizontal" >
                                     <UserControl:UCValueExpression x:Name="xPageURLTextBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250"/>
                                     <UserControls:ucButton x:Name="xPageURLBtn" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoNext" Click="xPageURLBtn_Click" ToolTip="Go to Page" Margin="0,0,0,0"/>
@@ -75,7 +75,7 @@
                                 <Frame VerticalAlignment="Top" Margin="0,0,0,0" x:Name="xFrameBusinessFlowControl" NavigationUIVisibility="Hidden" HorizontalAlignment="Left" BorderBrush="Transparent"/>
                             </StackPanel>
 
-                            <agents:ucAgentControl x:Name="xAgentControlUC" Grid.Column="2" Grid.RowSpan="3" AgentStartedUCEvent="AgentStartedHandler" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0" ></agents:ucAgentControl>
+                            <agents:ucAgentControl x:Name="xAgentControlUC" Grid.Column="2" Grid.RowSpan="3" Width="250" AgentStartedUCEvent="AgentStartedHandler" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" ></agents:ucAgentControl>
 
                         </Grid>
                     </StackPanel>
