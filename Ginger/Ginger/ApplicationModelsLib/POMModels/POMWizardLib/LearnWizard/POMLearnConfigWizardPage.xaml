@@ -35,7 +35,7 @@
 
             <DockPanel x:Name="xLearningConfigsPnl" Grid.Row="1" Margin="5,0,10,0">
                 <Label DockPanel.Dock="Top" HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}" Margin="0,10,0,0" >Agent Settings:</Label>
-                <agents:ucAgentControl x:Name="xAgentControlUC" AutomationProperties.AutomationId="ucAgentControl AID" DockPanel.Dock="Top" Margin="5,0,0,20"></agents:ucAgentControl>
+                <agents:ucAgentControl x:Name="xAgentControlUC" AutomationProperties.AutomationId="ucAgentControl AID" DockPanel.Dock="Top" Margin="5,0,0,0"></agents:ucAgentControl>
 
                 
                 <DockPanel>
@@ -57,6 +57,7 @@
                                 </Grid>
                             </StackPanel>
 
+                            <CheckBox x:Name="xLearnScreenshotsOfElements" AutomationProperties.AutomationId="LearnScreenshotsElementsCheckBox AID" Content="Learn Sreenshots of Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="False" Style="{StaticResource $CeckBoxStyle}"/>
                             <CheckBox x:Name="xLearnOnlyMappedElements" AutomationProperties.AutomationId="LearnOnlyMappedElementsCheckBox AID" Content="Learn Only Mapped Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="False" Style="{StaticResource $CeckBoxStyle}"/>
                             <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" Margin="5,0,0,0">
                                 <Expander.Header>

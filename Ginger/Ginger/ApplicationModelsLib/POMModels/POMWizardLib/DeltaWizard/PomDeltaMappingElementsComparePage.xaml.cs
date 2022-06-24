@@ -38,7 +38,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             // set delement gridview
             SetElementLocatorsGridView(new GridViewDef(GridViewDef.DefaultViewName));
             xDeletedElementDetails.xLocatorsGrid.DataSourceList = deletedElement.ElementInfo.Locators;
-            xDeletedElementDetails.xSelectedElementTextBlock.Text = "Deleted Element";
+            //xDeletedElementDetails.xSelectedElementTextBlock.Text = "Deleted Element";
             xDeletedElementDetails.xLocatorsGrid.AllowHorizentalScroll = true;
             SetElementPropertiesGridView(new GridViewDef(GridViewDef.DefaultViewName));
             xDeletedElementDetails.xPropertiesGrid.DataSourceList = deletedElement.ElementInfo.Properties;
@@ -47,7 +47,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             //set new added element grdiview
             SetElementLocatorsGridView(new GridViewDef(GridViewDef.DefaultViewName), false);
             SetElementPropertiesGridView(new GridViewDef(GridViewDef.DefaultViewName), false);
-            xAddedElementDetails.xSelectedElementTextBlock.Text = "New Added Element";
+            //xAddedElementDetails.xSelectedElementTextBlock.Text = "New Added Element";
             xAddedElementDetails.xLocatorsGrid.AllowHorizentalScroll = true;
             xAddedElementDetails.xPropertiesGrid.AllowHorizentalScroll = true;
             if (newAddedElement != null)

@@ -1237,6 +1237,11 @@ namespace GingerCore.Drivers
                 {
                     AddCurrentScreenShot(act);
                 }
+                if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                {
+                    Bitmap img = GetScreenShot(true);
+                    act.AddScreenShot(img, Driver.Title);
+                }
                 else
                 {
                     //keep the current window and switch back at the end
@@ -4021,6 +4026,16 @@ namespace GingerCore.Drivers
                                         CreateXpathFromUserTemplate(template, foundElemntInfo);
                                     }
                                 }
+                            }
+                            //Element Screenshot
+                            var screenshot = ((ITakesScreenshot)webElement).GetScreenshot();
+                            Bitmap image = ScreenshotToImage(screenshot);
+                            //foundElemntInfo.ScreenShotImage = BitmapToBase64(screenshot);
+                            using (MemoryStream ms = new MemoryStream())
+                            {
+                                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                                byte[] byteImage = ms.ToArray();
+                                foundElemntInfo.ScreenShotImage = Convert.ToBase64String(byteImage);
                             }
 
                             foundElemntInfo.IsAutoLearned = true;
