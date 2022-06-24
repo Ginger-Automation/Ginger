@@ -24,7 +24,7 @@ using GingerCore;
 using System;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
-
+using Ginger.Configurations;
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIArgs : ICLI
@@ -81,13 +81,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             if (cliHelper.SetSealightsSettings)
             {               
-                options.SealightsEnable = solution.LoggerConfigurations.SealightsLog == eSealightsLog.Yes ? true : false;
-                options.SealightsLabID = solution.LoggerConfigurations.SealightsLabId;
-                options.SealightsSessionID = solution.LoggerConfigurations.SealightsBuildSessionID;
-                options.SealightsTestStage = solution.LoggerConfigurations.SealightsTestStage;
-                options.SealightsSessionTimeOut = solution.LoggerConfigurations.SealightsSessionTimeout;
-                options.SealightsEntityLevel = solution.LoggerConfigurations.SealightsReportedEntityLevel.ToString();
-                options.SealightsAgentToken = solution.LoggerConfigurations.SealightsAgentToken;
+                options.SealightsEnable = solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.Yes ? true : false;
+                options.SealightsLabID = solution.SealightsConfiguration.SealightsLabId;
+                options.SealightsSessionID = solution.SealightsConfiguration.SealightsBuildSessionID;
+                options.SealightsTestStage = solution.SealightsConfiguration.SealightsTestStage;
+                options.SealightsSessionTimeOut = solution.SealightsConfiguration.SealightsSessionTimeout;
+                options.SealightsEntityLevel = solution.SealightsConfiguration.SealightsReportedEntityLevel.ToString();
+                options.SealightsAgentToken = solution.SealightsConfiguration.SealightsAgentToken;
 
                 //  Check Sealights's values on run-set levels
                 if (runsetExecutor.RunSetConfig.SealighsLabId != null)

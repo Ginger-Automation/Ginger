@@ -269,7 +269,7 @@ namespace Ginger.Run
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
 
-            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes)
+            if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
@@ -296,7 +296,7 @@ namespace Ginger.Run
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
 
-            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes)
+            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
@@ -1098,7 +1098,7 @@ namespace Ginger.Run
 
         private void SelfHealingExecuteInSimulationMode(Act act)
         {
-            if (act.Status == eRunStatus.Failed && act.SupportSimulation && ((ExecutedFrom == eExecutedFrom.Automation && WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoExecuteInSimulateionMode) || (ExecutedFrom == eExecutedFrom.Run && WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoExecuteInSimulateionMode)))
+            if (act.Status == eRunStatus.Failed && act.SupportSimulation && ((ExecutedFrom == eExecutedFrom.Automation && WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoExecuteInSimulationMode) || (ExecutedFrom == eExecutedFrom.Run && WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoExecuteInSimulationMode)))
             {
                 var isSimulationModeTemp = mGingerRunner.RunInSimulationMode;
                 var actErrorBeforeSimulation = act.Error;
@@ -4855,6 +4855,8 @@ namespace Ginger.Run
             activity.StartTimeStamp = DateTime.UtcNow;
             activity.EndTimeStamp = DateTime.UtcNow;
 
+
+
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
                 runnerListener.ActivitySkipped(evetTime, activity);
@@ -4898,6 +4900,9 @@ namespace Ginger.Run
         private void NotifyBusinessFlowSkipped(BusinessFlow businessFlow, bool ContinueRun = false)
         {
             uint evetTime = RunListenerBase.GetEventTime();
+
+            businessFlow.StartTimeStamp = DateTime.UtcNow;
+            businessFlow.EndTimeStamp = DateTime.UtcNow;
 
             foreach (RunListenerBase runnerListener in mRunListeners)
             {
@@ -4949,7 +4954,10 @@ namespace Ginger.Run
         private void NotifyActivityGroupSkipped(ActivitiesGroup activityGroup, bool offlineMode = false)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+
+            activityGroup.StartTimeStamp = DateTime.UtcNow;
             activityGroup.EndTimeStamp = DateTime.UtcNow;
+
             foreach (RunListenerBase runnerListener in mRunListeners)
             {                
                 runnerListener.ActivityGroupSkipped(eventTime, activityGroup, offlineMode);
