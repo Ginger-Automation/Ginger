@@ -151,15 +151,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                                 SetElementViewText(selectedPOMElement.ElementName, selectedPOMElement.ElementTypeEnum.ToString());
                                 HighlightButton.IsEnabled = true;
 
-                                //update screenshot
-                                BitmapSource source = null;
-                                if (selectedPOMElement.ScreenShotImage != null)
-                                {
-                                    source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(selectedPOMElement.ScreenShotImage.ToString()));
-                                    xElementScreenShotFrame.Content = new ScreenShotViewPage(selectedPOMElement?.ElementName, source);
-                                    xElementScreenShotFrame.Visibility = Visibility.Visible;
-                                }
-                                
+                                UpdatedElementScreenshot(selectedPOMElement);
                             }
                         }
                     }
@@ -245,14 +237,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void HideElementSelection()
         {
-            //xSpaceCol.Width = new GridLength(0);
             xPOMElementsLbl.Visibility = Visibility.Collapsed;
-            //xElementLblCol.Width = new GridLength(0);
             xPOMElementTextBox.Visibility = Visibility.Collapsed;
-            //xElementTxtBoxCol.Width = new GridLength(0);
             ArrowDownButton.Visibility = Visibility.Collapsed;
             HighlightButton.Visibility = Visibility.Collapsed;
-            //xElementControlsCol.Width = new GridLength(0);
             xPOMTitleLbl.Visibility = Visibility.Collapsed;
             xPOMGrid.ColumnDefinitions[0].Width = new GridLength(0);
 
@@ -263,14 +251,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             if (!mOnlyPOMRequest)
             {
-                //xSpaceCol.Width = new GridLength(10);
                 xPOMElementsLbl.Visibility = Visibility.Visible;
-                //xElementLblCol.Width = new GridLength(50);
                 xPOMElementTextBox.Visibility = Visibility.Visible;
-                //xElementTxtBoxCol.Width = new GridLength(100,GridUnitType.Star);
                 ArrowDownButton.Visibility = Visibility.Visible;
                 HighlightButton.Visibility = Visibility.Visible;
-                //xElementControlsCol.Width = new GridLength(45);
                 xPOMTitleLbl.Visibility = Visibility.Visible;
                 xPOMElementsGrid.Visibility = Visibility.Visible;
                 xSelectElement.Visibility = Visibility.Visible;
@@ -314,16 +298,20 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 SetElementTypeProperty(selectedElement.ElementTypeEnum);
                 SetElementViewText(selectedElement.ElementName, selectedElement.ElementTypeEnum.ToString());
                 HighlightButton.IsEnabled = true;
+                UpdatedElementScreenshot(selectedElement);
+            }
+        }
 
-                //update screenshot
-                BitmapSource source = null;
-                if (selectedElement.ScreenShotImage != null)
-                {
-                    source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(selectedElement.ScreenShotImage.ToString()));
-                    xElementScreenShotFrame.Content = new ScreenShotViewPage(selectedElement?.ElementName, source);
-                    xElementScreenShotFrame.Visibility = Visibility.Visible;
-                }
-            }            
+        private void UpdatedElementScreenshot(ElementInfo selectedElement)
+        {
+            //update screenshot
+            BitmapSource source = null;
+            if (selectedElement.ScreenShotImage != null)
+            {
+                source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(selectedElement.ScreenShotImage.ToString()));
+                xElementScreenShotFrame.Content = new ScreenShotViewPage(selectedElement?.ElementName, source);
+                xElementScreenShotFrame.Visibility = Visibility.Visible;
+            }
         }
 
         private void SetControlsGridView()

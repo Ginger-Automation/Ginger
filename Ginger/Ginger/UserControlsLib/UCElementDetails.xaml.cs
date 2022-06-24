@@ -187,19 +187,6 @@ namespace Ginger
 
             InitControlPropertiesGridView();
 
-            //BitmapSource source = null;
-            //if (POMElement != null && POMElement.ScreenShotImage != null)
-            //{
-            //    source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(POMElement.ScreenShotImage.ToString()));
-            //}
-            ////if(source == null)
-            ////{
-            ////    string img = "iVBORw0KGgoAAAANSUhEUgAAAf4AAAAUCAYAAABsx191AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAOxSURBVHhe7ZrPTRtBGEddAA3QAR3QASVQAh3QAi3QAi2gRCJcUSQ4JDdLEcccuBCRHDd6jn/wZbW2F3aQkP2eNNrdmW/+rC9vvlnPOhEREdkZFL+IiMgOofhFRER2CMUvIiKyQyh+ERGRHWIrxX96etrNZrPu4eFhWfM+tJ7n8vJyMd7FxcWyRkRE5G18+/6ju/py2z0+/l7W/EPxT+D8/Lw7PDxU/CIi8qFA+p8+f12UvvwV/wdC8YuISAuurm6fxV/lz4agifhvbm66o6OjhbQoZMHHx8f/yZfryclJt7e39xzHc5XzmBhA7Pv7+4t2Ys/Ozp5j085znZv1ZFyum+RKHO/Rfy/eNdR5EsdaAicC1GVdm9ah+EVEpAVIvi//lMniR2YIDBEjLOR1cHCwEBgl8o0YkSUxkSYyDWNiUodMiYn0U1djMjf9WSMipg/PtK8TbMZkTfShb4Sdces8+R0ogd+EMp/PF8+b1kFdfRYREXkrq+Q/WfwRL9IKkWCkSJbMfcQcIk76jokBxkXGkS/UzUB9Jgbpcl8zceoRMuOsgj7E1HmyRsaHOg/kt+CabJ8rjFmH4hcRkZYg/+biR1pk+FWQUI/6I8R6TA6RIQIdExPxRqYhMUPij4CJqRCLdFdRx6vwrjmB6IsfGJPNCVfi0jZmHYpfRERaUv/k10z8yA0Z9qlSHBJkoB75jYlZJ8bEwNDcq8rQfEDbkPjr+w6tOWuk5JQCxqxD8YuISCuGpN9E/GT8Q5kz9RHae2f8qV8nfqQ6VF4r/k0ZfzJ7Cu1hzDq4EqP4RURkCkPSv7ubL775N/vGX4WNxF7zjZ/2MTGQb/yVxAyJP+P2ZUoMnyNWQR/mqtRNCNR5IHMxbjY+yLy2rVuH4hcRkRb0/9THRgD45j9Z/JE8WT/CopAVIzBKpBgRImcEF2lS/5qY1PVjUldj0ocMnWey8dqHTcsqMibvQp+8F++a7/R1Hgq/ATG05zntsGkd1PGs+EVEZAq/fr38oz/SD5PFD2SzkRqFDLb+uQ+4IuacBHBFfGmHMTFAXWKQa47XV4mfK+upfYbGrRBXM3cK74icQ52HNsav7cny2QwQs2kdil9ERFrx9PSnu7//uXx6YbL4yW6r7AIijPBawlzJuEOE2f/2PwXGy0ZCRERkW5gs/kgXSSarTSb8HuJkQ0GmnM0G1/4RfAsUv4iIbCOz6+vr5e3b4Wg6R90Ik3uy79bZPjAmx+XInrnYBPDMsXpLFL+IiGwfXfcXgSs5dIKPm8AAAAAASUVORK5CYII=";
-            ////    source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(img));
-
-            ////}
-            //mScreenShotViewPage = new ScreenShotViewPage(POMElement?.ElementName, source);
-            //xElementScreenShotFrame.Content = mScreenShotViewPage;
         }
 
         private void ElementDetailsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
