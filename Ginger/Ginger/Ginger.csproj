@@ -290,6 +290,8 @@
     <Compile Include="ExternalConfigurations\VRTExternalConfigurationsPage.xaml.cs">
       <DependentUpon>VRTExternalConfigurationsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Drivers\DriversWindows\DeviceInfo.cs" />
+    <Compile Include="Drivers\DriversWindows\DeviceInfo.cs" />
     <Compile Include="Reports\ValidationRules\ValidateEmptyValue.cs" />
     <Compile Include="Reports\ValidationRules\ValidateNumberInputRule.cs" />
     <Compile Include="Activities\ActivityNameValidationRule.cs" />
