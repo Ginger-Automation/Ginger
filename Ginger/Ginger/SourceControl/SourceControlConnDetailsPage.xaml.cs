@@ -111,7 +111,7 @@ namespace Ginger.SourceControl
 
         public bool TestSourceControlConnection()
         {
-            bool result = SourceControlUI.TestConnection(WorkSpace.Instance.Solution.SourceControl, eSourceControlContext.ConnectionDetailsPage, false);
+            bool result = SourceControlUI.TestConnection(WorkSpace.Instance.Solution.SourceControl, false);
             Mouse.OverrideCursor = null;
             return result;
         }
@@ -123,10 +123,13 @@ namespace Ginger.SourceControl
 
         private void SaveConfiguration_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(xTextSourceControlConnectionTimeout.Text) || Int32.TryParse(xTextSourceControlConnectionTimeout.Text, out int _))
+            if (SourceControlClassTextBox.Text != "GIT")
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide valid value for connection timeout");
-                return;
+                if (string.IsNullOrEmpty(xTextSourceControlConnectionTimeout.Text) || Int32.TryParse(xTextSourceControlConnectionTimeout.Text, out int _))
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide valid value for connection timeout");
+                    return;
+                }
             }
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
         }
