@@ -1077,7 +1077,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                     string error = string.Format("Failed to find shared Activities to be added to the Virtual Business Flow");
                                     throw new Exception(error);
                                 }
-                                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(bf);
+                                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(bf, true);
                             }
 
                             if (businessFlowRun == null)
