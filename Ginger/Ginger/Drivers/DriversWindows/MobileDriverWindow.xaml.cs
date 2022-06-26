@@ -120,7 +120,7 @@ namespace Ginger.Drivers.DriversWindows
             view.GridColsView = new ObservableList<GridColView>();
 
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 6, ReadOnly = true, MaxWidth=105});
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 5, ReadOnly = true});
             view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailValue), Header = "Value", WidthWeight = 7, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.ExtraInfo), Header = "Extra Info", WidthWeight = 2, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
 
@@ -138,7 +138,7 @@ namespace Ginger.Drivers.DriversWindows
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 6, ReadOnly = true, MaxWidth = 105 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 5, ReadOnly = true});
             view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailValue), Header = "Value", WidthWeight = 7, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.ExtraInfo), Header = "Extra Info", WidthWeight = 2, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
 
@@ -229,13 +229,6 @@ namespace Ginger.Drivers.DriversWindows
                             xMessagePnl.Visibility = Visibility.Collapsed;
                             xDeviceScreenshotCanvas.Visibility = Visibility.Visible;
                             xMessageLbl.Content = "Loading Device Screenshot...";
-
-                            ////Loading image on details and metrics ucGrid
-                            //xDeviceDetailsGrid.Visibility = Visibility.Collapsed;
-                            //xDeviceMetricsGrid.Visibility = Visibility.Collapsed;
-
-                            //xDetailsLoadingPnl.Visibility = Visibility.Visible;
-                            //xMetricsLoadingPnl.Visibility = Visibility.Visible;
 
                             await RefreshDeviceScreenshotAsync();
                             SetOrientationButton();

@@ -51,7 +51,7 @@
 
                 </TabItem>
 
-                    <TabItem x:Name="xDeviceMetricsTab" Style="{StaticResource $CoolTab}" TabIndex="2">
+                    <TabItem x:Name="xDeviceMetricsTab" Style="{StaticResource $CoolTab}" TabIndex="2" >
                         <TabItem.Header>
                             <Border Style="{StaticResource $CoolTabBorderStyle}">
                                 <DockPanel >
