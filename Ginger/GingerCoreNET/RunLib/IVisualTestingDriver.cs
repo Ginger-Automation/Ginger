@@ -45,5 +45,8 @@ namespace GingerCore.Actions.VisualTesting
         string GetEnvironment();
 
         IWebDriver GetWebDriver();
+
+        string GetAgentAppName();
+        string GetViewport();
     }
 }

@@ -23,7 +23,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Configurations
 {
-    public class VRTConfiguration : RepositoryItemBase
+    public class ApplitoolsConfiguration : RepositoryItemBase
     {
         private string mApiUrl;
         [IsSerializedForLocalRepository]
@@ -56,55 +56,6 @@ namespace Ginger.Configurations
             }
         }
 
-        private string mProject;
-        [IsSerializedForLocalRepository]
-        public string Project
-        {
-            get
-            {
-                return mProject;
-            }
-            set
-            {
-                mProject = value;
-                OnPropertyChanged(nameof(Project));
-            }
-        }
-
-        private string mBranchName;
-        [IsSerializedForLocalRepository]
-        public string BranchName
-        {
-            get
-            {
-                return mBranchName;
-            }
-            set
-            {
-                mBranchName = value;
-                OnPropertyChanged(nameof(BranchName));
-            }
-        }        
-
-        public enum eEnableSoftAssert
-        {
-            Yes,
-            No
-        }
-        private eEnableSoftAssert mEnableSoftAssert = eEnableSoftAssert.No;
-
-        [IsSerializedForLocalRepository]
-        public eEnableSoftAssert EnableSoftAssert
-        {
-            get
-            {
-                return mEnableSoftAssert;
-            }
-            set
-            {
-                mEnableSoftAssert = value;
-            }
-        }
         public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
 
