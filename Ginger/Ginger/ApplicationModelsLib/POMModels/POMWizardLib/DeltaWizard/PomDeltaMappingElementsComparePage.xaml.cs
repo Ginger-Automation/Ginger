@@ -17,10 +17,12 @@ limitations under the License.
 #endregion
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Ginger.Actions.UserControls;
 using Ginger.UserControls;
 using GingerCoreNET.Application_Models;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 {
@@ -38,24 +40,36 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             // set delement gridview
             SetElementLocatorsGridView(new GridViewDef(GridViewDef.DefaultViewName));
             xDeletedElementDetails.xLocatorsGrid.DataSourceList = deletedElement.ElementInfo.Locators;
-            //xDeletedElementDetails.xSelectedElementTextBlock.Text = "Deleted Element";
             xDeletedElementDetails.xLocatorsGrid.AllowHorizentalScroll = true;
             SetElementPropertiesGridView(new GridViewDef(GridViewDef.DefaultViewName));
             xDeletedElementDetails.xPropertiesGrid.DataSourceList = deletedElement.ElementInfo.Properties;
             xDeletedElementDetails.xPropertiesGrid.AllowHorizentalScroll = true;
 
+            //update screenshot
+            BitmapSource source = null;
+            if (deletedElement.ElementInfo.ScreenShotImage != null)
+            {
+                source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(deletedElement.ElementInfo.ScreenShotImage.ToString()));
+            }
+            xDeletedElementDetails.xElementScreenShotFrame.Content = new ScreenShotViewPage(deletedElement.ElementInfo?.ElementName, source, false);
+
             //set new added element grdiview
             SetElementLocatorsGridView(new GridViewDef(GridViewDef.DefaultViewName), false);
             SetElementPropertiesGridView(new GridViewDef(GridViewDef.DefaultViewName), false);
-            //xAddedElementDetails.xSelectedElementTextBlock.Text = "New Added Element";
             xAddedElementDetails.xLocatorsGrid.AllowHorizentalScroll = true;
             xAddedElementDetails.xPropertiesGrid.AllowHorizentalScroll = true;
             if (newAddedElement != null)
             {
                 xAddedElementDetails.xLocatorsGrid.DataSourceList = newAddedElement.ElementInfo.Locators;
                 xAddedElementDetails.xPropertiesGrid.DataSourceList = newAddedElement.ElementInfo.Properties;
+                //update screenshot
+                BitmapSource newAddedElementSource = null;
+                if (newAddedElement.ElementInfo.ScreenShotImage != null)
+                {
+                    newAddedElementSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(newAddedElement.ElementInfo.ScreenShotImage.ToString()));
+                }
+                xAddedElementDetails.xElementScreenShotFrame.Content = new ScreenShotViewPage(newAddedElement.ElementInfo?.ElementName, newAddedElementSource, false);
             }
-
         }
 
         private void SetElementLocatorsGridView(GridViewDef gridViewDef,bool isDeletedElement=true)

@@ -17,9 +17,9 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1.5*"/>
             <ColumnDefinition Width="45"/>
-            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid.Resources>
             <BooleanToVisibilityConverter x:Key="boolToVisibility" />
@@ -43,7 +43,7 @@
             <usercontrols:ucButton  x:Name="HighlightButton" ToolTip="Highlight Element" ButtonType="ImageButton" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Pointer" Click="HighlightElementClicked" VerticalAlignment="Top" Margin="-10,-8,0,0"  />
         </StackPanel>
         <StackPanel Orientation="Vertical" Grid.Row="0" Grid.RowSpan="2"  Grid.Column="3">
-            <Frame x:Name="xElementScreenShotFrame" Visibility="Collapsed" Margin="0,0,0,0" MaxHeight="100" Width="500" VerticalAlignment="Center" HorizontalAlignment="Left"></Frame>
+            <Frame x:Name="xElementScreenShotFrame" Visibility="Collapsed" Margin="0,0,0,0" MaxHeight="100" Width="300" VerticalAlignment="Center" HorizontalAlignment="Left"></Frame>
         </StackPanel>
     </Grid>
 </Page>

@@ -72,6 +72,7 @@ namespace Ginger
         public Agent mAgent { get; set; }
         public Context Context;
 
+
         public bool ShowTestBtn { get; set; }
 
         public PlatformInfoBase Platform { get; set; }

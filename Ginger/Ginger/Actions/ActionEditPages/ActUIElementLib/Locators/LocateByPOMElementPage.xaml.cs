@@ -309,7 +309,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (selectedElement.ScreenShotImage != null)
             {
                 source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(selectedElement.ScreenShotImage.ToString()));
-                xElementScreenShotFrame.Content = new ScreenShotViewPage(selectedElement?.ElementName, source);
+                xElementScreenShotFrame.Content = new ScreenShotViewPage(selectedElement?.ElementName, source, false);
                 xElementScreenShotFrame.Visibility = Visibility.Visible;
             }
         }
