@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
 {
@@ -63,5 +64,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
         void PerformSendKey(string key);
 
         void OpenDeviceSettings();
+
+        Dictionary<string, string> GetDeviceCPUInfo();
+
+        Dictionary<string, string> GetDeviceMemoryInfo();
+
+        Task<string> GetDeviceNetworkInfo();
+
+        Dictionary<string, string> GetDeviceBatteryInfo();
+
+        Dictionary<string, object> GetDeviceGeneralInfo();
+
+        Task<bool> IsRealDeviceAsync();
+        string GetDeviceUDID();
+
     }
 }
