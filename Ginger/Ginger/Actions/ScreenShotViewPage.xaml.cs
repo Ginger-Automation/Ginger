@@ -66,7 +66,7 @@ namespace Ginger.Actions.UserControls
             xHighLighterRectangle.Visibility = Visibility.Collapsed;
         }
         
-        public ScreenShotViewPage(string Name, BitmapSource bitmapSource)
+        public ScreenShotViewPage(string Name, BitmapSource bitmapSource, bool IsDisplayName = true)
         {
             InitializeComponent();
 
@@ -88,6 +88,14 @@ namespace Ginger.Actions.UserControls
                 xMainCanvas.Width = bitmapSource.PixelWidth;
                 xMainCanvas.Height = bitmapSource.PixelHeight;
                 xMainImage.Source = bitmapSource;
+            }
+            if (IsDisplayName)
+            {
+                xNameLabel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xNameLabel.Visibility = Visibility.Collapsed;
             }
           
             xHighLighterRectangle.Visibility = Visibility.Collapsed;

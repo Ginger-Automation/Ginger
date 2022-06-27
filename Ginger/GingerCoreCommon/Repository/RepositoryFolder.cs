@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -696,12 +696,16 @@ namespace Amdocs.Ginger.Repository
         /// Save the Repository Item to folder and add it to cache
         /// </summary>
         /// <param name="repositoryItem"></param>
-        public override void AddRepositoryItem(RepositoryItemBase repositoryItem)
+        public override void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false)
         {
-            //save it
             repositoryItem.ContainingFolder = FolderRelativePath;
             repositoryItem.ContainingFolderFullPath = FolderFullPath;
-            SolutionRepository.SaveNewRepositoryItem(repositoryItem);
+
+            if (!doNotSave)
+            {
+                //save it
+                SolutionRepository.SaveNewRepositoryItem(repositoryItem);
+            }
 
             //add it to folder cache
             mFolderItemsCache[repositoryItem.FilePath] = repositoryItem;
@@ -711,7 +715,7 @@ namespace Amdocs.Ginger.Repository
             }
 
             //add it to general item cache
-            if (!mSolutionRepositoryItemInfo.AllItemsCacheIsNull())
+            if (!mSolutionRepositoryItemInfo.AllItemsCacheIsNull() || doNotSave)
             {
                 mSolutionRepositoryItemInfo.AddItemToCache((T)(object)repositoryItem);
             }

@@ -53,7 +53,7 @@ namespace GingerCore.Actions.WebAPI
         string BodyString = null;
         string ContentType;
         ApplicationAPIUtils.eContentType eContentType;
-        string ResponseMessage = null;
+        public string ResponseMessage = null;
         public string RequestFileContent = null;
         public string ResponseFileContent = null;
 
