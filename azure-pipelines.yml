@@ -43,8 +43,8 @@ jobs:
     inputs:
       packageType: 'sdk' # Options: runtime, sdk
 
-      version: '6.0.301' 
-      displayName: Install .Net Core 6.0.303 
+      version: '3.1.100' 
+      displayName: Install .Net Core 3.1 
 
 # ------------------------------------------------------------------------------------------------------
 # Install Nuget tool
