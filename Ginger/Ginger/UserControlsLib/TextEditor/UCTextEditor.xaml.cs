@@ -192,6 +192,7 @@ namespace Ginger.UserControlsLib.TextEditor
             else
             {
                 textEditor.IsReadOnly = true;
+                SaveButton.Visibility = Visibility.Collapsed;
             }
 
             this.FileName = FileName;
