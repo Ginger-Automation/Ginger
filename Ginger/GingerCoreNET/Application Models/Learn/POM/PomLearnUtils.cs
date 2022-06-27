@@ -57,6 +57,19 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             }
         }
 
+        bool mLearnScreenshotsOfElements = true;
+        public bool LearnScreenshotsOfElements
+        {
+            get
+            {
+                return mLearnScreenshotsOfElements;
+            }
+            set
+            {
+                mLearnScreenshotsOfElements = value;
+            }
+        }
+
         private Agent mAgent = null;
         public Agent Agent
         {
@@ -157,7 +170,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         public void LearnScreenShot()
         {
             IWindowExplorerDriver.UnHighLightElements();
-            ScreenShot = ((IVisualTestingDriver)((AgentOperations)Agent.AgentOperations).Driver).GetScreenShot(new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
+            ScreenShot = ((IVisualTestingDriver)((AgentOperations)Agent.AgentOperations).Driver).GetScreenShot(null, true);
         }
 
         public async Task Learn()
