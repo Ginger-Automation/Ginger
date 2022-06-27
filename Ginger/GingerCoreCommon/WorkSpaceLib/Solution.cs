@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
+using Ginger.Configurations;
 using Ginger.Reports;
 using GingerCore;
 using GingerCore.Platforms;
@@ -41,6 +42,7 @@ namespace Ginger.SolutionGeneral
 {
     public class Solution : RepositoryItemBase, ISolution
     {
+        public readonly string ExternalIntegrationsTabName = "External Integrations";
         public ISolutionOperations SolutionOperations;
 
         public SourceControlBase SourceControl { get; set; }
@@ -293,6 +295,15 @@ namespace Ginger.SolutionGeneral
         [IsSerializedForLocalRepository]
         public ObservableList<HTMLReportsConfiguration> HTMLReportsConfigurationSetList { get; set; } = new ObservableList<HTMLReportsConfiguration>();
 
+        [IsSerializedForLocalRepository]
+        public VRTConfiguration VRTConfiguration { get; set; } = new VRTConfiguration();
+
+        [IsSerializedForLocalRepository]
+        public ApplitoolsConfiguration ApplitoolsConfiguration { get; set; } = new ApplitoolsConfiguration();
+
+        [IsSerializedForLocalRepository]
+        public SealightsConfiguration SealightsConfiguration { get; set; } = new SealightsConfiguration();
+
         public void AddVariable(VariableBase v, int insertIndex = -1)
         {
             if (v != null)
@@ -482,6 +493,21 @@ namespace Ginger.SolutionGeneral
                 }
             }
             return new List<ApplicationPlatform>();
+        }
+
+        public void SetSealightsOldConifurationsToNewObject()
+        {
+            if (!string.IsNullOrEmpty(this.LoggerConfigurations.SealightsURL) && string.IsNullOrEmpty(this.SealightsConfiguration.SealightsURL))
+            {
+                this.SealightsConfiguration.SealightsURL = this.LoggerConfigurations.SealightsURL;
+                this.SealightsConfiguration.SealightsAgentToken = this.LoggerConfigurations.SealightsAgentToken;
+                this.SealightsConfiguration.SealightsBuildSessionID = this.LoggerConfigurations.SealightsBuildSessionID;
+                this.SealightsConfiguration.SealightsLabId = this.LoggerConfigurations.SealightsLabId;
+                this.SealightsConfiguration.SealightsLog = this.LoggerConfigurations.SealightsLog;
+                this.SealightsConfiguration.SealightsReportedEntityLevel = this.LoggerConfigurations.SealightsReportedEntityLevel;
+                this.SealightsConfiguration.SealightsSessionTimeout = this.LoggerConfigurations.SealightsSessionTimeout;
+                this.SealightsConfiguration.SealightsTestStage = this.LoggerConfigurations.SealightsTestStage;
+            }
         }
     }
 }

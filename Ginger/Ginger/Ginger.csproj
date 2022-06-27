@@ -230,6 +230,9 @@
     <Compile Include="Actions\ActionEditPages\ActOcrEditPage.xaml.cs">
       <DependentUpon>ActOcrEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionEditPages\VisualTesting\VRTComparePage.xaml.cs">
+      <DependentUpon>VRTComparePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
       <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
     </Compile>
@@ -278,6 +281,17 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ExternalConfigurations\ApplitoolsExternalConfigurationsPage.xaml.cs">
+      <DependentUpon>ApplitoolsExternalConfigurationsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ExternalConfigurations\SealightsExternalConfigurationsPage.xaml.cs">
+      <DependentUpon>SealightsExternalConfigurationsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ExternalConfigurations\VRTExternalConfigurationsPage.xaml.cs">
+      <DependentUpon>VRTExternalConfigurationsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\DriversWindows\DeviceInfo.cs" />
+    <Compile Include="Drivers\DriversWindows\DeviceInfo.cs" />
     <Compile Include="Reports\ValidationRules\ValidateEmptyValue.cs" />
     <Compile Include="Reports\ValidationRules\ValidateNumberInputRule.cs" />
     <Compile Include="Activities\ActivityNameValidationRule.cs" />
@@ -2639,6 +2653,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\ActionEditPages\VisualTesting\VRTComparePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Activities\ConfigureErrorListPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -3018,6 +3036,18 @@
     <Page Include="Drivers\DriversWindows\MobileDriverWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ExternalConfigurations\ApplitoolsExternalConfigurationsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ExternalConfigurations\SealightsExternalConfigurationsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ExternalConfigurations\VRTExternalConfigurationsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="GlobalSolutionLib\ImportItemWizardLib\SelectItemFromSolutionPage.xaml">
       <SubType>Designer</SubType>
@@ -3458,6 +3488,9 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\androidWhite.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\iosWhite.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\ApplitoolsLogo.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\VRTLogo.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -4924,7 +4957,7 @@
       <Version>106.11.4</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.ChromeDriver">
-      <Version>100.0.4896.6000</Version>
+      <Version>102.0.5005.6102</Version>
     </PackageReference>
     <PackageReference Include="Selenium.WebDriver.GeckoDriver">
       <Version>0.31.0</Version>

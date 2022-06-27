@@ -60,6 +60,8 @@ namespace GingerCore.Actions
             //BlinkDiff,
             //[EnumValueDescription("Spell Check Analyzer - Not Implemented")]
             //Spellcheck,
+            [EnumValueDescription("Visual Regression Tracker")]
+            VRT
         }
 
         public enum eChangeAppWindowSize
@@ -261,7 +263,9 @@ namespace GingerCore.Actions
                 if (mPlatforms.Count == 0) {
                     mPlatforms.Add(ePlatformType.Web);
                     mPlatforms.Add(ePlatformType.Mobile);
+                    mPlatforms.Add(ePlatformType.Java);
                     mPlatforms.Add(ePlatformType.Windows);
+                    mPlatforms.Add(ePlatformType.PowerBuilder);
                     //mPlatforms.Add(ePlatformType.AndroidDevice);
                 }
                 return mPlatforms;
@@ -308,7 +312,11 @@ namespace GingerCore.Actions
             mDriver = driver;
             CheckSetVisualAnalyzer();
             CheckSetAppWindowSize();
-
+            if (Amdocs.Ginger.Common.Context.GetAsContext(Context).Activity == null)
+            {
+                Amdocs.Ginger.Common.Context.GetAsContext(Context).Activity = ((Drivers.DriverBase)mDriver).BusinessFlow.CurrentActivity;
+                Amdocs.Ginger.Common.Context.GetAsContext(Context).BusinessFlow = ((Drivers.DriverBase)mDriver).BusinessFlow;
+            }
             if (mVisualAnalyzer.SupportUniqueExecution())
             {
                 mVisualAnalyzer.SetAction(mDriver, this);
@@ -489,6 +497,10 @@ namespace GingerCore.Actions
                 case eVisualTestingAnalyzer.UIElementsComparison:
                     if (mVisualAnalyzer is UIElementsAnalyzer) return;
                     mVisualAnalyzer = new UIElementsAnalyzer();
+                    break;
+                case eVisualTestingAnalyzer.VRT:
+                    if (mVisualAnalyzer is VRTAnalyzer) return;
+                    mVisualAnalyzer = new VRTAnalyzer();
                     break;
             }
         }

@@ -61,6 +61,11 @@ namespace Ginger.Reports
         {
             _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
             _selectedExecutionLoggerConfiguration.StartDirtyTracking();
+            //Notify User about Change in sealights configurations settings
+            if (!string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.SealightsURL))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Sealights Configurations section moved to Configurations -> External Integrations -> Sealights Configurations. \n Please save the configuration details.");
+            }
             SetControls();
             isControlsSet = true;
         }
@@ -75,32 +80,12 @@ namespace Ginger.Reports
                 xPublishingPhasePanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.DataPublishingPhase));
 
-            xSealightsLogRadioButton.Init(typeof(ExecutionLoggerConfiguration.eSealightsLog),
-                xSealightsLogPanel, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.SealightsLog), SealightsLogRadioButton_CheckedHandler);
-
             xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
                 xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEndPointURLTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.CentralLoggerEndPointUrl));
-
-            Context mContext = new Context();
-            xSealightsURLTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsURL));
-            xSealighsAgentTokenTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
-            xSealighsLabIdTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId));
-            xSealightsTestStageTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsTestStage));
-            xSealighsBuildSessionIDTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
-            xSealighsSessionTimeoutTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsSessionTimeout));
-            xSealighsReportedEntityLevelComboBox.BindControl(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
-
-            ApplyValidationRules();
-
-            if (xSealighsSessionTimeoutTextBox.ValueTextBox.Text.Trim() == "")
-            {
-                xSealighsSessionTimeoutTextBox.ValueTextBox.Text = "14400";
-            }
 
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
@@ -122,10 +107,7 @@ namespace Ginger.Reports
             }
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralExecutionLoggerExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
-
-            // this added in ordre to apply the validation when turnining ON the Enterprise Features Flag (the validation wont apply when the Enterprise Features Flag initially was OFF)
-            xSealighsExpander.IsVisibleChanged += XSealighsExpander_IsVisibleChanged;
+            
             if (_selectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
             {
                 SetExecutionLoggerRadioButtonToOff();
@@ -134,36 +116,6 @@ namespace Ginger.Reports
                 xPublishLogToCentralDBRadioBtnPanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB), PublishLogToCentralDBRadioButton_CheckedHandler);
 
-        }
-
-        private void XSealighsExpander_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            ApplyValidationRules();
-        }
-
-        private void ApplyValidationRules()
-        {
-            // check if fields have been populated (font-end validation)
-            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId), "Lab ID or Build Session ID must be provided"));
-            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
-            xSealightsURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Url cannot be empty"));
-            xSealighsAgentTokenTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Token cannot be empty"));
-            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
-            xSealighsSessionTimeoutTextBox.ValueTextBox.AddValidationRule(new ValidateNumberInputRule());
-            xSealighsReportedEntityLevelComboBox.AddValidationRule(new ValidateEmptyValue("Entity Level cannot be empty"));
-
-            CallSealightsConfigPropertyChange();
-        }
-
-        private void CallSealightsConfigPropertyChange()
-        {
-            // need in order to trigger the validation's rules on init binding (load/init form)
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsURL));
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsLabId));
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsTestStage));
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
         }
 
         private void SelectFolderButton_Click(object sender, RoutedEventArgs e)
@@ -298,37 +250,6 @@ namespace Ginger.Reports
                 xCentralExecutionLoggerGrid.Visibility = Visibility.Collapsed;
             }
         }
-
-        private void SealightsLogRadioButton_CheckedHandler(object sender, RoutedEventArgs e)
-        {
-            string value = ((RadioButton)sender).Tag?.ToString();
-
-            ExecutionLoggerConfiguration.eSealightsLog sealightsLog;
-
-            Enum.TryParse(value, out sealightsLog);
-
-            if (sealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
-            {
-                xSealightsExecutionLoggerGrid.Visibility = Visibility.Visible;
-
-                // Adding Init and validation in ordre to fix the issue: Validation is not working when Sealights is not Enable on the Init/load Configuration form
-                Context mContext = new Context();
-                xSealightsURLTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsURL));
-                xSealighsAgentTokenTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsAgentToken));
-                xSealighsLabIdTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsLabId));
-                xSealightsTestStageTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsTestStage));
-                xSealighsBuildSessionIDTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsBuildSessionID));
-                xSealighsSessionTimeoutTextBox.Init(mContext, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsSessionTimeout));
-                xSealighsReportedEntityLevelComboBox.BindControl(_selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.SealightsReportedEntityLevel));
-
-                ApplyValidationRules();
-            }
-            else
-            {
-                xSealightsExecutionLoggerGrid.Visibility = Visibility.Collapsed;
-            }
-        }
-
 
         private void SetExecutionLoggerRadioButtonToOff()
         {

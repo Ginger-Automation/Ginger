@@ -156,7 +156,6 @@ namespace GingerCore.Actions
             TapXY,
             [EnumValueDescription("Drag XY to XY")]
             DragXYXY,
-
             [EnumValueDescription("Get Current Application Identifiers")]
             GetCurrentApplicationInfo,
 
@@ -176,7 +175,6 @@ namespace GingerCore.Actions
             PressKey,
             [EnumValueDescription("Long Press Key")]
             LongPressKey,
-
             [EnumValueDescription("Swipe Up")]
             SwipeUp,
             [EnumValueDescription("Swipe Down")]
@@ -187,7 +185,6 @@ namespace GingerCore.Actions
             SwipeLeft,
             [EnumValueDescription("Swipe by XY")]
             SwipeByCoordinates,
-
             [EnumValueDescription("Take Screenshot")]
             TakeScreenShot,
             [EnumValueDescription("Open App")]
@@ -199,7 +196,17 @@ namespace GingerCore.Actions
             [EnumValueDescription("Lock Device")]
             LockDevice,
             [EnumValueDescription("Get Page Source")]
-            GetPageSource,                      
+            GetPageSource,
+            [EnumValueDescription("Get Device Battery %")]
+            GetDeviceBattery,
+            [EnumValueDescription("Get Device Network Info")]
+            GetDeviceNetwork,
+            [EnumValueDescription("Get App CPU Usage")]
+            GetDeviceCPUUsage,
+            [EnumValueDescription("Get App RAM Usage")]
+            GetDeviceRAMUsage,
+            [EnumValueDescription("Get Device General Info")]
+            GetDeviceGeneralInfo,
         }
 
         public enum ePressKey

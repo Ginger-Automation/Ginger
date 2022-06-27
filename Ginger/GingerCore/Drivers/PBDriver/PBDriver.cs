@@ -1287,5 +1287,23 @@ namespace GingerCore.Drivers.PBDriver
         {
             return Driver;
         }
+
+        public Bitmap GetElementScreenshot(Act act)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetAgentAppName()
+        {
+            return this.Platform.ToString();
+        }
+
+        public string GetViewport()
+        {
+            Size size = new Size();
+            size.Height = (int)((AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Height;
+            size.Width = (int)((AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width;
+            return size.ToString();
+        }
     }
 }

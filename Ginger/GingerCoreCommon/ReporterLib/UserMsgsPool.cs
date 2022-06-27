@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.Common
         PleaseStartAgent, AskToSelectValidation,
         EnvironmentItemLoadError, MissingUnixCredential,
         ErrorConnectingToDataBase, ErrorClosingConnectionToDataBase, DbTableError, DbTableNameError, DbQueryError, DbConnSucceed, DbConnFailed,
-        TestagentSucceed, FailedToConnectAgent, RecordingStopped, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent, RestartAgent,
+        TestagentSucceed, MobileDriverNotConnected, FailedToConnectAgent, RecordingStopped, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent, RestartAgent,
         MissingActionPropertiesEditor, AskToSelectItem, AskToSelectAction, ImportSeleniumScriptError,
         AskToSelectVariable, VariablesAssignError, SetCycleNumError, VariablesParentNotFound, CantStoreToVariable,
         AskToSelectSolutionFolder, SolutionLoadError,
@@ -138,7 +138,7 @@ namespace Amdocs.Ginger.Common
         POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, WizardCantMoveWhileInProcess, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported, WizardSureWantToCancel,
         POMSearchByGUIDFailed, POMElementSearchByGUIDFailed, NoRelevantAgentInRunningStatus, SolutionSaveWarning,
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
-        ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, OperationNotSupported, ValueIssue, MissingTargetApplication,
+        ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, RunSetNotExecuted, OperationNotSupported, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty,
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
         POMElementNotExist, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped, SavePOMChanges,
@@ -310,6 +310,7 @@ namespace Amdocs.Ginger.Common
             #endregion Environment Messages
 
             #region Agents/Drivers Messages
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileDriverNotConnected, new UserMsg(eUserMsgType.INFO, "Mobile Device Error", "The connection to the mobile device has failed, please try again.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestagentSucceed, new UserMsg(eUserMsgType.INFO, "Test Agent", "Agent starting test ended successfully!", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToConnectAgent, new UserMsg(eUserMsgType.ERROR, "Connect to Agent", "Failed to load '{0}' Agent." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SshCommandError, new UserMsg(eUserMsgType.ERROR, "Ssh Command Error", "The Ssh Run Command returns error, please double check the connection info and credentials." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -617,6 +618,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToInitiate, new UserMsg(eUserMsgType.ERROR, "Failed to initiate", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToCreateRequestResponse, new UserMsg(eUserMsgType.ERROR, "Failed to create Request / Response", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ActionNotImplemented, new UserMsg(eUserMsgType.ERROR, "Action is not implemented yet for control type ", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RunSetNotExecuted, new UserMsg(eUserMsgType.ERROR, "Runset Not Executed", "Please execute the Runset before running Send Email Report Operation", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.OperationNotSupported, new UserMsg(eUserMsgType.INFO, "Operation not supported ", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ValueIssue, new UserMsg(eUserMsgType.ERROR, "Value Issue", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.JSExecutionFailed, new UserMsg(eUserMsgType.ERROR, "Error Executing JS", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));

@@ -67,7 +67,7 @@
                     <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" HorizontalAlignment="Left" Margin="5,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
                 </StackPanel>
 
-                <StackPanel x:Name="xPluginConfigPnl" Visibility="Collapsed" Margin="0,10,0,0">
+                <StackPanel x:Name="xPluginConfigPnl" Visibility="Collapsed" Margin="0,10,0,0" >
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Label Style="{StaticResource $LabelStyle}" Content="Plugin ID:" Margin="0,0,0,0" VerticalAlignment="Center"/>
                         <ComboBox x:Name="xPluginIdComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="35,0,0,0" FontWeight="Bold" SelectionChanged="xPluginIdComboBox_SelectionChanged" />

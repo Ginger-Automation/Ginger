@@ -182,6 +182,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.GingerSplash:
                     SetAsStaticImage("GingerSplashImageNew.png");
                     break;
+                case eImageType.VRT:
+                    SetAsStaticImage("VRTLogo.png");
+                    break;
+                case eImageType.Applitools:
+                    SetAsStaticImage("ApplitoolsLogo.png");
+                    break;
+                case eImageType.Sealights:
+                    SetAsStaticImage("SealightsLogo.png");
+                    break;
                 #endregion
 
 
@@ -217,6 +226,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Operations:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Cogs);
+                    break;
+                case eImageType.Settings:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Gears);
                     break;
                 case eImageType.Environment:
                 case eImageType.Globe:

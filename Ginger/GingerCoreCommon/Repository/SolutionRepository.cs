@@ -131,10 +131,10 @@ namespace Amdocs.Ginger.Repository
         /// Save the Repository Item to the Root folder and add it to cache
         /// </summary>
         /// <param name="repositoryItem"></param>
-        public void AddRepositoryItem(RepositoryItemBase repositoryItem)
+        public void AddRepositoryItem(RepositoryItemBase repositoryItem, bool doNotSave = false)
         {
             SolutionRepositoryItemInfoBase SRII = GetSolutionRepositoryItemInfo(repositoryItem.GetType());
-            SRII.ItemRootRepositoryFolder.AddRepositoryItem(repositoryItem);
+            SRII.ItemRootRepositoryFolder.AddRepositoryItem(repositoryItem, doNotSave);
         }
 
         public async Task SaveRepositoryItemAsync(RepositoryItemBase repositoryItem)
