@@ -24,6 +24,7 @@ using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.Actions._Common.ActUIElementLib;
+using Ginger.Actions.UserControls;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
@@ -71,6 +72,7 @@ namespace Ginger
         public Agent mAgent { get; set; }
         public Context Context;
 
+
         public bool ShowTestBtn { get; set; }
 
         public PlatformInfoBase Platform { get; set; }
@@ -81,6 +83,8 @@ namespace Ginger
 
         bool SelectedElementChanged = false;
         private ElementInfo mSelectedElement;
+
+        ScreenShotViewPage mScreenShotViewPage;
         public ElementInfo SelectedElement
         {
             get
@@ -183,6 +187,7 @@ namespace Ginger
             InitializeComponent();
 
             InitControlPropertiesGridView();
+
         }
 
         private void ElementDetailsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
