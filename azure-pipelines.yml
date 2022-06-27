@@ -3,12 +3,12 @@
 jobs:
 
 # ------------------------------------------------------------------------------------------------------
-# Request Windows VM Windows 2019 with Visual Studio 2019 - set Ginger solution
+# Request Windows VM Windows windows-2022 with Visual Studio 2022 - set Ginger solution
 # ------------------------------------------------------------------------------------------------------
 
 - job: Windows
   pool:
-   vmImage: 'windows-2019'  #Visual Studio 2019 Preview on Windows Server 2019
+   vmImage: 'windows-2022'  #Visual Studio 2022 Preview on Windows Server 2019
   workspace:
     clean: outputs
 
@@ -36,7 +36,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
   steps:
 # ------------------------------------------------------------------------------------------------------
-# Install .Net core SDK 2.2.x
+# Install .Net core SDK 6.0.x
 # ------------------------------------------------------------------------------------------------------
 
   - task: DotNetCoreInstaller@0
