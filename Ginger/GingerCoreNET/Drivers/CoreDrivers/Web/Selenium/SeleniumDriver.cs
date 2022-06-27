@@ -1237,6 +1237,11 @@ namespace GingerCore.Drivers
                 {
                     AddCurrentScreenShot(act);
                 }
+                if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                {
+                    Bitmap img = GetScreenShot(true);
+                    act.AddScreenShot(img, Driver.Title);
+                }
                 else
                 {
                     //keep the current window and switch back at the end
@@ -4022,6 +4027,16 @@ namespace GingerCore.Drivers
                                     }
                                 }
                             }
+                            //Element Screenshot
+                            var screenshot = ((ITakesScreenshot)webElement).GetScreenshot();
+                            Bitmap image = ScreenshotToImage(screenshot);
+                            //foundElemntInfo.ScreenShotImage = BitmapToBase64(screenshot);
+                            using (MemoryStream ms = new MemoryStream())
+                            {
+                                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                                byte[] byteImage = ms.ToArray();
+                                foundElemntInfo.ScreenShotImage = Convert.ToBase64String(byteImage);
+                            }
 
                             foundElemntInfo.IsAutoLearned = true;
                             foundElementsList.Add(foundElemntInfo);
@@ -6667,6 +6682,7 @@ namespace GingerCore.Drivers
                     String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
                     var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
 
+                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkLogs));
                     foreach (var item in networkLogs)
                     {
                         Dictionary<string, object> dict = item as Dictionary<string, object>;

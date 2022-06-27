@@ -64,8 +64,8 @@
         </Grid.Resources>
 
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="Row1" Height="70*" MinHeight="35"/>
-            <RowDefinition  x:Name="Row2" Height="35" MinHeight="35"/>
+            <RowDefinition x:Name="Row1" Height="250*" MinHeight="35"/>
+            <RowDefinition  x:Name="Row2" Height="250" MinHeight="35"/>
         </Grid.RowDefinitions>
         <Ginger:ucGrid ScrollViewer.CanContentScroll="True" x:Name="xMainElementsGrid" Grid.Row="0" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Visible"/>
         <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows"  Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
@@ -73,7 +73,15 @@
         <ScrollViewer Grid.Row="1"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <Expander ScrollViewer.CanContentScroll="True" x:Name="xDetailsExpander"  ExpandDirection="Down" Expanded="DetailsGrid_Expanded" IsExpanded="True" IsEnabled="True" Collapsed="DetailsGrid_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
                 <Expander.Header>
-                    <Label x:Name="xDetailsExpanderLabel" Content="Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" />
+                    <StackPanel Orientation="Horizontal">
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <Label x:Name="xDetailsExpanderLabel" Grid.Column="0" Content="Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                        </Grid>
+                    </StackPanel>
                 </Expander.Header>
                 <Expander.Content>
                     <Ginger:UCElementDetails x:Name="xElementDetails" ShowActionTab="False" />
