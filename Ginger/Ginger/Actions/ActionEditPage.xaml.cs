@@ -387,6 +387,12 @@ namespace Ginger.Actions
                 {
                     BindingHandler.ObjFieldBinding(xTakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.TakeScreenShot));
                     xWindowsToCaptureCombo.BindControl(mAction, nameof(Act.WindowsToCapture));
+                    //remove full page for other platforms excepts web
+                    if (mAction.Platform != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
+                    {
+                        var comboEnumItem = xWindowsToCaptureCombo.Items.Cast<ComboEnumItem>().Where(x => x.Value.ToString() == Act.eWindowsToCapture.FullPage.ToString()).FirstOrDefault();
+                        xWindowsToCaptureCombo.Items.Remove(comboEnumItem);
+                    }
                     SetScreenshotsPnlView();
                     UpdateScreenShots();
                 }

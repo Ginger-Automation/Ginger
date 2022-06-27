@@ -22,7 +22,6 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
-using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts;
 using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Requests;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
@@ -44,7 +43,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using static Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration.SealightsDetails;
-using static Ginger.Reports.ExecutionLoggerConfiguration;
+using static Ginger.Configurations.SealightsConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
@@ -511,13 +510,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 SealightsDetails sealightsDetails = new SealightsDetails();
 
-                sealightsDetails.SealightsEnable = solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.Yes;
-                sealightsDetails.SealightsLabId = solution.SealightsConfiguration.SealightsLabId;
-                sealightsDetails.SealightsBSId = solution.SealightsConfiguration.SealightsBuildSessionID;
-                sealightsDetails.SealightsTestStage = solution.SealightsConfiguration.SealightsTestStage;
-                sealightsDetails.SealightsSessionTimeout = Convert.ToInt32(solution.SealightsConfiguration.SealightsSessionTimeout);
-                sealightsDetails.SealightsEntityLevel = (eSealightsEntityLevel)solution.SealightsConfiguration.SealightsReportedEntityLevel;
-                sealightsDetails.SealightsAgentToken = solution.SealightsConfiguration.SealightsAgentToken;
+                sealightsDetails.SealightsEnable = solution.LoggerConfigurations.SealightsLog == eSealightsLog.Yes;
+                sealightsDetails.SealightsLabId = solution.LoggerConfigurations.SealightsLabId;
+                sealightsDetails.SealightsBSId = solution.LoggerConfigurations.SealightsBuildSessionID;
+                sealightsDetails.SealightsTestStage = solution.LoggerConfigurations.SealightsTestStage;
+                sealightsDetails.SealightsSessionTimeout = Convert.ToInt32(solution.LoggerConfigurations.SealightsSessionTimeout);
+                sealightsDetails.SealightsEntityLevel = (SealightsDetails.eSealightsEntityLevel)solution.LoggerConfigurations.SealightsReportedEntityLevel;
+                sealightsDetails.SealightsAgentToken = solution.LoggerConfigurations.SealightsAgentToken;
 
                 //  Check Sealights's values on run-set levels
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId != null)

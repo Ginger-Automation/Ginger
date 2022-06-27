@@ -15,7 +15,7 @@
     <ScrollViewer>
         <Grid Background="{StaticResource $BackgroundColor_LightGray}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="225"/>
+                <RowDefinition Height="240"/>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="250*"/>
             </Grid.RowDefinitions>
@@ -44,9 +44,9 @@
                     </StackPanel>
                     <StackPanel Margin="0,0,0,0">
                         <StackPanel x:Name="xPageUrlStackPanel" Orientation="Horizontal" >
-                            <TextBox x:Name="xURLTextBox" Style="{StaticResource $TextBoxStyle}" HorizontalAlignment="Left" FontWeight="Bold" TextWrapping="NoWrap" Height="20" Width="330" Margin="0,0,0,0"/>
+                            <TextBox x:Name="xURLTextBox" Style="{StaticResource $TextBoxStyle}" HorizontalAlignment="Left" FontWeight="Bold" TextWrapping="NoWrap" Height="20" Width="330" Margin="0,10,0,0"/>
                         </StackPanel>
-                        <Frame VerticalAlignment="Top" Margin="-2,0,0,0" x:Name="xFrameBusinessFlowControl" NavigationUIVisibility="Hidden" HorizontalAlignment="Left" BorderBrush="Transparent"/>
+                        <Frame VerticalAlignment="Top" Margin="0,0,0,0" x:Name="xFrameBusinessFlowControl" NavigationUIVisibility="Hidden" HorizontalAlignment="Left" BorderBrush="Transparent"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
