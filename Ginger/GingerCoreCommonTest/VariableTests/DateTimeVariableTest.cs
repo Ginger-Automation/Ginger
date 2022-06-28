@@ -106,6 +106,7 @@ namespace GingerCoreCommonTest.VariableTests
             variableDateTime.Name = "test";
             variableDateTime.Value = "123";
             variableDateTime.InitialDateTime = DateTime.Now.ToString("dd/MMM/yyyy");
+            variableDateTime.DateTimeFormat = "dd/MMM/yyyy";
             //Act
             string formulaStr = variableDateTime.GetFormula();
 
