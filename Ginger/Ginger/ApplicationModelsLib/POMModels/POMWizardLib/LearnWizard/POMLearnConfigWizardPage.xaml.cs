@@ -131,6 +131,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     mAppPlatform = selectedplatform.Platform;
                 }
             }
+            if (mAppPlatform == ePlatformType.Web)
+            {
+                xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xLearnScreenshotsOfElements.Visibility = Visibility.Collapsed;
+            }
             mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             foreach (Agent agent in mWizard.OptionalAgentsList)
             {
