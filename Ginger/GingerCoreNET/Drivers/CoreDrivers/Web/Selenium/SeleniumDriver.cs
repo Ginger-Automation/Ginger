@@ -223,21 +223,6 @@ namespace GingerCore.Drivers
         public string SeleniumUserArguments { get; set; }
 
 
-        //[UserConfigured]
-        //[UserConfiguredDefault("False")]
-        //[UserConfiguredDescription("Applitool - Set to true if you want to use Applitools for visual testing")]
-        //public Boolean UseApplitools { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Applitool View Key number")]
-        public String ApplitoolsViewKey { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Applitool Server Url")]
-        public String ApplitoolsServerUrl { get; set; }
-
         [UserConfigured]
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Change to Iframe automatically in case of POM Element execution ")]
@@ -245,7 +230,7 @@ namespace GingerCore.Drivers
 
         protected IWebDriver Driver;
 
-        public eBrowserType mBrowserTpe;
+        protected eBrowserType mBrowserTpe;
         protected NgWebDriver ngDriver;
         private String DefaultWindowHandler = null;
 
@@ -407,11 +392,11 @@ namespace GingerCore.Drivers
                         if (!(String.IsNullOrEmpty(SeleniumUserArguments) && String.IsNullOrWhiteSpace(SeleniumUserArguments)))
                             ieoptions.BrowserCommandLineArguments += "," + SeleniumUserArguments;
 
-                        if (!(String.IsNullOrEmpty(ApplitoolsViewKey) && String.IsNullOrWhiteSpace(ApplitoolsViewKey)))
-                            ieoptions.BrowserCommandLineArguments += "," + ApplitoolsViewKey;
+                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
+                            ieoptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
 
-                        if (!(String.IsNullOrEmpty(ApplitoolsServerUrl) && String.IsNullOrWhiteSpace(ApplitoolsServerUrl)))
-                            ieoptions.BrowserCommandLineArguments += "," + ApplitoolsServerUrl;
+                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
+                            ieoptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
                         InternetExplorerDriverService IEService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                         IEService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -504,11 +489,11 @@ namespace GingerCore.Drivers
                             options.AddArgument("--user-agent=" + BrowserUserAgent.Trim());
                         }
 
-                        if (!(String.IsNullOrEmpty(ApplitoolsViewKey) && String.IsNullOrWhiteSpace(ApplitoolsViewKey)))
-                            options.AddArgument(ApplitoolsViewKey);
+                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
+                            options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey);
 
-                        if (!(String.IsNullOrEmpty(ApplitoolsServerUrl) && String.IsNullOrWhiteSpace(ApplitoolsServerUrl)))
-                            options.AddArgument(ApplitoolsServerUrl);
+                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
+                            options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl);
 
                         ChromeDriverService ChService = ChromeDriverService.CreateDefaultService(GetDriversPathPerOS());
                         if (HideConsoleWindow)
@@ -1251,6 +1236,11 @@ namespace GingerCore.Drivers
                 if (act.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow || TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure)
                 {
                     AddCurrentScreenShot(act);
+                }
+                if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                {
+                    Bitmap img = GetScreenShot(true);
+                    act.AddScreenShot(img, Driver.Title);
                 }
                 else
                 {
@@ -4037,6 +4027,16 @@ namespace GingerCore.Drivers
                                     }
                                 }
                             }
+                            //Element Screenshot
+                            var screenshot = ((ITakesScreenshot)webElement).GetScreenshot();
+                            Bitmap image = ScreenshotToImage(screenshot);
+                            //foundElemntInfo.ScreenShotImage = BitmapToBase64(screenshot);
+                            using (MemoryStream ms = new MemoryStream())
+                            {
+                                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                                byte[] byteImage = ms.ToArray();
+                                foundElemntInfo.ScreenShotImage = Convert.ToBase64String(byteImage);
+                            }
 
                             foundElemntInfo.IsAutoLearned = true;
                             foundElementsList.Add(foundElemntInfo);
@@ -6682,6 +6682,7 @@ namespace GingerCore.Drivers
                     String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
                     var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
 
+                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkLogs));
                     foreach (var item in networkLogs)
                     {
                         Dictionary<string, object> dict = item as Dictionary<string, object>;
@@ -8509,12 +8510,12 @@ namespace GingerCore.Drivers
 
         public string GetApplitoolServerURL()
         {
-            return this.ApplitoolsServerUrl;
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
         }
 
         public string GetApplitoolKey()
         {
-            return this.ApplitoolsViewKey;
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
         }
 
         public ePlatformType GetPlatform()
@@ -8525,6 +8526,21 @@ namespace GingerCore.Drivers
         public string GetEnvironment()
         {
             return this.BusinessFlow.Environment;
+        }
+
+        public Size GetWindowSize()
+        {
+            return Driver.Manage().Window.Size;
+        }
+
+        public string GetAgentAppName()
+        {
+            return GetBrowserType().ToString();
+        }
+
+        public string GetViewport()
+        {
+            return Driver.Manage().Window.Size.ToString();
         }
     }
 }

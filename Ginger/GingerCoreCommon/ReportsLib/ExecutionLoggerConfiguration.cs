@@ -20,19 +20,10 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using Amdocs.Ginger.Common.InterfacesLib;
+using static Ginger.Configurations.SealightsConfiguration;
 
 namespace Ginger.Reports
 {
-    public enum eSealightsEntityLevel
-    {
-        [EnumValueDescription("Business Flow")]
-        BusinessFlow,
-        [EnumValueDescription("Activities Group")]
-        ActivitiesGroup,
-        [EnumValueDescription("Activity")]
-        Activity
-    }
-
     public class ExecutionLoggerConfiguration : RepositoryItemBase
     {
         public static partial class Fields
@@ -63,11 +54,6 @@ namespace Ginger.Reports
             No
         }
 
-        public enum eSealightsLog
-        {
-            Yes,
-            No
-        }
 
         public enum eDeleteLocalDataOnPublish
         {
@@ -147,23 +133,6 @@ namespace Ginger.Reports
         }
 
 
-        // Gideon
-        private eSealightsLog mSealightsLog = eSealightsLog.No;
-
-        [IsSerializedForLocalRepository]
-        public eSealightsLog SealightsLog
-        {
-            get
-            {
-                return mSealightsLog;
-            }
-            set
-            {
-                mSealightsLog = value;
-            }
-        }
-        // Gideon End
-
         private eDataPublishingPhase mDataPublishingPhase = eDataPublishingPhase.PostExecution;
 
         [IsSerializedForLocalRepository]
@@ -210,8 +179,26 @@ namespace Ginger.Reports
             }
         }
 
+
+        /// <summary>
+        /// Do NOT Remove below fields 
+        /// Needed for old Ginger Version Solutions 
+        /// </summary>
+        #region Sealights Data ***---Do NOT Remove---*** 
+        private eSealightsLog mSealightsLog = eSealightsLog.No;
+        public eSealightsLog SealightsLog
+        {
+            get
+            {
+                return mSealightsLog;
+            }
+            set
+            {
+                mSealightsLog = value;
+            }
+        }
+
         private string mSealightsURL;
-        [IsSerializedForLocalRepository]
         public string SealightsURL
         {
             get
@@ -227,7 +214,6 @@ namespace Ginger.Reports
 
 
         private string mSealightsAgentToken;
-        [IsSerializedForLocalRepository]
         public string SealightsAgentToken
         {
             get
@@ -242,7 +228,6 @@ namespace Ginger.Reports
         }
 
         private string mSealightsLabId;
-        [IsSerializedForLocalRepository]
         public string SealightsLabId
         {
             get
@@ -257,7 +242,6 @@ namespace Ginger.Reports
         }
 
         private string mSealightsTestStage;
-        [IsSerializedForLocalRepository]
         public string SealightsTestStage
         {
             get
@@ -272,7 +256,6 @@ namespace Ginger.Reports
         }
 
         private string mSealightsBuildSessionID;
-        [IsSerializedForLocalRepository]
         public string SealightsBuildSessionID
         {
             get
@@ -287,7 +270,6 @@ namespace Ginger.Reports
         }        
 
         private string mSealightsSessionTimeout;
-        [IsSerializedForLocalRepository]
         public string SealightsSessionTimeout
         {
             get
@@ -302,7 +284,6 @@ namespace Ginger.Reports
         }
 
         private eSealightsEntityLevel mSealightsReportedEntityLevel;
-        [IsSerializedForLocalRepository]
         public eSealightsEntityLevel SealightsReportedEntityLevel
         {
             get
@@ -315,8 +296,8 @@ namespace Ginger.Reports
                 OnPropertyChanged(nameof(SealightsReportedEntityLevel));
             }
         }
+        #endregion
 
-        
 
         public bool IsPublishToCentralDBRunning { get; set; }
 

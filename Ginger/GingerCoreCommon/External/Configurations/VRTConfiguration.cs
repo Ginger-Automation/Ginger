@@ -23,16 +23,6 @@ using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Configurations
 {
-    public enum eSealightsEntityLevel
-    {
-        [EnumValueDescription("Business Flow")]
-        BusinessFlow,
-        [EnumValueDescription("Activities Group")]
-        ActivitiesGroup,
-        [EnumValueDescription("Activity")]
-        Activity
-    }
-
     public class VRTConfiguration : RepositoryItemBase
     {
         private string mApiUrl;
