@@ -57,7 +57,7 @@ namespace Ginger.Variables
 
             txtDateFormat.Text = variableDateTime.DateTimeFormat;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDateFormat, TextBox.TextProperty,variableDateTime,nameof(VariableDateTime.DateTimeFormat));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDateFormat, ComboBox.TextProperty,variableDateTime,nameof(VariableDateTime.DateTimeFormat));
             txtDateFormat.AddValidationRule(new DateTimeFormatValidationRule(variableDateTime));
         }
 
