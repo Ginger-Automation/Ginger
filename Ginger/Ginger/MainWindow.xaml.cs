@@ -528,6 +528,10 @@ namespace Ginger
             s1.SolutionOperations = solutionOperations;
             AddSolutionPage addSol = new AddSolutionPage(s1);
             addSol.ShowAsWindow();
+            if(addSol.IsUploadSolutionToSourceControl)
+            {
+                UploadSolutionMenuItem_Click(sender, e);
+            }
         }
 
         public void SetSolutionDependedUIElements()
@@ -545,11 +549,13 @@ namespace Ginger
                 }
                 if (WorkSpace.Instance.Solution.SourceControl != null)
                 {
-                    xSolutionSourceControlMenu.Visibility = Visibility.Visible;
+                    xSolutionSourceControlSetMenuItem.Visibility = Visibility.Visible;
+                    xSolutionSourceControlInitMenuItem.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    xSolutionSourceControlMenu.Visibility = Visibility.Collapsed;
+                    xSolutionSourceControlInitMenuItem.Visibility = Visibility.Visible;
+                    xSolutionSourceControlSetMenuItem.Visibility = Visibility.Collapsed;
                 }
 
             }
@@ -1314,6 +1320,13 @@ namespace Ginger
             {
                 ShowHelpLayout();//need to show again in correct size
             }
+        }
+
+        private void UploadSolutionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            SourceControlUploadSolutionPage uploadPage = new SourceControl.SourceControlUploadSolutionPage();
+            uploadPage.ShowAsWindow(eWindowShowStyle.Dialog);
+            SetSolutionDependedUIElements();
         }
     }
 }

@@ -561,6 +561,105 @@ namespace GingerCore.SourceControl
             }
             return true;
         }
+        public override bool InitializeRepository(string remoteURL)
+        {
+            try
+            {
+                RepositoryRootFolder = WorkSpace.Instance.Solution.Folder;
+                LibGit2Sharp.Repository.Init(RepositoryRootFolder);
+                UploadSolutionToSourceControl(remoteURL);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Upload Solution to Source Control", ex);
+                return false;
+            }
+        }
+
+        private bool isRemoteBranchExist()
+        {
+            var remoteBranches = GetBranches();
+            foreach (var branch in remoteBranches)
+            {
+                if (branch.Equals(SourceControlBranch))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void UploadSolutionToSourceControl(string remoteURL)
+        {
+            using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+            {
+                // Stage all items in working directory
+                Commands.Stage(repo, "*");
+
+                // Create the committer's signature and commit
+                Signature author = new LibGit2Sharp.Signature(SourceControlUser, SourceControlUser, DateTime.Now);
+                Signature committer = author;
+
+                //Commit the staged items 
+                repo.Commit("First commit using Ginger", author, committer);
+
+                // Add the origin remote
+                LibGit2Sharp.Remote remote = repo.Network.Remotes.Add("origin", remoteURL);
+
+                PushOptions options = new PushOptions();
+                options.CredentialsProvider = GetSourceCredentialsHandler();
+
+                if (!String.IsNullOrEmpty(SourceControlBranch) && isRemoteBranchExist())
+                {
+                    PullOptions pullOptions = new PullOptions();
+
+                    pullOptions.MergeOptions = new MergeOptions();
+                    pullOptions.MergeOptions.FailOnConflict = true;
+
+                    pullOptions.FetchOptions = new FetchOptions();
+                    pullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
+
+                    Signature merger = author;
+
+                    Branch localBranch = repo.Head;
+
+                    if (!repo.Head.FriendlyName.Equals(SourceControlBranch))
+                    {
+                        repo.CreateBranch(SourceControlBranch);
+                        localBranch = repo.Branches[SourceControlBranch];
+
+                        repo.Branches.Update(localBranch, b => b.TrackedBranch = localBranch.CanonicalName);
+                        Commands.Checkout(repo, SourceControlBranch);
+
+                        repo.Branches.Update(localBranch,
+                            b => b.Remote = remote.Name,
+                            b => b.UpstreamBranch = localBranch.CanonicalName);
+                    }
+                    else
+                    {
+                        repo.Branches.Update(localBranch,
+                            b => b.Remote = remote.Name,
+                            b => b.UpstreamBranch = localBranch.CanonicalName);
+                    }
+
+                    Commands.Pull(repo, merger, pullOptions);
+                }
+                else
+                {
+                    repo.CreateBranch(SourceControlBranch);
+                    Branch localBranch = repo.Branches[SourceControlBranch];
+
+                    repo.Branches.Update(localBranch, b => b.TrackedBranch = localBranch.CanonicalName);
+                    Commands.Checkout(repo, SourceControlBranch);
+
+                    repo.Branches.Update(localBranch,
+                        b => b.Remote = remote.Name,
+                        b => b.UpstreamBranch = localBranch.CanonicalName);
+                }
+                repo.Network.Push(remote, @"refs/heads/" + SourceControlBranch, options);
+            }
+        }
 
         public override bool UnLock(string path, ref string error)
         {
