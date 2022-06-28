@@ -30,8 +30,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8E8355
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerATS", "GingerATS\GingerATS.csproj", "{C855FDED-E6F3-489E-92C5-7CFA7A6D49C4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerConsoleTest", "GingerConsoleTest\GingerConsoleTest.csproj", "{44C2E969-CDDD-4D15-B663-84D262248DD7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DE334450-46DA-434B-9CDC-9ADBA7C85CAD}"
@@ -66,6 +64,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualRegressionTracker", "VisualRegressionTracker\VisualRegressionTracker.csproj", "{DAB57806-607C-409F-ABA1-29CD6A9C5368}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerTest", "GingerTest\GingerTest.csproj", "{0DDA6DC8-0F6A-4955-8425-2077C658EB7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerATS", "GingerATS\GingerATS.csproj", "{2FE010E3-F1BD-4F8D-91BA-E3C452FD62BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -134,12 +134,6 @@ Global
 		{D5329D81-7FF0-4AF1-B186-A2FD65EF0583}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D5329D81-7FF0-4AF1-B186-A2FD65EF0583}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D5329D81-7FF0-4AF1-B186-A2FD65EF0583}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
-		{C855FDED-E6F3-489E-92C5-7CFA7A6D49C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C855FDED-E6F3-489E-92C5-7CFA7A6D49C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C855FDED-E6F3-489E-92C5-7CFA7A6D49C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C855FDED-E6F3-489E-92C5-7CFA7A6D49C4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C855FDED-E6F3-489E-92C5-7CFA7A6D49C4}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C855FDED-E6F3-489E-92C5-7CFA7A6D49C4}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 		{44C2E969-CDDD-4D15-B663-84D262248DD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{44C2E969-CDDD-4D15-B663-84D262248DD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44C2E969-CDDD-4D15-B663-84D262248DD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -224,6 +218,12 @@ Global
 		{0DDA6DC8-0F6A-4955-8425-2077C658EB7C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0DDA6DC8-0F6A-4955-8425-2077C658EB7C}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0DDA6DC8-0F6A-4955-8425-2077C658EB7C}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
+		{2FE010E3-F1BD-4F8D-91BA-E3C452FD62BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FE010E3-F1BD-4F8D-91BA-E3C452FD62BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FE010E3-F1BD-4F8D-91BA-E3C452FD62BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FE010E3-F1BD-4F8D-91BA-E3C452FD62BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FE010E3-F1BD-4F8D-91BA-E3C452FD62BD}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FE010E3-F1BD-4F8D-91BA-E3C452FD62BD}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
