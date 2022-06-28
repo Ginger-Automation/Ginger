@@ -32,7 +32,7 @@ namespace Ginger.SourceControl
 {
     public class SourceControlUI
     {
-        public static bool TestConnection(SourceControlBase SourceControl, SourceControlConnDetailsPage.eSourceControlContext context, bool ignoreSuccessMessage)
+        public static bool TestConnection(SourceControlBase SourceControl, bool ignoreSuccessMessage)
         {
             string error = string.Empty;
             bool res = false;

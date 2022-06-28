@@ -180,7 +180,7 @@ namespace Ginger.SourceControl
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
 
                 SourceControlIntegration.CreateConfigFile(mSourceControl);
-                if (SourceControlUI.TestConnection(mSourceControl, SourceControlConnDetailsPage.eSourceControlContext.DownloadProjectPage, true) == false)
+                if (SourceControlUI.TestConnection(mSourceControl, true) == false)
                 {
                     SourceControlIntegration.BusyInProcessWhileDownloading = false;
                     Mouse.OverrideCursor = null;

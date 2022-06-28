@@ -214,5 +214,10 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
                 return false;
             }
         }
+
+        public override bool InitializeRepository(string remoteURL)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

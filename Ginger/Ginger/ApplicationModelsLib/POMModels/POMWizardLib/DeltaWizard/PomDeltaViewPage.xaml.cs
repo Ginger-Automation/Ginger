@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
+using Ginger.Actions.UserControls;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.GeneralLib;
@@ -33,6 +34,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using static GingerCore.General;
 
 namespace Ginger.ApplicationModelsLib.POMModels
@@ -329,6 +331,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
                 xPropertiesGrid.DataSourceList = mSelectedElement.Properties;
                 UpdatePropertiesHeader();
+
+                //update screenshot
+                BitmapSource source = null;
+                if (mSelectedElement.ElementInfo.ScreenShotImage != null)
+                {
+                    source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mSelectedElement.ElementInfo.ScreenShotImage.ToString()));
+                }
+                xElementScreenShotFrame.Content = new ScreenShotViewPage(mSelectedElement.ElementInfo?.ElementName, source, false);
 
             }
             else
