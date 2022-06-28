@@ -542,7 +542,7 @@ namespace GingerCore.Drivers
         private bool CheckUserSpecificProcess(UIAuto.AutomationElement window)
         {
             Process currentProcess = Process.GetProcessById(window.Current.ProcessId);
-
+            ////Need to fix currentProcess.StartInfo issue temporary Commented
             //if (currentProcess.StartInfo.Environment["USERNAME"] != Environment.UserName)
             //{
             //    return false;
