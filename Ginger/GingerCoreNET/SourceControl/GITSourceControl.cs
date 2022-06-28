@@ -812,7 +812,12 @@ namespace GingerCore.SourceControl
                 {
                     if (item.State == FileStatus.Conflicted)
                     {
-                        ConflictPaths.Add(RepositoryRootFolder + @"\" + item.FilePath);
+                        string filePath = item.FilePath;
+                        if (item.FilePath.Contains(@"/"))
+                        {
+                            filePath = filePath.Replace(@"/", @"\");
+                        }
+                        ConflictPaths.Add(Path.Combine(RepositoryRootFolder, filePath));
                     }
                 }
             }
