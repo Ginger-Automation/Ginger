@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -125,6 +125,8 @@ namespace GingerCoreNET.SourceControl
         public abstract bool GetProject(string Path, string URI, ref string error);
 
         public abstract void Init();
+
+        public abstract bool InitializeRepository(string remoteURL);
 
         public abstract bool TestConnection(ref string error);
 

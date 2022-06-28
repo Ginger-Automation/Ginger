@@ -1,0 +1,237 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using GingerCore.SourceControl;
+using GingerCoreNET.SourceControl;
+
+namespace Ginger.SourceControl
+{
+    /// <summary>
+    /// Interaction logic for SourceControlUploadSolutionPage.xaml
+    /// </summary>
+    public partial class SourceControlUploadSolutionPage : Page
+    {
+        GenericWindow genWin = null;
+
+        public static SourceControlBase mSourceControl;
+
+        public SourceControlUploadSolutionPage()
+        {
+            InitializeComponent();
+
+            SourceControlInit();
+
+            Init();
+
+        }
+
+        private void SourceControlInit()
+        {
+            mSourceControl = new GITSourceControl();
+            if (mSourceControl != null)
+            {
+                WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
+                mSourceControl.SourceControlURL = WorkSpace.Instance.UserProfile.SourceControlURL;
+                mSourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
+                mSourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
+                mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+                mSourceControl.SourceControlBranch = WorkSpace.Instance.UserProfile.SourceControlBranch;
+
+                mSourceControl.SourceControlConfigureProxy = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
+                mSourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
+                mSourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
+
+                if (WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout == 0)
+                {
+                    WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout = 80;
+                }
+                mSourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+                mSourceControl.PropertyChanged += SourceControl_PropertyChanged;
+
+            }
+        }
+
+        private static void SourceControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
+            WorkSpace.Instance.UserProfile.SourceControlURL = mSourceControl.SourceControlURL;
+            WorkSpace.Instance.UserProfile.SourceControlUser = mSourceControl.SourceControlUser;
+            WorkSpace.Instance.UserProfile.SourceControlPass = mSourceControl.SourceControlPass;
+            WorkSpace.Instance.UserProfile.SourceControlLocalFolder = mSourceControl.SourceControlLocalFolder;
+            WorkSpace.Instance.UserProfile.SourceControlBranch = mSourceControl.SourceControlBranch;
+
+            WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = mSourceControl.SourceControlConfigureProxy;
+            WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = mSourceControl.SourceControlProxyAddress;
+            WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort = mSourceControl.SourceControlProxyPort;
+            WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout = mSourceControl.SourceControlTimeout;
+        }
+
+        private void Init()
+        {
+            if (WorkSpace.Instance.UserProfile.SourceControlURL == null)
+            {
+
+                WorkSpace.Instance.UserProfile.SourceControlURL = "";
+            }
+            mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.Solution.Folder;
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConfigureProxyCheckBox, CheckBox.IsCheckedProperty, mSourceControl, nameof(SourceControlBase.SourceControlConfigureProxy));
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProxyAddressTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlProxyAddress));
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProxyPortTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlProxyPort));
+ 
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlURLTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlURL));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlUser));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlPass));
+            SourceControlPassTextBox.Password = mSourceControl.SourceControlPass;
+
+            //xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBranchesCombo, ComboBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlBranch));
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CustomBranchTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlBranch));
+
+            SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;
+        }
+
+        private void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            mSourceControl.SourceControlPass = ((PasswordBox)sender).Password;
+            SourceControlIntegration.Init(mSourceControl);
+        }
+
+        private void SourceControlUserTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            SourceControlIntegration.Init(mSourceControl);
+        }
+
+        private void FetchBranches_Click(object sender, RoutedEventArgs e)
+        {
+            xProcessingIcon.Visibility = Visibility.Visible;
+            xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
+            if (xBranchesCombo.Items.Count > 0)
+            {
+                xBranchesCombo.SelectedIndex = 0;
+            }
+            else
+            {
+                mSourceControl.SourceControlBranch = "";
+            }
+            xProcessingIcon.Visibility = Visibility.Collapsed;
+        }
+
+        private void SourceControlURLTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            SourceControlIntegration.Init(mSourceControl);
+        }
+
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        {
+            Button testConnBtn = new Button();
+            testConnBtn.Content = "Upload Solution";
+            testConnBtn.Click += new RoutedEventHandler(TestConnection_Click);
+
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn }, true, "Close", new RoutedEventHandler(Close_Click));
+        }
+
+        private void TestConnection_Click(object sender, RoutedEventArgs e)
+        {
+            xProcessingIcon.Visibility = Visibility.Visible;
+            if(TestSourceControlConnection())
+            {
+                UploadSolutionToSourceControl(sender, e);
+            }
+            xProcessingIcon.Visibility = Visibility.Collapsed;
+        }
+
+        private bool TestSourceControlConnection()
+        {
+            bool result = SourceControlUI.TestConnection(mSourceControl, false);
+            Mouse.OverrideCursor = null;
+            return result;
+        }
+
+        private void UploadSolutionToSourceControl(object sender, RoutedEventArgs e)
+        {
+            if(mSourceControl.InitializeRepository(mSourceControl.SourceControlURL))
+            {
+                Reporter.ToUser(eUserMsgKey.UploadSolutionInfo, "Solution was successfully uploaded into: '" + mSourceControl.SourceControlURL + "'");
+                Close_Click(sender, e);
+                if (WorkSpace.Instance.Solution.SourceControl == null)
+                {
+                    WorkSpace.Instance.Solution.SourceControl = mSourceControl;
+                }
+            }
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.SourceControl != null)
+            {
+                WorkSpace.Instance.UserProfile.SolutionSourceControlUser = WorkSpace.Instance.Solution.SourceControl.SourceControlUser;
+                WorkSpace.Instance.UserProfile.SolutionSourceControlPass = WorkSpace.Instance.Solution.SourceControl.SourceControlPass;
+                WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName = WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName;
+                WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail = WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName;
+                SourceControlIntegration.Disconnect(WorkSpace.Instance.Solution.SourceControl);
+            }
+            genWin.Close();
+        }
+
+        private void ConfigureProxyCheckBoxChecked(object sender, RoutedEventArgs e)
+        {
+            ProxyAddressTextBox.IsEnabled = true;
+            ProxyPortTextBox.IsEnabled = true;
+        }
+
+        private void ConfigureProxyCheckBoxUnchecked(object sender, RoutedEventArgs e)
+        {
+            ProxyAddressTextBox.IsEnabled = false;
+            ProxyPortTextBox.IsEnabled = false;
+        }
+
+        private void ConnectionDetailsExpended(object sender, RoutedEventArgs e)
+        {
+            ExpenderDetailsRow.Height = new GridLength(230);
+        }
+
+        private void ConnectionDetailsCollapsed(object sender, RoutedEventArgs e)
+        {
+            ExpenderDetailsRow.Height = new GridLength(50);
+        }
+
+        private void ConnectionConfigurationsExpended(object sender, RoutedEventArgs e)
+        {
+            ExpenderConfigurationRow.Height = new GridLength(200);
+        }
+
+        private void ConnectionConfigurationsCollapsed(object sender, RoutedEventArgs e)
+        {
+            ExpenderConfigurationRow.Height = new GridLength(50);
+        }
+
+        private void CustomBranchCheckBoxChecked(object sender, RoutedEventArgs e)
+        {
+            CustomBranchTextBox.IsEnabled = true;
+        }
+
+        private void CustomBranchCheckBoxUnchecked(object sender, RoutedEventArgs e)
+        {
+            CustomBranchTextBox.IsEnabled = false;
+        }
+    }
+}

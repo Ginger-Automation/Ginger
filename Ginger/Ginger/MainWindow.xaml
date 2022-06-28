@@ -147,7 +147,7 @@
                         </Menu>
 
                         <Menu x:Name="xSolutionSourceControlMenu" Background="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" >
-                            <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Source Control Operations">
+                            <MenuItem x:Name="xSolutionSourceControlSetMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Source Control Operations">
                                 <MenuItem.Icon>
                                     <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="SourceControl" FontWeight="Bold" Margin="0,0,0,0"/>
                                 </MenuItem.Icon>
@@ -179,6 +179,16 @@
                                     </MenuItem>
                                     <MenuItem Header="Accept Server Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ResolveConflictsServerMenuItem_Click">
                                     </MenuItem>
+                                </MenuItem>
+                            </MenuItem>
+                            <MenuItem x:Name="xSolutionSourceControlInitMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Source Control Operations">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="SourceControl" FontWeight="Bold" Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                                <MenuItem Header="Upload Solution To Source Control" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="UploadSolutionMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="CheckIn"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
                                 </MenuItem>
                             </MenuItem>
                         </Menu>

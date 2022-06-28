@@ -53,6 +53,8 @@ namespace Ginger.SolutionWindows
             GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform);
         }
 
+        public bool IsUploadSolutionToSourceControl { get; set; }
+
         private void EncryptionKeyBox_Changed(object sender, RoutedEventArgs e)
         {
             UCEncryptionKey.CheckKeyCombination();
@@ -135,7 +137,10 @@ namespace Ginger.SolutionWindows
                 mSolution.SolutionOperations.SaveSolution(false);
                 //show success message to user
                 Mouse.OverrideCursor = null;
-                Reporter.ToUser(eUserMsgKey.AddSolutionSucceed);
+                if (Reporter.ToUser(eUserMsgKey.UploadSolutionToSourceControl, mSolution.Name) == eUserMsgSelection.Yes)
+                {
+                    IsUploadSolutionToSourceControl = true;
+                }
                 _pageGenericWin.Close();
             }
             catch (Exception ex)
