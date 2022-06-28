@@ -687,7 +687,7 @@
       <HintPath>ProjectDll\LibGit2Sharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.mshtml">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\PublicAssemblies\Microsoft.mshtml.dll</HintPath>
+      <HintPath>..\GingerCoreNET\DLLS\Microsoft.mshtml.dll</HintPath>
     </Reference>
     <Reference Include="OctaneInteractionStd">
       <HintPath>..\GingerCoreNET\DLLS\OctaneInteractionStd.dll</HintPath>

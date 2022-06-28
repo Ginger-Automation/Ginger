@@ -247,7 +247,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.mshtml">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\PublicAssemblies\Microsoft.mshtml.dll</HintPath>
+      <HintPath>..\GingerCoreNET\DLLS\Microsoft.mshtml.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
