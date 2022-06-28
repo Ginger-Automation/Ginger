@@ -250,7 +250,7 @@ namespace Ginger
                     else
                     {
                         xMainWindowFrame.Visibility = Visibility.Collapsed;
-                        xNoLoadedSolutionImg.Visibility = Visibility.Visible;                         
+                        xNoLoadedSolutionImg.Visibility = Visibility.Visible;
                         GingerCore.General.DoEvents();
                         xSolutionTabsListView.SelectedItem = null;
                         xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
@@ -399,15 +399,15 @@ namespace Ginger
             eUserMsgSelection userSelection;
             if (mRestartApplication)
             {
-                 userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestart);               
+                userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestart);
             }
-            else if(mAskUserIfToClose == false)
+            else if (mAskUserIfToClose == false)
             {
-                 userSelection = eUserMsgSelection.Yes;
+                userSelection = eUserMsgSelection.Yes;
             }
             else
             {
-                userSelection=Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose);
+                userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose);
             }
 
 
@@ -528,6 +528,10 @@ namespace Ginger
             s1.SolutionOperations = solutionOperations;
             AddSolutionPage addSol = new AddSolutionPage(s1);
             addSol.ShowAsWindow();
+            if(addSol.IsUploadSolutionToSourceControl)
+            {
+                UploadSolutionMenuItem_Click(sender, e);
+            }
         }
 
         public void SetSolutionDependedUIElements()
@@ -545,11 +549,13 @@ namespace Ginger
                 }
                 if (WorkSpace.Instance.Solution.SourceControl != null)
                 {
-                    xSolutionSourceControlMenu.Visibility = Visibility.Visible;
+                    xSolutionSourceControlSetMenuItem.Visibility = Visibility.Visible;
+                    xSolutionSourceControlInitMenuItem.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    xSolutionSourceControlMenu.Visibility = Visibility.Collapsed;
+                    xSolutionSourceControlInitMenuItem.Visibility = Visibility.Visible;
+                    xSolutionSourceControlSetMenuItem.Visibility = Visibility.Collapsed;
                 }
 
             }
@@ -581,7 +587,7 @@ namespace Ginger
 
         private void ALMFieldsConfiguration_Click(object sender, RoutedEventArgs e)
         {
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig(); 
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.GetDefaultAlmConfig();
             ALMIntegration.Instance.OpenALMItemsFieldsPage(eALMConfigType.MainMenu, ALMIntegration.Instance.GetALMType(), WorkSpace.Instance.Solution.ExternalItemsFields);
         }
 
@@ -836,7 +842,7 @@ namespace Ginger
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            if(mRestartApplication)
+            if (mRestartApplication)
             {
                 Process.Start(Application.ResourceAssembly.Location);
             }
@@ -1126,7 +1132,7 @@ namespace Ginger
 
         private void xLoadOfflineHelpMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            GingerHelpProvider.ShowOfflineHelpLibrary(silent:false);
+            GingerHelpProvider.ShowOfflineHelpLibrary(silent: false);
         }
 
         private void xLoadOnlineHelpMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1188,18 +1194,18 @@ namespace Ginger
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                //--general canvas setup                
-                xHelpLayoutCanvas.Width = xMainWindowPnl.ActualWidth;
+                    //--general canvas setup                
+                    xHelpLayoutCanvas.Width = xMainWindowPnl.ActualWidth;
                     xHelpLayoutCanvas.Height = xMainWindowPnl.ActualHeight;
 
-                //---get control to focus details
-                FrameworkElement controlToFocus = helpArgs.FocusedControl;
+                    //---get control to focus details
+                    FrameworkElement controlToFocus = helpArgs.FocusedControl;
                     double controlToFocusWidth = controlToFocus.ActualWidth;
                     double controlToFocusHeight = controlToFocus.ActualHeight;
                     Point controlToFocusLocation = controlToFocus.TransformToAncestor(App.MainWindow).Transform(new Point(0, 0));
 
-                //---set background rectangles
-                double gapSize = 0.25;
+                    //---set background rectangles
+                    double gapSize = 0.25;
                     xHelpLayoutRectangleLeft.Width = controlToFocusLocation.X + gapSize;
                     xHelpLayoutRectangleLeft.Height = xMainWindowPnl.ActualHeight;
 
@@ -1217,13 +1223,13 @@ namespace Ginger
                     xHelpLayoutRectangleBottom.Width = controlToFocusWidth;
                     xHelpLayoutRectangleBottom.Height = xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight);
 
-                //xHelpLayoutRectangleFocusedItem.SetValue(Canvas.LeftProperty, controlToFocusLocation.X);
-                //xHelpLayoutRectangleFocusedItem.SetValue(Canvas.TopProperty, controlToFocusLocation.Y);
-                //xHelpLayoutRectangleFocusedItem.Width = controlToFocusWidth;
-                //xHelpLayoutRectangleFocusedItem.Height = controlToFocusHeight;
+                    //xHelpLayoutRectangleFocusedItem.SetValue(Canvas.LeftProperty, controlToFocusLocation.X);
+                    //xHelpLayoutRectangleFocusedItem.SetValue(Canvas.TopProperty, controlToFocusLocation.Y);
+                    //xHelpLayoutRectangleFocusedItem.Width = controlToFocusWidth;
+                    //xHelpLayoutRectangleFocusedItem.Height = controlToFocusHeight;
 
-                //-- set text and it location 
-                xHelpLayoutTextBlock.Text = helpArgs.HelpText;
+                    //-- set text and it location 
+                    xHelpLayoutTextBlock.Text = helpArgs.HelpText;
                     double textNeededWidth = 450;
                     double textNeededHeight = 250;
                     double arrowNeededLength = 100;
@@ -1231,40 +1237,40 @@ namespace Ginger
                     Point helpTextLocation = new Point();
                     Point arrowSourceLocation = new Point();
                     Point arrowTargetLocation = new Point();
-                //focused item top left corner
-                if (controlToFocusLocation.X >= textNeededWidth && controlToFocusLocation.Y >= textNeededHeight)
+                    //focused item top left corner
+                    if (controlToFocusLocation.X >= textNeededWidth && controlToFocusLocation.Y >= textNeededHeight)
                     {
                         helpTextLocation.X = controlToFocusLocation.X - textNeededWidth - arrowNeededLength; ;
                         helpTextLocation.Y = controlToFocusLocation.Y - arrowNeededLength;
                         arrowSourceLocation = new Point(helpTextLocation.X + textNeededWidth, helpTextLocation.Y + 50);
                         arrowTargetLocation = new Point(controlToFocusLocation.X, controlToFocusLocation.Y - arrowDistanceFromTarget);
                     }
-                //focused item bottom left corner
-                else if (controlToFocusLocation.X >= textNeededWidth && (xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight)) >= textNeededHeight)
+                    //focused item bottom left corner
+                    else if (controlToFocusLocation.X >= textNeededWidth && (xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight)) >= textNeededHeight)
                     {
                         helpTextLocation.X = controlToFocusLocation.X - textNeededWidth;
                         helpTextLocation.Y = controlToFocusLocation.Y + controlToFocusHeight + arrowNeededLength;
                         arrowSourceLocation = new Point(helpTextLocation.X + textNeededWidth / 2, helpTextLocation.Y);
                         arrowTargetLocation = new Point(controlToFocusLocation.X, controlToFocusLocation.Y + controlToFocusHeight + arrowDistanceFromTarget);
                     }
-                //focused item top right corner
-                else if ((xMainWindowPnl.ActualWidth - (controlToFocusLocation.X + controlToFocusWidth)) >= textNeededWidth && controlToFocusLocation.Y >= textNeededHeight)
+                    //focused item top right corner
+                    else if ((xMainWindowPnl.ActualWidth - (controlToFocusLocation.X + controlToFocusWidth)) >= textNeededWidth && controlToFocusLocation.Y >= textNeededHeight)
                     {
                         helpTextLocation.X = controlToFocusLocation.X + controlToFocusWidth + textNeededWidth;
                         helpTextLocation.Y = controlToFocusLocation.Y - arrowNeededLength;
                         arrowSourceLocation = new Point(helpTextLocation.X - 20, helpTextLocation.Y + 20);
                         arrowTargetLocation = new Point(controlToFocusLocation.X + controlToFocusWidth, controlToFocusLocation.Y - arrowDistanceFromTarget);
                     }
-                //focused item bottom right corner
-                else if ((xMainWindowPnl.ActualWidth - (controlToFocusLocation.X + controlToFocusWidth)) >= textNeededWidth && (xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight)) >= textNeededHeight)
+                    //focused item bottom right corner
+                    else if ((xMainWindowPnl.ActualWidth - (controlToFocusLocation.X + controlToFocusWidth)) >= textNeededWidth && (xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight)) >= textNeededHeight)
                     {
                         helpTextLocation.X = controlToFocusLocation.X + controlToFocusWidth + textNeededWidth;
                         helpTextLocation.Y = controlToFocusLocation.Y + controlToFocusHeight + arrowNeededLength;
                         arrowSourceLocation = new Point(helpTextLocation.X, helpTextLocation.Y);
                         arrowTargetLocation = new Point(controlToFocusLocation.X + controlToFocusWidth, controlToFocusLocation.Y + controlToFocusHeight + arrowDistanceFromTarget);
                     }
-                //middle of screen
-                else
+                    //middle of screen
+                    else
                     {
                         helpTextLocation.X = xMainWindowPnl.ActualWidth / 2;
                         helpTextLocation.Y = xMainWindowPnl.ActualHeight / 2;
@@ -1272,8 +1278,8 @@ namespace Ginger
                     xHelpLayoutTextBlock.SetValue(Canvas.LeftProperty, helpTextLocation.X);
                     xHelpLayoutTextBlock.SetValue(Canvas.TopProperty, helpTextLocation.Y);
 
-                //-- draw Arrow
-                while (xHelpLayoutCanvas.Children.Count > 5)//removing previous dynamic arrows
+                    //-- draw Arrow
+                    while (xHelpLayoutCanvas.Children.Count > 5)//removing previous dynamic arrows
                     {
                         xHelpLayoutCanvas.Children.RemoveAt(xHelpLayoutCanvas.Children.Count - 1);
                     }
@@ -1314,6 +1320,13 @@ namespace Ginger
             {
                 ShowHelpLayout();//need to show again in correct size
             }
+        }
+
+        private void UploadSolutionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            SourceControlUploadSolutionPage uploadPage = new SourceControl.SourceControlUploadSolutionPage();
+            uploadPage.ShowAsWindow(eWindowShowStyle.Dialog);
+            SetSolutionDependedUIElements();
         }
     }
 }

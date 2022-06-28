@@ -281,6 +281,10 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ConflictResolve\ConflictResolve.cs" />
+    <Compile Include="ConflictResolve\ResolveConflictWindow.xaml.cs">
+      <DependentUpon>ResolveConflictWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ExternalConfigurations\ApplitoolsExternalConfigurationsPage.xaml.cs">
       <DependentUpon>ApplitoolsExternalConfigurationsPage.xaml</DependentUpon>
     </Compile>
@@ -653,6 +657,9 @@
     <Compile Include="SolutionWindows\TreeViewItems\TreeViewItemBase.cs" />
     <Compile Include="SolutionWindows\UpgradePage.xaml.cs">
       <DependentUpon>UpgradePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SourceControl\SourceControlUploadSolutionPage.xaml.cs">
+      <DependentUpon>SourceControlUploadSolutionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml.cs">
       <DependentUpon>CustomRelativeXpathTemplateUI.xaml</DependentUpon>
@@ -3021,6 +3028,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ConflictResolve\ResolveConflictWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Drivers\DriversConfigsEditPages\AppiumDriverEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -3108,6 +3119,10 @@
     <Page Include="SolutionWindows\UpgradePage.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="SourceControl\SourceControlUploadSolutionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml">
       <SubType>Designer</SubType>

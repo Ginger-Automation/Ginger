@@ -60,6 +60,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     SetAutoMapElementTypes();                    
                     SetAutoMapElementTypesGridView();
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomDeltaUtils.PomLearnUtils, nameof(mWizard.mPomDeltaUtils.PomLearnUtils.LearnOnlyMappedElements));
+                    xLearnScreenshotsOfElements.BindControl(mWizard.mPomDeltaUtils.PomLearnUtils, nameof(mWizard.mPomDeltaUtils.PomLearnUtils.LearnScreenshotsOfElements));
+                    ShowLearnScreenshotsOfElements();
                     SetElementLocatorsSettingsData();                    
                     SetElementLocatorsSettingsGridView();
                     ShowSpecficFrameLearnConfigPanel();
@@ -113,6 +115,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             else
             {
                 xSpecificFrameConfigPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ShowLearnScreenshotsOfElements()
+        {
+            if (mAppPlatform.Equals(ePlatformType.Web))
+            {
+                xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xLearnScreenshotsOfElements.Visibility = Visibility.Collapsed;
             }
         }
 
