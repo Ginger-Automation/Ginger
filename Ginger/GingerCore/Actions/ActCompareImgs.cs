@@ -256,6 +256,11 @@ namespace GingerCore.Actions
             }
         }
 
+        public void testMethod()
+        { 
+                //fake method for sealight test
+        }
+
         public AutomationElement UIAutomationGetWindowByTitle(string WindowTitle)
         {
             TreeWalker walker = TreeWalker.ControlViewWalker;
