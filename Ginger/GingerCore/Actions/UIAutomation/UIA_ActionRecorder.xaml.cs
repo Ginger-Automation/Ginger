@@ -56,12 +56,12 @@ namespace GingerCore.Actions
         {
         }
 
-        internal AutomationElement_Extend TryGetActElementByLocator(Act act)
+        internal AutomationElement TryGetActElementByLocator(Act act)
         {
             if (act == null) return null;
             try
             {
-                AutomationElement_Extend e = TryGetActElementByLocator(act, act.LocateBy, act.LocateValue);
+                AutomationElement e = TryGetActElementByLocator(act, act.LocateBy, act.LocateValue);
                 if (e == null)
                 {
                     act.Error = "Element not found - " + act.LocateBy + " - " + act.LocateValue + Environment.NewLine; //TODO add to accommodate multiple locator's need to be done for UIA
@@ -76,9 +76,9 @@ namespace GingerCore.Actions
             }
         }
 
-        internal AutomationElement_Extend TryGetActElementByLocator(Act A, eLocateBy LocateBy, string LocateValue)
+        internal AutomationElement TryGetActElementByLocator(Act A, eLocateBy LocateBy, string LocateValue)
         {
-            AutomationElement_Extend e = null;
+            AutomationElement e = null;
             switch (LocateBy)
             {
                 case eLocateBy.ByID:

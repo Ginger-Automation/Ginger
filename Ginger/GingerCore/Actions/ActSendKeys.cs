@@ -167,7 +167,7 @@ namespace Ginger.Actions
 
 
                 IntPtr winhandle = IntPtr.Zero;
-                AutomationElement_Extend window;
+                AutomationElement window;
 
 
 
@@ -259,14 +259,14 @@ namespace Ginger.Actions
                 return p[0].MainWindowHandle;
             return IntPtr.Zero;
         }
-        AutomationElement_Extend GetWindow(string LocValCal) //*******
+        AutomationElement GetWindow(string LocValCal) //*******
         {
             UIAComWrapperHelper UIA = new UIAComWrapperHelper();
 
             List<object> AppWindows = UIA.GetListOfWindows();
 
 
-            foreach (AutomationElement_Extend window in AppWindows)
+            foreach (AutomationElement window in AppWindows)
             {
                 string WindowTitle = UIA.GetWindowInfo(window);
                 

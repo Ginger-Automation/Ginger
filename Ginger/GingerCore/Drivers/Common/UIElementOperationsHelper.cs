@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-
+extern alias UIAComWrapperNetstandard;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows.Automation;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Drivers.Common
 {
@@ -41,21 +42,21 @@ namespace GingerCore.Drivers.Common
 
         private WinAPIAutomation winAPI = new WinAPIAutomation();
         public bool taskFinished;
-        public ActionResult ToggleElement(AutomationElement_Extend automationElement, eElementType elementType)
+        public ActionResult ToggleElement(UIAuto.AutomationElement automationElement, eElementType elementType)
         {
             ActionResult actionResult = new ActionResult();           
             object togglePattern;
 
             try
             {
-                automationElement.TryGetCurrentPattern(TogglePatternExtended.Pattern, out togglePattern);
+                automationElement.TryGetCurrentPattern(UIAuto.TogglePattern.Pattern, out togglePattern);
                 if (togglePattern != null)
                 {
-                    ToggleStateExtended originalState = ((TogglePatternExtended)togglePattern).Current.ToggleState;
+                    Interop.UIAutomationClient.ToggleState originalState = ((UIAuto.TogglePattern)togglePattern).Current.ToggleState;
 
-                    ((TogglePatternExtended)togglePattern).Toggle();
+                    ((UIAuto.TogglePattern)togglePattern).Toggle();
 
-                    ToggleStateExtended newState = ((TogglePatternExtended)togglePattern).Current.ToggleState;
+                    Interop.UIAutomationClient.ToggleState newState = ((UIAuto.TogglePattern)togglePattern).Current.ToggleState;
 
                     if (originalState != newState)
                     {
@@ -82,18 +83,18 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        public ActionResult SetValue(AutomationElement_Extend automationElement, string value)
+        public ActionResult SetValue(UIAuto.AutomationElement automationElement, string value)
         {
             ActionResult actionResult = new ActionResult();
             object pattern;
 
             try
             {
-                automationElement.TryGetCurrentPattern(ValuePatternExtended.Pattern, out pattern);
+                automationElement.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out pattern);
 
                 if (pattern != null)
                 {
-                    ((ValuePatternExtended)pattern).SetValue(value);
+                    ((UIAuto.ValuePattern)pattern).SetValue(value);
                     actionResult.executionInfo = "Element Value set to " + value;
                 }
                 else
@@ -109,18 +110,18 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        public ActionResult SetText(AutomationElement_Extend automationElement, string value)
+        public ActionResult SetText(UIAuto.AutomationElement automationElement, string value)
         {
             ActionResult actionResult = new ActionResult();
             object pattern;
 
             try
             {
-                automationElement.TryGetCurrentPattern(LegacyIAccessiblePatternExtended.Pattern, out pattern);
+                automationElement.TryGetCurrentPattern(UIAuto.LegacyIAccessiblePattern.Pattern, out pattern);
 
                 if (pattern != null)
                 {
-                    ((LegacyIAccessiblePatternExtended)pattern).SetValue(value);
+                    ((UIAuto.LegacyIAccessiblePattern)pattern).SetValue(value);
                     actionResult.executionInfo = "Element Value set to " + value;
                 }
                 else
@@ -136,7 +137,7 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        public ActionResult SendKeys(AutomationElement_Extend automationElement, string value)
+        public ActionResult SendKeys(UIAuto.AutomationElement automationElement, string value)
         {
             ActionResult actionResult = new ActionResult();
             try
@@ -154,12 +155,12 @@ namespace GingerCore.Drivers.Common
         }
 
 
-        public ActionResult SelectValue(AutomationElement_Extend automationElement, eElementType elementType, string value)
+        public ActionResult SelectValue(UIAuto.AutomationElement automationElement, eElementType elementType, string value)
         {
             ActionResult actionResult = new ActionResult();
 
-            AutomationElement_Extend itemToSelect = automationElement.FindFirst(TreeScopeExtended.Descendants, new
-                       PropertyConditionExtended(AutomationElement_Extend.NameProperty, value));
+            UIAuto.AutomationElement itemToSelect = automationElement.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, new
+                       UIAuto.PropertyCondition(UIAuto.AutomationElement.NameProperty, value));
 
             if (itemToSelect != null)
             {
@@ -173,14 +174,14 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        internal ActionResult SelementElement(AutomationElement_Extend automationElement)
+        internal ActionResult SelementElement(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
             object selectionItemPattern;
-            automationElement.TryGetCurrentPattern(SelectionItemPatternExtended.Pattern, out selectionItemPattern);
+            automationElement.TryGetCurrentPattern(UIAuto.SelectionItemPattern.Pattern, out selectionItemPattern);
             if (selectionItemPattern != null)
             {
-                ((SelectionItemPatternExtended)selectionItemPattern).Select();
+                ((UIAuto.SelectionItemPattern)selectionItemPattern).Select();
                 actionResult.executionInfo = "Succesfully selected the element";
             }
             else
@@ -190,14 +191,14 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        internal ActionResult AddToSelection(AutomationElement_Extend automationElement)
+        internal ActionResult AddToSelection(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
             object selectionItemPattern;
-            automationElement.TryGetCurrentPattern(SelectionItemPatternExtended.Pattern, out selectionItemPattern);
+            automationElement.TryGetCurrentPattern(UIAuto.SelectionItemPattern.Pattern, out selectionItemPattern);
             if (selectionItemPattern != null)
             {
-                ((SelectionItemPatternExtended)selectionItemPattern).AddToSelection();
+                ((UIAuto.SelectionItemPattern)selectionItemPattern).AddToSelection();
                 actionResult.executionInfo = "Succesfully selected the element";
             }
             else
@@ -207,14 +208,14 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        internal ActionResult RemoveFromSelection(AutomationElement_Extend automationElement)
+        internal ActionResult RemoveFromSelection(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
             object selectionItemPattern;
-            automationElement.TryGetCurrentPattern(SelectionItemPatternExtended.Pattern, out selectionItemPattern);
+            automationElement.TryGetCurrentPattern(UIAuto.SelectionItemPattern.Pattern, out selectionItemPattern);
             if (selectionItemPattern != null)
             {
-                ((SelectionItemPatternExtended)selectionItemPattern).RemoveFromSelection();
+                ((UIAuto.SelectionItemPattern)selectionItemPattern).RemoveFromSelection();
                 actionResult.executionInfo = "Succesfully removed the element from selection";
             }
             else
@@ -224,15 +225,15 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        public ActionResult ExpandElement(AutomationElement_Extend automationElement)
+        public ActionResult ExpandElement(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
             object expandPattern;
-            automationElement.TryGetCurrentPattern(ExpandCollapsePatternExtended.Pattern, out expandPattern);
+            automationElement.TryGetCurrentPattern(UIAuto.ExpandCollapsePattern.Pattern, out expandPattern);
 
             if (expandPattern != null)
             {
-                ((ExpandCollapsePatternExtended)expandPattern).Expand();
+                ((UIAuto.ExpandCollapsePattern)expandPattern).Expand();
                 actionResult.executionInfo = "Successfully expanded the element";
             }
             else
@@ -241,15 +242,15 @@ namespace GingerCore.Drivers.Common
             }
             return actionResult;
         }
-        public ActionResult CollapseElement(AutomationElement_Extend automationElement)
+        public ActionResult CollapseElement(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
             object collapsePattern;
-            automationElement.TryGetCurrentPattern(ExpandCollapsePatternExtended.Pattern, out collapsePattern);
+            automationElement.TryGetCurrentPattern(UIAuto.ExpandCollapsePattern.Pattern, out collapsePattern);
 
             if (collapsePattern != null)
             {
-                ((ExpandCollapsePatternExtended)collapsePattern).Collapse();
+                ((UIAuto.ExpandCollapsePattern)collapsePattern).Collapse();
                 actionResult.executionInfo = "Successfully collapsed the element";
             }
             else
@@ -258,14 +259,14 @@ namespace GingerCore.Drivers.Common
             }
             return actionResult;
         }
-        internal ActionResult ScrollToView(AutomationElement_Extend automationElement)
+        internal ActionResult ScrollToView(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
             object scrollPattern;
-            automationElement.TryGetCurrentPattern(ScrollItemPatternExtended.Pattern, out scrollPattern);
+            automationElement.TryGetCurrentPattern(UIAuto.ScrollItemPattern.Pattern, out scrollPattern);
             if (scrollPattern != null)
             {               
-                ((ScrollItemPatternExtended)scrollPattern).ScrollIntoView();
+                ((UIAuto.ScrollItemPattern)scrollPattern).ScrollIntoView();
                 actionResult.executionInfo = "Successfully scrolled the element into view";
             }
             else
@@ -275,7 +276,7 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        internal ActionResult GetPropertyValue(AutomationElement_Extend automationElement, AutomationPropertyExtended automationProperty)
+        internal ActionResult GetPropertyValue(UIAuto.AutomationElement automationElement, UIAuto.AutomationProperty automationProperty)
         {
   
 
@@ -294,7 +295,7 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        public ActionResult ClickElement(AutomationElement_Extend automationElement)
+        public ActionResult ClickElement(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
             Boolean clickTriggeredFlag = false;
@@ -315,7 +316,7 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        public ActionResult MouseClickElement(AutomationElement_Extend automationElement)
+        public ActionResult MouseClickElement(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();         
             try
@@ -331,7 +332,7 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        public ActionResult ClickElementUsingXY(AutomationElement_Extend automationElement, int xCoordinate, int yCoordinate)
+        public ActionResult ClickElementUsingXY(UIAuto.AutomationElement automationElement, int xCoordinate, int yCoordinate)
         {
             ActionResult actionResult = new ActionResult();
             try
@@ -350,7 +351,7 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        public ActionResult DoubleClickElementUsingXY(AutomationElement_Extend automationElement, int xCoordinate, int yCoordinate)
+        public ActionResult DoubleClickElementUsingXY(UIAuto.AutomationElement automationElement, int xCoordinate, int yCoordinate)
         {
             ActionResult actionResult = new ActionResult();
             try
@@ -372,7 +373,7 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        public ActionResult RightClickElementUsingXY(AutomationElement_Extend automationElement, int xCoordinate, int yCoordinate)
+        public ActionResult RightClickElementUsingXY(UIAuto.AutomationElement automationElement, int xCoordinate, int yCoordinate)
         {
             ActionResult actionResult = new ActionResult();
             try
@@ -395,7 +396,7 @@ namespace GingerCore.Drivers.Common
         }
 
 
-        public ActionResult AsyncClickElement(AutomationElement_Extend automationElement)
+        public ActionResult AsyncClickElement(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
             Boolean clickTriggeredFlag = false;
@@ -446,19 +447,19 @@ namespace GingerCore.Drivers.Common
 
 
 
-        internal ActionResult ClickUsingInvokePattern(AutomationElement_Extend automationElement, ref Boolean clickTriggeredFlag)
+        internal ActionResult ClickUsingInvokePattern(UIAuto.AutomationElement automationElement, ref Boolean clickTriggeredFlag)
         {
             ActionResult actionResult = new ActionResult();
             object invokePattern;
             try
             {
 
-                automationElement.TryGetCurrentPattern(InvokePatternExtended.Pattern, out invokePattern);
+                automationElement.TryGetCurrentPattern(UIAuto.InvokePattern.Pattern, out invokePattern);
 
                 if (invokePattern != null)
                 {
                     clickTriggeredFlag = true;                   
-                    ((InvokePatternExtended)invokePattern).Invoke();
+                    ((InvokePattern)invokePattern).Invoke();
                     actionResult.executionInfo = "Successfully clicked the element";
                 }
                 else
@@ -475,24 +476,24 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        internal ActionResult ClickUsingLegacyPattern(AutomationElement_Extend automationElement, ref Boolean clickTriggeredFlag)
+        internal ActionResult ClickUsingLegacyPattern(UIAuto.AutomationElement automationElement, ref Boolean clickTriggeredFlag)
         {
             ActionResult actionResult = new ActionResult();
             object legacyPattern;
             try
             {
 
-                automationElement.TryGetCurrentPattern(LegacyIAccessiblePatternExtended.Pattern, out legacyPattern);
+                automationElement.TryGetCurrentPattern(UIAuto.LegacyIAccessiblePattern.Pattern, out legacyPattern);
 
                 if (legacyPattern != null)
                 {
-                    actionResult= GetPropertyValue(automationElement, LegacyIAccessiblePatternIdentifiersExtended.DefaultActionProperty);
+                    actionResult= GetPropertyValue(automationElement,UIAuto.LegacyIAccessiblePatternIdentifiers.DefaultActionProperty);
                     if(string.IsNullOrEmpty(actionResult.errorMessage))
                     {
                         if(!string.IsNullOrEmpty(actionResult.outputValue))
                         {
                             clickTriggeredFlag = true;
-                            ((LegacyIAccessiblePatternExtended)legacyPattern).DoDefaultAction();
+                            ((UIAuto.LegacyIAccessiblePattern)legacyPattern).DoDefaultAction();
                             actionResult.executionInfo = "Successfully clicked the element";
                         }
                         else
@@ -516,7 +517,7 @@ namespace GingerCore.Drivers.Common
         }
 
 
-        //public ActionResult GetControlProperty(AutomationElement_Extend automationElement, string propertyName)
+        //public ActionResult GetControlProperty(UIAuto.AutomationElement automationElement, string propertyName)
         //{
         //    ActionResult actionResult = new ActionResult();
         //    try
@@ -534,7 +535,7 @@ namespace GingerCore.Drivers.Common
         //}
 
 
-        public ActionResult GetValue(AutomationElement_Extend automationElement, eElementType elementType)
+        public ActionResult GetValue(UIAuto.AutomationElement automationElement, eElementType elementType)
         {
             ActionResult actionResult = new ActionResult();
             object valuePattern;
@@ -543,17 +544,17 @@ namespace GingerCore.Drivers.Common
                 //if(elementType==eElementType.CheckBox)
                 //{
                 //    object togglePattern;
-                //    automationElement.TryGetCurrentPattern(TogglePatternExtended.Pattern, out togglePattern);
+                //    automationElement.TryGetCurrentPattern(UIAuto.TogglePattern.Pattern, out togglePattern);
 
-                //    ToggleStateExtended toggleState = ((TogglePatternExtended)togglePattern).Current.ToggleStateExtended;
+                //    ToggleState toggleState = ((UIAuto.TogglePattern)togglePattern).Current.ToggleState;
                 //    actionResult.outputValue = Convert.ToString(toggleState);
                 //}
                 //else
                 //{
-                    actionResult = GetPropertyValue(automationElement, ValuePatternIdentifiersExtended.ValueProperty);
+                    actionResult = GetPropertyValue(automationElement, UIAuto.ValuePatternIdentifiers.ValueProperty);
                     if (!string.IsNullOrEmpty(actionResult.errorMessage)|| string.IsNullOrEmpty(actionResult.outputValue))
                     {
-                        actionResult = GetPropertyValue(automationElement, LegacyIAccessiblePatternIdentifiersExtended.ValueProperty);
+                        actionResult = GetPropertyValue(automationElement, UIAuto.LegacyIAccessiblePatternIdentifiers.ValueProperty);
                     }
                 //}      
             }
@@ -566,23 +567,23 @@ namespace GingerCore.Drivers.Common
 
         }
 
-        public ActionResult GetText(AutomationElement_Extend automationElement)
+        public ActionResult GetText(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
             object textPattern;
             try
             {
-                automationElement.TryGetCurrentPattern(TextPatternExtended.Pattern, out textPattern);
+                automationElement.TryGetCurrentPattern(UIAuto.TextPattern.Pattern, out textPattern);
                 if (textPattern != null)
                 {
-                    actionResult.outputValue = ((TextPatternExtended)textPattern).DocumentRange.GetText(-1);
+                    actionResult.outputValue = ((UIAuto.TextPattern)textPattern).DocumentRange.GetText(-1);
                     return actionResult;
                 }
 
-                automationElement.TryGetCurrentPattern(ValuePatternExtended.Pattern, out textPattern);
+                automationElement.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out textPattern);
                 if (textPattern != null)
                 {
-                    var valuePattern = (ValuePatternExtended)textPattern;
+                    var valuePattern = (UIAuto.ValuePattern)textPattern;
                     actionResult.outputValue = valuePattern.Current.Value;
                     return actionResult;
                 }
@@ -599,14 +600,14 @@ namespace GingerCore.Drivers.Common
             }
             return actionResult;
         }
-        public ActionResult GetSelectedValue(AutomationElement_Extend automationElement)
+        public ActionResult GetSelectedValue(UIAuto.AutomationElement automationElement)
         {
             ActionResult actionResult = new ActionResult();
             string ListItems = null;
             taskFinished = false;
             try
             {
-                bool isMultiSelect = (bool)automationElement.GetCurrentPropertyValue(SelectionPatternIdentifiersExtended.CanSelectMultipleProperty);
+                bool isMultiSelect = (bool)automationElement.GetCurrentPropertyValue(UIAuto.SelectionPatternIdentifiers.CanSelectMultipleProperty);
                 if (isMultiSelect)
                 {
                     ListItems = GetSelectedItems(automationElement);
@@ -614,18 +615,18 @@ namespace GingerCore.Drivers.Common
                 else
                 {
                     object vp;
-                    automationElement.TryGetCurrentPattern(ValuePatternExtended.Pattern, out vp);
+                    automationElement.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out vp);
                     if (vp != null)
                     {
                         actionResult = GetValue(automationElement, eElementType.Unknown);
                     }
                     else
                     {
-                        AutomationElement_Extend elementNode = TreeWalkerExtended.RawViewWalker.GetFirstChild(automationElement);
+                        UIAuto.AutomationElement elementNode = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(automationElement);
                         string isItemSelected;
                         while (elementNode != null && !taskFinished)
                         {
-                            isItemSelected = (elementNode.GetCurrentPropertyValue(SelectionItemPatternIdentifiersExtended.IsSelectedProperty)).ToString();
+                            isItemSelected = (elementNode.GetCurrentPropertyValue(UIAuto.SelectionItemPatternIdentifiers.IsSelectedProperty)).ToString();
                             if (isItemSelected == "True")
                             {
                                 if (ListItems == null && isItemSelected == "True")
@@ -637,7 +638,7 @@ namespace GingerCore.Drivers.Common
                                     ListItems += "," + elementNode.Current.Name;
                                 }
                             }
-                            elementNode = TreeWalkerExtended.RawViewWalker.GetNextSibling(elementNode);
+                            elementNode = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(elementNode);
                         }
                         actionResult.executionInfo = "No Item selected";
                     }
@@ -652,13 +653,13 @@ namespace GingerCore.Drivers.Common
             return actionResult;
         }
 
-        private string GetSelectedItems(AutomationElement_Extend element)
+        private string GetSelectedItems(UIAuto.AutomationElement element)
         {
-            AutomationElement_Extend elementNode = TreeWalkerExtended.RawViewWalker.GetFirstChild(element);
+            UIAuto.AutomationElement elementNode = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(element);
             String ListItems = null;
             do
             {
-                string isItemSelected = (elementNode.GetCurrentPropertyValue(SelectionItemPatternIdentifiersExtended.IsSelectedProperty)).ToString();
+                string isItemSelected = (elementNode.GetCurrentPropertyValue(UIAuto.SelectionItemPatternIdentifiers.IsSelectedProperty)).ToString();
                 if (ListItems == null && isItemSelected == "True")
                 {
                     ListItems = elementNode.Current.Name;
@@ -668,22 +669,22 @@ namespace GingerCore.Drivers.Common
                     ListItems += "," + elementNode.Current.Name;
                 }
 
-                elementNode = TreeWalkerExtended.RawViewWalker.GetNextSibling(elementNode);
+                elementNode = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(elementNode);
             } while (elementNode != null && !taskFinished);
             return ListItems;
         }
 
-        public ActionResult CloseWindow(AutomationElement_Extend window)
+        public ActionResult CloseWindow(UIAuto.AutomationElement window)
         {
             ActionResult actionResult = new ActionResult();
             Object windowPattern;
 
             try
             {
-                window.TryGetCurrentPattern(WindowPatternExtended.Pattern, out windowPattern);
+                window.TryGetCurrentPattern(UIAuto.WindowPattern.Pattern, out windowPattern);
                 if (windowPattern != null)
                 {
-                    ((WindowPatternExtended)windowPattern).Close();
+                    ((UIAuto.WindowPattern)windowPattern).Close();
                     actionResult.executionInfo = "Window closed";
                 }
                 else
@@ -700,7 +701,7 @@ namespace GingerCore.Drivers.Common
             
         }
 
-        public ActionResult GetTitle(AutomationElement_Extend window)
+        public ActionResult GetTitle(UIAuto.AutomationElement window)
         {
             ActionResult actionResult = new ActionResult();
             try
@@ -716,17 +717,17 @@ namespace GingerCore.Drivers.Common
 
         }
 
-        public ActionResult SetWindowState(AutomationElement_Extend window, WindowVisualStateExtended windowVisualState)
+        public ActionResult SetWindowState(UIAuto.AutomationElement window, Interop.UIAutomationClient.WindowVisualState windowVisualState)
         {
             ActionResult actionResult = new ActionResult();
             Object windowPattern;
 
             try
             {
-                window.TryGetCurrentPattern(WindowPatternExtended.Pattern, out windowPattern);
+                window.TryGetCurrentPattern(UIAuto.WindowPattern.Pattern, out windowPattern);
                 if (windowPattern != null)
                 {
-                    ((WindowPatternExtended)windowPattern).SetWindowVisualState(windowVisualState);
+                    ((UIAuto.WindowPattern)windowPattern).SetWindowVisualState(windowVisualState);
                     actionResult.executionInfo = "Window is " + windowVisualState;
                 }
                 else
@@ -743,7 +744,7 @@ namespace GingerCore.Drivers.Common
 
         }
         
-        public bool PerformClick(AutomationElement_Extend automationElement, ActUIElement.eElementAction clickType)
+        public bool PerformClick(UIAuto.AutomationElement automationElement, ActUIElement.eElementAction clickType)
         {
             ActionResult actionResult = new ActionResult();
             bool result = false;
@@ -768,7 +769,7 @@ namespace GingerCore.Drivers.Common
             return result;
         }
 
-        public bool LocateAndValidateElement(AutomationElement_Extend elementToValidate, string elementType, ActUIElement.eElementAction actionType, string validationValue = "")
+        public bool LocateAndValidateElement(UIAuto.AutomationElement elementToValidate, string elementType, ActUIElement.eElementAction actionType, string validationValue = "")
         {
             ActionResult actionResult = new ActionResult();
             bool result = false;
@@ -812,7 +813,7 @@ namespace GingerCore.Drivers.Common
             return result;
         }
 
-        public ActionResult ClickElementByOthertypes(ActUIElement.eElementAction executedClick, List<ActUIElement.eElementAction> clicks, AutomationElement_Extend automationElement, AutomationElement_Extend elementToValidate, string validationElementType, ActUIElement.eElementAction validationType)
+        public ActionResult ClickElementByOthertypes(ActUIElement.eElementAction executedClick, List<ActUIElement.eElementAction> clicks, UIAuto.AutomationElement automationElement, UIAuto.AutomationElement elementToValidate, string validationElementType, ActUIElement.eElementAction validationType)
         {
             ActUIElement.eElementAction currentClick;
             //string result = "";

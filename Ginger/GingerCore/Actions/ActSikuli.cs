@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.Repository;
 using GingerCore.Properties;
@@ -175,7 +177,7 @@ namespace GingerCore.Actions
 
         public override eImageType Image { get { return eImageType.BullsEye; } }
 
-        private List<AutomationElement_Extend> lstWindows = new List<AutomationElement_Extend>();
+        private List<UIAuto.AutomationElement> lstWindows = new List<UIAuto.AutomationElement>();
 
         public static new partial class Fields
         {
@@ -379,7 +381,7 @@ namespace GingerCore.Actions
             List<object> lstAppWindow = uiHelper.GetListOfWindows();
             ActiveProcessWindowsList.Clear();
             lstWindows.Clear();
-            foreach (AutomationElement_Extend process in lstAppWindow)
+            foreach (UIAuto.AutomationElement process in lstAppWindow)
             {
                 // If the process appears on the Taskbar (if has a title)
                 // print the information of the process

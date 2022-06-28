@@ -66,7 +66,10 @@ namespace Ginger.Actions
             xURLSrcRadioButton.Init(typeof(ActBrowserElement.eURLSrc), xURLSrcRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString()), URLSrcRadioButton_Clicked);
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy);
             xImplicitWaitVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.ImplicitWait);
+            xNetworkUrlVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.NetworkUrl);
             SetVisibleControlsForAction();
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNetworkLogCheckbox, CheckBox.IsCheckedProperty, mAct, ActBrowserElement.Fields.NetworkLog);
+            xNetworkLogPnl.Visibility = System.Windows.Visibility.Visible;
         }
 
         private void ResetView()
@@ -76,6 +79,15 @@ namespace Ginger.Actions
             xURLSrcPnl.Visibility = System.Windows.Visibility.Collapsed;
             xValueGrid.Visibility = System.Windows.Visibility.Collapsed;
             xImplicitWaitPnl.Visibility = System.Windows.Visibility.Collapsed;
+            if(xNetworkLogCheckbox.IsChecked == true)
+            {
+                xNetworkLogPnl.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                xNetworkLogPnl.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            
         }
 
         private void ResetPOMView()

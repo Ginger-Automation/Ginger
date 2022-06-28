@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
@@ -56,7 +58,7 @@ namespace GingerCore.Drivers.PBDriver
         public IHTMLDocument2 frameContent;
         public DispHTMLDocument frameDocument;
         List<ElementInfo> frameElementsList = new List<ElementInfo>();
-        AutomationElement_Extend AEBrowser;
+        UIAuto.AutomationElement AEBrowser;
 
         public async Task<List<ElementInfo>> GetVisibleElement()
         {
@@ -65,7 +67,7 @@ namespace GingerCore.Drivers.PBDriver
             return await GetElementList();
         }
 
-        public HTMLHelper(InternetExplorer IE,AutomationElement_Extend AE)
+        public HTMLHelper(InternetExplorer IE,UIAuto.AutomationElement AE)
         {
             browserObject = IE;
             AEBrowser = AE;

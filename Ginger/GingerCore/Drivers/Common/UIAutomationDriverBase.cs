@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
@@ -212,9 +214,9 @@ namespace GingerCore.Drivers.Common
             if (obj == null) return null;
             ElementInfo EI = null;
 
-            if (obj.GetType().Equals(typeof(AutomationElement_Extend)))
+            if (obj.GetType().Equals(typeof(UIAuto.AutomationElement)))
             {
-                EI = mUIAutomationHelper.GetElementInfoFor((AutomationElement_Extend)obj);
+                EI = mUIAutomationHelper.GetElementInfoFor((UIAuto.AutomationElement)obj);
             }
 
             else

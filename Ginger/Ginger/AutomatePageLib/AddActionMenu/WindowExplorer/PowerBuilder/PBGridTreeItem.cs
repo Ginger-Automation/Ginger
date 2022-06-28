@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using Ginger.WindowExplorer;
 using Ginger.WindowExplorer.PowerBuilder;
@@ -63,7 +65,7 @@ namespace Ginger.Drivers.PowerBuilder
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
-            return new DataGridInfoPage((AutomationElement_Extend)UIAElementInfo.ElementObject);
+            return new DataGridInfoPage((UIAuto.AutomationElement)UIAElementInfo.ElementObject);
         }
     }
 }

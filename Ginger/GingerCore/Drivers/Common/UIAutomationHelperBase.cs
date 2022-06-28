@@ -157,7 +157,7 @@ namespace GingerCore.Drivers.Common
 
         public abstract object GetElementFromCursor();
 
-        public abstract object GetElementAtPoint(Windows.Foundation.Point point);
+        public abstract object GetElementAtPoint(System.Drawing.Point point);
 
         public abstract Task<List<ElementInfo>> GetVisibleControls();
 
@@ -188,8 +188,8 @@ namespace GingerCore.Drivers.Common
                 double x;
                 double y;
 
-                x = ((AutomationElement_Extend)GetCurrentWindow()).Current.BoundingRectangle.X;
-                y = ((AutomationElement_Extend)GetCurrentWindow()).Current.BoundingRectangle.Y;
+                x = ((AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.X;
+                y = ((AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.Y;
 
                 double xCordinate = double.Parse(GetControlPropertyValue(ei.ElementObject, "XOffset")) - x;
                 double yCordinate = double.Parse(GetControlPropertyValue(ei.ElementObject, "YOffset")) - y;
@@ -239,7 +239,7 @@ namespace GingerCore.Drivers.Common
 
         public abstract string GetElementControlType(object element);
 
-        public abstract Windows.Foundation.Rect GetElementBoundingRectangle(object element);
+        public abstract System.Drawing.Rectangle GetElementBoundingRectangle(object element);
 
         public abstract int GetElementNativeWindowHandle(object element);
 
@@ -296,11 +296,11 @@ namespace GingerCore.Drivers.Common
                     return;
                 }
 
-                Windows.Foundation.Rect r = new Windows.Foundation.Rect();
+                System.Drawing.Rectangle r = new System.Drawing.Rectangle();
                 r = GetElementBoundingRectangle(WEI.ElementObject);
 
                 int hwnd = GetElementNativeWindowHandle(GetCurrentWindow());  // AE.Current.NativeWindowHandle;            
-                                                                              // hwnd = (TreeWalkerExtended.ContentViewWalker.GetParent(AE)).Current.NativeWindowHandle;
+                                                                              // hwnd = (TreeWalker.ContentViewWalker.GetParent(AE)).Current.NativeWindowHandle;
                 LastHighLightHWND = hwnd;
 
                 // If user have multiple screens, get the one where the current window is displayed, resolve issue of highlighter not working when app window on secondary monitor
@@ -327,7 +327,7 @@ namespace GingerCore.Drivers.Common
         [DllImport("gdi32.dll")]
         static extern int CreateDC(string lpszDriver, string lpszDevice, string lpszOutput, IntPtr lpInitData);
 
-        public static void HighlightRect(Windows.Foundation.Rect r, System.Windows.Forms.Screen scr, UIAElementInfo WEI)
+        public static void HighlightRect(System.Drawing.Rectangle r, System.Windows.Forms.Screen scr, UIAElementInfo WEI)
         {
             FontFamily CurrentFontFamily = null;
             for (int i = 0; i < System.Drawing.FontFamily.Families.Count(); i++)

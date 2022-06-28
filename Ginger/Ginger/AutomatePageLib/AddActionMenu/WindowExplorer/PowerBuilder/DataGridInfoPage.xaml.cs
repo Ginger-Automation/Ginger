@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using System.Data;
@@ -31,9 +33,9 @@ namespace Ginger.WindowExplorer.PowerBuilder
     /// </summary>
     public partial class DataGridInfoPage : Page
     {
-        private System.Windows.Automation.AutomationElement_Extend AEControl;
+        private UIAuto.AutomationElement AEControl;
 
-        public DataGridInfoPage(System.Windows.Automation.AutomationElement_Extend AEControl)
+        public DataGridInfoPage(UIAuto.AutomationElement AEControl)
         {
             InitializeComponent();
             this.AEControl = AEControl;
@@ -44,27 +46,27 @@ namespace Ginger.WindowExplorer.PowerBuilder
         private void ShowGridData()
         {             
             DataTable tempTable = new DataTable("table");
-            AutomationElement_Extend AEHeader = TreeWalkerExtended.RawViewWalker.GetFirstChild(AEControl);
+            UIAuto.AutomationElement AEHeader = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(AEControl);
             
             //Calculate total cells of Grid
             while (AEHeader != null) 
             {
-                string ColName = AEHeader.GetCurrentPropertyValue(ValuePatternIdentifiersExtended.ValueProperty).ToString();
+                string ColName = AEHeader.GetCurrentPropertyValue(UIAuto.ValuePatternIdentifiers.ValueProperty).ToString();
                 ColName += " (" + AEHeader.Current.Name + ")";
                 tempTable.Columns.Add(ColName);
-                AEHeader = TreeWalkerExtended.RawViewWalker.GetNextSibling(AEHeader);
-                if (AEHeader.Current.ControlType != ControlTypeExtended.Text) break;
+                AEHeader = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(AEHeader);
+                if (AEHeader.Current.ControlType != UIAuto.ControlType.Text) break;
             }
 
-            AutomationElement_Extend AECell = AEHeader;
+            UIAuto.AutomationElement AECell = AEHeader;
             while (AECell != null)
             {
                 DataRow dr = tempTable.NewRow();
                 for (int j = 0; j < tempTable.Columns.Count; j++)
                 {
                     //TODO: based on cell type get the value for check box get is checked
-                    dr[j] = AECell.GetCurrentPropertyValue(ValuePatternIdentifiersExtended.ValueProperty).ToString();
-                    AECell = TreeWalkerExtended.RawViewWalker.GetNextSibling(AECell);
+                    dr[j] = AECell.GetCurrentPropertyValue(UIAuto.ValuePatternIdentifiers.ValueProperty).ToString();
+                    AECell = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(AECell);
                     if (AECell == null) break;
                 }
                 tempTable.Rows.Add(dr);
