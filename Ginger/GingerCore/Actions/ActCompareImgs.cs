@@ -258,7 +258,15 @@ namespace GingerCore.Actions
 
         public void testMethod()
         { 
+            //+1
                 //fake method for sealight test
+        }
+
+
+        public void testMethod2()
+        {
+            //+1
+            //fake method for sealight test
         }
 
         public AutomationElement UIAutomationGetWindowByTitle(string WindowTitle)
