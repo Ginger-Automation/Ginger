@@ -80,7 +80,11 @@
             </Expander.Header>
             <Expander.Content>
                 <Grid>
-                    <TabControl x:Name="xElementDetailsTabs" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="xElementDetailsTabs_SelectionChanged" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="250"/>
+                    </Grid.ColumnDefinitions>
+                    <TabControl x:Name="xElementDetailsTabs" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" SelectionChanged="xElementDetailsTabs_SelectionChanged" >
                         <TabControl.Resources>
                             <Style TargetType="{x:Type TabItem}">
                                 <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
@@ -115,6 +119,8 @@
                             <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed"/>
                         </TabItem>
                     </TabControl>
+                    <Frame x:Name="xElementScreenShotFrame" Grid.Column="1" Grid.Row="0" Margin="5,25,5,0" Height="200" VerticalAlignment="Top"></Frame>
+
                 </Grid>
             </Expander.Content>
         </Expander>
