@@ -2364,6 +2364,9 @@
     <None Update="ALMRESTConfiguration\appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Documents\License.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Images\DragDrop\DoNotDrop.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
