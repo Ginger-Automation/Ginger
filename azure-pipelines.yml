@@ -21,12 +21,12 @@ jobs:
     buildConfiguration: 'Release'	
     solutionDirectory:  'Ginger-Automation/Ginger'    
     testDLLs: |
-      **\GingerUtilsTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerUtilsTest.dll
-      **\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerCoreCommonTest.dll
-      **\GingerCoreNETUnitTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerCoreNETUnitTest.dll
-      **\GingerConsoleTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerConsoleTest.dll
-      **\GingerAutoPilotTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerAutoPilotTest.dll
-      **\GingerPluginCoreTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerPluginCoreTest.dll                
+      **\GingerUtilsTest\bin\$(buildConfiguration)\net6.0\GingerUtilsTest.dll
+      **\GingerCoreCommonTest\bin\$(buildConfiguration)\net6.0\GingerCoreCommonTest.dll
+      **\GingerCoreNETUnitTest\bin\$(buildConfiguration)\net6.0\GingerCoreNETUnitTest.dll
+      **\GingerConsoleTest\bin\$(buildConfiguration)\net6.0\GingerConsoleTest.dll
+      **\GingerAutoPilotTest\bin\$(buildConfiguration)\net6.0\GingerAutoPilotTest.dll
+      **\GingerPluginCoreTest\bin\$(buildConfiguration)\net6.0\GingerPluginCoreTest.dll                
      
     artifactsFolder: 'D:\a\1\a'      
      
