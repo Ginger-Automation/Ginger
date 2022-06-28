@@ -32,12 +32,11 @@ namespace Ginger.ConflictResolve
         public bool IsResolved { get; set; }
         ObservableList<ConflictResolve> conflictResolves = new ObservableList<ConflictResolve>();
         Dictionary<string, string> filePathDct = new Dictionary<string, string>();
-        public ResolveConflictWindow(List<string> conflictPaths, Dictionary<string, string> filePathItemNameDct)
+        public ResolveConflictWindow(List<string> conflictPaths)
         {
             IsResolved = false;
             InitializeComponent();
             mConflictPaths = conflictPaths;
-            filePathDct = filePathItemNameDct;
             SetGridView();
         }
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
@@ -78,13 +77,11 @@ namespace Ginger.ConflictResolve
                 ConflictResolve newObjConflict = new ConflictResolve();
                 newObjConflict.ConflictPath = conflictName;
                 newObjConflict.resolveOperations = eResolveOperations.AcceptServer;
-                newObjConflict.ItemName = filePathDct[newObjConflict.ConflictPath];
                 conflictResolves.Add(newObjConflict);
             }
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConflictResolve.ItemName), Header = "Name", WidthWeight = 70, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ConflictResolve.RelativeConflictPath), Header = "Conflicted File", WidthWeight = 150, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             viewCols.Add(new GridColView() { Field = nameof(ConflictResolve.resolveOperations), Header = "Operation", WidthWeight = 90, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(eResolveOperations)), nameof(ConflictResolve.resolveOperations), false, true) }); ;
 

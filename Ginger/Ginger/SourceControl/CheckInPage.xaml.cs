@@ -296,21 +296,11 @@ namespace Ginger.SourceControl
             bool result = true;
             bool conflict = conflictHandled;
             List<string> conflictsPaths = new List<string>();
-            IEnumerable<RepositoryFile> repositoryFiles = WorkSpace.Instance.SolutionRepository.GetAllSolutionRepositoryFiles();
-            IEnumerator<RepositoryFile> repoFileEnum = repositoryFiles.GetEnumerator();
-            Dictionary<string, string> filePathItemNameDct = new Dictionary<string, string>();
-            while (repoFileEnum.MoveNext())
-            {
-                RepositoryFile repoFile = repoFileEnum.Current;
-                RepositoryItemBase repoItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByPath(repoFile.FilePath);
-                string itemName = repoItem.ItemName;
-                filePathItemNameDct.Add(repoFile.FilePath, itemName);
-            }
             if (!SourceControl.CommitChanges(pathsToCommit, Comments, ref error, ref conflictsPaths, includeLocks))
             {
                 App.MainWindow.Dispatcher.Invoke(() =>
                 {
-                    ResolveConflictWindow resConfPage = new ResolveConflictWindow(conflictsPaths, filePathItemNameDct);
+                    ResolveConflictWindow resConfPage = new ResolveConflictWindow(conflictsPaths);
                     if (WorkSpace.Instance.RunningInExecutionMode == true)
                         conflictsPaths.ForEach(cPath => SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, cPath, eResolveConflictsSide.Server));
                     else

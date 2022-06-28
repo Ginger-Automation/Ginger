@@ -57,21 +57,12 @@ namespace Ginger.SourceControl
         }
         public static bool GetLatest(string path, SourceControlBase SourceControl)
         {
-            Dictionary<string, string> filePathItemNameDct = new Dictionary<string, string>();
             string error = string.Empty;
             List<string> conflictsPaths = new List<string>();
-            IEnumerable<RepositoryFile> repositoryFiles = WorkSpace.Instance.SolutionRepository.GetAllSolutionRepositoryFiles();
-            IEnumerator<RepositoryFile> repoFileEnum = repositoryFiles.GetEnumerator();
-            while (repoFileEnum.MoveNext())
-            {
-                RepositoryFile repoFile = repoFileEnum.Current;
-                RepositoryItemBase repoItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByPath(repoFile.FilePath);
-                string itemName = repoItem.ItemName;
-                filePathItemNameDct.Add(repoFile.FilePath, itemName);
-            }
+          
             if (!SourceControl.GetLatest(path, ref error, ref conflictsPaths))
             {
-                ResolveConflictWindow conflictWindow = new ResolveConflictWindow(conflictsPaths, filePathItemNameDct);
+                ResolveConflictWindow conflictWindow = new ResolveConflictWindow(conflictsPaths);
                 if (WorkSpace.Instance.RunningInExecutionMode == true)
                 {
                     conflictsPaths.ForEach(path => SourceControlIntegration.ResolveConflicts(SourceControl, path, eResolveConflictsSide.Server));
