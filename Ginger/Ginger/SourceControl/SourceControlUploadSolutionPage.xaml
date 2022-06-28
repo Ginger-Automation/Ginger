@@ -14,62 +14,50 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Name="ExpenderDetailsRow" Height="50"/>
+            <RowDefinition Name="ExpenderDetailsRow" Height="230"/>
             <RowDefinition Name="ExpenderConfigurationRow" Height="50"/>
             <RowDefinition Height="44"/>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition/>
-            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250*"/>
             <ColumnDefinition Width="50*"/>
         </Grid.ColumnDefinitions>
 
-        <Expander x:Name="ConnectionDetailsExpender" Margin="0,15,0,0" Grid.Row="0"   Expanded="ConnectionDetailsExpended" Collapsed="ConnectionDetailsCollapsed"  >
-            <Expander.Header>
-                <Label x:Name="ConnectionDetailsExpenderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
-                    <Label.Content>
-                        <GingerCore:ucTextDicResource Text="Connection Details"/>
-                    </Label.Content>
-                </Label>
-            </Expander.Header>
-            <Expander.Content>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition  Height="35"/>
-                        <RowDefinition  Height="35"/>
-                        <RowDefinition  Height="35"/>
-                        <RowDefinition  Height="35"/>
-                        <RowDefinition  Height="35"/>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition  Height="35"/>
+                <RowDefinition  Height="35"/>
+                <RowDefinition  Height="35"/>
+                <RowDefinition  Height="35"/>
+                <RowDefinition  Height="35"/>
+                <RowDefinition  Height="35"/>
 
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50*"/>
-                        <ColumnDefinition Width="150*"/>
-                        <ColumnDefinition Width="50*"/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <Label Content="Source Control URL:" Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}"  Margin="10,5,0,0"/>
-                    <TextBox x:Name="SourceControlURLTextBox" Grid.Column="1" Grid.Row="0" Margin="0,5,0,7"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   HorizontalAlignment="Stretch" Text=""  TextChanged="SourceControlURLTextBox_TextChanged" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="150*"/>
+                <ColumnDefinition Width="50*"/>
+            </Grid.ColumnDefinitions>
 
-                    <Label Content="User Name:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="1" Margin="10,5,0,0"/>
-                    <TextBox x:Name="SourceControlUserTextBox" Grid.Column="1" Grid.Row="1" Margin="0,5,0,7" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserTextBox_TextChanged"/>
+            <Label Content="Source Control URL:" Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}"  Margin="10,5,0,0"/>
+            <TextBox x:Name="SourceControlURLTextBox" Grid.Column="1" Grid.Row="0" ToolTip="Please create a new git repository or uses an existing empty repository only." Margin="0,5,0,7"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   HorizontalAlignment="Stretch" Text=""  TextChanged="SourceControlURLTextBox_TextChanged" />
 
-                    <Label  Content="Password:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="2" Margin="10,5,0,0"/>
-                    <PasswordBox x:Name="SourceControlPassTextBox" Style="{StaticResource @PasswordBoxStyle}" Margin="0,5,0,7" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="2"/>
+            <Label Content="User Name:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="1" Margin="10,5,0,0"/>
+            <TextBox x:Name="SourceControlUserTextBox" Grid.Column="1" Grid.Row="1" Margin="0,5,0,7" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserTextBox_TextChanged"/>
 
-                    <Button x:Name="xFetchBranchesButton" Click="FetchBranches_Click"  Grid.Row="3" Grid.Column="2" Content="Fetch Branches"  HorizontalAlignment="Stretch" Style="{StaticResource $RoundTextButtonStyle_Generic}" Margin="10,0,0,0" />
-                    <Label x:Name="xSelectBranchLabel" Content="Select Branch:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="3" Margin="10,5,0,0"/>
-                    <ComboBox x:Name="xBranchesCombo" Style="{StaticResource @InputComboBoxStyle}" Margin="0,5,0,7" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="3"></ComboBox>
+            <Label  Content="Password:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="2" Margin="10,5,0,0"/>
+            <PasswordBox x:Name="SourceControlPassTextBox" Style="{StaticResource @PasswordBoxStyle}" Margin="0,5,0,7" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="2"/>
 
-                    <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing" Grid.Row="6" Margin="19,9,0,9" HorizontalAlignment="Left" Width="35" Visibility="Collapsed"/>
+            <Button x:Name="xFetchBranchesButton" Click="FetchBranches_Click"  Grid.Row="3" Grid.Column="2" Content="Fetch Branches"  HorizontalAlignment="Stretch" Style="{StaticResource $RoundTextButtonStyle_Generic}" Margin="10,0,0,0" />
+            <Label x:Name="xSelectBranchLabel" Content="Select Branch:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="3" Margin="10,5,0,0"/>
+            <ComboBox x:Name="xBranchesCombo" Style="{StaticResource @InputComboBoxStyle}" Margin="0,5,0,7" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="3"></ComboBox>
 
-                </Grid>
+            <CheckBox x:Name="CustomBranchCheckBox" Grid.Row="4" Content="Create New Branch" Checked="CustomBranchCheckBoxChecked" Unchecked="CustomBranchCheckBoxUnchecked" HorizontalAlignment="Left" Margin="5,10,0,0"/>
 
-            </Expander.Content>
-        </Expander>
+            <Label x:Name="labelCustomBranch" Content="Custom Branch Name:" Margin="10,5,0,0" Grid.Column="0" Grid.Row="5" Style="{StaticResource @InputFieldLabelStyle}" />
+            <TextBox x:Name="CustomBranchTextBox" Margin="0,5,0,7" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Stretch" Text="" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" IsEnabled="false" />
+        </Grid>
 
         <Expander x:Name="ConnectionConfigurationsExpender"  Grid.Row="1"   Expanded="ConnectionConfigurationsExpended" Collapsed="ConnectionConfigurationsCollapsed"  >
             <Expander.Header>
@@ -102,7 +90,8 @@
                 </Grid>
             </Expander.Content>
         </Expander>
-        
-        
+
+        <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing" Grid.Row="2" Margin="19,9,0,9" HorizontalAlignment="Left" Width="35" Visibility="Collapsed"/>
+
     </Grid>
 </Page>

@@ -528,7 +528,7 @@ namespace Ginger
             s1.SolutionOperations = solutionOperations;
             AddSolutionPage addSol = new AddSolutionPage(s1);
             addSol.ShowAsWindow();
-            if(Reporter.ToUser(eUserMsgKey.UploadSolutionToSourceControl,s1.Name) == eUserMsgSelection.Yes)
+            if(addSol.IsUploadSolutionToSourceControl)
             {
                 UploadSolutionMenuItem_Click(sender, e);
             }
@@ -1324,7 +1324,6 @@ namespace Ginger
 
         private void UploadSolutionMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Reporter.ToUser(eUserMsgKey.UploadSolutionInfo, "Please first create an empty repository on Gitlab/Github or use an existing empty repository only." + Environment.NewLine + "the repository can be initialized with a README.");
             SourceControlUploadSolutionPage uploadPage = new SourceControl.SourceControlUploadSolutionPage();
             uploadPage.ShowAsWindow(eWindowShowStyle.Dialog);
             SetSolutionDependedUIElements();

@@ -567,14 +567,27 @@ namespace GingerCore.SourceControl
             {
                 RepositoryRootFolder = WorkSpace.Instance.Solution.Folder;
                 LibGit2Sharp.Repository.Init(RepositoryRootFolder);
-
                 UploadSolutionToSourceControl(remoteURL);
                 return true;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Upload Solution to Source Control", ex);
                 return false;
             }
+        }
+
+        private bool isRemoteBranchExist()
+        {
+            var remoteBranches = GetBranches();
+            foreach (var branch in remoteBranches)
+            {
+                if (branch.Equals(SourceControlBranch))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void UploadSolutionToSourceControl(string remoteURL)
@@ -597,7 +610,7 @@ namespace GingerCore.SourceControl
                 PushOptions options = new PushOptions();
                 options.CredentialsProvider = GetSourceCredentialsHandler();
 
-                if (!String.IsNullOrEmpty(SourceControlBranch))
+                if (!String.IsNullOrEmpty(SourceControlBranch) && isRemoteBranchExist())
                 {
                     PullOptions pullOptions = new PullOptions();
 
@@ -615,7 +628,6 @@ namespace GingerCore.SourceControl
                     {
                         repo.CreateBranch(SourceControlBranch);
                         localBranch = repo.Branches[SourceControlBranch];
-                        Branch trackedBranch = repo.Branches[SourceControlBranch];
 
                         repo.Branches.Update(localBranch, b => b.TrackedBranch = localBranch.CanonicalName);
                         Commands.Checkout(repo, SourceControlBranch);
@@ -635,8 +647,12 @@ namespace GingerCore.SourceControl
                 }
                 else
                 {
-                    SourceControlBranch = "master";
-                    Branch localBranch = repo.Head;
+                    repo.CreateBranch(SourceControlBranch);
+                    Branch localBranch = repo.Branches[SourceControlBranch];
+
+                    repo.Branches.Update(localBranch, b => b.TrackedBranch = localBranch.CanonicalName);
+                    Commands.Checkout(repo, SourceControlBranch);
+
                     repo.Branches.Update(localBranch,
                         b => b.Remote = remote.Name,
                         b => b.UpstreamBranch = localBranch.CanonicalName);

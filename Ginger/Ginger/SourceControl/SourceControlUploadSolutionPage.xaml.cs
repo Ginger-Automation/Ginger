@@ -100,10 +100,11 @@ namespace Ginger.SourceControl
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlPass));
             SourceControlPassTextBox.Password = mSourceControl.SourceControlPass;
 
-            xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
+            //xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBranchesCombo, ComboBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlBranch));
 
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CustomBranchTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlBranch));
 
             SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;
         }
@@ -142,7 +143,7 @@ namespace Ginger.SourceControl
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             Button testConnBtn = new Button();
-            testConnBtn.Content = "Test Connection & Upload Solution";
+            testConnBtn.Content = "Upload Solution";
             testConnBtn.Click += new RoutedEventHandler(TestConnection_Click);
 
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn }, true, "Close", new RoutedEventHandler(Close_Click));
@@ -150,10 +151,12 @@ namespace Ginger.SourceControl
 
         private void TestConnection_Click(object sender, RoutedEventArgs e)
         {
+            xProcessingIcon.Visibility = Visibility.Visible;
             if(TestSourceControlConnection())
             {
                 UploadSolutionToSourceControl(sender, e);
             }
+            xProcessingIcon.Visibility = Visibility.Collapsed;
         }
 
         private bool TestSourceControlConnection()
@@ -219,6 +222,16 @@ namespace Ginger.SourceControl
         private void ConnectionConfigurationsCollapsed(object sender, RoutedEventArgs e)
         {
             ExpenderConfigurationRow.Height = new GridLength(50);
+        }
+
+        private void CustomBranchCheckBoxChecked(object sender, RoutedEventArgs e)
+        {
+            CustomBranchTextBox.IsEnabled = true;
+        }
+
+        private void CustomBranchCheckBoxUnchecked(object sender, RoutedEventArgs e)
+        {
+            CustomBranchTextBox.IsEnabled = false;
         }
     }
 }
