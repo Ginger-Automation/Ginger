@@ -281,6 +281,10 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ConflictResolve\ConflictResolve.cs" />
+    <Compile Include="ConflictResolve\ResolveConflictWindow.xaml.cs">
+      <DependentUpon>ResolveConflictWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ExternalConfigurations\ApplitoolsExternalConfigurationsPage.xaml.cs">
       <DependentUpon>ApplitoolsExternalConfigurationsPage.xaml</DependentUpon>
     </Compile>
@@ -3023,6 +3027,10 @@
     <Page Include="BusinessFlowWindows\BusinessFlowViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ConflictResolve\ResolveConflictWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Drivers\DriversConfigsEditPages\AppiumDriverEditPage.xaml">
       <SubType>Designer</SubType>

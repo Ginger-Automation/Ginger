@@ -187,6 +187,10 @@ namespace Ginger.SourceControl
                 {
                     return false;
                 }
+                if (path.Contains("@/"))
+                {
+                    path = path.Replace("@/", "\\");
+                }
                 RepositoryFolderBase repositoryFolderBase = null;
                 if (path != SourceControl.SolutionFolder)
                 {
@@ -470,7 +474,7 @@ namespace Ginger.SourceControl
                 }
 
                 string ProjectURI = string.Empty;
-                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN  && !( mSourceControl is  SVNSourceControlShellWrapper))
+                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && !(mSourceControl is SVNSourceControlShellWrapper))
                 {
 
                     if (WorkSpace.Instance.UserProfile.SourceControlURL.StartsWith("SVN", StringComparison.CurrentCultureIgnoreCase))
