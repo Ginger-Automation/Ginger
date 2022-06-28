@@ -1219,7 +1219,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return list;
         }
         
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
         {
             //TODO: impl
             return null;
