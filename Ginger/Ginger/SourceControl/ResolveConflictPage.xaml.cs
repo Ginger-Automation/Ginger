@@ -101,10 +101,13 @@ namespace Ginger.SourceControl
             switch (mResolveOperation)
             {
                 case eResolveOperations.AcceptServer:
-                    SourceControlIntegration.ResolveConflicts( WorkSpace.Instance.Solution.SourceControl,mConflictPath, eResolveConflictsSide.Server );
+                    SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, mConflictPath, eResolveConflictsSide.Server);
                     break;
                 case eResolveOperations.KeepLocal:
-                    SourceControlIntegration.ResolveConflicts( WorkSpace.Instance.Solution.SourceControl, mConflictPath, eResolveConflictsSide.Local);
+                    SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, mConflictPath, eResolveConflictsSide.Local);
+                    break;
+                default:
+                    //do nothing
                     break;
             }
             Reporter.HideStatusMessage();

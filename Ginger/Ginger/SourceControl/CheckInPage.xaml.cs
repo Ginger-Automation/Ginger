@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.ConflictResolve;
 using Ginger.Reports;
 using Ginger.Run;
 using Ginger.UserControls;
@@ -48,7 +49,7 @@ namespace Ginger.SourceControl
         string mPath;
         ObservableList<SourceControlFileInfo> mFiles;
         GenericWindow genWin = null;
-        bool mCheckInWasDone=false;
+        bool mCheckInWasDone = false;
         private List<string> parentFolders = null;
 
         public CheckInPage(string path)
@@ -84,18 +85,18 @@ namespace Ginger.SourceControl
 
             // TODO: use fields
             viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.Selected), Header = "Selected", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.CheckBox, AllowSorting = true });
-            viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.Status), Header = "Status", WidthWeight = 10, ReadOnly=true, AllowSorting = true });
+            viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.Status), Header = "Status", WidthWeight = 10, ReadOnly = true, AllowSorting = true });
             viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.Name), Header = "Item Name", WidthWeight = 20, AllowSorting = true });
             viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.FileType), Header = "Item Type", WidthWeight = 20, AllowSorting = true });
-            viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.SolutionPath), Header="Item Path", WidthWeight = 40, ReadOnly=true, AllowSorting = true });
-            if ( WorkSpace.Instance.Solution.ShowIndicationkForLockedItems)
+            viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.SolutionPath), Header = "Item Path", WidthWeight = 40, ReadOnly = true, AllowSorting = true });
+            if (WorkSpace.Instance.Solution.ShowIndicationkForLockedItems)
             {
-                viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.Locked), Header = "Locked", WidthWeight = 10,  StyleType=GridColView.eGridColStyleType.Text });
+                viewCols.Add(new GridColView() { Field = nameof(SourceControlFileInfo.Locked), Header = "Locked", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Text });
             }
             CheckInFilesGrid.SetAllColumnsDefaultView(view);
             CheckInFilesGrid.InitViewItems();
         }
-        
+
         private async void Init()
         {
             try
@@ -107,12 +108,12 @@ namespace Ginger.SourceControl
                     return;
                 }
                 SourceControlIntegration.BusyInProcessWhileDownloading = true;
-               
+
                 await Task.Run(() =>
                 {
-                   
-              
-                    mFiles = SourceControlIntegration.GetPathFilesStatus( WorkSpace.Instance.Solution.SourceControl, mPath);
+
+
+                    mFiles = SourceControlIntegration.GetPathFilesStatus(WorkSpace.Instance.Solution.SourceControl, mPath);
                     //set items name and type
                     Parallel.ForEach(mFiles, SCFI =>
                      {
@@ -120,23 +121,23 @@ namespace Ginger.SourceControl
                          {
                              if (SCFI.Path.ToUpper().Contains(".GINGER.") && SCFI.Path.ToUpper().Contains(".XML") && SCFI.Status != SourceControlFileInfo.eRepositoryItemStatus.Deleted)
                              {
-                                     NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
-                                     //unserialize the item
-                                     RepositoryItemBase item = newRepositorySerializer.DeserializeFromFile(SCFI.Path);
-                                     SCFI.Name = item.ItemName;
+                                 NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+                                 //unserialize the item
+                                 RepositoryItemBase item = newRepositorySerializer.DeserializeFromFile(SCFI.Path);
+                                 SCFI.Name = item.ItemName;
                              }
                              else
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
                          }
                          catch (Exception ex)
                          {
-                    
+
                              //TODO: fix the path changes 
                              if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
                              Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                          }
-                    
+
                          if (string.IsNullOrEmpty(SCFI.Path)) SCFI.FileType = "";
                          else if (SCFI.Path.ToUpper().Contains("AGENTS")) SCFI.FileType = "Agent";
                          else if (SCFI.Path.ToUpper().Contains("BUSINESSFLOWS")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
@@ -148,7 +149,7 @@ namespace Ginger.SourceControl
                          else if (SCFI.Path.ToUpper().Contains("ACTIVITIESGROUPS")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
                          else if (SCFI.Path.ToUpper().Contains("ACTIVITIES")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Activity);
                          else if (SCFI.Path.ToUpper().Contains("VARIABLES")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Variable);
-                         
+
                          else if (SCFI.Path.Contains("ApplicationAPIModel")) SCFI.FileType = "Application API Model";
                          else if (SCFI.Path.Contains("GlobalAppModelParameter")) SCFI.FileType = "Global Applications Model Parameter";
                      });
@@ -161,7 +162,7 @@ namespace Ginger.SourceControl
                 xProcessingIcon.Visibility = Visibility.Collapsed;
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
             }
-                        
+
         }
         private void SelectAll(object sender, RoutedEventArgs e)
         {
@@ -182,7 +183,7 @@ namespace Ginger.SourceControl
             }
             CheckInFilesGrid.DataSourceList = mFiles;
         }
-      
+
         private async void CheckInButton_Click(object sender, RoutedEventArgs e)
         {
             if (WorkSpace.Instance.Solution.SourceControl.Name == SourceControlBase.eSourceControlType.GIT.ToString())
@@ -223,41 +224,41 @@ namespace Ginger.SourceControl
                     {
                         SaveAllDirtyFiles(SelectedFiles);
                     });
-                //performing cleanup for the solution folder to clean old locks left by faild check ins
-                SourceControlIntegration.CleanUp( WorkSpace.Instance.Solution.SourceControl,  WorkSpace.Instance.Solution.Folder);
+                    //performing cleanup for the solution folder to clean old locks left by faild check ins
+                    SourceControlIntegration.CleanUp(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Folder);
                     List<string> pathsToCommit = new List<string>();
                     foreach (SourceControlFileInfo fi in SelectedFiles)
                     {
 
-                    switch (fi.Status)
+                        switch (fi.Status)
                         {
                             case SourceControlFileInfo.eRepositoryItemStatus.New:
-                                SourceControlIntegration.AddFile( WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                                SourceControlIntegration.AddFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
                                 pathsToCommit.Add(fi.Path);
                                 break;
                             case SourceControlFileInfo.eRepositoryItemStatus.Modified:
-                                if (fi.Locked && fi.LockedOwner !=  WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                                if (fi.Locked && fi.LockedOwner != WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                                 {
-                                    SourceControlIntegration.UpdateFile( WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                                    SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
                                 }
-                                else if (fi.Locked && fi.LockedOwner ==  WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                                else if (fi.Locked && fi.LockedOwner == WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                                 {
-                                    SourceControlIntegration.UpdateFile( WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                                    SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
                                 }
                                 else if (!fi.Locked)
                                 {
-                                    SourceControlIntegration.UpdateFile( WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                                    SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
                                 }
                                 break;
                             case SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved:
                                 pathsToCommit.Add(fi.Path);
-                                SourceControlIntegration.UpdateFile( WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                                SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
                                 break;
                             case SourceControlFileInfo.eRepositoryItemStatus.Deleted:
-                                SourceControlIntegration.DeleteFile(  WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                                SourceControlIntegration.DeleteFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
                                 pathsToCommit.Add(fi.Path);
                                 break;
                             default:
@@ -268,17 +269,17 @@ namespace Ginger.SourceControl
                     bool conflictHandled = false;
                     bool CommitSuccess = false;
                     CommitSuccess = CommitChanges(WorkSpace.Instance.Solution.SourceControl, pathsToCommit, Comments, WorkSpace.Instance.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
-              
+
 
                     AfterCommitProcess(CommitSuccess, conflictHandled);
 
-                
+
                     TriggerSourceControlIconChanged(SelectedFiles);
-                    
+
                 });
                 xProcessingIcon.Visibility = Visibility.Collapsed;
                 if (SourceControlIntegration.conflictFlag)
-                {                    
+                {
                     SourceControlIntegration.conflictFlag = false;
                 }
             }
@@ -297,18 +298,16 @@ namespace Ginger.SourceControl
             List<string> conflictsPaths = new List<string>();
             if (!SourceControl.CommitChanges(pathsToCommit, Comments, ref error, ref conflictsPaths, includeLocks))
             {
-                App.MainWindow.Dispatcher.Invoke(() => {
-                    foreach (string cPath in conflictsPaths)
-                    {
-                        ResolveConflictPage resConfPage = new ResolveConflictPage(cPath);
-                        if (WorkSpace.Instance.RunningInExecutionMode == true)
-                            SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, cPath, eResolveConflictsSide.Server);
-                        else
-                            resConfPage.ShowAsWindow();
-                        result = resConfPage.IsResolved;
-                        conflict = true;
-                        SourceControlIntegration.conflictFlag = conflict;
-                    }
+                App.MainWindow.Dispatcher.Invoke(() =>
+                {
+                    ResolveConflictWindow resConfPage = new ResolveConflictWindow(conflictsPaths);
+                    if (WorkSpace.Instance.RunningInExecutionMode == true)
+                        conflictsPaths.ForEach(cPath => SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, cPath, eResolveConflictsSide.Server));
+                    else
+                        resConfPage.ShowAsWindow();
+                    result = resConfPage.IsResolved;
+                    conflict = true;
+                    SourceControlIntegration.conflictFlag = conflict;
                     if (SourceControl.GetSourceControlmConflict != null)
                         SourceControl.GetSourceControlmConflict.Clear();
                 });
@@ -318,7 +317,8 @@ namespace Ginger.SourceControl
                         error = "Commit failed because of wrong credentials error, please enter valid Username and Password and try again";
                     if (error.Contains("is locked in another working copy"))
                         error = "This file has been locked by other user. Please remove lock and then try to Check in.";
-                    App.MainWindow.Dispatcher.Invoke(() => {
+                    App.MainWindow.Dispatcher.Invoke(() =>
+                    {
                         Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                     });
                     return false;
@@ -340,10 +340,10 @@ namespace Ginger.SourceControl
                     if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                     {
                         RepositoryFolderBase repoFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(fi.Path);
-                        if(repoFolder != null)
+                        if (repoFolder != null)
                         {
                             repoFolder.RefreshFolderAndChildElementsSourceControlStatus();
-                        }                        
+                        }
 
                         AddToParentFoldersToRefresh(Directory.GetParent(fi.Path).FullName);
                     }
@@ -423,7 +423,7 @@ namespace Ginger.SourceControl
             foreach (SourceControlFileInfo SCFI in SelectedFiles)
             {
                 Object obj = null;
-                
+
                 if (SCFI.FileType == "Agent")
                 {
                     obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
@@ -466,14 +466,14 @@ namespace Ginger.SourceControl
                 {
                     ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
                     obj = variables.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
-                }               
+                }
 
                 if (obj != null && ((RepositoryItemBase)obj).DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
                 {
                     if (Reporter.ToUser(eUserMsgKey.SourceControlCheckInUnsavedFileChecked, SCFI.Name) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
-                        Reporter.ToStatus(eStatusMsgKey.SaveItem, null,  WorkSpace.Instance.Solution.GetNameForFileName(), "item");                        
-                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem((RepositoryItemBase)obj);                        
+                        Reporter.ToStatus(eStatusMsgKey.SaveItem, null, WorkSpace.Instance.Solution.GetNameForFileName(), "item");
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem((RepositoryItemBase)obj);
                         Reporter.HideStatusMessage();
                     }
                     else
@@ -500,7 +500,7 @@ namespace Ginger.SourceControl
         }
 
         private void CloseWindow()
-        {   
+        {
             //TODO: remove sol refresh after all RIs moved to new repo and using new tree item if mCheckInWasDone true            
             genWin.Close();
         }
