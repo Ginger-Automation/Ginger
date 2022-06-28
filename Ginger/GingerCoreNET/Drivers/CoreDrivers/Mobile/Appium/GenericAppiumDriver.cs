@@ -44,8 +44,11 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Actions.WebAPI;
+using GingerCore.Actions.WebServices;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
@@ -54,12 +57,15 @@ using OpenQA.Selenium.Appium.Interfaces;
 using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Appium.MultiTouch;
 using OpenQA.Selenium.Remote;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -122,16 +128,6 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredDescription("Appium capabilities")]
         public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
 
-        [UserConfigured]
-        [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Applitool View Key number")]
-        public String ApplitoolsViewKey { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Applitool Server Url")]
-        public String ApplitoolsServerUrl { get; set; }
-
         protected IWebDriver webDriver;
 
 
@@ -144,6 +140,8 @@ namespace Amdocs.Ginger.CoreNET
             set => mIsDeviceConnected = value;
         }
 
+        RestClient restClient;
+
         public bool ShowWindow
         {
             get => LoadDeviceWindow;
@@ -151,7 +149,6 @@ namespace Amdocs.Ginger.CoreNET
 
         private AppiumDriver Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
-     
 
         public override bool StopProcess
         {
@@ -245,7 +242,7 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         Driver.Navigate().GoToUrl(mDefaultURL);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
                     }
@@ -961,7 +958,28 @@ namespace Amdocs.Ginger.CoreNET
                             act.Error = "Operation not supported for this mobile OS or application type.";
                         }
                         break;
-
+                    case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
+                        AddReturnParamFromDict(GetDeviceBatteryInfo(), act);
+                        act.RawResponseValues = GetDeviceMetricsString("batteryinfo").Result;
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetDeviceCPUUsage:
+                        AddReturnParamFromDict(GetDeviceCPUInfo(), act);
+                        act.RawResponseValues = GetDeviceMetricsString("cpuinfo").Result;
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetDeviceNetwork:
+                        act.AddOrUpdateReturnParamActual("Device's network information", GetDeviceNetworkInfo().Result);
+                        act.RawResponseValues = GetDeviceMetricsString("networkinfo").Result;
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetDeviceRAMUsage:
+                        AddReturnParamFromDict(GetDeviceMemoryInfo(), act);
+                        act.RawResponseValues = GetDeviceMetricsString("memoryinfo").Result;
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.GetDeviceGeneralInfo:
+                        foreach(KeyValuePair<string,object> entry in GetDeviceGeneralInfo())
+                        {
+                            act.AddOrUpdateReturnParamActual(entry.Key, entry.Value.ToString());
+                        }
+                        break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
                 }
@@ -970,6 +988,26 @@ namespace Amdocs.Ginger.CoreNET
             {
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
             }
+        }
+
+        private string DictionaryToString(Dictionary<string, string> dict)
+        {
+            string returnString = string.Empty;
+            foreach (KeyValuePair<string, string> entry in dict)
+            {
+                returnString = new StringBuilder(returnString + entry.Key + ": " + entry.Value + ", ").ToString();
+            }
+            returnString = returnString.Substring(0, returnString.Length - 2);
+            return returnString;
+        }
+
+        private void AddReturnParamFromDict(Dictionary<string, string>dict, ActMobileDevice act)
+        {
+            foreach (KeyValuePair<string, string> entry in dict)
+            {
+                act.AddOrUpdateReturnParamActual(entry.Key, entry.Value);
+            }
+
         }
 
         public override void HighlightActElement(Act act)
@@ -1218,7 +1256,7 @@ namespace Amdocs.Ginger.CoreNET
             return Pagesource;
         }
 
-        public void SwipeScreen(eSwipeSide side, double impact=1)
+        public void SwipeScreen(eSwipeSide side, double impact = 1)
         {
             System.Drawing.Size sz = Driver.Manage().Window.Size;
             double startX;
@@ -1274,6 +1312,30 @@ namespace Amdocs.Ginger.CoreNET
             TouchAction drag = new TouchAction(Driver);
             drag.Press(startX, startY).MoveTo(endX, endY).Release();
             drag.Perform();
+        }
+
+        private string GetCurrentPackage()
+        {
+            try
+            {
+                if (DevicePlatformType == eDevicePlatformType.Android)
+                {
+                    return string.Format("{0}", ((AndroidDriver)Driver).CurrentPackage);
+                }
+                else if (DevicePlatformType == eDevicePlatformType.iOS)
+                {
+                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                }
+                else
+                {
+                    return string.Format("{0}", Driver.Capabilities.GetCapability("appPackage").ToString());
+                }
+            }
+            catch (Exception exc)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "An error ocured while fetching the current Package details", exc);
+                return "Package";
+            }
         }
 
         public string GetCurrentActivityDetails()
@@ -1811,7 +1873,7 @@ namespace Amdocs.Ginger.CoreNET
 
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
         {
-            if(AppType == eAppType.Web)
+            if (AppType == eAppType.Web)
             {
                 return ((IWindowExplorer)mSeleniumDriver).GetElementLocators(ElementInfo);
             }
@@ -1968,9 +2030,9 @@ namespace Amdocs.Ginger.CoreNET
                 CP.Value = attrs[i].Value;
                 list.Add(CP);
 
-                if(CP.Name == "x")
+                if (CP.Name == "x")
                     ElementInfo.X = Convert.ToInt32(CP.Value);
-                else if(CP.Name == "y")
+                else if (CP.Name == "y")
                     ElementInfo.Y = Convert.ToInt32(CP.Value);
             }
 
@@ -1993,8 +2055,8 @@ namespace Amdocs.Ginger.CoreNET
             //    mSeleniumDriver.StartRecording();
             //}
             //else
-                //IsRecording = true;
-            
+            //IsRecording = true;
+
             IsRecording = true;
 
             OnDriverMessage(eDriverMessageType.RecordingEvent, IsRecording);
@@ -2724,7 +2786,7 @@ namespace Amdocs.Ginger.CoreNET
                         ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
                         ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
 
-                        if(AutoCorrectRectPropRequired)
+                        if (AutoCorrectRectPropRequired)
                             AutoCorrectRectProp = 2;
 
                         ElementMaxPoints.X = ElementStartPoints.X + (Convert.ToInt32(wdth) * AutoCorrectRectProp);
@@ -2865,12 +2927,12 @@ namespace Amdocs.Ginger.CoreNET
 
         public string GetApplitoolServerURL()
         {
-            return this.ApplitoolsServerUrl;
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
         }
 
         public string GetApplitoolKey()
         {
-            return this.ApplitoolsViewKey;
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
         }
 
         public ePlatformType GetPlatform()
@@ -2888,9 +2950,177 @@ namespace Amdocs.Ginger.CoreNET
             return Driver;
         }
 
+        private async Task<string> SendRestRequestAndGetResponse(string api, string requestBody)
+        {
+            try
+            {
+                Method method = Method.POST;
+                RestRequest restRequest = (RestRequest)new RestRequest(api, method) { RequestFormat = DataFormat.Json }.AddJsonBody(requestBody);
+                IRestResponse response = await restClient.ExecuteAsync(restRequest);
+                if (response.IsSuccessful)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + api);
+                    return response.Content;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + api + "Response: " + response.Content);
+                    return response.Content;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception when sending " + api, ex);
+                return "Unable to connect to: " + api;
+            }
+        }
+
+        private Dictionary<string, string> StringToDictionary(string response)
+        {
+            response = response.Substring(10, response.Length - 12);
+            List<string> responseList = new List<string>();
+            while (!string.IsNullOrEmpty(response))
+            {
+                int startIndex = response.IndexOf("[") + 1;
+                int endIndex = response.IndexOf("]");
+                responseList.Add(response.Substring(startIndex, endIndex - startIndex));
+                if (endIndex + 2 > response.Length)
+                {
+                    response = response.Substring(endIndex + 1);
+
+                }
+                else
+                {
+                    response = response.Substring(endIndex + 2);
+                }
+
+            }
+            responseList[0] = responseList[0].Replace("\"", "");
+            string[] keyArray = responseList[0].Split(',');
+            responseList[1] = responseList[1].Replace("\"", "");
+            string[] valueArray = responseList[1].Split(',');
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+            for (int i = 0; i < keyArray.Length; i++)
+            {
+                dict.Add(keyArray[i], valueArray[i]);
+            }
+            return dict;
+        }
+
+        private async Task<string> GetDeviceMetricsString(string dataType)
+        {
+            string url = this.AppiumServer + "/session/" + Driver.SessionId + "/appium/getPerformanceData";
+            string requestBody = "{\"packageName\": \"" + GetCurrentPackage() + "\", \"dataType\": \"" + dataType + "\"}";
+            restClient = new RestClient(url);
+            return await SendRestRequestAndGetResponse(url, requestBody).ConfigureAwait(false);
+        }
+
+        private async Task<Dictionary<string, string>> GetDeviceMetricsDict(string dataType)
+        {
+            string response = await GetDeviceMetricsString(dataType);
+            if (response.Contains("error"))
+            {
+                return new Dictionary<string, string>();
+            }
+            try
+            {
+                Dictionary<string, string> dict = StringToDictionary(response);
+                return dict;
+            }
+            catch (Exception e)
+            {
+                return new Dictionary<string, string>();
+            }
+        }
+
+        public Dictionary<string, string> GetDeviceCPUInfo()
+        {
+
+            return GetDeviceMetricsDict("cpuinfo").Result;
+        }
+
+        public Dictionary<string, string> GetDeviceMemoryInfo()
+        {
+            return GetDeviceMetricsDict("memoryinfo").Result;
+        }
+
+        public async Task<string> GetDeviceNetworkInfo()
+        {
+            string url = this.AppiumServer + "/session/" + Driver.SessionId + "/appium/getPerformanceData";
+            string requestBody = "{\"packageName\": \"" + GetCurrentPackage() + "\", \"dataType\": \"networkinfo\"}";
+            restClient = new RestClient(url);
+            string response = await SendRestRequestAndGetResponse(url, requestBody).ConfigureAwait(false);
+
+            return response;
+        }
+
+        public Dictionary<string, string> GetDeviceBatteryInfo()
+        {
+            return GetDeviceMetricsDict("batteryinfo").Result;
+        }
+
+        public Dictionary<string, object> GetDeviceGeneralInfo()
+        {
+            try
+            {
+                return (Dictionary<string, object>)Driver.ExecuteScript("mobile: deviceInfo");
+
+            }
+            catch (Exception e)
+            {
+                return new Dictionary<string, object>();
+            }
+
+        }
+
+        public async Task<bool> IsRealDeviceAsync()
+        {
+            string url = this.AppiumServer + "/session/" + Driver.SessionId + "/appium/device/network_speed";
+            string requestBody = "{\"netspeed\": \"lte\"}";
+            restClient = new RestClient(url);
+            string response = await SendRestRequestAndGetResponse(url, requestBody).ConfigureAwait(false);
+            if (response.Contains("error"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public string GetDeviceUDID()
+        {
+            object udid = null;
+            if(Driver.SessionDetails != null)
+            {
+                Driver.SessionDetails.TryGetValue("udid", out udid);
+            }
+            if (string.IsNullOrEmpty((string)udid))
+            {
+                return null;
+            }
+            else
+            {
+                return (string)udid;
+            }
+        }
+
         public Bitmap GetElementScreenshot(Act act)
         {
             throw new NotImplementedException();
         }
+
+        public string GetAgentAppName()
+        {
+            return this.Platform.ToString();
+        }
+
+        public string GetViewport()
+        {
+            return Driver.Manage().Window.Size.ToString();
+        }
     }
+
 }
+

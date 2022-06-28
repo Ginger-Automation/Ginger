@@ -68,6 +68,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     ClearAutoMapElementTypesSection();
                     SetAutoMapElementTypesGridView();
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
+                    xLearnScreenshotsOfElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnScreenshotsOfElements));
                     SetElementLocatorsSettingsGridView();
                     UpdateConfigsBasedOnAgentStatus();
                     PlatformSpecificUIManipulations();
@@ -250,6 +251,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 ClearAutoMapElementTypesSection();
             }
             xLearnOnlyMappedElements.IsEnabled = xAgentControlUC.AgentIsRunning;
+            xLearnScreenshotsOfElements.IsEnabled = xAgentControlUC.AgentIsRunning;
             xAutoMapElementTypesExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
             xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
             xElementLocatorsSettingsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
@@ -269,7 +271,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void SetAutoMapElementTypesSection()
         {
-            xAgentControlUC.xAgentConfigsExpander.IsExpanded = false;
+            xAgentControlUC.xAgentConfigsExpander.Visibility = Visibility.Visible;
 
             SetAutoMapElementTypes();
             xAutoMapBasicElementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapBasicElementTypesList;

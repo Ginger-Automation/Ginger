@@ -182,6 +182,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.GingerSplash:
                     SetAsStaticImage("GingerSplashImageNew.png");
                     break;
+                case eImageType.VRT:
+                    SetAsStaticImage("VRTLogo.png");
+                    break;
+                case eImageType.Applitools:
+                    SetAsStaticImage("ApplitoolsLogo.png");
+                    break;
+                case eImageType.Sealights:
+                    SetAsStaticImage("SealightsLogo.png");
+                    break;
                 #endregion
 
 

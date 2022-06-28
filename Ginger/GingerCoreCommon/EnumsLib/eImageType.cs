@@ -41,6 +41,9 @@ namespace Amdocs.Ginger.Common.Enums
         GingerIconWhite,
         GingerIconGray,
         GingerSplash,
+        VRT,
+        Applitools,
+        Sealights,
         #endregion
 
 

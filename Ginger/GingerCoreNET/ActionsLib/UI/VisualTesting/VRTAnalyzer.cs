@@ -137,7 +137,6 @@ namespace GingerCore.Actions.VisualTesting
 
         private void StartVRT()
         {
-            List<int> mResolution = new List<int>();
             try
             {
                 string buildName = mAct.GetInputParamCalculatedValue(VRTAnalyzer.VRTParamBuildName);
@@ -191,6 +190,7 @@ namespace GingerCore.Actions.VisualTesting
             }
             try
             {
+                //get Image
                 Image image;
                 if (mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ActionBy).Value == eActionBy.Window.ToString())
                 {
@@ -200,50 +200,23 @@ namespace GingerCore.Actions.VisualTesting
                 {
                     image = mDriver.GetElementScreenshot(mAct);
                 }
+                //diffTollerancePercent
                 bool res = Double.TryParse(mAct.GetInputParamCalculatedValue(VRTAnalyzer.VRTParamDiffTollerancePercent), out double diffTollerancePercent);
+                //Operating System
+                string os = GingerPluginCore.OperatingSystem.GetCurrentOS();
 
-                string os = "Linux";
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    os = "Windows";
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    os = "Mac";
-                }
-                else
-                {
-                    os = "Linux";
-                }
-                string browser = ((Drivers.SeleniumDriver)mDriver).mBrowserTpe.ToString();
                 //tags
-                string tags = null;
-                var activityTagsList = Context.GetAsContext(mAct.Context).Activity.Tags.Select(x => x.ToString());
-                if (activityTagsList != null)
-                {
-                    tags = string.Join(",", activityTagsList);
-                }
+                string tags = GetTags();
 
-                //Get resolution from driver
-                Size size = ((Drivers.SeleniumDriver)mDriver).GetWindowSize();
-                string viewport = size.ToString();
-
+                //Browser name and resolution from driver
+                string browser = mDriver.GetPlatform() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web ? mDriver.GetAgentAppName() : mDriver.GetAgentAppName()+"App";
+                string viewport = mDriver.GetViewport();
+               
+                //device
                 string device = null;
-
                 //imageName
-                string imageName = mAct.Description;
-                if (mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy).Value == eImageNameBy.ActionGuid.ToString())
-                {
-                    imageName = mAct.Guid.ToString();
-                }
-                else if (mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy).Value == eImageNameBy.ActionNameGUID.ToString())
-                {
-                    imageName = mAct.Description + "_" + mAct.Guid.ToString();
-                }
-                else if (mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy).Value == eImageNameBy.Custom.ToString())
-                {
-                    imageName = mAct.GetInputParamCalculatedValue(VRTAnalyzer.ImageName);
-                }
+                string imageName = GetImageName();
+
                 //checkpoint
                 TestRunResult result = vrt.Track(imageName, General.ImageToByteArray(image, System.Drawing.Imaging.ImageFormat.Png), null, os, browser, viewport, device, tags, diffTollerancePercent).GetAwaiter().GetResult();
                 //results
@@ -285,6 +258,58 @@ namespace GingerCore.Actions.VisualTesting
                 }
             }
         }
+
+        private string GetTags()
+        {
+            string tags = string.Empty;
+            var activityTagsList = Context.GetAsContext(mAct.Context).Activity.Tags.Select(x => x.ToString());
+            if (activityTagsList != null)
+            {
+                tags = string.Join(",", activityTagsList);
+            }
+            //environment tag
+            if (string.IsNullOrEmpty(tags))
+            {
+                tags = "Environment:" + mDriver.GetEnvironment();
+            }
+            else
+            {
+                tags += ",Environment:" + mDriver.GetEnvironment();
+            }
+
+            return tags;
+        }
+
+        private string GetImageName()
+        {
+            string imageName;
+            eImageNameBy imageNameBy;
+            bool imageNameByResult = Enum.TryParse(mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy).Value, out imageNameBy);
+            if (!imageNameByResult)
+            {
+                imageNameBy = eImageNameBy.ActionName;
+            }
+            switch (imageNameBy)
+            {
+                case eImageNameBy.ActionName:
+                    imageName = mAct.Description;
+                    break;
+                case eImageNameBy.ActionGuid:
+                    imageName = mAct.Guid.ToString();
+                    break;
+                case eImageNameBy.ActionNameGUID:
+                    imageName = mAct.Description + "_" + mAct.Guid.ToString();
+                    break;
+                case eImageNameBy.Custom:
+                    imageName = mAct.GetInputParamCalculatedValue(VRTAnalyzer.ImageName);
+                    break;
+                default:
+                    imageName = mAct.Description;
+                    break;
+            }
+            return imageName;
+        }
+
         private void StopVRT()
         {
             try

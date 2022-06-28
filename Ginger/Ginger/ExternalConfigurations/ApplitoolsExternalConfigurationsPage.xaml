@@ -1,0 +1,68 @@
+<Page x:Class="Ginger.Configurations.ApplitoolsExternalConfigurationsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:Activities="clr-namespace:Ginger.BusinessFlowWindows"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      mc:Ignorable="d" 
+      MinHeight="500" MinWidth="585"
+	Title="Execution Logger Configuration">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
+        <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition  Height="50"/>
+                <RowDefinition  Height="30"/>
+                <RowDefinition  Height="1*"/>
+            </Grid.RowDefinitions>
+            <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="1">
+                    <Label Content="Applitools Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
+            </StackPanel>
+                <StackPanel Orientation="Vertical" Grid.Row="2">
+                <Grid Margin="10,10,0,0" x:Name="xVRTGrid" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="50"/>
+                        <RowDefinition  Height="0"/>
+                        <RowDefinition  Height="50"/>
+                        <RowDefinition  Height="0"/>
+                        <RowDefinition  Height="0"/>
+                        <RowDefinition  Height="0"/>
+                        <RowDefinition  Height="50"/>
+                        <RowDefinition  Height="0"/>
+                        <RowDefinition  Height="50"/>
+                        <RowDefinition  Height="0"/>
+                        <RowDefinition  Height="50"/>
+                        <RowDefinition  Height="0"/>
+
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="350*"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                        <Label x:Name="xAPIURLLabel" Content="API URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
+                        <Label x:Name="xAPIURLLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                    </StackPanel>
+                    <Activities:UCValueExpression x:Name="xAPIURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="VRT API URL" Margin="10,0,0,0"  Width="400"/>
+
+                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
+                        <Label x:Name="xAPIKeyLabel" Content="API Key:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                        <Label x:Name="xAPIKeyLabelValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                    </StackPanel>
+                    <Activities:UCValueExpression x:Name="xAPIKeyTextBox" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="API Key" Margin="10,0,0,0"  Width="400"/>
+
+                    
+                </Grid>
+            </StackPanel>
+            </Grid>
+        </DockPanel>
+    </ScrollViewer>
+</Page>

@@ -8,13 +8,13 @@
       mc:Ignorable="d" 
       d:DesignHeight="30" d:DesignWidth="365">
 
-    <Grid x:Name="xBFGrid" Height="25">
+    <Grid x:Name="xBFGrid" Height="35">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50*"/>
             <ColumnDefinition Width="60"/>
         </Grid.ColumnDefinitions>
        
-        <TextBox x:Name="xBFTextBox" Grid.Column="0" Style="{StaticResource $TextBoxStyle}" Height="20" Width="310" HorizontalAlignment="Left" IsReadOnly="True" VerticalAlignment="Center" Margin="2,0,2,3"></TextBox>
+        <TextBox x:Name="xBFTextBox" Grid.Column="0" Style="{StaticResource $TextBoxStyle}" Height="20" Width="250" HorizontalAlignment="Left" IsReadOnly="True" VerticalAlignment="Center" Margin="0,10,0,0"></TextBox>
         <StackPanel Orientation="Horizontal" Grid.Column="1">
             <usercontrols:ucButton x:Name="xSelectBF" HorizontalAlignment="Left" ButtonType="ImageButton" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Edit" Click="xSelectBF_Click" VerticalAlignment="Center" Margin="0,0,0,0" >
                 <usercontrols:ucButton.ToolTip>

@@ -31,13 +31,13 @@ using Ginger.ValidationRules;
 namespace Ginger.Configurations
 {
     /// <summary>
-    /// Interaction logic for ExecutionResultsConfiguration.xaml
+    /// Interaction logic for VRTExternalConfigurationsPage.xaml
     /// </summary>
-    public partial class ExternalConfigurationsPage : Page
+    public partial class VRTExternalConfigurationsPage : Page
     {
         VRTConfiguration _VRTConfiguration = new VRTConfiguration();
 
-        public ExternalConfigurationsPage()
+        public VRTExternalConfigurationsPage()
         {
             InitializeComponent();
             Init();
@@ -60,15 +60,6 @@ namespace Ginger.Configurations
             xEnableSoftAssertRadioButton.Init(typeof(VRTConfiguration.eEnableSoftAssert),
                 xEnableSoftAssertPanel, _VRTConfiguration,
                 nameof(VRTConfiguration.EnableSoftAssert));
-            ApplyValidationRules();
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVRTExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
-
-            // this added in ordre to apply the validation when turnining ON the Enterprise Features Flag (the validation wont apply when the Enterprise Features Flag initially was OFF)
-            xVRTExpander.IsVisibleChanged += XVRTExpander_IsVisibleChanged;
-        }
-
-        private void XVRTExpander_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
             ApplyValidationRules();
         }
 
