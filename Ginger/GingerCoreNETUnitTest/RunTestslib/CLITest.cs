@@ -996,8 +996,8 @@ namespace WorkspaceHold
             Assert.AreEqual(jiraUsrConfig.ALMServerURL, @"http:/Jira.CLI", "Validating correct ALMServerURL");
             Assert.AreEqual(jiraSolConfig.ALMUserName, "CLIUser", "Validating correct ALMUserName");
             Assert.AreEqual(jiraUsrConfig.ALMUserName, "CLIUser", "Validating correct ALMUserName");
-            Assert.AreEqual(jiraSolConfig.ALMPassword, "53d7ccd462fbfbc43c6dc9f3f638747582df333b", "Validating correct ALMPassword");
-            Assert.AreEqual(jiraUsrConfig.ALMPassword, "53d7ccd462fbfbc43c6dc9f3f638747582df333b", "Validating correct ALMPassword");
+            Assert.AreEqual(jiraSolConfig.ALMPassword, "JiraPassword", "Validating correct ALMPassword");
+            Assert.AreEqual(jiraUsrConfig.ALMPassword, "JiraPassword", "Validating correct ALMPassword");
             Assert.AreEqual(jiraSolConfig.JiraTestingALM, ALMIntegrationEnums.eTestingALMType.Xray, "Validating correct JiraTestingALM");
         }
 
