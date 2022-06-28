@@ -383,10 +383,9 @@ namespace GingerCore.DataSource
         public bool CheckAutoIncrement(DataSourceTable mDSTableDetails)
         {
             bool check = false;
-            
             foreach( DataColumn mColumn in mDSTableDetails.DataTable.Columns)
             {
-                if (mColumn.AutoIncrement == true)
+                if (mColumn.AutoIncrement)
                 {
                     check = true;
                     return check;
@@ -397,18 +396,16 @@ namespace GingerCore.DataSource
         public override void AddRow( List<string> mColumnNames, DataSourceTable mDSTableDetails)
         {
             var count = mDSTableDetails.DataTable.Constraints.Count;
-               
             if (count>0)
             {
-                //Console.WriteLine("Unable to add new rows due to Primary Key Constraint. Remove the Primary key constraint and try again.");
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The table contains Primary key constraint, adding new rows will not work. To avoid any issues, remove the Primary key constraint and add the data source again.");
                 if (!CheckAutoIncrement(mDSTableDetails))
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No Auto Increment Column Present. To avoid any issues, add one auto-increment column and add the data source again.");
-
+                    return;
                 }
-
             }
+
             DataRow dr = mDSTableDetails.DataTable.NewRow();
             mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
             foreach (string sColName in mColumnNames)
