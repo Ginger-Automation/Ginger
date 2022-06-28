@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -115,7 +115,7 @@ namespace GingerCore.DataSource
         {
             return Name;
         }
-       
+
         public abstract ObservableList<DataSourceTable> GetTablesList();
 
         public abstract void UpdateTableList(ObservableList<DataSourceTable> dsTableList);

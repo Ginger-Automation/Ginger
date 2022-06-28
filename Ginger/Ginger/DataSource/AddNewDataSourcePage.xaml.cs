@@ -79,7 +79,7 @@ namespace Ginger.DataSource
             mFileType = "mdb";
             mDSDetails.FilePath = mTargetFolder.FolderRelativePath + @"\GingerDataSource.mdb";
             FilePathTextBox.Text = mDSDetails.FilePath;
-            DSName.Text = "GingerDataSource";
+            DSName.Text = "GingerDataSource";       
 
         }
 
