@@ -388,7 +388,7 @@ namespace GingerCore.DataSource
                 if (mColumn.AutoIncrement)
                 {
                     check = true;
-                    return check;
+                    break;
                 }
             }
             return check;
@@ -399,11 +399,12 @@ namespace GingerCore.DataSource
             if (count>0)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The table contains Primary key constraint, adding new rows will not work. To avoid any issues, remove the Primary key constraint and add the data source again.");
-                if (!CheckAutoIncrement(mDSTableDetails))
-                {
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No Auto Increment Column Present. To avoid any issues, add one auto-increment column and add the data source again.");
-                    return;
-                }
+                return;
+            }
+            if (!CheckAutoIncrement(mDSTableDetails))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No Auto Increment Column Present. To avoid any issues, add one auto-increment column and add the data source again.");
+                return;
             }
 
             DataRow dr = mDSTableDetails.DataTable.NewRow();
