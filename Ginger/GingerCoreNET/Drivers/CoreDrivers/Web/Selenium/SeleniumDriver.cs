@@ -1242,6 +1242,11 @@ namespace GingerCore.Drivers
                 {
                     AddCurrentScreenShot(act);
                 }
+                if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                {
+                    Bitmap img = GetScreenShot(true);
+                    act.AddScreenShot(img, Driver.Title);
+                }
                 else
                 {
                     //keep the current window and switch back at the end
@@ -3906,7 +3911,7 @@ namespace GingerCore.Drivers
         /// Else, it'll be skipped - Checking the performance
         /// </summary>
         public bool ExtraLocatorsRequired = true;
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
         {
             return await Task.Run(() =>
             {
@@ -3920,7 +3925,7 @@ namespace GingerCore.Drivers
                     List<ElementInfo> list = new List<ElementInfo>();
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList));
+                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList, LearnScreenshotsOfElements));
                     allReadElem.Clear();
                     CurrentFrame = "";
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -3936,7 +3941,7 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -4025,6 +4030,19 @@ namespace GingerCore.Drivers
                                     {
                                         CreateXpathFromUserTemplate(template, foundElemntInfo);
                                     }
+                                }
+                            }
+                            //Element Screenshot
+                            if (LearnScreenshotsOfElements)
+                            {
+                                var screenshot = ((ITakesScreenshot)webElement).GetScreenshot();
+                                Bitmap image = ScreenshotToImage(screenshot);
+                                //foundElemntInfo.ScreenShotImage = BitmapToBase64(screenshot);
+                                using (MemoryStream ms = new MemoryStream())
+                                {
+                                    image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                                    byte[] byteImage = ms.ToArray();
+                                    foundElemntInfo.ScreenShotImage = Convert.ToBase64String(byteImage);
                                 }
                             }
 

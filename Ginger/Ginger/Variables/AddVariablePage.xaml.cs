@@ -103,7 +103,10 @@ namespace Ginger.Variables
             {
                 VariableBase v = (VariableBase)Activator.CreateInstance(t);
                 v.Name = v.VariableUIType;
-                list.Add(v);
+                if (!v.IsObsolete)
+                {
+                    list.Add(v);
+                }
             }
 
             return list;
