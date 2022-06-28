@@ -654,6 +654,9 @@
     <Compile Include="SolutionWindows\UpgradePage.xaml.cs">
       <DependentUpon>UpgradePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SourceControl\SourceControlUploadSolutionPage.xaml.cs">
+      <DependentUpon>SourceControlUploadSolutionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml.cs">
       <DependentUpon>CustomRelativeXpathTemplateUI.xaml</DependentUpon>
     </Compile>
@@ -3108,6 +3111,10 @@
     <Page Include="SolutionWindows\UpgradePage.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="SourceControl\SourceControlUploadSolutionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\CustomRelativeXpathTemplateUI.xaml">
       <SubType>Designer</SubType>
