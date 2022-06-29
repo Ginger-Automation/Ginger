@@ -606,7 +606,7 @@
 
   <ItemGroup>
     <Resource Include="GingerIconNew.ico">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Actions\ActionConversion\ActionConversionIntro.md" />
     <Resource Include="Agents\AddAgentWizardLib\AddAgentIntro.md" />
