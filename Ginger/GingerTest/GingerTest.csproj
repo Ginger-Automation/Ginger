@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb" />
+    <None Remove="TestResources\Solutions\POMsTest\DataSources\GingerDataSource.mdb" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="GingerTestHelper" Version="2.0.2" />
     <PackageReference Include="log4net" Version="2.0.14" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="11.2.0" />
@@ -24,6 +29,143 @@
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
     <ProjectReference Include="..\GingerCore\GingerCore.csproj" />
     <ProjectReference Include="..\Ginger\Ginger.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb" />
+    <Resource Include="TestResources\Solutions\POMsTest\DataSources\GingerDataSource.mdb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestResources\APIModel\globalweather.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\HTML\HTMLControls.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\JavaLegacyToPOMxml\Java Swing Test App.Ginger.ApplicationPOMModel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\JavaLegacyToPOMxml\Java_Legacy_Actions_BF.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AgentsTest\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AgentsTest\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AgentsTest\DataSources\GingerDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AgentsTest\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\DosConsole\Agents\MyDosApp - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\DosConsole\BusinessFlows\DOS_RegressionTestingSuite.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\DosConsole\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\DosConsole\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\DataSources\GingerDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\Environments\ST.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\Environments\UAT.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\POMsTest\Agents\MyWebApp - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\POMsTest\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\POMsTest\DataSources\GingerDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\POMsTest\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\POMsTest\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\POMsTest\HTMLReportConfigurations\Default.Ginger.HTMLReportConfiguration.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\ReportSR\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\ReportSR\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\ReportSR\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\ReportSR\HTMLReportConfigurations\HTML Report Template.Ginger.HTMLReportConfiguration.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\ReportSR\HTMLReportConfigurations\Template #1.Ginger.HTMLReportConfiguration.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\ReportSR\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\Agents\MyWebApp - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\BusinessFlows\Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\BusinessFlows\Flow 2.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\DataSources\DefaultDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\HTMLReportConfigurations\Default.Ginger.HTMLReportConfiguration.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
