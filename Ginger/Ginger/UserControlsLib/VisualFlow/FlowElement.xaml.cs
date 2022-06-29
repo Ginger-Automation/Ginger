@@ -140,7 +140,7 @@ namespace Ginger.UserControlsLib.VisualFlow
             BitmapImage logo = new BitmapImage();
             logo.BeginInit();            
             //TODO: use the image from above
-            logo.UriSource = new Uri("pack://application:,,,/Ginger;component/Images/" + "@Agent_32x32.png");
+            logo.UriSource = new Uri(@"/Images/" + "@Agent_32x32.png", UriKind.RelativeOrAbsolute);
             logo.EndInit();
 
             FEImage.Source = logo;

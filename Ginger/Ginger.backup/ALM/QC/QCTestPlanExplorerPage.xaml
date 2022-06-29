@@ -1,0 +1,34 @@
+    <Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
+    xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+    x:Class="Ginger.ALM.QC.QCTestPlanExplorerPage" 
+      mc:Ignorable="d" 
+      Height="600" Width="700" Title="QC/ALM Test Plan">
+
+    <Grid x:Name="ExplorerTreeGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="580*"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0">
+            <UCTreeView:TreeView1 DockPanel.Dock="Top" x:Name="TestPlanExplorerTreeView" TreeTitle="Test Plan Explorer"/>
+        </DockPanel>
+        <DockPanel Grid.Row="1">
+            <Border BorderBrush="Black" BorderThickness="0,1,0,0" DockPanel.Dock="Top">
+                <CheckBox DockPanel.Dock="Bottom" x:Name="xCreateBusinessFlowFolder" Style="{StaticResource @CheckBoxStyle}"  VerticalAlignment="Bottom" Checked="xCreateBusinessFlowFolder_Checked" Unchecked="xCreateBusinessFlowFolder_Checked">
+                    <CheckBox.Content>
+                        <GingerCore:ucTextDicResource Text="Create [BusinessFlow] Folder and Export the [ActivitiesGroups] to this folder"/>
+                    </CheckBox.Content>
+                </CheckBox>
+
+            </Border>
+        </DockPanel>
+
+    </Grid>
+
+</Page>

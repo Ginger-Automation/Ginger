@@ -1,0 +1,20 @@
+    <Page x:Class="Ginger.Actions.ActSmartSyncEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+	Title="ActSmartSyncEditPage">
+
+    <Grid>
+        <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
+            <Label>Action Type</Label>
+            <ComboBox x:Name="ActionNameComboBox"></ComboBox>
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" >
+                <Label Content="WaitTime:"  Width="80"></Label>
+                <TextBox x:Name="WaitTimeTextbox" Style="{StaticResource @TextBoxStyle}"  ToolTip="Action will wait this seconds long before start to run" Width="100" Height="20"></TextBox>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

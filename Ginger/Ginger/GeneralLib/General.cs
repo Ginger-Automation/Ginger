@@ -332,7 +332,7 @@ namespace Ginger
         /// <returns></returns>
         public static BitmapImage GetResourceImage(string resourceImageName)
         {
-            return new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + resourceImageName));
+            return new BitmapImage(new Uri(@"/Images/" + resourceImageName, UriKind.RelativeOrAbsolute));
         }
 
         public static void DoEvents()
@@ -417,7 +417,7 @@ namespace Ginger
         {
             //TODO: replace all places where we have pack://application:,,,/Ginger;component/Images/ with below function
             System.Windows.Controls.Image img = new System.Windows.Controls.Image();
-            img.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + imageName));
+            img.Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute));
             if (width > 0)
                 img.Width = width;
             if (height > 0)

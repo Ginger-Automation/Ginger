@@ -59,11 +59,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Text;
 using OpenQA.Selenium.Edge;
+using OpenQA.Selenium.DevTools;
+using DevToolsSessionDomains = OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
     public class SeleniumDriver : DriverBase, IVirtualDriver, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord
     {
+        protected IDevToolsSession Session;
+        DevToolsSession devToolsSession;
         public enum eBrowserType
         {
             IE,
@@ -503,7 +507,8 @@ namespace GingerCore.Drivers
 
                         try
                         {
-                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));    
+                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut))); 
+                            
                         }
                         catch (Exception ex)
                         {
@@ -6682,37 +6687,48 @@ namespace GingerCore.Drivers
                     break;
                 case ActBrowserElement.eControlAction.GetBrowserLog:
 
-                    String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
-                    var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
+                    //String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
+                    //var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
 
-                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkLogs));
-                    foreach (var item in networkLogs)
-                    {
-                        Dictionary<string, object> dict = item as Dictionary<string, object>;
-                        if (dict != null)
-                        {
-                            if (dict.ContainsKey("name"))
-                            {
-                                var urlArray = dict.Where(x => x.Key == "name").FirstOrDefault().Value.ToString().Split('/');
+                    //foreach (var item in networkLogs)
+                    //{
+                    //    Dictionary<string, object> dict = item as Dictionary<string, object>;
+                    //    if (dict != null)
+                    //    {
+                    //        if (dict.ContainsKey("name"))
+                    //        {
+                    //            var urlArray = dict.Where(x => x.Key == "name").FirstOrDefault().Value.ToString().Split('/');
 
-                                var urlString = string.Empty;
-                                if (urlArray.Length > 0)
-                                {
-                                    urlString = urlArray[urlArray.Length - 1];
-                                    if (string.IsNullOrEmpty(urlString) && urlArray.Length > 1)
-                                    {
-                                        urlString = urlArray[urlArray.Length - 2];
-                                    }
-                                    foreach (var val in dict)
-                                    {
-                                        act.AddOrUpdateReturnParamActual(Convert.ToString(urlString + ":[" + val.Key + "]"), Convert.ToString(val.Value));
-                                    }
-                                }
-                            }
+                    //            var urlString = string.Empty;
+                    //            if (urlArray.Length > 0)
+                    //            {
+                    //                urlString = urlArray[urlArray.Length - 1];
+                    //                if (string.IsNullOrEmpty(urlString) && urlArray.Length > 1)
+                    //                {
+                    //                    urlString = urlArray[urlArray.Length - 2];
+                    //                }
+                    //                foreach (var val in dict)
+                    //                {
+                    //                    act.AddOrUpdateReturnParamActual(Convert.ToString(urlString + ":[" + val.Key + "]"), Convert.ToString(val.Value));
+                    //                }
+                    //            }
+                    //        }
 
-                        }
+                    //    }
 
-                    }
+                    //}
+                    SetUPDevTools(Driver);
+
+                    INetwork interceptor = Driver.Manage().Network;
+                    interceptor.NetworkRequestSent += OnNetworkRequestSent;
+                    interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
+                    interceptor.StartMonitoring();
+                    string Networkurl = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.NetworkUrl);
+                    Driver.Navigate().GoToUrl(Networkurl);
+                    interceptor.StopMonitoring();
+                    interceptor.NetworkRequestSent -= OnNetworkRequestSent;
+                    interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
+                    //_ =NetworkLogTestAsync(Driver);
 
                     break;
                 case ActBrowserElement.eControlAction.NavigateBack:
@@ -8544,6 +8560,129 @@ namespace GingerCore.Drivers
         public string GetViewport()
         {
             return Driver.Manage().Window.Size.ToString();
+        }
+
+        private void SetUPDevTools(IWebDriver webDriver)
+        {
+            //Get DevTools
+            var devTool = webDriver as IDevTools;
+
+            //DevTool Session 
+            devToolsSession = devTool.GetDevToolsSession();
+            var domains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains>();
+
+            domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
+        }
+        public async Task NetworkLogTestAsync(IWebDriver webDriver)
+        {
+            //SetUPDevTools(webDriver);
+            ////webDriver.Url = "http://www.executeautomation.com";
+            ////var logs =  webDriver.Manage().Logs.GetLog(LogType.Server);
+
+            ////var l = webDriver.Manage().Network.NetworkResponseReceived();
+            //var domains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains>();
+
+            //domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
+            //domains.Network.GetResponseBody(new OpenQA.Selenium.DevTools.V96.Network.GetResponseBodyCommandSettings { }, default, 60, true);
+
+            //////devToolsSession.SendCommand(domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
+            //////devTools.send(Network.emulateNetworkConditions(
+            //////        false,
+            //////        20,
+            //////        20,
+            //////        50,
+            //////        Optional.of(ConnectionType.CELLULAR2G)
+            //////));
+
+            //webDriver.Url = "http://www.executeautomation.com";
+            // webDriver.Manage().Network.;
+
+            //EventHandler<MessageAddedEventArgs> messageAdded = (sender, e) =>
+            //{
+            //    Assert.AreEqual("BELLATRIX is cool", e.Message);
+            //};
+            //domains.Console.Enable();
+            //domains.Console.ClearMessages();
+            //domains.Console.MessageAdded += messageAdded;
+            //var ff = DevToolsSessionLogLevel.;
+
+            //object p = webDriver.e("console.log('BELLATRIX is cool');");
+            INetwork interceptor = webDriver.Manage().Network;
+            interceptor.NetworkRequestSent += OnNetworkRequestSent;
+            interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
+            await interceptor.StartMonitoring();
+            // webDriver.Url = "http://the-internet.herokuapp.com/redirect";
+            webDriver.Url = "https://my.smart.com.ph/smart";
+            //webDriver.Navigate().GoToUrl("https://www.google.com");
+            // webDriver.Url = "https://www.google.com";
+            await interceptor.StopMonitoring();
+        }
+
+        private void OnNetworkRequestSent(object sender, NetworkRequestSentEventArgs e)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat("Request {0}", e.RequestId).AppendLine();
+            builder.AppendLine("--------------------------------");
+            builder.AppendFormat("{0} {1}", e.RequestMethod, e.RequestUrl).AppendLine();
+            foreach (KeyValuePair<string, string> header in e.RequestHeaders)
+            {
+                builder.AppendFormat("{0}: {1}", header.Key, header.Value).AppendLine();
+            }
+            builder.AppendLine("--------------------------------");
+            builder.AppendLine();
+            Console.WriteLine(builder.ToString());
+            string path = @"C:\networklog\" + "log.txt";
+            File.WriteAllText(path, builder.ToString());
+        }
+
+        private void OnNetworkResponseReceived(object sender, NetworkResponseReceivedEventArgs e)
+        {
+            try
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.AppendFormat("Response {0}", e.RequestId).AppendLine();
+                builder.AppendLine("--------------------------------");
+                builder.AppendFormat("{0} {1}", e.ResponseStatusCode, e.ResponseUrl).AppendLine();
+                foreach (KeyValuePair<string, string> header in e.ResponseHeaders)
+                {
+                    builder.AppendFormat("{0}: {1}", header.Key, header.Value).AppendLine();
+                }
+
+                if (e.ResponseResourceType == "XHR")
+                {
+                    Console.WriteLine(e.ResponseBody);
+                }
+                else if (e.ResponseResourceType == "Document")
+                {
+                    builder.AppendLine(e.ResponseBody);
+                }
+                else if (e.ResponseResourceType == "Script")
+                {
+                    builder.AppendLine("<JavaScript content>");
+                }
+                else if (e.ResponseResourceType == "Stylesheet")
+                {
+                    builder.AppendLine("<stylesheet content>");
+                }
+                else if (e.ResponseResourceType == "Image")
+                {
+                    builder.AppendLine("<image>");
+                }
+                else
+                {
+                    builder.AppendFormat("Content type: {0}", e.ResponseResourceType).AppendLine();
+                }
+
+                builder.AppendLine("--------------------------------");
+                Console.WriteLine(builder.ToString());
+                string path = @"C:\networklog\" + "log.txt";
+                File.WriteAllText(path, builder.ToString());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
         }
     }
 }

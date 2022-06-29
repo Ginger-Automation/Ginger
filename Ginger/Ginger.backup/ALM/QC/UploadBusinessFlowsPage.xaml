@@ -1,0 +1,25 @@
+    <Page xmlns:Ginger="clr-namespace:Ginger"  x:Class="Ginger.ALM.QC.UploadBusinessFlowsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="600"
+	Title="UploadBusinessFlowsPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="253*"/>
+            <RowDefinition Height="47*"/>
+        </Grid.RowDefinitions>
+
+
+        <Ginger:ucGrid x:Name="grdBusinessFlows" Title="Upload" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" Grid.Row="0" IsReadOnly="True"/>
+        <Label Content="QC Folder:" HorizontalAlignment="Left" Height="27" Margin="121,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="84"/>
+        <TextBox x:Name="QCFolderTextBox" HorizontalAlignment="Left" Height="27" Margin="195,10,0,0" Grid.Row="1" TextWrapping="Wrap" Text="QC Target Folder" VerticalAlignment="Top" Width="312"/>
+        <Button x:Name="SelectQCFolderButton" Click="SelectQCFolderButton_Click" Content="Select" HorizontalAlignment="Left" Height="27" Margin="521,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="66" RenderTransformOrigin="0.022,0.889" />
+        <CheckBox x:Name="chk_selectAll" Content="Select All" HorizontalAlignment="Left" Margin="10,15,0,0" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="-0.232,0.739" Click="CheckBox_Checked"/>
+
+
+    </Grid>
+</Page>

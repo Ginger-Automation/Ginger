@@ -1,0 +1,140 @@
+    <Page x:Class="Ginger.Actions.VisualTesting.ActVisualTestingEditPage"  xmlns:Actions="clr-namespace:Ginger.Actions" xmlns:Ginger="clr-namespace:Ginger"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      mc:Ignorable="d" 
+      d:DesignHeight="1000" d:DesignWidth="1200"      
+	Title="ActVisualTestingEditPage">
+
+    <!--Container Grid-->
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition x:Name="xBaselineAndTargetImagesRow" Height="400"/>
+            <RowDefinition x:Name="xResultImageHeaderRow" Height="30"/>
+            <RowDefinition x:Name="xDiffrenceImageFrameRow" Height="500"/>
+        </Grid.RowDefinitions>
+
+
+        <!--Choose Visual Testing Engine - First Line-->
+
+        <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <Label Style="{StaticResource @LabelStyle}" Grid.Column="0" VerticalAlignment="Center" >Visual Testing Analyzer:</Label>
+                <UserControlsLib:UCComboBox x:Name="VisualTestingEngineComboBox" Grid.Column="1" Width="250" HorizontalAlignment="Left" Margin="40,0,0,0"/>
+            </StackPanel>
+            <StackPanel Margin="60,2,0,-2" x:Name="xCompareOrCreateBaselinesRadioButtons">
+                <Label Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left">Action</Label>
+                <RadioButton x:Name="CompareRadioButton" Content="Compare Baseline vs. Target" Checked="CompareRadioButton_Checked" GroupName="CompareOrBaseline" VerticalAlignment="Center" ></RadioButton>
+                <RadioButton x:Name="CreateBaselineRadioButton" Content="Create baseline at runtime" Checked="CreateBaselineRadioButton_Checked" GroupName="CompareOrBaseline" VerticalAlignment="Center" ></RadioButton>
+            </StackPanel>
+            <Border BorderBrush="LightGray" BorderThickness="1" Margin="50,0,0,0" x:Name="xLightGrayVerticalBorder">
+                
+                    <StackPanel x:Name="xSetApplicationScreenSize">
+                    <Label Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left">Change Application Screen Size:</Label>
+                        <StackPanel Orientation="Horizontal">
+                            <UserControlsLib:UCComboBox x:Name="ChangeAppScreenSizeComboBox" Width="250" Margin="0,0,20,0"/>
+
+                        <StackPanel x:Name="WidthHeightStackPanel" Orientation="Horizontal">
+                            <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12">Width</Label>
+                            <Actions:UCValueExpression x:Name="WidthUCVE" Width="100"/>
+                            <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12">Height</Label>
+                            <Actions:UCValueExpression x:Name="HeightUCVE" Width="100"/>
+                        </StackPanel>
+                    </StackPanel>
+                    </StackPanel>
+                                    
+            </Border>
+        </StackPanel>
+
+        <Frame x:Name="EngineConfigFrame" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Auto"></Frame>
+
+        <!--For Simple Bitmap Pixel to Pixel comparison-->
+        <Grid Grid.Row="2" Visibility="Visible" x:Name="xBaselineAndTargetImages">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="200*"/>
+                </Grid.RowDefinitions>
+
+
+
+                <!--Comparison Test, Set BaselineImage, Target and test the results-->
+                <Grid Grid.Row="1" Margin="0,2,0,-2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition x:Name="BaselineImageColumn" Width="100*"/>
+                        <ColumnDefinition x:Name="TargetImageColumn" Width="100*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="0"/>
+                        <RowDefinition Height="100*"/>
+                    </Grid.RowDefinitions>
+
+                    <GridSplitter Grid.Column="1" Grid.Row="0" ResizeDirection="Columns" Grid.RowSpan="4" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="5" Style="{StaticResource @VerticalGridSplitterStyle}"/>
+                    <GridSplitter Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0" ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Style="{StaticResource @HorizontalGridSplitterStyle}" Height="5" Width="Auto"/>
+                    <!--Titles-->
+                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                        <Label Content="Baseline Image" Style="{StaticResource @InputFieldLabelStyle}"></Label>
+
+                        <Button x:Name="CreateBaseline"  Margin="50,0,0,0" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1"  Click="CreateBaseline_Click"  Style="{StaticResource @InputImageButtonStyle}" >
+                            <StackPanel Orientation="Horizontal" >
+                                <Label>Create baseline from active window</Label>
+                                <Image Source="{StaticResource @Image_16x16}" Height="16" Width="16"/>
+                            </StackPanel>
+                        </Button>
+                        
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="1" >
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label  Grid.Column="0" Margin="3,0,0,0" Content="Target Image:" Style="{StaticResource @InputFieldLabelStyle}"></Label>
+
+                            <RadioButton x:Name="TargetScreenShotRadioButton" Content="Screenshot" Checked="TargetScreenShotRadioButton_Checked"  GroupName="TargetSource" VerticalAlignment="Center" Grid.Column="1"></RadioButton>
+                            <RadioButton x:Name="TargetImageFileRadioButton" Content="Image File" Checked="TargetImageFileRadioButton_Checked"  GroupName="TargetSource" VerticalAlignment="Center" Grid.Column="2"></RadioButton>
+                        </Grid>
+
+
+                    </StackPanel>
+
+                    <Actions:UCValueExpression x:Name="CurrentBaselineImagePathTxtBox" Grid.Row="1" Margin="5,0,5,0"/>
+
+                    <Actions:UCValueExpression x:Name="TargetImageFileNameUCVE" Grid.Row="1" Grid.Column="4" Visibility="Collapsed"/>
+
+                    <Label x:Name="TargetScreenShotLabel" Grid.Row="1" Grid.Column="4">Run the action to take updated screen shot</Label>
+
+                    <Frame x:Name="BaseImageFrame" Grid.Row="3" Grid.Column="0" Background="White" Margin="0,0,5,10"></Frame>
+
+                    <Frame x:Name="TargetImageFrame" Grid.Row="3" Grid.Column="4" Background="White" Margin="10,0,0,10"></Frame>
+                    
+
+                </Grid>
+
+
+            </Grid>
+
+
+        </Grid>
+
+        <StackPanel Grid.Row="3" x:Name="xResultImageHeader">
+            <Label>Result</Label>
+        </StackPanel>
+        
+        <Frame x:Name="xDiffrenceImageFrame" Background="White" Grid.Row="4" Margin="5"></Frame>
+
+
+        
+
+    </Grid>
+</Page>

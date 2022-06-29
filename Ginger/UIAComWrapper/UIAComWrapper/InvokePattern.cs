@@ -26,13 +26,13 @@ using UIAComWrapperInternal;
 
 namespace System.Windows.Automation
 {
-    public class InvokePattern : BasePattern
+    public class InvokePatternExtended : BasePattern
     {
         private UIAutomationClient.IUIAutomationInvokePattern _pattern;
-        public static readonly AutomationEvent InvokedEvent = InvokePatternIdentifiers.InvokedEvent;
-        public static readonly AutomationPattern Pattern = InvokePatternIdentifiers.Pattern;
+        public static readonly AutomationEventExtended InvokedEvent = InvokePatternIdentifiersExtended.InvokedEvent;
+        public static readonly AutomationPatternExtended Pattern = InvokePatternIdentifiersExtended.Pattern;
         
-        private InvokePattern(AutomationElement el, UIAutomationClient.IUIAutomationInvokePattern pattern, bool cached)
+        private InvokePatternExtended(AutomationElement_Extend el, UIAutomationClient.IUIAutomationInvokePattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
@@ -51,9 +51,9 @@ namespace System.Windows.Automation
             }
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
-            return (pattern == null) ? null : new InvokePattern(el, (UIAutomationClient.IUIAutomationInvokePattern)pattern, cached);
+            return (pattern == null) ? null : new InvokePatternExtended(el, (UIAutomationClient.IUIAutomationInvokePattern)pattern, cached);
         }
     }
 }

@@ -1,0 +1,40 @@
+    <Page xmlns:Actions="clr-namespace:Ginger.Actions"  xmlns:Ginger="clr-namespace:Ginger"  x:Class="Ginger.Actions.XML.ActXMLProcessingEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="800"
+	Title="ActXMLEditPage">
+    <Page.Resources>
+        <DataTemplate x:Key="InputValueExpressionButton">
+            <Button x:Name="InputGridVEButton" Content="..." Click="InputGridVEButton_Click" Style="{DynamicResource DataGridCellButtonStyle}" />
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="400*"/>
+            <ColumnDefinition Width="100"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>          
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+
+        <Label Style="{StaticResource @InputFieldLabelStyle}">Template File</Label>                            
+        <TextBox x:Name="XMLTemplateFileTextBox" Grid.Column="1" Margin="3"/>
+        <Button x:Name="BrowseFileButton" Content="Browse" Click="BrowseButton_Click" Grid.Column="2"/>
+                                
+        <Label Grid.Row="1" Grid.Column="0"  Style="{StaticResource @InputFieldLabelStyle}">Target File Name</Label>
+        <Actions:UCValueExpression x:Name="TargetFileNameTextBox" Grid.Row="1" Grid.Column="1"/>
+
+   
+        <Ginger:ucGrid x:Name="DynamicParametersGrid" Title="Dynamic Parameters" Grid.Row="3" Grid.ColumnSpan="3" />
+
+
+    </Grid>
+</Page>

@@ -97,8 +97,8 @@ namespace UnitTests.NonUITests
             //Assert.IsNotNull(recs.Count, 0);
             Assert.IsNotNull(recs.Count);
         }
-        
 
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void TestMSAccessDB()
         {

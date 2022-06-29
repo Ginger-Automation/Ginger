@@ -1,0 +1,41 @@
+﻿<Page x:Class="Ginger.Agents.AddAgentWizardLib.AddAgentDetailsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:Ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="600"
+      Title="AddAgentDetailsPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <StackPanel Margin="10,10,10,0" >
+            <StackPanel >
+                <Label Content="Name:" Style="{StaticResource @LabelStyle}"/>
+                <TextBox x:Name="xAgentNameTextBox" AutomationProperties.AutomationId="Name AID"  TextWrapping="Wrap" Text="" Style="{StaticResource @TextBoxStyle}" FontWeight="Bold" Margin="5,0,0,0" />
+            </StackPanel>
+            
+            <StackPanel Margin="0,20,0,0">
+                <Label Content="Description:" Style="{StaticResource @LabelStyle}"/>
+                <TextBox x:Name="xAgentDescriptionTextBox" TextWrapping="Wrap" Text="" Style="{StaticResource @TextBoxStyle}" Height="50" Margin="5,0,0,0"/>
+                <Ginger:ucTagsViewer x:Name="xAgentTagsViewer" Margin="0,10,0,0" HorizontalAlignment="Left"/>
+            </StackPanel>
+
+            <StackPanel x:Name="xDriverConfigStackPanel" Visibility="Visible">
+                <StackPanel Margin="0,10,0,0">
+                    <Label Content="Platform :" Style="{StaticResource @LabelStyle}"/>
+                    <ComboBox x:Name="xPlatformTypeComboBox"  AutomationProperties.AutomationId="Platform Type AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+                </StackPanel>
+
+                <StackPanel x:Name="xDriverTypeStackPanel" Margin="0,10,0,0">
+                    <Label Content="Driver :" Style="{StaticResource @LabelStyle}"/>
+                    <ComboBox x:Name="xDriverTypeComboBox" AutomationProperties.AutomationId="Driver Type AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+                </StackPanel>
+                <StackPanel x:Name="xDriverSubTypeStackPanel" Margin="0,10,0,0">
+                    <Label Content="Type :" Style="{StaticResource @LabelStyle}"/>
+                    <ComboBox x:Name="xDriverSubTypeComboBox" AutomationProperties.AutomationId="Driver SubType AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

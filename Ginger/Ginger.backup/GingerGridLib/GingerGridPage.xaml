@@ -1,0 +1,43 @@
+<Page xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"  x:Class="Ginger.GingerGridLib.GingerGridPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:Ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="600"
+      Title="GingerGridPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="49*"/>
+            <RowDefinition Height="49*"/>
+        </Grid.RowDefinitions>
+        <Label Content="Services Grid" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0" />
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,0,0">
+            <!--<Button x:Name="ListButton" Click="ListButton_Click">List</Button>-->
+            <UserControls:ucButton x:Name="xTableButton" ToolTip="Table View"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Table" Click="xTableButton_Click"/>
+            <!--<Button x:Name="UIViewButton" Click="UIViewButton_Click">UI View</Button>-->
+            <UserControls:ucButton x:Name="xUIViewButton" ToolTip="UI View"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="View" Click="xUIViewButton_Click"/>
+            <!--<Button x:Name="ClearButton" Click="ClearButton_Click">Clear</Button>-->
+            <UserControls:ucButton x:Name="xClearButton" ToolTip="Clear"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Delete" Click="xClearButton_Click"/>
+            <UserControls:ucButton x:Name="xPingButton" ToolTip="Ping"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20"  ButtonImageType="Ping" Click="xPingButton_Click"/>
+            <UserControls:ucButton x:Name="xAddRemoteGrid" ToolTip="Add remote grid"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20"  ButtonImageType="Add" Click="XAddRemoteGrid_Click"/>
+            <Label x:Name="StatusLabel">Status</Label>
+        </StackPanel>
+        
+        
+        <Grid x:Name="xServicesGrid" Grid.Row="2"/>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="50*"/>
+            </Grid.ColumnDefinitions>
+            <DataGrid x:Name="xProcessesDataGrid" IsReadOnly="True"/>
+            <Ginger:ucGrid x:Name="xRemoteServiceGrid" Grid.Column="1" Title="Remote Service Grid" ShowRefresh="Visible" ShowUndo="Visible" />
+        </Grid>
+    </Grid>
+</Page>

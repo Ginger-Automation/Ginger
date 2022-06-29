@@ -16,7 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.DataContracts;
+using AlmDataContractsStd.Enums;
 using ALMRestClient;
 using Amdocs.Ginger.Common;
 using GingerCore.ALM.QC;
@@ -482,6 +482,7 @@ namespace GingerCore.ALM.QCRestAPI
             byte[] fileData = br.ReadBytes((Int32)fs.Length);
             ALMResponseData response = QcRestClient.CreateAttachmentForEntitiyId(ResourceType.TEST_RUN, id, zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData);
             fs.Close();
+
             return response;
         }
 

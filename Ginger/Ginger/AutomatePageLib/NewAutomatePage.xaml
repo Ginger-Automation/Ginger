@@ -92,14 +92,14 @@
                     <Menu x:Name="xAnalyzerOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Analyzer Options">
                         <MenuItem Cursor="Hand">
                             <MenuItem.Icon>
-                                <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="18"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
+                                <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
                             </MenuItem.Icon>
                             <MenuItem.Header>
                                 <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent"/>
                             </MenuItem.Header>
                             <MenuItem x:Name="xAnalyzeMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAnalyzeBtn_Click">
                                 <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="18" />
+                                    <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
                                     <GingerCore:ucTextDicResource Text="Analyze [BusinessFlow] to Detect Integrity Issues" />

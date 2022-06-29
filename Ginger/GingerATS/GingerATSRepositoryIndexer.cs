@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -50,8 +50,8 @@ namespace GingerATS
         public GingerATSRepositoryIndexer(string solutionFolderPath)
         {
             mSolutionFolderPath = solutionFolderPath;
-            mRepositoryFolderPath = Path.Combine(mSolutionFolderPath,"SharedRepository");
-            mIndexerFilePath = Path.Combine(mSolutionFolderPath,"SharedRepository","RepositoryIndexer.txt");
+            mRepositoryFolderPath = Path.Combine(mSolutionFolderPath, "SharedRepository");
+            mIndexerFilePath = Path.Combine(mSolutionFolderPath, "SharedRepository", "RepositoryIndexer.txt");
         }
 
         public void RefreshRepositoryIndexer()
@@ -156,7 +156,7 @@ namespace GingerATS
             while (succeedReadingFile == false && tryingCounter <= 3) //TODO: implement better way to syncronaize the calls to this function
             {
                 try
-                {                   
+                {
                     System.IO.StreamReader file = new System.IO.StreamReader(mIndexerFilePath);
                     IndexerLines = (file.ReadToEnd()).Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList<string>(); //fastest avg 702 ticks while ((indexLine = file.ReadLine()) != null) //this way is 100xs slower average 6124 ticks.
                     file.Close();
@@ -174,7 +174,7 @@ namespace GingerATS
             else
                 return IndexerLines;
         }
-        
+
         private List<GingerRepositoryItem> GetAllRepositoryFiles()
         {
             List<GingerRepositoryItem> repoFilesList = new List<GingerRepositoryItem>();
@@ -203,7 +203,7 @@ namespace GingerATS
                 string[] files = Directory.GetFiles(activitiesFolderPath, "*", SearchOption.AllDirectories);
                 if (files != null && files.Length > 0)
                     foreach (string filePath in files)
-                        if (!filePath.ToUpper().Contains("PREVVERSIONS") && !filePath.ToUpper().Contains(".SVN") && Path.GetExtension(filePath).ToUpper()==".XML")
+                        if (!filePath.ToUpper().Contains("PREVVERSIONS") && !filePath.ToUpper().Contains(".SVN") && Path.GetExtension(filePath).ToUpper() == ".XML")
                         {
                             GingerRepositoryItem activityItem = new GingerRepositoryItem(eGingerRepoItemType.Activity);
                             activityItem.FilePath = filePath;
@@ -233,21 +233,21 @@ namespace GingerATS
                     if (repoItem.ExternalID == null) repoItem.ExternalID = "Null";
                     repoItem.LastUpdated = xmlReader.GetAttribute(eGeneralGingerRepoAttributes.LastUpdate.ToString());
 
-                    repoItem.XmlFileDetails =   GingerRepositoryItem.GetRepoItemTypeLabelInIndexer(repoItem.Type) + ";" +
+                    repoItem.XmlFileDetails = GingerRepositoryItem.GetRepoItemTypeLabelInIndexer(repoItem.Type) + ";" +
                                                 repoItem.Name + ";" +
                                                 repoItem.GUID + ";" +
-                                                repoItem.ExternalID + ";" + 
-                                                repoItem.FilePath + ";" + 
+                                                repoItem.ExternalID + ";" +
+                                                repoItem.FilePath + ";" +
                                                 repoItem.LastUpdated;
-                }                
+                }
             }
 
             xmlReader.Close();
         }
 
-        public GingerRepositoryItem GetGingerRepositoryItem(eGingerRepoItemType itemType, string itemExternalID, List<string> indexerRecords=null)
+        public GingerRepositoryItem GetGingerRepositoryItem(eGingerRepoItemType itemType, string itemExternalID, List<string> indexerRecords = null)
         {
-            GingerRepositoryItem repoItem= null;
+            GingerRepositoryItem repoItem = null;
             if (indexerRecords == null)
                 indexerRecords = ReadRepositoryIndexerData();
             foreach (string indexerRecord in indexerRecords)
@@ -285,4 +285,3 @@ namespace GingerATS
         }
     }
 }
-

@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
@@ -56,7 +58,7 @@ namespace GingerCore.Drivers.PBDriver
         public IHTMLDocument2 frameContent;
         public DispHTMLDocument frameDocument;
         List<ElementInfo> frameElementsList = new List<ElementInfo>();
-        AutomationElement AEBrowser;
+        UIAuto.AutomationElement AEBrowser;
 
         public async Task<List<ElementInfo>> GetVisibleElement()
         {
@@ -65,7 +67,7 @@ namespace GingerCore.Drivers.PBDriver
             return await GetElementList();
         }
 
-        public HTMLHelper(InternetExplorer IE,AutomationElement AE)
+        public HTMLHelper(InternetExplorer IE,UIAuto.AutomationElement AE)
         {
             browserObject = IE;
             AEBrowser = AE;
@@ -116,19 +118,19 @@ namespace GingerCore.Drivers.PBDriver
                 else
                     domNode = dispHtmlDocument.firstChild;         
                 node = domNode as IHTMLElement;
-                coll = node.children;
+                coll = (IHTMLElementCollection)node.children;
 
                 while (coll.length == 0 && domNode.nextSibling != null)
                 {
                     domNode = domNode.nextSibling;
                     node = domNode as IHTMLElement;
-                    coll = node.children;
+                    coll = (IHTMLElementCollection)node.children;
                 }
             }
             else
             {
                 node = (IHTMLElement)Ei.ElementObject;
-                coll = node.children;
+                coll = (IHTMLElementCollection)node.children;
             }
 
             foreach (IHTMLElement h1 in coll)
@@ -410,7 +412,7 @@ namespace GingerCore.Drivers.PBDriver
                     break;
                 }
             }
-            IHTMLElementCollection childHAECollection = HAE.children;
+            IHTMLElementCollection childHAECollection = (IHTMLElementCollection)HAE.children;
             foreach (IHTMLElement cellChild in childHAECollection)
             {
 
@@ -1026,7 +1028,7 @@ namespace GingerCore.Drivers.PBDriver
                 {
                     d1 = (IHTMLDOMNode)HElem;
                 }                
-                IHTMLAttributeCollection HAttributes = d1.attributes;
+                IHTMLAttributeCollection HAttributes = (IHTMLAttributeCollection)d1.attributes;
                 if (HAttributes != null)
                 {
                     foreach (IHTMLDOMAttribute d in HAttributes)
@@ -1289,7 +1291,7 @@ namespace GingerCore.Drivers.PBDriver
             else
                 d1 =(IHTMLDOMNode) EI.ElementObject;
             string val = "";
-            IHTMLAttributeCollection HAttributes = d1.attributes;
+            IHTMLAttributeCollection HAttributes = (IHTMLAttributeCollection)d1.attributes;
             if (HAttributes != null)
             {
                 foreach (IHTMLDOMAttribute d in HAttributes)
@@ -1483,7 +1485,7 @@ namespace GingerCore.Drivers.PBDriver
                                 element.setAttribute(attribute, "0" + idx.ToString());
                             else
                                 element.setAttribute(attribute, idx.ToString());
-                            temp = element.getAttribute(attribute);
+                            temp = (string)element.getAttribute(attribute);
                             currentAttribute = temp;
                         }
                     }
@@ -1500,7 +1502,7 @@ namespace GingerCore.Drivers.PBDriver
         public string SelectFromDropDownByChild(IHTMLElement element,string value,string attribute)
         {
             string currentAttribute = "NoSelection";
-            IHTMLElementCollection coll = element.all;
+            IHTMLElementCollection coll = (IHTMLElementCollection)element.all;
             string name = "";
             foreach (IHTMLElement item in coll)
             {
@@ -2353,7 +2355,8 @@ namespace GingerCore.Drivers.PBDriver
             // based on the name and position of the node
             int childPos = 0;
             int pos=0;
-            var elChilds= el.children;
+            List<IHTMLElement> elChilds = new List<IHTMLElement>(); 
+            elChilds.Add((IHTMLElement)el.children);
             if (node.Name.StartsWith(".."))
             {
                 el = el.parentElement;
@@ -2361,7 +2364,7 @@ namespace GingerCore.Drivers.PBDriver
             }
             if (node.Name.StartsWith("/"))
             {
-                elChilds = el.all;
+                elChilds.Add((IHTMLElement)el.all);
                 node.Name = node.Name.Substring(1);
             }
            

@@ -69,10 +69,10 @@ namespace Ginger.ALM.RQM
         {
             Mouse.OverrideCursor = Cursors.Wait;
             ObservableList<RQMTestPlan> mRQMTestPlansListSortedByDate = new ObservableList<RQMTestPlan>();
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectKey, System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
-            {
-                mRQMTestPlansListSortedByDate.Add(testPlan);
-            }
+            //foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectKey, System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
+            //{
+            //    mRQMTestPlansListSortedByDate.Add(testPlan);
+            //}
             grdRQMTestPlanes.DataSourceList = mRQMTestPlansListSortedByDate;
             Mouse.OverrideCursor = null;
         }

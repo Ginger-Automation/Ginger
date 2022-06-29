@@ -1,0 +1,34 @@
+    <Page x:Class="GingerWPF.SolutionLib.NewSolutionTargetApplicationWizardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:GingerWPF.SolutionLib"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="NewSolutionTargetApplicationWizardPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <StackPanel>
+            
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Main Application Name:</Label>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100*"/>
+                    <ColumnDefinition Width="55"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="MainApplicationNameTextBox" AutomationProperties.AutomationId="QA-SolutionFolderTextBox" Style="{StaticResource @TextBoxStyle}" Height="25" VerticalAlignment="Top"/>
+                
+            </Grid>
+            <StackPanel>
+                <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Main Application Platform:" />
+                <ComboBox x:Name="MainApplicationPlatformComboBox" Style="{StaticResource @InputComboBoxStyle}" Width="200" HorizontalAlignment="Left" />
+            </StackPanel>
+
+            <Label>
+                You will be able to add more target applications later if needed
+            </Label>
+        </StackPanel>
+
+    </Grid>
+</Page>

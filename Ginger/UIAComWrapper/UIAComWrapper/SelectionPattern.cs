@@ -25,20 +25,20 @@ namespace System.Windows.Automation
     public class SelectionPattern : BasePattern
     {
         private UIAutomationClient.IUIAutomationSelectionPattern _pattern;
-        public static readonly AutomationPattern Pattern = SelectionPatternIdentifiers.Pattern;
-        public static readonly AutomationProperty CanSelectMultipleProperty = SelectionPatternIdentifiers.CanSelectMultipleProperty;
-        public static readonly AutomationEvent InvalidatedEvent = SelectionPatternIdentifiers.InvalidatedEvent;
-        public static readonly AutomationProperty IsSelectionRequiredProperty = SelectionPatternIdentifiers.IsSelectionRequiredProperty;
-        public static readonly AutomationProperty SelectionProperty = SelectionPatternIdentifiers.SelectionProperty;
+        public static readonly AutomationPatternExtended Pattern = SelectionPatternIdentifiersExtended.Pattern;
+        public static readonly AutomationPropertyExtended CanSelectMultipleProperty = SelectionPatternIdentifiersExtended.CanSelectMultipleProperty;
+        public static readonly AutomationEventExtended InvalidatedEvent = SelectionPatternIdentifiersExtended.InvalidatedEvent;
+        public static readonly AutomationPropertyExtended IsSelectionRequiredProperty = SelectionPatternIdentifiersExtended.IsSelectionRequiredProperty;
+        public static readonly AutomationPropertyExtended SelectionProperty = SelectionPatternIdentifiersExtended.SelectionProperty;
         
-        private SelectionPattern(AutomationElement el, UIAutomationClient.IUIAutomationSelectionPattern pattern, bool cached)
+        private SelectionPattern(AutomationElement_Extend el, UIAutomationClient.IUIAutomationSelectionPattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
             this._pattern = pattern;
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
             return (pattern == null) ? null : new SelectionPattern(el, (UIAutomationClient.IUIAutomationSelectionPattern)pattern, cached);
         }
@@ -65,17 +65,17 @@ namespace System.Windows.Automation
         [StructLayout(LayoutKind.Sequential)]
         public struct SelectionPatternInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal SelectionPatternInformation(AutomationElement element, bool isCached)
+            internal SelectionPatternInformation(AutomationElement_Extend element, bool isCached)
             {
                 this._el = element;
                 this._isCached = isCached;
             }
 
-            public AutomationElement[] GetSelection()
+            public AutomationElement_Extend[] GetSelection()
             {
-                return (AutomationElement[])this._el.GetPropertyValue(SelectionPattern.SelectionProperty, _isCached);
+                return (AutomationElement_Extend[])this._el.GetPropertyValue(SelectionPattern.SelectionProperty, _isCached);
             }
 
             public bool CanSelectMultiple
@@ -95,29 +95,29 @@ namespace System.Windows.Automation
         }
     }
 
-    public class SelectionItemPattern : BasePattern
+    public class SelectionItemPatternExtended : BasePattern
     {
         
         private UIAutomationClient.IUIAutomationSelectionItemPattern _pattern;
-        public static readonly AutomationPattern Pattern = SelectionItemPatternIdentifiers.Pattern;
-        public static readonly AutomationEvent ElementAddedToSelectionEvent = SelectionItemPatternIdentifiers.ElementAddedToSelectionEvent;
-        public static readonly AutomationEvent ElementRemovedFromSelectionEvent = SelectionItemPatternIdentifiers.ElementRemovedFromSelectionEvent;
-        public static readonly AutomationEvent ElementSelectedEvent = SelectionItemPatternIdentifiers.ElementSelectedEvent;
-        public static readonly AutomationProperty IsSelectedProperty = SelectionItemPatternIdentifiers.IsSelectedProperty;
-        public static readonly AutomationProperty SelectionContainerProperty = SelectionItemPatternIdentifiers.SelectionContainerProperty;
+        public static readonly AutomationPatternExtended Pattern = SelectionItemPatternIdentifiersExtended.Pattern;
+        public static readonly AutomationEventExtended ElementAddedToSelectionEvent = SelectionItemPatternIdentifiersExtended.ElementAddedToSelectionEvent;
+        public static readonly AutomationEventExtended ElementRemovedFromSelectionEvent = SelectionItemPatternIdentifiersExtended.ElementRemovedFromSelectionEvent;
+        public static readonly AutomationEventExtended ElementSelectedEvent = SelectionItemPatternIdentifiersExtended.ElementSelectedEvent;
+        public static readonly AutomationPropertyExtended IsSelectedProperty = SelectionItemPatternIdentifiersExtended.IsSelectedProperty;
+        public static readonly AutomationPropertyExtended SelectionContainerProperty = SelectionItemPatternIdentifiersExtended.SelectionContainerProperty;
 
 
         
-        private SelectionItemPattern(AutomationElement el, UIAutomationClient.IUIAutomationSelectionItemPattern pattern, bool cached)
+        private SelectionItemPatternExtended(AutomationElement_Extend el, UIAutomationClient.IUIAutomationSelectionItemPattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
             this._pattern = pattern;
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
-            return (pattern == null) ? null : new SelectionItemPattern(el, (UIAutomationClient.IUIAutomationSelectionItemPattern)pattern, cached);
+            return (pattern == null) ? null : new SelectionItemPatternExtended(el, (UIAutomationClient.IUIAutomationSelectionItemPattern)pattern, cached);
         }
 
         public void AddToSelection()
@@ -178,9 +178,9 @@ namespace System.Windows.Automation
         [StructLayout(LayoutKind.Sequential)]
         public struct SelectionItemPatternInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal SelectionItemPatternInformation(AutomationElement element, bool isCached)
+            internal SelectionItemPatternInformation(AutomationElement_Extend element, bool isCached)
             {
                 this._el = element;
                 this._isCached = isCached;
@@ -190,15 +190,15 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(SelectionItemPattern.IsSelectedProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(SelectionItemPatternExtended.IsSelectedProperty, _isCached);
                 }
             }
 
-            public AutomationElement SelectionContainer
+            public AutomationElement_Extend SelectionContainer
             {
                 get
                 {
-                    return (AutomationElement)this._el.GetPropertyValue(SelectionItemPattern.SelectionContainerProperty, _isCached);
+                    return (AutomationElement_Extend)this._el.GetPropertyValue(SelectionItemPatternExtended.SelectionContainerProperty, _isCached);
                 }
             }
         }

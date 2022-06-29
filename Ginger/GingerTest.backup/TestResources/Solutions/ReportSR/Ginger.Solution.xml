@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Ginger Repository Item created with version: 3.0.0.0-->
+<Ginger.Environments.Solution AlmType="QC" EncryptedValidationString="VUmheVjtatgVR0oSpuArDg==" Created="6/13/2018 2:23:13 PM" CreatedBy="YARONWE" Guid="ed2dc1d6-2f4c-424d-9449-2bc8a91a8a05" LastBusinessFlowFileName="c:\temp\s30\s30\\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml" LastUpdate="6/25/2018 2:26:40 AM" LastUpdateBy="YARONWE" Name="s30" ParentGuid="00000000-0000-0000-0000-000000000000" ShowIndicationkForLockedItems="False" Version="5">
+  <ApplicationPlatforms>
+    <GingerCore.Platforms.ApplicationPlatform AppName="crm" CoreGUID="00000000-0000-0000-0000-000000000000" Created="6/13/2018 2:23:30 PM" CreatedBy="YARONWE" Guid="3b3168cb-18a9-4f5b-bbfa-1bf2839b4395" GUID="00000000-0000-0000-0000-000000000000" LastUpdate="1/1/0001 12:00:00 AM" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" Version="0" />
+  </ApplicationPlatforms>
+  <ExecutionLoggerConfigurationSetList>
+    <Ginger.Reports.ExecutionLoggerConfiguration Created="6/19/2018 8:30:32 PM" CreatedBy="YARONWE" ExecutionLoggerConfigurationExecResultsFolder="~\ExecutionResults\" ExecutionLoggerConfigurationIsEnabled="True" ExecutionLoggerConfigurationMaximalFolderSize="250" Guid="261b7845-8b91-478d-8c8b-f816427845fd" IsSelected="True" LastUpdate="1/1/0001 12:00:00 AM" ParentGuid="00000000-0000-0000-0000-000000000000" Seq="0" Version="0" />
+  </ExecutionLoggerConfigurationSetList>
+  <ExternalItemsFields></ExternalItemsFields>
+  <HTMLReportsConfigurationSetList>
+    <Ginger.Reports.HTMLReportsConfiguration Created="6/19/2018 8:30:32 PM" CreatedBy="YARONWE" Guid="1c18362d-c566-4a45-8a22-9c46dda25a65" HTMLReportConfigurationMaximalFolderSize="0" HTMLReportsAutomaticProdIsEnabled="False" HTMLReportsFolder="~\HTMLReports\" HTMLReportTemplatesSeq="2" IsSelected="True" LastUpdate="1/1/0001 12:00:00 AM" LimitReportFolderSize="False" ParentGuid="00000000-0000-0000-0000-000000000000" Seq="0" Version="0" />
+  </HTMLReportsConfigurationSetList>
+  <Tags>
+    <Amdocs.Ginger.Repository.RepositoryItemTag Description="" Guid="ac09e994-74f0-450d-9617-2bb5cc60553f" Name="uuu" ParentGuid="00000000-0000-0000-0000-000000000000" />
+  </Tags>
+  <Variables></Variables>
+</Ginger.Environments.Solution>

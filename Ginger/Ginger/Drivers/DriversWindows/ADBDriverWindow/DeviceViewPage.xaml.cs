@@ -95,12 +95,14 @@ namespace GingerCore.Drivers.Common
             else
             {
                 // put some default pics
-                string img = "pack://application:,,,/Ginger;component/Images/RemoteAgentScreen.jpg";             
-                BitmapSource Bs = new BitmapImage(new Uri(img));
-                DeviceScreenShotImageBK.Source = Bs; 
+                //string img = "pack://application:,,,/Ginger;component/Images/RemoteAgentScreen.jpg";             
+                string img = @"/Images/RemoteAgentScreen.jpg";
+                BitmapSource Bs = new BitmapImage(new Uri(img, UriKind.RelativeOrAbsolute));
+                DeviceScreenShotImageBK.Source = Bs;
 
-                string ScreenFile = "pack://application:,,,/Ginger;component/Images/RemoteAgentTempScreen.jpg";
-                DeviceImage.Source = new BitmapImage(new Uri(ScreenFile));
+                //string ScreenFile = "pack://application:,,,/Ginger;component/Images/RemoteAgentTempScreen.jpg";
+                string ScreenFile = @"/Images/RemoteAgentTempScreen.jpg";
+                DeviceImage.Source = new BitmapImage(new Uri(ScreenFile, UriKind.RelativeOrAbsolute));
             }
             InitDeviceButtons();
             InitHighLighter();

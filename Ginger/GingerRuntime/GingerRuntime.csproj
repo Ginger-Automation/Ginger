@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RuntimeFrameworkVersion>3.1.0</RuntimeFrameworkVersion>
     <RootNamespace>Amdocs.Ginger.Runtime</RootNamespace>
   </PropertyGroup>
@@ -31,6 +31,7 @@
   <PropertyGroup>
     <GeckoDriverPlatform>linux64</GeckoDriverPlatform>
     <PublishGeckoDriver>true</PublishGeckoDriver>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>

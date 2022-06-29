@@ -1,0 +1,19 @@
+    <Window x:Class="GingerWPF.DragDropLib.DragDropWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+        Title="DragDropWindow" Height="50" Width="260" Opacity="0.8" WindowStyle="None"        >
+    <Window.Effect>
+        <DropShadowEffect/>
+    </Window.Effect>
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30"/>
+            <ColumnDefinition Width="75*"/>
+        </Grid.ColumnDefinitions>
+
+        <usercontrols:ImageMakerControl x:Name="xDragOperationImage" Grid.Column="0" SetAsFontImageWithSize="25" ImageType="Blocked"  Width="25" Height="25" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Center" ImageToolTip="" />
+
+        <TextBlock x:Name="xHeaderTextBlock" Text="Header" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" Background="White" Grid.Column="1" Style="{StaticResource $TextBlockStyle}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+    </Grid>
+</Window>

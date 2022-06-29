@@ -176,7 +176,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             Image image = new Image();
             try
             {
-                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + ImageFile));
+                image.Source = new BitmapImage(new Uri(@"/Images/" + ImageFile, UriKind.RelativeOrAbsolute));
             }
             catch
             {               
@@ -218,7 +218,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (IsDirty)
             {
                 Image Dirty = new Image();
-                Dirty.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/RedStar8x8.png"));
+                Dirty.Source = new BitmapImage(new Uri(@"/Images/RedStar8x8.png", UriKind.RelativeOrAbsolute));
                 Dirty.ToolTip = "This item was modified";
                 stack.Children.Add(Dirty);
             }
@@ -303,7 +303,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (string.IsNullOrEmpty(icon) == false)
             {
                 Image image = new Image();
-                image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + icon));
+                //image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + icon, UriKind.RelativeOrAbsolute));
+                image.Source = new BitmapImage(new Uri(@"/Images/" + icon, UriKind.RelativeOrAbsolute));
                 mnuItem.Icon = image;
             }
             mnuItem.Header = Header;

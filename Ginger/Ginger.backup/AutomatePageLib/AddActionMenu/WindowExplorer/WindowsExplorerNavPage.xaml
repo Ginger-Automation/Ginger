@@ -1,0 +1,15 @@
+﻿<Page x:Class="Ginger.BusinessFlowsLibNew.AddActionMenu.WindowsExplorerNavPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help"
+      h:GingerHelpProvider.HelpString="Explorer"
+      d:DesignHeight="700" d:DesignWidth="410"
+      Title="WindowsExplorerNavPage">
+
+    <Grid >
+        <Frame Name="xSelectedItemFrame" NavigationUIVisibility="Hidden" Margin="3,0,0,0" HorizontalAlignment="Stretch" Height="780" />
+    </Grid>
+</Page>

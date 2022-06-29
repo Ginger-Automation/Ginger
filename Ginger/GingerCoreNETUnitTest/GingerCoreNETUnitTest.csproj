@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RuntimeFrameworkVersion>3.1.0</RuntimeFrameworkVersion>
+    <TargetFramework>net6.0</TargetFramework>
 	  <IsPackable>false</IsPackable>
     <OutputType>Library</OutputType>
     <StartupObject />
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,6 +35,8 @@
     <None Remove="TestResources\JSON\Request JSON.TXT" />
     <None Remove="TestResources\Repository\Default Run Set.Ginger.RunSetConfig.xml" />
     <None Remove="TestResources\Repository\dummyAction.xml" />
+    <None Remove="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb" />
+    <None Remove="TestResources\Solutions\GlobalCrossSolution\DataSources\AccessDS.mdb" />
     <None Remove="TestResources\XML\createPaymentRequest2.xml" />
   </ItemGroup>
 
@@ -109,6 +111,15 @@
     <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj" />
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
     <ProjectReference Include="..\GingerRuntime\GingerRuntime.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="TestResources\Solutions\GlobalCrossSolution\DataSources\AccessDS.mdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -508,9 +519,6 @@
     <None Update="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.Ginger.DataSource.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="TestResources\Solutions\BasicSimple\DataSources\LiteDB.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -641,9 +649,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\GlobalCrossSolution\DataSources\AccessDS.Ginger.DataSource.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestResources\Solutions\GlobalCrossSolution\DataSources\AccessDS.mdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\GlobalCrossSolution\DataSources\DefaultDataSource.Ginger.DataSource.xml">

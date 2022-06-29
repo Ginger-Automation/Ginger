@@ -3,12 +3,12 @@
 jobs:
 
 # ------------------------------------------------------------------------------------------------------
-# Request Windows VM Windows 2019 with Visual Studio 2019 - set Ginger solution
+# Request Windows VM Windows windows-2022 with Visual Studio 2022 - set Ginger solution
 # ------------------------------------------------------------------------------------------------------
 
 - job: Windows
   pool:
-   vmImage: 'windows-2019'  #Visual Studio 2019 Preview on Windows Server 2019
+   vmImage: 'windows-2022'  #Visual Studio 2022 Preview on Windows Server 2019
   workspace:
     clean: outputs
 
@@ -21,12 +21,12 @@ jobs:
     buildConfiguration: 'Release'	
     solutionDirectory:  'Ginger-Automation/Ginger'    
     testDLLs: |
-      **\GingerUtilsTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerUtilsTest.dll
-      **\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerCoreCommonTest.dll
-      **\GingerCoreNETUnitTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerCoreNETUnitTest.dll
-      **\GingerConsoleTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerConsoleTest.dll
-      **\GingerAutoPilotTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerAutoPilotTest.dll
-      **\GingerPluginCoreTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerPluginCoreTest.dll                
+      **\GingerUtilsTest\bin\$(buildConfiguration)\net6.0\GingerUtilsTest.dll
+      **\GingerCoreCommonTest\bin\$(buildConfiguration)\net6.0\GingerCoreCommonTest.dll
+      **\GingerCoreNETUnitTest\bin\$(buildConfiguration)\net6.0\GingerCoreNETUnitTest.dll
+      **\GingerConsoleTest\bin\$(buildConfiguration)\net6.0\GingerConsoleTest.dll
+      **\GingerAutoPilotTest\bin\$(buildConfiguration)\net6.0\GingerAutoPilotTest.dll
+      **\GingerPluginCoreTest\bin\$(buildConfiguration)\net6.0\GingerPluginCoreTest.dll                
      
     artifactsFolder: 'D:\a\1\a'      
      
@@ -36,16 +36,13 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
   steps:
 # ------------------------------------------------------------------------------------------------------
-# Install .Net core SDK 2.2.x
+# Install .Net core SDK 6.0.x
 # ------------------------------------------------------------------------------------------------------
 
-  - task: DotNetCoreInstaller@0
+  - task: UseDotNet@2
     inputs:
-      packageType: 'sdk' # Options: runtime, sdk
-
-      version: '3.1.100' 
-      displayName: Install .Net Core 3.1 
-
+        packageType: 'sdk'
+        version: '6.0.301'
 # ------------------------------------------------------------------------------------------------------
 # Install Nuget tool
 # ------------------------------------------------------------------------------------------------------

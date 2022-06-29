@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.RunLib;
@@ -354,7 +356,7 @@ namespace GingerCore.Drivers.WindowsLib
         private void HandleUIElementAction(Act act)
         {
             ActUIElement actUIElement = (ActUIElement)act;
-            AutomationElement automationElement = null;
+            UIAuto.AutomationElement automationElement = null;
             eElementType elementType=eElementType.Unknown;
 
             if (actUIElement.ElementLocateBy.Equals(eLocateBy.POMElement))
@@ -368,7 +370,7 @@ namespace GingerCore.Drivers.WindowsLib
             }
             else if (actUIElement.ElementType!= eElementType.Window && actUIElement.ElementAction !=ActUIElement.eElementAction.IsExist)
             {
-                automationElement = (AutomationElement)mUIAutomationHelper.FindElementByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
+                automationElement = (UIAuto.AutomationElement)mUIAutomationHelper.FindElementByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
 
                 if (automationElement == null && actUIElement.ElementAction != ActUIElement.eElementAction.IsEnabled)
                 {
@@ -436,7 +438,7 @@ namespace GingerCore.Drivers.WindowsLib
                     object windowElement = mUIAutomationHelper.FindWindowByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
                     if (windowElement != null)
                     {
-                        actionResult = mUIElementOperationsHelper.GetTitle((AutomationElement)windowElement);
+                        actionResult = mUIElementOperationsHelper.GetTitle((UIAuto.AutomationElement)windowElement);
                     }
                     else 
                     {
@@ -480,7 +482,7 @@ namespace GingerCore.Drivers.WindowsLib
                     Object windowToClose = mUIAutomationHelper.FindWindowByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
                     if (windowToClose != null)
                     {
-                        actionResult = mUIElementOperationsHelper.CloseWindow((AutomationElement)windowToClose);
+                        actionResult = mUIElementOperationsHelper.CloseWindow((UIAuto.AutomationElement)windowToClose);
                     }
                     else
                     {
@@ -536,10 +538,10 @@ namespace GingerCore.Drivers.WindowsLib
                     actionResult = ClickAndValidte(automationElement, actUIElement);
                     break;
                 case ActUIElement.eElementAction.Maximize:
-                    actionResult = mUIElementOperationsHelper.SetWindowState(automationElement, WindowVisualState.Maximized);
+                    actionResult = mUIElementOperationsHelper.SetWindowState(automationElement, Interop.UIAutomationClient.WindowVisualState.WindowVisualState_Maximized);
                     break;
                 case ActUIElement.eElementAction.Minimize:
-                    actionResult = mUIElementOperationsHelper.SetWindowState(automationElement, WindowVisualState.Minimized);
+                    actionResult = mUIElementOperationsHelper.SetWindowState(automationElement, Interop.UIAutomationClient.WindowVisualState.WindowVisualState_Minimized);
                     break;
 
                 //case ActUIElement.eElementAction.ScrollDown:
@@ -568,7 +570,7 @@ namespace GingerCore.Drivers.WindowsLib
                 actUIElement.Error = actionResult.errorMessage;
             }
         }
-        public ActionResult ClickAndValidte(AutomationElement automationElement, ActUIElement act)
+        public ActionResult ClickAndValidte(UIAuto.AutomationElement automationElement, ActUIElement act)
         {
             ActionResult actionResult = new ActionResult();
             ActUIElement.eElementAction clickType;
@@ -601,7 +603,7 @@ namespace GingerCore.Drivers.WindowsLib
             }
 
             List<ActUIElement.eElementAction> clicks = PlatformInfoBase.GetPlatformImpl(mUIAutomationHelper.mPlatform).GetPlatformUIClickTypeList();
-            AutomationElement elementToValidate = (AutomationElement)mUIAutomationHelper.FindElementByLocator(validationElementLocateby, validattionElementLocateValue);
+            UIAuto.AutomationElement elementToValidate = (UIAuto.AutomationElement)mUIAutomationHelper.FindElementByLocator(validationElementLocateby, validattionElementLocateValue);
 
             //perform click
             bool isClicked = mUIElementOperationsHelper.PerformClick(automationElement, clickType);
@@ -634,7 +636,7 @@ namespace GingerCore.Drivers.WindowsLib
 
             return actionResult;
         }
-        private AutomationElement HandlePOMElememnt(ActUIElement act)
+        private UIAuto.AutomationElement HandlePOMElememnt(ActUIElement act)
         {
             ObservableList<ElementLocator> locators = new ObservableList<ElementLocator>();
             var pomExcutionUtil = new POMExecutionUtils(act,act.ElementLocateValue);
@@ -646,7 +648,7 @@ namespace GingerCore.Drivers.WindowsLib
                 currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
                 locators = currentPOMElementInfo.Locators;
             }
-            AutomationElement windowElement = LocateElementByLocators(locators, true);
+            UIAuto.AutomationElement windowElement = LocateElementByLocators(locators, true);
 
             if (windowElement == null)
             {
@@ -1247,7 +1249,7 @@ namespace GingerCore.Drivers.WindowsLib
         {
             if (ElementInfo.ElementObject == null || locateElementByItLocators)
             {
-                AutomationElement windowElement = LocateElementByLocators(ElementInfo.Locators, true);
+                UIAuto.AutomationElement windowElement = LocateElementByLocators(ElementInfo.Locators, true);
                 if (windowElement != null)
                 {
                     ElementInfo.ElementObject = (object)windowElement;
@@ -1543,9 +1545,9 @@ namespace GingerCore.Drivers.WindowsLib
             }
         }
 
-        public AutomationElement LocateElementByLocators(ObservableList<ElementLocator> Locators, bool GetOutAfterFoundElement = false)
+        public UIAuto.AutomationElement LocateElementByLocators(ObservableList<ElementLocator> Locators, bool GetOutAfterFoundElement = false)
         {
-            AutomationElement elem = null;
+            UIAuto.AutomationElement elem = null;
             foreach (ElementLocator locator in Locators)
             {
                 locator.StatusError = string.Empty;
@@ -1581,15 +1583,15 @@ namespace GingerCore.Drivers.WindowsLib
             return elem;
         }
 
-        private AutomationElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
+        private UIAuto.AutomationElement LocateElementByLocator(ElementLocator locator, bool AlwaysReturn = true)
         {
             locator.StatusError = "";
             locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
-            AutomationElement AE = null;
+            UIAuto.AutomationElement AE = null;
             try
             {
                 object obj = mUIAutomationHelper.FindElementByLocator(locator.LocateBy, locator.LocateValue);
-                AE = (AutomationElement)obj;
+                AE = (UIAuto.AutomationElement)obj;
             }
             catch (Exception ex)
             {
@@ -1606,14 +1608,14 @@ namespace GingerCore.Drivers.WindowsLib
             }
             return AE;
         }
-        private AutomationElement LocateElementIfNotAutoLearned(ElementLocator locator)
+        private UIAuto.AutomationElement LocateElementIfNotAutoLearned(ElementLocator locator)
         {
             ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
             ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
             evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
 
             object obj = mUIAutomationHelper.FindElementByLocator(evaluatedLocator.LocateBy, evaluatedLocator.LocateValue);
-            AutomationElement AE = (AutomationElement)obj;
+            UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
             return AE;
         }
         public override void ActionCompleted(Act act)
@@ -1639,7 +1641,7 @@ namespace GingerCore.Drivers.WindowsLib
                 {
                     try
                     {
-                        AutomationElement elem = LocateElementByLocators(EI.Locators);
+                        UIAuto.AutomationElement elem = LocateElementByLocators(EI.Locators);
                         if (elem != null)
                         {
                             EI.ElementObject = elem;
@@ -1685,17 +1687,17 @@ namespace GingerCore.Drivers.WindowsLib
         ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
             ObservableList<OptionalValue> optionalValues = new ObservableList<OptionalValue>();
-            AutomationElement automationElement = (AutomationElement)ElementInfo.ElementObject;
+            UIAuto.AutomationElement automationElement = (UIAuto.AutomationElement)ElementInfo.ElementObject;
 
             //get child elements expand if combobox
             object expandPattern;
-            automationElement.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out expandPattern);
+            automationElement.TryGetCurrentPattern(UIAuto.ExpandCollapsePattern.Pattern, out expandPattern);
             if (expandPattern != null && automationElement.Current.IsEnabled)
             {
                 //try catch to handle if the screen is not focused
                 try
                 {
-                    ((ExpandCollapsePattern)expandPattern).Expand();
+                    ((UIAuto.ExpandCollapsePattern)expandPattern).Expand();
                 }
                 catch(Exception ex)
                 {
@@ -1703,9 +1705,9 @@ namespace GingerCore.Drivers.WindowsLib
                 }
             }
 
-            AutomationElementCollection itemList = automationElement.FindAll(TreeScope.Descendants,
-                new PropertyCondition(AutomationElement.LocalizedControlTypeProperty, "list item"));
-            foreach (AutomationElement ae in itemList)
+            UIAuto.AutomationElementCollection itemList = automationElement.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants,
+                new UIAuto.PropertyCondition( UIAuto.AutomationElement.LocalizedControlTypeProperty, "list item"));
+            foreach (UIAuto.AutomationElement ae in itemList)
             {
                 optionalValues.Add(new OptionalValue { Value = ae.Current.Name, IsDefault = false });
             }
@@ -1725,14 +1727,14 @@ namespace GingerCore.Drivers.WindowsLib
 
         public async Task<ElementInfo> GetElementAtPoint(long ptX, long ptY)
         {
-            object elem = mUIAutomationHelper.GetElementAtPoint(new System.Windows.Point(ptX, ptY));
+            object elem = mUIAutomationHelper.GetElementAtPoint(new System.Drawing.Point((int)ptX, (int)ptY));
 
             if (elem == null) return null;
             ElementInfo EI = null;
 
-            if (elem.GetType().Equals(typeof(AutomationElement)))
+            if (elem.GetType().Equals(typeof(UIAuto.AutomationElement)))
             {
-                EI = mUIAutomationHelper.GetElementInfoFor((AutomationElement)elem);
+                EI = mUIAutomationHelper.GetElementInfoFor((UIAuto.AutomationElement)elem);
             }
             else
             {
@@ -1828,8 +1830,8 @@ namespace GingerCore.Drivers.WindowsLib
         public string GetViewport()
         {
             Size size = new Size();
-            size.Height = (int)((AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Height;
-            size.Width = (int)((AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width;
+            size.Height = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Height;
+            size.Width = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width;
             return size.ToString();
         }
     }

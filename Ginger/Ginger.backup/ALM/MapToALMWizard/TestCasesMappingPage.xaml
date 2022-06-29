@@ -1,0 +1,25 @@
+﻿<Page x:Class="Ginger.ALM.MapToALMWizard.TestCasesMappingPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.ALM.MapToALMWizard"
+      xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" 
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" 
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="TestCasesMappingPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250*"/>
+            <ColumnDefinition Width="150*"/>
+        </Grid.ColumnDefinitions>
+        <Ginger:ucGrid x:Name="xMapActivityGroupToTestCaseGrid" Margin="0,0,5,0" HorizontalAlignment="Stretch" PreviewDragItem="xUnMapTestCaseGrid_PreviewDragItem" DragOver="xMapActivityGroupToTestCaseGrid_DragOver" 
+                       ItemDropped="xUnMapTestCaseGrid_ItemDropped" IsReadOnly="True" ShowAdd="Collapsed" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed"/>
+        <GridSplitter x:Name="xMapGridSplitter" ResizeDirection="Columns" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="5" Style="{StaticResource $VerticalGridSplitterStyle}" />
+        <Ginger:ucGrid x:Name="xUnMapTestCaseGrid" Grid.Column="1" HorizontalAlignment="Stretch" PreviewDragItem="xUnMapTestCaseGrid_PreviewDragItem" ItemDropped="xUnMapTestCaseGrid_ItemDropped" 
+                       IsReadOnly="True" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" />
+    </Grid>
+</Page>

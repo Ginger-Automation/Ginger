@@ -1,0 +1,99 @@
+<Page x:Class="Ginger.PlugInsWindows.PluginPackagePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:Ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="800"
+      Title="PluginPackagePage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="541*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="180"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="0">
+            <StackPanel Orientation="Horizontal">
+                <Label Style="{StaticResource  @InputFieldLabelStyle}" FontWeight="Bold"  Content="Plugin Package:"/>
+                <Label x:Name="PlugInNamelbl" Style="{StaticResource  @InputFieldLabelStyle}"/>
+            </StackPanel>
+
+            <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="55"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Content="Description:" />
+                <Border BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}" Grid.Row="1" Margin="5,0,0,0" >
+                    <ScrollViewer  >
+                        <TextBlock x:Name="xSummaryTextBlock" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" ></TextBlock>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <Label Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Content="PlugIn Version:" />
+                <Label x:Name="xPlugInPackageVersionLabel" Style="{StaticResource @InputFieldLabelStyle}" FontSize="13" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <Label Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Content="PlugIn Folder:" />
+                <Label x:Name="xPlugInFolderLabel" Style="{StaticResource @InputFieldLabelStyle}" FontSize="13" />
+            </StackPanel>
+           
+
+            <DockPanel>
+                <Label x:Name="LoadErrorLbl" HorizontalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Foreground="Red" Content="Failed To Load The PlugIn"  Visibility="Collapsed"/>
+            </DockPanel>
+
+        </StackPanel>
+                
+        <TabControl x:Name="PlugInTab" Grid.Row="2" >
+            <TabControl.Resources>
+                <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                    <Setter Property="Height" Value="30"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="False" >
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True" >
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TabControl.Resources>
+            <TabItem x:Name="ActionsTab" Margin="0,0,0,0">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <Image Source="{StaticResource  @GeneralAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
+                        <TextBlock Text="Services" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30*"/>
+                        <RowDefinition Height="70*"/>
+                    </Grid.RowDefinitions>
+                    <Ginger:ucGrid x:Name="xServicesGrid" Title="Services" RowChangedEvent="XServicesGrid_RowChangedEvent" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
+                    <Ginger:ucGrid x:Name="xServiceActionGrid" Grid.Row="1" Title="Service Actions" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="TextEditorTab" Margin="2,0,-6,0">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="{StaticResource @Edit_20x20}" Height="20" Width="20" Margin="-6,0,0,0"/>
+                        <TextBlock Text="PlugIn Text Editors" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                    </StackPanel>
+                </TabItem.Header>
+                <Ginger:ucGrid x:Name="PlugInsEditorActionsGrid" Title="PlugIn Editors" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed"/>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</Page>

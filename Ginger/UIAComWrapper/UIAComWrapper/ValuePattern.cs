@@ -22,27 +22,27 @@ using UIAComWrapperInternal;
 
 namespace System.Windows.Automation
 {
-    public class RangeValuePattern : BasePattern
+    public class RangeValuePatternExtended : BasePattern
     {
         private UIAutomationClient.IUIAutomationRangeValuePattern _pattern;
-        public static readonly AutomationPattern Pattern = RangeValuePatternIdentifiers.Pattern;
-        public static readonly AutomationProperty IsReadOnlyProperty = RangeValuePatternIdentifiers.IsReadOnlyProperty;
-        public static readonly AutomationProperty LargeChangeProperty = RangeValuePatternIdentifiers.LargeChangeProperty;
-        public static readonly AutomationProperty MaximumProperty = RangeValuePatternIdentifiers.MaximumProperty;
-        public static readonly AutomationProperty MinimumProperty = RangeValuePatternIdentifiers.MinimumProperty;
-        public static readonly AutomationProperty SmallChangeProperty = RangeValuePatternIdentifiers.SmallChangeProperty;
-        public static readonly AutomationProperty ValueProperty = RangeValuePatternIdentifiers.ValueProperty;
+        public static readonly AutomationPatternExtended Pattern = RangeValuePatternIdentifiers.Pattern;
+        public static readonly AutomationPropertyExtended IsReadOnlyProperty = RangeValuePatternIdentifiers.IsReadOnlyProperty;
+        public static readonly AutomationPropertyExtended LargeChangeProperty = RangeValuePatternIdentifiers.LargeChangeProperty;
+        public static readonly AutomationPropertyExtended MaximumProperty = RangeValuePatternIdentifiers.MaximumProperty;
+        public static readonly AutomationPropertyExtended MinimumProperty = RangeValuePatternIdentifiers.MinimumProperty;
+        public static readonly AutomationPropertyExtended SmallChangeProperty = RangeValuePatternIdentifiers.SmallChangeProperty;
+        public static readonly AutomationPropertyExtended ValueProperty = RangeValuePatternIdentifiers.ValueProperty;
         
-        private RangeValuePattern(AutomationElement el, UIAutomationClient.IUIAutomationRangeValuePattern pattern, bool cached)
+        private RangeValuePatternExtended(AutomationElement_Extend el, UIAutomationClient.IUIAutomationRangeValuePattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
             this._pattern = pattern;
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
-            return (pattern == null) ? null : new RangeValuePattern(el, (UIAutomationClient.IUIAutomationRangeValuePattern)pattern, cached);
+            return (pattern == null) ? null : new RangeValuePatternExtended(el, (UIAutomationClient.IUIAutomationRangeValuePattern)pattern, cached);
         }
 
         public void SetValue(double value)
@@ -78,9 +78,9 @@ namespace System.Windows.Automation
         [StructLayout(LayoutKind.Sequential)]
         public struct RangeValuePatternInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal RangeValuePatternInformation(AutomationElement element, bool isCached)
+            internal RangeValuePatternInformation(AutomationElement_Extend element, bool isCached)
             {
                 this._el = element;
                 this._isCached = isCached;
@@ -90,67 +90,67 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (double)this._el.GetPropertyValue(RangeValuePattern.ValueProperty, _isCached);
+                    return (double)this._el.GetPropertyValue(RangeValuePatternExtended.ValueProperty, _isCached);
                 }
             }
             public bool IsReadOnly
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(RangeValuePattern.IsReadOnlyProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(RangeValuePatternExtended.IsReadOnlyProperty, _isCached);
                 }
             }
             public double Maximum
             {
                 get
                 {
-                    return (double)this._el.GetPropertyValue(RangeValuePattern.MaximumProperty, _isCached);
+                    return (double)this._el.GetPropertyValue(RangeValuePatternExtended.MaximumProperty, _isCached);
                 }
             }
             public double Minimum
             {
                 get
                 {
-                    return (double)this._el.GetPropertyValue(RangeValuePattern.MinimumProperty, _isCached);
+                    return (double)this._el.GetPropertyValue(RangeValuePatternExtended.MinimumProperty, _isCached);
                 }
             }
             public double LargeChange
             {
                 get
                 {
-                    return (double)this._el.GetPropertyValue(RangeValuePattern.LargeChangeProperty, _isCached);
+                    return (double)this._el.GetPropertyValue(RangeValuePatternExtended.LargeChangeProperty, _isCached);
                 }
             }
             public double SmallChange
             {
                 get
                 {
-                    return (double)this._el.GetPropertyValue(RangeValuePattern.SmallChangeProperty, _isCached);
+                    return (double)this._el.GetPropertyValue(RangeValuePatternExtended.SmallChangeProperty, _isCached);
                 }
             }
         }
     }
 
-    public class ValuePattern : BasePattern
+    public class ValuePatternExtended : BasePattern
     {
         
         private UIAutomationClient.IUIAutomationValuePattern _pattern;
-        public static readonly AutomationPattern Pattern = ValuePatternIdentifiers.Pattern;
-        public static readonly AutomationProperty IsReadOnlyProperty = ValuePatternIdentifiers.IsReadOnlyProperty;
-        public static readonly AutomationProperty ValueProperty = ValuePatternIdentifiers.ValueProperty;
+        public static readonly AutomationPatternExtended Pattern = ValuePatternIdentifiersExtended.Pattern;
+        public static readonly AutomationPropertyExtended IsReadOnlyProperty = ValuePatternIdentifiersExtended.IsReadOnlyProperty;
+        public static readonly AutomationPropertyExtended ValueProperty = ValuePatternIdentifiersExtended.ValueProperty;
 
 
         
-        private ValuePattern(AutomationElement el, UIAutomationClient.IUIAutomationValuePattern pattern, bool cached)
+        private ValuePatternExtended(AutomationElement_Extend el, UIAutomationClient.IUIAutomationValuePattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
             this._pattern = pattern;
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
-            return (pattern == null) ? null : new ValuePattern(el, (UIAutomationClient.IUIAutomationValuePattern)pattern, cached);
+            return (pattern == null) ? null : new ValuePatternExtended(el, (UIAutomationClient.IUIAutomationValuePattern)pattern, cached);
         }
 
         public void SetValue(string value)
@@ -188,9 +188,9 @@ namespace System.Windows.Automation
         [StructLayout(LayoutKind.Sequential)]
         public struct ValuePatternInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal ValuePatternInformation(AutomationElement element, bool isCached)
+            internal ValuePatternInformation(AutomationElement_Extend element, bool isCached)
             {
                 this._el = element;
                 this._isCached = isCached;
@@ -200,7 +200,7 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(ValuePattern.ValueProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(ValuePatternExtended.ValueProperty, _isCached);
                 }
             }
 
@@ -208,7 +208,7 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(ValuePattern.IsReadOnlyProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(ValuePatternExtended.IsReadOnlyProperty, _isCached);
                 }
             }
         }

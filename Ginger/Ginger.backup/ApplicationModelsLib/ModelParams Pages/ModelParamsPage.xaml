@@ -1,0 +1,50 @@
+    <Page x:Class="GingerWPF.ApplicationModelsLib.APIModelWizard.ModelParamsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="300"
+      Title="APIModelParamsPage">
+
+    <Grid x:Name="pageGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="Row1LocalParams" Height="76*" MinHeight="35"/>
+            <RowDefinition x:Name="Row2GlobalParams" Height="35*" MinHeight="35"/>
+        </Grid.RowDefinitions>
+
+        <Expander x:Name="xModelParamsExpander" Grid.Row="0" ExpandDirection="Down" IsExpanded="True" Expanded ="LocalParamsGrid_Expanded" Collapsed="LocalParamsGrid_Collapsed"  Style="{StaticResource @ExpanderLightStyle}">
+            <Expander.Header>
+                <Label x:Name="xModelParamsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}"/>
+            </Expander.Header>
+            <Expander.Content>
+                <ginger:ucGrid  x:Name="ModelParametersGrid"></ginger:ucGrid>
+            </Expander.Content>
+        </Expander>
+
+        <Expander x:Name="xGlobalModelParamsExpander" Grid.Row="1" ExpandDirection="Down" Expanded="GlobalParams_Expanded" IsExpanded="False" Collapsed="GlobalParams_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
+            <Expander.Header>
+                <Label x:Name="xGlobalModelParamsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}"/>
+            </Expander.Header>
+            <Expander.Content>
+                <ginger:ucGrid x:Name="xGlobalModelParametersGrid"></ginger:ucGrid>
+            </Expander.Content>
+        </Expander>
+        
+        <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
+
+
+        <Grid.Resources>
+            <DataTemplate x:Key="OpenEditLocalParamPossibleValuesPage">
+                <Button x:Name="OpenEditLocalParamPossibleValuesPageButton" Content="..." Click="OpenEditLocalParamPossibleValuesPageButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
+
+            <DataTemplate x:Key="OpenEditGlobalParamPossibleValuesPage">
+                <Button x:Name="OpenEditGlobalParamPossibleValuesPageButton" Content="..." Click="OpenEditGlobalParamPossibleValuesPageButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
+        </Grid.Resources>
+    </Grid>
+   
+
+</Page>

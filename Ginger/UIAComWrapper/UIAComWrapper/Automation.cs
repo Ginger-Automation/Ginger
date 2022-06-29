@@ -20,16 +20,16 @@ using UIAComWrapperInternal;
 
 namespace System.Windows.Automation
 {
-    public static class Automation
+    public static class AutomationExtended
     {
         private static readonly UIAutomationClient.IUIAutomation factory = new UIAutomationClient.CUIAutomation();
-        public static readonly Condition ContentViewCondition = Condition.Wrap(Factory.ContentViewCondition);
-        public static readonly Condition ControlViewCondition = Condition.Wrap(Factory.ControlViewCondition);
-        public static readonly Condition RawViewCondition = Condition.Wrap(Factory.RawViewCondition);        
+        public static readonly ConditionExtended ContentViewCondition = ConditionExtended.Wrap(Factory.ContentViewCondition);
+        public static readonly ConditionExtended ControlViewCondition = ConditionExtended.Wrap(Factory.ControlViewCondition);
+        public static readonly ConditionExtended RawViewCondition = ConditionExtended.Wrap(Factory.RawViewCondition);        
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
-        static Automation()
+        static AutomationExtended()
         {
         }
 
@@ -41,13 +41,13 @@ namespace System.Windows.Automation
             }
         }
 
-        public static void AddAutomationEventHandler(AutomationEvent eventId, AutomationElement element, TreeScope scope, AutomationEventHandler eventHandler)
+        public static void AddAutomationEventHandler(AutomationEventExtended eventId, AutomationElement_Extend element, TreeScopeExtended scope, AutomationEventHandler eventHandler)
         {
             Utility.ValidateArgumentNonNull(element, "element");
             Utility.ValidateArgumentNonNull(eventHandler, "eventHandler");
-            Utility.ValidateArgument(eventId != AutomationElement.AutomationFocusChangedEvent, "Use FocusChange notification instead");
-            Utility.ValidateArgument(eventId != AutomationElement.StructureChangedEvent, "Use StructureChange notification instead");
-            Utility.ValidateArgument(eventId != AutomationElement.AutomationPropertyChangedEvent, "Use PropertyChange notification instead");
+            Utility.ValidateArgument(eventId != AutomationElement_Extend.AutomationFocusChangedEvent, "Use FocusChange notification instead");
+            Utility.ValidateArgument(eventId != AutomationElement_Extend.StructureChangedEvent, "Use StructureChange notification instead");
+            Utility.ValidateArgument(eventId != AutomationElement_Extend.AutomationPropertyChangedEvent, "Use PropertyChange notification instead");
 
             try
             {
@@ -81,7 +81,7 @@ namespace System.Windows.Automation
             }
         }
 
-        public static void AddAutomationPropertyChangedEventHandler(AutomationElement element, TreeScope scope, AutomationPropertyChangedEventHandler eventHandler, params AutomationProperty[] properties)
+        public static void AddAutomationPropertyChangedEventHandler(AutomationElement_Extend element, TreeScopeExtended scope, AutomationPropertyChangedEventHandler eventHandler, params AutomationPropertyExtended[] properties)
         {
             Utility.ValidateArgumentNonNull(element, "element");
             Utility.ValidateArgumentNonNull(eventHandler, "eventHandler");
@@ -99,7 +99,7 @@ namespace System.Windows.Automation
 
             try
             {
-                PropertyEventListener listener = new PropertyEventListener(AutomationElement.StructureChangedEvent, element, eventHandler);
+                PropertyEventListener listener = new PropertyEventListener(AutomationElement_Extend.StructureChangedEvent, element, eventHandler);
                 Factory.AddPropertyChangedEventHandler(
                     element.NativeElement,
                     (UIAutomationClient.TreeScope)scope,
@@ -114,7 +114,7 @@ namespace System.Windows.Automation
             }
         }
 
-        public static void AddStructureChangedEventHandler(AutomationElement element, TreeScope scope, StructureChangedEventHandler eventHandler)
+        public static void AddStructureChangedEventHandler(AutomationElement_Extend element, TreeScopeExtended scope, StructureChangedEventHandler eventHandler)
         {
             Utility.ValidateArgumentNonNull(element, "element");
             Utility.ValidateArgumentNonNull(eventHandler, "eventHandler");
@@ -122,7 +122,7 @@ namespace System.Windows.Automation
 
             try
             {
-                StructureEventListener listener = new StructureEventListener(AutomationElement.StructureChangedEvent, element, eventHandler);
+                StructureEventListener listener = new StructureEventListener(AutomationElement_Extend.StructureChangedEvent, element, eventHandler);
                 Factory.AddStructureChangedEventHandler(
                     element.NativeElement,
                     (UIAutomationClient.TreeScope)scope,
@@ -156,7 +156,7 @@ namespace System.Windows.Automation
             }
         }
 
-        public static bool Compare(AutomationElement el1, AutomationElement el2)
+        public static bool Compare(AutomationElement_Extend el1, AutomationElement_Extend el2)
         {
             if (el1 == null && el2 == null)
             {
@@ -176,13 +176,13 @@ namespace System.Windows.Automation
             }
         }
 
-        public static string PatternName(AutomationPattern pattern)
+        public static string PatternName(AutomationPatternExtended pattern)
         {
             Utility.ValidateArgumentNonNull(pattern, "pattern");
             return Factory.GetPatternProgrammaticName(pattern.Id);
         }
 
-        public static string PropertyName(AutomationProperty property)
+        public static string PropertyName(AutomationPropertyExtended property)
         {
             Utility.ValidateArgumentNonNull(property, "property");
             return Factory.GetPropertyProgrammaticName(property.Id);
@@ -201,13 +201,13 @@ namespace System.Windows.Automation
             }
         }
 
-        public static void RemoveAutomationEventHandler(AutomationEvent eventId, AutomationElement element, AutomationEventHandler eventHandler)
+        public static void RemoveAutomationEventHandler(AutomationEventExtended eventId, AutomationElement_Extend element, AutomationEventHandler eventHandler)
         {
             Utility.ValidateArgumentNonNull(element, "element");
             Utility.ValidateArgumentNonNull(eventHandler, "eventHandler");
-            Utility.ValidateArgument(eventId != AutomationElement.AutomationFocusChangedEvent, "Use FocusChange notification instead");
-            Utility.ValidateArgument(eventId != AutomationElement.StructureChangedEvent, "Use StructureChange notification instead");
-            Utility.ValidateArgument(eventId != AutomationElement.AutomationPropertyChangedEvent, "Use PropertyChange notification instead");
+            Utility.ValidateArgument(eventId != AutomationElement_Extend.AutomationFocusChangedEvent, "Use FocusChange notification instead");
+            Utility.ValidateArgument(eventId != AutomationElement_Extend.StructureChangedEvent, "Use StructureChange notification instead");
+            Utility.ValidateArgument(eventId != AutomationElement_Extend.AutomationPropertyChangedEvent, "Use PropertyChange notification instead");
 
             try
             {
@@ -226,7 +226,7 @@ namespace System.Windows.Automation
 
             try
             {
-                FocusEventListener listener = (FocusEventListener)ClientEventList.Remove(AutomationElement.AutomationFocusChangedEvent, null, eventHandler);
+                FocusEventListener listener = (FocusEventListener)ClientEventList.Remove(AutomationElement_Extend.AutomationFocusChangedEvent, null, eventHandler);
                 Factory.RemoveFocusChangedEventHandler(listener);
             }
             catch (System.Runtime.InteropServices.COMException e)
@@ -235,14 +235,14 @@ namespace System.Windows.Automation
             }
         }
 
-        public static void RemoveAutomationPropertyChangedEventHandler(AutomationElement element, AutomationPropertyChangedEventHandler eventHandler)
+        public static void RemoveAutomationPropertyChangedEventHandler(AutomationElement_Extend element, AutomationPropertyChangedEventHandler eventHandler)
         {
             Utility.ValidateArgumentNonNull(element, "element");
             Utility.ValidateArgumentNonNull(eventHandler, "eventHandler");
             
             try
             {
-                PropertyEventListener listener = (PropertyEventListener)ClientEventList.Remove(AutomationElement.AutomationPropertyChangedEvent, element, eventHandler);
+                PropertyEventListener listener = (PropertyEventListener)ClientEventList.Remove(AutomationElement_Extend.AutomationPropertyChangedEvent, element, eventHandler);
                 Factory.RemovePropertyChangedEventHandler(element.NativeElement, listener);
             }
             catch (System.Runtime.InteropServices.COMException e)
@@ -251,14 +251,14 @@ namespace System.Windows.Automation
             }
         }
 
-        public static void RemoveStructureChangedEventHandler(AutomationElement element, StructureChangedEventHandler eventHandler)
+        public static void RemoveStructureChangedEventHandler(AutomationElement_Extend element, StructureChangedEventHandler eventHandler)
         {
             Utility.ValidateArgumentNonNull(element, "element");
             Utility.ValidateArgumentNonNull(eventHandler, "eventHandler");
 
             try
             {
-                StructureEventListener listener = (StructureEventListener)ClientEventList.Remove(AutomationElement.StructureChangedEvent, element, eventHandler);
+                StructureEventListener listener = (StructureEventListener)ClientEventList.Remove(AutomationElement_Extend.StructureChangedEvent, element, eventHandler);
                 Factory.RemoveStructureChangedEventHandler(element.NativeElement, listener);
             }
             catch (System.Runtime.InteropServices.COMException e)

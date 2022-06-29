@@ -22,23 +22,23 @@ using UIAComWrapperInternal;
 
 namespace System.Windows.Automation
 {
-    public class LegacyIAccessiblePattern : BasePattern
+    public class LegacyIAccessiblePatternExtended : BasePattern
     {
-        public static readonly AutomationProperty ChildIdProperty = LegacyIAccessiblePatternIdentifiers.ChildIdProperty;
-        public static readonly AutomationProperty NameProperty = LegacyIAccessiblePatternIdentifiers.NameProperty;
-        public static readonly AutomationProperty ValueProperty = LegacyIAccessiblePatternIdentifiers.ValueProperty;
-        public static readonly AutomationProperty DescriptionProperty = LegacyIAccessiblePatternIdentifiers.DescriptionProperty;
-        public static readonly AutomationProperty RoleProperty = LegacyIAccessiblePatternIdentifiers.RoleProperty;
-        public static readonly AutomationProperty StateProperty = LegacyIAccessiblePatternIdentifiers.StateProperty;
-        public static readonly AutomationProperty HelpProperty = LegacyIAccessiblePatternIdentifiers.HelpProperty;
-        public static readonly AutomationProperty KeyboardShortcutProperty = LegacyIAccessiblePatternIdentifiers.KeyboardShortcutProperty;
-        public static readonly AutomationProperty SelectionProperty = LegacyIAccessiblePatternIdentifiers.SelectionProperty;
-        public static readonly AutomationProperty DefaultActionProperty = LegacyIAccessiblePatternIdentifiers.DefaultActionProperty;
-        public static readonly AutomationPattern Pattern = LegacyIAccessiblePatternIdentifiers.Pattern;
+        public static readonly AutomationPropertyExtended ChildIdProperty = LegacyIAccessiblePatternIdentifiersExtended.ChildIdProperty;
+        public static readonly AutomationPropertyExtended NameProperty = LegacyIAccessiblePatternIdentifiersExtended.NameProperty;
+        public static readonly AutomationPropertyExtended ValueProperty = LegacyIAccessiblePatternIdentifiersExtended.ValueProperty;
+        public static readonly AutomationPropertyExtended DescriptionProperty = LegacyIAccessiblePatternIdentifiersExtended.DescriptionProperty;
+        public static readonly AutomationPropertyExtended RoleProperty = LegacyIAccessiblePatternIdentifiersExtended.RoleProperty;
+        public static readonly AutomationPropertyExtended StateProperty = LegacyIAccessiblePatternIdentifiersExtended.StateProperty;
+        public static readonly AutomationPropertyExtended HelpProperty = LegacyIAccessiblePatternIdentifiersExtended.HelpProperty;
+        public static readonly AutomationPropertyExtended KeyboardShortcutProperty = LegacyIAccessiblePatternIdentifiersExtended.KeyboardShortcutProperty;
+        public static readonly AutomationPropertyExtended SelectionProperty = LegacyIAccessiblePatternIdentifiersExtended.SelectionProperty;
+        public static readonly AutomationPropertyExtended DefaultActionProperty = LegacyIAccessiblePatternIdentifiersExtended.DefaultActionProperty;
+        public static readonly AutomationPatternExtended Pattern = LegacyIAccessiblePatternIdentifiersExtended.Pattern;
 
         private UIAutomationClient.IUIAutomationLegacyIAccessiblePattern _pattern;
 
-        private LegacyIAccessiblePattern(AutomationElement el, UIAutomationClient.IUIAutomationLegacyIAccessiblePattern pattern, bool cached)
+        private LegacyIAccessiblePatternExtended(AutomationElement_Extend el, UIAutomationClient.IUIAutomationLegacyIAccessiblePattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
@@ -93,9 +93,9 @@ namespace System.Windows.Automation
             }
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
-            return (pattern == null) ? null : new LegacyIAccessiblePattern(el, (UIAutomationClient.IUIAutomationLegacyIAccessiblePattern)pattern, cached);
+            return (pattern == null) ? null : new LegacyIAccessiblePatternExtended(el, (UIAutomationClient.IUIAutomationLegacyIAccessiblePattern)pattern, cached);
         }
 
 
@@ -119,24 +119,24 @@ namespace System.Windows.Automation
         [StructLayout(LayoutKind.Sequential)]
         public struct LegacyIAccessiblePatternInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal LegacyIAccessiblePatternInformation(AutomationElement element, bool isCached)
+            internal LegacyIAccessiblePatternInformation(AutomationElement_Extend element, bool isCached)
             {
                 this._el = element;
                 this._isCached = isCached;
             }
             
-            public AutomationElement[] GetSelection()
+            public AutomationElement_Extend[] GetSelection()
             {
-                return (AutomationElement[])this._el.GetPropertyValue(LegacyIAccessiblePattern.SelectionProperty, _isCached);
+                return (AutomationElement_Extend[])this._el.GetPropertyValue(LegacyIAccessiblePatternExtended.SelectionProperty, _isCached);
             }
 
             public int ChildId
             {
                 get
                 {
-                    return (int)this._el.GetPropertyValue(LegacyIAccessiblePattern.ChildIdProperty, _isCached);
+                    return (int)this._el.GetPropertyValue(LegacyIAccessiblePatternExtended.ChildIdProperty, _isCached);
                 }
             }
 
@@ -144,7 +144,7 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(LegacyIAccessiblePattern.DefaultActionProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(LegacyIAccessiblePatternExtended.DefaultActionProperty, _isCached);
                 }
             }
 
@@ -152,7 +152,7 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(LegacyIAccessiblePattern.DescriptionProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(LegacyIAccessiblePatternExtended.DescriptionProperty, _isCached);
                 }
             }
 
@@ -160,7 +160,7 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(LegacyIAccessiblePattern.HelpProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(LegacyIAccessiblePatternExtended.HelpProperty, _isCached);
                 }
             }
 
@@ -168,7 +168,7 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(LegacyIAccessiblePattern.KeyboardShortcutProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(LegacyIAccessiblePatternExtended.KeyboardShortcutProperty, _isCached);
                 }
             }
 
@@ -176,7 +176,7 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(LegacyIAccessiblePattern.NameProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(LegacyIAccessiblePatternExtended.NameProperty, _isCached);
                 }
             }
 
@@ -184,7 +184,7 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return Convert.ToUInt32(this._el.GetPropertyValue(LegacyIAccessiblePattern.RoleProperty, _isCached));
+                    return Convert.ToUInt32(this._el.GetPropertyValue(LegacyIAccessiblePatternExtended.RoleProperty, _isCached));
                 }
             }
 
@@ -192,7 +192,7 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return Convert.ToUInt32(this._el.GetPropertyValue(LegacyIAccessiblePattern.StateProperty, _isCached));
+                    return Convert.ToUInt32(this._el.GetPropertyValue(LegacyIAccessiblePatternExtended.StateProperty, _isCached));
                 }
             }
 
@@ -200,7 +200,7 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(LegacyIAccessiblePattern.ValueProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(LegacyIAccessiblePatternExtended.ValueProperty, _isCached);
                 }
             }
         }

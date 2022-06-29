@@ -1,0 +1,35 @@
+﻿<Page x:Class="Ginger.BusinessFlowPages.AddActivityDetailsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      h:GingerHelpProvider.HelpString="Activity"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="AddActivityDetailsPage">
+
+
+    <StackPanel Margin="10,10,10,0" Background="{StaticResource $BackgroundColor_LightGray}" >
+        <StackPanel x:Name="xGroupPanel" Margin="0,10,0,0">
+            <Label  Style="{StaticResource $LabelStyle}" FontWeight="Bold">
+                <Label.Content>
+                    <GingerCore:ucTextDicResource Text="Parent [ActivitiesGroup]:" />
+                </Label.Content>
+            </Label>
+            <StackPanel Orientation="Horizontal">
+                <ComboBox x:Name="xGroupComboBox" AutomationProperties.AutomationId="Group AID" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,7,0,0" />
+                <usercontrols:ucButton x:Name="xAddGroupBtn" ButtonType="RoundTextAndImageButton" ButtonImageType="Add" ButtonFontImageSize="16" ButtonText="New Activities Group" Click="XAddGroupBtn_Click" VerticalAlignment="Center" />
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel x:Name="xTypePanel" Margin="0,10,0,0">
+            <Label Content="Type:" Style="{StaticResource $LabelStyle}" FontWeight="Bold"/>
+            <RadioButton x:Name="xRegularType" Content="Regular" Style="{StaticResource $InputRadioButtonStyle}" Checked="XType_Checked" Unchecked="XType_Checked" Margin="5,0,0,0"/>
+            <RadioButton x:Name="xErrorHandlerType" Content="Error Handler" Style="{StaticResource $InputRadioButtonStyle}" Checked="XType_Checked" Unchecked="XType_Checked" Margin="5,0,0,0"/>
+            <RadioButton x:Name="xCleanActivityType" Content="Clean Up Activity" Style="{StaticResource $InputRadioButtonStyle}" Checked="XType_Checked" Unchecked="XType_Checked" Margin="5,0,0,0" ToolTip="Always executed at the end of BusinessFlow"/>
+        </StackPanel>
+    </StackPanel>
+</Page>

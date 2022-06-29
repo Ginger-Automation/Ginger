@@ -1,0 +1,104 @@
+    <Page x:Class="Ginger.Actions.ActDemoPageEditPage" xmlns:Actions="clr-namespace:Ginger.Actions" xmlns:Ginger="clr-namespace:Ginger"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:local="clr-namespace:Ginger.Actions"
+      mc:Ignorable="d" 
+      d:DesignHeight="650" d:DesignWidth="700"
+      Title="Data Structure Example">
+
+    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Margin="0,10,25,0">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="240"/>
+                            <ColumnDefinition Width="200*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" VerticalAlignment="Center" >Regular Text Box:</Label>
+                        <TextBox x:Name="ExampleTextBox" Grid.Column="1" VerticalAlignment="Center" ToolTip="XML file full path" Style="{StaticResource @TextBoxStyle}"/>
+                    </Grid>
+
+                    <Grid Margin="0,10,0,0" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="240"/>
+                            <ColumnDefinition Width="200*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" VerticalAlignment="Center" >Text Box With VE:</Label>
+                        <Actions:UCValueExpression x:Name="ExampleTextBoxNoBrowser" Grid.Column="1" VerticalAlignment="Center" ToolTip="XML file full path"/>
+                    </Grid>
+
+                    <Grid  Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="240"/>
+                            <ColumnDefinition Width="200*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" VerticalAlignment="Center" >Text Box With Browse:</Label>
+                        <Actions:UCValueExpression x:Name="ExampleTextBoxNoVE" Grid.Column="1" VerticalAlignment="Center" ToolTip="XML file full path"/>
+                    </Grid>
+
+                    <Grid Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="240"/>
+                            <ColumnDefinition Width="200*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" VerticalAlignment="Center" >Text Box With VE and File Browse:</Label>
+                        <Actions:UCValueExpression x:Name="ExampleTextBoxFile" Grid.Column="1" VerticalAlignment="Center" ToolTip="XML file full path"/>
+                    </Grid>
+
+                    <Grid Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="240"/>
+                            <ColumnDefinition Width="200*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" VerticalAlignment="Center" >Text Box With VE and Folder Browse:</Label>
+                        <Actions:UCValueExpression x:Name="ExampleTextBoxFolder" Grid.Column="1" VerticalAlignment="Center" ToolTip="XML file full path"/>
+                    </Grid>
+
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Margin="0,20,25,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="240"/>
+                        <ColumnDefinition Width="200*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0"  VerticalAlignment="Center">UCCombobox Example:</Label>
+                    <UserControlsLib:UCComboBox x:Name="ExampleUCComboBox" Grid.Column="1" />
+                </Grid>
+            </StackPanel>
+
+            <StackPanel Margin="0,20,25,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="240"/>
+                        <ColumnDefinition Width="200*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0"  VerticalAlignment="Center">UCCombobox with VE Example:</Label>
+                    <UserControlsLib:UCComboBox x:Name="ExampleUCComboBoxWithVE" Grid.Column="1" />
+                </Grid>
+            </StackPanel>
+
+
+            <CheckBox x:Name="ExampleCheckBox" Content="CheckBox Example"  HorizontalAlignment="Left" Margin="10,25,0,0"/>
+
+            <Actions:UCInputValuesGrid x:Name="ExampleUCInputValuesGrid" Margin="10,10,10,10"/>
+
+            <StackPanel x:Name="Panel"  Margin="10">
+                <RadioButton x:Name="RB1" Content="Yes Value" GroupName="a" Tag="Yes" Click="ExampleRadioButton_Click" Margin="0,5,0,0"></RadioButton>
+                <RadioButton x:Name="RB2" Content="No Value"  GroupName="a" Tag="No" Click="ExampleRadioButton_Click" Margin="0,5,0,0"></RadioButton>
+                <RadioButton x:Name="RB3" Content="Maybe Value"  GroupName="a" Tag="Maybe" Click="ExampleRadioButton_Click" Margin="0,5,0,0"></RadioButton>
+            </StackPanel>
+
+            <StackPanel x:Name="RadioButtonPanel"  Margin="10">
+                <UserControlsLib:UCRadioButtons x:Name="ExampleUCRadioButtons" ></UserControlsLib:UCRadioButtons>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

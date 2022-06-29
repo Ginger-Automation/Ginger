@@ -1,0 +1,68 @@
+    <Page xmlns:Ginger="clr-namespace:Ginger"  x:Class="Ginger.Imports.UFT.UFTImportPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="800"
+	Title="Import from ASAP">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,-107,-97">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="300"/>
+            <RowDefinition Height="204*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="566"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.ColumnSpan="2" Grid.RowSpan="2">
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="   * Select UFT Object Repository (xml format) :" Margin="-5,0,183,0"/>
+            <Image Height="25" Margin="528,0,788,0" Loaded="Image_Loaded" MouseDown="Image_MouseDown"/>
+            <Grid Height="10" RenderTransformOrigin="0.5,0.5">
+                <TextBox x:Name="UFTObjectRepositoryTextBox" Style="{StaticResource @TextBoxStyle}" Height="25" Width="473" VerticalAlignment="Top" Margin="10,-25,0,0"  HorizontalAlignment="Left" />
+                <Button x:Name="UFTObjectRepositoryBrowseButton" Click="UFTObjectRepositoryBrowseButton_Click"  Content="Browse" Style="{StaticResource @InputButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="483,-25,0,10" />
+            </Grid>
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="   * Select an ASAP GUI File :" Margin="-5,0,183,0"/>
+            <Grid>
+                <TextBox x:Name="ScriptFileTextBox" Style="{StaticResource @TextBoxStyle}" Height="25" Width="475" VerticalAlignment="Top" Margin="10,0,0,0"  HorizontalAlignment="Left" />
+                <Button x:Name="ScriptFileBrowseButton" Click="ScriptFileBrowseButton_Click"  Content="Browse" ToolTip="Select From List of Known Applications" Style="{StaticResource @InputButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="485,0,332,2" />
+            </Grid>
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="   * Select an ASAP BUS File :" Margin="-5,0,183,0"/>
+            <Grid>
+                <Button x:Name="ScriptBUSFileBrowseButton" Click="ScriptBUSFileBrowseButton_Click"  Content="Browse" ToolTip="Select From List of Known Applications" Style="{StaticResource @InputButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="485,0,332,2" />
+                <TextBox x:Name="ScriptBUSFileTextBox" Style="{StaticResource @TextBoxStyle}" Height="25" Width="475" VerticalAlignment="Top" Margin="10,0,0,0"  HorizontalAlignment="Left" />
+            </Grid>
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="   * Select the associated CALENDAR :" Margin="-5,0,183,0"/>
+            <Grid Height="26" Margin="0,0,10,0">
+                <TextBox x:Name="CalendarTextBox" Style="{StaticResource @TextBoxStyle}" Height="25" Width="472" VerticalAlignment="Top" Margin="10,1,0,0"  HorizontalAlignment="Left" TextChanged="CalendarTextBox_TextChanged"/>
+                <Button x:Name="CalendarBrowseButton" Click="CalendarBrowse_Click"  Content="Browse" Style="{StaticResource @InputButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="482,0,0,1" Width="42" />
+            </Grid>
+            <Label Style="{StaticResource @InputFieldLabelStyle}"  Margin="7,10,0,0" Height="28" RenderTransformOrigin="0.518,1.393">
+                <Label.Content>
+                    <GingerCore:ucTextDicResource Text="[BusinessFlow]  Name:                                                    Select a BUS Function  :                    * Target Application:  "/>
+                </Label.Content>
+            </Label>
+            <Grid Height="29">
+                <TextBox x:Name="BusinessFlowNameTextBox" Style="{StaticResource @TextBoxStyle}" Height="25" Width="313" VerticalAlignment="Top" Margin="10,-3,0,0"  HorizontalAlignment="Left" />
+                <ComboBox x:Name="CalendarBusFunction" HorizontalAlignment="Left" Margin="339,-3,0,0" VerticalAlignment="Top" Width="172" SelectionChanged="CalendarBusFunction_SelectionChanged" RenderTransformOrigin="0.5,0.5"/>
+                <ComboBox x:Name="TargetApplication" HorizontalAlignment="Left" Margin="560,-3,50,0" VerticalAlignment="Top" Width="162" SelectionChanged="TargetApplication_SelectionChanged" RenderTransformOrigin="0.5,0.5" SelectedIndex="0" Cursor="Arrow"/>
+                <Button x:Name="ClearButton" Click="Clear_Click" Content="Clear Function List" Style="{StaticResource @InputButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="1100,-28,0,26" Width="113" Background="Black" Height="29" Foreground="White" FontWeight="Bold" />
+            </Grid>
+
+        </StackPanel>
+
+        <Ginger:ucGrid x:Name="ResultsDataGrid" Title=" Code Line Display " Margin="10,14,120,132" Grid.Row="1" Grid.ColumnSpan="2"/>
+
+        <StackPanel Orientation="Horizontal" Margin="21,197,120,-18" Grid.ColumnSpan="2" Grid.Row="1">
+            <Label x:Name="RecordsCountLabel" Content="Records: 0"  />
+            <Label Content="View"/>
+            <ComboBox x:Name="FilterComboBox" Width="254" SelectionChanged="FilterComboBox_SelectionChanged" Height="30" Margin="0,2,0,-14"/>
+            <Label x:Name="ConvertedCountLabel" Content="Lines Converted: 0"  />
+        </StackPanel>
+        <Ginger:ucGrid x:Name="CommonFunctionMappingUCGrid" Title="Common Function Mapping" Margin="0,28,157,74" Grid.Column="1"/>
+
+    </Grid>
+</Page>

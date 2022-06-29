@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="30d0c9a7-9e30-49ef-a9b4-14d72806a2cc" ItemType="ProjEnvironment" CreatedBy="YARONWE" Created="201805311615" GingerVersion="2.7.0.0" Version="1" LastUpdateBy="YARONWE" LastUpdate="201805311615" />
+<ProjEnvironment Active="False" Created="9/28/2017 3:35:53 PM" CreatedBy="YARONWE" Guid="30d0c9a7-9e30-49ef-a9b4-14d72806a2cc" LastUpdate="9/28/2017 3:35:53 PM" LastUpdateBy="YARONWE" Name="Default" ParentGuid="00000000-0000-0000-0000-000000000000" Version="1">
+<Applications>
+<EnvApplication Active="True" Created="9/28/2017 3:35:53 PM" CreatedBy="YARONWE" Guid="672f8efd-e50a-4c78-8c4c-201256aa3135" LastUpdate="1/1/0001 12:00:00 AM" Name="Amdo CSP" ParentGuid="00000000-0000-0000-0000-000000000000" Version="0" />
+</Applications>
+</ProjEnvironment></GingerRepositoryItem>

@@ -143,16 +143,16 @@ namespace Ginger.ALM
 
             ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, true, fieldsWorker);
 
-            fieldsWorker.ReportProgress(GingerCore.ALM.RQM.ImportFromRQM.totalValues);
-            e.Result = GingerCore.ALM.RQM.ImportFromRQM.totalValues;
-            System.Diagnostics.Debug.WriteLine("values = " + e.Result);
+            //fieldsWorker.ReportProgress(GingerCore.ALM.RQM.ImportFromRQM.totalValues);
+            //e.Result = GingerCore.ALM.RQM.ImportFromRQM.totalValues;
+            //System.Diagnostics.Debug.WriteLine("values = " + e.Result);
         }
 
         private void FieldsWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             LoadFieldsStatusLbl.Dispatcher.Invoke(() =>
             {
-                LoadFieldsStatusLbl.Content = GingerCore.ALM.RQM.ImportFromRQM.populatedValue;
+                //LoadFieldsStatusLbl.Content = GingerCore.ALM.RQM.ImportFromRQM.populatedValue;
 
             });
 

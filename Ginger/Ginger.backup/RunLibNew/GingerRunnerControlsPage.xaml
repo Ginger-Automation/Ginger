@@ -1,0 +1,86 @@
+    <Page x:Class="GingerWPF.RunLib.GingerRunnerControlsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" d:DesignWidth="600"
+      Title="GingerRunnerControlsPage" Height="110" Unloaded="Page_Unloaded">
+    <ContentControl x:Name="MainContent">
+        <Grid x:Name="MainGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="RunActivityButton"  Click="RunActivityButton_Click" Height="40" Width="90">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Grid>
+                                            <Path Name="Ellipse" Stroke="#FF3EA7FC" StrokeThickness="1" Fill="#FFEDEFF5">
+                                                <Path.Data>
+                                                    <RectangleGeometry Rect="1,2,88,35" RadiusX="15" RadiusY="30"/>
+                                                </Path.Data>
+                                            </Path>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Label Foreground="#FF3EA7FC" FontSize="11">Run Activity</Label>
+                                                <Image Source="{StaticResource RunActivity32x32}" Height="16"/>
+                                            </StackPanel>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Ellipse" Property="Fill">
+                                                    <Setter.Value>
+                                                        <SolidColorBrush Color="LightBlue"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+
+                </Button>
+                <usercontrols:ucButton x:Name="StopButton" ToolTip="Stop execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="StopButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"></usercontrols:ucButton>
+                
+                <usercontrols:ucButton x:Name="RunActionButton" ToolTip="Run selected Action" ButtonType="RoundTextAndImageButton" ButtonText="Run Action" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="RunActionButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"></usercontrols:ucButton>
+
+                <usercontrols:ucButton x:Name="RunButton" ToolTip="Run selected Action" ButtonType="RoundTextAndImageButton" ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="RunButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}"></usercontrols:ucButton>
+
+                <Button x:Name="ResetButton" usercontrols:ImageMaker.Content="Refresh" Click="ResetButton_Click"  Width="30" ToolTip="Reset"/>
+
+                <Button x:Name="MiniButton" usercontrols:ImageMaker.Content="Minimize"  Click="MiniButton_Click"  Width="30" ToolTip="Minimize"/>
+                
+            </StackPanel>
+
+            <StackPanel x:Name="MaxiWindowStackPanel" Grid.Row="1" Orientation="Horizontal">
+                <Label FontSize="8" Content="App/Agent:"/>
+                <Label x:Name="AppAgentLabel" Width="201">App1/Chrome1, App2/Unix</Label>
+
+                <Button x:Name="ConfigButton" usercontrols:ImageMaker.Content="Config"  Click="ConfigButton_Click" Width="30" />
+
+
+                <Label FontSize="8">Status:</Label>
+                <Label x:Name="StatusLabel">Ready</Label>
+
+                <usercontrols:ImageMakerControl x:Name="StatusImageControl" ImageType="Ready"  Width="20"/>
+
+            </StackPanel>
+
+            <StackPanel x:Name="MiniWindowStackPanel" Grid.Row="2" Orientation="Horizontal" Margin="5">
+                <Label FontSize="8">Activity</Label>
+                <ComboBox x:Name="ActivitiesComboBox" Width="100"></ComboBox>
+                <Label FontSize="8" >Action</Label>
+                <ComboBox Width="100"></ComboBox>
+            </StackPanel>
+
+        </Grid>
+    </ContentControl>
+</Page>

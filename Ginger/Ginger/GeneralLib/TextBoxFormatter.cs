@@ -100,7 +100,7 @@ namespace Ginger.GeneralLib
         public void AddImage(string image, int width, int height)
         {
             Image img = new Image();
-            img.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + image));
+            img.Source = new BitmapImage(new Uri(@"/Images/" + image, UriKind.RelativeOrAbsolute));
             img.Width = width;
             img.Height = height;
             mTextBlock.Inlines.Add(img);

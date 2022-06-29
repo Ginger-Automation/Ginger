@@ -22,22 +22,22 @@ using UIAComWrapperInternal;
 
 namespace System.Windows.Automation
 {
-    public class TogglePattern : BasePattern
+    public class TogglePatternExtended : BasePattern
     {
         private UIAutomationClient.IUIAutomationTogglePattern _pattern;
-        public static readonly AutomationPattern Pattern = TogglePatternIdentifiers.Pattern;
-        public static readonly AutomationProperty ToggleStateProperty = TogglePatternIdentifiers.ToggleStateProperty;
+        public static readonly AutomationPatternExtended Pattern = TogglePatternIdentifiersExtended.Pattern;
+        public static readonly AutomationPropertyExtended ToggleStateProperty = TogglePatternIdentifiersExtended.ToggleStateProperty;
         
-        private TogglePattern(AutomationElement el, UIAutomationClient.IUIAutomationTogglePattern pattern, bool cached)
+        private TogglePatternExtended(AutomationElement_Extend el, UIAutomationClient.IUIAutomationTogglePattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
             this._pattern = pattern;
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
-            return (pattern == null) ? null : new TogglePattern(el, (UIAutomationClient.IUIAutomationTogglePattern)pattern, cached);
+            return (pattern == null) ? null : new TogglePatternExtended(el, (UIAutomationClient.IUIAutomationTogglePattern)pattern, cached);
         }
 
         public void Toggle()
@@ -72,19 +72,19 @@ namespace System.Windows.Automation
         [StructLayout(LayoutKind.Sequential)]
         public struct TogglePatternInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal TogglePatternInformation(AutomationElement element, bool isCached)
+            internal TogglePatternInformation(AutomationElement_Extend element, bool isCached)
             {
                 this._el = element;
                 this._isCached = isCached;
             }
 
-            public ToggleState ToggleState
+            public ToggleStateExtended ToggleState
             {
                 get
                 {
-                    return (ToggleState)this._el.GetPropertyValue(TogglePattern.ToggleStateProperty, _isCached);
+                    return (ToggleStateExtended)this._el.GetPropertyValue(TogglePatternExtended.ToggleStateProperty, _isCached);
                 }
             }
         }

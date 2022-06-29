@@ -1,0 +1,79 @@
+﻿<Page x:Class="Ginger.Functionalities.FindAndReplacePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.Functionalities"
+      xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+      Height="800" Width="800"
+      Title="Find &amp; Replace">
+
+    <Grid x:Name="FindAndReplace" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.Resources>
+            <DataTemplate x:Key="ViewDetailsButton">
+                <Button x:Name="xViewDetailsButton" Click="ViewDetailsClicked" ToolTip="View Details" Style="{StaticResource @InputImageGridCellButtonStyle}">
+                    <UserControls:ImageMakerControl ImageType="Search" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                </Button>
+            </DataTemplate>
+            
+            <DataTemplate x:Key="IsSelectedTemplate">
+                <CheckBox x:Name="IsSelected_FieldSelection" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            </DataTemplate>
+            
+        </Grid.Resources>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Name="xRow0" Height="40"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Name="xRow3" Height="0"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="400*"/>
+        </Grid.RowDefinitions>
+
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0" >
+            <Label x:Name="xMainItemTypeLabel" Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center">Item Type:</Label>
+            <ComboBox x:Name="xMainItemTypeComboBox"  SelectionChanged="ItemTypeComboBox_SelectionChanged" VerticalAlignment="Center"   Width="150" IsEditable="true" Style="{StaticResource $FlatInputComboBoxStyle}" />
+            <Label x:Name="xSubItemTypeLabel" Style="{StaticResource @InputFieldLabelStyle}" Visibility="Collapsed"  VerticalAlignment="Center" Margin="20,0,0,0">Sub Item Type:</Label>
+            <ComboBox x:Name="xSubItemTypeComboBox"  SelectionChanged="SubItemTypeComboBox_SelectionChanged"  Width="260" IsEditable="true" VerticalAlignment="Center"  Visibility="Collapsed" Style="{StaticResource $FlatInputComboBoxStyle}"  />
+
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1"  >
+            <Label x:Name="xOperationsLabel" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}">Operations:</Label>
+            <RadioButton x:Name="xFindRadioButton" VerticalAlignment="Center" IsChecked="True" Margin="10,0,0,0" Checked="FindRadioButton_Checked">Find</RadioButton>
+            <RadioButton x:Name="xReplaceRadioButton" VerticalAlignment="Center" Margin="10,0,0,0" Checked="ReplaceRadioButton_Checked">Replace</RadioButton>
+        </StackPanel>
+
+
+        <StackPanel Orientation="Horizontal" Grid.Row="2">
+            <Label x:Name="xFindWhatLabel"  Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" >Find what:</Label>
+            <TextBox x:Name="xFindWhatTextBox"  Style="{StaticResource @TextBoxStyle}" VerticalAlignment="Center" Width="425" TextChanged="TextToFindTextBoxTextChanges"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="3">
+            <Label x:Name="xReplaceLabel"  Style="{StaticResource @InputFieldLabelStyle}" Visibility="Collapsed" VerticalAlignment="Center" >Replace:</Label>
+            <TextBox x:Name="xReplaceValueTextBox" Margin="12,0,0,0" Style="{StaticResource @TextBoxStyle}" Visibility="Collapsed" VerticalAlignment="Center" Width="425" TextChanged="ValueToReplaceTextBoxTextChanges"/>
+            <ComboBox x:Name="xReplaceValueComboBox"  Margin="12,0,0,0" SelectionChanged="ReplaceValueComboBox_SelectionChanged" Width="425" IsEditable="true" VerticalAlignment="Center"  Visibility="Collapsed" Style="{StaticResource $FlatInputComboBoxStyle}"  />
+        </StackPanel>
+
+        <StackPanel Margin="5,0,0,0" Orientation="Vertical" Grid.Row="4">
+            <CheckBox x:Name="xMatchCaseCheckBox" VerticalAlignment="Center" Style="{StaticResource @InputCheckBoxStyle}" ToolTip="Find/Replace items with key sensitive consideration" >Match Case</CheckBox>
+            <CheckBox x:Name="xMatchWholeWordCheckBox" VerticalAlignment="Center" Style="{StaticResource @InputCheckBoxStyle}" ToolTip="Find/Replace items which equals the whole field value" >Match whole word</CheckBox>
+        </StackPanel>
+        
+        <UserControls:ImageMakerControl x:Name="xProcessingImage" Grid.Column="0" Grid.Row="0" ImageType="Processing" Height="30" Width="30" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Visibility="Collapsed"/>
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,0,20,0" Grid.Row="5">
+            <UserControls:ucButton x:Name="xFindButton" ButtonType="RoundTextAndImageButton" ButtonText="Find" ButtonImageType="Search" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="FindButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+            <UserControls:ucButton x:Name="xReplaceButton" ButtonType="RoundTextAndImageButton" ButtonText="Replace Selected" ButtonImageType="Exchange" Visibility="Collapsed" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"   Click="ReplaceButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+            <UserControls:ucButton x:Name="xSaveButton" ButtonType="RoundTextAndImageButton" ButtonText="Save Selected" ButtonImageType="Save" Visibility="Collapsed" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"   Click="SaveButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+            <UserControls:ucButton x:Name="xStopButton" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" Visibility="Collapsed" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"   Click="StopProcess" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+        </StackPanel>
+        <Ginger:ucGrid x:Name="xFoundItemsGrid" Title="Find Results" Grid.Row="6" IsReadOnly="False" ShowAdd="Collapsed" ShowDelete="Collapsed"  ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Visible" Visibility="Collapsed"/>
+        
+    </Grid>
+</Page>

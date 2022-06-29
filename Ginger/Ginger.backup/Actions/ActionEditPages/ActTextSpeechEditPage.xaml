@@ -1,0 +1,41 @@
+    <Page x:Class="Ginger.Actions.ActTextSpeechEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+	Title="ActTextSpeechEditPage">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="51"/>
+            <RowDefinition Height="51"/>
+            <RowDefinition Height="51"/>
+
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel  Grid.Row="0">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">TextSpeech Action</Label>
+            <ComboBox x:Name="TextSpeechActionComboBox"/>
+        </StackPanel>
+
+        <StackPanel  Grid.Row="3">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Interval</Label>
+            <TextBox x:Name="IntervalTextBox"/>
+        </StackPanel>
+        <StackPanel  Grid.Row="2">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">WaveLocation</Label>
+            <TextBox x:Name="WaveLocationTextBox"/>
+        </StackPanel>
+        <StackPanel  Grid.Row="1">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">TextToSayLoud</Label>
+            <TextBox x:Name="TextToSayLoudTextBox"/>
+        </StackPanel>
+
+    </Grid>
+</Page>

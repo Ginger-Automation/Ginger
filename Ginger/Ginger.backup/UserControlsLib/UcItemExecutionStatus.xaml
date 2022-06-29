@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="Ginger.UserControlsLib.UCListView.UcItemExecutionStatus"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="60">
+
+    <StackPanel>
+        <DockPanel x:Name="xPolygonStatusPnl" Visibility="Collapsed" >
+            <Polygon x:Name="xPolygon" DockPanel.Dock="Right" Points="0,0,24,0,0,25"  Stroke="{StaticResource $PendingStatusColor}" Fill="{StaticResource $PendingStatusColor}" HorizontalAlignment="Right" >
+                <Polygon.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform AngleX="0"/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform X="25" Y="0"/>
+                    </TransformGroup>
+                </Polygon.RenderTransform>
+            </Polygon>
+            <!--<usercontrols:ImageMakerControl x:Name="xPolygonStatusImage" DockPanel.Dock="Right" Margin="0,-8,-25,0"  SetAsFontImageWithSize="13"  Width="13" Height="13" ImageType="Pending" FontWeight="Thin" HorizontalAlignment="Right" Foreground="White" />-->
+            <DockPanel x:Name="xPolygonStatusImagePnl" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,-10,-25,0" Width="13" Height="13" />
+        </DockPanel>
+
+        <DockPanel x:Name="xStatusImagePnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+
+        <Label x:Name="xStatusLbl" FontWeight="Bold" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Margin="0,0,0,0" Content="Status" Visibility="Collapsed"/>
+    </StackPanel>
+</UserControl>

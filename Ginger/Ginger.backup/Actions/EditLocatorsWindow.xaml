@@ -1,0 +1,20 @@
+    <Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.BusinessFlowWindows.EditLocatorsWindow"
+        Title="Add Multiple Locators" Height="400" Width="600" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="299*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Button x:Name="CancelButton" Click="CancelButton_Click" Content="Cancel" HorizontalAlignment="Left" Height="36" Margin="508,4,0,0" VerticalAlignment="Top" Width="74" Grid.Row="1"/>
+        <Button x:Name="OKButton" Click="OKButton_Click" Content="OK" HorizontalAlignment="Left" Height="36" Margin="434,5,0,0" VerticalAlignment="Top" Width="69" Grid.Row="1"/>
+        <Button x:Name="RecButton" Click="RecButton_Click"  Content="Record" HorizontalAlignment="Left" Height="36" Margin="360,5,0,0" VerticalAlignment="Top" Width="69" Grid.Row="1"/>
+
+        <Ginger:ucGrid x:Name="LocatorsGrid" Title="Add Multiple Locators" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
+        <Label Content="Adding Multiple Locators can help uniquely identify Objects" HorizontalAlignment="Left" Height="30" Margin="10,0,0,0" VerticalAlignment="Top" Width="359" Grid.Row="1"/>
+        <Label Content="Please add unique identifiers from the above list" HorizontalAlignment="Left" Height="30" Margin="10,20,0,0" VerticalAlignment="Top" Width="359" Grid.Row="1"/>
+
+    </Grid>
+</Window>

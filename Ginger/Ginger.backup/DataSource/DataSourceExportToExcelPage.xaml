@@ -1,0 +1,61 @@
+<Page x:Class="Ginger.DataSource.DataSourceExportToExcel" xmlns:Actions="clr-namespace:Ginger.Actions" 
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:Ginger="clr-namespace:Ginger" h:GingerHelpProvider.HelpString="Data Source"
+      Height="750" Width="718"
+	  Title="Export to Excel">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120"/>
+            <ColumnDefinition Width="100*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition x:Name="SheetRow"  Height="30"/>
+            <RowDefinition  Height="80"/>
+            <RowDefinition Height="500*"/>
+        </Grid.RowDefinitions>
+        
+        <Label Style="{StaticResource @InputFieldLabelStyle}">Excel File Path:</Label>
+        <Actions:UCValueExpression x:Name="ExcelFilePath" Grid.Column="1" VerticalAlignment="Center" ToolTip="Excel file full path"/>
+        
+        <Label Content="Sheet Name:" Grid.Row="1" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
+       <Actions:UCValueExpression x:Name="xExportSheetName" Grid.Row="1" Grid.Column="1"  VerticalAlignment="Center" ToolTip="Excel Sheet Name" />
+        
+        <StackPanel Grid.Row="2"  VerticalAlignment="Top" Grid.Column="0" Margin="0,8,-70,0">
+            <Label FontWeight="Bold" HorizontalAlignment="Left" Margin="0,0,0,0" Style="{StaticResource @LabelStyle}">Excel Export Configuration</Label>
+            <RadioButton x:Name="xRdoByCustomExport" Checked="xRdoByCustomExport_Checked" GroupName="ExportExcelConfig" Grid.Column="0" VerticalAlignment="Center" Content="Customized"  ToolTip="Export Custom" Margin="5,5,0,0"/>
+            <RadioButton x:Name="xRdoByQueryExport" Checked="xRdoByQueryExport_Checked" GroupName="ExportExcelConfig" Grid.Column="0" VerticalAlignment="Center" Content="By Query"  ToolTip="Export ByQuery" Margin="5,5,0,0"/>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"  Margin="5,0,10,0">
+            <StackPanel  x:Name="xByQueryPanel" Visibility="Collapsed">
+                <Label Grid.Column="0" HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}" FontWeight="Medium" Margin="-5,0,0,0">Query :</Label>
+                <Actions:UCValueExpression x:Name="xExcelExportQuery" Grid.Column="1" VerticalAlignment="Center" ToolTip="Excel Export Query" Margin="0,0,0,0"/>
+            </StackPanel>
+
+            <StackPanel  x:Name="xExcelExportCustomPanel"  Visibility="Collapsed" >
+                <Label HorizontalAlignment="Left" FontWeight="Medium" Style="{StaticResource @LabelStyle}">Select Column To Export :</Label>
+                <Ginger:ucGrid x:Name="xColumnListGrid" MaxHeight="250" AutomationProperties.AutomationId="ColumnListGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" Width="500" HorizontalAlignment="Left" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+
+                <CheckBox x:Name="xExportWhereChkBox" Content="Filter Record Based On Where Clause :" Click="xExportWhereChkBox_Click" Margin="0,20,0,5" FontWeight="Medium"/>
+                
+
+                <Grid Name ="WhereGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid.Resources>
+                        <DataTemplate x:Key="ValueExpressionButton">
+                            <Button x:Name="GridVEButton" Content="..." Click="GridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                        </DataTemplate>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions/>
+                    <Grid.RowDefinitions/>
+                    <Ginger:ucGrid Grid.Row="0" x:Name="xGrdExportCondition"  Height="190" Title="Where Condition(s)" Visibility="Collapsed" ShowUpDown="Collapsed"></Ginger:ucGrid>
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

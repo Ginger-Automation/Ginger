@@ -1,0 +1,82 @@
+﻿<Page x:Class="Ginger.BusinessFlowPages.ActivityDetailsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:Activities="clr-namespace:Ginger.Actions"
+      mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:usercontrols="clr-namespace:Ginger.UserControlsLib"
+      h:GingerHelpProvider.HelpString="Activity"
+      d:DesignHeight="600" d:DesignWidth="800"      
+      Title="ActivityConfigurationsPage">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="{StaticResource $BackgroundColor_LightGray}">
+        <DockPanel>
+            <Grid x:Name="xDetailsPnl"  DockPanel.Dock="Top" Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition x:Name="xSharedRepoInstanceUCCol" Width="50"/>
+                </Grid.ColumnDefinitions>
+                <DockPanel Grid.Column="0">
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
+                        <usercontrols:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                    </StackPanel>
+                    <TextBox x:Name="xActivityNameTxtBox" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Height="30" Margin="0,0,0,5"/>
+                    <Label Style="{StaticResource $LabelStyle}" Content="Description:" DockPanel.Dock="Top"/>
+                    <TextBox x:Name="xActivityDescriptionTxt" DockPanel.Dock="Top" Style="{StaticResource $MultiRowsTextBoxStyle}" Height="50"></TextBox>
+                    <Ginger:ucTagsViewer x:Name="xTagsViewer" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <Label Style="{StaticResource $LabelStyle}" Content="Run Description:" DockPanel.Dock="Top"/>
+                    <Activities:UCValueExpression  x:Name="xRunDescritpion" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
+                    <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" VerticalAlignment="Top">Screen/Component:</Label>
+                    <TextBox x:Name="xScreenTxt" DockPanel.Dock="Top" Height="25" Style="{StaticResource $MultiRowsTextBoxStyle}"></TextBox>
+                    <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" VerticalAlignment="Top">Expected:</Label>
+                    <TextBox x:Name="xExpectedTxt"  DockPanel.Dock="Top" Height="25" Style="{StaticResource $MultiRowsTextBoxStyle}"></TextBox>
+                </DockPanel>
+                <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-2,0,0"/>
+            </Grid>
+
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                <Label Style="{StaticResource $LabelStyle}" Content="Target Application:"/>
+                <ComboBox x:Name="xTargetApplicationComboBox" Width="250" Margin="19,0,0,0" Style="{StaticResource $FlatEditInputComboBoxStyle}" />
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,10,0,0" VerticalAlignment="Top">
+                <Label Content="Automation Status:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                <ComboBox x:Name="xAutomationStatusCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="15,0,0,0"/>
+                <CheckBox x:Name="xPublishcheckbox" Content="Publish" Margin="10,0,0,0" ToolTip="Publish to third party applications" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}"/>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,10,0,0">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                    <Label Content="Actions Run Option:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="xRunOptionCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Height="20" Margin="11,0,0,0"/>
+                </StackPanel>
+                <CheckBox x:Name="xMandatoryActivityCB" Margin="10,0,0,0" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Mandatory"/>
+            </StackPanel>
+
+            <StackPanel x:Name="xHandlerTypeStack" Visibility="Visible" DockPanel.Dock="Top" Margin="0,10,0,0" Orientation="Horizontal">
+                <Label Content="Error Handler Type:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                <ComboBox x:Name="xHandlerTypeCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="15,0,0,0"/>
+            </StackPanel>
+
+            <StackPanel x:Name="xHandlerTriggerOnStackPanel" DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed" Orientation="Horizontal">
+                <Label Content="Trigger On:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Width="120"/>
+                <ComboBox x:Name="xHandlerTriggerOnCombo" Width="250" SelectionChanged="xHandlerTriggerOnCombo_SelectionChanged" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="15,0,0,0"/>
+                <Button x:Name="xTriggerOnSpecificErrorBtn" Content="Configure Error" Click="xTriggerOnSpecificErrorBtn_Click"  Margin="10,-5,0,0" Visibility="Collapsed"  Style="{StaticResource $InputButtonStyle}"/>
+            </StackPanel>
+            <StackPanel x:Name="xHandlerPostExecutionActionStack" DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed" Orientation="Horizontal">
+                <Label Content="Post Execution Action:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                <ComboBox x:Name="xHandlerPostExecutionCombo" Width="250" Style="{StaticResource $FlatEditInputComboBoxStyle}" Margin="2,0,0,0"/>
+            </StackPanel>
+
+            <StackPanel x:Name="xHandlerMappingStack" DockPanel.Dock="Top" Margin="0,10,0,0" Orientation="Horizontal" VerticalAlignment="Top">
+                <Label Content="Error Handler Map:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                <ComboBox x:Name="xErrorHandlerMappingCmb"  Style="{StaticResource $FlatEditInputComboBoxStyle}" Width="250" Margin="15,0,0,0" SelectionChanged="xErrorHandlerMappingCmb_SelectionChanged"/>
+                <Button x:Name="xSpecificErrorHandlerBtn" Content="Set Error Handler" Click="xSpecificErrorHandlerBtn_Click"  Margin="10,-5,0,0" Width="120" Style="{StaticResource $InputButtonStyle}"/>
+            </StackPanel>
+
+
+        </DockPanel>
+    </ScrollViewer>
+</Page>

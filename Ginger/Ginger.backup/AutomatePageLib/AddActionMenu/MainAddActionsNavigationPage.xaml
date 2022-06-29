@@ -1,0 +1,48 @@
+﻿<Page x:Class="Ginger.BusinessFlowsLibNew.AddActionMenu.MainAddActionsNavigationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help"
+      h:GingerHelpProvider.HelpString="Action"
+      d:DesignHeight="800" d:DesignWidth="240"
+      Title="MainAddActionsNavigationPage" Background="White">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Name="xNavigationBarPnl" Grid.Row="0" BorderBrush="{StaticResource $amdocsLogoRadialGradientBrush}" BorderThickness="0,0,0,1">
+            <DockPanel Background="{StaticResource $amdocsLogoLinarGradientBrush}">
+                <UserControls:ucButton x:Name="xGoBackBtn" DockPanel.Dock="Left" ButtonType="ImageButton" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="GoBack" Click="xGoBackBtn_Click" ButtonImageForground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Margin="0,0,0,0" ToolTip="Previous Menu Options" />
+                <StackPanel x:Name="xSelectedItemTitlePnl" Orientation="Horizontal" DockPanel.Dock="Left" Margin="10,0,0,0" Visibility="Collapsed" HorizontalAlignment="Center">
+                    <UserControls:ImageMakerControl x:Name="xSelectedItemTitleImage" SetAsFontImageWithSize="18" ImageType="Empty" HorizontalAlignment="Right" SetBorder="False" VerticalAlignment="Center" Foreground="White"  />
+                    <Label x:Name="xSelectedItemTitleText" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Foreground="White"  />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
+            <DockPanel>
+                <StackPanel x:Name="xAddActionsOptionsPnl" DockPanel.Dock="Top" HorizontalAlignment="Center">
+                    <UserControls:ucButton x:Name="xSharedRepositoryItemBtn" ButtonType="PanelButton" ButtonText="  Shared Repository " ToolTip="Add Actions from Shared Repository" ButtonImageType="SharedRepositoryItem" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XNavSharedRepo_Click" Width="200" Margin="10,10,10,10"/>
+                    <!--<UserControls:ucButton x:Name="xApplicationPOMItemBtn" ButtonType="PanelButton" ButtonText="Page Objects Model" ToolTip="Add Actions from Page Objects Model Mapped Elements" ButtonImageType="ApplicationPOMModel" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XNavPOM_Click" Width="200" Margin="10,10,10,10"/>-->
+                    <UserControls:ucButton x:Name="xApplicationModelsBtn" ButtonType="PanelButton" ButtonText="Application Models" ToolTip="Add Actions from Application Models" ButtonImageType="ApplicationModel" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XApplicationModelsBtn_Click" Width="200" Margin="10,10,10,10"/>
+                    <UserControls:ucButton x:Name="xActionsLibraryItemBtn" ButtonType="PanelButton" ButtonText="    Actions Library    " ToolTip="Add Actions from Actions Library" ButtonImageType="Action" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XNavActLib_Click" Width="200" Margin="10,10,10,10"/>
+                    <UserControls:ucButton x:Name="xRecordItemBtn" ButtonType="PanelButton" ButtonText="           Record           " ToolTip="Add Actions while Recording" ButtonImageType="Camera" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XRecord_Click" Width="200" Margin="10,10,10,10"/>
+                    <UserControls:ucButton x:Name="xLiveSpyItemBtn" ButtonType="PanelButton" ButtonText="          Live Spy          " ToolTip="Add Actions using Live Spy Tool" ButtonImageType="Spy" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XNavSpy_Click" Width="200" Margin="10,10,10,10"/>
+                    <UserControls:ucButton x:Name="xWindowExplorerItemBtn" ButtonType="PanelButton"     ButtonText="          Explorer          " ToolTip="Add Actions using Window Explorer Tool" ButtonImageType="Window" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XNavWinExp_Click" Width="200" Margin="10,10,10,10"/>
+                </StackPanel>
+                <StackPanel x:Name="xApplicationModelsPnl" DockPanel.Dock="Top" HorizontalAlignment="Center">
+                    <!--<UserControls:ucButton x:Name="xApplicationPOMItemBtn" ButtonType="PanelButton" ButtonText="Page Objects Model" ToolTip="Add Actions from Page Objects Model Mapped Elements" ButtonImageType="ApplicationPOMModel" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XNavPOM_Click" Width="200" Margin="10,10,10,10"/>-->
+                    <!--<UserControls:ucButton x:Name="xAPIBtn" ButtonType="PanelButton" ButtonText="        API Models        " ToolTip="Add Actions from API Models" ButtonImageType="APIModel" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" Click="XAPIBtn_Click" Width="200" Margin="10,10,10,10"/>-->
+                </StackPanel>
+                <Frame Name="xSelectedItemFrame" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </DockPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

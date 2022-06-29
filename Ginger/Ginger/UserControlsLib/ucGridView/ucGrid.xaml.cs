@@ -1810,8 +1810,8 @@ namespace Ginger
         public void AddToolbarTool(string toolImage, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, Binding binding = null)
         {
             Image image = new Image();
-            image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + toolImage));
-            AddToolbarTool(image, toolTip, clickHandler, toolVisibility, binding);
+            image.Source = new BitmapImage(new Uri(@"/Images/" + toolImage, UriKind.RelativeOrAbsolute));
+            AddToolbarTool(image, toolTip, clickHandler, toolVisibility);
         }
 
         public void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, int imageSize = 16)
@@ -1954,7 +1954,7 @@ namespace Ginger
         public void SetBtnImage(Button btn, string imageName)
         {
             Image image = new Image();
-            image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + imageName));
+            image.Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute));
             btn.Content = image;
         }
 
@@ -2075,7 +2075,7 @@ namespace Ginger
         {
             Button b = new Button();
             Image image = new Image();
-            image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + btnImage));
+            image.Source = new BitmapImage(new Uri(@"/Images/" + btnImage, UriKind.RelativeOrAbsolute));
             b.Content = image;
             b.ToolTip = tooltip;
             b.Style = this.FindResource("@GridFloatingImageButtonStyle") as Style;

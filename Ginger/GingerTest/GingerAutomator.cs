@@ -87,10 +87,13 @@ namespace GingerTest
 
                 // we need sample class - Dummy
                 Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
-                Assembly asm1 = d.GetType().Assembly;                
-                // Set the app resources to Ginger so image an other will be locally to Ginger
-                Application.ResourceAssembly = asm1;
-                
+                Assembly asm1 = d.GetType().Assembly;
+
+                // Set the app resources to Ginger so images and other resources will be locally avaiilable to Ginger
+                var applicationType = typeof(Application);
+                var resourceField = applicationType.GetField("_resourceAssembly", BindingFlags.NonPublic | BindingFlags.Static);
+                resourceField.SetValue(null, asm1);
+
                 app = new Ginger.App();
                 WorkSpace.Init(new WorkSpaceEventHandler());
                 WorkSpace.Instance.RunningFromUnitTest = true;

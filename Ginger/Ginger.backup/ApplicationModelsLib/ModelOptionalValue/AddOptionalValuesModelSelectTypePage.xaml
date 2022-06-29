@@ -1,0 +1,132 @@
+﻿<Page x:Class="Ginger.ApplicationModelsLib.ModelOptionalValue.AddOptionalValuesModelSelectTypePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="AddOptionalValuesModelSelectTypePage">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width ="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Content="Source Type:" Style="{StaticResource @InputFieldLabelStyle}" />
+            <ComboBox Grid.Row="0" Grid.Column="1"  Name="xSourceTypeComboBox" ContextMenu="{x:Null}" Width="150"  Style="{StaticResource @InputComboBoxStyle}"  VerticalAlignment="Center" SelectionChanged="xSourceTypeComboBox_SelectionChanged"  HorizontalAlignment="Left"  Margin="0,0,5,0"></ComboBox>
+
+            <StackPanel x:Name="xDBStackPanel" Grid.Row="1" Grid.ColumnSpan="3" Visibility="Collapsed" HorizontalAlignment="Left" >
+                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Content="DB Type:" HorizontalAlignment="Left" Style="{StaticResource @InputFieldLabelStyle}"></Label>
+                    <ComboBox x:Name="xDBTypeComboBox" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" ContextMenu="{x:Null}" Width="115" Style="{StaticResource @InputComboBoxStyle}"  VerticalAlignment="Center" SelectionChanged="xDBTypeComboBox_SelectionChanged"  HorizontalAlignment="Left"  Margin="0,0,5,0"></ComboBox>
+                    <Label Grid.Row="1" Grid.Column="0"  Content="TNS\Host\File Path:" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}"></Label>
+                    <TextBox Grid.Row="1"  Grid.Column="1" Grid.ColumnSpan="2"  Background="White" x:Name="xBDHostTextBox" Text="" VerticalAlignment="Center" IsEnabled="true" HorizontalAlignment="Left"  Width="250" Style="{StaticResource @MultiRowsTextBoxStyle}" Margin="0,0,5,0"  />
+                    <usercontrols:ucButton Grid.Row="1" Grid.Column="4"  HorizontalAlignment="Left"   x:Name="xDBBrowseButton" VerticalAlignment="Top" ToolTip="Browse File" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="OpenFolder" Click="xDBBrowseButton_Click" Margin="0,0,0,0" />
+                    <Label Grid.Row="2" Grid.Column="0" Content="User:" HorizontalAlignment="Left" Style="{StaticResource @InputFieldLabelStyle}"></Label>
+                    <TextBox Grid.Row="2"  Grid.Column="1" Grid.ColumnSpan="3" Background="White" x:Name="xDBUserTextBox" HorizontalAlignment="Left" Width="250" Text="" VerticalAlignment="Center"  IsEnabled="true" Style="{StaticResource @TextBoxStyle}" Margin="0,0,5,0"  />
+                    <Label Grid.Row="3" Grid.Column="0" Content="Password:" HorizontalAlignment="Left" Style="{StaticResource @InputFieldLabelStyle}"></Label>
+                    <TextBox Grid.Row="3"  Grid.Column="1" Grid.ColumnSpan="3" Background="White" x:Name="xDBPasswordTextBox"  HorizontalAlignment="Left" Width="250" Text="" VerticalAlignment="Center" IsEnabled="true" Style="{StaticResource @TextBoxStyle}" Margin="0,0,5,0"  />
+                    <Button Grid.Row="4" Grid.Column="2" x:Name="xConnectDBButton" Content="Connect" Click="xConnectDBButton_Click"  Visibility="Visible" Style="{StaticResource @InputButtonStyle}" Width="60" Margin="2,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                    <Label Grid.Row="5" Grid.Column="0" Name="xSQLLable" Visibility="Collapsed" Style="{StaticResource @InputFieldLabelStyle}"  Content="Free SQL:" VerticalAlignment="Top"  />
+                    <TextBox Grid.Row="5" Grid.Column="1" Background="White" x:Name="xSQLTextBox"  Visibility="Collapsed"  Text="" VerticalAlignment="Bottom" TextChanged="xSQLTextBox_TextChanged" IsEnabled="true"  Style="{StaticResource @MultiRowsTextBoxStyle}" Grid.ColumnSpan="3" Margin="0,0,0,0" />
+                </Grid>
+            </StackPanel>
+
+            <StackPanel x:Name="xExcelFileStackPanel" Grid.Row="1" Grid.ColumnSpan="3" Visibility="Visible">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="15"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width ="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Row="0" Grid.ColumnSpan="2">
+                        <Label Name="xPathLable" Style="{StaticResource @InputFieldLabelStyle}"  Content="Path:" VerticalAlignment="Top"  />
+                        <TextBox x:Name="xPathTextBox" Background="White" ToolTip="Please Provide Full  Valid Path To Create Excel Template File." Margin="5,0,0,0"  Text="" HorizontalAlignment="Stretch" VerticalAlignment="Center"  IsEnabled="true" TextChanged="xPathTextBox_TextChanged" Style="{StaticResource @TextBoxStyle}" />
+                    </StackPanel>
+
+                    <DockPanel Grid.Row="0" Grid.Column="2">
+                        <usercontrols:ucButton x:Name="xBrowseButton" ToolTip="Browse File" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="OpenFolder" Click="xBrowseButton_Click" VerticalAlignment="Bottom" Margin="0,0,0,-10" />
+                        <usercontrols:ucButton x:Name="xCreateTemplateExcelButton" ToolTip="Create Template" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="ExcelFile" Click="xCreateTemplateExcelButton_Click" VerticalAlignment="Bottom" Margin="-10,0,0,-10" />
+                    </DockPanel>
+
+                    <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Height="25">
+                        <Label Name="xSaveExcelLable" Style="{StaticResource @LabelStyle}" Foreground="Red" Content="Please save and close Excel after editing it." VerticalAlignment="Bottom" Margin="0,2,0,-2" />
+                    </DockPanel>
+                    
+                    <DockPanel Grid.Row="2" Grid.ColumnSpan="3">
+                        <StackPanel >
+                            <Label Name="xSheetLable"   HorizontalAlignment="Left" Content="Sheet:" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}"  />
+                            <ComboBox x:Name="xSheetNameComboBox" SelectionChanged="xSheetNameComboBox_SelectionChanged"  Margin="5,0,0,0"  VerticalAlignment="Center" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" Width="250" HorizontalAlignment="Left" ></ComboBox>
+                        </StackPanel>
+                        <usercontrols:ucButton x:Name="RefreshBtn" ToolTip="Refresh Sheets" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="Refresh" Click="RefreshButton_Click" VerticalAlignment="Bottom" Margin="0,20,0,0" />
+                        <usercontrols:ucButton x:Name="xExcelViewDataButton" ToolTip="View All Data" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="View" Click="xExcelViewDataButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,20,0,0" />
+                    </DockPanel>
+
+                    <DockPanel Grid.Row="3" Grid.ColumnSpan="3">
+                        <StackPanel Margin="0,10,0,0">
+                            <Label Name="xSelectRowLable"  Style="{StaticResource @InputFieldLabelStyle}"  Content="Select Row(s) Where:" VerticalAlignment="Center"  />
+                            <TextBox x:Name="xSelectRowTextBox" Background="White" Margin="5,0,0,0" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1 or [Team Name]='Ginger'."  Style="{StaticResource @MultiRowsTextBoxStyle}" Text ="" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" IsEnabled="true"/>
+                        </StackPanel>
+                        <usercontrols:ucButton x:Name="xExcelViewWhereButton" ToolTip="View Filtered Data" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageType="Filter" Click="xExcelViewWhereButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,25,0,0" />
+                    </DockPanel>
+
+                    <GridSplitter x:Name="xExcelGridSplitter" Grid.ColumnSpan="3" Grid.Row="4" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource $Color_DarkBlue}" IsEnabled="False" Margin="0,5,0,5" />
+
+                    <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,5">
+                        <DockPanel x:Name="xExcelDataGridDockPanel" Margin="0,5,5,5">
+                            <Label Style ="{StaticResource @InputFieldLabelStyle}" Content="Excel Data:" DockPanel.Dock="Left"></Label>
+                            <DataGrid x:Name="xExcelDataGrid" DockPanel.Dock="Top" >
+                                <DataGrid.ColumnHeaderStyle>
+                                    <Style TargetType="{x:Type DataGridColumnHeader}">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="DataGridColumnHeader">
+                                                    <ContentPresenter RecognizesAccessKey="False"></ContentPresenter>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGrid.ColumnHeaderStyle>
+                            </DataGrid>
+                        </DockPanel>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+
+            <Ginger:ucGrid x:Name="xImportOptionalValuesGrid" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Visibility="Collapsed" Margin="5,0,5,0" />
+        </Grid>
+    </ScrollViewer>
+</Page>

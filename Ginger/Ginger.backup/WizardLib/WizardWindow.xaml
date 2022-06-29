@@ -1,0 +1,140 @@
+    <Window x:Class="GingerWPF.WizardLib.WizardWindow"
+          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+          xmlns:wizardlib="clr-namespace:GingerWPF.WizardLib"
+          mc:Ignorable="d"
+        Title="WizardWindow" Name="WizardWindowPage" Height="600" Width="900" WindowStartupLocation="CenterScreen" Closing="CloseWindowClicked" Icon="{StaticResource @Flash_16x16}">
+    
+    <Window.Resources>
+        <wizardlib:BoolToVisibilityConverter x:Key="visibilityConverter" ValueIfTrue="Visible" ValueIfFalse="Collapsed" />
+        <!-- Hides the listbox highlight -->
+        <Style TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid x:Name="gridMain" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="*"	/>
+        </Grid.ColumnDefinitions>
+
+        <Grid x:Name="gridNavPanel"  Background="{StaticResource $BackgroundColor_LightGray}">
+            <ListBox x:Name="NavigationList" Background="{StaticResource $BackgroundColor_LightGray}"  Foreground="{StaticResource $BackgroundColor_DarkBlue}"
+					 SelectionChanged="NavigationList_SelectionChanged"
+					 >
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Focusable" Value="False"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,2" x:Name="partContent" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <!--<TextBlock Grid.Column="0" />-->
+                            <Polygon Grid.Column="0" Points="0,0 12,6 0,12 0,0" Stroke="SteelBlue" StrokeThickness="0" SnapsToDevicePixels="True" Margin="0,0,0,0" VerticalAlignment="Center" x:Name="SelectionArrow" >
+                                <Polygon.Fill>
+                                    <SolidColorBrush Color="SteelBlue" Opacity="1" />
+                                </Polygon.Fill>
+                            </Polygon>
+                            <TextBlock x:Name="xTitleTextBlock" Grid.Column="1" FontSize="14" Text="{Binding Title}" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
+                        </Grid>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="false">
+                                <Setter TargetName="SelectionArrow" Property="Opacity" Value="0" />
+                            </DataTrigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="xTitleTextBlock" Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
+                            </Trigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+
+        <Grid x:Name="gridContentPanel" Grid.Column="1" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="346*" />
+                <RowDefinition Height="149*"/>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Border x:Name="gridContentBanner" Grid.Row="0" 
+					Background="{Binding Path=WizConfig.BannerBackgroundBrush, Mode=OneWay}" 
+					BorderBrush="{Binding Path=WizConfig.BannerBorderBrush, Mode=OneWay}" 
+					BorderThickness="{Binding Path=WizConfig.BannerBorderThickness, Mode=OneWay}"  
+					Visibility="{Binding Path=WizConfig.ShowContentBanner, Mode=OneWay}" >
+                <Grid Height="{Binding Path=WizConfig.ContentBannerHeight, Mode=OneWay}" >
+                    <StackPanel Orientation="Horizontal" 
+								VerticalAlignment="Center" 
+								HorizontalAlignment="{Binding Path=WizConfig.BannerImageAlignment, Mode=OneWay}" Margin="5,0,5,0" 
+								Visibility="{Binding Path=WizConfig.ShowBannerImage, Mode=OneWay, Converter={StaticResource visibilityConverter}}">
+                        <!-- for icon/image -->
+                        <Image Source="{Binding Path=WizConfig.BannerImage}" />
+                    </StackPanel>
+                    <StackPanel Height="30"  VerticalAlignment="Center" Background="{DynamicResource $Color_DarkBlue}"  HorizontalAlignment="{Binding Path=WizConfig.BannerTextAlignment, Mode=OneWay}" >
+                        
+                        <TextBlock x:Name="tbSubTitle" AutomationProperties.AutomationId="Title AID" Foreground="White"
+					
+								
+								   
+								   HorizontalAlignment="{Binding Path=WizConfig.BannerTextAlignment, Mode=OneWay}" 
+								   FontSize="16" 
+
+								   Margin="10,5,0,0"   TextAlignment="Left"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            <Frame x:Name="PageFrame" Grid.Row="1" Background="Transparent" Margin="5,0,0,0" NavigationUIVisibility="Hidden" Grid.RowSpan="2"></Frame>
+
+
+            <Border x:Name="gridContentNavigation" Grid.Row="3" 
+					Background="{Binding Path=WizConfig.BannerBackgroundBrush, Mode=OneWay}" 
+					BorderBrush="{Binding Path=WizConfig.BannerBorderBrush, Mode=OneWay}" 
+					BorderThickness="{Binding Path=WizConfig.NavPanelBorderThickness, Mode=OneWay}" >
+                <Grid >
+                    <StackPanel x:Name="stackNaveLeftSide" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,5,0,5" 
+								Visibility="{Binding Path=WizConfig.ShowResetButton, Mode=OneWay, Converter={StaticResource visibilityConverter}}">
+                        
+                        
+                    </StackPanel>
+                    <StackPanel x:Name="stackNaveRightSide"  Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,5">
+                        <UserControls:ImageMakerControl x:Name="xProcessingImage" Grid.Column="0" Grid.Row="0" ImageType="Processing" Height="30" Width="30" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Visibility="Collapsed"/>
+
+                        <UserControls:ucButton x:Name="xPrevButton" ButtonType="RoundTextAndImageButton" ButtonText="Previous" ButtonImageType="GoBack" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="PrevButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" IsEnabled="False"/>
+                        <UserControls:ucButton x:Name="xNextButton" ButtonType="RoundTextAndImageButton" ButtonText="Next" ButtonImageType="GoNext" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="NextButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+                        <UserControls:ucButton x:Name="xFinishButton" ButtonType="RoundTextAndImageButton" ButtonText="Finish" ButtonImageType="Finish" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="FinishButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+                        <UserControls:ucButton x:Name="xCancelButton" ButtonType="RoundTextAndImageButton" ButtonText="Cancel" ButtonImageType="Cancel" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="CancelButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <GridSplitter Grid.Column="1" Grid.Row="0"  ResizeDirection="Columns" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="5" Style="{StaticResource @TreeSplitterStyle}"/>
+        
+    </Grid>
+</Window>

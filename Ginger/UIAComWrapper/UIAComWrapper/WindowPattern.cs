@@ -22,29 +22,29 @@ using UIAComWrapperInternal;
 
 namespace System.Windows.Automation
 {
-    public class WindowPattern : BasePattern
+    public class WindowPatternExtended : BasePattern
     {
         private UIAutomationClient.IUIAutomationWindowPattern _pattern;
-        public static readonly AutomationPattern Pattern = WindowPatternIdentifiers.Pattern;
-        public static readonly AutomationProperty CanMaximizeProperty = WindowPatternIdentifiers.CanMaximizeProperty;
-        public static readonly AutomationProperty CanMinimizeProperty = WindowPatternIdentifiers.CanMinimizeProperty;
-        public static readonly AutomationProperty IsModalProperty = WindowPatternIdentifiers.IsModalProperty;
-        public static readonly AutomationProperty IsTopmostProperty = WindowPatternIdentifiers.IsTopmostProperty;
-        public static readonly AutomationEvent WindowClosedEvent = WindowPatternIdentifiers.WindowClosedEvent;
-        public static readonly AutomationProperty WindowInteractionStateProperty = WindowPatternIdentifiers.WindowInteractionStateProperty;
-        public static readonly AutomationEvent WindowOpenedEvent = WindowPatternIdentifiers.WindowOpenedEvent;
-        public static readonly AutomationProperty WindowVisualStateProperty = WindowPatternIdentifiers.WindowVisualStateProperty;
+        public static readonly AutomationPatternExtended Pattern = WindowPatternIdentifiers.Pattern;
+        public static readonly AutomationPropertyExtended CanMaximizeProperty = WindowPatternIdentifiers.CanMaximizeProperty;
+        public static readonly AutomationPropertyExtended CanMinimizeProperty = WindowPatternIdentifiers.CanMinimizeProperty;
+        public static readonly AutomationPropertyExtended IsModalProperty = WindowPatternIdentifiers.IsModalProperty;
+        public static readonly AutomationPropertyExtended IsTopmostProperty = WindowPatternIdentifiers.IsTopmostProperty;
+        public static readonly AutomationEventExtended WindowClosedEvent = WindowPatternIdentifiers.WindowClosedEvent;
+        public static readonly AutomationPropertyExtended WindowInteractionStateProperty = WindowPatternIdentifiers.WindowInteractionStateProperty;
+        public static readonly AutomationEventExtended WindowOpenedEvent = WindowPatternIdentifiers.WindowOpenedEvent;
+        public static readonly AutomationPropertyExtended WindowVisualStateProperty = WindowPatternIdentifiers.WindowVisualStateProperty;
         
-        private WindowPattern(AutomationElement el, UIAutomationClient.IUIAutomationWindowPattern pattern, bool cached)
+        private WindowPatternExtended(AutomationElement_Extend el, UIAutomationClient.IUIAutomationWindowPattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
             this._pattern = pattern;
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
-            return (pattern == null) ? null : new WindowPattern(el, (UIAutomationClient.IUIAutomationWindowPattern)pattern, cached);
+            return (pattern == null) ? null : new WindowPatternExtended(el, (UIAutomationClient.IUIAutomationWindowPattern)pattern, cached);
         }
 
         public void Close()
@@ -59,7 +59,7 @@ namespace System.Windows.Automation
             }
         }
 
-        public void SetWindowVisualState(WindowVisualState state)
+        public void SetWindowVisualState(WindowVisualStateExtended state)
         {
             try
             {
@@ -103,9 +103,9 @@ namespace System.Windows.Automation
         [StructLayout(LayoutKind.Sequential)]
         public struct WindowPatternInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal WindowPatternInformation(AutomationElement element, bool isCached)
+            internal WindowPatternInformation(AutomationElement_Extend element, bool isCached)
             {
                 this._el = element;
                 this._isCached = isCached;
@@ -115,7 +115,7 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(WindowPattern.CanMaximizeProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(WindowPatternExtended.CanMaximizeProperty, _isCached);
                 }
             }
 
@@ -123,7 +123,7 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(WindowPattern.CanMinimizeProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(WindowPatternExtended.CanMinimizeProperty, _isCached);
                 }
             }
 
@@ -131,23 +131,23 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(WindowPattern.IsModalProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(WindowPatternExtended.IsModalProperty, _isCached);
                 }
             }
 
-            public WindowVisualState WindowVisualState
+            public WindowVisualStateExtended WindowVisualState
             {
                 get
                 {
-                    return (WindowVisualState)this._el.GetPropertyValue(WindowPattern.WindowVisualStateProperty, _isCached);
+                    return (WindowVisualStateExtended)this._el.GetPropertyValue(WindowPatternExtended.WindowVisualStateProperty, _isCached);
                 }
             }
 
-            public WindowInteractionState WindowInteractionState
+            public WindowInteractionStateExtended WindowInteractionState
             {
                 get
                 {
-                    return (WindowInteractionState)this._el.GetPropertyValue(WindowPattern.WindowInteractionStateProperty, _isCached);
+                    return (WindowInteractionStateExtended)this._el.GetPropertyValue(WindowPatternExtended.WindowInteractionStateProperty, _isCached);
                 }
             }
 
@@ -155,7 +155,7 @@ namespace System.Windows.Automation
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(WindowPattern.IsTopmostProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(WindowPatternExtended.IsTopmostProperty, _isCached);
                 }
             }
         }

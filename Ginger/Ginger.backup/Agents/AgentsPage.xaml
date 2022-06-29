@@ -1,0 +1,20 @@
+    <Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.Agents.AgentsPage" 
+      mc:Ignorable="d" 
+    xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Agent"
+      d:DesignHeight="300" d:DesignWidth="300"
+	Title="AgentsPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>            
+        </Grid.ColumnDefinitions>
+        <StackPanel>            
+            <Ginger:ucGrid x:Name="xAgentsGrd" Title="Agents" ShowAdd="Collapsed" ShowRefresh="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" IsReadOnly="True"/>
+        </StackPanel>
+    </Grid>
+</Page>

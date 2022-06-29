@@ -1,0 +1,25 @@
+    <Page x:Class="Ginger.Imports.CDL.ImportCDLPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.Imports.CDL"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ImportCDLPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="43*"/>
+            <RowDefinition Height="41*"/>
+            <RowDefinition Height="46*"/>
+            <RowDefinition Height="320*"/>
+        </Grid.RowDefinitions>
+
+        <Label>Import CDL - Change Definition Language</Label>
+        <Label Grid.Row="1">File Name</Label>
+        <TextBox x:Name="FileNameTextBox" Grid.Row="2" Margin="10"></TextBox>
+        <TextBox x:Name="ContentTextBox" Grid.Row="3" TextWrapping="Wrap" Text="TextBox" Margin="10"/>
+
+    </Grid>
+</Page>

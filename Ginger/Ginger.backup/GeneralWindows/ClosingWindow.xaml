@@ -1,0 +1,21 @@
+    <Window x:Class="Ginger.ClosingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+        Title="Closing" Height="240" Width="320" BorderThickness="10" BorderBrush="{StaticResource $BackgroundColor_LightGray}" WindowStyle="None"  Topmost="True" WindowStartupLocation="CenterScreen">
+    <Grid Background="{StaticResource $Color_DarkBlue}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        
+        <Label VerticalAlignment="Center" FontSize="20" Height="100" FontWeight="Bold" Grid.Row="0" Foreground="White">Preparing to Close...</Label>
+        <usercontrols:ImageMakerControl Grid.Row="1" x:Name="xProcessingImage"  ImageType="Processing" Height="30" Width="30" />
+        <StackPanel Grid.Row="2">
+            <Label FontSize="12"  Foreground="White">Saving user profile, logs and doing some cleanup</Label>
+            <Label FontSize="10"  Foreground="White">This might take a few seconds</Label>
+            
+        </StackPanel>
+    </Grid>
+</Window>

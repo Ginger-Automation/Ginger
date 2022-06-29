@@ -20,6 +20,7 @@ using System;
 using System.ComponentModel;
 using System.Management;
 using System.Windows.Threading;
+using System.Windows.Forms.DataVisualization;
 
 namespace Ginger    
 {

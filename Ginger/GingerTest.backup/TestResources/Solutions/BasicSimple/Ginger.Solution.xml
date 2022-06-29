@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Ginger Repository Item created with version: 2.5.0.0-->
+<Ginger.Environments.Solution AlmType="QC"  EncryptedValidationString="VUmheVjtatgVR0oSpuArDg==" Created="9/28/2017 3:31:07 PM" CreatedBy="YARONWE" Guid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" LastUpdate="9/28/2017 3:35:51 PM" LastUpdateBy="YARONWE" Name="Simple Basic" ParentGuid="00000000-0000-0000-0000-000000000000" ShowIndicationkForLockedItems="False" Version="1">
+<ApplicationPlatforms>
+<GingerCore.Platforms.ApplicationPlatform AppName="Amdo CSP" CoreGUID="00000000-0000-0000-0000-000000000000" Created="9/28/2017 3:35:51 PM" CreatedBy="YARONWE" Guid="67845df5-359a-4706-a1de-71d7db092e2c" GUID="00000000-0000-0000-0000-000000000000" LastUpdate="1/1/0001 12:00:00 AM" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" Version="0" />
+</ApplicationPlatforms>
+
+<ExecutionLoggerConfigurationSetList>
+</ExecutionLoggerConfigurationSetList>
+
+<ExternalItemsFields>
+</ExternalItemsFields>
+
+<HTMLReportsConfigurationSetList>
+</HTMLReportsConfigurationSetList>
+
+<Tags>
+</Tags>
+
+<Variables>
+</Variables>
+</Ginger.Environments.Solution>

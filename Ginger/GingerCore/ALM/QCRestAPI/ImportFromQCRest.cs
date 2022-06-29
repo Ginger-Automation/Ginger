@@ -599,22 +599,22 @@ namespace GingerCore.ALM.QCRestAPI
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
-            string testSetfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_SET);
+            string testSetfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.TEST_SET);
             List<QCField> testSetfieldsCollection = QCRestAPIConnect.GetFields(testSetfieldInRestSyntax);
 
-            string testCasefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CASE);
+            string testCasefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.TEST_CASE);
             List<QCField> testCasefieldsCollection = QCRestAPIConnect.GetFields(testCasefieldInRestSyntax);
 
-            string designStepfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP);
+            string designStepfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.DESIGN_STEP);
             List<QCField> designStepfieldsCollection = QCRestAPIConnect.GetFields(designStepfieldInRestSyntax);
 
-            string testInstancefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CYCLE);
+            string testInstancefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.TEST_CYCLE);
             List<QCField> testInstancefieldsCollection = QCRestAPIConnect.GetFields(testInstancefieldInRestSyntax);
 
-            string designStepParamsfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP_PARAMETERS);
+            string designStepParamsfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.DESIGN_STEP_PARAMETERS);
             List<QCField> designStepParamsfieldsCollection = QCRestAPIConnect.GetFields(designStepParamsfieldInRestSyntax);
 
-            string runfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_RUN);
+            string runfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(AlmDataContractsStd.Enums.ResourceType.TEST_RUN);
             List<QCField> runfieldsCollection = QCRestAPIConnect.GetFields(runfieldInRestSyntax);
 
             fields.Append(AddFieldsValues(testSetfieldsCollection, testSetfieldInRestSyntax));
@@ -627,7 +627,7 @@ namespace GingerCore.ALM.QCRestAPI
             return fields;
         }
 
-        public static ObservableList<ExternalItemFieldBase> GetALMItemFields(ALM_Common.DataContracts.ResourceType resourceType)
+        public static ObservableList<ExternalItemFieldBase> GetALMItemFields(AlmDataContractsStd.Enums.ResourceType resourceType)
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
@@ -639,7 +639,7 @@ namespace GingerCore.ALM.QCRestAPI
 
             if (QCRestAPIConnect.QcRestClient.Login())
             {
-                if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
+                if (resourceType == AlmDataContractsStd.Enums.ResourceType.ALL)
                     return GetALMItemFields();
                 else
                 {
@@ -695,7 +695,7 @@ namespace GingerCore.ALM.QCRestAPI
                 BinaryReader br = new BinaryReader(fs);
                 byte[] fileData = br.ReadBytes((Int32)fs.Length);
 
-                qcClientREST.CreateAttachmentForEntitiyId(ALM_Common.DataContracts.ResourceType.DEFECT, defectId, Path.GetFileName(filePath), fileData);
+                qcClientREST.CreateAttachmentForEntitiyId(AlmDataContractsStd.Enums.ResourceType.DEFECT, defectId, Path.GetFileName(filePath), fileData);
 
                 fs.Close();
                 return true;

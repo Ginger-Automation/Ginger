@@ -1,0 +1,98 @@
+﻿<UserControl x:Class="Ginger.UserControlsLib.UCListView.UcListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+             xmlns:Ginger="clr-namespace:Ginger"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="500" KeyDown="UserControl_KeyDown">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="xListTitleRow" Height="40" />
+            <RowDefinition x:Name="xListSearchRow" Height="30" />
+            <RowDefinition x:Name="xListFilterRow" Height="30" />
+            <RowDefinition Height="300*" />
+        </Grid.RowDefinitions>
+        
+        <DockPanel Grid.Row="0" Margin="-7,0,0,0" HorizontalAlignment="Stretch">
+            <usercontrols:ucButton x:Name="xExpandCollapseBtn" DockPanel.Dock="Left"  ToolTip="Expand/Collapse All" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="ExpandAll" Visibility="Visible" Click="XExpandCollapseBtn_Click"  />
+
+            <DockPanel x:Name="xListTitlePnl" DockPanel.Dock="Left">
+                <usercontrols:ImageMakerControl x:Name="xListTitleImage" DockPanel.Dock="Left" SetAsFontImageWithSize="20" ImageType="Null"  Width="20" Height="20" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Left" ImageToolTip="" ImageForeground="{StaticResource $BackgroundColor_DarkGray}"/>
+                <Label x:Name="xListTitleLbl" DockPanel.Dock="Left" Margin="0,8,0,0" Content="Title" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
+                <Label x:Name="xListCountTitleLbl" DockPanel.Dock="Left" Margin="0,8,0,0" Content="(0)" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
+            </DockPanel>
+
+            <DockPanel x:Name="xAllListOperationsBarPnl"  HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="10 0 0 0">
+                <StackPanel x:Name="xListOperationsPnl" DockPanel.Dock="Left" Orientation="Horizontal"/>
+                <Menu x:Name="xListExtraOperationsMenu" Margin="0,0,0,0" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent" ToolTip="Extra Operations">
+                    <MenuItem Cursor="Hand">
+                        <MenuItem.Header>
+                            <usercontrols:ImageMakerControl  ImageType="EllipsisH" SetAsFontImageWithSize="17" Height="18" Width="18" HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+                </Menu>
+            </DockPanel>
+        </DockPanel>
+
+        <Grid Grid.Row="1" >
+            <TextBox x:Name="xSearchTextBox" MinWidth="50" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderBrush="White" />
+            <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
+            <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" Click="xSearchBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
+        </Grid>
+        
+        <Ginger:ucTagsViewer x:Name="xTagsFilter" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" AddTags="False"/>
+
+        <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0" IsEnabled="False" Background="LightGray" />
+
+        <ListView x:Name="xListView" Grid.Row="3" 
+                  Margin="0 0 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible" 
+                  VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
+                  VerticalContentAlignment="Top"  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $ListViewItemStyle}" 
+                  SelectionChanged="xListView_SelectionChanged" AllowDrop="True" >
+
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Expander IsExpanded="True">
+                                            <Expander.Header>
+                                                <Grid HorizontalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="100*"/>
+                                                        <ColumnDefinition Width="100"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <DockPanel HorizontalAlignment="Stretch" Grid.Column="0">
+                                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" ToolTip="{Binding Name}" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontSize="16" VerticalAlignment="Center" Style="{StaticResource $TextBlockStyle}" TextTrimming="CharacterEllipsis" Margin="0,0,0,0" />
+                                                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="2,0,0,0">
+                                                            <TextBlock Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center" FontSize="11" >(</TextBlock>
+                                                            <TextBlock Text="{Binding ItemCount}" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontSize="11" VerticalAlignment="Center" Margin="0,0,0,0"></TextBlock>
+                                                            <TextBlock Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center" FontSize="11" Margin="0,0,0,0">)</TextBlock>
+                                                        </StackPanel>
+                                                        <DockPanel x:Name="xGroupNotificationsPnl" Tag="{Binding Name}" HorizontalAlignment="Left" Margin="5,0,0,0" Loaded="XGroupNotificationsPnl_Loaded" />
+                                                    </DockPanel>
+                                                    <Menu x:Name="xGroupOperationsMenu" Tag="{Binding Name}" Grid.Column="1" Margin="0,0,0,0"  HorizontalAlignment="Left" VerticalAlignment="Center" Background="Transparent" Loaded="XGroupOperationsMenu_Loaded" ToolTip="Group Operations" >
+                                                        <MenuItem Cursor="Hand">
+                                                            <MenuItem.Icon>
+                                                                <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="17" Height="18" Width="18" HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </Menu>
+                                                </Grid>
+                                            </Expander.Header>
+                                            <ItemsPresenter />
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </ListView.GroupStyle>
+        </ListView>
+    </Grid>
+</UserControl>

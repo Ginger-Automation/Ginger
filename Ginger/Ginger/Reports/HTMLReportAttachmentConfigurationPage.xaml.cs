@@ -177,11 +177,11 @@ namespace Ginger.Reports
                 FileSystemSecurity security;
                 if (File.Exists(FilePath))
                 {
-                    security = File.GetAccessControl(FilePath);
+                    security = FileSystemAclExtensions.GetAccessControl(new FileInfo(FilePath));// File.GetAccessControl(FilePath);
                 }
                 else
                 {
-                    security = Directory.GetAccessControl(System.IO.Path.GetDirectoryName(FilePath));
+                    security = FileSystemAclExtensions.GetAccessControl(new DirectoryInfo(FilePath)); //Directory.GetAccessControl(System.IO.Path.GetDirectoryName(FilePath));
                 }
                 var rules = security.GetAccessRules(true, true, typeof(NTAccount));
 

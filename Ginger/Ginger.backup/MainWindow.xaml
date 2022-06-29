@@ -1,0 +1,327 @@
+﻿<Window x:Class="Ginger.MainWindow" x:Name="xMainWindow" h:GingerHelpProvider.HelpString=""
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:h="clr-namespace:Ginger.Help"
+        xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+        xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+        Title="Ginger by amdocs"        
+        Icon="GingerIconNew.ico"
+        Height="600" Width="1100" WindowState="Maximized"   SizeChanged="xMainWindow_SizeChanged"      
+        Closing="MainWindow_Closing" PreviewKeyDown="MainWindow_PreviewKeyDown">
+
+    <Grid x:Name="xMainWindowPnl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid  Panel.ZIndex="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="200*"/>
+                <RowDefinition Height="25"/>
+            </Grid.RowDefinitions>
+
+            <!--Main Menu -->
+            <Grid Grid.Row="0" Background="{StaticResource $BackgroundColor_DarkBlue}" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="150*"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="30"/>
+                </Grid.ColumnDefinitions>
+
+                <!--Main Menu- Ginger Icon-->
+                <DockPanel Grid.Column="0" VerticalAlignment="Center">
+                    <usercontrols:ImageMakerControl x:Name="xGingerIconImg" ImageType="GingerLogoWhiteSmall" Width="90" DockPanel.Dock="Left" HorizontalAlignment="Center" Margin="5,5,0,0"/>
+                    <GridSplitter Width="1" Height="40" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" Margin="10,0,10,0" IsEnabled="False"/>
+                </DockPanel>
+
+                <!--Main Menu- Solution Menu's-->
+                <DockPanel Grid.Column="1" VerticalAlignment="Center">
+                    <!--Main Menu- Solution Selection-->
+                    <StackPanel x:Name="xSolutionSelectionPnl" Orientation="Horizontal" DockPanel.Dock="Left" >
+                        <TextBlock x:Name="xSolutionNameTextBlock" TextTrimming="CharacterEllipsis" MaxWidth="300"  TextWrapping="NoWrap" Margin="0,0,0,0" Text="Please Load Solution" VerticalAlignment="Center" HorizontalAlignment="Left" FontFamily="Open Sans" FontSize="20" FontWeight="Normal" Foreground="{StaticResource $SelectionColor_Pink}"   ></TextBlock>
+                        <Menu x:Name="xSolutionSelectionMenu" Background="{StaticResource $BackgroundColor_DarkBlue}"  Margin="5,0,0,0" VerticalAlignment="Center" >
+                            <MenuItem x:Name="xSolutionSelectionMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Solution Selection" Margin="0,0,0,0"  StaysOpenOnClick="True">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="20" ImageType="ArrowDown" Width="20" Height="20" Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                                <MenuItem x:Name="xRecentSolutionsMenuItem" Header="Recently Used Solutions" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xRecentSolutionsMenuItem_Click" StaysOpenOnClick="True" Visibility="Collapsed" >
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="History"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="xOpenSolutionMenuItem" Header="Open Existing Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xOpenSolutionMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16"  ImageType="OpenFolder"  Margin="0,0,0,0" HorizontalAlignment="Center"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="xDownloadSolutionMenuItem" Header="Download Existing Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xDownloadSolutionMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Download"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem x:Name="xCreateNewSolutionMenuItem" Header="Create New Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xCreateNewSolutionMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Add"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                        </Menu>
+                    </StackPanel>
+
+                    <!--Main Menu- Loaded Solution Menu's-->
+                    <DockPanel x:Name="xLoadedSolutionMenusPnl" DockPanel.Dock="Left" VerticalAlignment="Center">
+                        <!--Main Menu- Solution Tabs-->
+                        <ListView x:Name="xSolutionTabsListView" Background="{StaticResource $BackgroundColor_DarkBlue}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" SelectionChanged="xSolutionTopNavigationListView_SelectionChanged" Margin="0,5,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" SelectionMode="Single" >
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"></StackPanel>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListViewItem x:Name="xBusinessFlowsListItem" Style="{StaticResource $TopListViewItemStyle}" IsSelected="True">
+                                <ListViewItem.Content>
+                                    <GingerCore:ucTextDicResource x:Name="xBusinessFlowsListItemText" Text="[BusinessFlows]" Typography.Capitals="AllSmallCaps" FontSize="20" Margin="0,0,0,3"/>
+                                </ListViewItem.Content>
+                            </ListViewItem>
+                            <ListViewItem x:Name="xRunListItem" Style="{StaticResource $TopListViewItemStyle}" >
+                                <ListViewItem.Content>
+                                    <GingerCore:ucTextDicResource x:Name="xRunListItemText"  Text="[RunSets]" Typography.Capitals="AllSmallCaps" FontSize="20" Margin="0,0,0,3"/>
+                                </ListViewItem.Content>
+                            </ListViewItem>
+                            <ListViewItem x:Name="xConfigurationsListItem" Style="{StaticResource $TopListViewItemStyle}">CONFIGURATIONS</ListViewItem>
+                            <ListViewItem x:Name="xResourcesListItem" Style="{StaticResource $TopListViewItemStyle}">RESOURCES</ListViewItem>
+                        </ListView>
+
+                        <!--Main Menu- Solution Operations-->
+                        <Menu x:Name="xExtraSolutionOperationsMenu" Background="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <MenuItem x:Name="xExtraSolutionOperationsMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Extra Solution Operations" StaysOpenOnClick="True">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="ArrowDown" Width="18" Height="18" Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                                <MenuItem  Header="Analyze Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="AnalyzerButton_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl ImageType="Analyze" Width="16" SetAsFontImageWithSize="16"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem  Header="Upgrade Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="btnUpgrade_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Upgrade" Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem  Header="Recover Solution" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="btnRecover_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl ImageType="Recover" Width="16" SetAsFontImageWithSize="16"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem  Header="View/Edit Solution Details" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="EditSolutionDetailsMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Edit" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem  Header="Open Solution Folder" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="ViewSolutionFiles_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="OpenFolder" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                        </Menu>
+
+                        <Menu x:Name="xSolutionALMMenu" Background="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                            <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Share Operations">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="Share" Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                                <MenuItem Header="ALM Connection Settings" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ALMConfigButton_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Parameter"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="ALM Items Fields Configuration" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ALMFieldsConfiguration_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="ListGroup"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="ALM Defect's Profiles" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ALMDefectsProfiles_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Bug"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuItem>
+                        </Menu>
+
+                        <Menu x:Name="xSolutionSourceControlMenu" Background="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                            <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Source Control Operations">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="SourceControl" FontWeight="Bold" Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                                <MenuItem Header="Source Control Settings" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlConnectionDetails_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Parameter"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Get Latest Solution Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlGetLatest_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="GetLatest"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Check-In Solution Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlCheckIn_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="CheckIn"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="View Repository Details" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlRepositoryDetails_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="View"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Resolve Conflicts" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Fix"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                    <MenuItem Header="Keep Local Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ResolveConflictsLocalMenuItem_Click">
+                                    </MenuItem>
+                                    <MenuItem Header="Accept Server Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ResolveConflictsServerMenuItem_Click">
+                                    </MenuItem>
+                                </MenuItem>
+                            </MenuItem>
+                        </Menu>
+
+                        <Menu x:Name="xGlobalSolutionMenu" Background="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                            <MenuItem Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Global Solution Operations">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="ImportFile" FontWeight="Bold" Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                                
+                                <MenuItem Header="Import Global Cross Solution Items" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnGlobalSolutionImport_Click">
+                                    <MenuItem.Icon>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="GetLatest"  Margin="0,0,0,0"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                
+                            </MenuItem>
+                        </Menu>
+                        <usercontrols:ucButton x:Name="xFindAndReplaceBtn" ButtonType="ImageButton" ToolTip="Find and Replace in Solution"  ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Search" Click="xFindAndReplaceSolutionButton_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="20,0,5,0"/>
+                    </DockPanel>
+                </DockPanel>
+
+                <!--Main Menu- User Operations-->
+                <DockPanel Grid.Column="2" VerticalAlignment="Center">
+                    <GridSplitter Width="1" Height="40" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" Margin="10,0,10,0" IsEnabled="False"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <Ellipse x:Name="xProfileImageEllipse" Grid.Column="0" Height="38" Width="38" Margin="0,5,0,0">
+                            <Ellipse.Fill>
+                                <ImageBrush x:Name="xProfileImageImgBrush" RenderOptions.BitmapScalingMode="HighQuality"  Stretch="Uniform"  />
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Label x:Name="xUserNameLbl" Content="User Name" Style="{StaticResource $LabelStyle}" FontSize="8" Foreground="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+                    </StackPanel>
+                    <Menu x:Name="xUserOperationsMenu" DockPanel.Dock="Left" Background="Transparent"  Margin="5,0,0,0" VerticalAlignment="Center">
+                        <MenuItem x:Name="xUserOperationsMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="User Operations" Margin="0,0,0,0"  StaysOpenOnClick="True">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="ArrowDown" Width="18" Height="18" Margin="0,0,0,0"/>
+                            </MenuItem.Icon>
+                            <MenuItem x:Name="xUserProfileMenuItem" Header="User Profile" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xUserProfileMenuItem_Click" >
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="UserProfile"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="xUserSettingsMenuItem" Header="User Settings" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="xUserSettingsMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16"  ImageType="Parameter"  Margin="0,0,0,0" HorizontalAlignment="Center"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="xLogOptionsMenuItem" Header="Log" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xLogOptionsMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="File"  Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
+                </DockPanel>
+
+                <!--Main Menu- Extra Operations-->
+                <DockPanel Grid.Column="3" VerticalAlignment="Center">
+                    <Menu x:Name="xExtraOperationsMenu" DockPanel.Dock="Left" Background="Transparent"  Margin="0,0,0,0" VerticalAlignment="Center">
+                        <MenuItem x:Name="xExtraOperationsMainMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Extra Operations" Margin="0,0,0,0"  StaysOpenOnClick="True">
+                            <MenuItem.Icon>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="18" ImageType="EllipsisH" Width="18" Height="18" Margin="0,0,0,0"/>
+                            </MenuItem.Icon>
+                            <MenuItem x:Name="xHelpOptionsMenuItem" Header="Ginger Help Library" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True"  Click="xHelpOptionsMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Help" Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="xSupportOptionsMenuItem" Header="Support" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xSupportOptionsMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Support" Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="xContactOptionsMenuItem" Header="Contact" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xContactOptionsMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Email" Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="xUpgradeMenuItem" Header="Check for Upgrade" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xCheckForUpgradeMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Upgrade" Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem x:Name="xContributeMenuItem" Header="Contribute Ginger on GitHub" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" StaysOpenOnClick="True" Click="xGingerGithubMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="GitHub" Margin="0,0,0,0"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem  Header="About" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="btnAbout_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl ImageType="Info" Width="16" SetAsFontImageWithSize="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem  Header="Restart Application" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="btnRestart_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl ImageType="Reset" Width="16" SetAsFontImageWithSize="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem  Header="Close Application" Style="{StaticResource $MenuItemStyle_ButtonMenuItem}" Click="btnExit_Click">
+                                <MenuItem.Icon>
+                                    <usercontrols:ImageMakerControl ImageType="Close" Width="16" SetAsFontImageWithSize="16"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
+                </DockPanel>
+            </Grid>
+
+            <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1"/>
+
+            <usercontrols:ImageMakerControl x:Name="xNoLoadedSolutionImg" Grid.Row="1" ImageType="GingerLogoGray" Width="250" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+            <Grid x:Name="xSplashGrid" Width="650" Height="400" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">
+                <usercontrols:ImageMakerControl ImageType="GingerSplash"/>
+                <Label x:Name="lblAppVersion" Content="Version x.x.x.x" Style="{StaticResource $LabelStyle}" Foreground="WhiteSmoke"  FontWeight="Bold"  HorizontalAlignment="Center" Margin="180,200,0,0" Grid.Row="1" Width="200" Height="50"/>
+            </Grid>
+
+            <Border Grid.Row="2" Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" >
+                <DockPanel VerticalAlignment="Center">
+                    <usercontrols:ImageMakerControl x:Name="xBetaFeaturesIcon" ImageType="Beta" ToolTip="Running With Beta Features" SetAsFontImageWithSize="18" Foreground="OrangeRed" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="5,0,0,0" MouseLeftButtonDown="xBetaFeaturesIcon_MouseLeftButtonDown"/>
+                    <StackPanel x:Name="xLogErrorsPnl" Orientation="Horizontal" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <usercontrols:ImageMakerControl x:Name="xLogErrorsIcon" ImageType="Error" SetAsFontImageWithSize="18" Foreground="Red" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="10,0,0,0" MouseLeftButtonDown="xLogErrors_MouseLeftButtonDown"/>
+                        <Label x:Name="xLogErrorsLbl" Content="[0]" Style="{StaticResource $LabelStyle}" Foreground="Red" FontWeight="Bold" MouseLeftButtonDown="xLogErrors_MouseLeftButtonDown" Margin="-5,0,0,0"/>
+                    </StackPanel>
+                    <StackPanel x:Name="xProcessMsgPnl" Orientation="Horizontal" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <usercontrols:ImageMakerControl x:Name="xProcessMsgIcon" ImageType="Processing" ToolTip="Running With Beta Features" SetAsFontImageWithSize="18" Foreground="OrangeRed" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="10,0,5,0"/>
+                        <TextBlock x:Name="xProcessMsgTxtBlock" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Text="Showing something is running" MaxWidth="400" />
+                    </StackPanel>
+
+                    <usercontrols:ImageMakerControl x:Name="xVersionAndNewsIcon" MouseDown="XVersionAndNewsIcon_MouseDown" ImageType="Info" ToolTip="Version Info" HorizontalAlignment="Right" DockPanel.Dock="Right" SetAsFontImageWithSize="18" Margin="0,0,5,0"/>
+                    <Label x:Name="lblVersion" DockPanel.Dock="Right"  Content="Version" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Right" Margin="0,0,5,0"/>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <Canvas x:Name="xHelpLayoutCanvas" Panel.ZIndex="2" MouseLeftButtonDown="xHelpLayoutCanvas_MouseLeftButtonDown"  Background="Transparent" Visibility="Collapsed" >
+            <Rectangle  x:Name="xHelpLayoutRectangleLeft" Fill="Black" Opacity="0.7" />
+            <Rectangle  x:Name="xHelpLayoutRectangleTop" Fill="Black" Opacity="0.7" />
+            <!--<Rectangle  x:Name="xHelpLayoutRectangleFocusedItem" Fill="Red" />-->
+            <Rectangle  x:Name="xHelpLayoutRectangleRight" Fill="Black" Opacity="0.7"  />
+            <Rectangle  x:Name="xHelpLayoutRectangleBottom" Fill="Black" Opacity="0.7"   />
+            <TextBlock x:Name="xHelpLayoutTextBlock" FontFamily="Comic Sans MS" Canvas.Left="500" Canvas.Top="200" Text="Help text content" Foreground="White" MaxWidth="450" MaxHeight="250" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="22"/>
+        </Canvas>
+    </Grid>
+</Window>

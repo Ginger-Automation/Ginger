@@ -14,6 +14,7 @@
     <SolidColorBrush x:Key="$BackgroundColor_WhiteSmoke" Color="WhiteSmoke" />
 
     <!--Selection Colors-->
+    
     <SolidColorBrush x:Key="$SelectionColor_Pink" Color="#F26F6F" />
     <SolidColorBrush x:Key="$SelectionColor_LightBlue" Color="#3EA7FC" />
     <SolidColorBrush x:Key="$SelectionColor_VeryLightBlue" Color="#BADDFF" />
@@ -2056,7 +2057,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-
+    <BitmapImage x:Key="@RunAll_16x16.png" UriSource="C:/Users/pravishe/source/repos/Ginger/Ginger/Ginger/Images/@RunAll_16x16.png"> </BitmapImage> 
     <!--TODO: find why this is not working - put images in separate dictionary-->
     <!--<ResourceDictionary x:Key="dicImages" Source="Images/_Images.xaml" />-->
 
@@ -2084,7 +2085,7 @@
     <ImageSource x:Key="@AddRunSetALMAction_16x16">pack://application:,,,/Ginger;component/Images/@AddRunSetALMAction_16x16.png</ImageSource>
     <ImageSource x:Key="@AddDefectsToALM_16x16">pack://application:,,,/Ginger;component/Images/@AddDefectsToALM_16x16.png</ImageSource>
     <ImageSource x:Key="@ExportExecutionResultsToALM_32x32">pack://application:,,,/Ginger;component/Images/@ExportExecutionResultsToALM_32x32.png</ImageSource>
-    <ImageSource x:Key="@ExportExecutionResultsToALM_16x16">pack://application:,,,/Ginger;component/Images/@ExportExecutionResultsToALM_16x16.png</ImageSource>
+    <!--<ImageSource x:Key="@ExportExecutionResultsToALM_16x16">pack://application:,,,/Ginger;component/Images/@ExportExecutionResultsToALM_16x16.png</ImageSource>-->
     <ImageSource x:Key="@ExportToALM_16x16">pack://application:,,,/Ginger;component/Images/@ExportToALM_16x16.png</ImageSource>
     <ImageSource x:Key="@ExportToALM_32x32">pack://application:,,,/Ginger;component/Images/@ExportToALM_32x32.png</ImageSource>
     <ImageSource x:Key="@ImportFromALM_32x32">pack://application:,,,/Ginger;component/Images/@ImportFromALM_32x32.png</ImageSource>
@@ -2347,7 +2348,7 @@
     <ImageSource x:Key="@AddSave_16x16.png">pack://application:,,,/Ginger;component/Images/@AddSave_16x16.png</ImageSource>
     <ImageSource x:Key="@@AddShare_16x16.png">pack://application:,,,/Ginger;component/Images/@AddShare_16x16.png</ImageSource>
     <ImageSource x:Key="@AddSMS_16x16.png">pack://application:,,,/Ginger;component/Images/@AddSMS_16x16.png</ImageSource>
-    <ImageSource x:Key="@RunAll_16x16.png">pack://application:,,,/Ginger;component/Images/@RunAll_16x16.png</ImageSource>
+    <!--<ImageSource x:Key="@RunAll_16x16.png">pack://application:,,,/Ginger;component/Images/@RunAll_16x16.png</ImageSource>-->
     <ImageSource x:Key="@StopRed_16x16">pack://application:,,,/Ginger;component/Images/@StopRed_16x16.png</ImageSource>
     <ImageSource x:Key="@FlashGreen_16x16">pack://application:,,,/Ginger;component/Images/@FlashGreen_16x16.png</ImageSource>
     <ImageSource x:Key="@RightArrowRed_16x16">pack://application:,,,/Ginger;component/Images/@RightArrowRed_16x16.png</ImageSource>

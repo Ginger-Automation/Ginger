@@ -1,0 +1,30 @@
+    <Page x:Class="GingerWPF.AgentsLib.NewAgentPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      Height="85" Width="350" MinHeight="85"
+	Title="Add New Agent">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="110"/>
+            <ColumnDefinition Width="200*"/>            
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>
+            <RowDefinition Height="26"/>            
+        </Grid.RowDefinitions>
+        
+        <Label Content="Agent Name:" Grid.Row="0" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
+        <TextBox x:Name="AgentNameTextBox" Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" Text="" Style="{StaticResource @TextBoxStyle}" FontWeight="Bold"/>
+
+        <Label Content="Platform Type:" Grid.Row="1" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
+        <ComboBox x:Name="PlatformTypeComboBox" Grid.Column="1" Grid.Row="1" Style="{StaticResource @InputComboBoxStyle}"/>
+        
+        <Label Content="Driver Type:" Grid.Row="2" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>        
+        <ComboBox x:Name="DriverTypeComboBox" Grid.Column="1" Grid.Row="2" Style="{StaticResource @InputComboBoxStyle}"/>        
+    </Grid>
+</Page>

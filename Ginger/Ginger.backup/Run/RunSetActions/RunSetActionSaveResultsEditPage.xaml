@@ -1,0 +1,46 @@
+    <Page x:Class="Ginger.Run.RunSetActions.RunSetActionSaveResultsEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      d:DesignHeight="400" d:DesignWidth="600"
+	Title="RunSetActionSaveResultsEditPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        
+        <StackPanel>            
+            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Selected Report Template Name:</Label>
+            <StackPanel Orientation="Horizontal" >
+                <TextBox x:Name="TemplateNameTextBox" Width="500" Style="{StaticResource @TextBoxStyle}" ></TextBox>
+                <Button x:Name="SelectTemplateButton" Click="SelectTemplateButton_Click" Style="{StaticResource @InputButtonStyle}" Width="50" Margin="5,0,0,0" VerticalAlignment="Center">Select</Button>
+            </StackPanel>
+            <CheckBox x:Name="SaveindividualBFReportCheckBox" Style="{StaticResource @CheckBoxStyle}" Margin="5">
+                <CheckBox.Content>
+                    <GingerCore:ucTextDicResource Text="Also Save Report per [BusinessFlow]"></GingerCore:ucTextDicResource>
+                </CheckBox.Content>
+            </CheckBox>
+            
+            <Label Content="Save Destination Path/s:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" Margin="0,15,0,0" FontSize="14"></Label>
+            <StackPanel Margin="10,0,0,0" HorizontalAlignment="Left">
+                <Label Content="Solution Execution Results Folder" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"></Label>
+                <Label  Style="{StaticResource @LabelStyle}">Folder Name:</Label>
+                <TextBox x:Name="SaveResultstoInSolutionFolderNameTextBox" Style="{StaticResource @TextBoxStyle}" Width="485"></TextBox>
+                <Label Style="{StaticResource @LabelStyle}" FontSize="10">* If folder doesn't exist a new one will be created, i.e: 'Sanity Tests'</Label>
+            </StackPanel>
+
+            <StackPanel Margin="10,10,0,0" HorizontalAlignment="Left">
+                <Label Content="Local/Network Folder" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"></Label>
+                <Label  Style="{StaticResource @LabelStyle}">Folder Path:</Label>
+                <StackPanel Orientation="Horizontal" >
+                    <TextBox x:Name="SaveResultstoFolderNameTextBox" Width="485" Style="{StaticResource @TextBoxStyle}" ></TextBox>
+                    <Button x:Name="SelectFolderButton" Click="SelectFolderButton_Click" Style="{StaticResource @InputButtonStyle}" Width="50" Margin="5,0,0,0" VerticalAlignment="Center">Select</Button>
+                </StackPanel>
+                <Label Style="{StaticResource @LabelStyle}" FontSize="10">* Target folder must exist, i.e.: '\\Proj1\DailySanity\'</Label>
+            </StackPanel>
+
+            <CheckBox x:Name="OpenExecutionResultsFolderCheckBox" Margin="5,10,0,0" Style="{StaticResource @CheckBoxStyle}" Content="Open folder/s after saving results"></CheckBox>
+        </StackPanel>
+    </Grid>
+</Page>
