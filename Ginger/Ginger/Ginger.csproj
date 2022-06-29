@@ -25,6 +25,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Actions\ActionConversion\ActionConversionIntro.md" />
+    <None Remove="Agents\AddAgentWizardLib\AddAgentIntro.md" />
+    <None Remove="ALM\MapToALMWizard\MappedToALMIntro.md" />
+    <None Remove="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiActionsConversionIntro.md" />
+    <None Remove="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
+    <None Remove="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
+    <None Remove="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
+    <None Remove="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro.md" />
     <None Remove="Images\%40AccessDataSource_16x16.png" />
     <None Remove="Images\%40Action_32x32.png" />
     <None Remove="Images\%40Activities_16x16.png" />
@@ -558,6 +566,10 @@
     <None Remove="Images\Workflow16x16.png" />
     <None Remove="Images\Workflow32x32.png" />
     <None Remove="Images\X16x16.png" />
+    <None Remove="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
+    <None Remove="Resources\GingerDataSource.mdb" />
+    <None Remove="RunSetLib\CreateAutoRunWizardLib\AutoRunIntroduction.md" />
+    <None Remove="TestLib\WizardLib\Intro.md" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\android.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidWhite.png" />
@@ -593,9 +605,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="GingerIconNew.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Resource Include="GingerIconNew.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Actions\ActionConversion\ActionConversionIntro.md" />
+    <Resource Include="Agents\AddAgentWizardLib\AddAgentIntro.md" />
+    <Resource Include="ALM\MapToALMWizard\MappedToALMIntro.md" />
+    <Resource Include="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiActionsConversionIntro.md" />
+    <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
+    <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
+    <Resource Include="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
+    <Resource Include="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro.md" />
+    <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
+    <Resource Include="Resources\GingerDataSource.mdb">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="RunSetLib\CreateAutoRunWizardLib\AutoRunIntroduction.md">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -604,7 +631,7 @@
 
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.1.3.50" />
-    <PackageReference Include="CommandLineParser" Version="2.9.1-preview1" />
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.16.0" />
     <PackageReference Include="EPPlus" Version="6.0.4" />
     <PackageReference Include="FontAwesome.Sharp" Version="5.15.4" />
@@ -2319,6 +2346,7 @@
     <Resource Include="Images\_Images.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="TestLib\WizardLib\Intro.md" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\android.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -2398,9 +2426,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\ASCF16x16.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\GingerDataSource.mdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\LiteDB.db">

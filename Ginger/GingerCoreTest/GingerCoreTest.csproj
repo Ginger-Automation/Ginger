@@ -93,12 +93,9 @@
     <None Update="TestResources\Converter\IPDLSAM.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="TestResources\Database\GingerUnitTest.mdb">
+    <Resource Include="TestResources\Database\GingerUnitTest.mdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <None Update="TestResources\DataSources\GingerDataSource.mdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Resource>
     <Content Include="TestResources\HTML\HTMLControls.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -203,9 +200,6 @@
     <None Update="TestResources\Solutions\BasicSimple\Environments\Default.Ginger.Environment.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.Ginger.DataSource.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -218,9 +212,15 @@
     <None Update="TestResources\XML\BATCH_FILE.BAT">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Resource Include="TestResources\DataSources\GingerDataSource.mdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="TestResources\keys\privatekey_jack.txt" />
     <Resource Include="TestResources\keys\Privatekey.txt" />
     <Resource Include="TestResources\ASCF\GingerASCFRecordQueueCommands.txt" />
+    <Resource Include="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <None Update="TestResources\AutoPilot\JSONTemplates\login.json">
@@ -244,6 +244,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Misc\StatusResultTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="TestResources\DataSources\GingerDataSource.mdb" />
+    <None Remove="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.mshtml">
