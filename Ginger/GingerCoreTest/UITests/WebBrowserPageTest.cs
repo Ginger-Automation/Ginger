@@ -131,6 +131,7 @@ namespace UnitTests.UITests.WebBrowserPageTest
 
         }
 
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void HomeLinkXPath()
         {
@@ -138,6 +139,7 @@ namespace UnitTests.UITests.WebBrowserPageTest
             TestElementXPath("QAHome", ".//*[@id='home']");
         }
 
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void AdminLinkXPath()
         {
@@ -145,6 +147,7 @@ namespace UnitTests.UITests.WebBrowserPageTest
             TestElementXPath("QAAdmin", ".//*[@id='menu']/li[2]/a");
         }
 
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void ItemInTable()
         {
